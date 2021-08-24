@@ -221,4 +221,13 @@ public class TagEditorPanel extends JPanel {
                 model.getTags(), presetHandler);
         validate();
     }
+
+    /**
+     * Save all outstanding edits to the model.
+     * @see org.openstreetmap.josm.gui.io.UploadDialog#saveEdits
+     * @since 18173
+     */
+    public void saveEdits() {
+        tagTable.endCellEditing();
+    }
 }

@@ -108,7 +108,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      */
     public void initFromPreferences() {
         String url = OsmApi.getOsmApi().getServerUrl();
-        tfOsmServerUrl.setPossibleItems(SERVER_URL_HISTORY.get());
+        tfOsmServerUrl.getModel().prefs().load(SERVER_URL_HISTORY);
         if (Config.getUrls().getDefaultOsmApiUrl().equals(url.trim())) {
             cbUseDefaultServerUrl.setSelected(true);
             propagator.propagate(Config.getUrls().getDefaultOsmApiUrl());
@@ -130,7 +130,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         } else {
             Config.getPref().put("osm-server.url", hmiUrl);
             tfOsmServerUrl.addCurrentItemToHistory();
-            SERVER_URL_HISTORY.put(tfOsmServerUrl.getHistory());
+            tfOsmServerUrl.getModel().prefs().save(SERVER_URL_HISTORY);
         }
         String newUrl = OsmApi.getOsmApi().getServerUrl();
 

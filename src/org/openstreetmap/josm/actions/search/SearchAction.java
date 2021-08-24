@@ -13,11 +13,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -42,6 +40,7 @@ import org.openstreetmap.josm.gui.dialogs.SearchDialog;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -66,7 +65,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
-    private static final LinkedList<SearchSetting> searchHistory = new LinkedList<>();
+    private static AutoCompComboBoxModel<SearchSetting> model = new AutoCompComboBoxModel<>();
+
+    /** preferences reader/writer with automatic transmogrification to and from String */
+    private static AutoCompComboBoxModel<SearchSetting>.Preferences prefs = model.prefs(
+            SearchSetting::readFromString, SearchSetting::writeToString);
+
     static {
         SearchCompiler.addMatchFactory(new SimpleMatchFactory() {
             @Override
@@ -86,21 +90,15 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 }
             }
         });
-
-        for (String s: Config.getPref().getList("search.history", Collections.<String>emptyList())) {
-            SearchSetting ss = SearchSetting.readFromString(s);
-            if (ss != null) {
-                searchHistory.add(ss);
-            }
-        }
+        model.setSize(Config.getPref().getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE));
     }
 
     /**
      * Gets the search history
-     * @return The last searched terms. Do not modify it.
+     * @return The last searched terms.
      */
     public static Collection<SearchSetting> getSearchHistory() {
-        return searchHistory;
+        return model.asCollection();
     }
 
     /**
@@ -108,22 +106,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @param s The search to save
      */
     public static void saveToHistory(SearchSetting s) {
-        if (searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
-            searchHistory.addFirst(new SearchSetting(s));
-        } else if (searchHistory.contains(s)) {
-            // move existing entry to front, fixes #8032 - search history loses entries when re-using queries
-            searchHistory.remove(s);
-            searchHistory.addFirst(new SearchSetting(s));
-        }
-        int maxsize = Config.getPref().getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
-        while (searchHistory.size() > maxsize) {
-            searchHistory.removeLast();
-        }
-        List<String> savedHistory = searchHistory.stream()
-                .map(SearchSetting::writeToString)
-                .distinct()
-                .collect(Collectors.toList());
-        Config.getPref().putList("search.history", savedHistory);
+        model.addTopElement(s);
+        prefs.save("search.history");
     }
 
     /**
@@ -131,9 +115,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @return The list of search texts.
      */
     public static List<String> getSearchExpressionHistory() {
-        return getSearchHistory().stream()
-                .map(ss -> ss.text)
-                .collect(Collectors.toList());
+        return prefs.asStringList();
     }
 
     private static volatile SearchSetting lastSearch;
@@ -175,7 +157,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         SearchDialog dialog = new SearchDialog(
-                initialValues, getSearchExpressionHistory(), ExpertToggleAction.isExpert());
+                initialValues, model, ExpertToggleAction.isExpert());
 
         if (dialog.showDialog().getValue() != 1) return null;
 
@@ -203,6 +185,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * Launches the dialog for specifying search criteria and runs a search
      */
     public static void search() {
+        prefs.load("search.history");
         SearchSetting se = showSearchDialog(lastSearch);
         if (se != null) {
             searchWithHistory(se);

@@ -178,8 +178,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
      * @param cbHistory the {@link HistoryComboBox} to which the history is restored to
      */
     protected void restorePrimitivesHistory(HistoryComboBox cbHistory) {
-        cbHistory.setPossibleItemsTopDown(
-                Config.getPref().getList(getClass().getName() + ".primitivesHistory", Collections.emptyList()));
+        cbHistory.getModel().prefs().load(getClass().getName() + ".primitivesHistory");
     }
 
     /**
@@ -189,7 +188,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
      */
     protected void remindPrimitivesHistory(HistoryComboBox cbHistory) {
         cbHistory.addCurrentItemToHistory();
-        Config.getPref().putList(getClass().getName() + ".primitivesHistory", cbHistory.getHistory());
+        cbHistory.getModel().prefs().save(getClass().getName() + ".primitivesHistory");
     }
 
     /**

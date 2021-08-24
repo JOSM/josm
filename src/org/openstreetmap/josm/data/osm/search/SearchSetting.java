@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.util.Objects;
 
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class defines a set of parameters that is used to
@@ -49,6 +50,16 @@ public class SearchSetting {
 
     @Override
     public String toString() {
+        return Utils.shortenString(text,
+            org.openstreetmap.josm.actions.search.SearchAction.MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
+    }
+
+    /**
+     * A more talkative version of toString.
+     * @return a bit more info than toString
+     * @since 18173
+     */
+    public String toStringEx() {
         String cs = caseSensitive ?
                 /*case sensitive*/  trc("search", "CS") :
                     /*case insensitive*/  trc("search", "CI");
@@ -135,6 +146,24 @@ public class SearchSetting {
 
         result.text = s.substring(index);
 
+        return result;
+    }
+
+    /**
+     * Build a SearchSetting from a plain unformatted string.
+     * <p>
+     * All attributes are defaulted, only the search string is set. This function is used in
+     * {@link org.openstreetmap.josm.gui.download.OverpassQueryWizardDialog}.
+     *
+     * @param s The string
+     * @return The instance
+     * @since 18173
+     */
+    public static SearchSetting fromString(String s) {
+        if (s.isEmpty())
+            return null;
+        SearchSetting result = new SearchSetting();
+        result.text = s;
         return result;
     }
 

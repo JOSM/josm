@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.Collections;
 import java.util.Optional;
 
 import javax.swing.JLabel;
@@ -44,7 +43,7 @@ public class SearchNotesDownloadAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         HistoryComboBox searchTermBox = new HistoryComboBox();
-        searchTermBox.setPossibleItemsTopDown(Config.getPref().getList(HISTORY_KEY, Collections.emptyList()));
+        searchTermBox.getModel().prefs().load(HISTORY_KEY);
 
         JPanel contentPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -72,7 +71,7 @@ public class SearchNotesDownloadAction extends JosmAction {
         }
 
         searchTermBox.addCurrentItemToHistory();
-        Config.getPref().putList(HISTORY_KEY, searchTermBox.getHistory());
+        searchTermBox.getModel().prefs().save(HISTORY_KEY);
 
         performSearch(searchTerm);
     }

@@ -43,7 +43,6 @@ import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -113,8 +112,7 @@ public class OpenLocationAction extends JosmAction {
      * @param cbHistory the history combo box
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {
-        cbHistory.setPossibleItemsTopDown(Config.getPref().getList(getClass().getName() + ".uploadAddressHistory",
-                Collections.emptyList()));
+        cbHistory.getModel().prefs().load(getClass().getName() + ".uploadAddressHistory");
     }
 
     /**
@@ -123,7 +121,7 @@ public class OpenLocationAction extends JosmAction {
      */
     protected void remindUploadAddressHistory(HistoryComboBox cbHistory) {
         cbHistory.addCurrentItemToHistory();
-        Config.getPref().putList(getClass().getName() + ".uploadAddressHistory", cbHistory.getHistory());
+        cbHistory.getModel().prefs().save(getClass().getName() + ".uploadAddressHistory");
     }
 
     @Override

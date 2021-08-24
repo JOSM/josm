@@ -28,7 +28,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -55,14 +54,18 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     private JCheckBox cbCloseAfterUpload;
     private OpenChangesetComboBoxModel model;
 
+    /** the changeset comment model */
+    private final transient UploadDialogModel uploadDialogModel;
+
     /**
      * Constructs a new {@code ChangesetManagementPanel}.
      *
-     * @param changesetCommentModel the changeset comment model. Must not be null.
-     * @throws IllegalArgumentException if {@code changesetCommentModel} is null
+     * @param uploadDialogModel The tag editor model.
+     *
+     * @since 18173 (signature)
      */
-    public ChangesetManagementPanel(ChangesetCommentModel changesetCommentModel) {
-        CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
+    public ChangesetManagementPanel(UploadDialogModel uploadDialogModel) {
+        this.uploadDialogModel = uploadDialogModel;
         build();
         refreshGUI();
     }
@@ -272,6 +275,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
                 }
                 Changeset cs = (Changeset) cbOpenChangesets.getSelectedItem();
                 if (cs == null) return;
+                uploadDialogModel.putAll(getSelectedChangeset().getKeys());
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
             }
         }
@@ -279,7 +283,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
 
     /**
      * Refreshes the list of open changesets
-     *
      */
     class RefreshAction extends AbstractAction {
         RefreshAction() {
@@ -295,7 +298,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
 
     /**
      * Closes the currently selected changeset
-     *
      */
     class CloseChangesetAction extends AbstractAction implements ItemListener {
         CloseChangesetAction() {

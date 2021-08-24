@@ -12,13 +12,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 import javax.swing.JOptionPane;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.io.UploadDialog.UploadAction;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -81,11 +79,6 @@ class UploadDialogTest {
         public Map<String, String> getTags(boolean keepEmpty) {
             return new ConcurrentHashMap<>();
         }
-
-        @Override
-        public void forceUpdateActiveField() {
-            // Do nothing
-        }
     }
 
     /**
@@ -113,41 +106,6 @@ class UploadDialogTest {
         assertFalse(UploadDialog.UploadAction.isUploadCommentTooShort("几何校正"));
         // test with unassigned unicode characters ==> no unicode block
         assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("\u0860"));
-    }
-
-    private static void doTestGetLastChangesetTagFromHistory(String historyKey, Supplier<String> methodToTest, String def) {
-        Config.getPref().putList(historyKey, null);
-        Config.getPref().putInt(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0);
-        Config.getPref().putInt(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, 30);
-        assertNull(methodToTest.get());          // age NOK (history empty)
-        Config.getPref().putList(historyKey, Arrays.asList("foo"));
-        assertNull(methodToTest.get());          // age NOK (history not empty)
-        Config.getPref().putLong(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, System.currentTimeMillis() / 1000);
-        assertEquals("foo", methodToTest.get()); // age OK, history not empty
-        Config.getPref().putList(historyKey, null);
-        assertEquals(def, methodToTest.get());   // age OK, history empty
-    }
-
-    /**
-     * Test of {@link UploadDialog#getLastChangesetCommentFromHistory} method.
-     */
-    @Test
-    void testGetLastChangesetCommentFromHistory() {
-        doTestGetLastChangesetTagFromHistory(
-                BasicUploadSettingsPanel.HISTORY_KEY,
-                UploadDialog::getLastChangesetCommentFromHistory,
-                null);
-    }
-
-    /**
-     * Test of {@link UploadDialog#getLastChangesetSourceFromHistory} method.
-     */
-    @Test
-    void testGetLastChangesetSourceFromHistory() {
-        doTestGetLastChangesetTagFromHistory(
-                BasicUploadSettingsPanel.SOURCE_HISTORY_KEY,
-                UploadDialog::getLastChangesetSourceFromHistory,
-                BasicUploadSettingsPanel.getDefaultSources().get(0));
     }
 
     private static void doTestValidateUploadTag(String prefix) {
@@ -184,16 +142,5 @@ class UploadDialogTest {
     void testValidateUploadTag() {
         doTestValidateUploadTag("upload.comment");
         doTestValidateUploadTag("upload.source");
-    }
-
-    @Test
-    void testGetCommentWithDataSetHashTag() {
-        assertEquals("", UploadDialog.getCommentWithDataSetHashTag(null, null));
-        DataSet ds = new DataSet();
-        assertEquals("foo", UploadDialog.getCommentWithDataSetHashTag("foo", ds));
-        ds.getChangeSetTags().put("hashtags", "bar");
-        assertEquals("foo #bar", UploadDialog.getCommentWithDataSetHashTag("foo", ds));
-        ds.getChangeSetTags().put("hashtags", "bar;baz;#bar");
-        assertEquals("foo #bar #baz", UploadDialog.getCommentWithDataSetHashTag("foo", ds));
     }
 }

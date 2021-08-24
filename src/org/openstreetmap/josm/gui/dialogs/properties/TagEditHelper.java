@@ -87,7 +87,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.IExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
@@ -399,6 +399,29 @@ public class TagEditHelper {
     }
 
     /**
+     * Returns the edited item with whitespaces removed
+     * @param cb the combobox
+     * @return the edited item with whitespaces removed
+     * @since 18173
+     */
+    public static String getEditItem(AutoCompComboBox<AutoCompletionItem> cb) {
+        return Utils.removeWhiteSpaces(cb.getEditor().getItem().toString());
+    }
+
+    /**
+     * Returns the selected item or the edited item as string
+     * @param cb the combobox
+     * @return the selected item or the edited item as string
+     * @since 18173
+     */
+    public static String getSelectedOrEditItem(AutoCompComboBox<AutoCompletionItem> cb) {
+        final Object selectedItem = cb.getSelectedItem();
+        if (selectedItem != null)
+            return selectedItem.toString();
+        return getEditItem(cb);
+    }
+
+    /**
      * Warns user about a key being overwritten.
      * @param action The action done by the user. Must state what key is changed
      * @param togglePref  The preference to save the checkbox state to
@@ -475,9 +498,11 @@ public class TagEditHelper {
             AutoCompletionManager autocomplete = AutoCompletionManager.of(OsmDataManager.getInstance().getActiveDataSet());
             List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
 
-            keys = new AutoCompletingComboBox(key);
-            keys.setPossibleAcItems(keyList);
+            keys = new AutoCompComboBox<>();
+            keys.getModel().setComparator(Comparator.naturalOrder()); // according to Comparable
+            keys.setPrototypeDisplayValue(new AutoCompletionItem(key));
             keys.setEditable(true);
+            keys.getModel().addAllElements(keyList);
             keys.setSelectedItem(key);
 
             p.add(Box.createVerticalStrut(5), GBC.eol());
@@ -489,13 +514,15 @@ public class TagEditHelper {
 
             final String selection = m.size() != 1 ? tr("<different>") : m.entrySet().iterator().next().getKey();
 
-            values = new AutoCompletingComboBox(selection);
+            values = new AutoCompComboBox<>();
+            values.getModel().setComparator(Comparator.naturalOrder());
+            values.setPrototypeDisplayValue(new AutoCompletionItem(selection));
             values.setRenderer(cellRenderer);
-
             values.setEditable(true);
-            values.setPossibleAcItems(valueList);
+            values.getModel().addAllElements(valueList);
             values.setSelectedItem(selection);
             values.getEditor().setItem(selection);
+
             p.add(Box.createVerticalStrut(5), GBC.eol());
             p.add(new JLabel(tr("Value")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
@@ -521,12 +548,12 @@ public class TagEditHelper {
 
         @Override
         public void performTagEdit() {
-            String value = values.getEditItem();
+            String value = getEditItem(values);
             value = Normalizer.normalize(value, Normalizer.Form.NFC);
             if (value.isEmpty()) {
                 value = null; // delete the key
             }
-            String newkey = keys.getEditItem();
+            String newkey = getEditItem(keys);
             newkey = Normalizer.normalize(newkey, Normalizer.Form.NFC);
             if (newkey.isEmpty()) {
                 newkey = key;
@@ -573,8 +600,8 @@ public class TagEditHelper {
     }
 
     protected abstract class AbstractTagsDialog extends ExtendedDialog {
-        protected AutoCompletingComboBox keys;
-        protected AutoCompletingComboBox values;
+        protected AutoCompComboBox<AutoCompletionItem> keys;
+        protected AutoCompComboBox<AutoCompletionItem> values;
 
         AbstractTagsDialog(Component parent, String title, String... buttonTexts) {
             super(parent, title, buttonTexts);
@@ -620,7 +647,7 @@ public class TagEditHelper {
             super.setVisible(visible);
         }
 
-        private void selectACComboBoxSavingUnixBuffer(AutoCompletingComboBox cb) {
+        private void selectACComboBoxSavingUnixBuffer(AutoCompComboBox<AutoCompletionItem> cb) {
             // select combobox with saving unix system selection (middle mouse paste)
             Clipboard sysSel = ClipboardUtils.getSystemSelection();
             if (sysSel != null) {
@@ -666,7 +693,8 @@ public class TagEditHelper {
                    boolean valuesOK = size == currentModel.getSize()
                            && IntStream.range(0, size).allMatch(i -> Objects.equals(currentModel.getElementAt(i), correctItems.get(i)));
                    if (!valuesOK) {
-                       values.setPossibleAcItems(correctItems);
+                       values.getModel().removeAllElements();
+                       values.getModel().addAllElements(correctItems);
                    }
                    if (!Objects.equals(key, objKey)) {
                        values.getEditor().selectAll();
@@ -687,7 +715,7 @@ public class TagEditHelper {
             if (buttons.isEmpty()) {
                 return;
             }
-            buttons.get(0).setIcon(findIcon(keys.getSelectedOrEditItem(), values.getSelectedOrEditItem())
+            buttons.get(0).setIcon(findIcon(getSelectedOrEditItem(keys), getSelectedOrEditItem(values))
                     .orElse(ImageProvider.get("ok", ImageProvider.ImageSizes.LARGEICON)));
         }
 
@@ -731,8 +759,12 @@ public class TagEditHelper {
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
 
             mainPanel = new JPanel(new GridBagLayout());
-            keys = new AutoCompletingComboBox();
-            values = new AutoCompletingComboBox();
+            keys = new AutoCompComboBox<>();
+            values = new AutoCompComboBox<>();
+            keys.getModel().setComparator(Comparator.naturalOrder()); // according to Comparable
+            values.getModel().setComparator(Comparator.naturalOrder());
+            keys.setPrototypeDisplayValue(new AutoCompletionItem("dummy"));
+            values.setPrototypeDisplayValue(new AutoCompletionItem("dummy"));
             keys.setAutocompleteEnabled(AUTOCOMPLETE_KEYS.get());
             values.setAutocompleteEnabled(AUTOCOMPLETE_VALUES.get());
 
@@ -747,7 +779,8 @@ public class TagEditHelper {
             // remove the object's tag keys from the list
             keyList.removeIf(item -> containsDataKey(item.getValue()));
 
-            keys.setPossibleAcItems(keyList);
+            keys.getModel().removeAllElements();
+            keys.getModel().addAllElements(keyList);
             keys.setEditable(true);
 
             mainPanel.add(keys, GBC.eop().fill(GBC.HORIZONTAL));
@@ -938,10 +971,10 @@ public class TagEditHelper {
                         tr("Choose recent tag {0}", count), null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        keys.setSelectedItem(t.getKey(), true);
+                        keys.setSelectedItem(t.getKey());
                         // fix #7951, #8298 - update list of values before setting value (?)
                         focus.focusGained(null);
-                        values.setSelectedItem(t.getValue(), true);
+                        values.setSelectedItem(t.getValue());
                         selectValuesCombobox();
                     }
                 };
@@ -1093,8 +1126,8 @@ public class TagEditHelper {
          * Read tags from comboboxes and add it to all selected objects
          */
         public final void performTagAdding() {
-            String key = keys.getEditItem();
-            String value = values.getEditItem();
+            String key = getEditItem(keys);
+            String value = getEditItem(values);
             if (key.isEmpty() || value.isEmpty())
                 return;
             for (OsmPrimitive osm : sel) {

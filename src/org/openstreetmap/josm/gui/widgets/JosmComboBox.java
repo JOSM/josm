@@ -109,6 +109,26 @@ public class JosmComboBox<E> extends JComboBox<E> {
     }
 
     /**
+     * Returns the text in the combobox editor.
+     * @return the text
+     * @see JTextComponent#getText
+     * @since 18173
+     */
+    public String getText() {
+        return getEditorComponent().getText();
+    }
+
+    /**
+     * Sets the text in the combobox editor.
+     * @param value the text to set
+     * @see JTextComponent#setText
+     * @since 18173
+     */
+    public void setText(String value) {
+        getEditorComponent().setText(value);
+    }
+
+    /**
      * Finds the prototype display value to use among the given possible candidates.
      * @param possibleValues The possible candidates that will be iterated.
      * @return The value that needs the largest display height on screen.
@@ -163,13 +183,13 @@ public class JosmComboBox<E> extends JComboBox<E> {
                 .orElse(null);
     }
 
-    protected final void init(E prototype) {
-        init(prototype, true);
-    }
-
-    protected final void init(E prototype, boolean registerPropertyChangeListener) {
+    /**
+     * Set the prototypeCellValue property and calculate the height of the dropdown.
+     */
+    @Override
+    public void setPrototypeDisplayValue(E prototype) {
         if (prototype != null) {
-            setPrototypeDisplayValue(prototype);
+            super.setPrototypeDisplayValue(prototype);
             int screenHeight = GuiHelper.getScreenSize().height;
             // Compute maximum number of visible items based on the preferred size of the combo box.
             // This assumes that items have the same height as the combo box, which is not granted by the look and feel
@@ -188,6 +208,14 @@ public class JosmComboBox<E> extends JComboBox<E> {
             }
             setMaximumRowCount(Math.max(getMaximumRowCount(), maxsize));
         }
+    }
+
+    protected final void init(E prototype) {
+        init(prototype, true);
+    }
+
+    protected final void init(E prototype, boolean registerPropertyChangeListener) {
+        setPrototypeDisplayValue(prototype);
         // Handle text contextual menus for editable comboboxes
         if (registerPropertyChangeListener) {
             addPropertyChangeListener("editable", handler);

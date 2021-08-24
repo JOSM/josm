@@ -239,7 +239,7 @@ public class UploadAction extends AbstractUploadAction {
         ChangesetUpdater.check();
 
         final UploadDialog dialog = UploadDialog.getUploadDialog();
-        dialog.setChangesetTags(layer.getDataSet());
+        dialog.initLifeCycle(layer.getDataSet());
         dialog.setUploadedPrimitives(apiData);
         dialog.setVisible(true);
         dialog.rememberUserInput();

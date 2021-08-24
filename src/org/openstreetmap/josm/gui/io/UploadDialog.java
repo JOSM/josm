@@ -17,16 +17,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -39,7 +36,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
 
 import org.openstreetmap.josm.data.APIDataSet;
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -47,6 +43,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.MultiLineFlowLayout;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
@@ -60,6 +57,7 @@ import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -71,9 +69,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     /** the unique instance of the upload dialog */
     private static UploadDialog uploadDialog;
 
-    /** the "created_by" changeset OSM key */
-    private static final String CREATED_BY = "created_by";
-
     /** the panel with the objects to upload */
     private UploadedObjectsSummaryPanel pnlUploadedObjects;
     /** the panel to select the changeset used */
@@ -84,17 +79,17 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     private UploadStrategySelectionPanel pnlUploadStrategySelectionPanel;
 
     private TitledBorder tagSettingsBorder;
-    /** checkbox for selecting whether an atomic upload is to be used  */
-    private TagSettingsPanel pnlTagSettings;
+    /** a border around the tag editor panel */
+    private JPanel pnlTagEditorBorder;
+    /** the tag editor panel */
+    private TagEditorPanel pnlTagEditor;
     /** the tabbed pane used below of the list of primitives  */
     private JTabbedPane tpConfigPanels;
     /** the upload button */
     private JButton btnUpload;
 
-    /** the changeset comment model keeping the state of the changeset comment */
-    private final transient ChangesetCommentModel changesetCommentModel = new ChangesetCommentModel();
-    private final transient ChangesetCommentModel changesetSourceModel = new ChangesetCommentModel();
-    private final transient ChangesetReviewModel changesetReviewModel = new ChangesetReviewModel();
+    /** the model keeping the state of the changeset tags */
+    private final transient UploadDialogModel model = new UploadDialogModel();
 
     private transient DataSet dataSet;
 
@@ -137,22 +132,27 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         tpConfigPanels = new CompactTabbedPane();
         splitPane.setRightComponent(tpConfigPanels);
 
-        pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel, changesetSourceModel, changesetReviewModel);
+        pnlBasicUploadSettings = new BasicUploadSettingsPanel(model);
         tpConfigPanels.add(pnlBasicUploadSettings);
         tpConfigPanels.setTitleAt(0, tr("Description"));
-        tpConfigPanels.setToolTipTextAt(0, tr("Decide how to upload the data and which changeset to use"));
+        tpConfigPanels.setToolTipTextAt(0, tr("Describe the changes you made"));
 
+        JPanel pnlSettings = new JPanel(new GridBagLayout());
+        pnlTagEditorBorder = new JPanel(new BorderLayout());
         tagSettingsBorder = BorderFactory.createTitledBorder(tr("Tags of new changeset"));
-        pnlTagSettings = new TagSettingsPanel(changesetCommentModel, changesetSourceModel, changesetReviewModel);
-        pnlTagSettings.setBorder(tagSettingsBorder);
-        pnlChangesetManagement = new ChangesetManagementPanel(changesetCommentModel);
+        pnlTagEditorBorder.setBorder(tagSettingsBorder);
+        pnlTagEditor = new TagEditorPanel(model, null, Changeset.MAX_CHANGESET_TAG_LENGTH);
+        pnlTagEditorBorder.add(pnlTagEditor, BorderLayout.CENTER);
+
+        pnlChangesetManagement = new ChangesetManagementPanel(model);
         pnlUploadStrategySelectionPanel = new UploadStrategySelectionPanel();
-        JPanel pnlChangeset = new JPanel(new GridBagLayout());
-        pnlChangeset.add(pnlChangesetManagement, GBC.eop().fill(GBC.HORIZONTAL));
-        pnlChangeset.add(pnlUploadStrategySelectionPanel, GBC.eop().fill(GBC.HORIZONTAL));
-        pnlChangeset.add(pnlTagSettings, GBC.eol().fill(GBC.BOTH));
-        tpConfigPanels.add(pnlChangeset);
+        pnlSettings.add(pnlChangesetManagement, GBC.eop().fill(GBC.HORIZONTAL));
+        pnlSettings.add(pnlUploadStrategySelectionPanel, GBC.eop().fill(GBC.HORIZONTAL));
+        pnlSettings.add(pnlTagEditorBorder, GBC.eol().fill(GBC.BOTH));
+
+        tpConfigPanels.add(pnlSettings);
         tpConfigPanels.setTitleAt(1, tr("Settings"));
+        tpConfigPanels.setToolTipTextAt(1, tr("Decide how to upload the data and which changeset to use"));
 
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(splitPane, BorderLayout.CENTER);
@@ -180,6 +180,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         CancelAction cancelAction = new CancelAction(this);
         pnl.add(new JButton(cancelAction));
         InputMapUtils.addEscapeAction(getRootPane(), cancelAction);
+
+        // -- help button
         pnl.add(new JButton(new ContextSensitiveHelpAction(ht("/Dialog/Upload"))));
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/Upload"));
         return pnl;
@@ -200,11 +202,11 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         pnlChangesetManagement.addPropertyChangeListener(
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
         );
-        pnlChangesetManagement.addPropertyChangeListener(this);
+        pnlUploadedObjects.addPropertyChangeListener(pnlUploadStrategySelectionPanel);
         pnlUploadedObjects.addPropertyChangeListener(
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
         );
-        pnlUploadedObjects.addPropertyChangeListener(pnlUploadStrategySelectionPanel);
+        pnlUploadStrategySelectionPanel.addPropertyChangeListener(this);
         pnlUploadStrategySelectionPanel.addPropertyChangeListener(
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
         );
@@ -217,8 +219,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 () -> tpConfigPanels.setSelectedIndex(2)
         );
 
-        pnlBasicUploadSettings.setUploadTagDownFocusTraversalHandlers(e -> btnUpload.requestFocusInWindow());
-
         // Enable/disable the upload button if at least an upload validator rejects upload
         pnlBasicUploadSettings.getUploadTextValidators().forEach(v -> v.addChangeListener(e -> btnUpload.setEnabled(
                 pnlBasicUploadSettings.getUploadTextValidators().stream().noneMatch(UploadTextComponentValidator::isUploadRejected))));
@@ -226,6 +226,24 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         setMinimumSize(new Dimension(600, 350));
 
         Config.getPref().addPreferenceChangeListener(this);
+    }
+
+    /**
+     * Initializes this life cycle of the dialog.
+     *
+     * Initializes the dialog each time before it is made visible. We cannot do
+     * this in the constructor because the dialog is a singleton.
+     *
+     * @param dataSet The Dataset we want to upload
+     * @since 18173
+     */
+    public void initLifeCycle(DataSet dataSet) {
+        Map<String, String> map = new HashMap<>();
+        this.dataSet = dataSet;
+        pnlBasicUploadSettings.initLifeCycle(map);
+        model.clear();
+        model.putAll(map);
+        model.putAll(this.dataSet);
     }
 
     /**
@@ -252,99 +270,11 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     }
 
     /**
-     * Sets the tags for this upload based on (later items overwrite earlier ones):
-     * <ul>
-     * <li>previous "source" and "comment" input</li>
-     * <li>the tags set in the dataset (see {@link DataSet#getChangeSetTags()})</li>
-     * <li>the tags from the selected open changeset</li>
-     * <li>the JOSM user agent (see {@link Version#getAgentString(boolean)})</li>
-     * </ul>
-     *
-     * @param dataSet to obtain the tags set in the dataset
+     * Sets the input focus to upload button.
+     * @since 18173
      */
-    public void setChangesetTags(DataSet dataSet) {
-        setChangesetTags(dataSet, false);
-    }
-
-    /**
-     * Sets the tags for this upload based on (later items overwrite earlier ones):
-     * <ul>
-     * <li>previous "source" and "comment" input</li>
-     * <li>the tags set in the dataset (see {@link DataSet#getChangeSetTags()})</li>
-     * <li>the tags from the selected open changeset</li>
-     * <li>the JOSM user agent (see {@link Version#getAgentString(boolean)})</li>
-     * </ul>
-     *
-     * @param dataSet to obtain the tags set in the dataset
-     * @param keepSourceComment if {@code true}, keep upload {@code source} and {@code comment} current values from models
-     */
-    private void setChangesetTags(DataSet dataSet, boolean keepSourceComment) {
-        final Map<String, String> tags = new HashMap<>();
-
-        // obtain from previous input
-        if (!keepSourceComment) {
-            tags.put("source", getLastChangesetSourceFromHistory());
-            tags.put("comment", getCommentWithDataSetHashTag(getLastChangesetCommentFromHistory(), dataSet));
-        }
-
-        // obtain from dataset
-        if (dataSet != null) {
-            tags.putAll(dataSet.getChangeSetTags());
-        }
-        this.dataSet = dataSet;
-
-        // obtain from selected open changeset
-        if (pnlChangesetManagement.getSelectedChangeset() != null) {
-            tags.putAll(pnlChangesetManagement.getSelectedChangeset().getKeys());
-        }
-
-        // set/adapt created_by
-        final String agent = Version.getInstance().getAgentString(false);
-        final String createdBy = tags.get(CREATED_BY);
-        if (createdBy == null || createdBy.isEmpty()) {
-            tags.put(CREATED_BY, agent);
-        } else if (!createdBy.contains(agent)) {
-            tags.put(CREATED_BY, createdBy + ';' + agent);
-        }
-
-        // remove empty values
-        tags.keySet().removeIf(key -> {
-            final String v = tags.get(key);
-            return v == null || v.isEmpty();
-        });
-
-        // ignore source/comment to keep current values from models ?
-        if (keepSourceComment) {
-            tags.put("source", changesetSourceModel.getComment());
-            tags.put("comment", getCommentWithDataSetHashTag(changesetCommentModel.getComment(), dataSet));
-        }
-
-        pnlTagSettings.initFromTags(tags);
-        pnlTagSettings.tableChanged(null);
-        pnlBasicUploadSettings.discardAllUndoableEdits();
-    }
-
-    /**
-     * Returns the given comment with appended hashtags from dataset changeset tags, if not already present.
-     * @param comment changeset comment. Can be null
-     * @param dataSet optional dataset, which can contain hashtags in its changeset tags
-     * @return comment with dataset changesets tags, if any, not duplicated
-     */
-    static String getCommentWithDataSetHashTag(String comment, DataSet dataSet) {
-        StringBuilder result = comment == null ? new StringBuilder() : new StringBuilder(comment);
-        if (dataSet != null) {
-            String hashtags = dataSet.getChangeSetTags().get("hashtags");
-            if (hashtags != null) {
-                Set<String> sanitizedHashtags = new LinkedHashSet<>();
-                for (String hashtag : hashtags.split(";", -1)) {
-                    sanitizedHashtags.add(hashtag.startsWith("#") ? hashtag : "#" + hashtag);
-                }
-                if (!sanitizedHashtags.isEmpty()) {
-                    result.append(' ').append(String.join(" ", sanitizedHashtags));
-                }
-            }
-        }
-        return result.toString();
+    public void setFocusToUploadButton() {
+        btnUpload.requestFocus();
     }
 
     @Override
@@ -359,7 +289,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     public void startUserInput() {
         tpConfigPanels.setSelectedIndex(0);
         pnlBasicUploadSettings.startUserInput();
-        pnlTagSettings.startUserInput();
+        pnlTagEditor.initAutoCompletion(MainApplication.getLayerManager().getEditLayer());
         pnlUploadStrategySelectionPanel.initFromPreferences();
         UploadParameterSummaryPanel pnl = pnlBasicUploadSettings.getUploadParameterSummaryPanel();
         pnl.setUploadStrategySpecification(pnlUploadStrategySelectionPanel.getUploadStrategySpecification());
@@ -374,7 +304,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      */
     public Changeset getChangeset() {
         Changeset cs = Optional.ofNullable(pnlChangesetManagement.getSelectedChangeset()).orElseGet(Changeset::new);
-        cs.setKeys(pnlTagSettings.getTags(false));
+        cs.setKeys(model.getTags(false));
         return cs;
     }
 
@@ -394,14 +324,24 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         return spec;
     }
 
+    /**
+     * Get the upload dialog model.
+     *
+     * @return The model.
+     * @since 18173
+     */
+    public UploadDialogModel getModel() {
+        return model;
+    }
+
     @Override
     public String getUploadComment() {
-        return changesetCommentModel.getComment();
+        return model.getValue("comment");
     }
 
     @Override
     public String getUploadSource() {
-        return changesetSourceModel.getComment();
+        return model.getValue("source");
     }
 
     @Override
@@ -495,13 +435,13 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // force update of model in case dialog is closed before focus lost event, see #17452
-            dialog.forceUpdateActiveField();
+            Map<String, String> tags = dialog.getTags(true);
+            Logging.info("Starting upload with tags {0}", tags);
 
             /* test for empty tags in the changeset metadata and proceed only after user's confirmation.
              * though, accept if key and value are empty (cf. xor). */
             List<String> emptyChangesetTags = new ArrayList<>();
-            for (final Entry<String, String> i : dialog.getTags(true).entrySet()) {
+            for (final Entry<String, String> i : tags.entrySet()) {
                 final boolean isKeyEmpty = Utils.isStripEmpty(i.getKey());
                 final boolean isValueEmpty = Utils.isStripEmpty(i.getValue());
                 final boolean ignoreKey = "comment".equals(i.getKey()) || "source".equals(i.getKey());
@@ -588,7 +528,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
             Changeset cs = (Changeset) evt.getNewValue();
-            setChangesetTags(dataSet, cs == null); // keep comment/source of first tab for new changesets
             if (cs == null) {
                 tagSettingsBorder.setTitle(tr("Tags of new changeset"));
             } else {
@@ -609,10 +548,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 case "osm-server.url":
                     osmServerUrlChanged(e.getNewValue());
                     break;
-                case BasicUploadSettingsPanel.HISTORY_KEY:
-                case BasicUploadSettingsPanel.SOURCE_HISTORY_KEY:
-                    pnlBasicUploadSettings.refreshHistoryComboBoxes();
-                    break;
                 default:
                     return;
             }
@@ -629,34 +564,13 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         setTitle(tr("Upload to ''{0}''", url));
     }
 
-    private static String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
-        Collection<String> history = Config.getPref().getList(historyKey, def);
-        long age = System.currentTimeMillis() / 1000 - BasicUploadSettingsPanel.getHistoryLastUsedKey();
-        if (age < BasicUploadSettingsPanel.getHistoryMaxAgeKey() && !history.isEmpty()) {
-            return history.iterator().next();
-        }
-        return null;
-    }
-
-    /**
-     * Returns the last changeset comment from history.
-     * @return the last changeset comment from history
-     */
-    public static String getLastChangesetCommentFromHistory() {
-        return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.HISTORY_KEY, new ArrayList<String>());
-    }
-
-    /**
-     * Returns the last changeset source from history.
-     * @return the last changeset source from history
-     */
-    public static String getLastChangesetSourceFromHistory() {
-        return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.SOURCE_HISTORY_KEY, BasicUploadSettingsPanel.getDefaultSources());
-    }
-
+    /* -------------------------------------------------------------------------- */
+    /* Interface IUploadDialog                                                    */
+    /* -------------------------------------------------------------------------- */
     @Override
     public Map<String, String> getTags(boolean keepEmpty) {
-        return pnlTagSettings.getTags(keepEmpty);
+        saveEdits();
+        return model.getTags(keepEmpty);
     }
 
     @Override
@@ -676,11 +590,18 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         tpConfigPanels.setSelectedIndex(0);
     }
 
-    @Override
-    public void forceUpdateActiveField() {
-        if (tpConfigPanels.getSelectedComponent() == pnlBasicUploadSettings) {
-            pnlBasicUploadSettings.forceUpdateActiveField();
-        }
+    /**
+     * Save all outstanding edits to the model.
+     * <p>
+     * The combobox editors and the tag cell editor need to be manually saved
+     * because they normally save on focus loss, eg. when the "Upload" button is
+     * pressed, but there's no focus change when Ctrl+Enter is pressed.
+     *
+     * @since 18173
+     */
+    public void saveEdits() {
+        pnlBasicUploadSettings.saveEdits();
+        pnlTagEditor.saveEdits();
     }
 
     /**

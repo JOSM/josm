@@ -645,7 +645,7 @@ public class TagEditorModel extends AbstractTableModel {
         this.endEditListener = endEditListener;
     }
 
-    private void commitPendingEdit() {
+    protected void commitPendingEdit() {
         if (endEditListener != null) {
             endEditListener.endCellEditing();
         }

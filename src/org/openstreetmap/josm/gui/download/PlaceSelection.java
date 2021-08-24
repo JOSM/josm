@@ -116,7 +116,7 @@ public class PlaceSelection implements DownloadSelection {
 
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
-        cbSearchExpression.setPossibleItemsTopDown(Config.getPref().getList(HISTORY_KEY, Collections.emptyList()));
+        cbSearchExpression.getModel().prefs().load(HISTORY_KEY);
         lpanel.add(cbSearchExpression, GBC.std(1, 1).fill(GBC.HORIZONTAL));
 
         panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));
@@ -194,7 +194,7 @@ public class PlaceSelection implements DownloadSelection {
             if (!isEnabled() || searchExpression.trim().isEmpty())
                 return;
             cbSearchExpression.addCurrentItemToHistory();
-            Config.getPref().putList(HISTORY_KEY, cbSearchExpression.getHistory());
+            cbSearchExpression.getModel().prefs().save(HISTORY_KEY);
             Server server = (Server) serverComboBox.getSelectedItem();
             URL url = server.urlFunction.apply(searchExpression, isSearchMore ? model.getData() : Collections.emptyList());
             NameQueryTask task = new NameQueryTask(url, data -> {

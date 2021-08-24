@@ -41,7 +41,7 @@ public class OverpassServerPanel extends JPanel {
      * Initializes the panel from preferences
      */
     public final void initFromPreferences() {
-        overpassServer.setPossibleItems(OverpassDownloadReader.OVERPASS_SERVER_HISTORY.get());
+        overpassServer.getModel().prefs().load(OverpassDownloadReader.OVERPASS_SERVER_HISTORY);
         overpassServer.setText(OverpassDownloadReader.OVERPASS_SERVER.get());
         forMultiFetch.setSelected(OverpassDownloadReader.FOR_MULTI_FETCH.get());
     }
@@ -51,7 +51,7 @@ public class OverpassServerPanel extends JPanel {
      */
     public final void saveToPreferences() {
         OverpassDownloadReader.OVERPASS_SERVER.put(overpassServer.getText());
-        OverpassDownloadReader.OVERPASS_SERVER_HISTORY.put(overpassServer.getHistory());
+        overpassServer.getModel().prefs().save(OverpassDownloadReader.OVERPASS_SERVER_HISTORY);
         OverpassDownloadReader.FOR_MULTI_FETCH.put(forMultiFetch.isSelected());
     }
 }

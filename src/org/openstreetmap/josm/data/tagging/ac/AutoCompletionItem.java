@@ -94,32 +94,19 @@ public class AutoCompletionItem implements Comparable<AutoCompletionItem> {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (obj instanceof String)
-            return obj.equals(value);
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof AutoCompletionItem))
             return false;
         final AutoCompletionItem other = (AutoCompletionItem) obj;
-        if (priority == null) {
-            if (other.priority != null)
-                return false;
-        } else if (!priority.equals(other.priority))
+        if (value == null ? other.value != null : !value.equals(other.value))
             return false;
-        if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
-        return true;
+        return priority == null ? other.priority == null : priority.equals(other.priority);
     }
 
     @Override
     public int compareTo(AutoCompletionItem other) {
-        int ret = other.priority.compareTo(priority); // higher priority items come first in the list
-        if (ret != 0)
-            return ret;
-        else
-            return this.value.compareTo(other.value);
+        // sort on priority descending
+        int ret = other.priority.compareTo(priority);
+        // then alphabetic ascending
+        return ret != 0 ? ret : this.value.compareTo(other.value);
     }
 }
