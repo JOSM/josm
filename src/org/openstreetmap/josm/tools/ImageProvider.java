@@ -1098,7 +1098,7 @@ public class ImageProvider {
                     case SVG:
                         SVGDiagram svg = null;
                         synchronized (getSvgUniverse()) {
-                            URI uri = getSvgUniverse().loadSVG(is, entryName);
+                            URI uri = getSvgUniverse().loadSVG(is, entryName, true);
                             svg = getSvgUniverse().getDiagram(uri);
                         }
                         return svg == null ? null : new ImageResource(svg);
