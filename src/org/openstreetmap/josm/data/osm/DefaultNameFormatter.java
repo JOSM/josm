@@ -412,6 +412,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     private static String getRelationTypeName(IRelation<?> relation) {
         // see https://josm.openstreetmap.de/browser/osm/applications/editors/josm/i18n/specialmessages.java
         String name = trc("Relation type", relation.get("type"));
+        if (relation.hasTag("type", "route") && relation.hasKey("route")) {
+            String route = trc("Route type", relation.get("route"));
+            name = route + " " + name;
+        }
         if (name == null) {
             name = relation.hasKey("public_transport") ? tr("public transport") : null;
         }

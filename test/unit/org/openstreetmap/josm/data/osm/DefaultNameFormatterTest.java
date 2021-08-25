@@ -102,7 +102,7 @@ class DefaultNameFormatterTest {
                 getFormattedRelationName("X=Y"));
         assertEquals("relation (\"Foo\", 0 members)",
                 getFormattedRelationName("name=Foo"));
-        assertEquals("route (\"123\", 0 members)",
+        assertEquals("tram route (\"123\", 0 members)",
                 getFormattedRelationName("type=route route=tram ref=123"));
         assertEquals("multipolygon (\"building\", 0 members)",
                 getFormattedRelationName("type=multipolygon building=yes"));
