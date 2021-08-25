@@ -12,6 +12,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -111,7 +112,8 @@ public class UntaggedWay extends Test {
             }
         }
 
-        if (!w.isTagged() && !waysUsedInRelations.contains(w)) {
+        // #20393 - ways tagged with just area=yes are catched by MapCSS tests
+        if (!w.isTagged() && !w.hasTag("area", OsmUtils.TRUE_VALUE) && !waysUsedInRelations.contains(w)) {
             if (w.hasKeys()) {
                 errors.add(TestError.builder(this, Severity.WARNING, COMMENTED_WAY)
                         .message(tr("Untagged ways (commented)"))
