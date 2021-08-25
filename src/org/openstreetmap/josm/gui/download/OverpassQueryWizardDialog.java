@@ -84,7 +84,7 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
      * Saves the latest, successfully parsed search term.
      */
     private void saveHistory() {
-        hcbSearchString.getModel().addTopElement(SearchSetting.fromString(hcbSearchString.getText()));
+        model.addTopElement(SearchSetting.fromString(hcbSearchString.getText()));
         prefs.save(OVERPASS_WIZARD_HISTORY);
     }
 
@@ -119,9 +119,7 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
      * @return {@code true} if the query successfully built, {@code false} otherwise.
      */
     private boolean buildQueryAction() {
-        final String wizardSearchTerm = getSearchSettings().text;
-
-        Optional<String> q = this.tryParseSearchTerm(wizardSearchTerm);
+        Optional<String> q = tryParseSearchTerm(getSearchSettings().text);
         q.ifPresent(callbacks::submitWizardResult);
         return q.isPresent();
     }

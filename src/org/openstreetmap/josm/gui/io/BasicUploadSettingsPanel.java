@@ -319,10 +319,9 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
      */
     private void updateHistory(JTextField text) {
         String tag = (String) text.getDocument().getProperty("tag"); // tag is either "comment" or "source"
-        if (tag.equals("comment")) {
+        if ("comment".equals(tag)) {
             hcbUploadComment.addCurrentItemToHistory();
-        }
-        if (tag.equals("source")) {
+        } else if ("source".equals(tag)) {
             hcbUploadSource.addCurrentItemToHistory();
         }
     }
@@ -381,7 +380,7 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        getDialog().setFocusToUploadButton();
+        setFocusToUploadButton();
     }
 
     @Override
@@ -438,7 +437,7 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
     @Override
     public void keyTyped(KeyEvent e) {
         if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-            getDialog().setFocusToUploadButton();
+            setFocusToUploadButton();
         }
     }
 
@@ -448,5 +447,9 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    private void setFocusToUploadButton() {
+        Optional.ofNullable(getDialog()).ifPresent(UploadDialog::setFocusToUploadButton);
     }
 }
