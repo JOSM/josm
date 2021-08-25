@@ -362,7 +362,7 @@ area:closed[building][building!=no][eval(areasize()) > 520000] {
 }
 
 /* #12646, #12992, #16334 */
-way[waterway=~/^(stream|river|drain)$/]!:closed >[index=-1] node[natural!=sinkhole][natural!=cave_entrance]!:connection:in-downloaded-area { 
+way[waterway=~/^(stream|river|drain)$/]!:closed >[index=-1] node[natural!=sinkhole][natural!=cave_entrance][waterway!=stream_end]!:connection:in-downloaded-area { 
   throwWarning: tr("Waterway ends without a connection to another waterway or the direction of the waterway is wrong.");
 }
 
