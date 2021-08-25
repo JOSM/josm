@@ -20,7 +20,7 @@ public class SelectAction extends AbstractRelationEditorAction {
      * @param editorAccess An interface to access the relation editor contents.
      */
     public SelectAction(IRelationEditorActionAccess editorAccess) {
-        super(editorAccess);
+        super(editorAccess, IRelationEditorUpdateOn.TAG_CHANGE);
         putValue(NAME, tr("Select"));
         putValue(SHORT_DESCRIPTION, tr("Select the currently edited relation"));
         new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);

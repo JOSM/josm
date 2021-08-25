@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
@@ -160,12 +161,13 @@ abstract class SavingAction extends AbstractRelationEditorAction {
     }
 
     protected boolean applyChanges() {
-        if (editorAccess.getEditor().getRelation() == null) {
+        IRelationEditor editor = editorAccess.getEditor();
+        if (editor.getRelation() == null) {
             applyNewRelation(getTagModel());
         } else if (isEditorDirty()) {
-            if (editorAccess.getEditor().isDirtyRelation()) {
+            if (editor.isDirtyRelation()) {
                 if (confirmClosingBecauseOfDirtyState()) {
-                    if (getLayer().getConflicts().hasConflictForMy(editorAccess.getEditor().getRelation())) {
+                    if (getLayer().getConflicts().hasConflictForMy(editor.getRelation())) {
                         warnDoubleConflict();
                         return false;
                     }
@@ -178,7 +180,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
                 applyExistingNonConflictingRelation(getTagModel());
             }
         }
-        editorAccess.getEditor().setRelation(editorAccess.getEditor().getRelation());
+        editor.setRelation(editor.getRelation());
         return true;
     }
 
@@ -187,7 +189,6 @@ abstract class SavingAction extends AbstractRelationEditorAction {
             ((Component) editorAccess.getEditor()).setVisible(false);
             editorAccess.getEditor().setRelation(null);
         }
-
     }
 
     protected boolean isEditorDirty() {
