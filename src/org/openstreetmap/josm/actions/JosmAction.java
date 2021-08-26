@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -512,33 +513,34 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
             Collection<? extends OsmPrimitive> ignore) {
         int checkRes = Command.checkOutlyingOrIncompleteOperation(primitives, ignore);
         if ((checkRes & Command.IS_OUTSIDE) != 0) {
-            JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JMultilineLabel("<html>" + outsideDialogMessage + "</html>"));
-            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
-                    operation + "_outside_nodes",
-                    MainApplication.getMainFrame(),
-                    msg,
-                    dialogTitle,
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION);
+            boolean answer = showConfirmOutlyingOperationDialog(operation + "_outside_nodes", outsideDialogMessage, dialogTitle);
             if (!answer)
                 return false;
         }
         if ((checkRes & Command.IS_INCOMPLETE) != 0) {
-            JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JMultilineLabel("<html>" + incompleteDialogMessage + "</html>"));
-            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
-                    operation + "_incomplete",
-                    MainApplication.getMainFrame(),
-                    msg,
-                    dialogTitle,
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION);
+            boolean answer = showConfirmOutlyingOperationDialog(operation + "_incomplete", incompleteDialogMessage, dialogTitle);
             if (!answer)
                 return false;
         }
         return true;
+    }
+
+    private static boolean showConfirmOutlyingOperationDialog(String preferenceKey, String dialogMessage, String dialogTitle) {
+        JPanel msg = new JPanel(new GridBagLayout());
+        msg.add(new JMultilineLabel("<html>" + dialogMessage + "</html>"));
+        boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                preferenceKey,
+                MainApplication.getMainFrame(),
+                msg,
+                dialogTitle,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                JOptionPane.YES_OPTION);
+        if (!answer && JOptionPane.NO_OPTION == ConditionalOptionPaneUtil.getDialogReturnValue(preferenceKey)) {
+            String message = tr("Operation was not performed, as per {0} preference", preferenceKey);
+            new Notification(message).show();
+            Logging.info(message);
+        }
+        return answer;
     }
 }
