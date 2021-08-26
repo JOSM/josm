@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.xml.sax.SAXException;
 
 /**
- * Abstraction of {@code GpxReader}, {@code NmeaReader} and {@code RtkLibPosReader}
+ * Abstraction of {@code GpxReader}, {@code NmeaReader}, {@code OziWptReader} and {@code RtkLibPosReader}
  * @since 14010
  */
 public interface IGpxReader {
@@ -21,6 +21,7 @@ public interface IGpxReader {
      * parsing but some data were parsed anyway
      * @throws SAXException if any SAX parsing error occurs
      * @throws IOException if any I/O error occurs
+     * @throws UnsupportedOperationException if the format is not supported
      */
     boolean parse(boolean tryToFinish) throws SAXException, IOException;
 
@@ -29,4 +30,13 @@ public interface IGpxReader {
      * @return The GPX data
      */
     GpxData getGpxData();
+
+    /**
+     * Returns the number of coordinates that have been successfuly read.
+     * @return the number of coordinates that have been successfuly read
+     * @since 18179
+     */
+    default int getNumberOfCoordinates() {
+        throw new UnsupportedOperationException();
+    }
 }

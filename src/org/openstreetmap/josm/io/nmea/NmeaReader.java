@@ -214,10 +214,7 @@ public class NmeaReader implements IGpxReader {
         return ps.malformed;
     }
 
-    /**
-     * Returns the number of coordinates that have been successfuly read.
-     * @return the number of coordinates that have been successfuly read
-     */
+    @Override
     public int getNumberOfCoordinates() {
         return ps.success;
     }

@@ -71,7 +71,7 @@ public final class GpxDataHelper {
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
-        } catch (IOException ex) {
+        } catch (IOException | UnsupportedOperationException ex) {
             Logging.error(ex);
             JOptionPane.showMessageDialog(
                     MainApplication.getMainFrame(),

@@ -9,38 +9,38 @@ import java.io.InputStream;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter.GpxImporterData;
-import org.openstreetmap.josm.io.rtklib.RtkLibPosReader;
+import org.openstreetmap.josm.io.ozi.OziWptReader;
 
 /**
- * File importer allowing to import RTKLib files (*.pos files).
- * @since 15247
+ * File importer allowing to import OziExplorer Waypoint files (*.wpt files).
+ * @since 18179
  */
-public class RtkLibImporter extends GpxLikeImporter<RtkLibPosReader> {
+public class OziWptImporter extends GpxLikeImporter<OziWptReader> {
 
     /**
-     * The RtkLib file filter (*.pos files).
+     * The OziExplorer Waypoint file filter (*.wpt files).
      */
     public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
-            "pos", "pos", tr("RTKLib Positioning Solution Files"), false);
+            "wpt", "wpt", tr("OziExplorer Waypoint Files"), false);
 
     /**
-     * Constructs a new {@code RtkLibImporter}.
+     * Constructs a new {@code OziWptImporter}.
      */
-    public RtkLibImporter() {
-        super(FILE_FILTER, RtkLibPosReader.class);
+    public OziWptImporter() {
+        super(FILE_FILTER, OziWptReader.class);
     }
 
     /**
-     * Replies the new GPX and marker layers corresponding to the specified RTKLib file.
-     * @param is input stream to RTKLib data
-     * @param associatedFile RTKLib file
+     * Replies the new GPX and marker layers corresponding to the specified wpt file.
+     * @param is input stream to data
+     * @param associatedFile wpt file
      * @param gpxLayerName The GPX layer name
-     * @return the new GPX and marker layers corresponding to the specified RTKLib file
+     * @return the new GPX and marker layers corresponding to the specified wpt file
      * @throws IOException if an I/O error occurs
      */
     public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
                                              final String gpxLayerName) throws IOException {
-        final RtkLibPosReader r = buildAndParse(is, RtkLibPosReader.class);
+        final OziWptReader r = buildAndParse(is, OziWptReader.class);
         final boolean parsedProperly = r.getNumberOfCoordinates() > 0;
         r.getGpxData().storageFile = associatedFile;
         return GpxImporter.loadLayers(r.getGpxData(), parsedProperly, gpxLayerName);
