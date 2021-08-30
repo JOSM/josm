@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -136,6 +135,17 @@ class GeometryTest {
         commands.add(createCommandInteger(15));
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Geometry(GeometryTypes.POLYGON, commands));
         assertEquals("POLYGON cannot have zero area", exception.getMessage());
+    }
+
+    /**
+     * This checks that the area is properly calculated
+     */
+    @Test
+    void testNonRegression20971And21254() {
+        assertEquals(15.0, Geometry.calculateSurveyorsArea(new int[]{1507, 1509, 1509}, new int[]{3029, 3018, 3033}));
+        assertEquals(0.0, Geometry.calculateSurveyorsArea(new int[]{0, 0, 0}, new int[]{0, 0, 0}));
+        assertEquals(0.0, Geometry.calculateSurveyorsArea(new int[2], new int[2]));
+        assertThrows(IllegalArgumentException.class, () -> Geometry.calculateSurveyorsArea(new int[3], new int[4]));
     }
 
     @Test

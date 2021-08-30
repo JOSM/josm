@@ -44,27 +44,29 @@ public class Geometry {
             Path2D.Float line = null;
             Area area = null;
             // MVT uses delta encoding. Each feature starts at (0, 0).
-            double x = 0;
-            double y = 0;
+            int x = 0;
+            int y = 0;
             // Area is used to determine the inner/outer of a polygon
-            double areaAreaSq = 0;
+            final int maxArraySize = commands.stream().filter(command -> command.getType() != Command.ClosePath).mapToInt(command -> command.getOperations().length).sum();
+            final List<Integer> xArray = new ArrayList<>(maxArraySize);
+            final List<Integer> yArray = new ArrayList<>(maxArraySize);
             for (CommandInteger command : commands) {
                 final short[] operations = command.getOperations();
                 // Technically, there is no reason why there can be multiple MoveTo operations in one command, but that is undefined behavior
                 if (command.getType() == Command.MoveTo && operations.length == 2) {
-                    areaAreaSq = 0;
                     x += operations[0];
                     y += operations[1];
                     line = new Path2D.Float();
                     line.moveTo(x, y);
+                    xArray.add(x);
+                    yArray.add(y);
                     shapes.add(line);
                 } else if (command.getType() == Command.LineTo && operations.length % 2 == 0 && line != null) {
                     for (int i = 0; i < operations.length / 2; i++) {
-                        final double lx = x;
-                        final double ly = y;
                         x += operations[2 * i];
                         y += operations[2 * i + 1];
-                        areaAreaSq += lx * y - x * ly;
+                        xArray.add(x);
+                        yArray.add(y);
                         line.lineTo(x, y);
                     }
                 // ClosePath should only be used with Polygon geometry
@@ -76,6 +78,7 @@ public class Geometry {
                         shapes.add(area);
                     }
 
+                    final double areaAreaSq = calculateSurveyorsArea(xArray.stream().mapToInt(i -> i).toArray(), yArray.stream().mapToInt(i -> i).toArray());
                     Area nArea = new Area(line);
                     // SonarLint thinks that this is never > 0. It can be.
                     if (areaAreaSq > 0) {
@@ -90,6 +93,31 @@ public class Geometry {
                 }
             }
         }
+    }
+
+    /**
+     * This is also known as the "shoelace formula".
+     * @param xArray The array of x coordinates
+     * @param yArray The array of y coordinates
+     * @return The area of the object
+     * @throws IllegalArgumentException if the array lengths are not equal
+     */
+    static double calculateSurveyorsArea(int[] xArray, int[] yArray) {
+        if (xArray.length != yArray.length) {
+            throw new IllegalArgumentException("Cannot calculate areas when arrays are uneven");
+        }
+        // Lines have no area
+        if (xArray.length < 3) {
+            return 0;
+        }
+        int area = 0;
+        // Do the non-special stuff first (x0 * y1 - x1 * y0)
+        for (int i = 0; i < xArray.length - 1; i++) {
+            area += xArray[i] * yArray[i + 1] - xArray[i + 1] * yArray[i];
+        }
+        // Now calculate the edges (xn * y0 - x0 * yn)
+        area += xArray[xArray.length - 1] * yArray[0] - xArray[0] * yArray[yArray.length - 1];
+        return area / 2d;
     }
 
     /**
