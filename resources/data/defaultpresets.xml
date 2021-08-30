@@ -251,12 +251,12 @@
     <chunk id="fee_interval">
         <combo key="fee" text="Fee" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_no_i18n="true" values_sort="false" />
     </chunk>
-    <chunk id="parking_name_type_ref">
+    <chunk id="parking_name_ref">
+        <combo key="parking" text="Type of parking" values="carports,garage_boxes,lane,multi-storey,rooftop,sheds,street_side,surface,underground" values_context="parking" />
         <text key="name" text="Name" />
-        <combo key="parking" text="Type" values="carports,garage_boxes,lane,multi-storey,rooftop,sheds,street_side,surface,underground" values_context="parking" />
         <text key="ref" text="Reference number" />
     </chunk>
-    <chunk id="parking_access_fee_operator_surface_smoothness">
+    <chunk id="access_fee_operator_surface_smoothness">
         <space />
         <reference ref="POI_access" />
         <reference ref="fee_interval" />
@@ -2556,10 +2556,10 @@
             <link wiki="Tag:amenity=parking" />
             <space />
             <key key="amenity" value="parking" />
-            <reference ref="parking_name_type_ref" />
+            <reference ref="parking_name_ref" />
             <text key="maxheight" text="Max. height (meters)" />
             <combo key="park_ride" text="Park and Ride" values="yes,no,bus,train,tram,metro,ferry" />
-            <reference ref="parking_access_fee_operator_surface_smoothness" />
+            <reference ref="access_fee_operator_surface_smoothness" />
             <space />
             <text key="capacity" text="Capacity (overall)" />
             <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,1,2,3" />
@@ -2577,9 +2577,10 @@
             <link wiki="Tag:amenity=parking_space" />
             <space />
             <key key="amenity" value="parking_space" />
-            <reference ref="parking_name_type_ref" />
+            <combo key="parking_space" text="Type of parking space" values="disabled,normal" />
+            <reference ref="parking_name_ref" />
             <text key="capacity" text="Capacity" />
-            <reference ref="parking_access_fee_operator_surface_smoothness" />
+            <reference ref="access_fee_operator_surface_smoothness" />
             <reference ref="maxstay" />
             <reference ref="supervised_lit_oh" />
             <check key="covered" text="Covered (with roof)" />
@@ -2588,9 +2589,9 @@
             <link wiki="Tag:amenity=parking_entrance" />
             <space />
             <key key="amenity" value="parking_entrance" />
-            <reference ref="parking_name_type_ref" />
+            <reference ref="parking_name_ref" />
             <text key="maxheight" text="Max. height (meters)" />
-            <reference ref="parking_access_fee_operator_surface_smoothness" />
+            <reference ref="access_fee_operator_surface_smoothness" />
             <reference ref="supervised_lit_oh" />
             <check key="covered" text="Covered (with roof)" />
         </item> <!-- Parking Entrance -->
@@ -2765,9 +2766,9 @@
             <link wiki="Tag:amenity=motorcycle_parking" />
             <space />
             <key key="amenity" value="motorcycle_parking" />
-            <reference ref="parking_name_type_ref" />
+            <reference ref="parking_name_ref" />
             <text key="capacity" text="Capacity" />
-            <reference ref="parking_access_fee_operator_surface_smoothness" />
+            <reference ref="access_fee_operator_surface_smoothness" />
             <reference ref="supervised_lit_oh" />
             <reference ref="maxstay" />
             <check key="covered" text="Covered (with roof)" />
@@ -2804,7 +2805,7 @@
             <combo key="bicycle_parking" text="Type" values="anchors,bollard,building,ground_slots,informal,lockers,rack,shed,stands,wall_loops" />
             <text key="name" text="Name" />
             <text key="capacity" text="Capacity" />
-            <reference ref="parking_access_fee_operator_surface_smoothness" />
+            <reference ref="access_fee_operator_surface_smoothness" />
             <check key="covered" text="Covered" />
             <reference ref="supervised_lit_oh" />
         </item> <!-- Parking -->
