@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.layer.WMTSLayer;
+import org.openstreetmap.josm.gui.layer.imagery.MVTLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.ButtonColumn;
@@ -78,6 +79,7 @@ public class CacheSettingsPanel extends JPanel {
             addToPanel(TMSLayer.getCache(), "TMS");
             addToPanel(WMSLayer.getCache(), "WMS");
             addToPanel(WMTSLayer.getCache(), "WMTS");
+            addToPanel(MVTLayer.getCache(), "MVT");
         });
     }
 

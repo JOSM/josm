@@ -23,10 +23,12 @@ import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 
+import org.apache.commons.jcs3.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Layer;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTFile;
@@ -85,6 +87,15 @@ public class MVTLayer extends AbstractCachedTileSourceLayer<MapboxVectorTileSour
     @Override
     protected String getCacheName() {
         return CACHE_REGION_NAME;
+    }
+
+    /**
+     * Returns cache region for MVT layer.
+     * @return cache region for MVT layer
+     * @since 18186
+     */
+    public static CacheAccess<String, BufferedImageCacheEntry> getCache() {
+        return AbstractCachedTileSourceLayer.getCache(CACHE_REGION_NAME);
     }
 
     @Override
