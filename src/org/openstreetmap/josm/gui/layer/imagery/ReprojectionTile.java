@@ -4,12 +4,15 @@ package org.openstreetmap.josm.gui.layer.imagery;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
+import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -25,19 +28,30 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  */
 public class ReprojectionTile extends Tile {
 
+    private final Tile tile;
     protected TileAnchor anchor;
     private double nativeScale;
     protected boolean maxZoomReached;
 
     /**
      * Constructs a new {@code ReprojectionTile}.
-     * @param source sourec tile
+     * @param source source tile
      * @param xtile X coordinate
      * @param ytile Y coordinate
      * @param zoom zoom level
      */
     public ReprojectionTile(TileSource source, int xtile, int ytile, int zoom) {
         super(source, xtile, ytile, zoom);
+        this.tile = null;
+    }
+
+    /**
+     * Create a reprojection tile for a specific tile
+     * @param tile The tile to use
+     */
+    public ReprojectionTile(Tile tile) {
+        super(tile.getTileSource(), tile.getXtile(), tile.getYtile(), tile.getZoom());
+        this.tile = tile;
     }
 
     /**
@@ -72,6 +86,15 @@ public class ReprojectionTile extends Tile {
         if (Utils.equalsEpsilon(nativeScale, currentScale))
             return false;
         return !maxZoomReached || currentScale >= nativeScale;
+    }
+
+    @Override
+    public void loadImage(InputStream inputStream) throws IOException {
+        if (this.tile instanceof VectorTile) {
+            this.tile.loadImage(inputStream);
+        } else {
+            super.loadImage(inputStream);
+        }
     }
 
     @Override

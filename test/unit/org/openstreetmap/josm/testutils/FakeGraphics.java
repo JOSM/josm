@@ -31,6 +31,9 @@ import java.util.Map;
  * A fake Graphics to be used in headless mode.
  */
 public final class FakeGraphics extends Graphics2D {
+    // This is needed just in case someone wants to fake paint something
+    private Rectangle bounds;
+
     @Override
     public void setXORMode(Color c1) {
     }
@@ -49,6 +52,7 @@ public final class FakeGraphics extends Graphics2D {
 
     @Override
     public void setClip(int x, int y, int width, int height) {
+        this.bounds = new Rectangle(x, y, width, height);
     }
 
     @Override
@@ -72,7 +76,7 @@ public final class FakeGraphics extends Graphics2D {
 
     @Override
     public Rectangle getClipBounds() {
-        return null;
+        return this.bounds;
     }
 
     @Override

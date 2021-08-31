@@ -888,7 +888,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         Tile tile = getTile(x, y, zoom);
         if (tile == null) {
             if (coordinateConverter.requiresReprojection()) {
-                tile = new ReprojectionTile(tileSource, x, y, zoom);
+                tile = new ReprojectionTile(createTile(tileSource, x, y, zoom));
             } else {
                 tile = createTile(tileSource, x, y, zoom);
             }
