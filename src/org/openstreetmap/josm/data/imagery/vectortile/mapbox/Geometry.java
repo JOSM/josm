@@ -47,7 +47,8 @@ public class Geometry {
             int x = 0;
             int y = 0;
             // Area is used to determine the inner/outer of a polygon
-            final int maxArraySize = commands.stream().filter(command -> command.getType() != Command.ClosePath).mapToInt(command -> command.getOperations().length).sum();
+            final int maxArraySize = commands.stream().filter(command -> command.getType() != Command.ClosePath)
+                    .mapToInt(command -> command.getOperations().length).sum();
             final List<Integer> xArray = new ArrayList<>(maxArraySize);
             final List<Integer> yArray = new ArrayList<>(maxArraySize);
             for (CommandInteger command : commands) {
@@ -78,7 +79,8 @@ public class Geometry {
                         shapes.add(area);
                     }
 
-                    final double areaAreaSq = calculateSurveyorsArea(xArray.stream().mapToInt(i -> i).toArray(), yArray.stream().mapToInt(i -> i).toArray());
+                    final double areaAreaSq = calculateSurveyorsArea(xArray.stream().mapToInt(i -> i).toArray(),
+                            yArray.stream().mapToInt(i -> i).toArray());
                     Area nArea = new Area(line);
                     // SonarLint thinks that this is never > 0. It can be.
                     if (areaAreaSq > 0) {
@@ -88,6 +90,8 @@ public class Geometry {
                     } else {
                         throw new IllegalArgumentException(tr("{0} cannot have zero area", geometryType));
                     }
+                    xArray.clear();
+                    yArray.clear();
                 } else {
                     throw new IllegalArgumentException(tr("{0} with {1} arguments is not understood", geometryType, operations.length));
                 }
