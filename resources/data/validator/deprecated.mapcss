@@ -503,13 +503,17 @@ way[sidewalk=yes] {
   fixAdd: "mooring=yes";
 }
 
-/* #10837 */
+/* #10837, #21268 */
 *[building][levels],
-*[building:part=yes][levels] {
+*[building:part][levels] {
   throwWarning: tr("{0} is deprecated", "{1.key}");
   suggestAlternative: "building:levels";
   group: tr("deprecated tagging");
   fixChangeKey: "levels => building:levels";
+  set levels_building;
+}
+*[levels]!.levels_building {
+  throwWarning: tr("Unusual key {0}, maybe {1} or {2} is meant", "{0.key}", "level", "building:levels");
 }
 
 /* #10691 */
