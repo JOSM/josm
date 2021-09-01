@@ -87,7 +87,7 @@ class MVTLayerTest {
             ProjectionRegistry.setProjection(Projections.getProjectionByCode(projectionCode));
             // Needed to initialize mapView
             MainApplication.getLayerManager().addLayer(this.testLayer);
-            final BBox tileBBox = new MVTTile(this.testLayer.getTileSource(), 3251, 6258, 14).getBBox();
+            final BBox tileBBox = new MVTTile(this.testLayer.getTileSource(), 3248, 6258, 14).getBBox();
             MainApplication.getMap().mapView.zoomTo(new Bounds(tileBBox.getMinLat(), tileBBox.getMinLon(),
                     tileBBox.getMaxLat(), tileBBox.getMaxLon()));
             final FakeGraphics graphics2D = new FakeGraphics();
@@ -128,7 +128,7 @@ class MVTLayerTest {
 
     @Test
     void finishedLoading() throws ReflectiveOperationException {
-        final MVTTile mvtTile = (MVTTile) this.testLayer.createTile(this.testLayer.getTileSource(), 3251, 6258, 14);
+        final MVTTile mvtTile = (MVTTile) this.testLayer.createTile(this.testLayer.getTileSource(), 3248, 6258, 14);
         final FinishedLoading finishedLoading = new FinishedLoading();
         mvtTile.addTileLoaderFinisher(finishedLoading);
         assertTrue(this.testLayer.getData().allPrimitives().isEmpty());
