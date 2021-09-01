@@ -95,7 +95,7 @@ class MVTLayerTest {
             this.testLayer.setZoomLevel(14);
             this.testLayer.getDisplaySettings().setAutoZoom(false);
             MainApplication.getMap().mapView.paintLayer(this.testLayer, graphics2D);
-            Awaitility.await().atMost(Durations.ONE_SECOND).until(() -> !this.testLayer.getData().allPrimitives().isEmpty());
+            Awaitility.await().atMost(Durations.FIVE_SECONDS).until(() -> !this.testLayer.getData().allPrimitives().isEmpty());
             assertFalse(this.testLayer.getData().allPrimitives().isEmpty());
         } finally {
             ProjectionRegistry.setProjection(originalProjection);
@@ -135,7 +135,7 @@ class MVTLayerTest {
         this.testLayer.getTileLoaderClass().getConstructor(TileLoaderListener.class, ICacheAccess.class, TileJobOptions.class)
                 .newInstance(this.testLayer, MVTLayer.getCache(), new TileJobOptions(50, 50, Collections.emptyMap(), 1))
                 .createTileLoaderJob(mvtTile).submit();
-        Awaitility.await().atMost(Durations.ONE_SECOND).until(() -> finishedLoading.finished);
+        Awaitility.await().atMost(Durations.FIVE_SECONDS).until(() -> finishedLoading.finished);
         assertFalse(this.testLayer.getData().allPrimitives().isEmpty());
     }
 
