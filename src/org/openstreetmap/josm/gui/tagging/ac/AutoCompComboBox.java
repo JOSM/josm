@@ -104,11 +104,7 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
                 throws BadLocationException {
-            int newLen = fb.getDocument().getLength() + string.length();
-            if (maxTextLength == -1 || newLen <= maxTextLength ||
-                    // allow longer text while composing characters or it will be hard to compose
-                    // the last characters before the limit
-                    ((attr != null) && attr.isDefined(StyleConstants.ComposedTextAttribute))) {
+            if (mustInsertOrReplace(fb, 0, string, attr)) {
                 super.insertString(fb, offset, string, attr);
             }
         }
@@ -116,13 +112,17 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
         @Override
         public void replace(FilterBypass fb, int offset, int length, String string, AttributeSet attr)
                 throws BadLocationException {
-            int newLen = fb.getDocument().getLength() - length + string.length();
-            if (maxTextLength == -1 || newLen <= maxTextLength ||
-                    // allow longer text while composing characters or it will be hard to compose
-                    // the last characters before the limit
-                    ((attr != null) && attr.isDefined(StyleConstants.ComposedTextAttribute))) {
+            if (mustInsertOrReplace(fb, length, string, attr)) {
                 super.replace(fb, offset, length, string, attr);
             }
+        }
+
+        private boolean mustInsertOrReplace(FilterBypass fb, int length, String string, AttributeSet attr) {
+            int newLen = fb.getDocument().getLength() - length + ((string == null) ? 0 : string.length());
+            return (maxTextLength == -1 || newLen <= maxTextLength ||
+                    // allow longer text while composing characters or it will be hard to compose
+                    // the last characters before the limit
+                    ((attr != null) && attr.isDefined(StyleConstants.ComposedTextAttribute)));
         }
     }
 
