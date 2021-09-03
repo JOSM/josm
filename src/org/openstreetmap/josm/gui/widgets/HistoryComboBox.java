@@ -38,9 +38,9 @@ public class HistoryComboBox extends AutoCompComboBox<String> {
      * Returns the items as strings
      * @return the items as strings
      * @deprecated Has been moved to the model, where it belongs. Use
-     *     {@link HistoryComboBoxModel#asStringList} instead.  Probably you want to use
-     *     {@link HistoryComboBoxModel.Preferences#load} and
-     *     {@link HistoryComboBoxModel.Preferences#save}.
+     *     {@link HistoryComboBoxModel#asStringList} instead. Probably you want to use
+     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#load} and
+     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#save}.
      */
     @Deprecated
     public List<String> getHistory() {

@@ -220,8 +220,8 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
      * @param elems The string items to set
      * @deprecated Has been moved to the model, where it belongs. Use
      *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel#addAllStrings} instead. Probably you want to use
-     *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel.Preferences#load} and
-     *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel.Preferences#save}.
+     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#load} and
+     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#save}.
      */
     @Deprecated
     public void setPossibleItems(Collection<E> elems) {
@@ -238,8 +238,8 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
      * @since 15011
      * @deprecated Has been moved to the model, where it belongs. Use
      *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel#addAllStrings} instead. Probably you want to use
-     *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel.Preferences#load} and
-     *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel.Preferences#save}.
+     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#load} and
+     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#save}.
      */
     @Deprecated
     public void setPossibleItemsTopDown(Collection<E> elems) {

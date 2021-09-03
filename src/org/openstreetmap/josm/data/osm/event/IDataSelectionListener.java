@@ -1,6 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.event;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -9,13 +16,6 @@ import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This interface is the same as {@link DataSelectionListener}, except it isn't {@link OsmPrimitive} specific.
@@ -265,7 +265,7 @@ public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W
         private final Set<O> current;
 
         /**
-         * Create a {@link DataSelectionListener.SelectionRemoveEvent}
+         * Create a {@code SelectionRemoveEvent}
          * @param source The source dataset
          * @param old The old primitives that were previously selected. The caller needs to ensure that this set is not modified.
          * @param toRemove The primitives to remove.

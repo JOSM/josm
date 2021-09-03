@@ -35,6 +35,11 @@ import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.event.IDataSelectionEventSource;
 import org.openstreetmap.josm.data.osm.event.IDataSelectionListener;
+import org.openstreetmap.josm.data.osm.event.IDataSelectionListener.SelectionAddEvent;
+import org.openstreetmap.josm.data.osm.event.IDataSelectionListener.SelectionChangeEvent;
+import org.openstreetmap.josm.data.osm.event.IDataSelectionListener.SelectionRemoveEvent;
+import org.openstreetmap.josm.data.osm.event.IDataSelectionListener.SelectionReplaceEvent;
+import org.openstreetmap.josm.data.osm.event.IDataSelectionListener.SelectionToggleEvent;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
@@ -295,8 +300,8 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     }
 
     /**
-     * Get the current Read/Write lock
-     * @implNote This changes based off of zoom level. Please do not use this in a finally block
+     * Get the current Read/Write lock.
+     * This changes based off of zoom level. Please do not use this in a finally block
      * @return The current read/write lock
      */
     @Override
@@ -327,9 +332,9 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     }
 
     /**
-     * Mark some primitives as highlighted
+     * Mark some primitives as highlighted.
+     * API is *highly likely* to change, as the inherited methods are modified to accept primitives other than OSM primitives.
      * @param primitives The primitives to highlight
-     * @apiNote This is *highly likely* to change, as the inherited methods are modified to accept primitives other than OSM primitives.
      */
     public void setHighlighted(Collection<PrimitiveId> primitives) {
         this.highlighted.clear();
@@ -422,7 +427,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     }
 
     private void toggleSelectedImpl(Stream<? extends PrimitiveId> osm) {
-        this.doSelectionChange(old -> new IDataSelectionListener.SelectionToggleEvent<>(this, old,
+        this.doSelectionChange(old -> new SelectionToggleEvent<>(this, old,
                 osm.flatMap(this::getPrimitivesById).filter(Objects::nonNull)));
     }
 
@@ -437,7 +442,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     }
 
     private void setSelectedImpl(Stream<? extends PrimitiveId> osm) {
-        this.doSelectionChange(old -> new IDataSelectionListener.SelectionReplaceEvent<>(this, old,
+        this.doSelectionChange(old -> new SelectionReplaceEvent<>(this, old,
                 osm.filter(Objects::nonNull).flatMap(this::getPrimitivesById).filter(Objects::nonNull)));
     }
 
@@ -452,7 +457,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     }
 
     private void addSelectedImpl(Stream<? extends PrimitiveId> osm) {
-        this.doSelectionChange(old -> new IDataSelectionListener.SelectionAddEvent<>(this, old,
+        this.doSelectionChange(old -> new SelectionAddEvent<>(this, old,
                 osm.flatMap(this::getPrimitivesById).filter(Objects::nonNull)));
     }
 
@@ -472,7 +477,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     }
 
     private void clearSelectionImpl(Stream<? extends PrimitiveId> osm) {
-        this.doSelectionChange(old -> new IDataSelectionListener.SelectionRemoveEvent<>(this, old,
+        this.doSelectionChange(old -> new SelectionRemoveEvent<>(this, old,
                 osm.flatMap(this::getPrimitivesById).filter(Objects::nonNull)));
     }
 
@@ -480,14 +485,14 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
      * Do a selection change.
      * <p>
      * This is the only method that changes the current selection state.
-     * @param command A generator that generates the {@link DataSelectionListener.SelectionChangeEvent}
+     * @param command A generator that generates the {@link SelectionChangeEvent}
      *                for the given base set of currently selected primitives.
      * @return true iff the command did change the selection.
      */
     private boolean doSelectionChange(final Function<Set<VectorPrimitive>,
-            IDataSelectionListener.SelectionChangeEvent<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet>> command) {
+            SelectionChangeEvent<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet>> command) {
         synchronized (this.selectionLock) {
-            IDataSelectionListener.SelectionChangeEvent<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet> event =
+            SelectionChangeEvent<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet> event =
                     command.apply(currentSelectedPrimitives.stream().map(this::getPrimitiveById).collect(Collectors.toSet()));
             if (event.isNop()) {
                 return false;
@@ -569,6 +574,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     /**
      * Try to read something (here to avoid boilerplate)
      *
+     * @param lock     The lock
      * @param supplier The reading function
      * @param <T>      The return type
      * @return The optional return
@@ -588,7 +594,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
 
     /**
      * Try to write something (here to avoid boilerplate)
-     *
+     * @param lock lock
      * @param runnable The writing function
      */
     private static void tryWrite(ReentrantReadWriteLock lock, Runnable runnable) {

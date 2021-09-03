@@ -1,6 +1,25 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.geom.Area;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -28,25 +47,6 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
-
-import java.awt.geom.Area;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Tag check.
@@ -226,7 +226,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
 
     /**
      * Determines the {@code index}-th key/value/tag (depending on {@code type}) of the
-     * {@link Selector.GeneralSelector}.
+     * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector}.
      *
      * @param matchingSelector matching selector
      * @param index            index

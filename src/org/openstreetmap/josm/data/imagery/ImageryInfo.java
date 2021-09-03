@@ -779,7 +779,7 @@ public class ImageryInfo extends
 
     /**
      * Gets a unique toolbar key to store this layer as toolbar item
-     * @return The kay.
+     * @return The key.
      */
     public String getToolbarName() {
         String res = name;
