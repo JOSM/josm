@@ -25,6 +25,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -286,9 +287,11 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            supportLayer = new CorrelationSupportLayer(yLayer.getFauxGpxData());
-            supportLayer.getGpxData().addChangeListener(statusBarUpdaterWithRepaint);
-            MainApplication.getLayerManager().addLayer(supportLayer);
+            Optional.ofNullable(selectedGPX(true)).ifPresent(gpx -> {
+                supportLayer = new CorrelationSupportLayer(gpx.data);
+                supportLayer.getGpxData().addChangeListener(statusBarUpdaterWithRepaint);
+                MainApplication.getLayerManager().addLayer(supportLayer);
+            });
         }
     }
 
