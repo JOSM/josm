@@ -8,12 +8,14 @@ relation[!type] {
 
 /* from http://wiki.openstreetmap.org/wiki/Types_of_relation */
 /* see also #9071 */
+relation[type=boundary][!boundary][!disused:boundary],
+relation[type=building][!building],
+relation[type=destination_sign][!destination],
+relation[type=enforcement][!enforcement],
+relation[type=public_transport][!public_transport],
 relation[type=route][!route],
 relation[type=route_master][!route_master],
-relation[type=boundary][!boundary][!disused:boundary],
-relation[type=public_transport][!public_transport],
-relation[type=waterway][!waterway],
-relation[type=enforcement][!enforcement] {
+relation[type=waterway][!waterway] {
   throwWarning: tr("{0} relation without {0} tag", "{1.key}");
   group: tr("missing tag");
   assertMatch: "relation type=route";
@@ -43,7 +45,24 @@ relation[type=restriction][!/^restriction/]{
 /* #15208, #16242 */
 relation[type=route][route=mtb    ] > way[bicycle=no],
 relation[type=route][route=bicycle] > way[bicycle=no],
+relation[type=route][route=mtb    ] > way[bicycle=private],
+relation[type=route][route=bicycle] > way[bicycle=private],
 relation[type=route][route=mtb    ] > way[bicycle=use_sidepath],
-relation[type=route][route=bicycle] > way[bicycle=use_sidepath] { 
-  throwWarning: tr("way with {0} is part of a bicycle route relation", "{0.tag}");
+relation[type=route][route=bicycle] > way[bicycle=use_sidepath], 
+relation[type=route][route=fitness_trail] > way[foot=no],
+relation[type=route][route=hiking       ] > way[foot=no],
+relation[type=route][route=running      ] > way[foot=no],
+relation[type=route][route=walking      ] > way[foot=no],
+relation[type=route][route=fitness_trail] > way[foot=private],
+relation[type=route][route=hiking       ] > way[foot=private],
+relation[type=route][route=running      ] > way[foot=private],
+relation[type=route][route=walking      ] > way[foot=private],
+relation[type=route][route=fitness_trail] > way[foot=use_sidepath],
+relation[type=route][route=hiking       ] > way[foot=use_sidepath],
+relation[type=route][route=running      ] > way[foot=use_sidepath],
+relation[type=route][route=walking      ] > way[foot=use_sidepath], 
+relation[type=route][route=horse] > way[horse=no],
+relation[type=route][route=horse] > way[horse=private],
+relation[type=route][route=horse] > way[horse=use_sidepath] { 
+  throwWarning: tr("way with {0} is part of a {1} route relation", "{0.tag}", "{0.key}");
 }
