@@ -379,7 +379,9 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
             if (layer instanceof GpxDataContainer) {
                 GpxData removedGpxData = ((GpxDataContainer) layer).getGpxData();
                 for (int i = gpxModel.getSize() - 1; i >= 0; i--) {
-                    if (gpxModel.getElementAt(i).data.equals(removedGpxData)) {
+                    GpxData data = gpxModel.getElementAt(i).data;
+                    // removedGpxData can be null if gpx layer has been destroyed before this listener
+                    if (data.equals(removedGpxData) || (removedGpxData == null && data.isEmpty())) {
                         gpxModel.removeElementAt(i);
                         forEachLayer(correlateAction -> {
                             correlateAction.repaintCombobox();
