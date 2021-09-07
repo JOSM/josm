@@ -166,7 +166,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("scoutsigns", tr(replacedByPlugin, "KartaView")),
             new DeprecatedPlugin("javafx-osx", inCore),
             new DeprecatedPlugin("javafx-unixoid", inCore),
-            new DeprecatedPlugin("javafx-windows", inCore)
+            new DeprecatedPlugin("javafx-windows", inCore),
+            new DeprecatedPlugin("wikidata", tr(replacedByPlugin, "osmwiki-dataitem"))
         );
         Collections.sort(DEPRECATED_PLUGINS);
     }
