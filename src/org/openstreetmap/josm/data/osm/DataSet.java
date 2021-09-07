@@ -387,7 +387,11 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @see #getChangeSetTags
      */
     public void addChangeSetTag(String k, String v) {
-        this.changeSetTags.put(k, v);
+        if (v != null) {
+            this.changeSetTags.put(k, v);
+        } else {
+            this.changeSetTags.remove(k);
+        }
     }
 
     @Override

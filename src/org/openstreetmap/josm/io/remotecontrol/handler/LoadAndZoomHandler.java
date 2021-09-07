@@ -254,7 +254,13 @@ public class LoadAndZoomHandler extends RequestHandler {
                 if (ds != null) {
                     for (String tag : Arrays.asList("changeset_comment", "changeset_source", "changeset_hashtags")) {
                         if (args.containsKey(tag)) {
-                            ds.addChangeSetTag(tag.substring("changeset_".length()), args.get(tag));
+                            final String tagKey = tag.substring("changeset_".length());
+                            final String value = args.get(tag);
+                            if (!Utils.isStripEmpty(value)) {
+                                ds.addChangeSetTag(tagKey, value);
+                            } else {
+                                ds.addChangeSetTag(tagKey, null);
+                            }
                         }
                     }
                 }
