@@ -290,6 +290,16 @@ public class SearchCompiler {
         public final boolean test(OsmPrimitive object) {
             return match(object);
         }
+
+        /**
+         * Check if this is a valid match object
+         * @return {@code this}, for easy chaining
+         * @throws SearchParseError If the match is not valid
+         */
+        public Match validate() throws SearchParseError {
+            // Default to no-op
+            return this;
+        }
     }
 
     public abstract static class TaggedMatch extends Match {
@@ -860,6 +870,22 @@ public class SearchCompiler {
             } else if (!referenceValue.equals(other.referenceValue))
                 return false;
             return true;
+        }
+
+        @Override
+        public Match validate() throws SearchParseError {
+            if (this.referenceValue == null) {
+                final String referenceType;
+                if (this.compareMode == +1) {
+                    referenceType = ">";
+                } else if (this.compareMode == -1) {
+                    referenceType = "<";
+                } else {
+                    referenceType = "<unknown>";
+                }
+                throw new SearchParseError(tr("Reference value for ''{0}'' expected", referenceType));
+            }
+            return this;
         }
     }
 
@@ -2108,13 +2134,13 @@ public class SearchCompiler {
             // factor consists of key:value or key=value
             String key = tokenizer.getText();
             if (tokenizer.readIfEqual(Token.EQUALS)) {
-                return new ExactKeyValue(regexSearch, caseSensitive, key, tokenizer.readTextOrNumber());
+                return new ExactKeyValue(regexSearch, caseSensitive, key, tokenizer.readTextOrNumber()).validate();
             } else if (tokenizer.readIfEqual(Token.TILDE)) {
-                return new ExactKeyValue(true, caseSensitive, key, tokenizer.readTextOrNumber());
+                return new ExactKeyValue(true, caseSensitive, key, tokenizer.readTextOrNumber()).validate();
             } else if (tokenizer.readIfEqual(Token.LESS_THAN)) {
-                return new ValueComparison(key, tokenizer.readTextOrNumber(), -1);
+                return new ValueComparison(key, tokenizer.readTextOrNumber(), -1).validate();
             } else if (tokenizer.readIfEqual(Token.GREATER_THAN)) {
-                return new ValueComparison(key, tokenizer.readTextOrNumber(), +1);
+                return new ValueComparison(key, tokenizer.readTextOrNumber(), +1).validate();
             } else if (tokenizer.readIfEqual(Token.COLON)) {
                 // see if we have a Match that takes a data parameter
                 SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
@@ -2123,24 +2149,24 @@ public class SearchCompiler {
 
                 UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
-                    return unaryFactory.get(key, parseFactor(), tokenizer);
+                    return unaryFactory.get(key, parseFactor(), tokenizer).validate();
 
                 // key:value form where value is a string (may be OSM key search)
                 final String value = tokenizer.readTextOrNumber();
-                return new KeyValue(key, value != null ? value : "", regexSearch, caseSensitive);
+                return new KeyValue(key, value != null ? value : "", regexSearch, caseSensitive).validate();
             } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
             else {
                 SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
-                    return factory.get(key, caseSensitive, regexSearch, null);
+                    return factory.get(key, caseSensitive, regexSearch, null).validate();
 
                 UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
-                    return unaryFactory.get(key, parseFactor(), null);
+                    return unaryFactory.get(key, parseFactor(), null).validate();
 
                 // match string in any key or value
-                return new Any(key, regexSearch, caseSensitive);
+                return new Any(key, regexSearch, caseSensitive).validate();
             }
         } else
             return null;

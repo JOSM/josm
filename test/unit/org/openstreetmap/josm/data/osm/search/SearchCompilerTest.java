@@ -18,6 +18,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -44,9 +49,6 @@ import org.openstreetmap.josm.tools.Logging;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Assert;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 
 /**
  * Unit tests for class {@link SearchCompiler}.
@@ -144,7 +146,7 @@ class SearchCompilerTest {
      * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    void testRegexpCaseSensitive() throws Exception {
+    void testRegexpCaseSensitive() throws SearchParseError {
         SearchSetting searchSetting = new SearchSetting();
         searchSetting.regexSearch = true;
         searchSetting.text = "foo=\"^bar$\"";
@@ -827,5 +829,15 @@ class SearchCompilerTest {
         sc.r1.addMember(new RelationMember("foo", sc.n1));
         sc.match(sc.n1, true);
         sc.match(sc.n2, false);
+    }
+
+    /**
+     * Non-regression test for JOSM #21300
+     * @param searchString search string to test
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"maxweight<" /* #21300 */, "maxweight>"})
+    void testNonRegression21300(final String searchString) {
+        assertThrows(SearchParseError.class, () -> SearchCompiler.compile(searchString));
     }
 }
