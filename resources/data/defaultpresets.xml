@@ -333,7 +333,7 @@
     </chunk>
     <chunk id="other_religions"> <!-- religions which don't have an own preset -->
         <combo key="religion" text="Religion" values="bahai,caodaism,confucian,jain,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" match="keyvalue!" values_searchable="true" />
-    </chunk> 
+    </chunk>
     <chunk id="christian_denominations"> <!-- christian denominations -->
         <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,evangelical,greek_catholic,greek_orthodox,iglesia_ni_cristo,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,spiritist,united,united_methodist" values_searchable="true" />
     </chunk>
@@ -350,7 +350,7 @@
         <combo key="denomination" text="Denomination" values="vaishnavism,shaivism,shaktism,smartism" values_searchable="true" />
     </chunk>
     <!-- shinto and the religions which don't have an own preset don't have denominations (yet) -->
-    <!-- end of religions and denominations --> 
+    <!-- end of religions and denominations -->
     <chunk id="voltage">
         <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,22000,20000,15000,110000;20000" />
     </chunk>
@@ -788,7 +788,7 @@
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                     <check key="passing_places" text="Passing Places" />
-                </checkgroup> 
+                </checkgroup>
                 <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -1356,7 +1356,7 @@
             <check key="button_operated" text="Button operated" />
             <check key="traffic_signals:sound" text="Sound signals" />
         </item> <!-- Pedestrian Crossing -->
-        <group name="Traffic Calming" icon="presets/vehicle/choker.svg"> 
+        <group name="Traffic Calming" icon="presets/vehicle/choker.svg">
             <item name="Bump" icon="presets/vehicle/bump.svg" type="node,way" preset_name_label="true">
                 <link wiki="Key:traffic_calming" />
                 <space />
@@ -3790,7 +3790,7 @@
             <text key="description" text="Description" />
         </item> <!-- Fitness Station -->
         <item name="Sauna" icon="presets/leisure/sauna.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=sauna" />
+            <link wiki="Tag:leisure=sauna" />
             <space />
             <key key="leisure" value="sauna" />
             <reference ref="name_operator_oh_wheelchair" />
