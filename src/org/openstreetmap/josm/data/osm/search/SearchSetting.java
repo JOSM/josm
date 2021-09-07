@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.util.Objects;
 
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class defines a set of parameters that is used to
@@ -50,8 +49,7 @@ public class SearchSetting {
 
     @Override
     public String toString() {
-        return Utils.shortenString(text,
-            org.openstreetmap.josm.actions.search.SearchAction.MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
+        return text;
     }
 
     /**
