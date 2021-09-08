@@ -518,10 +518,17 @@
         <text key="description" text="Description" />
         <reference ref="color" />
         <reference ref="oh" />
+    </chunk>
+    <chunk id="fee_reservation_roundtrip_website">
+        <reference ref="fee" />
+        <combo key="reservation" text="Reservation" values="yes,no,required,recommended" />
+        <check key="roundtrip" text="Roundtrip"/>
+        <text key="website" text="Website" />
+    </chunk>
+    <chunk id="pt_route_opt2">
         <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
         <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
-        <reference ref="fee" />
-        <text key="website" text="Website" />
+        <reference ref="fee_reservation_roundtrip_website" />
     </chunk>
     <chunk id="climbing_styles">
         <label text="Climbing styles:" />
@@ -947,7 +954,7 @@
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Construction -->
         <separator/>
-        <item name="Road Restrictions" icon="presets/vehicle/restriction/maxspeed.svg" type="node,way,closedway" preset_name_label="true">
+        <item name="Road Restrictions" icon="presets/vehicle/restriction/maxspeed.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true"> <!-- There are links from MPs and route relations to this preset -->
             <link wiki="Key:access" />
             <space />
             <checkgroup columns="3" >
@@ -974,7 +981,7 @@
             <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" values_sort="false" match="key" />
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Road Restrictions -->
-        <item name="Access Restrictions" icon="presets/vehicle/restriction/restrictions.svg" type="node,way,closedway" preset_name_label="true">
+        <item name="Access Restrictions" icon="presets/vehicle/restriction/restrictions.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true"> <!-- There are links from MPs and route relations to this preset -->
             <link wiki="Key:access" />
             <space />
             <label text="Some road types already imply some access restrictions which should not be set again." />
@@ -2174,19 +2181,17 @@
             <text key="name" text="Name" />
             <combo key="cargo" text="Cargo" values="passengers,vehicle,bicycle,hgv,passengers;vehicle" values_context="cargo" />
         </item> <!-- Ferry Terminal -->
-        <item name="Ferry Route" icon="presets/nautical/ferry.svg" type="way,closedway,relation" preset_name_label="true">
+        <item name="Ferry Route" icon="presets/nautical/ferry.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:route=ferry" />
             <key key="route" value="ferry" />
             <optional>
                 <reference ref="name_ref_operator" />
                 <reference ref="wheelchair" />
-                <space />
-                <reference ref="oh" />
-                <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
-                <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
-                <reference ref="fee" />
                 <combo key="ferry" text="Highway type the ferry connects" values="trunk,primary,secondary,tertiary,unclassified" values_context="Highway" values_sort="false" />
                 <check key="ferry:cable" text="Reaction ferry" />
+                <space />
+                <reference ref="oh" />
+                <reference ref="pt_route_opt2" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Ferry Route -->
@@ -2856,6 +2861,7 @@
             <reference ref="name_ref" />
             <optional>
                 <reference ref="public_transport_route_optionals" />
+                <reference ref="pt_route_opt2" />
             </optional>
             <roles>
                 <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (train=yes OR subway=yes OR monorail=yes OR tram=yes OR light_rail=yes)" />
@@ -2868,7 +2874,7 @@
             </roles>
         </item> <!-- Public Transport Route (Rail) -->
         <item name="Public Transport Route (Bus)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
-            <link wiki="Public_transport#Service_routes" />
+            <link wiki="Tag:route=bus" />
             <space />
             <key key="type" value="route" />
             <combo key="route" text="Route type" values="bus,share_taxi,trolleybus" values_searchable="true" match="keyvalue!" />
@@ -2876,7 +2882,7 @@
             <reference ref="name_ref" />
             <optional>
                 <reference ref="public_transport_route_optionals" />
-                <combo key="reservation" text="Reservation" values="yes,no,required,recommended" />
+                <reference ref="pt_route_opt2" />
             </optional>
             <roles>
                 <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR share_taxi=yes OR trolleybus=yes)" />
@@ -2889,6 +2895,48 @@
                 <role key="hail_and_ride" text="hail and ride route segment" requisite="optional" type="way,closedway" member_expression="highway" />
             </roles>
         </item> <!-- Public Transport Route (Bus) -->
+        <item name="Public Transport Route (Ferry)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+            <link wiki="Tag:route=ferry" />
+            <key key="type" value="route" />
+            <key key="route" value="ferry" />
+            <key key="public_transport:version" value="2" /> <!-- only validate marked relations in order to avoid false positives -->
+            <optional>
+                <check key="ferry:cable" text="Reaction ferry" />
+                <space />
+                <reference ref="oh" />
+                <reference ref="public_transport_route_optionals" />
+                <reference ref="pt_route_opt2" />
+            </optional>
+            <reference ref="link_road_access_restrictions" />
+            <roles>
+                <role key="stop" text="stop_position" requisite="optional" type="node" member_expression="public_transport=stop_position ferry=yes" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform ferry=yes" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform ferry=yes" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform ferry=yes" />
+                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="route=ferry" />
+            </roles>
+        </item> <!-- Public Transport Route (Ferry) -->
+        <item name="Public Transport Route (Aerialway)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+            <link wiki="Public_transport" />
+            <space />
+            <key key="type" value="route" />
+            <key key="route" value="aerialway"/>
+            <key key="public_transport:version" value="2" /> <!-- only validate marked relations in order to avoid false positives -->
+            <reference ref="name_ref" />
+            <optional>
+                <reference ref="public_transport_route_optionals" />
+                <reference ref="pt_route_opt2" />
+            </optional>
+            <roles>
+               <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (aerialway=yes OR aerialway=station)" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (aerialway=yes OR aerialway=station)" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (aerialway=yes OR aerialway=station)" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
+                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="aerialway" />
+            </roles>
+        </item> <!-- Public Transport Route (Aerialway) -->
         <item name="Route Master" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
             <link wiki="Public_transport#Route_Master_relations" />
             <space />
@@ -2999,34 +3047,75 @@
         </item> <!-- Ticket Machine -->
     </group> <!-- Public Transport -->
     <group name="Public Transport (Legacy)" icon="presets/transport/bus_old.svg">
-        <item name="Public transport route (Legacy)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+        <item name="Public transport route (Legacy) (Bus/Train)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+            <link wiki="Public_transport#Service_routes" />
+            <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,share_taxi,aerialway,ferry" values_searchable="true" match="keyvalue!" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,share_taxi" values_searchable="true" match="keyvalue!" />
             <key key="public_transport:version" value="1" /> <!-- only validate marked relations in order to avoid false positives -->
             <reference ref="name_ref" />
             <optional>
-                <text key="from" text="From (initial stop)" />
-                <text key="to" text="To (terminal stop)" />
-                <text key="via" text="Via (intermediate stops)" />
-                <text key="operator" text="Operator" />
-                <text key="network" text="Network" />
-                <text key="description" text="Description" />
-                <reference ref="color" />
-                <reference ref="oh" />
-                <reference ref="fee" />
-                <combo key="reservation" text="Reservation" values="yes,no,required,recommended" />
-                <text key="website" text="Website" />
+                <reference ref="public_transport_route_optionals" />
+                <reference ref="fee_reservation_roundtrip_website" />
             </optional>
             <roles>
-                <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
-                <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
-                <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
+                <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|railway|route=ferry" />
+                <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|railway|route=ferry" />
+                <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway|railway|route=ferry" />
                 <role key="stop" text="halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="forward_stop" text="forward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="backward_stop" text="backward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="highway=platform OR railway=platform" />
             </roles>
-        </item> <!-- Public transport route (Legacy) -->
+        </item> <!-- Public transport route (Legacy) (Bus/Train) -->
+        <item name="Public transport route (Legacy) (Ferry)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+            <link wiki="Tag:route=ferry" />
+            <space />
+            <key key="type" value="route" />
+            <key key="route" value="ferry" />
+            <key key="public_transport:version" value="1" /> <!-- only validate marked relations in order to avoid false positives -->
+            <reference ref="name_ref_operator" />
+            <combo key="ferry" text="Highway type the ferry connects" values="trunk,primary,secondary,tertiary,unclassified" values_context="Highway" values_sort="false" />
+            <check key="ferry:cable" text="Reaction ferry" />
+            <optional>
+                <reference ref="oh_wheelchair" />
+                <text key="network" text="Network" />
+                <text key="description" text="Description" />
+                <reference ref="color" />
+                <reference ref="pt_route_opt2" />
+            </optional>
+            <reference ref="link_road_access_restrictions" />
+            <roles>
+                <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="route=ferry" />
+                <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="route=ferry" />
+                <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="route=ferry" />
+                <role key="stop" text="halt point" requisite="optional" type="node" member_expression="amenity=ferry_terminal OR (public_transport=stop_position ferry=yes)" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="man_made=pier OR (public_transport=platform ferry=yes)" />
+            </roles>
+        </item> <!-- Public transport route (Legacy) (Ferry) -->
+        <item name="Public transport route (Legacy) (Aerialway)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+            <link wiki="Public_transport" />
+            <space />
+            <key key="type" value="route" />
+            <key key="route" value="aerialway" />
+            <key key="public_transport:version" value="1" /> <!-- only validate marked relations in order to avoid false positives -->
+            <reference ref="name_ref_operator" />
+            <optional>
+                <reference ref="oh_wheelchair" />
+                <text key="network" text="Network" />
+                <text key="description" text="Description" />
+                <reference ref="color" />
+                <reference ref="pt_route_opt2" />
+            </optional>
+            <roles>
+                <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="aerialway" />
+                <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="aerialway" />
+                <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="aerialway" />
+                <role key="stop" text="halt point" requisite="optional" type="node" member_expression="aerialway=station OR (public_transport=stop_position aerialway=yes)" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
+            </roles>
+        </item> <!-- Public transport route (Legacy) (Aerialway) -->
+        <separator/>
         <item name="Station" name_context="railway" icon="presets/transport/railway_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:railway=station" />
             <key key="railway" value="station" />
