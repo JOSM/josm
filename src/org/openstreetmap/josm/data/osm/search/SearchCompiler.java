@@ -2149,7 +2149,7 @@ public class SearchCompiler {
 
                 UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
-                    return unaryFactory.get(key, parseFactor(), tokenizer).validate();
+                    return getValidate(unaryFactory, key, tokenizer);
 
                 // key:value form where value is a string (may be OSM key search)
                 final String value = tokenizer.readTextOrNumber();
@@ -2163,7 +2163,7 @@ public class SearchCompiler {
 
                 UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
-                    return unaryFactory.get(key, parseFactor(), null).validate();
+                    return getValidate(unaryFactory, key, null);
 
                 // match string in any key or value
                 return new Any(key, regexSearch, caseSensitive).validate();
@@ -2174,6 +2174,12 @@ public class SearchCompiler {
 
     private Match parseFactor(String errorMessage) throws SearchParseError {
         return Optional.ofNullable(parseFactor()).orElseThrow(() -> new SearchParseError(errorMessage));
+    }
+
+    private Match getValidate(UnaryMatchFactory unaryFactory, String key, PushbackTokenizer tokenizer)
+            throws SearchParseError {
+        UnaryMatch match = unaryFactory.get(key, parseFactor(), tokenizer);
+        return match != null ? match.validate() : null;
     }
 
     private static int regexFlags(boolean caseSensitive) {
