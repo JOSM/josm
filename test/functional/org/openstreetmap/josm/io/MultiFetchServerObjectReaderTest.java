@@ -240,7 +240,7 @@ class MultiFetchServerObjectReaderTest {
         for (Node n1:out.getNodes()) {
             Node n2 = (Node) ds.getPrimitiveById(n1);
             assertNotNull(n2);
-            assertEquals(n2.get("name"), n2.get("name"));
+            assertEquals(n1.get("name"), n2.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
     }
@@ -286,7 +286,7 @@ class MultiFetchServerObjectReaderTest {
             Relation r2 = (Relation) ds.getPrimitiveById(r1);
             assertNotNull(r2);
             assertEquals(r2.getMembersCount(), r1.getMembersCount());
-            assertEquals(r2.get("name"), r2.get("name"));
+            assertEquals(r1.get("name"), r2.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
     }
@@ -308,7 +308,7 @@ class MultiFetchServerObjectReaderTest {
         for (Node n1:out.getNodes()) {
             Node n2 = (Node) ds.getPrimitiveById(n1);
             assertNotNull(n2);
-            assertEquals(n2.get("name"), n2.get("name"));
+            assertEquals(n1.get("name"), n2.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
     }
@@ -332,7 +332,7 @@ class MultiFetchServerObjectReaderTest {
         for (Node n1:out.getNodes()) {
             Node n2 = (Node) ds.getPrimitiveById(n1);
             assertNotNull(n2);
-            assertEquals(n2.get("name"), n2.get("name"));
+            assertEquals(n1.get("name"), n2.get("name"));
         }
         assertFalse(reader.getMissingPrimitives().isEmpty());
         assertEquals(1, reader.getMissingPrimitives().size());
