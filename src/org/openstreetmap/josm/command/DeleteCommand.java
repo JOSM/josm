@@ -295,7 +295,7 @@ public class DeleteCommand extends Command {
      * @since 12718
      */
     public static Command deleteWithReferences(Collection<? extends OsmPrimitive> selection, boolean silent) {
-        if (selection == null || selection.isEmpty()) return null;
+        if (Utils.isEmpty(selection)) return null;
         Set<OsmPrimitive> parents = OsmPrimitive.getReferrer(selection);
         parents.addAll(selection);
 
@@ -401,7 +401,7 @@ public class DeleteCommand extends Command {
      * @since 12718
      */
     public static Command delete(Collection<? extends OsmPrimitive> selection, boolean alsoDeleteNodesInWay, boolean silent) {
-        if (selection == null || selection.isEmpty())
+        if (Utils.isEmpty(selection))
             return null;
 
         Set<OsmPrimitive> primitivesToDelete = new HashSet<>(selection);

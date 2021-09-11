@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.SortableTableModel;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -416,7 +417,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     }
 
     private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {
-        if (primitives == null || primitives.isEmpty())
+        if (Utils.isEmpty(primitives))
             return;
         int idx = index;
         for (OsmPrimitive primitive : primitives) {
@@ -546,7 +547,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @param selectedMembers the collection of selected members
      */
     public void setSelectedMembers(Collection<RelationMember> selectedMembers) {
-        if (selectedMembers == null || selectedMembers.isEmpty()) {
+        if (Utils.isEmpty(selectedMembers)) {
             getSelectionModel().clearSelection();
             return;
         }
@@ -570,7 +571,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @param selectedIndices the collection of selected member indices
      */
     public void setSelectedMembersIdx(Collection<Integer> selectedIndices) {
-        if (selectedIndices == null || selectedIndices.isEmpty()) {
+        if (Utils.isEmpty(selectedIndices)) {
             getSelectionModel().clearSelection();
             return;
         }
@@ -651,7 +652,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * otherwise
      */
     public static boolean hasMembersReferringTo(Collection<RelationMember> members, Collection<OsmPrimitive> primitives) {
-        if (primitives == null || primitives.isEmpty())
+        if (Utils.isEmpty(primitives))
             return false;
         Set<OsmPrimitive> referrers = members.stream().map(RelationMember::getMember).collect(Collectors.toSet());
         return primitives.stream().anyMatch(referrers::contains);

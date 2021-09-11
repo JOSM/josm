@@ -246,7 +246,7 @@ public class TagEditHelper {
         try {
             activeDataSet.beginUpdate();
             sel = OsmDataManager.getInstance().getInProgressSelection();
-            if (sel == null || sel.isEmpty())
+            if (Utils.isEmpty(sel))
                 return;
 
             final AddTagsDialog addDialog = getAddTagsDialog();
@@ -280,7 +280,7 @@ public class TagEditHelper {
     public void editTag(final int row, boolean focusOnKey) {
         changedKey = null;
         sel = OsmDataManager.getInstance().getInProgressSelection();
-        if (sel == null || sel.isEmpty())
+        if (Utils.isEmpty(sel))
             return;
 
         String key = getDataKey(row);
@@ -913,7 +913,7 @@ public class TagEditHelper {
             String s = String.format("%d", PROPERTY_RECENT_TAGS_NUMBER.get());
             while (true) {
                 s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"), s);
-                if (s == null || s.isEmpty()) {
+                if (Utils.isEmpty(s)) {
                     return;
                 }
                 try {

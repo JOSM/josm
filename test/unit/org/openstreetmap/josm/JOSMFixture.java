@@ -36,6 +36,7 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -121,7 +122,7 @@ public class JOSMFixture {
         Logging.setLogLevel(Logging.LEVEL_INFO);
         pref.init(false);
         String url = OsmApi.getOsmApi().getServerUrl();
-        if (url == null || url.isEmpty() || isProductionApiUrl(url)) {
+        if (Utils.isEmpty(url) || isProductionApiUrl(url)) {
             Config.getPref().put("osm-server.url", "https://api06.dev.openstreetmap.org/api");
         }
         I18n.set(Config.getPref().get("language", "en"));

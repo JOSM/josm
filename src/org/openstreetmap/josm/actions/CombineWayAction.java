@@ -49,6 +49,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Combines multiple ways into one.
@@ -112,7 +113,7 @@ public class CombineWayAction extends JosmAction {
 
         // prepare and clean the list of ways to combine
         //
-        if (ways == null || ways.isEmpty())
+        if (Utils.isEmpty(ways))
             return null;
         ways.remove(null); // just in case -  remove all null ways from the collection
 

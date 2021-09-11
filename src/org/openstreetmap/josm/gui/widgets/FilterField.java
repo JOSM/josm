@@ -92,7 +92,7 @@ public class FilterField extends DisableShortcutsOnFocusGainedTextField {
             try {
                 final TableRowSorter<? extends TableModel> sorter =
                     (TableRowSorter<? extends TableModel>) table.getRowSorter();
-                if (expr == null || expr.isEmpty()) {
+                if (Utils.isEmpty(expr)) {
                     sorter.setRowFilter(null);
                 } else {
                     expr = expr.replace("+", "\\+");

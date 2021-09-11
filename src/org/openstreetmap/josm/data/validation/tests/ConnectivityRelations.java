@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Check for inconsistencies in lane information between relation and members.
@@ -75,7 +76,7 @@ public class ConnectivityRelations extends Test {
      */
     public static Map<Integer, Map<Integer, Boolean>> parseConnectivityTag(Relation relation) {
         final String cnTag = relation.get(CONNECTIVITY_TAG);
-        if (cnTag == null || cnTag.isEmpty()) {
+        if (Utils.isEmpty(cnTag)) {
             return Collections.emptyMap();
         }
         final String joined = cnTag.replace("bw", Integer.toString(BW));

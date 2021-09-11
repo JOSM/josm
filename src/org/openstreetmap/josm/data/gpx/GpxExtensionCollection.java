@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 
 /**
@@ -65,7 +66,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
      * @param value the value
      */
     public void closeChild(String qName, String value) {
-        if (childStack == null || childStack.isEmpty()) {
+        if (Utils.isEmpty(childStack)) {
             Logging.warn("Can''t close child ''{0}'', no element in stack.", qName);
             return;
         }

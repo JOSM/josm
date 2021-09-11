@@ -15,6 +15,7 @@ import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Super class of all copy actions from tag table.
@@ -43,7 +44,7 @@ public abstract class AbstractCopyAction extends AbstractAction {
     protected Stream<String> valueStream() {
         int[] rows = tagTable.getSelectedRows();
         Collection<? extends Tagged> sel = objectSupplier.get();
-        if (rows.length == 0 || sel == null || sel.isEmpty()) return Stream.empty();
+        if (rows.length == 0 || Utils.isEmpty(sel)) return Stream.empty();
         return Arrays.stream(rows)
                 .mapToObj(keySupplier)
                 .flatMap(key -> sel.stream().map(p -> getString(p, key)))

@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A panel displaying the list of known plugins.
@@ -62,7 +63,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
     protected static String formatPluginRemoteVersion(PluginInformation pi) {
         StringBuilder sb = new StringBuilder();
-        if (pi.version == null || pi.version.trim().isEmpty()) {
+        if (Utils.isBlank(pi.version)) {
             sb.append(tr("unknown"));
         } else {
             sb.append(pi.version);
@@ -76,7 +77,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
     protected static String formatPluginLocalVersion(PluginInformation pi) {
         if (pi == null)
             return tr("unknown");
-        if (pi.localversion == null || pi.localversion.trim().isEmpty())
+        if (Utils.isBlank(pi.localversion))
             return tr("unknown");
         return pi.localversion;
     }

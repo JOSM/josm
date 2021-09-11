@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 
 /**
@@ -39,7 +40,7 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
             XPath xpath = xPathFactory.newXPath();
             XPathExpression fileExp = xpath.compile("file/text()");
             String fileStr = (String) fileExp.evaluate(elem, XPathConstants.STRING);
-            if (fileStr == null || fileStr.isEmpty()) {
+            if (Utils.isEmpty(fileStr)) {
                 throw new IllegalDataException(tr("File name expected for layer no. {0}", support.getLayerIndex()));
             }
 

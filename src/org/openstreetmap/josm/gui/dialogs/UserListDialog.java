@@ -309,7 +309,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
             Map<User, Integer> ret = new HashMap<>();
-            if (primitives == null || primitives.isEmpty())
+            if (Utils.isEmpty(primitives))
                 return ret;
             for (OsmPrimitive primitive: primitives) {
                 if (ret.containsKey(primitive.getUser())) {

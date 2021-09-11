@@ -53,7 +53,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
                 node.clearCachedStyle();
             }
 
-            if (nodes == null || nodes.isEmpty()) {
+            if (Utils.isEmpty(nodes)) {
                 this.nodes = EMPTY_NODES;
             } else {
                 this.nodes = nodes.toArray(EMPTY_NODES);

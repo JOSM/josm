@@ -729,7 +729,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
      * @since 9613
      */
     public void setNoTileHeaders(MultiMap<String, String> noTileHeaders) {
-       if (noTileHeaders == null || noTileHeaders.isEmpty()) {
+       if (Utils.isEmpty(noTileHeaders)) {
            this.noTileHeaders = null;
        } else {
             this.noTileHeaders = noTileHeaders.toMap();
@@ -749,7 +749,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
      * @since 9613
      */
     public void setNoTileChecksums(MultiMap<String, String> noTileChecksums) {
-        if (noTileChecksums == null || noTileChecksums.isEmpty()) {
+        if (Utils.isEmpty(noTileChecksums)) {
             this.noTileChecksums = null;
         } else {
             this.noTileChecksums = noTileChecksums.toMap();
@@ -769,7 +769,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
      * @since 8418
      */
     public void setMetadataHeaders(Map<String, String> metadataHeaders) {
-        if (metadataHeaders == null || metadataHeaders.isEmpty()) {
+        if (Utils.isEmpty(metadataHeaders)) {
             this.metadataHeaders = null;
         } else {
             this.metadataHeaders = metadataHeaders;

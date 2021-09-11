@@ -663,7 +663,7 @@ public class MapPaintDialog extends ToggleDialog {
 
             final int sel = tblStyles.getSelectionModel().getLeadSelectionIndex();
             final StyleSource style = sel >= 0 && sel < model.getRowCount() ? model.getRow(sel) : null;
-            if (style == null || style.settings.isEmpty()) {
+            if (style == null || Utils.isEmpty(style.settings)) {
                 setMenu.setEnabled(false);
             } else {
                 // Add settings groups

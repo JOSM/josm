@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A management window for the validator's ignorelist
@@ -223,7 +224,7 @@ public class ValidatorListManagementDialog extends ExtendedDialog {
         MapFrame map = MainApplication.getMap();
         List<TestError> errors = map.validatorDialog.tree.getErrors();
         ValidateAction validateAction = ValidatorDialog.validateAction;
-        if (!validateAction.isEnabled() || errors == null || errors.isEmpty()) return JOptionPane.NO_OPTION;
+        if (!validateAction.isEnabled() || Utils.isEmpty(errors)) return JOptionPane.NO_OPTION;
         final int answer = ConditionalOptionPaneUtil.showOptionDialog(
                 "rerun_validation_when_ignorelist_changed",
                 MainApplication.getMainFrame(),

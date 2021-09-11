@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Command that selects OSM primitives
@@ -32,7 +33,7 @@ public class SelectCommand extends Command {
      */
     public SelectCommand(DataSet dataset, Collection<OsmPrimitive> newSelection) {
         super(dataset);
-        if (newSelection == null || newSelection.isEmpty()) {
+        if (Utils.isEmpty(newSelection)) {
             this.newSelection = Collections.emptySet();
         } else if (newSelection.contains(null)) {
             throw new IllegalArgumentException("null primitive in selection");

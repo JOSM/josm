@@ -214,7 +214,7 @@ public class OsmApiException extends OsmTransferException {
         StringBuilder sb = new StringBuilder();
         String header = Utils.strip(errorHeader);
         String body = Utils.strip(errorBody);
-        if ((header == null || header.isEmpty()) && (body == null || body.isEmpty())) {
+        if (Utils.isEmpty(header) && Utils.isEmpty(body)) {
             sb.append(tr("The server replied an error with code {0}.", responseCode));
         } else {
             if (header != null && !header.isEmpty()) {

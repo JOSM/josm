@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Validator for user ids entered in a {@link JTextComponent}.
@@ -38,7 +39,7 @@ public class UidInputFieldValidator extends AbstractTextComponentValidator {
     @Override
     public void validate() {
         String value = getComponent().getText();
-        if (value == null || value.trim().isEmpty()) {
+        if (Utils.isBlank(value)) {
             feedbackInvalid("");
             return;
         }
@@ -61,7 +62,7 @@ public class UidInputFieldValidator extends AbstractTextComponentValidator {
      */
     public int getUid() {
         String value = getComponent().getText();
-        if (value == null || value.trim().isEmpty()) return 0;
+        if (Utils.isBlank(value)) return 0;
         try {
             int uid = Integer.parseInt(value.trim());
             if (uid > 0)

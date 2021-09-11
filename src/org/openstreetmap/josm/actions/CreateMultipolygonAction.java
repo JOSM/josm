@@ -386,7 +386,7 @@ public class CreateMultipolygonAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null || selection.isEmpty()) {
+        if (ds == null || Utils.isEmpty(selection)) {
             setEnabled(false);
         } else if (update) {
             setEnabled(getSelectedMultipolygonRelation(ds.getSelectedWays(), ds.getSelectedRelations()) != null);

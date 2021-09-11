@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Auxiliary class for relation sorting.
@@ -259,7 +260,7 @@ public class RelationNodeMap<T extends IRelationMember<? extends IPrimitive>> {
 
     private static Integer findAdjacentWay(NodesWays nw, INode n) {
         Set<Integer> adj = nw.nodes.get(n);
-        if (adj == null || adj.isEmpty()) return null;
+        if (Utils.isEmpty(adj)) return null;
         return adj.iterator().next();
     }
 

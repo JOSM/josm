@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * TagCollection is a collection of tags which can be used to manipulate
@@ -117,7 +118,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      */
     public static TagCollection commonToAllPrimitives(Collection<? extends Tagged> primitives) {
         TagCollection tags = new TagCollection();
-        if (primitives == null || primitives.isEmpty()) return tags;
+        if (Utils.isEmpty(primitives)) return tags;
         // initialize with the first
         tags.add(TagCollection.from(primitives.iterator().next()));
 
@@ -564,7 +565,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
         if (primitive == null) return;
         ensureApplicableToPrimitive();
         for (Tag tag: tags.keySet()) {
-            if (tag.getValue() == null || tag.getValue().isEmpty()) {
+            if (Utils.isEmpty(tag.getValue())) {
                 primitive.remove(tag.getKey());
             } else {
                 primitive.put(tag.getKey(), tag.getValue());

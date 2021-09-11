@@ -332,7 +332,7 @@ public class RelationChecker extends Test implements TaggingPresetListener {
             if (allroles.keySet().stream().noneMatch(role -> role.isRole(key))) {
                 String templates = allroles.keySet().stream()
                         .map(r -> r.key)
-                        .map(r -> r == null || r.isEmpty() ? tr("<empty>") : r)
+                        .map(r -> Utils.isEmpty(r) ? tr("<empty>") : r)
                         .distinct()
                         .collect(Collectors.joining("/"));
                 List<OsmPrimitive> primitives = new ArrayList<>(n.findRelationMembers(key));

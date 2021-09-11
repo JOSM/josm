@@ -35,7 +35,7 @@ public abstract class AbstractRelationAction extends AbstractAction implements I
      * @return the relation contained in {@code primitives}
      */
     protected static final Collection<IRelation<?>> getRelations(Collection<? extends IPrimitive> primitives) {
-        if (primitives == null || primitives.isEmpty()) {
+        if (Utils.isEmpty(primitives)) {
             return Collections.<IRelation<?>>emptySet();
         } else {
             return new SubclassFilteredCollection<>(primitives, IRelation.class::isInstance);

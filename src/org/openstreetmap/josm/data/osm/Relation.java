@@ -384,7 +384,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
      */
     public void removeMembersFor(Collection<? extends OsmPrimitive> primitives) {
         checkDatasetNotReadOnly();
-        if (primitives == null || primitives.isEmpty())
+        if (Utils.isEmpty(primitives))
             return;
 
         boolean locked = writeLock();

@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.LruCache;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -82,7 +83,7 @@ public abstract class TaggingPresetItem {
     }
 
     protected static Set<TaggingPresetType> getType(String types) throws SAXException {
-        if (types == null || types.isEmpty()) {
+        if (Utils.isEmpty(types)) {
             throw new SAXException(tr("Unknown type: {0}", types));
         }
         if (TYPE_CACHE.containsKey(types))
@@ -117,7 +118,7 @@ public abstract class TaggingPresetItem {
     }
 
     protected static Integer parseInteger(String str) {
-        if (str == null || str.isEmpty())
+        if (Utils.isEmpty(str))
             return null;
         try {
             return Integer.valueOf(str);

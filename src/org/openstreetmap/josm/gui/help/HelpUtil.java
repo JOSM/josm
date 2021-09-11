@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Provides utility methods for help system.
@@ -148,7 +149,7 @@ public final class HelpUtil {
      */
     public static String buildAbsoluteHelpTopic(String topic, LocaleType type) {
         String prefix = getHelpTopicPrefix(type);
-        if (prefix == null || topic == null || topic.trim().isEmpty() || "/".equals(topic.trim()))
+        if (prefix == null || Utils.isBlank(topic) || "/".equals(topic.trim()))
             return prefix;
         prefix += '/' + topic;
         return prefix.replaceAll("\\/+", "\\/"); // collapse sequences of //

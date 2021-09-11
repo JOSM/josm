@@ -34,7 +34,7 @@ import org.openstreetmap.josm.io.CachedFile;
 
 /**
  * Extracts web links from OSM tags.
- * 
+ *
  * The following rules are used:
  * <ul>
  * <li>internal rules for basic tags</li>
@@ -143,7 +143,7 @@ public final class Tag2Link {
      */
     public static void getLinksForTag(String key, String value, LinkConsumer linkConsumer) {
 
-        if (value == null || value.isEmpty()) {
+        if (Utils.isEmpty(value)) {
             return;
         }
 

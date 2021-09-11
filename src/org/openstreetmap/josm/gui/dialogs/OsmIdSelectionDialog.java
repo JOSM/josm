@@ -220,7 +220,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
 
     protected void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = ClipboardUtils.getClipboardStringContent();
-        if (buf == null || buf.isEmpty()) return;
+        if (Utils.isEmpty(buf)) return;
         if (buf.length() > Config.getPref().getInt("downloadprimitive.max-autopaste-length", 2000)) return;
         final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
         if (!ids.isEmpty()) {

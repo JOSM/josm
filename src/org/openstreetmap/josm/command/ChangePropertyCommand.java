@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Command that manipulate the key/value structure of several objects. Manages deletion,
@@ -138,7 +139,7 @@ public class ChangePropertyCommand extends Command {
                 String oldVal = osm.get(tag.getKey());
                 String newVal = tag.getValue();
 
-                if (newVal == null || newVal.isEmpty()) {
+                if (Utils.isEmpty(newVal)) {
                     if (oldVal != null) {
                         // new value is null and tag exists (will delete tag)
                         modified = true;
@@ -172,7 +173,7 @@ public class ChangePropertyCommand extends Command {
                     String oldVal = osm.get(tag.getKey());
                     String newVal = tag.getValue();
 
-                    if (newVal == null || newVal.isEmpty()) {
+                    if (Utils.isEmpty(newVal)) {
                         if (oldVal != null)
                             osm.remove(tag.getKey());
                     } else if (oldVal == null || !newVal.equals(oldVal))
@@ -203,7 +204,7 @@ public class ChangePropertyCommand extends Command {
             OsmPrimitive primitive = objects.get(0);
             String msg;
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
-            if (entry.getValue() == null || entry.getValue().isEmpty()) {
+            if (Utils.isEmpty(entry.getValue())) {
                 switch(OsmPrimitiveType.from(primitive)) {
                 case NODE: msg = marktr("Remove \"{0}\" for node ''{1}''"); break;
                 case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
@@ -222,7 +223,7 @@ public class ChangePropertyCommand extends Command {
             }
         } else if (objects.size() > 1 && tags.size() == 1) {
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
-            if (entry.getValue() == null || entry.getValue().isEmpty()) {
+            if (Utils.isEmpty(entry.getValue())) {
                 /* I18n: plural form for objects, but value < 2 not possible! */
                 text = trn("Remove \"{0}\" for {1} object", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
             } else {
@@ -232,7 +233,7 @@ public class ChangePropertyCommand extends Command {
             }
         } else {
             boolean allNull = this.tags.entrySet().stream()
-                    .allMatch(tag -> tag.getValue() == null || tag.getValue().isEmpty());
+                    .allMatch(tag -> Utils.isEmpty(tag.getValue()));
 
             if (allNull) {
                 /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */

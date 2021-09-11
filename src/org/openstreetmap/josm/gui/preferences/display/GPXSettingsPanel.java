@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 
@@ -142,7 +143,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     public GPXSettingsPanel(List<GpxLayer> layers) {
         super(new GridBagLayout());
         this.layers = layers;
-        if (layers == null || layers.isEmpty()) {
+        if (Utils.isEmpty(layers)) {
             throw new InvalidArgumentException("At least one layer required");
         }
         firstLayer = layers.get(0);
@@ -261,7 +262,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @param value the value or <code>null</code> to remove key
      */
     public static void putLayerPrefLocal(GpxData data, String key, String value) {
-        if (value == null || value.trim().isEmpty() ||
+        if (Utils.isBlank(value) ||
                 (getLayerPref(null, key).equals(value) && DEFAULT_PREFS.get(key) != null && DEFAULT_PREFS.get(key).toString().equals(value))) {
             data.getLayerPrefs().remove(key);
         } else {

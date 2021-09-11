@@ -66,11 +66,11 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
         String displayValue = Utils.escapeReservedCharactersHTML(getDisplayValue());
         String shortDescription = getShortDescription(true);
 
-        if (displayValue.isEmpty() && (shortDescription == null || shortDescription.isEmpty()))
+        if (displayValue.isEmpty() && Utils.isEmpty(shortDescription))
             return "&nbsp;";
 
         final StringBuilder res = new StringBuilder("<b>").append(displayValue).append("</b>");
-        if (shortDescription != null) {
+        if (!Utils.isEmpty(shortDescription)) {
             // wrap in table to restrict the text width
             res.append("<div style=\"width:300px; padding:0 0 5px 5px\">")
                .append(shortDescription)

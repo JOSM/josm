@@ -53,6 +53,7 @@ import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.Interval;
 
 /**
@@ -180,7 +181,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 }
                 int row = t.rowAtPoint(e.getPoint());
                 String url = (String) t.getValueAt(row, col);
-                if (url == null || url.isEmpty()) {
+                if (Utils.isEmpty(url)) {
                     return;
                 }
                 OpenBrowser.displayUrl(url);

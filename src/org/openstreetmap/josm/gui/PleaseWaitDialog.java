@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a dialog that displays the progress of an action to the user.
@@ -105,7 +106,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      */
     @Override
     public void setCustomText(String text) {
-        if (text == null || text.trim().isEmpty()) {
+        if (Utils.isBlank(text)) {
             customText.setVisible(false);
             adjustLayout();
             return;
@@ -130,7 +131,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      */
     @Override
     public void appendLogMessage(String message) {
-        if (message == null || message.trim().isEmpty())
+        if (Utils.isBlank(message))
             return;
         if (!spLog.isVisible()) {
             spLog.setVisible(true);

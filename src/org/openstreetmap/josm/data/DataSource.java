@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A data source, defined by bounds and textual description for the origin.
@@ -74,7 +75,7 @@ public class DataSource {
      * @see Data#getDataSourceArea()
      */
     public static Area getDataSourceArea(Collection<DataSource> dataSources) {
-        if (dataSources == null || dataSources.isEmpty()) {
+        if (Utils.isEmpty(dataSources)) {
             return null;
         }
         Path2D.Double p = new Path2D.Double();

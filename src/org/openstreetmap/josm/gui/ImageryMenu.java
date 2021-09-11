@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Imagery menu, holding entries for imagery preferences, offset actions and dynamic imagery entries
@@ -150,7 +151,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      */
     private static boolean isPosInOneShapeIfAny(ImageryInfo info, LatLon pos) {
         List<Shape> shapes = info.getBounds().getShapes();
-        return shapes == null || shapes.isEmpty() || shapes.stream().anyMatch(s -> s.contains(pos));
+        return Utils.isEmpty(shapes) || shapes.stream().anyMatch(s -> s.contains(pos));
     }
 
     /**

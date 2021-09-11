@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.UniqueIdGenerator;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The "Node" type of a vector layer
@@ -82,7 +83,7 @@ public class VectorNode extends VectorPrimitive implements INode {
         // Count only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
         List<? extends IPrimitive> referrers = super.getReferrers();
-        if (referrers == null || referrers.isEmpty())
+        if (Utils.isEmpty(referrers))
             return false;
         if (referrers instanceof IPrimitive)
             return n <= 1 && referrers instanceof IWay && ((IPrimitive) referrers).getDataSet() == getDataSet();

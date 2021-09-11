@@ -194,7 +194,7 @@ public class RelationMemberConflictResolver extends JPanel {
             return null;
         if (tfValue.getText().trim().isEmpty())
             return null;
-        if (primitives == null || primitives.isEmpty())
+        if (Utils.isEmpty(primitives))
             return null;
         return new ChangePropertyCommand(primitives, Utils.removeWhiteSpaces(tfKey.getText()), Utils.removeWhiteSpaces(tfValue.getText()));
     }

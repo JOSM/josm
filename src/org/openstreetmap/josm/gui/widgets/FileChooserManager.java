@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.PlatformManager;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A chained utility class used to create and open {@link AbstractFileChooser} dialogs.<br>
@@ -97,9 +98,9 @@ public class FileChooserManager {
      */
     public FileChooserManager(boolean open, String lastDirProperty, String defaultDir) {
         this.open = open;
-        this.lastDirProperty = lastDirProperty == null || lastDirProperty.isEmpty() ? "lastDirectory" : lastDirProperty;
+        this.lastDirProperty = Utils.isEmpty(lastDirProperty) ? "lastDirectory" : lastDirProperty;
         this.curDir = Config.getPref().get(this.lastDirProperty).isEmpty() ?
-                defaultDir == null || defaultDir.isEmpty() ? "." : defaultDir
+                Utils.isEmpty(defaultDir) ? "." : defaultDir
                 : Config.getPref().get(this.lastDirProperty);
     }
 

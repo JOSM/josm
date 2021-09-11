@@ -187,7 +187,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
     protected final void extractOsmFilename(DownloadParams settings, String pattern, String url) {
         newLayerName = settings.getLayerName();
-        if (newLayerName == null || newLayerName.isEmpty()) {
+        if (Utils.isEmpty(newLayerName)) {
             Matcher matcher = Pattern.compile(pattern).matcher(url);
             newLayerName = matcher.matches() && matcher.groupCount() > 0 ? Utils.decodeUrl(matcher.group(1)) : null;
         }

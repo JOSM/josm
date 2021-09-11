@@ -61,7 +61,7 @@ public class Mediawiki {
         final XPath xPath = XPathFactory.newInstance().newXPath();
         for (String page : distinctPages) {
             String normalized = xPath.evaluate("/api/query/normalized/n[@from='" + page + "']/@to", document);
-            if (normalized == null || normalized.isEmpty()) {
+            if (Utils.isEmpty(normalized)) {
                 normalized = page;
             }
             final Node node = (Node) xPath.evaluate("/api/query/pages/page[@title='" + normalized + "']", document, XPathConstants.NODE);

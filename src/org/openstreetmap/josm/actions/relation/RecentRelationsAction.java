@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action for accessing recent relations.
@@ -72,7 +73,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
      */
     public static Relation getLastRelation() {
         List<Relation> recentRelations = getRecentRelationsOnActiveLayer();
-        if (recentRelations == null || recentRelations.isEmpty())
+        if (Utils.isEmpty(recentRelations))
             return null;
         return recentRelations.stream().filter(RecentRelationsAction::isRelationListable)
                 .findFirst().orElse(null);

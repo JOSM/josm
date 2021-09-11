@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -38,7 +39,7 @@ public class NoteSessionImporter implements SessionLayerImporter {
             XPath xpath = xPathFactory.newXPath();
             XPathExpression fileExp = xpath.compile("file/text()");
             String fileStr = (String) fileExp.evaluate(elem, XPathConstants.STRING);
-            if (fileStr == null || fileStr.isEmpty()) {
+            if (Utils.isEmpty(fileStr)) {
                 throw new IllegalDataException(tr("File name expected for layer no. {0}", support.getLayerIndex()));
             }
 

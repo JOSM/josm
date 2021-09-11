@@ -708,6 +708,16 @@ public final class Utils {
     }
 
     /**
+     * Determines if a multimap is null or empty.
+     * @param map map
+     * @return {@code true} if map is null or empty
+     * @since 18208
+     */
+    public static boolean isEmpty(MultiMap<?, ?> map) {
+        return map == null || map.isEmpty();
+    }
+
+    /**
      * Determines if a string is null or empty.
      * @param string string
      * @return {@code true} if string is null or empty
@@ -715,6 +725,16 @@ public final class Utils {
      */
     public static boolean isEmpty(String string) {
         return string == null || string.isEmpty();
+    }
+
+    /**
+     * Determines if a string is null or blank.
+     * @param string string
+     * @return {@code true} if string is null or blank
+     * @since 18208
+     */
+    public static boolean isBlank(String string) {
+        return string == null || strip(string).isEmpty();
     }
 
     /**

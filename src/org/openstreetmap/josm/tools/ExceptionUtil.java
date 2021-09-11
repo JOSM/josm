@@ -460,7 +460,7 @@ public final class ExceptionUtil {
      */
     public static String explainGeneric(Exception e) {
         String msg = e.getMessage();
-        if (msg == null || msg.trim().isEmpty()) {
+        if (Utils.isBlank(msg)) {
             msg = e.toString();
         }
         Logging.error(e);

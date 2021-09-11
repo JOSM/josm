@@ -63,6 +63,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.OptionParser.OptionCount;
 import org.openstreetmap.josm.tools.ReflectionUtils;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -958,7 +959,7 @@ public class SyncEditorLayerIndex {
         Map<String, Set<String>> eh = getNoTileHeader(e);
         Map<String, Set<String>> jh = getNoTileHeader(j);
         if (!Objects.equals(eh, jh)) {
-            if (jh == null || jh.isEmpty()) {
+            if (Utils.isEmpty(jh)) {
                 myprintln("- Missing JOSM no tile headers ("+eh+"): "+getDescription(j));
             } else if (eh != null && !eh.isEmpty()) {
                 myprintln("* No tile headers differ ('"+eh+"' != '"+jh+"'): "+getDescription(j));

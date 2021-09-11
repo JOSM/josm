@@ -246,7 +246,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         }
                     }
                 }
-                if (n == null || n.isEmpty()) {
+                if (Utils.isEmpty(n)) {
                     n = String.valueOf(way.getId());
                 }
 

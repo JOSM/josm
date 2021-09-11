@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class to hold and perform operations on a set of notes
@@ -172,7 +173,7 @@ public class NoteData implements Data {
      * @param text Required comment with which to open the note
      */
     public synchronized void createNote(LatLon location, String text) {
-        if (text == null || text.isEmpty()) {
+        if (Utils.isEmpty(text)) {
             throw new IllegalArgumentException("Comment can not be blank when creating a note");
         }
         Note note = new Note(location);

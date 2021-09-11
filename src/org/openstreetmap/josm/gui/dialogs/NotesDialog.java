@@ -58,6 +58,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -243,7 +244,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
     }
 
     static boolean matchesNote(String filter, Note note) {
-        if (filter == null || filter.isEmpty()) {
+        if (Utils.isEmpty(filter)) {
             return true;
         }
         return Pattern.compile("\\s+").splitAsStream(filter).allMatch(string -> {
@@ -286,7 +287,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
                 if (fstComment != null) {
                     String text = fstComment.getText();
                     String userName = fstComment.getUser().getName();
-                    if (userName == null || userName.isEmpty()) {
+                    if (Utils.isEmpty(userName)) {
                         userName = "<Anonymous>";
                     }
                     String toolTipText = userName + " @ " + dateFormat.format(note.getCreatedAt());

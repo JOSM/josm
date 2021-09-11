@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Display and edit layer name and file path in a <code>JTable</code>.
@@ -228,7 +229,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     @Override
     public boolean stopCellEditing() {
-        if (tfFilename.getText() == null || tfFilename.getText().trim().isEmpty()) {
+        if (Utils.isBlank(tfFilename.getText())) {
             value = null;
         } else {
             value = new File(tfFilename.getText());

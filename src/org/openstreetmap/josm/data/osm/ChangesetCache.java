@@ -16,6 +16,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * ChangesetCache is global in-memory cache for changesets downloaded from
@@ -109,7 +110,7 @@ public final class ChangesetCache implements PreferenceChangedListener {
      * @param changesets changesets to update
      */
     public void update(Collection<Changeset> changesets) {
-        if (changesets == null || changesets.isEmpty()) return;
+        if (Utils.isEmpty(changesets)) return;
         DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
         for (Changeset cs: changesets) {
             update(cs, e);

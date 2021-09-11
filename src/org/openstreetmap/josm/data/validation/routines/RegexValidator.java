@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * <b>Regular Expression</b> validation (using JDK 1.4+ regex support).
  * <p>
@@ -125,7 +127,7 @@ public class RegexValidator extends AbstractValidator {
         patterns = new Pattern[regexs.length];
         int flags = caseSensitive ? 0 : Pattern.CASE_INSENSITIVE;
         for (int i = 0; i < regexs.length; i++) {
-            if (regexs[i] == null || regexs[i].isEmpty()) {
+            if (Utils.isEmpty(regexs[i])) {
                 throw new IllegalArgumentException("Regular expression[" + i + "] is missing");
             }
             patterns[i] = Pattern.compile(regexs[i], flags);

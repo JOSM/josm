@@ -15,10 +15,6 @@ import java.util.stream.Collectors;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import ch.poole.openinghoursparser.OpeningHoursParseException;
-import ch.poole.openinghoursparser.OpeningHoursParser;
-import ch.poole.openinghoursparser.Rule;
-import ch.poole.openinghoursparser.Util;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -27,6 +23,12 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
+
+import ch.poole.openinghoursparser.OpeningHoursParseException;
+import ch.poole.openinghoursparser.OpeningHoursParser;
+import ch.poole.openinghoursparser.Rule;
+import ch.poole.openinghoursparser.Util;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -92,7 +94,7 @@ public class OpeningHourTest extends TagTest {
      * @return a list of {@link TestError} or an empty list
      */
     List<TestError> checkOpeningHourSyntax(final String key, final String value, OsmPrimitive p, Locale locale) {
-        if (value == null || value.isEmpty()) {
+        if (Utils.isEmpty(value)) {
             return Collections.emptyList();
         }
 

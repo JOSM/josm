@@ -72,6 +72,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A panel displaying imagery providers.
@@ -478,7 +479,7 @@ public class ImageryProvidersPanel extends JPanel {
                 try {
                     activeModel.addRow(p.getImageryInfo());
                 } catch (IllegalArgumentException ex) {
-                    if (ex.getMessage() == null || ex.getMessage().isEmpty())
+                    if (Utils.isEmpty(ex.getMessage()))
                         throw ex;
                     else {
                         JOptionPane.showMessageDialog(MainApplication.getMainFrame(),

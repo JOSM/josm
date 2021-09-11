@@ -37,8 +37,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 
-import org.openstreetmap.josm.actions.AbstractShowHistoryAction;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
+import org.openstreetmap.josm.actions.AbstractShowHistoryAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
@@ -837,7 +837,7 @@ public class SelectionListDialog extends ToggleDialog {
      */
     protected static class SelectionHistoryPopup extends JPopupMenu {
         public static void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {
-            if (history == null || history.isEmpty()) return;
+            if (Utils.isEmpty(history)) return;
             if (parent.isShowing()) {
                 JPopupMenu menu = new SelectionHistoryPopup(history);
                 Rectangle r = parent.getBounds();

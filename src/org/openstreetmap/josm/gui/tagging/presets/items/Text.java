@@ -233,7 +233,7 @@ public class Text extends KeyedItem {
 
     @Override
     public Collection<String> getValues() {
-        if (default_ == null || default_.isEmpty())
+        if (Utils.isEmpty(default_))
             return Collections.emptyList();
         return Collections.singleton(default_);
     }
@@ -253,9 +253,9 @@ public class Text extends KeyedItem {
     }
 
     private void setupListeners(AutoCompletingTextField textField, TaggingPresetItemGuiSupport support) {
-        // value_templates don't work well with multiple selected items because, 
-        // as the command queue is currently implemented, we can only save 
-        // the same value to all selected primitives, which is probably not 
+        // value_templates don't work well with multiple selected items because,
+        // as the command queue is currently implemented, we can only save
+        // the same value to all selected primitives, which is probably not
         // what you want.
         if (valueTemplate == null || support.getSelected().size() > 1) { // only fire on normal fields
             textField.getDocument().addDocumentListener(DocumentAdapter.create(ignore ->

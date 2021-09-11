@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.IQuadBucketType;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Note: bbox of primitives added to QuadBuckets has to stay the same. In case of coordinate change, primitive must
@@ -351,7 +352,7 @@ public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
         }
 
         boolean canRemove() {
-            return (content == null || content.isEmpty()) && !this.hasChildren();
+            return Utils.isEmpty(content) && !this.hasChildren();
         }
     }
 

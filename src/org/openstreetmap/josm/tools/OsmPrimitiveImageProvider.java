@@ -57,7 +57,7 @@ public final class OsmPrimitiveImageProvider {
         if (primitive.isTagged() && (!options.contains(Options.NO_WAY_PRESETS) || OsmPrimitiveType.WAY != primitive.getType())) {
             final Optional<ImageResource> icon = TaggingPresets.getMatchingPresets(primitive).stream()
                     .sorted(Comparator.comparing(p -> (p.iconName != null && p.iconName.contains("multipolygon"))
-                            || p.types == null || p.types.isEmpty() ? Integer.MAX_VALUE : p.types.size()))
+                            || Utils.isEmpty(p.types) ? Integer.MAX_VALUE : p.types.size()))
                     .map(TaggingPreset::getImageResource)
                     .filter(Objects::nonNull)
                     .findFirst();

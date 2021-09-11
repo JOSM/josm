@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -259,7 +260,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                     final String searchMsg;
                     if (groupNode != null) {
                         searchMsg = description;
-                    } else if (description == null || description.isEmpty()) {
+                    } else if (Utils.isEmpty(description)) {
                         searchMsg = message;
                     } else {
                         searchMsg = message + " - " + description;

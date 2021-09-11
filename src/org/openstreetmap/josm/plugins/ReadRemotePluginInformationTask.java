@@ -203,7 +203,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
 
     private void handleIOException(final ProgressMonitor monitor, IOException e, String details) {
         final String msg = e.getMessage();
-        if (details == null || details.isEmpty()) {
+        if (Utils.isEmpty(details)) {
             Logging.error(e.getClass().getSimpleName()+": " + msg);
         } else {
             Logging.error(msg + " - Details:\n" + details);

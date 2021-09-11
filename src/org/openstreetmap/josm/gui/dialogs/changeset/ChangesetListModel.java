@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the model that backs a list of changesets
@@ -94,7 +95,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * @param ids The ids of the changesets to display
      */
     public void initFromChangesetIds(Collection<Integer> ids) {
-        if (ids == null || ids.isEmpty()) {
+        if (Utils.isEmpty(ids)) {
             setChangesets(null);
             return;
         }

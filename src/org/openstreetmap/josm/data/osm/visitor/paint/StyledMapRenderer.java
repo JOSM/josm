@@ -612,7 +612,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         MapViewPoint p = mapState.getPointFor(n);
         TextLabel text = bs.text;
         String s = text.labelCompositionStrategy.compose(n);
-        if (s == null || s.isEmpty()) return;
+        if (Utils.isEmpty(s)) return;
 
         Font defaultFont = g.getFont();
         g.setFont(text.font);
@@ -1144,7 +1144,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             return;
         }
         String name = text.getString(osm);
-        if (name == null || name.isEmpty()) {
+        if (Utils.isEmpty(name)) {
             return;
         }
 

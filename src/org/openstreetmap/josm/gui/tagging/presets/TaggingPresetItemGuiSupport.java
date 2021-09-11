@@ -1,17 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Supplier;
 
 /**
  * Supporting class for creating the GUI for a preset item.
@@ -91,7 +92,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
 
     /**
      * Get tags with values as currently shown in the dialog.
-     * If exactly one primitive is selected, get all tags of it, then 
+     * If exactly one primitive is selected, get all tags of it, then
      * overwrite with the current values shown in the dialog.
      * Else get only the tags shown in the dialog.
      * @return Tags
@@ -115,7 +116,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
     @Override
     public Object getTemplateValue(String key, boolean special) {
         String value = getTagged().get(key);
-        return (value == null || value.isEmpty()) ? null : value;
+        return Utils.isEmpty(value) ? null : value;
     }
 
     @Override

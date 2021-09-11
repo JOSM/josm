@@ -156,7 +156,7 @@ public class MapCSSRuleIndex {
                     selRightmost = ((Selector.ChildOrParentSelector) selRightmost).right;
                 }
                 final List<Condition> conditions = selRightmost.getConditions();
-                if (conditions == null || conditions.isEmpty()) {
+                if (Utils.isEmpty(conditions)) {
                     remaining.set(ruleIndex);
                     continue;
                 }

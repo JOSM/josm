@@ -84,6 +84,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Toolbar preferences.
@@ -1087,9 +1088,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     "tagginggroup_Man Made/Man Made"};
 
     public static Collection<String> getToolString() {
-
         Collection<String> toolStr = Config.getPref().getList("toolbar", Arrays.asList(deftoolbar));
-        if (toolStr == null || toolStr.isEmpty()) {
+        if (Utils.isEmpty(toolStr)) {
             toolStr = Arrays.asList(deftoolbar);
         }
         return toolStr;

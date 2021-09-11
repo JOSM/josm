@@ -389,7 +389,7 @@ public class PlatformHookWindows implements PlatformHook {
     @Override
     public File getDefaultCacheDirectory() {
         String p = getSystemEnv("LOCALAPPDATA");
-        if (p == null || p.isEmpty()) {
+        if (Utils.isEmpty(p)) {
             // Fallback for Windows OS earlier than Windows Vista, where the variable is not defined
             p = getSystemEnv("APPDATA");
         }

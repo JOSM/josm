@@ -431,7 +431,7 @@ public class ChangesetQuery {
      */
     public static class ChangesetQueryUrlParser {
         protected int parseUid(String value) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().isEmpty())
+            if (Utils.isBlank(value))
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
             int id;
@@ -448,7 +448,7 @@ public class ChangesetQuery {
         }
 
         protected boolean parseBoolean(String value, String parameter) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().isEmpty())
+            if (Utils.isBlank(value))
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             switch (value) {
@@ -463,7 +463,7 @@ public class ChangesetQuery {
         }
 
         protected Instant parseDate(String value, String parameter) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().isEmpty())
+            if (Utils.isBlank(value))
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             try {
@@ -487,7 +487,7 @@ public class ChangesetQuery {
         }
 
         protected Collection<Long> parseLongs(String value) {
-            if (value == null || value.isEmpty()) {
+            if (Utils.isEmpty(value)) {
                 return Collections.<Long>emptySet();
             } else {
                 return Stream.of(value.split(",", -1)).map(Long::valueOf).collect(Collectors.toSet());

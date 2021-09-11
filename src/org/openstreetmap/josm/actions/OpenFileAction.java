@@ -260,7 +260,7 @@ public class OpenFileAction extends DiskAccessAction {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            if (files == null || files.isEmpty()) return;
+            if (Utils.isEmpty(files)) return;
 
             /**
              * Find the importer with the chosen file filter

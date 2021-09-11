@@ -23,6 +23,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * UserIdentityManager is a global object which keeps track of what JOSM knows about
@@ -276,16 +277,14 @@ public final class UserIdentityManager implements PreferenceChangedListener {
     public void preferenceChanged(PreferenceChangeEvent evt) {
         switch (evt.getKey()) {
         case "osm-server.username":
-            String newUserName = null;
+            String newUserName = "";
             if (evt.getNewValue() instanceof StringSetting) {
                 newUserName = ((StringSetting) evt.getNewValue()).getValue();
             }
-            if (newUserName == null || newUserName.trim().isEmpty()) {
+            if (Utils.isBlank(newUserName)) {
                 setAnonymous();
-            } else {
-                if (!newUserName.equals(userName)) {
-                    setPartiallyIdentified(newUserName);
-                }
+            } else if (!newUserName.equals(userName)) {
+                setPartiallyIdentified(newUserName);
             }
             return;
         case "osm-server.url":
@@ -293,7 +292,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
             if (evt.getNewValue() instanceof StringSetting) {
                 newUrl = ((StringSetting) evt.getNewValue()).getValue();
             }
-            if (newUrl == null || newUrl.trim().isEmpty()) {
+            if (Utils.isBlank(newUrl)) {
                 setAnonymous();
             } else if (isFullyIdentified()) {
                 setPartiallyIdentified(getUserName());

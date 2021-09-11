@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.download.BookmarkList.Bookmark;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * DownloadAreaSelector which manages a list of "bookmarks", i.e. a list of
@@ -222,7 +223,7 @@ public class BookmarkSelection implements DownloadSelection {
         @Override
         public void actionPerformed(ActionEvent e) {
             List<Bookmark> sels = bookmarks.getSelectedValuesList();
-            if (sels == null || sels.isEmpty())
+            if (Utils.isEmpty(sels))
                 return;
             for (Object sel: sels) {
                 ((DefaultListModel<Bookmark>) bookmarks.getModel()).removeElement(sel);

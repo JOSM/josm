@@ -53,6 +53,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -1876,7 +1877,7 @@ public class SearchCompiler {
         @Override
         protected Collection<Bounds> getBounds(OsmPrimitive primitive) {
             final Collection<Bounds> bounds = super.getBounds(primitive);
-            return bounds == null || bounds.isEmpty() ?
+            return Utils.isEmpty(bounds) ?
                     Collections.singleton(ProjectionRegistry.getProjection().getWorldBoundsLatLon()) : bounds;
         }
 
@@ -1895,7 +1896,7 @@ public class SearchCompiler {
 
         Preset(String presetName) throws SearchParseError {
 
-            if (presetName == null || presetName.isEmpty()) {
+            if (Utils.isEmpty(presetName)) {
                 throw new SearchParseError("The name of the preset is required");
             }
 
@@ -2218,7 +2219,7 @@ public class SearchCompiler {
      */
     public static String buildSearchStringForTag(String key, String value) {
         final String forKey = '"' + escapeStringForSearch(key) + '"' + '=';
-        if (value == null || value.isEmpty()) {
+        if (Utils.isEmpty(value)) {
             return forKey + '*';
         } else {
             return forKey + '"' + escapeStringForSearch(value) + '"';

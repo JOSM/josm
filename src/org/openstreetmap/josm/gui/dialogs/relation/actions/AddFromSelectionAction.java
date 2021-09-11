@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.validation.tests.RelationChecker;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbortException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract superclass of "Add from selection" actions.
@@ -29,7 +30,7 @@ abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
     }
 
     protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
-        if (primitives == null || primitives.isEmpty())
+        if (Utils.isEmpty(primitives))
             return primitives;
         List<OsmPrimitive> ret = new ArrayList<>();
         ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");

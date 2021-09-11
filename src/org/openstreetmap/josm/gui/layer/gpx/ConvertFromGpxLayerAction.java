@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Converts a {@link GpxLayer} to a {@link OsmDataLayer}.
@@ -158,7 +159,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
             if (value != null && !value.isEmpty()) {
                 String extpre = "extension:";
                 String pre = ext.getPrefix();
-                if (pre == null || pre.isEmpty()) {
+                if (Utils.isEmpty(pre)) {
                     pre = "other";
                 }
                 // needs to be distinguished since both track and segment extensions are applied to the resulting way

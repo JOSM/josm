@@ -457,7 +457,7 @@ public interface Selector {
             }
 
             void execGeometryTests() {
-                if (toCheck == null || toCheck.isEmpty())
+                if (Utils.isEmpty(toCheck))
                     return;
                 for (IPrimitive p : Geometry.filterInsideAnyPolygon(toCheck, e.osm)) {
                     addToChildren(e, p);

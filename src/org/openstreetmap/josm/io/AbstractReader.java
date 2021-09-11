@@ -426,7 +426,7 @@ public abstract class AbstractReader {
     private final Map<String, Integer> timestampCache = new LruCache<>(30);
 
     protected final void parseTimestamp(PrimitiveData current, String time) {
-        if (time == null || time.isEmpty()) {
+        if (Utils.isEmpty(time)) {
             return;
         }
         try {

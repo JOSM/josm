@@ -56,6 +56,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -313,7 +314,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             if (commentText != null && !commentText.trim().isEmpty()) {
                 sb.append("<hr/>");
                 String userName = XmlWriter.encode(comment.getUser().getName());
-                if (userName == null || userName.trim().isEmpty()) {
+                if (Utils.isBlank(userName)) {
                     userName = "&lt;Anonymous&gt;";
                 }
                 sb.append(userName)

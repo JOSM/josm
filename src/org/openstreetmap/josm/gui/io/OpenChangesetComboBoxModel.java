@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
 import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A combobox model for the list of open changesets. The model is populated with the list
@@ -53,7 +54,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> 
      * Selects the first changeset in the current list of open changesets
      */
     public void selectFirstChangeset() {
-        if (changesets == null || changesets.isEmpty()) {
+        if (Utils.isEmpty(changesets)) {
             setSelectedItem(null);
         } else {
             setSelectedItem(changesets.get(0));

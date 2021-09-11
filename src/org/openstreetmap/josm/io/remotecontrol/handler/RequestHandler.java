@@ -278,7 +278,7 @@ public abstract class RequestHandler {
         if (mandatory != null && args != null) {
             for (String key : mandatory) {
                 String value = args.get(key);
-                if (value == null || value.isEmpty()) {
+                if (Utils.isEmpty(value)) {
                     error = true;
                     Logging.warn('\'' + myCommand + "' remote control request must have '" + key + "' parameter");
                     missingKeys.add(key);

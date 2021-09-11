@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Asynchronous task for running a collection of tests against a collection of primitives
@@ -77,7 +78,7 @@ public class ValidationTask extends PleaseWaitRunnable {
 
     @Override
     protected void realRun() {
-        if (tests == null || tests.isEmpty())
+        if (Utils.isEmpty(tests))
             return;
         errors = new ArrayList<>();
         getProgressMonitor().setTicksCount(tests.size() * validatedPrimitives.size());

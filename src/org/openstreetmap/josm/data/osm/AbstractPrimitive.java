@@ -535,7 +535,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     @Override
     public void setKeys(Map<String, String> keys) {
         Map<String, String> originalKeys = getKeys();
-        if (keys == null || keys.isEmpty()) {
+        if (Utils.isEmpty(keys)) {
             this.keys = null;
             keysChangedImpl(originalKeys);
             return;

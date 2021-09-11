@@ -46,6 +46,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
@@ -114,14 +115,14 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             switch(info.getImageryType()) {
             case WMS_ENDPOINT:
                 // convert to WMS type
-                if (info.getDefaultLayers() == null || info.getDefaultLayers().isEmpty()) {
+                if (Utils.isEmpty(info.getDefaultLayers())) {
                     return getWMSLayerInfo(info);
                 } else {
                     return info;
                 }
             case WMTS:
                 // specify which layer to use
-                if (info.getDefaultLayers() == null || info.getDefaultLayers().isEmpty()) {
+                if (Utils.isEmpty(info.getDefaultLayers())) {
                     WMTSTileSource tileSource = new WMTSTileSource(info);
                     DefaultLayer layerId = tileSource.userSelectLayer();
                     if (layerId != null) {
@@ -168,7 +169,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
             }
         } catch (IllegalArgumentException | ReportedException ex) {
-            if (ex.getMessage() == null || ex.getMessage().isEmpty() || GraphicsEnvironment.isHeadless()) {
+            if (Utils.isEmpty(ex.getMessage()) || GraphicsEnvironment.isHeadless()) {
                 throw ex;
             } else {
                 Logging.error(ex);

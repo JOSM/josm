@@ -134,6 +134,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -652,7 +653,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      */
     public void cleanupAfterUpload(final Collection<? extends IPrimitive> processed) {
         // return immediately if an upload attempt failed
-        if (processed == null || processed.isEmpty())
+        if (Utils.isEmpty(processed))
             return;
 
         UndoRedoHandler.getInstance().clean(data);

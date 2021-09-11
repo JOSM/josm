@@ -879,7 +879,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     private void checkSingleTagComplex(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String key, String value) {
-        if (!checkValues || key == null || value == null || value.isEmpty())
+        if (!checkValues || key == null || Utils.isEmpty(value))
             return;
         if (additionalPresetsValueData != null && !isTagIgnored(key, value)) {
             if (!isKeyInPresets(key)) {
@@ -936,7 +936,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     private void tryGuess(OsmPrimitive p, String key, String value, MultiMap<OsmPrimitive, String> withErrors) {
         // try to fix common typos and check again if value is still unknown
         final String harmonizedValue = harmonizeValue(value);
-        if (harmonizedValue == null || harmonizedValue.isEmpty())
+        if (Utils.isEmpty(harmonizedValue))
             return;
         String fixedValue;
         List<Set<String>> sets = new ArrayList<>();
@@ -1218,7 +1218,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             for (Entry<String, String> prop: tags.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
-                if (value == null || value.trim().isEmpty()) {
+                if (Utils.isBlank(value)) {
                     commands.add(new ChangePropertyCommand(p, key, null));
                 } else if (value.startsWith(" ") || value.endsWith(" ") || value.contains("  ")) {
                     commands.add(new ChangePropertyCommand(p, key, Utils.removeWhiteSpaces(value)));

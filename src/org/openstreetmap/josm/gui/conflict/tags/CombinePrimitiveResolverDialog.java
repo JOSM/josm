@@ -50,6 +50,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.UserCancelException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This dialog helps to resolve conflicts occurring when ways are combined or
@@ -636,7 +637,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     private static String getKeyDescription(String key, TagCollection normalizedTags) {
         String values = normalizedTags.getValues(key)
                 .stream()
-                .map(x -> (x == null || x.isEmpty()) ? tr("<i>missing</i>") : x)
+                .map(x -> Utils.isEmpty(x) ? tr("<i>missing</i>") : x)
                 .collect(Collectors.joining(tr(", ")));
         return tr("{0} ({1})", key, values);
     }

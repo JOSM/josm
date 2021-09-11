@@ -758,7 +758,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     private static void prepareFileChooser(String url, AbstractFileChooser fc) {
-        if (url == null || url.trim().isEmpty()) return;
+        if (Utils.isBlank(url)) return;
         URL sourceUrl = null;
         try {
             sourceUrl = new URL(url);

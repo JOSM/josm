@@ -13,6 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -55,7 +56,7 @@ public abstract class AbstractCellRenderer extends JLabel implements TableCellRe
     }
 
     protected void renderUser(User user) {
-        if (user == null || user.getName().trim().isEmpty()) {
+        if (user == null || Utils.isBlank(user.getName())) {
             setFont(UIManager.getFont("Table.font").deriveFont(Font.ITALIC));
             setText(tr("anonymous"));
         } else {

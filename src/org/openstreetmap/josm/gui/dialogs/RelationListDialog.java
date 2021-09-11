@@ -307,7 +307,7 @@ public class RelationListDialog extends ToggleDialog
      * @since 13957 (signature)
      */
     public void selectRelations(Collection<? extends IRelation<?>> relations) {
-        if (relations == null || relations.isEmpty()) {
+        if (Utils.isEmpty(relations)) {
             model.setSelectedRelations(null);
         } else {
             model.setSelectedRelations(relations);

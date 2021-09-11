@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Checks if multipolygons are valid
@@ -439,7 +440,7 @@ public class MultipolygonTest extends Test {
     private void checkOrSetRoles(Relation r, List<PolyData> allPolygons, Map<Long, RelationMember> wayMap, Set<Node> sharedNodes) {
         PolygonLevelFinder levelFinder = new PolygonLevelFinder(sharedNodes);
         List<PolygonLevel> list = levelFinder.findOuterWays(allPolygons);
-        if (list == null || list.isEmpty()) {
+        if (Utils.isEmpty(list)) {
             return;
         }
         if (r == createdRelation) {

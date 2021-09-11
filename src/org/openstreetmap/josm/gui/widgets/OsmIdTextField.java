@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A text field designed to enter one or several OSM primitive IDs.
@@ -93,7 +94,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
         public boolean readOsmIds() {
             String value = getComponent().getText();
             char c;
-            if (value == null || value.trim().isEmpty()) {
+            if (Utils.isBlank(value)) {
                 return false;
             }
             ids.clear();

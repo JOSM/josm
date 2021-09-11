@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.util.Objects;
 
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class defines a set of parameters that is used to
@@ -171,7 +172,7 @@ public class SearchSetting {
      * @return A string representation of the {@code SearchSetting} object.
      */
     public String writeToString() {
-        if (text == null || text.isEmpty())
+        if (Utils.isEmpty(text))
             return "";
 
         StringBuilder result = new StringBuilder();

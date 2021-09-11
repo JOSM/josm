@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 
 /**
@@ -123,7 +124,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                     return null;
                 monitor.indeterminateSubTask(tr("Downloading changeset {0} ...", id));
                 List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
-                if (changesets == null || changesets.isEmpty())
+                if (Utils.isEmpty(changesets))
                     return null;
                 result = changesets.get(0);
             } catch (IOException e) {
@@ -172,7 +173,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                         return null;
                     monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {2}...", i, ids.size(), id));
                     List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
-                    if (changesets == null || changesets.isEmpty()) {
+                    if (Utils.isEmpty(changesets)) {
                         continue;
                     }
                     ret.addAll(changesets);

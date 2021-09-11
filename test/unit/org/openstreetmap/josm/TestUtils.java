@@ -85,7 +85,7 @@ public final class TestUtils {
      */
     public static String getTestDataRoot() {
         String testDataRoot = System.getProperty("josm.test.data");
-        if (testDataRoot == null || testDataRoot.isEmpty()) {
+        if (Utils.isEmpty(testDataRoot)) {
             testDataRoot = "test/data";
             System.out.println("System property josm.test.data is not set, using '" + testDataRoot + "'");
         }

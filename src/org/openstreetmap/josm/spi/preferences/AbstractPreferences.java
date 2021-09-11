@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.Logging;
 
+import com.jayway.jsonpath.internal.Utils;
+
 /**
  * Abstract implementation of the {@link IPreferences} interface.
  * @since 12847
@@ -23,7 +25,7 @@ public abstract class AbstractPreferences implements IPreferences {
 
     @Override
     public boolean put(final String key, String value) {
-        return putSetting(key, value == null || value.isEmpty() ? null : new StringSetting(value));
+        return putSetting(key, Utils.isEmpty(value) ? null : new StringSetting(value));
     }
 
     @Override

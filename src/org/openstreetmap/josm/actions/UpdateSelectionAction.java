@@ -27,6 +27,7 @@ import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This action synchronizes a set of primitives with their state on the server.
@@ -119,7 +120,7 @@ public class UpdateSelectionAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (selection == null || selection.isEmpty()) {
+        if (Utils.isEmpty(selection)) {
             setEnabled(false);
         } else {
             DataSet ds = selection.iterator().next().getDataSet();

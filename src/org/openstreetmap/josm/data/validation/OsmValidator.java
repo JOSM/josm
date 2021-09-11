@@ -81,6 +81,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Stopwatch;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A OSM data validator.
@@ -504,7 +505,7 @@ public final class OsmValidator {
         list.add(ignoredErrors);
         int i = 0;
         while (i < list.size()) {
-            if (list.get(i) == null || list.get(i).isEmpty()) {
+            if (Utils.isEmpty(list.get(i))) {
                 list.remove(i);
                 continue;
             }

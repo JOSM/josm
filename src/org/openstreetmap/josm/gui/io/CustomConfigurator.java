@@ -148,7 +148,7 @@ public final class CustomConfigurator {
      * @param text - message to display, HTML allowed
      */
     public static void messageBox(String type, String text) {
-        char c = (type == null || type.isEmpty() ? "plain" : type).charAt(0);
+        char c = (Utils.isEmpty(type) ? "plain" : type).charAt(0);
         MainFrame parent = MainApplication.getMainFrame();
         switch (c) {
             case 'i': JOptionPane.showMessageDialog(parent, text, tr("Information"), JOptionPane.INFORMATION_MESSAGE); break;

@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.TextTagParser;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Utility methods/constants that are useful for generic OSM tag handling.
@@ -223,7 +224,7 @@ public final class OsmUtils {
      * @since 13957 (signature)
      */
     public static boolean isOsmCollectionEditable(Collection<? extends IPrimitive> collection) {
-        if (collection == null || collection.isEmpty()) {
+        if (Utils.isEmpty(collection)) {
             return false;
         }
         // see #16510: optimization: only consider the first primitive, as collection always refer to the same dataset

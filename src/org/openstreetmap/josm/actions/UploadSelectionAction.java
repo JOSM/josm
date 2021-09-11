@@ -33,6 +33,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -137,7 +138,7 @@ public class UploadSelectionAction extends AbstractUploadAction {
      * @param toUpload the primitives to upload. If null or empty returns immediatelly
      */
     public void uploadPrimitives(OsmDataLayer layer, Collection<OsmPrimitive> toUpload) {
-        if (toUpload == null || toUpload.isEmpty()) return;
+        if (Utils.isEmpty(toUpload)) return;
         UploadHullBuilder builder = new UploadHullBuilder();
         toUpload = builder.build(toUpload);
         if (hasPrimitivesToDelete(toUpload)) {

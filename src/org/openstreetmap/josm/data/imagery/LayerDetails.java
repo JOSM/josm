@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The details of a layer of this WMS server.
@@ -149,7 +150,7 @@ public class LayerDetails {
 
     @Override
     public String toString() {
-        String baseName = (title == null || title.isEmpty()) ? name : title;
+        String baseName = Utils.isEmpty(title) ? name : title;
         return abstr == null || abstr.equalsIgnoreCase(baseName) ? baseName : baseName + " (" + abstr + ')';
     }
 
@@ -183,7 +184,7 @@ public class LayerDetails {
      * @return true if user may select this layer, false if this layer is only grouping other layers
      */
     public boolean isSelectable() {
-        return !(name == null || name.isEmpty());
+        return !Utils.isEmpty(name);
     }
 
     /**

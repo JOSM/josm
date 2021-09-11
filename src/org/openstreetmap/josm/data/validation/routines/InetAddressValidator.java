@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * <p><b>InetAddress</b> validation and conversion routines (<code>java.net.InetAddress</code>).</p>
  *
@@ -95,7 +97,7 @@ public class InetAddressValidator extends AbstractValidator {
 
         // verify that address subgroups are legal
         for (String ipSegment : groups) {
-            if (ipSegment == null || ipSegment.isEmpty()) {
+            if (Utils.isEmpty(ipSegment)) {
                 return false;
             }
 
