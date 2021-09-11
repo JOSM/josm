@@ -9,8 +9,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.Logging;
-
-import com.jayway.jsonpath.internal.Utils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract implementation of the {@link IPreferences} interface.
