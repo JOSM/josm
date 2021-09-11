@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.ListeningCollection;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.Interval;
 
 /**
@@ -385,11 +387,50 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     /**
-     * Get all tracks contained in this data set.
+     * Get all tracks contained in this data set, without any guaranteed order.
      * @return The tracks.
      */
     public synchronized Collection<IGpxTrack> getTracks() {
         return Collections.unmodifiableCollection(privateTracks);
+    }
+
+    /**
+     * Get all tracks contained in this data set, ordered chronologically.
+     * @return The tracks in chronological order.
+     * @since 18207
+     */
+    public synchronized List<IGpxTrack> getOrderedTracks() {
+        return privateTracks.stream().sorted((t1, t2) -> {
+            boolean t1empty = Utils.isEmpty(t1.getSegments());
+            boolean t2empty = Utils.isEmpty(t2.getSegments());
+            if (t1empty && t2empty) {
+                return 0;
+            } else if (t1empty && !t2empty) {
+                return -1;
+            } else if (!t1empty && t2empty) {
+                return 1;
+            } else {
+                OptionalLong i1 = getTrackFirstWaypointMin(t1);
+                OptionalLong i2 = getTrackFirstWaypointMin(t2);
+                boolean i1absent = !i1.isPresent();
+                boolean i2absent = !i2.isPresent();
+                if (i1absent && i2absent) {
+                    return 0;
+                } else if (i1absent && !i2absent) {
+                    return 1;
+                } else if (!i1absent && i2absent) {
+                    return -1;
+                } else {
+                    return Long.compare(i1.getAsLong(), i2.getAsLong());
+                }
+            }
+        }).collect(Collectors.toList());
+    }
+
+    private static OptionalLong getTrackFirstWaypointMin(IGpxTrack track) {
+        return track.getSegments().stream().map(IGpxTrackSegment::getWayPoints)
+                .filter(Objects::nonNull).flatMap(Collection::stream)
+                .mapToLong(WayPoint::getTimeInMillis).min();
     }
 
     /**

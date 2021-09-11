@@ -265,7 +265,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     private void writeTracks() {
-        for (IGpxTrack trk : data.getTracks()) {
+        for (IGpxTrack trk : data.getOrderedTracks()) {
             openln("trk");
             writeAttr(trk, RTE_TRK_KEYS);
             gpxExtensions(trk.getExtensions());

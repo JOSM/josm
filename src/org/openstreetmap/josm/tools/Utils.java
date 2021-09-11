@@ -649,7 +649,7 @@ public final class Utils {
     @SuppressWarnings("unchecked")
     public static <T> List<T> toUnmodifiableList(Collection<T> collection) {
         // Java 9: use List.of(...)
-        if (collection == null || collection.isEmpty()) {
+        if (isEmpty(collection)) {
             return Collections.emptyList();
         } else if (collection.size() == 1) {
             return Collections.singletonList(collection.iterator().next());
@@ -671,7 +671,7 @@ public final class Utils {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> toUnmodifiableMap(Map<K, V> map) {
-        if (map == null || map.isEmpty()) {
+        if (isEmpty(map)) {
             return Collections.emptyMap();
         } else if (map.size() == 1) {
             final Map.Entry<K, V> entry = map.entrySet().iterator().next();
@@ -685,6 +685,36 @@ public final class Utils {
             }
         }
         return Collections.unmodifiableMap(map);
+    }
+
+    /**
+     * Determines if a collection is null or empty.
+     * @param collection collection
+     * @return {@code true} if collection is null or empty
+     * @since 18207
+     */
+    public static boolean isEmpty(Collection<?> collection) {
+        return collection == null || collection.isEmpty();
+    }
+
+    /**
+     * Determines if a map is null or empty.
+     * @param map map
+     * @return {@code true} if map is null or empty
+     * @since 18207
+     */
+    public static boolean isEmpty(Map<?, ?> map) {
+        return map == null || map.isEmpty();
+    }
+
+    /**
+     * Determines if a string is null or empty.
+     * @param string string
+     * @return {@code true} if string is null or empty
+     * @since 18207
+     */
+    public static boolean isEmpty(String string) {
+        return string == null || string.isEmpty();
     }
 
     /**
@@ -736,7 +766,7 @@ public final class Utils {
      * @since 8435
      */
     public static String strip(final String str, final String skipChars) {
-        if (str == null || str.isEmpty()) {
+        if (isEmpty(str)) {
             return str;
         }
 
@@ -773,7 +803,7 @@ public final class Utils {
      * @since 13597
      */
     public static String removeWhiteSpaces(String s) {
-        if (s == null || s.isEmpty()) {
+        if (isEmpty(s)) {
             return s;
         }
         return strip(s).replaceAll("\\s+", " ");

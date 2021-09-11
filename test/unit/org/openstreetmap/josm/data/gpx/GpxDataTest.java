@@ -322,7 +322,29 @@ class GpxDataTest {
         data.addTrack(track1);
         data.addTrack(track2);
         assertEquals(3 * new LatLon(0, 0).greatCircleDistance(new LatLon(1, 1)), data.length(), 1);
+    }
 
+    /**
+     * Test method for {@link GpxData#getOrderedTracks()}.
+     */
+    @Test
+    void testGetOrderedTracks() {
+        assertTrue(data.getOrderedTracks().isEmpty());
+
+        WayPoint p1 = new WayPoint(LatLon.NORTH_POLE);
+        WayPoint p2 = new WayPoint(LatLon.NORTH_POLE);
+
+        p1.setInstant(Instant.ofEpochMilli(100020));
+        p2.setInstant(Instant.ofEpochMilli(200020));
+
+        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p2)), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p1)), Collections.emptyMap()));
+
+        List<IGpxTrack> tracks = data.getOrderedTracks();
+        assertEquals(2, tracks.size());
+
+        assertEquals(p1, tracks.get(0).getSegments().iterator().next().getWayPoints().iterator().next());
+        assertEquals(p2, tracks.get(1).getSegments().iterator().next().getWayPoints().iterator().next());
     }
 
     /**
