@@ -69,6 +69,14 @@
         <combo key="bus_bay" text="Bus bay" values="both,left,right" />
         <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
     </chunk>
+    <chunk id="highway_max">
+            <text key="maxweight" text="Max. weight (tonnes)" match="key" />
+            <text key="maxaxleload" text="Max. axleload (tonnes)" match="key" />
+            <space />
+            <text key="maxheight" text="Max. height (meters)" match="key" />
+            <text key="maxwidth" text="Max. width (meters)" match="key" />
+            <text key="maxlength" text="Max. length (meters)" match="key" />
+    </chunk>
     <chunk id="placement_shoulder">
         <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5,transition" />
         <combo key="placement:forward" text="Placement in way direction" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5" />
@@ -954,7 +962,7 @@
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Construction -->
         <separator/>
-        <item name="Road Restrictions" icon="presets/vehicle/restriction/maxspeed.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true"> <!-- There are links from MPs and route relations to this preset -->
+        <item name="Road Restrictions" icon="presets/vehicle/restriction/maxspeed.svg" type="node,way,closedway,multipolygon" preset_name_label="true" > <!-- There are links from MP relations to this preset -->
             <link wiki="Key:access" />
             <space />
             <checkgroup columns="3" >
@@ -971,12 +979,7 @@
             <text key="maxspeed:advisory" text="Signposted advisory max. speed (km/h)" />
             <text key="minspeed" text="Min. speed (km/h)" match="key" />
             <space />
-            <text key="maxweight" text="Max. weight (tonnes)" match="key" />
-            <text key="maxaxleload" text="Max. axleload (tonnes)" match="key" />
-            <space />
-            <text key="maxheight" text="Max. height (meters)" match="key" />
-            <text key="maxwidth" text="Max. width (meters)" match="key" />
-            <text key="maxlength" text="Max. length (meters)" match="key" />
+            <reference ref="highway_max" />
             <space />
             <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" values_sort="false" match="key" />
             <preset_link preset_name="Access Restrictions" />
@@ -2192,8 +2195,10 @@
                 <space />
                 <reference ref="oh" />
                 <reference ref="pt_route_opt2" />
+                <space />
+                <reference ref="highway_max" />
             </optional>
-            <reference ref="link_road_access_restrictions" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Ferry Route -->
         <separator/>
         <item name="Marina" icon="presets/nautical/marina.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2906,8 +2911,10 @@
                 <reference ref="oh" />
                 <reference ref="public_transport_route_optionals" />
                 <reference ref="pt_route_opt2" />
+                <space />
+                <reference ref="highway_max" />
             </optional>
-            <reference ref="link_road_access_restrictions" />
+            <preset_link preset_name="Access Restrictions" />
             <roles>
                 <role key="stop" text="stop_position" requisite="optional" type="node" member_expression="public_transport=stop_position ferry=yes" />
                 <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform ferry=yes" />
@@ -3047,7 +3054,7 @@
         </item> <!-- Ticket Machine -->
     </group> <!-- Public Transport -->
     <group name="Public Transport (Legacy)" icon="presets/transport/bus_old.svg">
-        <item name="Public transport route (Legacy) (Bus/Train)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+        <item name="Public transport route (Legacy)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
             <link wiki="Public_transport#Service_routes" />
             <space />
             <key key="type" value="route" />
@@ -3067,7 +3074,7 @@
                 <role key="backward_stop" text="backward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="highway=platform OR railway=platform" />
             </roles>
-        </item> <!-- Public transport route (Legacy) (Bus/Train) -->
+        </item> <!-- Public transport route (Legacy) -->
         <item name="Public transport route (Legacy) (Ferry)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
             <link wiki="Tag:route=ferry" />
             <space />
@@ -3083,8 +3090,10 @@
                 <text key="description" text="Description" />
                 <reference ref="color" />
                 <reference ref="pt_route_opt2" />
+                <space />
+                <reference ref="highway_max" />
             </optional>
-            <reference ref="link_road_access_restrictions" />
+            <preset_link preset_name="Access Restrictions" />
             <roles>
                 <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="route=ferry" />
                 <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="route=ferry" />
