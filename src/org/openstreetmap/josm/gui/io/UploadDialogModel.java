@@ -74,7 +74,7 @@ public class UploadDialogModel extends TagEditorModel {
         String hashtags = String.join(";",
             Arrays.stream(comment.split("\\s", -1))
                 .map(s -> Utils.strip(s, ",;"))
-                .filter(s -> s.matches("#[a-zA-Z][-_a-zA-Z0-9]+"))
+                .filter(s -> s.matches("#[a-zA-Z0-9][-_a-zA-Z0-9]+"))
                 .collect(Collectors.toList()));
         return hashtags.isEmpty() ? null : hashtags;
     }

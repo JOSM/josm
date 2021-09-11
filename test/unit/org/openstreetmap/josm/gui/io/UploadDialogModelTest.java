@@ -37,7 +37,7 @@ public class UploadDialogModelTest {
         assertNull(model.findHashTags(" #"));
         assertNull(model.findHashTags(" # "));
         assertNull(model.findHashTags(" https://example.com/#map "));
-        assertNull(model.findHashTags("#59606086"));
+        assertEquals("#59606086", model.findHashTags("#59606086"));
         assertEquals("#foo", model.findHashTags(" #foo "));
         assertEquals("#foo;#bar", model.findHashTags(" #foo #bar baz"));
         assertEquals("#foo;#bar", model.findHashTags(" #foo, #bar, baz"));
