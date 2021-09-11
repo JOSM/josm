@@ -233,6 +233,8 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
             simpleTag("keywords", data.getString(META_KEYWORDS));
         }
 
+        simpleTag("time", Instant.now().toString());
+
         Bounds bounds = data.recalculateBounds();
         if (bounds != null) {
             String b = "minlat=\"" + bounds.getMinLat() + "\" minlon=\"" + bounds.getMinLon() +
