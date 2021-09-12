@@ -84,7 +84,8 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
      * Saves the latest, successfully parsed search term.
      */
     private void saveHistory() {
-        model.addTopElement(SearchSetting.fromString(hcbSearchString.getText()));
+        Optional.ofNullable(SearchSetting.fromString(hcbSearchString.getText()))
+            .ifPresent(model::addTopElement);
         prefs.save(OVERPASS_WIZARD_HISTORY);
     }
 
