@@ -73,8 +73,10 @@ public class VectorWay extends VectorPrimitive implements IWay<VectorNode> {
     public void setNodes(List<VectorNode> nodes) {
         this.nodes.forEach(node -> node.removeReferrer(this));
         this.nodes.clear();
-        nodes.forEach(node -> node.addReferrer(this));
-        this.nodes.addAll(nodes);
+        if (nodes != null) {
+            nodes.forEach(node -> node.addReferrer(this));
+            this.nodes.addAll(nodes);
+        }
         this.cachedBBox = null;
     }
 
