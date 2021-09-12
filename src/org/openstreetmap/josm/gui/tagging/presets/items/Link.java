@@ -35,7 +35,11 @@ public class Link extends TextItem {
     @Override
     public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
         initializeLocaleText(tr("More information about this feature"));
-        Optional.ofNullable(buildUrlLabel()).ifPresent(label -> p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL)));
+        UrlLabel label = buildUrlLabel();
+        if (label != null) {
+            label.applyComponentOrientation(support.getDefaultComponentOrientation());
+            p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL));
+        }
         return false;
     }
 

@@ -2,18 +2,28 @@
 package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Color;
+import java.awt.ComponentOrientation;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
+import javax.swing.RepaintManager;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import org.openstreetmap.josm.gui.MainApplication;
@@ -30,12 +40,14 @@ import org.openstreetmap.josm.tools.Utils;
  * </ul><br>This class must be used everywhere in core and plugins instead of {@code JTextField}.
  * @since 5886
  */
-public class JosmTextField extends JTextField implements Destroyable, FocusListener {
+public class JosmTextField extends JTextField implements Destroyable, ComponentListener, FocusListener, PropertyChangeListener {
 
     private final PopupMenuLauncher launcher;
     private String hint;
     private Icon icon;
-    private int leftInsets;
+    private Point iconPos;
+    private Insets originalMargin;
+    private OrientationAction orientationAction;
 
     /**
      * Constructs a new <code>JosmTextField</code> that uses the given text
@@ -77,13 +89,30 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
     public JosmTextField(Document doc, String text, int columns, boolean undoRedo) {
         super(doc, text, columns);
         launcher = TextContextualPopupMenu.enableMenuFor(this, undoRedo);
+
+        // There seems to be a bug in Swing 8 that components with Bidi enabled are smaller than
+        // without. (eg. 23px vs 21px in height, maybe a font thing).  Usually Bidi starts disabled
+        // but gets enabled whenever RTL text is loaded.  To avoid trashing the layout we enable
+        // Bidi by default.  See also {@link #drawHint()}.
+        getDocument().putProperty("i18n", Boolean.TRUE);
+
+        // the menu and hotkey to change text orientation
+        orientationAction = new OrientationAction(this);
+        orientationAction.addPropertyChangeListener(this);
+        JPopupMenu menu = launcher.getMenu();
+        menu.addSeparator();
+        menu.add(new JMenuItem(orientationAction));
+        getInputMap().put(OrientationAction.getShortcutKey(), orientationAction);
+
         // Fix minimum size when columns are specified
         if (columns > 0) {
             setMinimumSize(getPreferredSize());
         }
         addFocusListener(this);
+        addComponentListener(this);
         // Workaround for Java bug 6322854
         JosmPasswordField.workaroundJdkBug6322854(this);
+        originalMargin = getMargin();
     }
 
     /**
@@ -147,10 +176,23 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
     /**
      * Sets the hint to display when no text has been entered.
      * @param hint the hint to set
-     * @since 7505
+     * @return the old hint
+     * @since 18221 (signature)
      */
-    public final void setHint(String hint) {
+    public String setHint(String hint) {
+        String old = hint;
         this.hint = hint;
+        return old;
+    }
+
+    /**
+     * Return true if the textfield should display the hint text.
+     *
+     * @return whether to display the hint text
+     * @since 18221
+     */
+    public boolean displayHint() {
+        return !Utils.isEmpty(hint) && getText().isEmpty() && !isFocusOwner();
     }
 
     /**
@@ -169,11 +211,32 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
      */
     public void setIcon(Icon icon) {
         this.icon = icon;
+        if (icon == null) {
+            setMargin(originalMargin);
+        }
+        positionIcon();
+    }
+
+    private void positionIcon() {
         if (icon != null) {
-            this.leftInsets = getInsets().left;
-            Border original = getBorder();
-            Border margin = BorderFactory.createEmptyBorder(0, icon.getIconWidth(), 0, 0);
-            setBorder(original == null ? margin : BorderFactory.createCompoundBorder(original, margin));
+            Insets margin = (Insets) originalMargin.clone();
+            int hGap = (getHeight() - icon.getIconHeight()) / 2;
+            if (getComponentOrientation() == ComponentOrientation.RIGHT_TO_LEFT) {
+                margin.right += icon.getIconWidth() + 2 * hGap;
+                iconPos = new Point(getWidth() - icon.getIconWidth() - hGap, hGap);
+            } else {
+                margin.left += icon.getIconWidth() + 2 * hGap;
+                iconPos = new Point(hGap, hGap);
+            }
+            setMargin(margin);
+        }
+    }
+
+    @Override
+    public void setComponentOrientation(ComponentOrientation o) {
+        if (o.isLeftToRight() != getComponentOrientation().isLeftToRight()) {
+            super.setComponentOrientation(o);
+            positionIcon();
         }
     }
 
@@ -185,29 +248,69 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
         launcher.discardAllUndoableEdits();
     }
 
+    /**
+     * Returns the color for hint texts.
+     * @return the Color for hint texts
+     */
+    public static Color getHintTextColor() {
+        Color color = UIManager.getColor("TextField[Disabled].textForeground"); // Nimbus?
+        if (color == null)
+            color = UIManager.getColor("TextField.inactiveForeground");
+        if (color == null)
+            color = Color.GRAY;
+        return color;
+    }
+
+    /**
+     * Returns the font for hint texts.
+     * @return the font for hint texts
+     */
+    public static Font getHintFont() {
+        return UIManager.getFont("TextField.font");
+    }
+
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         if (icon != null) {
-            int h = getHeight() - icon.getIconHeight();
-            icon.paintIcon(this, g, Math.min(leftInsets, h / 2), h / 2);
+            icon.paintIcon(this, g, iconPos.x, iconPos.y);
         }
-        if (!Utils.isEmpty(hint) && getText().isEmpty() && !isFocusOwner()) {
-            // Taken from http://stackoverflow.com/a/24571681/2257172
-            int h = getHeight();
-            if (g instanceof Graphics2D) {
-                ((Graphics2D) g).setRenderingHint(
-                        RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            }
-            Insets ins = getInsets();
-            FontMetrics fm = g.getFontMetrics();
-            int c0 = getBackground().getRGB();
-            int c1 = getForeground().getRGB();
-            int m = 0xfefefefe;
-            int c2 = ((c0 & m) >>> 1) + ((c1 & m) >>> 1);
-            g.setColor(new Color(c2, true));
-            g.drawString(hint, ins.left, h / 2 + fm.getAscent() / 2 - 2);
+        if (displayHint()) {
+            // Logging.debug("drawing textfield hint: {0}", getHint());
+            drawHint(g);
         }
+    }
+
+    /**
+     * Draws the hint text over the editor component.
+     *
+     * @param g the graphics context
+     */
+    public void drawHint(Graphics g) {
+        int x;
+        try {
+            x = modelToView(0).x;
+        } catch (BadLocationException exc) {
+            return; // can't happen
+        }
+        // Taken from http://stackoverflow.com/a/24571681/2257172
+        if (g instanceof Graphics2D) {
+            ((Graphics2D) g).setRenderingHint(
+                    RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        }
+        g.setColor(getHintTextColor());
+        g.setFont(getHintFont());
+        if (getComponentOrientation().isLeftToRight()) {
+            g.drawString(getHint(), x, getBaseline(getWidth(), getHeight()));
+        } else {
+            FontMetrics metrics = g.getFontMetrics(g.getFont());
+            int dx = metrics.stringWidth(getHint());
+            g.drawString(getHint(), x - dx, getBaseline(getWidth(), getHeight()));
+        }
+        // Needed to avoid endless repaint loop if we accidentally draw over the insets.  This may
+        // easily happen because a change in text orientation invalidates the textfield and
+        // following that the preferred size gets smaller. (Bug in Swing?)
+        RepaintManager.currentManager(this).markCompletelyClean(this);
     }
 
     @Override
@@ -216,7 +319,13 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
         if (map != null) {
             map.keyDetector.setEnabled(false);
         }
-        repaint();
+        if (e != null && e.getOppositeComponent() != null) {
+            // Select all characters when the change of focus occurs inside JOSM only.
+            // When switching from another application, it is annoying, see #13747
+            selectAll();
+        }
+        positionIcon();
+        repaint(); // get rid of hint
     }
 
     @Override
@@ -225,12 +334,37 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
         if (map != null) {
             map.keyDetector.setEnabled(true);
         }
-        repaint();
+        repaint(); // paint hint
     }
 
     @Override
     public void destroy() {
         removeFocusListener(this);
         TextContextualPopupMenu.disableMenuFor(this, launcher);
+    }
+
+    @Override
+    public void componentResized(ComponentEvent e) {
+        positionIcon();
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        // command from the menu / shortcut key
+        if ("orientationAction".equals(evt.getPropertyName())) {
+            setComponentOrientation((ComponentOrientation) evt.getNewValue());
+        }
     }
 }

@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 
 import org.openstreetmap.josm.data.osm.Tag;
@@ -30,12 +30,12 @@ public class MultiSelect extends ComboMultiSelect {
     protected ConcatenatingJList list;
 
     @Override
-    protected void addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support) {
+    protected JComponent addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support) {
         list = new ConcatenatingJList(delimiter, presetListEntries.toArray(new PresetListEntry[0]));
-        component = list;
-        ListCellRenderer<PresetListEntry> renderer = getListCellRenderer();
+        ComboMultiSelectListCellRenderer renderer = new ComboMultiSelectListCellRenderer(list, list.getCellRenderer(), 200, key);
         list.setCellRenderer(renderer);
-        list.setSelectedItem(getItemToSelect(def, support, true));
+        Object itemToSelect = getItemToSelect(def, support, true);
+        list.setSelectedItem(itemToSelect == null ? null : new PresetListEntry(itemToSelect.toString()));
         JScrollPane sp = new JScrollPane(list);
         // if a number of rows has been specified in the preset,
         // modify preferred height of scroll pane to match that row count.
@@ -46,6 +46,7 @@ public class MultiSelect extends ComboMultiSelect {
         }
         list.addListSelectionListener(l -> support.fireItemValueModified(this, key, getSelectedValue()));
         p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));
+        return list;
     }
 
     @Override

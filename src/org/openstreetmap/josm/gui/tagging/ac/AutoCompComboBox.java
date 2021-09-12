@@ -1,35 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.ac;
 
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.im.InputContext;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.StyleConstants;
+import javax.swing.ComboBoxEditor;
 
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -44,87 +24,11 @@ import org.openstreetmap.josm.tools.Logging;
  * @param <E> the type of the combobox entries
  * @since 18173
  */
-public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener {
+public class AutoCompComboBox<E> extends JosmComboBox<E> implements AutoCompListener {
 
-    /** a regex that matches numbers */
-    private static final Pattern IS_NUMBER = Pattern.compile("^\\d+$");
-    /** true if the combobox should autocomplete */
-    private boolean autocompleteEnabled = true;
-    /** the editor will not accept text longer than this. -1 to disable */
-    private int maxTextLength = -1;
     /** force a different keyboard input locale for the editor */
     private boolean useFixedLocale;
-
-    /** Whether to autocomplete numbers */
-    private final boolean AUTOCOMPLETE_NUMBERS = !Config.getPref().getBoolean("autocomplete.dont_complete_numbers", true);
-
     private final transient InputContext privateInputContext = InputContext.getInstance();
-
-    static final class InnerFocusListener implements FocusListener {
-        private final JTextComponent editorComponent;
-
-        InnerFocusListener(JTextComponent editorComponent) {
-            this.editorComponent = editorComponent;
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-            MapFrame map = MainApplication.getMap();
-            if (map != null) {
-                map.keyDetector.setEnabled(true);
-            }
-        }
-
-        @Override
-        public void focusGained(FocusEvent e) {
-            MapFrame map = MainApplication.getMap();
-            if (map != null) {
-                map.keyDetector.setEnabled(false);
-            }
-            // save unix system selection (middle mouse paste)
-            Clipboard sysSel = ClipboardUtils.getSystemSelection();
-            if (sysSel != null) {
-                Transferable old = ClipboardUtils.getClipboardContent(sysSel);
-                editorComponent.selectAll();
-                if (old != null) {
-                    sysSel.setContents(old, null);
-                }
-            } else if (e != null && e.getOppositeComponent() != null) {
-                // Select all characters when the change of focus occurs inside JOSM only.
-                // When switching from another application, it is annoying, see #13747
-                editorComponent.selectAll();
-            }
-        }
-    }
-
-    /**
-     * A {@link DocumentFilter} to limit the text length in the editor.
-     */
-    private class MaxLengthDocumentFilter extends DocumentFilter {
-        @Override
-        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
-                throws BadLocationException {
-            if (mustInsertOrReplace(fb, 0, string, attr)) {
-                super.insertString(fb, offset, string, attr);
-            }
-        }
-
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String string, AttributeSet attr)
-                throws BadLocationException {
-            if (mustInsertOrReplace(fb, length, string, attr)) {
-                super.replace(fb, offset, length, string, attr);
-            }
-        }
-
-        private boolean mustInsertOrReplace(FilterBypass fb, int length, String string, AttributeSet attr) {
-            int newLen = fb.getDocument().getLength() - length + ((string == null) ? 0 : string.length());
-            return (maxTextLength == -1 || newLen <= maxTextLength ||
-                    // allow longer text while composing characters or it will be hard to compose
-                    // the last characters before the limit
-                    ((attr != null) && attr.isDefined(StyleConstants.ComposedTextAttribute)));
-        }
-    }
 
     /**
      * Constructs an {@code AutoCompletingComboBox}.
@@ -140,77 +44,57 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
      */
     public AutoCompComboBox(AutoCompComboBoxModel<E> model) {
         super(model);
-        Objects.requireNonNull(model, "A model cannot be null.");
+        setEditor(new AutoCompComboBoxEditor<E>());
         setEditable(true);
-        final JTextComponent editorComponent = getEditorComponent();
-        editorComponent.addFocusListener(new InnerFocusListener(editorComponent));
-        editorComponent.addKeyListener(this);
-        ((AbstractDocument) editorComponent.getDocument()).setDocumentFilter(new MaxLengthDocumentFilter());
+        getEditorComponent().setModel(model);
+        getEditorComponent().addAutoCompListener(this);
     }
 
     /**
      * Returns the {@link AutoCompComboBoxModel} currently used.
      *
-     * @return the model
+     * @return the model or null
      */
     @Override
     public AutoCompComboBoxModel<E> getModel() {
         return (AutoCompComboBoxModel<E>) dataModel;
     }
 
-    /**
-     * Autocompletes what the user typed in.
-     * <p>
-     * Gets the user input from the editor, finds the best matching item in the model, selects it in
-     * the list, sets the editor text, and highlights the autocompleted part. If there is no
-     * matching item, removes the list selection.
-     */
-    private void autocomplete() {
-        JTextField editor = getEditorComponent();
-        String prefix = editor.getText();
-        if (!AUTOCOMPLETE_NUMBERS && IS_NUMBER.matcher(prefix).matches())
-            return;
-
-        E item = getModel().findBestCandidate(prefix);
-        if (item != null) {
-            String text = item.toString();
-            // This calls setItem() if the selected item changed
-            // See: javax.swing.plaf.basic.BasicComboBoxUI.Handler.contentsChanged(ListDataEvent e)
-            setSelectedItem(item);
-            // set manually in case the selected item didn't change
-            editor.setText(text);
-            // select the autocompleted suffix in the editor
-            editor.select(prefix.length(), text.length());
-            // copy the whole autocompleted string to the unix system-wide selection (aka
-            // middle-click), else only the selected suffix would be copied
-            copyToSysSel(text);
-        } else {
-            setSelectedItem(null);
-            // avoid setItem because it selects the whole text (on windows only)
-            editor.setText(prefix);
+    @Override
+    public void setEditor(ComboBoxEditor newEditor) {
+        if (editor != null) {
+            editor.getEditorComponent().removePropertyChangeListener(this);
+        }
+        super.setEditor(newEditor);
+        if (editor != null) {
+            // listen to orientation changes in the editor
+            editor.getEditorComponent().addPropertyChangeListener(this);
         }
     }
 
     /**
-     * Copies a String to the UNIX system-wide selection (aka middle-click).
+     * Returns the editor component
      *
-     * @param s the string to copy
+     * @return the editor component
+     * @see ComboBoxEditor#getEditorComponent()
+     * @since 18221
      */
-    void copyToSysSel(String s) {
-        Clipboard sysSel = ClipboardUtils.getSystemSelection();
-        if (sysSel != null) {
-            Transferable transferable = new StringSelection(s);
-            sysSel.setContents(transferable, null);
-        }
+    @Override
+    @SuppressWarnings("unchecked")
+    public AutoCompTextField<E> getEditorComponent() {
+        return getEditor() == null ? null : (AutoCompTextField<E>) getEditor().getEditorComponent();
     }
 
     /**
-     * Sets the maximum text length.
+     * Selects the autocompleted item in the dropdown.
      *
-     * @param length the maximum text length in number of characters
+     * @param item the item selected for autocomplete
      */
-    public void setMaxTextLength(int length) {
-        maxTextLength = length;
+    private void autocomplete(Object item) {
+        // Save the text in case item is null, because setSelectedItem will erase it.
+        String savedText = getText();
+        setSelectedItem(item);
+        setText(savedText);
     }
 
     /**
@@ -262,15 +146,6 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
     }
 
     /**
-     * Returns {@code true} if autocompletion is enabled.
-     *
-     * @return {@code true} if autocompletion is enabled.
-     */
-    public final boolean isAutocompleteEnabled() {
-        return autocompleteEnabled;
-    }
-
-    /**
      * Enables or disables the autocompletion.
      *
      * @param enabled {@code true} to enable autocompletion
@@ -278,9 +153,7 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
      * @since 18173 (signature)
      */
     public boolean setAutocompleteEnabled(boolean enabled) {
-        boolean oldEnabled = this.autocompleteEnabled;
-        this.autocompleteEnabled = enabled;
-        return oldEnabled;
+        return getEditorComponent().setAutocompleteEnabled(enabled);
     }
 
     /**
@@ -318,32 +191,14 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements KeyListener 
         return super.getInputContext();
     }
 
-    /*
-     * The KeyListener interface
-     */
+    /** AutoCompListener Interface */
 
-    /**
-     * Listens to key events and eventually schedules an autocomplete.
-     *
-     * @param e the key event
-     */
     @Override
-    public void keyTyped(KeyEvent e) {
-        if (autocompleteEnabled
-                // and selection is at the end
-                && getEditorComponent().getSelectionEnd() == getEditorComponent().getText().length()
-                // and something visible was typed
-                && !Character.isISOControl(e.getKeyChar())) {
-            // We got the event before the editor component could see it. Let the editor do its job first.
-            SwingUtilities.invokeLater(() -> autocomplete());
-        }
+    public void autoCompBefore(AutoCompEvent e) {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
+    public void autoCompPerformed(AutoCompEvent e) {
+        autocomplete(e.getItem());
     }
 }

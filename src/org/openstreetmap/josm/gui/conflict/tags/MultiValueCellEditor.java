@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -21,6 +20,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -49,7 +49,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
 
     /** the combo box used as editor */
     private final JosmComboBox<Object> editor;
-    private final DefaultComboBoxModel<Object> editorModel;
+    private final JosmComboBoxModel<Object> editorModel;
     private final CopyOnWriteArrayList<NavigationListener> listeners;
 
     /**
@@ -86,7 +86,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
      * Construct a new {@link MultiValueCellEditor}
      */
     public MultiValueCellEditor() {
-        editorModel = new DefaultComboBoxModel<>();
+        editorModel = new JosmComboBoxModel<>();
         editor = new JosmComboBox<Object>(editorModel) {
             @Override
             public void processKeyEvent(KeyEvent e) {

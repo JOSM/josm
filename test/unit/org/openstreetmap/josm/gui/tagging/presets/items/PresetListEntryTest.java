@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,6 +25,6 @@ class PresetListEntryTest {
      */
     @Test
     void testTicket12416() {
-        assertEquals("&nbsp;", new PresetListEntry("").getListDisplay());
+        assertTrue(new PresetListEntry("").getListDisplay(200).contains(" "));
     }
 }

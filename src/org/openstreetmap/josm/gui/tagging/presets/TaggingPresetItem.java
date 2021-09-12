@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
@@ -54,6 +56,21 @@ public abstract class TaggingPresetItem {
         AutoCompletionList list = new AutoCompletionList();
         AutoCompletionManager.of(data).populateWithTagValues(list, keys);
         field.setAutoCompletionList(list);
+    }
+
+    /**
+     * Returns all cached {@link AutoCompletionItem}s for given keys.
+     *
+     * @param keys retrieve the items for these keys
+     * @return the currently cached items, sorted by priority and alphabet
+     * @since 18221
+     */
+    protected List<AutoCompletionItem> getAllForKeys(List<String> keys) {
+        DataSet data = OsmDataManager.getInstance().getEditDataSet();
+        if (data == null) {
+            return Collections.emptyList();
+        }
+        return AutoCompletionManager.of(data).getAllForKeys(keys);
     }
 
     /**

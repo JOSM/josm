@@ -35,11 +35,6 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
     /** The localized version of {@link #short_description}. */
     public String locale_short_description; // NOSONAR
 
-    /** Cached width (currently only for Combo) to speed up preset dialog initialization */
-    public short preferredWidth = -1; // NOSONAR
-    /** Cached height (currently only for Combo) to speed up preset dialog initialization */
-    public short preferredHeight = -1; // NOSONAR
-
     /**
      * Constructs a new {@code PresetListEntry}, uninitialized.
      */
@@ -56,27 +51,34 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
     }
 
     /**
-     * Returns HTML formatted contents.
+     * Returns the contents displayed in the dropdown list.
+     *
+     * This is the contents that would be displayed in the current view plus a short description to
+     * aid the user.  The whole contents is wrapped to {@code width}.
+     *
+     * @param width the width in px
      * @return HTML formatted contents
      */
-    public String getListDisplay() {
-        if (value.equals(KeyedItem.DIFFERENT))
-            return "<b>" + Utils.escapeReservedCharactersHTML(KeyedItem.DIFFERENT) + "</b>";
-
-        String displayValue = Utils.escapeReservedCharactersHTML(getDisplayValue());
-        String shortDescription = getShortDescription(true);
-
-        if (displayValue.isEmpty() && Utils.isEmpty(shortDescription))
-            return "&nbsp;";
-
-        final StringBuilder res = new StringBuilder("<b>").append(displayValue).append("</b>");
-        if (!Utils.isEmpty(shortDescription)) {
-            // wrap in table to restrict the text width
-            res.append("<div style=\"width:300px; padding:0 0 5px 5px\">")
-               .append(shortDescription)
-               .append("</div>");
+    public String getListDisplay(int width) {
+        if (value.equals(KeyedItem.DIFFERENT)) {
+            return "<b>" + KeyedItem.DIFFERENT + "</b>";
         }
-        return res.toString();
+
+        String shortDescription = getShortDescription(true);
+        String displayValue = getDisplayValue();
+
+        if (shortDescription.isEmpty()) {
+            if (displayValue.isEmpty()) {
+                return " ";
+            }
+            return displayValue;
+        }
+
+        // RTL not supported in HTML. See: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4866977
+        return String.format("<html><div style=\"width: %d\"><b>%s</b><p style=\"padding-left: 10\">%s</p></div></html>",
+                width,
+                displayValue,
+                Utils.escapeReservedCharactersHTML(shortDescription));
     }
 
     /**
@@ -88,7 +90,7 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
     }
 
     /**
-     * Returns the value to display.
+     * Returns the contents of the current item view.
      * @return the value to display
      */
     public String getDisplayValue() {
@@ -101,9 +103,10 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
      * @return the short description to display
      */
     public String getShortDescription(boolean translated) {
-        return translated
+        String shortDesc = translated
                 ? Utils.firstNonNull(locale_short_description, tr(short_description))
                         : short_description;
+        return shortDesc == null ? "" : shortDesc;
     }
 
     // toString is mainly used to initialize the Editor
@@ -112,7 +115,7 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
         if (KeyedItem.DIFFERENT.equals(value))
             return KeyedItem.DIFFERENT;
         String displayValue = getDisplayValue();
-        return displayValue != null ? displayValue.replaceAll("<.*>", "") : ""; // remove additional markup, e.g. <br>
+        return displayValue != null ? displayValue.replaceAll("\\s*<.*>\\s*", " ") : ""; // remove additional markup, e.g. <br>
     }
 
     @Override

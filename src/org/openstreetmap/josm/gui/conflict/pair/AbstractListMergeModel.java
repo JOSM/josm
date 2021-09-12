@@ -21,8 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -41,6 +39,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.gui.util.TableHelper;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -832,7 +831,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
         return this.comparePairListModel;
     }
 
-    public class ComparePairListModel extends AbstractListModel<ComparePairType> implements ComboBoxModel<ComparePairType> {
+    public class ComparePairListModel extends JosmComboBoxModel<ComparePairType> {
 
         private int selectedIdx;
         private final List<ComparePairType> compareModes;

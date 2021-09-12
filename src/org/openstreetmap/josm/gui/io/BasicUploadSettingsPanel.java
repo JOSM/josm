@@ -107,7 +107,7 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         pnl.setBorder(BorderFactory.createTitledBorder(tr("Provide a brief comment for the changes you are uploading:")));
 
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
-        hcbUploadComment.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
+        hcbUploadComment.getEditorComponent().setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
         JTextField editor = hcbUploadComment.getEditorComponent();
         editor.getDocument().putProperty("tag", "comment");
         editor.addKeyListener(this);
@@ -146,7 +146,7 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         }
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
-        hcbUploadSource.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
+        hcbUploadSource.getEditorComponent().setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
         JTextField editor = hcbUploadSource.getEditorComponent();
         editor.getDocument().putProperty("tag", "source");
         editor.addKeyListener(this);

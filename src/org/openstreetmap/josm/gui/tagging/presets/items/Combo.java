@@ -5,19 +5,27 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionPriority;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxEditor;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompTextField;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
@@ -35,9 +43,29 @@ public class Combo extends ComboMultiSelect {
      */
     public boolean editable = true; // NOSONAR
     /** The length of the combo box (number of characters allowed). */
-    public short length; // NOSONAR
+    public int length; // NOSONAR
 
     protected JosmComboBox<PresetListEntry> combobox;
+    protected AutoCompComboBoxModel<PresetListEntry> dropDownModel;
+    protected AutoCompComboBoxModel<AutoCompletionItem> autoCompModel;
+
+    class ComponentListener extends ComponentAdapter {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            // Make multi-line JLabels the correct size
+            // Only needed if there is any short_description
+            JComponent component = (JComponent) e.getSource();
+            int width = component.getWidth();
+            if (width == 0)
+                width = 200;
+            Insets insets = component.getInsets();
+            width -= insets.left + insets.right + 10;
+            ComboMultiSelectListCellRenderer renderer = (ComboMultiSelectListCellRenderer) combobox.getRenderer();
+            renderer.setWidth(width);
+            combobox.setRenderer(null); // needed to make prop change fire
+            combobox.setRenderer(renderer);
+        }
+    }
 
     /**
      * Constructs a new {@code Combo}.
@@ -47,7 +75,7 @@ public class Combo extends ComboMultiSelect {
     }
 
     @Override
-    protected void addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support) {
+    protected JComponent addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support) {
         if (!usage.unused()) {
             for (String s : usage.values) {
                 presetListEntries.add(new PresetListEntry(s));
@@ -58,26 +86,38 @@ public class Combo extends ComboMultiSelect {
         }
         presetListEntries.add(new PresetListEntry(""));
 
-        combobox = new JosmComboBox<>(presetListEntries.toArray(new PresetListEntry[0]));
-        component = combobox;
-        combobox.setRenderer(getListCellRenderer());
-        combobox.setEditable(true); // fix incorrect height, see #6157
-        combobox.reinitialize(presetListEntries);
-        combobox.setEditable(editable); // see #6157
-        AutoCompletingTextField tf = new AutoCompletingTextField();
-        initAutoCompletionField(tf, key);
+        dropDownModel = new AutoCompComboBoxModel<PresetListEntry>(Comparator.naturalOrder());
+        autoCompModel = new AutoCompComboBoxModel<AutoCompletionItem>(Comparator.naturalOrder());
+        presetListEntries.forEach(dropDownModel::addElement);
+
+        combobox = new JosmComboBox<>(dropDownModel);
+        AutoCompComboBoxEditor<AutoCompletionItem> editor = new AutoCompComboBoxEditor<>();
+        combobox.setEditor(editor);
+
+        // The default behaviour of JComboBox is to size the editor according to the tallest item in
+        // the dropdown list.  We don't want that to happen because we want to show taller items in
+        // the list than in the editor.  We can't use
+        // {@code combobox.setPrototypeDisplayValue(new PresetListEntry(" "));} because that would
+        // set a fixed cell height in JList.
+        combobox.setPreferredHeight(combobox.getPreferredSize().height);
+
+        // a custom cell renderer capable of displaying a short description text along with the
+        // value
+        combobox.setRenderer(new ComboMultiSelectListCellRenderer(combobox, combobox.getRenderer(), 200, key));
+        combobox.setEditable(editable);
+
+        getAllForKeys(Arrays.asList(key)).forEach(autoCompModel::addElement);
+        getDisplayValues().forEach(s -> autoCompModel.addElement(new AutoCompletionItem(s, AutoCompletionPriority.IS_IN_STANDARD)));
+
+        AutoCompTextField<AutoCompletionItem> tf = editor.getEditorComponent();
+        tf.setModel(autoCompModel);
+
         if (TaggingPresetItem.DISPLAY_KEYS_AS_HINT.get()) {
-            tf.setHint(key);
+            combobox.setHint(key);
         }
         if (length > 0) {
-            tf.setMaxChars((int) length);
+            tf.setMaxTextLength(length);
         }
-        AutoCompletionList acList = tf.getAutoCompletionList();
-        if (acList != null) {
-            acList.add(getDisplayValues(), AutoCompletionPriority.IS_IN_STANDARD);
-        }
-        combobox.setEditor(tf);
-        combobox.setSelectedItem(getItemToSelect(def, support, false));
 
         if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
             p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
@@ -92,7 +132,12 @@ public class Combo extends ComboMultiSelect {
         } else {
             p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL));
         }
+
+        Object itemToSelect = getItemToSelect(default_, support, false);
+        combobox.setSelectedItemText(itemToSelect == null ? null : itemToSelect.toString());
         combobox.addActionListener(l -> support.fireItemValueModified(this, key, getSelectedValue()));
+        combobox.addComponentListener(new ComponentListener());
+        return combobox;
     }
 
     class ChooseColorAction extends AbstractAction {

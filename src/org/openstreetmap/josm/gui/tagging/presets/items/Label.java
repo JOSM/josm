@@ -17,6 +17,7 @@ public class Label extends TextItem {
         initializeLocaleText(null);
         JLabel label = new JLabel(locale_text);
         addIcon(label);
+        label.applyComponentOrientation(support.getDefaultComponentOrientation());
         p.add(label, GBC.eol().fill(GBC.HORIZONTAL));
         return true;
     }

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -90,10 +90,14 @@ import org.xml.sax.SAXException;
  */
 public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, AdaptableAction, Predicate<IPrimitive> {
 
+    /** The user pressed the "Apply" button */
     public static final int DIALOG_ANSWER_APPLY = 1;
+    /** The user pressed the "New Relation" button */
     public static final int DIALOG_ANSWER_NEW_RELATION = 2;
+    /** The user pressed the "Cancel" button */
     public static final int DIALOG_ANSWER_CANCEL = 3;
 
+    /** The action key for optional tooltips */
     public static final String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
 
     /** Prefix of preset icon loading failure error message */
@@ -119,22 +123,41 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * The icon name assigned to this preset.
      */
     public String iconName;
+    /**
+     * Translation context for name
+     */
     public String name_context;
     /**
      * A cache for the local name. Should never be accessed directly.
      * @see #getLocaleName()
      */
     public String locale_name;
+    /**
+     * Show the preset name if true
+     */
     public boolean preset_name_label;
 
     /**
      * The types as preparsed collection.
      */
     public transient Set<TaggingPresetType> types;
+    /**
+     * The list of preset items
+     */
     public final transient List<TaggingPresetItem> data = new ArrayList<>(2);
+    /**
+     * The roles for this relation (if we are editing a relation). See:
+     * <a href="https://josm.openstreetmap.de/wiki/TaggingPresets#Tags">JOSM wiki</a>
+     */
     public transient Roles roles;
+    /**
+     * The name_template custom name formatter. See:
+     * <a href="https://josm.openstreetmap.de/wiki/TaggingPresets#Attributes">JOSM wiki</a>
+     */
     public transient TemplateEntry nameTemplate;
+    /** The name_template_filter */
     public transient Match nameTemplateFilter;
+    /** The match_expression */
     public transient Match matchExpression;
 
     /**
@@ -144,6 +167,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
     /** The completable future task of asynchronous icon loading */
     private CompletableFuture<Void> iconFuture;
+
+    /** Support functions */
+    protected TaggingPresetItemGuiSupport itemGuiSupport;
 
     /**
      * Create an empty tagging preset. This will not have any items and
@@ -276,15 +302,29 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         this.types = TaggingPresetItem.getType(types);
     }
 
-    public void setName_template(String pattern) throws SAXException {
+    /**
+     * Sets the name_template custom name formatter.
+     *
+     * @param template The format template
+     * @throws SAXException on template parse error
+     * @see <a href="https://josm.openstreetmap.de/wiki/TaggingPresets#name_templatedetails">JOSM wiki</a>
+     */
+    public void setName_template(String template) throws SAXException {
         try {
-            this.nameTemplate = new TemplateParser(pattern).parse();
+            this.nameTemplate = new TemplateParser(template).parse();
         } catch (ParseError e) {
-            Logging.error("Error while parsing " + pattern + ": " + e.getMessage());
+            Logging.error("Error while parsing " + template + ": " + e.getMessage());
             throw new SAXException(e);
         }
     }
 
+    /**
+     * Sets the name_template_filter.
+     *
+     * @param filter The search pattern
+     * @throws SAXException on search patern parse error
+     * @see <a href="https://josm.openstreetmap.de/wiki/TaggingPresets#name_templatedetails">JOSM wiki</a>
+     */
     public void setName_template_filter(String filter) throws SAXException {
         try {
             this.nameTemplateFilter = SearchCompiler.compile(filter);
@@ -294,6 +334,13 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         }
     }
 
+    /**
+     * Sets the match_expression additional criteria for matching primitives.
+     *
+     * @param filter The search pattern
+     * @throws SAXException on search patern parse error
+     * @see <a href="https://josm.openstreetmap.de/wiki/TaggingPresets#Attributes">JOSM wiki</a>
+     */
     public void setMatch_expression(String filter) throws SAXException {
         try {
             this.matchExpression = SearchCompiler.compile(filter);
@@ -320,7 +367,6 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
         PresetPanel p = new PresetPanel();
-        List<Link> l = new LinkedList<>();
 
         final JPanel pp = new JPanel();
         if (types != null) {
@@ -354,30 +400,49 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && selected.stream().allMatch(this);
-        final TaggingPresetItemGuiSupport itemGuiSupport = TaggingPresetItemGuiSupport.create(
-                presetInitiallyMatches, selected, this::getChangedTags);
-        JPanel items = new JPanel(new GridBagLayout());
+        itemGuiSupport = TaggingPresetItemGuiSupport.create(presetInitiallyMatches, selected, this::getChangedTags);
+
+        JPanel itemPanel = new JPanel(new GridBagLayout()) {
+            /**
+             * This hack allows the items to have their own orientation.
+             *
+             * The problem is that
+             * {@link org.openstreetmap.josm.gui.ExtendedDialog#showDialog ExtendedDialog} calls
+             * {@code applyComponentOrientation} very late in the dialog construction process thus
+             * overwriting the orientation the components have chosen for themselves.
+             *
+             * This stops the propagation of {@code applyComponentOrientation}, thus all
+             * {@code TaggingPresetItem}s may (and have to) set their own orientation.
+             */
+            @Override
+            public void applyComponentOrientation(ComponentOrientation o) {
+                setComponentOrientation(o);
+            }
+        };
+        JPanel linkPanel = new JPanel(new GridBagLayout());
         TaggingPresetItem previous = null;
         for (TaggingPresetItem i : data) {
             if (i instanceof Link) {
-                l.add((Link) i);
+                i.addToPanel(linkPanel, itemGuiSupport);
                 p.hasElements = true;
             } else {
                 if (i instanceof PresetLink) {
                     PresetLink link = (PresetLink) i;
                     if (!(previous instanceof PresetLink && Objects.equals(((PresetLink) previous).text, link.text))) {
-                        items.add(link.createLabel(), GBC.eol().insets(0, 8, 0, 0));
+                        itemPanel.add(link.createLabel(), GBC.eol().insets(0, 8, 0, 0));
                     }
                 }
-                if (i.addToPanel(items, itemGuiSupport)) {
+                if (i.addToPanel(itemPanel, itemGuiSupport)) {
                     p.hasElements = true;
                 }
             }
             previous = i;
         }
-        p.add(items, GBC.eol().fill());
+        p.add(itemPanel, GBC.eol().fill());
+        p.add(linkPanel, GBC.eol().fill());
+
         if (selected.isEmpty() && !supportsRelation()) {
-            GuiHelper.setEnabledRec(items, false);
+            GuiHelper.setEnabledRec(itemPanel, false);
         }
 
         if (selected.size() == 1 && USE_VALIDATOR.get()) {
@@ -385,18 +450,15 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                     TaggingPresetValidation.validateAsync(selected.iterator().next(), validationLabel, getChangedTags()));
         }
 
-        // add Link
-        for (Link link : l) {
-            link.addToPanel(p, itemGuiSupport);
-        }
-
         // "Add toolbar button"
         JToggleButton tb = new JToggleButton(new ToolbarButtonAction());
         tb.setFocusable(false);
         p.add(tb, GBC.std(1, 0).anchor(GBC.LINE_END));
 
-        // Trigger initial updates
+        // Trigger initial updates once and only once
+        itemGuiSupport.setEnabled(true);
         itemGuiSupport.fireItemValueModified(null, null, null);
+
         return p;
     }
 
@@ -409,6 +471,12 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         return data.stream().anyMatch(i -> !(i instanceof Optional || i instanceof Space || i instanceof Key));
     }
 
+    /**
+     * Suggests a relation role for this primitive
+     *
+     * @param osm The primitive
+     * @return the suggested role or null
+     */
     public String suggestRoleForOsmPrimitive(OsmPrimitive osm) {
         if (roles != null && osm != null) {
             return roles.roles.stream()

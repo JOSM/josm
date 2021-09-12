@@ -5,21 +5,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -31,6 +27,8 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.widgets.JosmListCellRenderer;
+import org.openstreetmap.josm.gui.widgets.OrientationAction;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -39,8 +37,6 @@ import org.openstreetmap.josm.tools.Utils;
  * Abstract superclass for combo box and multi-select list types.
  */
 public abstract class ComboMultiSelect extends KeyedItem {
-
-    private static final Renderer RENDERER = new Renderer();
 
     /**
      * A list of entries.
@@ -92,62 +88,58 @@ public abstract class ComboMultiSelect extends KeyedItem {
     /** whether to use values for search via {@link TaggingPresetSelector} */
     public boolean values_searchable; // NOSONAR
 
-    protected JComponent component;
     protected final Set<PresetListEntry> presetListEntries = new CopyOnWriteArraySet<>();
     private boolean initialized;
     protected Usage usage;
     protected Object originalValue;
 
-    private static final class Renderer implements ListCellRenderer<PresetListEntry> {
+    /**
+     * A list cell renderer that paints a short text in the current value pane and and a longer text
+     * in the dropdown list.
+     */
+    static class ComboMultiSelectListCellRenderer extends JosmListCellRenderer<PresetListEntry> {
+        int width;
+        private String key;
 
-        private final JLabel lbl = new JLabel();
+        ComboMultiSelectListCellRenderer(Component component, ListCellRenderer<? super PresetListEntry> renderer, int width, String key) {
+            super(component, renderer);
+            this.key = key;
+            setWidth(width);
+        }
+
+        /**
+         * Sets the width to format the dropdown list to
+         *
+         * Note: This is not the width of the list, but the width to which we format any multi-line
+         * label in the list.  We cannot use the list's width because at the time the combobox
+         * measures its items, it is not guaranteed that the list is already sized, the combobox may
+         * not even be layed out yet.  Set this to {@code combobox.getWidth()}
+         *
+         * @param width the width
+         */
+        public void setWidth(int width) {
+            if (width <= 0)
+                width = 200;
+            this.width = width - 20;
+        }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends PresetListEntry> list, PresetListEntry item, int index,
-                boolean isSelected, boolean cellHasFocus) {
+        public JLabel getListCellRendererComponent(
+            JList<? extends PresetListEntry> list, PresetListEntry value, int index, boolean isSelected, boolean cellHasFocus) {
 
-            if (list == null || item == null) {
-                return lbl;
+            JLabel l = (JLabel) renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (index != -1) {
+                // index -1 is set when measuring the size of the cell and when painting the
+                // editor-ersatz of a readonly combobox. fixes #6157
+                l.setText(value.getListDisplay(width));
             }
-
-            if (index == -1) {
-                // Take the longest element for the preferred width (#19321)
-                // We do not want the editor to have the maximum height of all entries. Return a dummy with bogus height.
-                IntStream.range(0, list.getModel().getSize())
-                        .mapToObj(i -> getListCellRendererComponent(list, list.getModel().getElementAt(i), i, isSelected, cellHasFocus))
-                        .map(Component::getPreferredSize)
-                        .max(Comparator.comparingInt(dim -> dim.width))
-                        .ifPresent(dim -> lbl.setPreferredSize(new Dimension(dim.width, 10)));
-                return lbl;
-            }
-
-            // Only return cached size, item is not shown
-            if (!list.isShowing() && item.preferredWidth != -1 && item.preferredHeight != -1) {
-                lbl.setPreferredSize(new Dimension(item.preferredWidth, item.preferredHeight));
-                return lbl;
-            }
-
-            lbl.setPreferredSize(null);
-
-            if (isSelected) {
-                lbl.setBackground(list.getSelectionBackground());
-                lbl.setForeground(list.getSelectionForeground());
+            String tt = value.value;
+            if (tt != null && !tt.isEmpty()) {
+                l.setToolTipText(tr("Sets the key ''{0}'' to the value ''{1}''.", key, tt));
             } else {
-                lbl.setBackground(list.getBackground());
-                lbl.setForeground(list.getForeground());
+                l.setToolTipText(tr("Clears the key ''{0}''.", key));
             }
-
-            lbl.setOpaque(true);
-            lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
-            lbl.setText("<html>" + item.getListDisplay() + "</html>");
-            lbl.setIcon(item.getIcon());
-            lbl.setEnabled(list.isEnabled());
-
-            // Cache size
-            item.preferredWidth = (short) lbl.getPreferredSize().width;
-            item.preferredHeight = (short) lbl.getPreferredSize().height;
-
-            return lbl;
+            return l;
         }
     }
 
@@ -187,7 +179,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     protected abstract Object getSelectedItem();
 
-    protected abstract void addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support);
+    protected abstract JComponent addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support);
 
     @Override
     public Collection<String> getValues() {
@@ -218,10 +210,12 @@ public abstract class ComboMultiSelect extends KeyedItem {
         addIcon(label);
         label.setToolTipText(getKeyTooltipText());
         label.setComponentPopupMenu(getPopupMenu());
+        label.applyComponentOrientation(OrientationAction.getDefaultComponentOrientation());
         p.add(label, GBC.std().insets(0, 0, 10, 0));
-        addToPanelAnchor(p, default_, support);
+        JComponent component = addToPanelAnchor(p, default_, support);
         label.setLabelFor(component);
         component.setToolTipText(getKeyTooltipText());
+        component.applyComponentOrientation(OrientationAction.getValueOrientation(key));
 
         return true;
     }
@@ -452,10 +446,6 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     protected PresetListEntry getListEntry(String value) {
         return presetListEntries.stream().filter(e -> Objects.equals(e.value, value)).findFirst().orElse(null);
-    }
-
-    protected ListCellRenderer<PresetListEntry> getListCellRenderer() {
-        return RENDERER;
     }
 
     @Override

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.Box;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
@@ -81,7 +81,7 @@ public class LanguagePreference extends DefaultTabPreferenceSetting {
                     LanguageInfo.getJOSMLocaleCode((Locale) langCombo.getSelectedItem()));
     }
 
-    private static class LanguageComboBoxModel extends DefaultComboBoxModel<Locale> {
+    private static class LanguageComboBoxModel extends JosmComboBoxModel<Locale> {
         private final List<Locale> data = new ArrayList<>();
 
         LanguageComboBoxModel() {

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
@@ -23,13 +24,17 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxEditor;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.OrientationAction;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -69,19 +74,36 @@ public class Text extends KeyedItem {
     @Override
     public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
 
+        AutoCompComboBoxModel<AutoCompletionItem> model = new AutoCompComboBoxModel<>();
+        List<String> keys = new ArrayList<>();
+        keys.add(key);
+        if (alternative_autocomplete_keys != null) {
+            for (String k : alternative_autocomplete_keys.split(",", -1)) {
+                keys.add(k);
+            }
+        }
+        getAllForKeys(keys).forEach(model::addElement);
+
+        AutoCompTextField<AutoCompletionItem> textField;
+        AutoCompComboBoxEditor<AutoCompletionItem> editor = null;
+
         // find out if our key is already used in the selection.
         Usage usage = determineTextUsage(support.getSelected(), key);
-        AutoCompletingTextField textField = new AutoCompletingTextField();
-        if (alternative_autocomplete_keys != null) {
-            initAutoCompletionField(textField, (key + ',' + alternative_autocomplete_keys).split(",", -1));
+
+        if (usage.unused() || usage.hasUniqueValue()) {
+            textField = new AutoCompTextField<>();
         } else {
-            initAutoCompletionField(textField, key);
+            editor = new AutoCompComboBoxEditor<>();
+            textField = editor.getEditorComponent();
+        }
+        textField.setModel(model);
+        value = textField;
+
+        if (length > 0) {
+            textField.setMaxTextLength(length);
         }
         if (TaggingPresetItem.DISPLAY_KEYS_AS_HINT.get()) {
             textField.setHint(key);
-        }
-        if (length > 0) {
-            textField.setMaxChars((int) length);
         }
         if (usage.unused()) {
             if (auto_increment_selected != 0 && auto_increment != null) {
@@ -110,11 +132,14 @@ public class Text extends KeyedItem {
             textField.setText(usage.getFirst());
             value = textField;
             originalValue = usage.getFirst();
-        } else {
-            // the objects have different values
+        }
+        if (editor != null) {
+            // The selected primitives have different values for this key.   <b>Note:</b> this
+            // cannot be an AutoCompComboBox because the values in the dropdown are different from
+            // those we autocomplete on.
             JosmComboBox<String> comboBox = new JosmComboBox<>(usage.values.toArray(new String[0]));
             comboBox.setEditable(true);
-            comboBox.setEditor(textField);
+            comboBox.setEditor(editor);
             comboBox.getEditor().setItem(DIFFERENT);
             value = comboBox;
             originalValue = DIFFERENT;
@@ -179,7 +204,9 @@ public class Text extends KeyedItem {
         label.setLabelFor(value);
         p.add(label, GBC.std().insets(0, 0, 10, 0));
         p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
+        label.applyComponentOrientation(support.getDefaultComponentOrientation());
         value.setToolTipText(getKeyTooltipText());
+        value.applyComponentOrientation(OrientationAction.getNamelikeOrientation(key));
         return true;
     }
 
@@ -252,7 +279,7 @@ public class Text extends KeyedItem {
         }
     }
 
-    private void setupListeners(AutoCompletingTextField textField, TaggingPresetItemGuiSupport support) {
+    private void setupListeners(AutoCompTextField<AutoCompletionItem> textField, TaggingPresetItemGuiSupport support) {
         // value_templates don't work well with multiple selected items because,
         // as the command queue is currently implemented, we can only save
         // the same value to all selected primitives, which is probably not
@@ -265,7 +292,7 @@ public class Text extends KeyedItem {
                 String valueTemplateText = valueTemplate.getText(support);
                 Logging.trace("Evaluating value_template {0} for key {1} from {2} with new value {3} => {4}",
                         valueTemplate, key, source, newValue, valueTemplateText);
-                textField.setItem(valueTemplateText);
+                textField.setText(valueTemplateText);
                 if (originalValue != null && !originalValue.equals(valueTemplateText)) {
                     textField.setForeground(Color.RED);
                 } else {

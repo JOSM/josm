@@ -61,6 +61,7 @@ public class PresetLink extends TextItem {
             TaggingPreset t = found.get();
             JLabel lbl = new TaggingPresetLabel(t);
             lbl.addMouseListener(new TaggingPresetMouseAdapter(t, support.getSelected()));
+            lbl.applyComponentOrientation(support.getDefaultComponentOrientation());
             p.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
         }
         return false;

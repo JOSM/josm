@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
+import java.awt.ComponentOrientation;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.gui.widgets.OrientationAction;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
@@ -25,6 +27,30 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
     private final boolean presetInitiallyMatches;
     private final Supplier<Collection<Tag>> changedTagsSupplier;
     private final ListenerList<ChangeListener> listeners = ListenerList.create();
+
+    /** whether to fire events or not */
+    private boolean enabled = false;
+
+    /**
+     * Returns whether firing of events is enabled
+     *
+     * @return true if firing of events is enabled
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Enables or disables the firing of events
+     *
+     * @param enabled fires if true
+     * @return the old state of enabled
+     */
+    public boolean setEnabled(boolean enabled) {
+        boolean oldEnabled = this.enabled;
+        this.enabled = enabled;
+        return oldEnabled;
+    }
 
     /**
      * Interface to notify listeners that a preset item input as changed.
@@ -119,6 +145,15 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
         return Utils.isEmpty(value) ? null : value;
     }
 
+    /**
+     * Returns the default component orientation by the user's locale
+     *
+     * @return the default component orientation
+     */
+    public ComponentOrientation getDefaultComponentOrientation() {
+        return OrientationAction.getDefaultComponentOrientation();
+    }
+
     @Override
     public boolean evaluateCondition(SearchCompiler.Match condition) {
         return condition.match(getTagged());
@@ -139,6 +174,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
      * @param newValue the new tag value
      */
     public void fireItemValueModified(TaggingPresetItem source, String key, String newValue) {
-        listeners.fireEvent(e -> e.itemValueModified(source, key, newValue));
+        if (enabled)
+            listeners.fireEvent(e -> e.itemValueModified(source, key, newValue));
     }
 }

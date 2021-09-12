@@ -4,13 +4,12 @@ package org.openstreetmap.josm.gui.io;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
-
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
 import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -18,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
  * of open changesets kept in the {@link ChangesetCache}.
  *
  */
-public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> implements ChangesetCacheListener {
+public class OpenChangesetComboBoxModel extends JosmComboBoxModel<Changeset> implements ChangesetCacheListener {
     private final transient List<Changeset> changesets;
     private transient Changeset selectedChangeset;
 
@@ -78,7 +77,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> 
     }
 
     @Override
-    public int getIndexOf(Object anObject) {
+    public int getIndexOf(Changeset anObject) {
         return changesets.indexOf(anObject);
     }
 

@@ -1,55 +1,77 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.swing.ComboBoxEditor;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.ListCellRenderer;
+import javax.swing.border.Border;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
- * Class overriding each {@link JComboBox} in JOSM to control consistently the number of displayed items at once.<br>
- * This is needed because of the default Java behaviour that may display the top-down list off the screen (see #7917).
- * @param <E> the type of the elements of this combo box
+ * Base class for all comboboxes in JOSM.
+ * <p>
+ * This combobox will show as many rows as possible without covering the combox itself. It makes
+ * sure the list will never go outside the screen (see #7917). You may limit the number of rows
+ * shown with the configuration: {@code gui.combobox.maximum-row-count}.
+ * <p>
+ * This combobox uses a {@link JosmTextField} for its editor component.
  *
+ * @param <E> the type of the elements of this combo box
  * @since 5429 (creation)
  * @since 7015 (generics for Java 7)
  */
-public class JosmComboBox<E> extends JComboBox<E> {
+public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, PropertyChangeListener {
+    /**
+     * Limits the number of rows that this combobox will show.
+     */
+    public static final String PROP_MAXIMUM_ROW_COUNT = "gui.combobox.maximum-row-count";
 
-    private final ContextMenuHandler handler = new ContextMenuHandler();
+    /** the configured maximum row count or null */
+    private Integer configMaximumRowCount = null;
 
     /**
-     * Creates a <code>JosmComboBox</code> with a default data model.
+     * The preferred height of the combobox when closed.  Use if the items in the list dropdown are
+     * taller than the item in the editor, as in some comboboxes in the preset dialog.  -1 to use
+     * the height of the tallest item in the list.
+     */
+    private int preferredHeight = -1;
+
+    /** greyed text to display in the editor when the selected value is empty */
+    private String hint;
+
+    /**
+     * Creates a {@code JosmComboBox} with a {@link JosmComboBoxModel} data model.
      * The default data model is an empty list of objects.
      * Use <code>addItem</code> to add items. By default the first item
      * in the data model becomes selected.
-     *
-     * @see DefaultComboBoxModel
      */
     public JosmComboBox() {
-        init(null);
+        super(new JosmComboBoxModel<E>());
+        init();
     }
 
     /**
-     * Creates a <code>JosmComboBox</code> with a default data model and
+     * Creates a {@code JosmComboBox} with a {@link JosmComboBoxModel} data model and
      * the specified prototype display value.
      * The default data model is an empty list of objects.
      * Use <code>addItem</code> to add items. By default the first item
@@ -59,43 +81,84 @@ public class JosmComboBox<E> extends JComboBox<E> {
      *      the maximum number of elements to be displayed at once before
      *      displaying a scroll bar
      *
-     * @see DefaultComboBoxModel
      * @since 5450
+     * @deprecated use {@link #setPrototypeDisplayValue} instead.
      */
+    @Deprecated
     public JosmComboBox(E prototypeDisplayValue) {
-        init(prototypeDisplayValue);
+        super(new JosmComboBoxModel<E>());
+        setPrototypeDisplayValue(prototypeDisplayValue);
+        init();
     }
 
     /**
-     * Creates a <code>JosmComboBox</code> that takes its items from an
-     * existing <code>ComboBoxModel</code>. Since the
-     * <code>ComboBoxModel</code> is provided, a combo box created using
-     * this constructor does not create a default combo box model and
-     * may impact how the insert, remove and add methods behave.
+     * Creates a {@code JosmComboBox} that takes it items from an existing {@link JosmComboBoxModel}
+     * data model.
      *
-     * @param aModel the <code>ComboBoxModel</code> that provides the
-     *      displayed list of items
-     * @see DefaultComboBoxModel
+     * @param aModel the model that provides the displayed list of items
      */
-    public JosmComboBox(ComboBoxModel<E> aModel) {
+    public JosmComboBox(JosmComboBoxModel<E> aModel) {
         super(aModel);
-        List<E> list = IntStream.range(0, aModel.getSize())
-                .mapToObj(aModel::getElementAt)
-                .collect(Collectors.toList());
-        init(findPrototypeDisplayValue(list));
+        init();
     }
 
     /**
-     * Creates a <code>JosmComboBox</code> that contains the elements
+     * Creates a {@code JosmComboBox} that takes it items from an existing {@link JosmComboBoxModel}
+     * data model and sets the specified prototype display value.
+     *
+     * @param aModel the model that provides the displayed list of items
+     * @param prototypeDisplayValue use this item to size the combobox (may be null)
+     * @deprecated use {@link #setPrototypeDisplayValue} instead.
+     */
+    @Deprecated
+    public JosmComboBox(JosmComboBoxModel<E> aModel, E prototypeDisplayValue) {
+        super(aModel);
+        setPrototypeDisplayValue(prototypeDisplayValue);
+        init();
+    }
+
+    /**
+     * Creates a {@code JosmComboBox} that contains the elements
      * in the specified array. By default the first item in the array
      * (and therefore the data model) becomes selected.
      *
      * @param items  an array of objects to insert into the combo box
-     * @see DefaultComboBoxModel
      */
     public JosmComboBox(E[] items) {
-        super(items);
-        init(findPrototypeDisplayValue(Arrays.asList(items)));
+        super(new JosmComboBoxModel<E>());
+        init();
+        for (E elem : items) {
+            getModel().addElement(elem);
+        }
+    }
+
+    private void init() {
+        configMaximumRowCount = Config.getPref().getInt(PROP_MAXIMUM_ROW_COUNT, 9999);
+        setEditor(new JosmComboBoxEditor());
+        // listen when the popup shows up so we can maximize its height
+        addPopupMenuListener(this);
+    }
+
+    /**
+     * Returns the {@link JosmComboBoxModel} currently used.
+     *
+     * @return the model or null
+     */
+    @Override
+    public JosmComboBoxModel<E> getModel() {
+        return (JosmComboBoxModel<E>) dataModel;
+    }
+
+    @Override
+    public void setEditor(ComboBoxEditor newEditor) {
+        if (editor != null) {
+            editor.getEditorComponent().removePropertyChangeListener(this);
+        }
+        super.setEditor(newEditor);
+        if (editor != null) {
+            // listen to orientation changes in the editor
+            editor.getEditorComponent().addPropertyChangeListener(this);
+        }
     }
 
     /**
@@ -104,8 +167,8 @@ public class JosmComboBox<E> extends JComboBox<E> {
      * @see ComboBoxEditor#getEditorComponent()
      * @since 9484
      */
-    public JTextField getEditorComponent() {
-        return (JTextField) getEditor().getEditorComponent();
+    public JosmTextField getEditorComponent() {
+        return (JosmTextField) (editor == null ? null : editor.getEditorComponent());
     }
 
     /**
@@ -115,7 +178,8 @@ public class JosmComboBox<E> extends JComboBox<E> {
      * @since 18173
      */
     public String getText() {
-        return getEditorComponent().getText();
+        JosmTextField tf = getEditorComponent();
+        return tf == null ? null : tf.getText();
     }
 
     /**
@@ -125,183 +189,258 @@ public class JosmComboBox<E> extends JComboBox<E> {
      * @since 18173
      */
     public void setText(String value) {
-        getEditorComponent().setText(value);
+        JosmTextField tf = getEditorComponent();
+        if (tf != null)
+            tf.setText(value);
     }
 
     /**
-     * Finds the prototype display value to use among the given possible candidates.
-     * @param possibleValues The possible candidates that will be iterated.
-     * @return The value that needs the largest display height on screen.
-     * @since 5558
+     * Selects an item and/or sets text
+     *
+     * Selects the item whose {@code toString()} equals {@code text}. If an item could not be found,
+     * selects nothing and sets the text anyway.
+     *
+     * @param text the text to select and set
+     * @return the item or null
      */
-    protected final E findPrototypeDisplayValue(Collection<E> possibleValues) {
-        E result = null;
-        int maxHeight = -1;
-        if (possibleValues != null) {
-            // Remind old prototype to restore it later
-            E oldPrototype = getPrototypeDisplayValue();
-            // Get internal JList to directly call the renderer
-            @SuppressWarnings("rawtypes")
-            JList list = getList();
-            try {
-                // Index to give to renderer
-                int i = 0;
-                for (E value : possibleValues) {
-                    if (value != null) {
-                        // With a "classic" renderer, we could call setPrototypeDisplayValue(value) + getPreferredSize()
-                        // but not with TaggingPreset custom renderer that return a dummy height if index is equal to -1
-                        // So we explicitly call the renderer by simulating a correct index for the current value
-                        @SuppressWarnings("unchecked")
-                        Component c = getRenderer().getListCellRendererComponent(list, value, i, true, true);
-                        if (c != null) {
-                            // Get the real preferred size for the current value
-                            Dimension dim = c.getPreferredSize();
-                            if (dim.height > maxHeight) {
-                                // Larger ? This is our new prototype
-                                maxHeight = dim.height;
-                                result = value;
-                            }
-                        }
-                    }
-                    i++;
-                }
-            } finally {
-                // Restore original prototype
-                setPrototypeDisplayValue(oldPrototype);
-            }
-        }
-        return result;
+    public E setSelectedItemText(String text) {
+        E item = getModel().find(text);
+        setSelectedItem(item);
+        if (text == null || !text.equals(getText()))
+            setText(text);
+        return item;
     }
 
-    @SuppressWarnings("unchecked")
-    protected final JList<Object> getList() {
-        return IntStream.range(0, getUI().getAccessibleChildrenCount(this))
-                .mapToObj(i -> getUI().getAccessibleChild(this, i))
-                .filter(child -> child instanceof ComboPopup)
-                .findFirst()
-                .map(child -> ((ComboPopup) child).getList())
-                .orElse(null);
+    /* Hint handling */
+
+    /**
+     * Returns the hint text
+     * @return the hint text
+     */
+    public String getHint() {
+        return hint;
     }
 
     /**
-     * Set the prototypeCellValue property and calculate the height of the dropdown.
+     * Sets the hint to display when no text has been entered.
+     *
+     * @param hint the hint to set
+     * @return the old hint
+     * @since 18221
+     */
+    public String setHint(String hint) {
+        String old = hint;
+        this.hint = hint;
+        JosmTextField tf = getEditorComponent();
+        if (tf != null)
+            tf.setHint(hint);
+        return old;
+    }
+
+    @Override
+    public void setComponentOrientation(ComponentOrientation o) {
+        if (o.isLeftToRight() != getComponentOrientation().isLeftToRight()) {
+            super.setComponentOrientation(o);
+            getEditorComponent().setComponentOrientation(o);
+            // the button doesn't move over without this
+            revalidate();
+        }
+    }
+
+    /**
+     * Return true if the combobox should display the hint text.
+     *
+     * @return whether to display the hint text
+     * @since 18221
+     */
+    public boolean displayHint() {
+        return !isEditable() && hint != null && !hint.isEmpty() && getText().isEmpty(); // && !isFocusOwner();
+    }
+
+    /**
+     * Overrides the calculated height.  See: {@link #setPreferredHeight(int)}.
+     *
+     * @since 18221
      */
     @Override
-    public void setPrototypeDisplayValue(E prototype) {
-        if (prototype != null) {
-            super.setPrototypeDisplayValue(prototype);
-            int screenHeight = GuiHelper.getScreenSize().height;
-            // Compute maximum number of visible items based on the preferred size of the combo box.
-            // This assumes that items have the same height as the combo box, which is not granted by the look and feel
-            int maxsize = (screenHeight/getPreferredSize().height) / 2;
-            // If possible, adjust the maximum number of items with the real height of items
-            // It is not granted this works on every platform (tested OK on Windows)
-            JList<Object> list = getList();
-            if (list != null) {
-                if (!prototype.equals(list.getPrototypeCellValue())) {
-                    list.setPrototypeCellValue(prototype);
-                }
-                int height = list.getFixedCellHeight();
-                if (height > 0) {
-                    maxsize = (screenHeight/height) / 2;
-                }
-            }
-            setMaximumRowCount(Math.max(getMaximumRowCount(), maxsize));
-        }
-    }
-
-    protected final void init(E prototype) {
-        init(prototype, true);
-    }
-
-    protected final void init(E prototype, boolean registerPropertyChangeListener) {
-        setPrototypeDisplayValue(prototype);
-        // Handle text contextual menus for editable comboboxes
-        if (registerPropertyChangeListener) {
-            addPropertyChangeListener("editable", handler);
-            addPropertyChangeListener("editor", handler);
-        }
-    }
-
-    protected class ContextMenuHandler extends MouseAdapter implements PropertyChangeListener {
-
-        private JTextComponent component;
-        private PopupMenuLauncher launcher;
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if ("editable".equals(evt.getPropertyName())) {
-                if (evt.getNewValue().equals(Boolean.TRUE)) {
-                    enableMenu();
-                } else {
-                    disableMenu();
-                }
-            } else if ("editor".equals(evt.getPropertyName())) {
-                disableMenu();
-                if (isEditable()) {
-                    enableMenu();
-                }
-            }
-        }
-
-        private void enableMenu() {
-            if (launcher == null && editor != null) {
-                Component editorComponent = editor.getEditorComponent();
-                if (editorComponent instanceof JTextComponent) {
-                    component = (JTextComponent) editorComponent;
-                    component.addMouseListener(this);
-                    launcher = TextContextualPopupMenu.enableMenuFor(component, true);
-                }
-            }
-        }
-
-        private void disableMenu() {
-            if (launcher != null) {
-                TextContextualPopupMenu.disableMenuFor(component, launcher);
-                launcher = null;
-                component.removeMouseListener(this);
-                component = null;
-            }
-        }
-
-        private void discardAllUndoableEdits() {
-            if (launcher != null) {
-                launcher.discardAllUndoableEdits();
-            }
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            processEvent(e);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            processEvent(e);
-        }
-
-        private void processEvent(MouseEvent e) {
-            if (launcher != null && !e.isPopupTrigger() && launcher.getMenu().isShowing()) {
-                launcher.getMenu().setVisible(false);
-            }
-        }
+    public Dimension getPreferredSize() {
+        Dimension d = super.getPreferredSize();
+        if (preferredHeight != -1)
+            d.height = preferredHeight;
+        return d;
     }
 
     /**
-     * Reinitializes this {@link JosmComboBox} to the specified values. This may be needed if a custom renderer is used.
-     * @param values The values displayed in the combo box.
-     * @since 5558
+     * Sets the preferred height of the combobox editor.
+     * <p>
+     * A combobox editor is automatically sized to accomodate the widest and the tallest items in
+     * the list.  In the Preset dialogs we show more of an item in the list than in the editor, so
+     * the editor becomes too big.  With this method we can set the editor height to a fixed value.
+     * <p>
+     * Set this to -1 to get the default behaviour back.
+     *
+     * See also: #6157
+     *
+     * @param height the preferred height or -1
+     * @return the old preferred height
+     * @see #setPreferredSize
+     * @since 18221
      */
-    public final void reinitialize(Collection<E> values) {
-        init(findPrototypeDisplayValue(values), false);
-        discardAllUndoableEdits();
+    public int setPreferredHeight(int height) {
+        int old = preferredHeight;
+        preferredHeight = height;
+        return old;
+    }
+
+    /**
+     * Get the dropdown list component
+     *
+     * @return the list or null
+     */
+    @SuppressWarnings("unchecked")
+    public JList<E> getList() {
+        Object popup = getUI().getAccessibleChild(this, 0);
+        if (popup != null && popup instanceof javax.swing.plaf.basic.ComboPopup) {
+            return ((javax.swing.plaf.basic.ComboPopup) popup).getList();
+        }
+        return null;
+    }
+
+    // get the popup list
+
+    /**
+     * Draw the hint text for read-only comboboxes.
+     * <p>
+     * The obvious way -- to call {@code setText(hint)} and {@code setForeground(gray)} on the
+     * {@code JLabel} returned by the list cell renderer -- unfortunately does not work out well
+     * because many UIs change the foreground color or the enabled state of the {@code JLabel} after
+     * the list cell renderer has returned ({@code BasicComboBoxUI}).  Other UIs don't honor the
+     * label color at all ({@code SynthLabelUI}).
+     * <p>
+     * We use the same approach as in {@link JosmTextField}. The only problem we face is to get the
+     * coordinates of the text inside the combobox.  Fortunately even read-only comboboxes have a
+     * (partially configured) editor component, although they don't use it.  We configure that editor
+     * just enough to call {@link JTextField#modelToView modelToView} and
+     * {@link javax.swing.JComponent#getBaseline getBaseline} on it, thus obtaining the text
+     * coordinates.
+     *
+     * @see javax.swing.plaf.basic.BasicComboBoxUI#paintCurrentValue
+     * @see javax.swing.plaf.synth.SynthLabelUI#paint
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        JosmTextField editor = getEditorComponent();
+        if (displayHint() && editor != null) {
+            if (editor.getSize().width == 0) {
+                Dimension dimen = getSize();
+                Insets insets = getInsets();
+                // a fake configuration not too far from reality
+                editor.setSize(dimen.width - insets.left - insets.right,
+                               dimen.height - insets.top - insets.bottom);
+            }
+            editor.drawHint(g);
+        }
     }
 
     /**
      * Empties the internal undo manager, if any.
+     * <p>
+     * Used in the {@link org.openstreetmap.josm.gui.io.UploadDialog UploadDialog}.
      * @since 14977
      */
     public final void discardAllUndoableEdits() {
-        handler.discardAllUndoableEdits();
+        getEditorComponent().discardAllUndoableEdits();
+    }
+
+    /**
+     * Limits the popup height.
+     * <p>
+     * Limits the popup height to the available screen space either below or above the combobox,
+     * whichever is bigger. To find the maximum number of rows that fit the screen, it does the
+     * reverse of the calculation done in
+     * {@link javax.swing.plaf.basic.BasicComboPopup#getPopupLocation}.
+     *
+     * @see javax.swing.plaf.basic.BasicComboBoxUI#getAccessibleChild
+     */
+    @Override
+    public void popupMenuWillBecomeVisible(PopupMenuEvent ev) {
+        // Get the combobox bounds.
+        Rectangle bounds = new Rectangle(getLocationOnScreen(), getSize());
+
+        // Get the screen bounds of the screen (of a multi-screen setup) we are on.
+        Rectangle screenBounds;
+        GraphicsConfiguration gc = getGraphicsConfiguration();
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        if (gc != null) {
+            Insets screenInsets = toolkit.getScreenInsets(gc);
+            screenBounds = gc.getBounds();
+            screenBounds.x += screenInsets.left;
+            screenBounds.y += screenInsets.top;
+            screenBounds.width -= (screenInsets.left + screenInsets.right);
+            screenBounds.height -= (screenInsets.top + screenInsets.bottom);
+        } else {
+            screenBounds = new Rectangle(new Point(), toolkit.getScreenSize());
+        }
+        int freeAbove = bounds.y - screenBounds.y;
+        int freeBelow = (screenBounds.y + screenBounds.height) - (bounds.y + bounds.height);
+
+        try {
+            // First try an implementation-dependent method to get the exact number.
+            JList<E> jList = getList();
+
+            // Calculate the free space available on screen
+            Insets insets = jList.getInsets();
+            // A small fudge factor that accounts for the displacement of the popup relative to the
+            // combobox and the popup shadow.
+            int fudge = 4;
+            int free = Math.max(freeAbove, freeBelow) - (insets.top + insets.bottom) - fudge;
+            if (jList.getParent() instanceof JScrollPane) {
+                JScrollPane scroller = (JScrollPane) jList.getParent();
+                Border border = scroller.getViewportBorder();
+                if (border != null) {
+                    insets = border.getBorderInsets(null);
+                    free -= insets.top + insets.bottom;
+                }
+                border = scroller.getBorder();
+                if (border != null) {
+                    insets = border.getBorderInsets(null);
+                    free -= insets.top + insets.bottom;
+                }
+            }
+
+            // Calculate how many rows fit into the free space.  Rows may have variable heights.
+            int rowCount = Math.min(configMaximumRowCount, getItemCount());
+            ListCellRenderer<? super E> r = jList.getCellRenderer();  // must take this from list, not combo: flatlaf bug
+            int i, h = 0;
+            for (i = 0; i < rowCount; ++i) {
+                Component c = r.getListCellRendererComponent(jList, getModel().getElementAt(i), i, false, false);
+                h += c.getPreferredSize().height;
+                if (h >= free)
+                    break;
+            }
+            setMaximumRowCount(i);
+            // Logging.debug("free = {0}, h = {1}, i = {2}, bounds = {3}, screenBounds = {4}", free, h, i, bounds, screenBounds);
+        } catch (Exception ex) {
+            setMaximumRowCount(8); // the default
+        }
+    }
+
+    @Override
+    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        // Who cares?
+    }
+
+    @Override
+    public void popupMenuCanceled(PopupMenuEvent e) {
+        // Who cares?
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        // follow our editor's orientation
+        if ("componentOrientation".equals(evt.getPropertyName())) {
+            setComponentOrientation((ComponentOrientation) evt.getNewValue());
+        }
     }
 }

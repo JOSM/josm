@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Font;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -15,6 +14,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -26,7 +26,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
 
     private final ImageIcon iconDecided;
     private final ImageIcon iconUndecided;
-    private final DefaultComboBoxModel<Object> model;
+    private final JosmComboBoxModel<Object> model;
     private final JosmComboBox<Object> cbDecisionRenderer;
 
     /**
@@ -36,7 +36,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         setOpaque(true);
         iconDecided = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
         iconUndecided = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");
-        model = new DefaultComboBoxModel<>();
+        model = new JosmComboBoxModel<>();
         cbDecisionRenderer = new JosmComboBox<>(model);
     }
 

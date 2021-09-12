@@ -45,6 +45,7 @@ public class CheckGroup extends TaggingPresetItem {
             panel.add(new JLabel());
         }
 
+        panel.applyComponentOrientation(support.getDefaultComponentOrientation());
         p.add(panel, GBC.eol());
         return false;
     }

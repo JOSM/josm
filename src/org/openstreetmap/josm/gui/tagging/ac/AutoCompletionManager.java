@@ -345,6 +345,30 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
+     * Returns all cached {@link AutoCompletionItem}s for given keys.
+     *
+     * @param keys retrieve the items for these keys
+     * @return the currently cached items, sorted by priority and alphabet
+     * @since 18221
+     */
+    public List<AutoCompletionItem> getAllForKeys(List<String> keys) {
+        Map<String, AutoCompletionPriority> map = new HashMap<>();
+
+        for (String key : keys) {
+            for (String value : TaggingPresets.getPresetValues(key)) {
+                map.merge(value, AutoCompletionPriority.IS_IN_STANDARD, AutoCompletionPriority::mergeWith);
+            }
+            for (String value : getDataValues(key)) {
+                map.merge(value, AutoCompletionPriority.IS_IN_DATASET, AutoCompletionPriority::mergeWith);
+            }
+            for (String value : getUserInputValues(key)) {
+                map.merge(value, AutoCompletionPriority.UNKNOWN, AutoCompletionPriority::mergeWith);
+            }
+        }
+        return map.entrySet().stream().map(e -> new AutoCompletionItem(e.getKey(), e.getValue())).sorted().collect(Collectors.toList());
+    }
+
+    /**
      * Returns the currently cached tag keys.
      * @return a set of tag keys
      * @since 12859

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompTextField;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @param <T> The ID validator class
  * @since 5765
  */
-public abstract class AbstractIdTextField<T extends AbstractTextComponentValidator> extends JosmTextField {
+public abstract class AbstractIdTextField<T extends AbstractTextComponentValidator> extends AutoCompTextField<String> {
 
     protected final transient T validator;
 

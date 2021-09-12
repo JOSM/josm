@@ -200,6 +200,7 @@ public class Roles extends TaggingPresetItem {
             for (Role i : roles) {
                 i.addToPanel(proles);
             }
+            proles.applyComponentOrientation(support.getDefaultComponentOrientation());
             p.add(proles, GBC.eol());
         }
         return false;

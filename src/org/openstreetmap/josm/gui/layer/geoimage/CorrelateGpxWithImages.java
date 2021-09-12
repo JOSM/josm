@@ -39,7 +39,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -70,6 +69,7 @@ import org.openstreetmap.josm.gui.layer.geoimage.AdjustTimezoneAndOffsetDialog.A
 import org.openstreetmap.josm.gui.layer.geoimage.SynchronizeTimeFromPhotoDialog.TimeZoneItem;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDataHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -85,7 +85,7 @@ import org.openstreetmap.josm.tools.Pair;
  */
 public class CorrelateGpxWithImages extends AbstractAction implements ExpertModeChangeListener, Destroyable {
 
-    private static MutableComboBoxModel<GpxDataWrapper> gpxModel;
+    private static JosmComboBoxModel<GpxDataWrapper> gpxModel;
     private static boolean forceTags;
 
     private final transient GeoImageLayer yLayer;
@@ -423,7 +423,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
      * @param nogdw Data wrapper with no GPX data
      */
     private void constructGpxModel(NoGpxDataWrapper nogdw) {
-        gpxModel = new DefaultComboBoxModel<>();
+        gpxModel = new JosmComboBoxModel<>();
         GpxDataWrapper defaultItem = null;
         for (AbstractModifiableLayer cur : MainApplication.getLayerManager().getLayersOfType(AbstractModifiableLayer.class)) {
             if (cur instanceof GpxDataContainer) {

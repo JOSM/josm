@@ -85,8 +85,10 @@ public class Check extends KeyedItem {
 
         if (icon != null) {
             JPanel checkPanel = IconTextCheckBox.wrap(check, locale_text, getIcon());
+            checkPanel.applyComponentOrientation(support.getDefaultComponentOrientation());
             p.add(checkPanel, GBC.eol()); // Do not fill, see #15104
         } else {
+            check.applyComponentOrientation(support.getDefaultComponentOrientation());
             p.add(check, GBC.eol()); // Do not fill, see #15104
         }
         check.addChangeListener(l -> support.fireItemValueModified(this, key, getValue()));
