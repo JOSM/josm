@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -23,8 +24,6 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link GpxWriter}.
@@ -39,6 +38,7 @@ public class GpxWriterTest {
         gpx.addWaypoint(waypoint);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (GpxWriter writer = new GpxWriter(baos)) {
+            writer.setMetaTime(Instant.parse("2021-09-12T12:30:50.724Z"));
             writer.write(gpx);
         }
         assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
@@ -46,6 +46,7 @@ public class GpxWriterTest {
                 "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">\n" +
                 "  <metadata>\n" +
+                "    <time>2021-09-12T12:30:50.724Z</time>\n" +
                 "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
                 "  </metadata>\n" +
                 "  <wpt lat=\"0.0\" lon=\"0.0\">\n" +
@@ -120,159 +121,161 @@ public class GpxWriterTest {
         data.addTrack(trk);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        GpxWriter writer = new GpxWriter(baos);
+        try (GpxWriter writer = new GpxWriter(baos)) {
+            // CHECKSTYLE.OFF: LineLength
+            writer.setMetaTime(Instant.parse("2021-09-12T12:30:50.724Z"));
+            writer.write(data);
+            assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
+                    "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+                    "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
+                    "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
+                    "    xmlns:gpxd=\"http://josm.openstreetmap.de/gpx-drawing-extensions-1.0\"\n" +
+                    "    xmlns:test=\"http://example.com/testURI\"\n" +
+                    "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                    "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd http://josm.openstreetmap.de/gpx-drawing-extensions-1.0 http://josm.openstreetmap.de/gpx-drawing-extensions-1.0.xsd\">\n" +
+                    "  <metadata>\n" +
+                    "    <time>2021-09-12T12:30:50.724Z</time>\n" +
+                    "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
+                    "    <extensions>\n" +
+                    "      <knownprefix:foo>bar</knownprefix:foo>\n" +
+                    "      <josm:from-server>true</josm:from-server>\n" +
+                    "      <josm:layerPreferences>\n" +
+                    "        <josm:entry key=\"foo\" value=\"bar\"/>\n" +
+                    "      </josm:layerPreferences>\n" +
+                    "    </extensions>\n" +
+                    "  </metadata>\n" +
+                    "  <trk>\n" +
+                    "    <extensions>\n" +
+                    "      <gpxd:color>#FF0000</gpxd:color>\n" +
+                    "    </extensions>\n" +
+                    "    <trkseg>\n" +
+                    "      <extensions>\n" +
+                    "        <test:foo>extension of a segment</test:foo>\n" +
+                    "      </extensions>\n" +
+                    "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
+                    "        <extensions>\n" +
+                    "          <test:foo>extension of a waypoint</test:foo>\n" +
+                    "        </extensions>\n" +
+                    "      </trkpt>\n" +
+                    "    </trkseg>\n" +
+                    "  </trk>\n" +
+                    "</gpx>", baos.toString());
 
-        // CHECKSTYLE.OFF: LineLength
+            baos.reset();
+            writer.write(data, GpxConstants.ColorFormat.GPXX, true);
+            assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
+                    "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+                    "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
+                    "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
+                    "    xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\"\n" +
+                    "    xmlns:test=\"http://example.com/testURI\"\n" +
+                    "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                    "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd\">\n" +
+                    "  <metadata>\n" +
+                    "    <time>2021-09-12T12:30:50.724Z</time>\n" +
+                    "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
+                    "    <extensions>\n" +
+                    "      <knownprefix:foo>bar</knownprefix:foo>\n" +
+                    "      <josm:from-server>true</josm:from-server>\n" +
+                    "      <josm:layerPreferences>\n" +
+                    "        <josm:entry key=\"foo\" value=\"bar\"/>\n" +
+                    "      </josm:layerPreferences>\n" +
+                    "    </extensions>\n" +
+                    "  </metadata>\n" +
+                    "  <trk>\n" +
+                    "    <extensions>\n" +
+                    "      <gpxx:TrackExtension>\n" +
+                    "        <gpxx:DisplayColor>Red</gpxx:DisplayColor>\n" +
+                    "      </gpxx:TrackExtension>\n" +
+                    "    </extensions>\n" +
+                    "    <trkseg>\n" +
+                    "      <extensions>\n" +
+                    "        <test:foo>extension of a segment</test:foo>\n" +
+                    "      </extensions>\n" +
+                    "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
+                    "        <extensions>\n" +
+                    "          <test:foo>extension of a waypoint</test:foo>\n" +
+                    "        </extensions>\n" +
+                    "      </trkpt>\n" +
+                    "    </trkseg>\n" +
+                    "  </trk>\n" +
+                    "</gpx>", baos.toString());
 
-        writer.write(data);
-        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
-                "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
-                "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
-                "    xmlns:gpxd=\"http://josm.openstreetmap.de/gpx-drawing-extensions-1.0\"\n" +
-                "    xmlns:test=\"http://example.com/testURI\"\n" +
-                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd http://josm.openstreetmap.de/gpx-drawing-extensions-1.0 http://josm.openstreetmap.de/gpx-drawing-extensions-1.0.xsd\">\n" +
-                "  <metadata>\n" +
-                "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
-                "    <extensions>\n" +
-                "      <knownprefix:foo>bar</knownprefix:foo>\n" +
-                "      <josm:from-server>true</josm:from-server>\n" +
-                "      <josm:layerPreferences>\n" +
-                "        <josm:entry key=\"foo\" value=\"bar\"/>\n" +
-                "      </josm:layerPreferences>\n" +
-                "    </extensions>\n" +
-                "  </metadata>\n" +
-                "  <trk>\n" +
-                "    <extensions>\n" +
-                "      <gpxd:color>#FF0000</gpxd:color>\n" +
-                "    </extensions>\n" +
-                "    <trkseg>\n" +
-                "      <extensions>\n" +
-                "        <test:foo>extension of a segment</test:foo>\n" +
-                "      </extensions>\n" +
-                "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
-                "        <extensions>\n" +
-                "          <test:foo>extension of a waypoint</test:foo>\n" +
-                "        </extensions>\n" +
-                "      </trkpt>\n" +
-                "    </trkseg>\n" +
-                "  </trk>\n" +
-                "</gpx>", baos.toString());
+            baos.reset();
+            writer.write(data, null, false);
+            assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
+                    "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+                    "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
+                    "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
+                    "    xmlns:test=\"http://example.com/testURI\"\n" +
+                    "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                    "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd\">\n" +
+                    "  <metadata>\n" +
+                    "    <time>2021-09-12T12:30:50.724Z</time>\n" +
+                    "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
+                    "    <extensions>\n" +
+                    "      <knownprefix:foo>bar</knownprefix:foo>\n" +
+                    "      <josm:from-server>true</josm:from-server>\n" +
+                    "    </extensions>\n" +
+                    "  </metadata>\n" +
+                    "  <trk>\n" +
+                    "    <trkseg>\n" +
+                    "      <extensions>\n" +
+                    "        <test:foo>extension of a segment</test:foo>\n" +
+                    "      </extensions>\n" +
+                    "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
+                    "        <extensions>\n" +
+                    "          <test:foo>extension of a waypoint</test:foo>\n" +
+                    "        </extensions>\n" +
+                    "      </trkpt>\n" +
+                    "    </trkseg>\n" +
+                    "  </trk>\n" +
+                    "</gpx>", baos.toString());
 
-        baos.reset();
-        writer.write(data, GpxConstants.ColorFormat.GPXX, true);
-        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
-                "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
-                "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
-                "    xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\"\n" +
-                "    xmlns:test=\"http://example.com/testURI\"\n" +
-                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd\">\n" +
-                "  <metadata>\n" +
-                "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
-                "    <extensions>\n" +
-                "      <knownprefix:foo>bar</knownprefix:foo>\n" +
-                "      <josm:from-server>true</josm:from-server>\n" +
-                "      <josm:layerPreferences>\n" +
-                "        <josm:entry key=\"foo\" value=\"bar\"/>\n" +
-                "      </josm:layerPreferences>\n" +
-                "    </extensions>\n" +
-                "  </metadata>\n" +
-                "  <trk>\n" +
-                "    <extensions>\n" +
-                "      <gpxx:TrackExtension>\n" +
-                "        <gpxx:DisplayColor>Red</gpxx:DisplayColor>\n" +
-                "      </gpxx:TrackExtension>\n" +
-                "    </extensions>\n" +
-                "    <trkseg>\n" +
-                "      <extensions>\n" +
-                "        <test:foo>extension of a segment</test:foo>\n" +
-                "      </extensions>\n" +
-                "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
-                "        <extensions>\n" +
-                "          <test:foo>extension of a waypoint</test:foo>\n" +
-                "        </extensions>\n" +
-                "      </trkpt>\n" +
-                "    </trkseg>\n" +
-                "  </trk>\n" +
-                "</gpx>", baos.toString());
+            baos.reset();
+            writer.write(data, GpxConstants.ColorFormat.GPXX, true);
+            // checked again to make sure that extensions are shown again after
+            // being hidden, even if they don't actually have to be converted
+            // (GPXD -> convertColor() -> GPXX -> hide() -> null -> show() -> GPXX)
+            assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
+                    "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+                    "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
+                    "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
+                    "    xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\"\n" +
+                    "    xmlns:test=\"http://example.com/testURI\"\n" +
+                    "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                    "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd\">\n" +
+                    "  <metadata>\n" +
+                    "    <time>2021-09-12T12:30:50.724Z</time>\n" +
+                    "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
+                    "    <extensions>\n" +
+                    "      <knownprefix:foo>bar</knownprefix:foo>\n" +
+                    "      <josm:from-server>true</josm:from-server>\n" +
+                    "      <josm:layerPreferences>\n" +
+                    "        <josm:entry key=\"foo\" value=\"bar\"/>\n" +
+                    "      </josm:layerPreferences>\n" +
+                    "    </extensions>\n" +
+                    "  </metadata>\n" +
+                    "  <trk>\n" +
+                    "    <extensions>\n" +
+                    "      <gpxx:TrackExtension>\n" +
+                    "        <gpxx:DisplayColor>Red</gpxx:DisplayColor>\n" +
+                    "      </gpxx:TrackExtension>\n" +
+                    "    </extensions>\n" +
+                    "    <trkseg>\n" +
+                    "      <extensions>\n" +
+                    "        <test:foo>extension of a segment</test:foo>\n" +
+                    "      </extensions>\n" +
+                    "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
+                    "        <extensions>\n" +
+                    "          <test:foo>extension of a waypoint</test:foo>\n" +
+                    "        </extensions>\n" +
+                    "      </trkpt>\n" +
+                    "    </trkseg>\n" +
+                    "  </trk>\n" +
+                    "</gpx>", baos.toString());
 
-        baos.reset();
-        writer.write(data, null, false);
-        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
-                "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
-                "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
-                "    xmlns:test=\"http://example.com/testURI\"\n" +
-                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd\">\n" +
-                "  <metadata>\n" +
-                "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
-                "    <extensions>\n" +
-                "      <knownprefix:foo>bar</knownprefix:foo>\n" +
-                "      <josm:from-server>true</josm:from-server>\n" +
-                "    </extensions>\n" +
-                "  </metadata>\n" +
-                "  <trk>\n" +
-                "    <trkseg>\n" +
-                "      <extensions>\n" +
-                "        <test:foo>extension of a segment</test:foo>\n" +
-                "      </extensions>\n" +
-                "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
-                "        <extensions>\n" +
-                "          <test:foo>extension of a waypoint</test:foo>\n" +
-                "        </extensions>\n" +
-                "      </trkpt>\n" +
-                "    </trkseg>\n" +
-                "  </trk>\n" +
-                "</gpx>", baos.toString());
-
-        baos.reset();
-        writer.write(data, GpxConstants.ColorFormat.GPXX, true);
-        // checked again to make sure that extensions are shown again after
-        // being hidden, even if they don't actually have to be converted
-        // (GPXD -> convertColor() -> GPXX -> hide() -> null -> show() -> GPXX)
-        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
-                "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
-                "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
-                "    xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\"\n" +
-                "    xmlns:test=\"http://example.com/testURI\"\n" +
-                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://example.com/URI http://example.com/location.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd\">\n" +
-                "  <metadata>\n" +
-                "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
-                "    <extensions>\n" +
-                "      <knownprefix:foo>bar</knownprefix:foo>\n" +
-                "      <josm:from-server>true</josm:from-server>\n" +
-                "      <josm:layerPreferences>\n" +
-                "        <josm:entry key=\"foo\" value=\"bar\"/>\n" +
-                "      </josm:layerPreferences>\n" +
-                "    </extensions>\n" +
-                "  </metadata>\n" +
-                "  <trk>\n" +
-                "    <extensions>\n" +
-                "      <gpxx:TrackExtension>\n" +
-                "        <gpxx:DisplayColor>Red</gpxx:DisplayColor>\n" +
-                "      </gpxx:TrackExtension>\n" +
-                "    </extensions>\n" +
-                "    <trkseg>\n" +
-                "      <extensions>\n" +
-                "        <test:foo>extension of a segment</test:foo>\n" +
-                "      </extensions>\n" +
-                "      <trkpt lat=\"0.0\" lon=\"0.0\">\n" +
-                "        <extensions>\n" +
-                "          <test:foo>extension of a waypoint</test:foo>\n" +
-                "        </extensions>\n" +
-                "      </trkpt>\n" +
-                "    </trkseg>\n" +
-                "  </trk>\n" +
-                "</gpx>", baos.toString());
-
-        // CHECKSTYLE.ON: LineLength
-
-        writer.close();
+            // CHECKSTYLE.ON: LineLength
+        }
     }
 }

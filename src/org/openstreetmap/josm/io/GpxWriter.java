@@ -60,11 +60,30 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
 
     private GpxData data;
     private String indent = "";
+    private Instant metaTime;
     private List<String> validprefixes;
 
     private static final int WAY_POINT = 0;
     private static final int ROUTE_POINT = 1;
     private static final int TRACK_POINT = 2;
+
+    /**
+     * Returns the forced metadata time information, if any.
+     * @return the forced metadata time information, or {@code null}
+     * @since 18219
+     */
+    public Instant getMetaTime() {
+        return metaTime;
+    }
+
+    /**
+     * Sets the forced metadata time information.
+     * @param metaTime the forced metadata time information, or {@code null} to use the current time
+     * @since 18219
+     */
+    public void setMetaTime(Instant metaTime) {
+        this.metaTime = metaTime;
+    }
 
     /**
      * Writes the given GPX data.
@@ -104,6 +123,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 e.put("value", entry.getValue());
             });
         }
+        data.put(META_TIME, (metaTime != null ? metaTime : Instant.now()).toString());
         data.endUpdate();
 
         Collection<IWithAttributes> all = new ArrayList<>();
@@ -234,7 +254,10 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
             simpleTag("keywords", data.getString(META_KEYWORDS));
         }
 
-        simpleTag("time", Instant.now().toString());
+        // write the time
+        if (attr.containsKey(META_TIME)) {
+            simpleTag("time", data.getString(META_TIME));
+        }
 
         Bounds bounds = data.recalculateBounds();
         if (bounds != null) {
