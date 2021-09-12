@@ -47,7 +47,7 @@ public class PrimitiveRenderer implements ListCellRenderer<IPrimitive>, TableCel
     @Override
     public Component getListCellRendererComponent(JList<? extends IPrimitive> list, IPrimitive value, int index,
             boolean isSelected, boolean cellHasFocus) {
-        Component def = defaultListCellRenderer.getListCellRendererComponent(list, null, index, isSelected, cellHasFocus);
+        Component def = defaultListCellRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         return renderer(def, value, list.getModel().getSize() > 1000);
     }
 

@@ -237,7 +237,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
                 Logging.debug(title);
                 final MeasurableTask task = new MeasurableTask(title);
                 tasks.add(task);
-                listener.stateChanged(null);
+                listener.stateChanged(new ChangeEvent(this));
             }
         }
 
@@ -266,7 +266,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
             Logging.debug(title);
             latestSubtask = new SplashProgressMonitor(title, listener);
             tasks.add(latestSubtask);
-            listener.stateChanged(null);
+            listener.stateChanged(new ChangeEvent(this));
         }
 
         @Override
@@ -299,7 +299,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
                     .findAny();
             taskOptional.ifPresent(task -> {
                 ((MeasurableTask) task).finish();
-                listener.stateChanged(null);
+                listener.stateChanged(new ChangeEvent(this));
             });
         }
 

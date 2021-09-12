@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -160,7 +161,7 @@ public class DownloadAlongPanel extends JPanel {
     protected final void addAndFireChangeListener(ChangeListener listener) {
         cbDownloadGpxData.addChangeListener(listener);
         cbDownloadOsmData.addChangeListener(listener);
-        listener.stateChanged(null);
+        listener.stateChanged(new ChangeEvent(this));
     }
 
     /**

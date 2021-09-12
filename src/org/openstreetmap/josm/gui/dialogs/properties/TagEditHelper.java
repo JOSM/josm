@@ -800,7 +800,7 @@ public class TagEditHelper {
 
             focus = addFocusAdapter(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
             // fire focus event in advance or otherwise the popup list will be too small at first
-            focus.focusGained(null);
+            focus.focusGained(new FocusEvent(this, FocusEvent.FOCUS_GAINED));
 
             addUpdateIconListener();
 
@@ -973,7 +973,7 @@ public class TagEditHelper {
                     public void actionPerformed(ActionEvent e) {
                         keys.setSelectedItem(t.getKey());
                         // fix #7951, #8298 - update list of values before setting value (?)
-                        focus.focusGained(null);
+                        focus.focusGained(new FocusEvent(AddTagsDialog.this, FocusEvent.FOCUS_GAINED));
                         values.setSelectedItem(t.getValue());
                         selectValuesCombobox();
                     }
