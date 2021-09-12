@@ -74,6 +74,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class is a toggle dialog that can be turned on and off.
@@ -952,7 +953,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             buttons.addAll(Arrays.asList(nextButtons));
         }
         add(data, BorderLayout.CENTER);
-        if (!buttons.isEmpty() && buttons.get(0) != null && !buttons.get(0).isEmpty()) {
+        if (!buttons.isEmpty() && !Utils.isEmpty(buttons.get(0))) {
             buttonsPanel = new JPanel(new GridLayout(buttons.size(), 1));
             for (Collection<SideButton> buttonRow : buttons) {
                 if (buttonRow == null) {

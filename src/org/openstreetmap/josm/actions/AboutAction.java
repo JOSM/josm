@@ -139,7 +139,7 @@ public final class AboutAction extends JosmAction {
 
         // Get the list of Launchpad contributors using customary msgid “translator-credits”
         String translators = tr("translator-credits");
-        if (translators != null && !translators.isEmpty() && !"translator-credits".equals(translators)) {
+        if (!Utils.isEmpty(translators) && !"translator-credits".equals(translators)) {
             about.addTab(tr("Translators"), createScrollPane(new JosmTextArea(translators)));
         }
 
@@ -210,7 +210,7 @@ public final class AboutAction extends JosmAction {
         JLabel symbol = new JLabel(source);
         symbol.setFont(GuiHelper.getMonospacedFont(symbol));
         JosmTextArea dirLabel = new JosmTextArea();
-        if (dir != null && !dir.isEmpty()) {
+        if (!Utils.isEmpty(dir)) {
             dirLabel.setText(dir);
             dirLabel.setEditable(false);
         } else {

@@ -897,7 +897,7 @@ public class ImageProvider {
                 String fullName = subdir + name + ext;
                 String cacheName = prefix + fullName;
                 /* cache separately */
-                if (dirs != null && !dirs.isEmpty()) {
+                if (!Utils.isEmpty(dirs)) {
                     cacheName = "id:" + id + ':' + fullName;
                     if (archive != null) {
                         cacheName += ':' + archive.getName();
@@ -1955,9 +1955,9 @@ public class ImageProvider {
     @Override
     public String toString() {
         return ("ImageProvider ["
-                + (dirs != null && !dirs.isEmpty() ? "dirs=" + dirs + ", " : "") + (id != null ? "id=" + id + ", " : "")
-                + (subdir != null && !subdir.isEmpty() ? "subdir=" + subdir + ", " : "") + "name=" + name + ", "
+                + (!Utils.isEmpty(dirs) ? "dirs=" + dirs + ", " : "") + (id != null ? "id=" + id + ", " : "")
+                + (!Utils.isEmpty(subdir) ? "subdir=" + subdir + ", " : "") + "name=" + name + ", "
                 + (archive != null ? "archive=" + archive + ", " : "")
-                + (inArchiveDir != null && !inArchiveDir.isEmpty() ? "inArchiveDir=" + inArchiveDir : "") + ']').replaceAll(", \\]", "]");
+                + (!Utils.isEmpty(inArchiveDir) ? "inArchiveDir=" + inArchiveDir : "") + ']').replaceAll(", \\]", "]");
     }
 }

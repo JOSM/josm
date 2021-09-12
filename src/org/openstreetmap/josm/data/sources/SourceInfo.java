@@ -501,7 +501,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
             return Collections.emptyList();
         }
         return entries.stream()
-                .filter(prefEntry -> prefEntry.id != null && !prefEntry.id.isEmpty())
+                .filter(prefEntry -> !Utils.isEmpty(prefEntry.id))
                 .map(prefEntry -> prefEntry.id)
                 .sorted()
                 .collect(Collectors.toList());
@@ -516,7 +516,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
         StringBuilder res = new StringBuilder(getName());
         boolean html = false;
         String dateStr = getDate();
-        if (dateStr != null && !dateStr.isEmpty()) {
+        if (!Utils.isEmpty(dateStr)) {
             res.append("<br>").append(tr("Date of imagery: {0}", dateStr));
             html = true;
         }
@@ -525,7 +525,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
             html = true;
         }
         String desc = getDescription();
-        if (desc != null && !desc.isEmpty()) {
+        if (!Utils.isEmpty(desc)) {
             res.append("<br>").append(Utils.escapeReservedCharactersHTML(desc));
             html = true;
         }

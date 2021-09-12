@@ -296,7 +296,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     private static String findURLTitle(String url) {
         for (SourceEntry source : new ValidatorPrefHelper().get()) {
-            if (url.equals(source.url) && source.title != null && !source.title.isEmpty()) {
+            if (url.equals(source.url) && !Utils.isEmpty(source.title)) {
                 return source.title;
             }
         }

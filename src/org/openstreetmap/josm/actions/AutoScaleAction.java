@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVis
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Toggles the autoScale feature of the mapView
@@ -420,7 +421,7 @@ public class AutoScaleAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         if (AutoScaleMode.SELECTION == mode) {
-            setEnabled(selection != null && !selection.isEmpty());
+            setEnabled(!Utils.isEmpty(selection));
         }
     }
 

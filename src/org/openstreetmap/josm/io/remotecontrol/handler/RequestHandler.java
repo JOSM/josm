@@ -342,7 +342,7 @@ public abstract class RequestHandler {
 
     private <T> T get(String key, Function<String, T> parser, Supplier<T> defaultSupplier) {
         String val = args.get(key);
-        return val != null && !val.isEmpty() ? parser.apply(val) : defaultSupplier.get();
+        return !Utils.isEmpty(val) ? parser.apply(val) : defaultSupplier.get();
     }
 
     private boolean get(String key) {

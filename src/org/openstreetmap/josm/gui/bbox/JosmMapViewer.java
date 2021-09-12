@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An extension of {@link JMapViewer} that implements JOSM-specific tile loading mechanisms.
@@ -76,7 +77,7 @@ public class JosmMapViewer extends JMapViewer {
             } catch (IllegalArgumentException ex) {
                 Logging.trace(ex);
                 Logging.warn(ex.getMessage());
-                if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+                if (!Utils.isEmpty(ex.getMessage())) {
                     new Notification(ex.getMessage()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                 }
             }

@@ -312,7 +312,7 @@ public final class ExceptionUtil {
         Logging.error(e);
         String msg = e.getDisplayMessage();
 
-        if (msg != null && !msg.isEmpty()) {
+        if (!Utils.isEmpty(msg)) {
             return tr("<html>"
                     + "Authorisation at the OSM server failed.<br>"
                     + "The server reported the following error:<br>"

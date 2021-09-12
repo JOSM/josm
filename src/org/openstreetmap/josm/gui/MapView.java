@@ -75,6 +75,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -818,7 +819,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     public String getLayerInformationForSourceTag() {
         return layerManager.getVisibleLayersInZOrder().stream()
-                .filter(layer -> layer.getChangesetSourceTag() != null && !layer.getChangesetSourceTag().trim().isEmpty())
+                .filter(layer -> !Utils.isBlank(layer.getChangesetSourceTag()))
                 .map(layer -> layer.getChangesetSourceTag().trim())
                 .distinct()
                 .collect(Collectors.joining("; "));

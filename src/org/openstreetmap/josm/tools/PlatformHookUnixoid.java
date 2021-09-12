@@ -155,7 +155,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                     }
                     try {
                         String version = Utils.execOutput(Arrays.asList(args));
-                        if (version != null && !version.isEmpty()) {
+                        if (!Utils.isEmpty(version)) {
                             return packageName + ':' + version;
                         }
                     } catch (ExecutionException e) {
@@ -239,7 +239,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 // Try lsb_release (only available on LSB-compliant Linux systems,
                 // see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
                 String line = exec("lsb_release", "-ds");
-                if (line != null && !line.isEmpty()) {
+                if (!Utils.isEmpty(line)) {
                     line = line.replaceAll("\"+", "");
                     line = line.replace("NAME=", ""); // strange code for some Gentoo's
                     if (line.startsWith("Linux ")) // e.g. Linux Mint
@@ -261,7 +261,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         new LinuxReleaseInfo("/etc/SuSE-release")
                 }) {
                     String description = info.extractDescription();
-                    if (description != null && !description.isEmpty()) {
+                    if (!Utils.isEmpty(description)) {
                         return "Linux " + description;
                     }
                 }
@@ -355,7 +355,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 }
             }
             // Append prefix if any
-            if (result != null && !result.isEmpty() && prefix != null && !prefix.isEmpty()) {
+            if (!Utils.isEmpty(result) && !Utils.isEmpty(prefix)) {
                 result = prefix + result;
             }
             if (result != null)
@@ -389,7 +389,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             return new File(getDotDirectory(), "cache");
         } else {
             String xdgCacheDir = getSystemEnv("XDG_CACHE_HOME");
-            if (xdgCacheDir != null && !xdgCacheDir.isEmpty()) {
+            if (!Utils.isEmpty(xdgCacheDir)) {
                 return new File(xdgCacheDir, Preferences.getJOSMDirectoryBaseName());
             } else {
                 return new File(getSystemProperty("user.home") + File.separator +
@@ -404,7 +404,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             return getDotDirectory();
         } else {
             String xdgConfigDir = getSystemEnv("XDG_CONFIG_HOME");
-            if (xdgConfigDir != null && !xdgConfigDir.isEmpty()) {
+            if (!Utils.isEmpty(xdgConfigDir)) {
                 return new File(xdgConfigDir, Preferences.getJOSMDirectoryBaseName());
             } else {
                 return new File(getSystemProperty("user.home") + File.separator +
@@ -419,7 +419,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             return getDotDirectory();
         } else {
             String xdgDataDir = getSystemEnv("XDG_DATA_HOME");
-            if (xdgDataDir != null && !xdgDataDir.isEmpty()) {
+            if (!Utils.isEmpty(xdgDataDir)) {
                 return new File(xdgDataDir, Preferences.getJOSMDirectoryBaseName());
             } else {
                 return new File(getSystemProperty("user.home") + File.separator +

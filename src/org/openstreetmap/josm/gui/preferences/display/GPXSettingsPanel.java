@@ -695,7 +695,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         putPref("colormode.heatmap.gain", colorTypeHeatMapGain.getValue());
         putPref("colormode.heatmap.lower-limit", colorTypeHeatMapLowerLimit.getValue());
 
-        if (!global && layers != null && !layers.isEmpty()) {
+        if (!global && !Utils.isEmpty(layers)) {
             layers.forEach(l -> l.data.invalidate());
         }
 

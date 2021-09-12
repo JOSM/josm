@@ -141,7 +141,7 @@ public class DefaultProxySelector extends ProxySelector {
         int port = parseProxyPortValue(PROXY_HTTP_PORT, Config.getPref().get(PROXY_HTTP_PORT, null));
         httpProxySocketAddress = null;
         if (proxyPolicy == ProxyPolicy.USE_HTTP_PROXY) {
-            if (host != null && !host.trim().isEmpty() && port > 0) {
+            if (!Utils.isBlank(host) && port > 0) {
                 httpProxySocketAddress = new InetSocketAddress(host, port);
             } else {
                 Logging.warn(tr("Unexpected parameters for HTTP proxy. Got host ''{0}'' and port ''{1}''.", host, port));
@@ -153,7 +153,7 @@ public class DefaultProxySelector extends ProxySelector {
         port = parseProxyPortValue(PROXY_SOCKS_PORT, Config.getPref().get(PROXY_SOCKS_PORT, null));
         socksProxySocketAddress = null;
         if (proxyPolicy == ProxyPolicy.USE_SOCKS_PROXY) {
-            if (host != null && !host.trim().isEmpty() && port > 0) {
+            if (!Utils.isBlank(host) && port > 0) {
                 socksProxySocketAddress = new InetSocketAddress(host, port);
             } else {
                 Logging.warn(tr("Unexpected parameters for SOCKS proxy. Got host ''{0}'' and port ''{1}''.", host, port));

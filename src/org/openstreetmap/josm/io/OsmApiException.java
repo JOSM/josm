@@ -217,10 +217,10 @@ public class OsmApiException extends OsmTransferException {
         if (Utils.isEmpty(header) && Utils.isEmpty(body)) {
             sb.append(tr("The server replied an error with code {0}.", responseCode));
         } else {
-            if (header != null && !header.isEmpty()) {
+            if (!Utils.isEmpty(header)) {
                 sb.append(tr(header));
             }
-            if (body != null && !body.isEmpty() && !body.equals(header)) {
+            if (!Utils.isEmpty(body) && !body.equals(header)) {
                 if (sb.length() > 0) {
                     sb.append(". ");
                 }

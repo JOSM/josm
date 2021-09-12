@@ -305,7 +305,7 @@ public final class LanguageInfo {
         String v = l.getVariant();
         if (c.isEmpty())
             c = null;
-        if (v != null && !v.isEmpty()) {
+        if (!Utils.isEmpty(v)) {
             if (c != null)
                 list.add(lang+'_'+c+'@'+v);
             list.add(lang+'@'+v);

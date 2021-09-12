@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlUtils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.Attributes;
@@ -660,7 +661,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     if (dot)
                         message += '.';
                 }
-                if (parser.data.creator != null && !parser.data.creator.trim().isEmpty()) {
+                if (!Utils.isBlank(parser.data.creator)) {
                     message += "\n" + tr("The file was created by \"{0}\".", parser.data.creator);
                 }
                 SAXException ex = new SAXException(message, e);

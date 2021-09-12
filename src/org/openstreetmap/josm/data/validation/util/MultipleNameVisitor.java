@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Able to create a name and an icon for a collection of elements.
@@ -43,7 +44,7 @@ public class MultipleNameVisitor extends NameVisitor {
         String multipleClassname = null;
         for (OsmPrimitive osm : data) {
             String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
-            if (name != null && !name.isEmpty() && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH.get()) {
+            if (!Utils.isEmpty(name) && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH.get()) {
                 if (multipleName.length() > 0) {
                     multipleName.append(", ");
                 }

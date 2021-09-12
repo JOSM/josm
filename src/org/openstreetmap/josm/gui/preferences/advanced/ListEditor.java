@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Editor for List preference entries.
@@ -43,7 +44,7 @@ public class ListEditor extends AbstractListEditor<String> {
 
     @Override
     public List<String> getData() {
-        return new ArrayList<>(SubclassFilteredCollection.filter(model.getData(), object -> object != null && !object.isEmpty()));
+        return new ArrayList<>(SubclassFilteredCollection.filter(model.getData(), object -> !Utils.isEmpty(object)));
     }
 
     @Override

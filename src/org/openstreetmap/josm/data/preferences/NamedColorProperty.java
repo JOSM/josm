@@ -9,6 +9,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A property containing a {@link Color} value with additional information associated to it.
@@ -83,7 +84,7 @@ public class NamedColorProperty extends AbstractToStringProperty<Color> {
     @Override
     public Color get() {
         List<String> data = getPreferences().getList(getKey(), getDefaultValuePref()); // store default value
-        if (super.isSet() && data != null && !data.isEmpty()) {
+        if (super.isSet() && !Utils.isEmpty(data)) {
             return ColorHelper.html2color(data.get(0));
         }
         return defaultValue;

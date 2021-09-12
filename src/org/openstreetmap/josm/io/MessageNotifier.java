@@ -148,7 +148,7 @@ public final class MessageNotifier {
                     } else {
                         String username = Config.getPref().get("osm-server.username", null);
                         String password = Config.getPref().get("osm-server.password", null);
-                        return username != null && !username.isEmpty() && password != null && !password.isEmpty();
+                        return !Utils.isEmpty(username) && !Utils.isEmpty(password);
                     }
                 } else {
                     CredentialsAgentResponse credentials = credManager.getCredentials(
@@ -156,7 +156,7 @@ public final class MessageNotifier {
                     if (credentials != null) {
                         String username = credentials.getUsername();
                         char[] password = credentials.getPassword();
-                        return username != null && !username.isEmpty() && password != null && password.length > 0;
+                        return !Utils.isEmpty(username) && password != null && password.length > 0;
                     }
                 }
             } catch (CredentialsAgentException e) {

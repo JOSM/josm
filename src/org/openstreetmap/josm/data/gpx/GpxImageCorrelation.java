@@ -196,7 +196,7 @@ public final class GpxImageCorrelation {
     static Double getElevation(WayPoint wp) {
         if (wp != null) {
             String value = wp.getString(GpxConstants.PT_ELE);
-            if (value != null && !value.isEmpty()) {
+            if (!Utils.isEmpty(value)) {
                 try {
                     return Double.valueOf(value);
                 } catch (NumberFormatException e) {

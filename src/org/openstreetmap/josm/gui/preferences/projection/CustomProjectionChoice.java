@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * ProjectionChoice where a CRS can be defined using various parameters.
@@ -186,7 +187,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
     @Override
     public void setPreferences(Collection<String> args) {
-        if (args != null && !args.isEmpty()) {
+        if (!Utils.isEmpty(args)) {
             pref = args.iterator().next();
         }
     }

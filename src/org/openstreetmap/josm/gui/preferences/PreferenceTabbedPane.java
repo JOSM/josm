@@ -436,7 +436,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         if (preference != null) {
             final Set<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
             final PluginDownloadTask task;
-            if (toDownload != null && !toDownload.isEmpty()) {
+            if (!Utils.isEmpty(toDownload)) {
                 task = new PluginDownloadTask(this, toDownload, tr("Download plugins"));
             } else {
                 task = null;

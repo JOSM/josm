@@ -587,7 +587,7 @@ public class RelationListDialog extends ToggleDialog
          * @since 13957 (signature)
          */
         public void setSelectedRelations(Collection<? extends IRelation<?>> sel) {
-            if (sel != null && !sel.isEmpty()) {
+            if (!Utils.isEmpty(sel)) {
                 if (!getVisibleRelations().containsAll(sel)) {
                     resetFilter();
                 }

@@ -36,6 +36,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Adjust the position of an imagery layer.
@@ -327,7 +328,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         @Override
         protected void buttonAction(int buttonIndex, ActionEvent evt) {
             restoreOldMode = true;
-            if (buttonIndex == 0 && tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty() &&
+            if (buttonIndex == 0 && !Utils.isEmpty(tBookmarkName.getText()) &&
                     OffsetBookmark.getBookmarkByName(layer, tBookmarkName.getText()) != null &&
                     !confirmOverwriteBookmark()) {
                 return;
@@ -345,7 +346,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (layer != null) {
                 if (getValue() != 1) {
                     layer.getDisplaySettings().setOffsetBookmark(old);
-                } else if (tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty()) {
+                } else if (!Utils.isEmpty(tBookmarkName.getText())) {
                     OffsetBookmark.bookmarkOffset(tBookmarkName.getText(), layer);
                 }
             }

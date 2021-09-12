@@ -993,7 +993,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     protected static Set<String> findSuggestedRoles(final Collection<TaggingPreset> presets, OsmPrimitive p) {
         return presets.stream()
                 .map(preset -> preset.suggestRoleForOsmPrimitive(p))
-                .filter(role -> role != null && !role.isEmpty())
+                .filter(role -> !Utils.isEmpty(role))
                 .collect(Collectors.toSet());
     }
 

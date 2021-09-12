@@ -368,7 +368,7 @@ public class ImageryProvidersPanel extends JPanel {
             if (bounds != null) {
                 int viewIndex = defaultTable.convertRowIndexToView(i);
                 List<Shape> shapes = bounds.getShapes();
-                if (shapes != null && !shapes.isEmpty()) {
+                if (!Utils.isEmpty(shapes)) {
                     if (defaultTable.getSelectionModel().isSelectedIndex(viewIndex)) {
                         if (!mapPolygons.containsKey(i)) {
                             List<MapPolygon> list = new ArrayList<>();

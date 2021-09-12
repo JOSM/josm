@@ -62,6 +62,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Preference settings for plugins.
@@ -555,7 +556,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                             tr("Enter URL"),
                             JOptionPane.QUESTION_MESSAGE
                             );
-                    if (s != null && !s.isEmpty()) {
+                    if (!Utils.isEmpty(s)) {
                         model.addElement(s);
                     }
                 }
@@ -581,7 +582,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                             null,
                             list.getSelectedValue()
                             );
-                    if (s != null && !s.isEmpty()) {
+                    if (!Utils.isEmpty(s)) {
                         model.setElementAt(s, list.getSelectedIndex());
                     }
                 }

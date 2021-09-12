@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Not;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Or;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Parent;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The context switch offers possibility to use tags of referenced primitive when constructing primitive name.
@@ -368,7 +369,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
     public void appendText(StringBuilder result, TemplateEngineDataProvider dataProvider) {
         if (dataProvider instanceof OsmPrimitive) {
             List<OsmPrimitive> primitives = context.getPrimitives((OsmPrimitive) dataProvider);
-            if (primitives != null && !primitives.isEmpty()) {
+            if (!Utils.isEmpty(primitives)) {
                 template.appendText(result, primitives.get(0));
             }
         }
@@ -379,7 +380,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
     public boolean isValid(TemplateEngineDataProvider dataProvider) {
         if (dataProvider instanceof OsmPrimitive) {
             List<OsmPrimitive> primitives = context.getPrimitives((OsmPrimitive) dataProvider);
-            if (primitives != null && !primitives.isEmpty()) {
+            if (!Utils.isEmpty(primitives)) {
                 return template.isValid(primitives.get(0));
             }
         }

@@ -136,7 +136,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
             final PluginCheckBox cbPlugin = new PluginCheckBox(pi, selected, this, model);
             String pluginText = tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion);
-            if (pi.requires != null && !pi.requires.isEmpty()) {
+            if (!Utils.isEmpty(pi.requires)) {
                 pluginText += tr(" (requires: {0})", pi.requires);
             }
             JLabel lblPlugin = new JLabel(

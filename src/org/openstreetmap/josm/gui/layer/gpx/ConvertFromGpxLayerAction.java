@@ -156,7 +156,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
             GpxExtensionCollection exts, OsmPrimitive p, boolean seg, List<String> keys, boolean check, String gpxPrefix) {
         for (GpxExtension ext : exts) {
             String value = ext.getValue();
-            if (value != null && !value.isEmpty()) {
+            if (!Utils.isEmpty(value)) {
                 String extpre = "extension:";
                 String pre = ext.getPrefix();
                 if (Utils.isEmpty(pre)) {

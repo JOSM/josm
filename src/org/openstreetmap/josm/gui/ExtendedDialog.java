@@ -508,7 +508,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
 
     @Override
     public final boolean toggleCheckState() {
-        toggleable = togglePref != null && !togglePref.isEmpty();
+        toggleable = !Utils.isEmpty(togglePref);
         toggleValue = ConditionalOptionPaneUtil.getDialogReturnValue(togglePref);
         return toggleable && toggleValue != -1;
     }

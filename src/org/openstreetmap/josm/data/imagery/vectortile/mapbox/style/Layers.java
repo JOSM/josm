@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery.vectortile.mapbox.style;
 
-import org.openstreetmap.josm.gui.mappaint.StyleKeys;
-
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.text.MessageFormat;
@@ -21,6 +19,9 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Mapbox style layers
@@ -266,7 +267,7 @@ public class Layers {
         boolean iconImage = false;
         if (layoutObject.containsKey("icon-image")) {
             sb.append(/* NO-ICON */"icon-image:concat(");
-            if (this.styleId != null && !this.styleId.trim().isEmpty()) {
+            if (!Utils.isBlank(this.styleId)) {
                 sb.append('"').append(this.styleId).append('/').append("\",");
             }
             Matcher matcher = CURLY_BRACES.matcher(layoutObject.getString("icon-image"));

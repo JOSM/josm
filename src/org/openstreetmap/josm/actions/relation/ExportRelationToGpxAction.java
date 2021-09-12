@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Exports the current relation to a single GPX track,
@@ -213,7 +214,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
     @Override
     public void setPrimitives(Collection<? extends IPrimitive> primitives) {
         relations = Collections.<Relation>emptySet();
-        if (primitives != null && !primitives.isEmpty()) {
+        if (!Utils.isEmpty(primitives)) {
             relations = new SubclassFilteredCollection<>(primitives,
                 r -> r instanceof Relation && r.hasTag("type", Arrays.asList("route", "superroute")));
         }

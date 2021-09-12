@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Copy OSM primitives to clipboard in order to paste them, or their tags, somewhere else.
@@ -69,7 +70,7 @@ public class CopyAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        setEnabled(!Utils.isEmpty(selection));
     }
 
     protected void showEmptySelectionWarning() {

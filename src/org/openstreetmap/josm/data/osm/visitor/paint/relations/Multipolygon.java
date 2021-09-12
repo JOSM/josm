@@ -31,6 +31,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Multipolygon data used to represent complex areas, see <a href="https://wiki.openstreetmap.org/wiki/Relation:multipolygon">wiki</a>.
@@ -99,19 +100,19 @@ public class Multipolygon {
             if (Config.getPref() == null) return;
             Collection<String> literals;
             literals = Config.getPref().getList(PREF_KEY_OUTER_ROLES);
-            if (literals != null && !literals.isEmpty()) {
+            if (!Utils.isEmpty(literals)) {
                 setNormalized(literals, outerExactRoles);
             }
             literals = Config.getPref().getList(PREF_KEY_OUTER_ROLE_PREFIXES);
-            if (literals != null && !literals.isEmpty()) {
+            if (!Utils.isEmpty(literals)) {
                 setNormalized(literals, outerRolePrefixes);
             }
             literals = Config.getPref().getList(PREF_KEY_INNER_ROLES);
-            if (literals != null && !literals.isEmpty()) {
+            if (!Utils.isEmpty(literals)) {
                 setNormalized(literals, innerExactRoles);
             }
             literals = Config.getPref().getList(PREF_KEY_INNER_ROLE_PREFIXES);
-            if (literals != null && !literals.isEmpty()) {
+            if (!Utils.isEmpty(literals)) {
                 setNormalized(literals, innerRolePrefixes);
             }
         }

@@ -86,7 +86,7 @@ public abstract class HelpAction extends AbstractAction {
             type = Utils.encodeUrl(type);
         }
 
-        if (type != null && !type.isEmpty()) {
+        if (!Utils.isEmpty(type)) {
             pages.add(String.format("%sRelation:%s", lang, type));
             pages.add(String.format("Relation:%s", type));
         }

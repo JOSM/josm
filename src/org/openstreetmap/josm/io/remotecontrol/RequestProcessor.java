@@ -455,7 +455,7 @@ public class RequestProcessor extends Thread {
             String[] examples = sample.getUsageExamples(handler.getKey().substring(1));
             usage.append("<li>")
                  .append(handler.getKey());
-            if (sample.getUsage() != null && !sample.getUsage().isEmpty()) {
+            if (!Utils.isEmpty(sample.getUsage())) {
                 usage.append(" &mdash; <i>").append(sample.getUsage()).append("</i>");
             }
             if (mandatory != null && mandatory.length > 0) {

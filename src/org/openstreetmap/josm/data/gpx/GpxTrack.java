@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.StreamUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * GPX track.
@@ -37,7 +38,7 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
      */
     public GpxTrack(Collection<Collection<WayPoint>> trackSegs, Map<String, Object> attributes) {
         this.segments = trackSegs.stream()
-                .filter(trackSeg -> trackSeg != null && !trackSeg.isEmpty())
+                .filter(trackSeg -> !Utils.isEmpty(trackSeg))
                 .map(GpxTrackSegment::new)
                 .collect(StreamUtils.toUnmodifiableList());
         this.length = calculateLength();

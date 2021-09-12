@@ -134,7 +134,7 @@ public class SessionLoadAction extends DiskAccessAction {
         }
 
         private void addLayers() {
-            if (layers != null && !layers.isEmpty()) {
+            if (!Utils.isEmpty(layers)) {
                 boolean noMap = MainApplication.getMap() == null;
                 for (Layer l : layers) {
                     if (canceled)

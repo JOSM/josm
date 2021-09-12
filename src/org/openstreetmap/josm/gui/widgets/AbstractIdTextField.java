@@ -5,6 +5,7 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An abstract class for ID text fields.
@@ -79,7 +80,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
      * @return true if text has been pasted and valid ids have been read
      */
     public boolean tryToPasteFrom(String contents) {
-        if (contents != null && !contents.trim().isEmpty()) {
+        if (!Utils.isBlank(contents)) {
             setText(contents.trim());
             clearTextIfInvalid();
             return readIds();

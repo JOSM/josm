@@ -11,7 +11,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This dialog lets the user select changesets from a list of changesets.
@@ -127,8 +127,7 @@ public class CloseChangesetDialog extends JDialog {
         }
 
         protected void refreshEnabledState() {
-            List<Changeset> list = lstOpenChangesets.getSelectedValuesList();
-            setEnabled(list != null && !list.isEmpty());
+            setEnabled(!Utils.isEmpty(lstOpenChangesets.getSelectedValuesList()));
         }
 
         @Override

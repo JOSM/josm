@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Map mode to add a new note. Listens for a mouse click and then
@@ -77,7 +78,7 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
             return;
         }
         String input = dialog.getInputText();
-        if (input != null && !input.isEmpty()) {
+        if (!Utils.isEmpty(input)) {
             LatLon latlon = map.mapView.getLatLon(e.getPoint().x, e.getPoint().y);
             noteData.createNote(latlon, input);
         } else {

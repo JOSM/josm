@@ -155,7 +155,7 @@ public class ImageryPreferenceTestIT {
     }
 
     private Optional<byte[]> checkUrl(ImageryInfo info, String url) {
-        if (url != null && !url.isEmpty()) {
+        if (!Utils.isEmpty(url)) {
             if (workingURLs.containsKey(url)) {
                 return Optional.of(workingURLs.get(url));
             }
@@ -301,7 +301,7 @@ public class ImageryPreferenceTestIT {
 
     private static LatLon getCenter(ImageryBounds bounds) {
         List<Shape> shapes = bounds.getShapes();
-        return shapes != null && !shapes.isEmpty() ? getPointInShape(shapes.get(0)) : bounds.getCenter();
+        return !Utils.isEmpty(shapes) ? getPointInShape(shapes.get(0)) : bounds.getCenter();
     }
 
     private void checkEntry(ImageryInfo info) {

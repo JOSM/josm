@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A {@link JList} containing items, and {@link JButton}s to add/edit/delete items.
@@ -65,7 +66,7 @@ public class EditableList extends JPanel {
                     title,
                     title,
                     JOptionPane.QUESTION_MESSAGE);
-            if (source != null && !source.isEmpty()) {
+            if (!Utils.isEmpty(source)) {
                 ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
             }
             sourcesList.clearSelection();
@@ -80,7 +81,7 @@ public class EditableList extends JPanel {
             if (row == -1) {
                 if (sourcesList.getModel().getSize() == 0) {
                     String source1 = JOptionPane.showInputDialog(MainApplication.getMainFrame(), title, title, JOptionPane.QUESTION_MESSAGE);
-                    if (source1 != null && !source1.isEmpty()) {
+                    if (!Utils.isEmpty(source1)) {
                         ((DefaultListModel<String>) sourcesList.getModel()).addElement(source1);
                     }
                 } else {
@@ -97,7 +98,7 @@ public class EditableList extends JPanel {
                         title,
                         JOptionPane.QUESTION_MESSAGE, null, null,
                         sourcesList.getSelectedValue());
-                if (source2 != null && !source2.isEmpty()) {
+                if (!Utils.isEmpty(source2)) {
                     ((DefaultListModel<String>) sourcesList.getModel()).setElementAt(source2, row);
                 }
             }

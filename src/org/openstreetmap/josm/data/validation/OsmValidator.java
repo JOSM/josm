@@ -391,7 +391,7 @@ public final class OsmValidator {
             DefaultMutableTreeNode trunk;
             DefaultMutableTreeNode branch;
 
-            if (description != null && !description.isEmpty()) {
+            if (!Utils.isEmpty(description)) {
                 trunk = inTree(root, description);
                 branch = inTree(trunk, key);
                 trunk.add(branch);

@@ -19,6 +19,7 @@ import javax.swing.text.Document;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Subclass of {@link JTextField} that:<ul>
@@ -191,7 +192,7 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
             int h = getHeight() - icon.getIconHeight();
             icon.paintIcon(this, g, Math.min(leftInsets, h / 2), h / 2);
         }
-        if (hint != null && !hint.isEmpty() && getText().isEmpty() && !isFocusOwner()) {
+        if (!Utils.isEmpty(hint) && getText().isEmpty() && !isFocusOwner()) {
             // Taken from http://stackoverflow.com/a/24571681/2257172
             int h = getHeight();
             if (g instanceof Graphics2D) {

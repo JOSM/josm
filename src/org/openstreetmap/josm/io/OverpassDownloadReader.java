@@ -264,8 +264,8 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         boolean javaPer = false;
         boolean javaDur = false;
         if (matcher.matches()) {
-            javaPer = matcher.group(1) != null && !matcher.group(1).isEmpty();
-            javaDur = matcher.group(3) != null && !matcher.group(3).isEmpty();
+            javaPer = !Utils.isEmpty(matcher.group(1));
+            javaDur = !Utils.isEmpty(matcher.group(3));
             duration = 'P' + matcher.group(1).replace('X', 'M') + matcher.group(2);
             if (javaDur) {
                 duration += 'T' + matcher.group(3);

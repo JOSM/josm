@@ -39,6 +39,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * GUI component to display an image (photograph).
@@ -791,7 +792,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         } else {
             errorMessage = null;
         }
-        if (errorMessage != null && !errorMessage.trim().isEmpty()) {
+        if (!Utils.isBlank(errorMessage)) {
             Rectangle2D errorStringSize = g.getFontMetrics(g.getFont()).getStringBounds(errorMessage, g);
             if (Boolean.TRUE.equals(ERROR_MESSAGE_BACKGROUND.get())) {
                 int height = g.getFontMetrics().getHeight();

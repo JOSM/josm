@@ -961,7 +961,7 @@ public class SyncEditorLayerIndex {
         if (!Objects.equals(eh, jh)) {
             if (Utils.isEmpty(jh)) {
                 myprintln("- Missing JOSM no tile headers ("+eh+"): "+getDescription(j));
-            } else if (eh != null && !eh.isEmpty()) {
+            } else if (!Utils.isEmpty(eh)) {
                 myprintln("* No tile headers differ ('"+eh+"' != '"+jh+"'): "+getDescription(j));
             } else if (!optionNoEli) {
                 myprintln("+ Missing ELI no tile headers ('"+jh+"'): "+getDescription(j));
@@ -1588,11 +1588,11 @@ public class SyncEditorLayerIndex {
         String name = getName(o);
         String id = getId(o);
         String d = cc;
-        if (name != null && !name.isEmpty()) {
+        if (!Utils.isEmpty(name)) {
             d += name;
-            if (id != null && !id.isEmpty())
+            if (!Utils.isEmpty(id))
               d += " ["+id+"]";
-        } else if (url != null && !url.isEmpty())
+        } else if (!Utils.isEmpty(url))
             d += url;
         if (optionShorten) {
             if (d.length() > MAXLEN) d = d.substring(0, MAXLEN-1) + "...";

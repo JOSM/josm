@@ -239,7 +239,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             if (isKeyIgnored(key))
                 continue;
             Set<String> values = TaggingPresets.getPresetValues(key);
-            boolean allNumerical = values != null && !values.isEmpty()
+            boolean allNumerical = !Utils.isEmpty(values)
                     && values.stream().allMatch(TagChecker::isNum);
             if (allNumerical) {
                 ignoreForLevenshtein.add(key);
@@ -427,7 +427,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * @return {@code true} if {@code s} contains non-printing control characters
      */
     static boolean containsUnwantedNonPrintingControlCharacter(String s) {
-        return s != null && !s.isEmpty() && (
+        return !Utils.isEmpty(s) && (
                 isJoiningChar(s.charAt(0)) ||
                 isJoiningChar(s.charAt(s.length() - 1)) ||
                 s.chars().anyMatch(c -> (isAsciiControlChar(c) && !isNewLineChar(c)) || isBidiControlChar(c))
@@ -639,7 +639,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 checkSingleTagValueSimple(withErrors, p, s, key, value);
                 checkSingleTagComplex(withErrors, p, key, value);
             }
-            if (checkFixmes && key != null && value != null && !value.isEmpty() && isFixme(key, value) && !withErrors.contains(p, "FIXME")) {
+            if (checkFixmes && key != null && !Utils.isEmpty(value) && isFixme(key, value) && !withErrors.contains(p, "FIXME")) {
                 errors.add(TestError.builder(this, Severity.OTHER, FIXME)
                         .message(tr("fixme"))
                         .primitives(p)

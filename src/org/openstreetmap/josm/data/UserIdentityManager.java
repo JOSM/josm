@@ -216,7 +216,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
     public void initFromPreferences() {
         String credentialsUserName = CredentialsManager.getInstance().getUsername();
         if (isAnonymous()) {
-            if (credentialsUserName != null && !credentialsUserName.trim().isEmpty()) {
+            if (!Utils.isBlank(credentialsUserName)) {
                 setPartiallyIdentified(credentialsUserName);
             }
         } else {

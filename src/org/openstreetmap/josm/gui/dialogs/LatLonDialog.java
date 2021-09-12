@@ -294,7 +294,7 @@ public class LatLonDialog extends ExtendedDialog {
     }
 
     private void setOkEnabled(boolean b) {
-        if (buttons != null && !buttons.isEmpty()) {
+        if (!Utils.isEmpty(buttons)) {
             buttons.get(0).setEnabled(b);
         }
     }

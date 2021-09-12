@@ -24,6 +24,7 @@ import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.StreamUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A panel that displays a summary of data the user is about to upload
@@ -166,7 +167,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                 .map(url -> tr("… to server: <strong>{0}</strong>", url))
                 .orElse("");
         final String html = Stream.of(buildChangesetSummary(), buildChangesetSummary2(), buildStrategySummary(), server)
-                .filter(s -> s != null && !s.isEmpty())
+                .filter(s -> !Utils.isEmpty(s))
                 .collect(StreamUtils.toHtmlList());
         jepMessage.setText(html);
         validate();

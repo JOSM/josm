@@ -69,7 +69,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements D
     }
 
     private void selectionChanged(final Collection<? extends IPrimitive> newSelection) {
-        GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty()
+        GuiHelper.runInEDT(() -> setEnabled(!Utils.isEmpty(newSelection)
                 && OsmUtils.isOsmCollectionEditable(relations)));
     }
 

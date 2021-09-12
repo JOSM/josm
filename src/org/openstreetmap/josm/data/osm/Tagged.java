@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * Objects implement Tagged if they provide a map of key/value pairs.
  *
@@ -110,8 +112,7 @@ public interface Tagged {
      * @since 13430
      */
     default boolean hasTag(String key) {
-        String v = get(key);
-        return v != null && !v.isEmpty();
+        return !Utils.isEmpty(get(key));
     }
 
     /**

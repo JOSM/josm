@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Splits a way into multiple ways (all identical except for their node list).
@@ -383,7 +384,7 @@ public class SplitWayAction extends JosmAction {
         splitWayCommand.ifPresent(result -> {
             UndoRedoHandler.getInstance().add(result);
             List<? extends PrimitiveId> newSel = result.getNewSelection();
-            if (newSel != null && !newSel.isEmpty()) {
+            if (!Utils.isEmpty(newSel)) {
                 way.getDataSet().setSelected(newSel);
             }
         });

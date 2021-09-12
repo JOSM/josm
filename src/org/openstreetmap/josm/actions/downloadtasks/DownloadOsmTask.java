@@ -501,7 +501,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                     rememberErrorMessage(NO_DATA_FOUND);
                 }
                 String remark = dataSet.getRemark();
-                if (remark != null && !remark.isEmpty()) {
+                if (!Utils.isEmpty(remark)) {
                     rememberErrorMessage(remark);
                 }
                 if (!(reader instanceof BoundingBoxDownloader)

@@ -203,7 +203,7 @@ public class BookmarkSelection implements DownloadSelection {
                             JOptionPane.QUESTION_MESSAGE)
             );
             b.setArea(currentArea);
-            if (b.getName() != null && !b.getName().isEmpty()) {
+            if (!Utils.isEmpty(b.getName())) {
                 ((DefaultListModel<BookmarkList.Bookmark>) bookmarks.getModel()).addElement(b);
                 bookmarks.save();
             }

@@ -224,7 +224,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 b.append(part).append('\n');
             }
             panel.add(new JLabel("<html><body width=\"500\"><b>"+b.toString().trim()+"</b></body></html>"), GBC.eol().insets(0, 0, 0, 10));
-            if (details != null && !details.isEmpty()) {
+            if (!Utils.isEmpty(details)) {
                 panel.add(new JLabel(tr("Details:")), GBC.eol().insets(0, 0, 0, 10));
                 JosmTextArea area = new JosmTextArea(details);
                 area.setEditable(false);

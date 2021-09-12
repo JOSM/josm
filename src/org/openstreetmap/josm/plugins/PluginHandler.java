@@ -1140,7 +1140,7 @@ public final class PluginHandler {
                 allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent, monitor.createSubTaskMonitor(1, false));
                 // If only some plugins have to be updated, filter the list
-                if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
+                if (!Utils.isEmpty(pluginsWanted)) {
                     final Collection<String> pluginsWantedName = Utils.transform(pluginsWanted, piw -> piw.name);
                     plugins = SubclassFilteredCollection.filter(plugins, pi -> pluginsWantedName.contains(pi.name));
                 }
@@ -1593,7 +1593,7 @@ public final class PluginHandler {
         for (final PluginProxy pp : pluginList) {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);
-            pl.add(pi.name + " (" + (pi.localversion != null && !pi.localversion.isEmpty()
+            pl.add(pi.name + " (" + (!Utils.isEmpty(pi.localversion)
                     ? pi.localversion : "unknown") + ')');
         }
         return pl;
@@ -1607,7 +1607,7 @@ public final class PluginHandler {
         JPanel pluginTab = new JPanel(new GridBagLayout());
         for (final PluginInformation info : getPlugins()) {
             String name = info.name
-            + (info.localversion != null && !info.localversion.isEmpty() ? " Version: " + info.localversion : "");
+            + (!Utils.isEmpty(info.localversion) ? " Version: " + info.localversion : "");
             pluginTab.add(new JLabel(name), GBC.std());
             pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
             pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());

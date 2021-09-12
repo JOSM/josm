@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Projection choice that lists all known projects by code.
@@ -77,7 +78,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
 
     @Override
     public void setPreferences(Collection<String> args) {
-        if (args != null && !args.isEmpty()) {
+        if (!Utils.isEmpty(args)) {
             code = args.iterator().next();
         }
     }

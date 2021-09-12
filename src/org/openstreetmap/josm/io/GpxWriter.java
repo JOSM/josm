@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Writes GPX files from GPX data or OSM data.
@@ -133,7 +134,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         StringBuilder schemaLocations = new StringBuilder("http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
 
         for (XMLNamespace n : namespaces) {
-            if (n.getURI() != null && n.getPrefix() != null && !n.getPrefix().isEmpty()) {
+            if (n.getURI() != null && !Utils.isEmpty(n.getPrefix())) {
                 out.println(String.format("    xmlns:%s=\"%s\"", n.getPrefix(), n.getURI()));
                 if (n.getLocation() != null) {
                     schemaLocations.append(' ').append(n.getURI()).append(' ').append(n.getLocation());
@@ -322,7 +323,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
      * @param content content
      */
     private void simpleTag(String tag, String content) {
-        if (content != null && !content.isEmpty()) {
+        if (!Utils.isEmpty(content)) {
             open(tag);
             out.print(encode(content));
             out.println("</" + tag + '>');
@@ -331,7 +332,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     private void simpleTag(String tag, String content, String attributes) {
-        if (content != null && !content.isEmpty()) {
+        if (!Utils.isEmpty(content)) {
             open(tag, attributes);
             out.print(encode(content));
             out.println("</" + tag + '>');

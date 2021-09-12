@@ -50,7 +50,7 @@ public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileS
         // If not, search into PROJ_LIB directory
         if (grid == null) {
             String projLib = Utils.getSystemProperty("PROJ_LIB");
-            if (projLib != null && !projLib.isEmpty()) {
+            if (!Utils.isEmpty(projLib)) {
                 File dir = new File(projLib);
                 if (dir.exists() && dir.isDirectory()) {
                     File file = new File(dir, gridFileName);

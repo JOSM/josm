@@ -146,7 +146,7 @@ public abstract class HttpClient {
                     Logging.debug("REQUEST HEADERS: {0}", headers);
                 }
                 cr = performConnection();
-                final boolean hasReason = reasonForRequest != null && !reasonForRequest.isEmpty();
+                final boolean hasReason = !Utils.isEmpty(reasonForRequest);
                 logRequest("{0} {1}{2} -> {3} {4} ({5}{6})",
                         getRequestMethod(), getURL(), hasReason ? (" (" + reasonForRequest + ')') : "",
                         cr.getResponseVersion(), cr.getResponseCode(),

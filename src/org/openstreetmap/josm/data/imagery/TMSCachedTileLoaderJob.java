@@ -141,7 +141,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         }
         if (isNotImage(headers, statusCode)) {
             String message = detectErrorMessage(new String(content, StandardCharsets.UTF_8));
-            if (message != null && !message.isEmpty()) {
+            if (!Utils.isEmpty(message)) {
                 tile.setError(message);
             }
             return false;

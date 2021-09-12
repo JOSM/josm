@@ -233,7 +233,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void beginTask(String title) {
-            if (title != null && !title.isEmpty()) {
+            if (!Utils.isEmpty(title)) {
                 Logging.debug(title);
                 final MeasurableTask task = new MeasurableTask(title);
                 tasks.add(task);

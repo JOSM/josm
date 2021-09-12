@@ -183,7 +183,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
      */
     private String makePathFit(String t) {
         boolean hasEllipsis = false;
-        while (t != null && !t.isEmpty()) {
+        while (!Utils.isEmpty(t)) {
             int txtwidth = lblFilename.getFontMetrics(lblFilename.getFont()).stringWidth(t);
             if (txtwidth < lblFilename.getWidth() || t.lastIndexOf(File.separator) < ELLIPSIS.length()) {
                 break;

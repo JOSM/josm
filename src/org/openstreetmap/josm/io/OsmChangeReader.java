@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Reader for <a href="http://wiki.openstreetmap.org/wiki/OsmChange">OsmChange</a> file format.
@@ -121,7 +122,7 @@ public class OsmChangeReader extends OsmReader {
                 break;
             }
         }
-        if (location != null && text != null && !text.isEmpty()) {
+        if (location != null && !Utils.isEmpty(text)) {
             noteData.createNote(location, text);
         }
     }

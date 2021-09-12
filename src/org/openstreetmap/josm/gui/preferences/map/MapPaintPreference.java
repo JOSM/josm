@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Preference settings for map paint styles.
@@ -168,7 +169,7 @@ public class MapPaintPreference extends DefaultTabPreferenceSetting {
         try {
             final MapCSSStyleSource css = new MapCSSStyleSource(entry);
             css.loadStyleSource();
-            if (css.title != null && !css.title.isEmpty()) {
+            if (!Utils.isEmpty(css.title)) {
                 return css.title;
             }
         } catch (RuntimeException ignore) { // NOPMD

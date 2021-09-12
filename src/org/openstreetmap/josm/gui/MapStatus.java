@@ -194,7 +194,7 @@ public final class MapStatus extends JPanel implements
         private String customText;
 
         private void updateText() {
-            if (customText != null && !customText.isEmpty()) {
+            if (!Utils.isEmpty(customText)) {
                 progressBar.setToolTipText(tr("{0} ({1})", title, customText));
             } else {
                 progressBar.setToolTipText(title);
@@ -233,7 +233,7 @@ public final class MapStatus extends JPanel implements
 
         @Override
         public void appendLogMessage(String message) {
-            if (message != null && !message.isEmpty()) {
+            if (!Utils.isEmpty(message)) {
                 Logging.info("appendLogMessage not implemented for background tasks. Message was: " + message);
             }
         }

@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Create a mapping for a Mapbox Vector Style
@@ -140,7 +141,7 @@ public class MapboxVectorStyle {
                 MainApplication.worker.execute(() -> this.save((source == null ? data.hashCode() : source.getName()) + ".mapcss", style));
                 this.sources.put(source, new ElemStyles(Collections.singleton(style)));
             }
-            if (this.spriteUrl != null && !this.spriteUrl.trim().isEmpty()) {
+            if (!Utils.isBlank(this.spriteUrl)) {
                 MainApplication.worker.execute(this::fetchSprites);
             }
         } else {

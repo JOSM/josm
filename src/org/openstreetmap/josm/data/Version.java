@@ -177,7 +177,7 @@ public class Version {
     public String getAgentString(boolean includeOsDetails) {
         int v = getVersion();
         String s = (v == JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);
-        if (buildName != null && !buildName.isEmpty()) {
+        if (!Utils.isEmpty(buildName)) {
             s += ' ' + buildName;
         }
         if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {

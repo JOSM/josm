@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * CredentialManager is a factory for the single credential agent used.
@@ -127,7 +128,7 @@ public class CredentialsManager implements CredentialsAgent {
     public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
         if (requestorType == RequestorType.SERVER && Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
             String username = credentials.getUserName();
-            if (username != null && !username.trim().isEmpty()) {
+            if (!Utils.isBlank(username)) {
                 UserIdentityManager.getInstance().setPartiallyIdentified(username);
             }
         }

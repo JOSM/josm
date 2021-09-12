@@ -704,7 +704,7 @@ public class WMSImagery {
     public ImageryInfo toImageryInfo(
             String name, List<LayerDetails> selectedLayers, List<String> selectedStyles, String format, boolean transparent) {
         ImageryInfo i = new ImageryInfo(name, buildGetMapUrl(selectedLayers, selectedStyles, format, transparent));
-        if (selectedLayers != null && !selectedLayers.isEmpty()) {
+        if (!selectedLayers.isEmpty()) {
             i.setServerProjections(getServerProjections(selectedLayers));
         }
         return i;

@@ -277,15 +277,15 @@ public class ImageryInfo extends
             if (!i.serverProjections.isEmpty()) {
                 projections = String.join(",", i.serverProjections);
             }
-            if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
+            if (!Utils.isEmpty(i.noTileHeaders)) {
                 noTileHeaders = new MultiMap<>(i.noTileHeaders);
             }
 
-            if (i.noTileChecksums != null && !i.noTileChecksums.isEmpty()) {
+            if (!Utils.isEmpty(i.noTileChecksums)) {
                 noTileChecksums = new MultiMap<>(i.noTileChecksums);
             }
 
-            if (i.metadataHeaders != null && !i.metadataHeaders.isEmpty()) {
+            if (!Utils.isEmpty(i.metadataHeaders)) {
                 metadataHeaders = i.metadataHeaders;
             }
 
@@ -362,7 +362,7 @@ public class ImageryInfo extends
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
         if (t != null) {
             this.sourceType = t;
-        } else if (type != null && !type.isEmpty()) {
+        } else if (!Utils.isEmpty(type)) {
             throw new IllegalArgumentException("unknown type: "+type);
         }
     }
@@ -410,7 +410,7 @@ public class ImageryInfo extends
                 }
             }
         }
-        if (e.projections != null && !e.projections.isEmpty()) {
+        if (!Utils.isEmpty(e.projections)) {
             // split generates null element on empty string which gives one element Array[null]
             setServerProjections(Arrays.asList(e.projections.split(",", -1)));
         }
@@ -716,7 +716,7 @@ public class ImageryInfo extends
         StringBuilder res = new StringBuilder(getName());
         boolean html = false;
         String dateStr = getDate();
-        if (dateStr != null && !dateStr.isEmpty()) {
+        if (!Utils.isEmpty(dateStr)) {
             html = addNewLineInTooltip(res, tr("Date of imagery: {0}", dateStr), htmlSupported);
         }
         if (category != null && category.getDescription() != null) {
@@ -729,7 +729,7 @@ public class ImageryInfo extends
             html = addNewLineInTooltip(res, tr("This imagery is an overlay."), htmlSupported);
         }
         String desc = getDescription();
-        if (desc != null && !desc.isEmpty()) {
+        if (!Utils.isEmpty(desc)) {
             html = addNewLineInTooltip(res, desc, htmlSupported);
         }
         if (html) {

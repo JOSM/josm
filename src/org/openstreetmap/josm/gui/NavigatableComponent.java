@@ -1344,7 +1344,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 if (useSelected && ws.getWay().isSelected()) {
                     return ws;
                 }
-                if (preferredRefs != null && !preferredRefs.isEmpty()) {
+                if (!Utils.isEmpty(preferredRefs)) {
                     // prefer ways containing given nodes
                     if (preferredRefs.contains(ws.getFirstNode()) || preferredRefs.contains(ws.getSecondNode())) {
                         return ws;

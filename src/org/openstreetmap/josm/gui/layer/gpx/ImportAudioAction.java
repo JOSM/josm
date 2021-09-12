@@ -123,8 +123,8 @@ public class ImportAudioAction extends AbstractAction {
      */
     private void importAudio(File audioFile, MarkerLayer ml, double firstStartTime, Markers markers) {
         URL url = Utils.fileToURL(audioFile);
-        boolean hasTracks = layer.data.tracks != null && !layer.data.tracks.isEmpty();
-        boolean hasWaypoints = layer.data.waypoints != null && !layer.data.waypoints.isEmpty();
+        boolean hasTracks = !Utils.isEmpty(layer.data.tracks);
+        boolean hasWaypoints = !Utils.isEmpty(layer.data.waypoints);
         Collection<WayPoint> waypoints = new ArrayList<>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
