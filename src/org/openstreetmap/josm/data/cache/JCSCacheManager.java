@@ -162,7 +162,7 @@ public final class JCSCacheManager {
     }
 
     private static boolean useBlockCache() {
-        return USE_BLOCK_CACHE.get() == Boolean.TRUE;
+        return Boolean.TRUE.equals(USE_BLOCK_CACHE.get());
     }
 
     /**
