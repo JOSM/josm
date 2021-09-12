@@ -452,8 +452,9 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
 
         setProjection(id, prefs, false);
 
-        if (PROP_COORDINATES.put(((ICoordinateFormat) coordinatesCombo.getSelectedItem()).getId())) {
-            CoordinateFormatManager.setCoordinateFormat((ICoordinateFormat) coordinatesCombo.getSelectedItem());
+        ICoordinateFormat selectedItem = (ICoordinateFormat) coordinatesCombo.getSelectedItem();
+        if (selectedItem != null && PROP_COORDINATES.put(selectedItem.getId())) {
+            CoordinateFormatManager.setCoordinateFormat(selectedItem);
         }
 
         SystemOfMeasurement.setSystemOfMeasurement(((SystemOfMeasurement) unitsCombo.getSelectedItem()));
