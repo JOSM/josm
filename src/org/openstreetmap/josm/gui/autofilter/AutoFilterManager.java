@@ -160,6 +160,21 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         public SearchCompiler.Match get() {
             return new Match(rule, value);
         }
+
+        @Override
+        public int hashCode() {
+            return 31 * super.hashCode() + Objects.hash(rule, value);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj) || getClass() != obj.getClass())
+                return false;
+            CompiledFilter other = (CompiledFilter) obj;
+            return Objects.equals(rule, other.rule) && value == other.value;
+        }
     }
 
     static class Match extends SearchCompiler.Match {

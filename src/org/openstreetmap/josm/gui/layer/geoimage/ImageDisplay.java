@@ -241,6 +241,21 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 p.y = y + height;
             }
         }
+
+        @Override
+        public int hashCode() {
+            return 31 * super.hashCode() + Objects.hash(init);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj) || getClass() != obj.getClass())
+                return false;
+            VisRect other = (VisRect) obj;
+            return Objects.equals(init, other.init);
+        }
     }
 
     /** The thread that reads the images. */

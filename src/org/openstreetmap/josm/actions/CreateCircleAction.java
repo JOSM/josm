@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.JOptionPane;
 
@@ -112,6 +113,21 @@ public final class CreateCircleAction extends JosmAction {
         @Override
         public int compareTo(PolarNode o) {
             return Double.compare(a, o.a);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(a, node);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            PolarNode other = (PolarNode) obj;
+            return Double.doubleToLongBits(a) == Double.doubleToLongBits(other.a) && Objects.equals(node, other.node);
         }
     }
 
