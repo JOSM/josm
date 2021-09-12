@@ -559,6 +559,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             lblTitleWeak = new JComponent() {
                 @Override
                 public void paintComponent(Graphics g) {
+                    super.paintComponent(g);
                     lblTitle.paint(g);
                 }
             };

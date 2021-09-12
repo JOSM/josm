@@ -697,6 +697,8 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
         ImageEntry entry;
         ImageEntry oldEntry;
         BufferedImage image;

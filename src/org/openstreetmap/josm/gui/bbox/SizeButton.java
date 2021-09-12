@@ -52,6 +52,7 @@ public class SizeButton extends JComponent implements Accessible {
 
     @Override
     protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         if (isEnlarged) {
             if (shrinkImage != null)
                 g.drawImage(shrinkImage.getImage(), 0, 0, null);
