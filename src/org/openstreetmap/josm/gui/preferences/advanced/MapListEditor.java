@@ -93,6 +93,7 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
         public void add() {
             dataKeys.add(new ArrayList<String>());
             dataValues.add(new ArrayList<String>());
+            dataLabels.add("");
             fireIntervalAdded(this, getSize() - 1, getSize() - 1);
         }
 
@@ -100,6 +101,7 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
         public void remove(int idx) {
             dataKeys.remove(idx);
             dataValues.remove(idx);
+            dataLabels.remove(idx);
             fireIntervalRemoved(this, idx, idx);
         }
     }
