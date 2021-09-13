@@ -18,9 +18,9 @@ public class Optional extends TextItem {
     // TODO: Draw a box around optional stuff
     @Override
     public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
+        initializeLocaleText(tr("Optional Attributes:"));
         JLabel label = new JLabel(locale_text);
         label.applyComponentOrientation(support.getDefaultComponentOrientation());
-        initializeLocaleText(tr("Optional Attributes:"));
         p.add(new JLabel(" "), GBC.eol()); // space
         p.add(label, GBC.eol());
         p.add(new JLabel(" "), GBC.eol()); // space
