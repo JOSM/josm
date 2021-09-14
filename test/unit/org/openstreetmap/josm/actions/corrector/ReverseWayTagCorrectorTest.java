@@ -1,37 +1,29 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.corrector;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.correction.TagCorrection;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link ReverseWayTagCorrector} class.
  */
 class ReverseWayTagCorrectorTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Tests that {@code ReverseWayTagCorrector.TagSwitcher} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
@@ -104,7 +96,7 @@ class ReverseWayTagCorrectorTest {
     }
 
     private void assertSwitch(Tag oldTag, Tag newTag) {
-        Assert.assertEquals(newTag, ReverseWayTagCorrector.TagSwitcher.apply(oldTag));
+        assertEquals(newTag, ReverseWayTagCorrector.TagSwitcher.apply(oldTag));
     }
 
     private Way buildWayWithMiddleNode(String middleNodeTags) {
@@ -127,8 +119,8 @@ class ReverseWayTagCorrectorTest {
     @Test
     void testSwitchingWayNodes() {
         final Map<OsmPrimitive, List<TagCorrection>> tagCorrections = getTagCorrectionsForWay("direction=forward");
-        Assert.assertEquals(1, tagCorrections.size());
-        Assert.assertEquals(Collections.singletonList(new TagCorrection("direction", "forward", "direction", "backward")),
+        assertEquals(1, tagCorrections.size());
+        assertEquals(Collections.singletonList(new TagCorrection("direction", "forward", "direction", "backward")),
                 tagCorrections.values().iterator().next());
     }
 
@@ -137,8 +129,8 @@ class ReverseWayTagCorrectorTest {
      */
     @Test
     void testNotSwitchingWayNodes() {
-        Assert.assertEquals(0, getTagCorrectionsForWay("direction=SSW").size());
-        Assert.assertEquals(0, getTagCorrectionsForWay("direction=145").size());
+        assertEquals(0, getTagCorrectionsForWay("direction=SSW").size());
+        assertEquals(0, getTagCorrectionsForWay("direction=145").size());
     }
 
     /**
@@ -147,14 +139,14 @@ class ReverseWayTagCorrectorTest {
     @Test
     void testIsReversible() {
         Way w0 = buildWayWithMiddleNode("highway=stop");
-        Assert.assertTrue(ReverseWayTagCorrector.isReversible(w0));
+        assertTrue(ReverseWayTagCorrector.isReversible(w0));
         Way w1 = buildWayWithMiddleNode("direction=forward");
-        Assert.assertFalse(ReverseWayTagCorrector.isReversible(w1));
-        Assert.assertEquals(3, w1.getNodesCount());
+        assertFalse(ReverseWayTagCorrector.isReversible(w1));
+        assertEquals(3, w1.getNodesCount());
         w1.getNodes().forEach(n -> n.setKeys(null));
-        Assert.assertTrue(ReverseWayTagCorrector.isReversible(w1));
+        assertTrue(ReverseWayTagCorrector.isReversible(w1));
         w1.put("oneway", "yes");
-        Assert.assertFalse(ReverseWayTagCorrector.isReversible(w1));
+        assertFalse(ReverseWayTagCorrector.isReversible(w1));
     }
 
 }

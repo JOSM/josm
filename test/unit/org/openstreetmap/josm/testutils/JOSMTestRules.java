@@ -24,7 +24,6 @@ import java.util.TimeZone;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -79,6 +78,8 @@ import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 import org.openstreetmap.josm.tools.date.DateUtils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * This class runs a test in an environment that resembles the one used by the JOSM main application.
@@ -620,7 +621,14 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
         }
     }
 
-    private void workaroundJdkBug8159956() {
+    /**
+     * Work around JDK bug 8159956: EXCEPTION_ACCESS_VIOLATION in sun.awt.windows.ThemeReader.getThemeMargins.
+     * Only used on Windows.
+     *
+     * NOTE: This is only visible for {@link org.openstreetmap.josm.testutils.annotations.Main}. Do not use in
+     * external code.
+     */
+    public static void workaroundJdkBug8159956() {
         try {
             if (PlatformManager.isPlatformWindows() && Utils.getJavaVersion() == 8 && GraphicsEnvironment.isHeadless()) {
                 // https://bugs.openjdk.java.net/browse/JDK-8159956

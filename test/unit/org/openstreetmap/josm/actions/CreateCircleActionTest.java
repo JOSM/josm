@@ -9,34 +9,26 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.GeoProperty;
 import org.openstreetmap.josm.tools.GeoPropertyIndex;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Unit tests for class {@link CreateCircleAction}.
  */
+@BasicPreferences
+@Projection
 final class CreateCircleActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     /**
      * Test case: When Create Circle action is performed with a single way selected,
      * circle direction must equals way direction.

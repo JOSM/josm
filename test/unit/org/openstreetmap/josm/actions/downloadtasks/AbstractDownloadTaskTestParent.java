@@ -5,26 +5,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 
 /**
  * Superclass of {@link DownloadGpsTaskTest}, {@link DownloadOsmTaskTest} and {@link DownloadNotesTaskTest}.
  */
+@BasicWiremock(responseTransformers = ResponseTemplateTransformer.class)
+@HTTPS
 public abstract class AbstractDownloadTaskTestParent {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    JOSMTestRules test = new JOSMTestRules().https();
-
     /**
      * HTTP mock.
      */

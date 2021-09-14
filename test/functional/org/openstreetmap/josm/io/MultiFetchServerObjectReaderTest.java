@@ -41,7 +41,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
 
@@ -51,10 +50,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link MultiFetchServerObjectReader}.
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
-@Timeout(value = 60, unit = TimeUnit.SECONDS)
-@BasicPreferences
-@OsmApiType(OsmApiType.APIType.DEV)
 @Main
+@OsmApiType(OsmApiType.APIType.DEV)
+@Timeout(value = 60, unit = TimeUnit.SECONDS)
 class MultiFetchServerObjectReaderTest {
     private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 

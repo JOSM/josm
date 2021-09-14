@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.OrthogonalizeAction.Direction;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -22,25 +21,21 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link OrthogonalizeAction}.
  */
+@BasicPreferences
+@LayerEnvironment
+@Projection
 class OrthogonalizeActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     @Test
     void testNoSelection() throws Exception {
         assertThrows(OrthogonalizeAction.InvalidUserInputException.class, () -> performTest("nothing selected"));

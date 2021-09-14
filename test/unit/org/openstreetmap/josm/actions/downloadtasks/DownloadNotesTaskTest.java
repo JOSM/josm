@@ -8,13 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 /**
  * Unit tests for class {@link DownloadNotesTask}.
  */
-@BasicWiremock
+@ExtendWith(BasicWiremock.OsmApiExtension.class)
+@LayerEnvironment
 class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
 
     /**

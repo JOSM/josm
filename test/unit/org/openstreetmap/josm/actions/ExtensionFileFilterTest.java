@@ -6,12 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter.AddArchiveExtension;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Unit tests for class {@link ExtensionFileFilter}.
  */
+@LayerEnvironment
 class ExtensionFileFilterTest {
 
     private static void test(String extensions, String defaultExtension, String description, boolean addArchiveExtensionsToDescription,

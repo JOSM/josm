@@ -7,10 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -18,23 +16,17 @@ import org.openstreetmap.josm.data.validation.tests.ApiCapabilitiesTest;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 
 /**
  * Performance test of {@code ValidationTask}.
  */
-@BasicPreferences
+@LayerEnvironment
+@Territories
 class ValidationTaskPerformanceTest {
 
     private List<org.openstreetmap.josm.data.validation.Test> tests;
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().territories();
 
     /**
      * Setup test.

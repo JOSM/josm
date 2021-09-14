@@ -9,11 +9,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.Optional;
 
-import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.support.AnnotationSupport;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -33,6 +31,7 @@ import org.openstreetmap.josm.testutils.mockers.WindowlessNavigatableComponentMo
 @HTTP // Prevent MOTD from throwing
 @ExtendWith(Main.MainExtension.class)
 @StaticClassCleanup(MainApplication.class)
+@LayerEnvironment
 public @interface Main {
     /**
      * Get the class to use as the mocker for the map view
@@ -50,17 +49,10 @@ public @interface Main {
      * Initialize the MainApplication
      * @author Taylor Smock
      */
-    class MainExtension implements BeforeEachCallback, AfterEachCallback {
-        @Override
-        public void afterEach(ExtensionContext context) throws Exception {
-            synchronized (MainExtension.class) {
-                MainApplication.getLayerManager().resetState();
-            }
-        }
-
+    class MainExtension implements BeforeEachCallback {
         @Override
         public void beforeEach(ExtensionContext context) throws Exception {
-            Optional<Main> annotation = AnnotationSupport.findAnnotation(context.getElement(), Main.class);
+            Optional<Main> annotation = AnnotationUtils.findFirstParentAnnotation(context, Main.class);
             Class<?> mapViewStateMocker = null;
             Class<?> navigableComponentMocker = null;
             if (annotation.isPresent()) {
@@ -77,13 +69,12 @@ public @interface Main {
                 navigableComponentMocker.getConstructor().newInstance();
             }
 
-            synchronized (MainExtension.class) {
-                new MainApplication();
-                JOSMFixture.initContentPane();
-                JOSMFixture.initMainPanel(true);
-                JOSMFixture.initToolbar();
-                JOSMFixture.initMainMenu();
-            }
+            JOSMTestRules.workaroundJdkBug8159956();
+            new MainApplication();
+            JOSMFixture.initContentPane();
+            JOSMFixture.initMainPanel(true);
+            JOSMFixture.initToolbar();
+            JOSMFixture.initMainMenu();
         }
     }
 }

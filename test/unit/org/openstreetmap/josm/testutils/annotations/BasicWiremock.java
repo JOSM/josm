@@ -41,8 +41,10 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.AbstractTransformer;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
 /**
@@ -56,6 +58,8 @@ import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
+// It makes no sense to wiremock when no HTTP calls will be made
+@HTTP
 @ExtendWith(BasicWiremock.WireMockExtension.class)
 @ExtendWith(BasicWiremock.WireMockParameterResolver.class)
 @Inherited
@@ -111,6 +115,11 @@ public @interface BasicWiremock {
                         } catch (ReflectiveOperationException e) {
                             reflectiveOperationException = e;
                         }
+                    }
+                    // Special case ResponseTemplateTransformer
+                    if (ResponseTemplateTransformer.class.equals(responseTransformer)) {
+                        transformers.add(new ResponseTemplateTransformer(false));
+                        success = true;
                     }
                     if (!success) {
                         fail(reflectiveOperationException);
@@ -228,9 +237,13 @@ public @interface BasicWiremock {
     }
 
     /**
-     * A class specifically to mock OSM API calls
+     * A class specifically to mock OSM API calls.
+     * Note: If using this, the osm-server.url is appended with {@code "/osmApi"} so that different extensions don't
+     * conflict.
      */
     class OsmApiExtension extends WireMockExtension {
+        /** This gives the default mock priority for this extension. Lower == higher priority */
+        public static int MOCK_PRIORITY = 500;
         @Override
         public void afterAll(ExtensionContext context) throws Exception {
             try {
@@ -246,7 +259,11 @@ public @interface BasicWiremock {
                 fail("OsmApiExtension requires @BasicPreferences");
             }
             super.beforeAll(context);
-            Config.getPref().put("osm-server.url", getWiremock(context).baseUrl());
+            Config.getPref().put("osm-server.url", getWiremock(context).url("/osmApi"));
+            // This stub is needed so that the API initialization doesn't throw
+            getWiremock(context).stubFor(WireMock.get(WireMock.urlPathMatching("/osmApi/.*"))
+                    .willReturn(WireMock.aResponse().withBodyFile("api/{{request.path.[1]}}").withStatus(200)
+                    .withHeader("Content-Type", "text/xml").withTransformers("response-template")).atPriority(MOCK_PRIORITY));
             OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         }
     }

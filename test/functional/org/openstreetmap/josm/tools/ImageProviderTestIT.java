@@ -4,25 +4,17 @@ package org.openstreetmap.josm.tools;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link ImageProvider} class.
  */
 @IntegrationTest
+@BasicPreferences
+@HTTP
 class ImageProviderTestIT {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Test fetching an image using {@code wiki://} protocol.
      */

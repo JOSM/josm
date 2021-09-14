@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.DeleteCommandCallback;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
@@ -37,6 +38,7 @@ import nl.jqno.equalsverifier.Warning;
  */
 // We need prefs for nodes.
 @BasicPreferences
+@DeleteCommandCallback
 @I18n
 @LayerEnvironment
 class DeleteCommandTest {

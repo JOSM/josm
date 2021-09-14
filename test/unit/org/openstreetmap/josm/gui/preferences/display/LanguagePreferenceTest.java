@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.display;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
@@ -25,6 +26,10 @@ class LanguagePreferenceTest {
      */
     @Test
     void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new LanguagePreference.Factory(), null);
+        try {
+            PreferencesTestUtils.doTestPreferenceSettingAddGui(new LanguagePreference.Factory(), null);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 }

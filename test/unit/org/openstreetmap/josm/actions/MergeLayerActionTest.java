@@ -11,34 +11,23 @@ import javax.swing.JPanel;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link MergeLayerAction}.
  */
-@BasicPreferences
+@Main
+@Projection
 public class MergeLayerActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection();
-
     /**
      * MergeLayerExtendedDialog mocker.
      */
@@ -60,12 +49,9 @@ public class MergeLayerActionTest {
      * Setup test.
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         if (action == null) {
             action = new MergeLayerAction();
-        }
-        for (TestLayer testLayer : MainApplication.getLayerManager().getLayersOfType(TestLayer.class)) {
-            MainApplication.getLayerManager().removeLayer(testLayer);
         }
     }
 
