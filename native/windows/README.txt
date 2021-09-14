@@ -35,7 +35,7 @@ build the installer
 how the installer is built
 --------------------------
 See jpackage documentation to understand what it does and how it works:
-- https://docs.oracle.com/en/java/javase/16/jpackage/preface.html
+- https://docs.oracle.com/en/java/javase/17/jpackage/preface.html
 
 known issues
 ------------
