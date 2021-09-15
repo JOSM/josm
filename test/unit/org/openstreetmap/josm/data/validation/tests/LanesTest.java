@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link Lanes}.
  */
+@BasicPreferences
 class LanesTest {
 
     private final Lanes lanes = new Lanes();
@@ -22,7 +23,6 @@ class LanesTest {
      */
     @BeforeEach
     public void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init();
         lanes.initialize();
         lanes.startTest(null);
     }

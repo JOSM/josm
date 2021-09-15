@@ -9,30 +9,21 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.routines.AbstractValidator;
 import org.openstreetmap.josm.data.validation.routines.EmailValidator;
 import org.openstreetmap.josm.data.validation.routines.UrlValidator;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * JUnit Test of "Internet Tags" validation test.
  */
+@BasicPreferences
 class InternetTagsTest {
 
     private static final InternetTags TEST = new InternetTags();
-
-    /**
-     * Setup test by initializing JOSM preferences and projection.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Test of valid URLs.

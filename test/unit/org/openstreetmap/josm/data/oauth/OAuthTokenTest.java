@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import oauth.signpost.OAuthConsumer;
@@ -13,6 +14,7 @@ import oauth.signpost.OAuthConsumer;
 /**
  * Unit tests for class {@link OAuthToken}.
  */
+@BasicPreferences
 class OAuthTokenTest {
 
     /**

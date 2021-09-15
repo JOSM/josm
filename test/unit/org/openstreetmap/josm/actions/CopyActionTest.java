@@ -25,12 +25,14 @@ import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link CopyAction}.
  */
 @Main
 @OsmApiType(OsmApiType.APIType.FAKE)
+@Projection
 class CopyActionTest {
     private static final class CapturingCopyAction extends CopyAction {
         private boolean warningShown;

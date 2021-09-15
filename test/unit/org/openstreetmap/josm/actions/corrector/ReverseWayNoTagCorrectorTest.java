@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link ReverseWayNoTagCorrector} class.
  */
+@BasicPreferences
 class ReverseWayNoTagCorrectorTest {
     /**
      * Tests the {@link ReverseWayNoTagCorrector#getDirectionalTags} function

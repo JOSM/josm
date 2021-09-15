@@ -4,9 +4,7 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 
 /**
  * Unit test of {@link SimilarNamedWays}
@@ -14,14 +12,6 @@ import org.openstreetmap.josm.JOSMFixture;
 class SimilarNamedWaysTest {
 
     private final SimilarNamedWays test = new SimilarNamedWays();
-
-    /**
-     * Setup test
-     */
-    @BeforeEach
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
 
     private void checkSimilarity(String message, String name1, String name2, boolean expected) {
         boolean actual = test.similaryName(name1, name2);

@@ -11,10 +11,12 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link DownloadReferrersTask}.
  */
+@BasicPreferences
 class DownloadReferrersTaskTest {
     /**
      * Unit test of {@code DownloadReferrersTask#DownloadReferrersTask}.

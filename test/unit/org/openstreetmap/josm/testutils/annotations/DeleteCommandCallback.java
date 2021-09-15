@@ -8,7 +8,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -24,18 +23,14 @@ import org.openstreetmap.josm.command.DeleteCommand;
 @Retention(RUNTIME)
 @Target(TYPE)
 @ExtendWith(DeleteCommandCallback.DeleteCommandCallbackExtension.class)
+@StaticClassCleanup(DeleteCommand.class)
 public @interface DeleteCommandCallback {
     /**
      * Initialize and reset the DeleteCommand callback
      * @author Taylor Smock
      *
      */
-    class DeleteCommandCallbackExtension implements BeforeAllCallback, AfterAllCallback {
-        @Override
-        public void afterAll(ExtensionContext context) throws Exception {
-            AnnotationUtils.resetStaticClass(DeleteCommand.class);
-        }
-
+    class DeleteCommandCallbackExtension implements BeforeAllCallback {
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
             DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);

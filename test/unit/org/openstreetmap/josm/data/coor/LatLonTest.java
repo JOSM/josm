@@ -10,10 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -22,14 +21,6 @@ import nl.jqno.equalsverifier.EqualsVerifier;
  * Unit tests for class {@link LatLon}.
  */
 public class LatLonTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     private static final double EPSILON = 1e-6;
 
     /**
@@ -222,8 +213,9 @@ public class LatLonTest {
      * Test {@link LatLon#isOutSideWorld}
      * @deprecated to remove
      */
-    @Test
     @Deprecated
+    @Projection
+    @Test
     void testIsOutSideWorld() {
         assertFalse(LatLon.ZERO.isOutSideWorld());
         assertTrue(LatLon.NORTH_POLE.isOutSideWorld());

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
-import org.junit.platform.commons.util.ClassFilter;
+import org.junit.platform.commons.support.ReflectionSupport;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
@@ -103,12 +103,14 @@ public @interface BasicPreferences {
             final Field configField = AbstractProperty.class.getDeclaredField("preferences");
             configField.setAccessible(true);
             for (Path classPath : ReflectionUtils.getAllClasspathRootDirectories()) {
-                for (Class<?> clazz : ReflectionUtils.findAllClassesInClasspathRoot(classPath.toUri(), ClassFilter.of(tClazz -> true))) {
+                for (Class<?> clazz : ReflectionSupport.findAllClassesInClasspathRoot(classPath.toUri(), tClazz -> true, tClazz -> true)) {
                     try {
                         for (Field field : clazz.getDeclaredFields()) {
                             if (ReflectionUtils.isStatic(field) && AbstractProperty.class.isAssignableFrom(field.getType())) {
                                 field.setAccessible(true);
-                                configField.set(field.get(null), pref);
+                                if (field.get(null) != null) {
+                                    configField.set(field.get(null), pref);
+                                }
                             }
                         }
                     } catch (NoClassDefFoundError noClassDefFoundError) {

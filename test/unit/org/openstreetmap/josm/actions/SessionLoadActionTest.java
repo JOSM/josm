@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link SessionLoadAction}.
  */
+@BasicPreferences
 @Main
 @Projection
 class SessionLoadActionTest {

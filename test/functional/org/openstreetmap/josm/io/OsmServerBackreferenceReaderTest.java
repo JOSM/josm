@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -54,6 +55,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 @FullPreferences
 @OsmApiType(OsmApiType.APIType.DEV)
+@Projection
 class OsmServerBackreferenceReaderTest {
     private static final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
 

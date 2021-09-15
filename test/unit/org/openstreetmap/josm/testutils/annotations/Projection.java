@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.support.AnnotationSupport;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -34,7 +33,7 @@ public @interface Projection {
      * The value to use for the projection. Defaults to EPSG:3857 (Mercator).
      * @return The value to use to get the projection from {@link Projections#getProjectionByCode}.
      */
-    String projectionCode() default "EPSG:3857";
+    String value() default "EPSG:3857";
 
     /**
      * Use projections in tests. Use {@link Projection} preferentially.
@@ -55,9 +54,9 @@ public @interface Projection {
 
         @Override
         public void beforeEach(ExtensionContext context) throws Exception {
-            Optional<Projection> annotation = AnnotationSupport.findAnnotation(context.getElement(), Projection.class);
+            Optional<Projection> annotation = AnnotationUtils.findFirstParentAnnotation(context, Projection.class);
             if (annotation.isPresent()) {
-                ProjectionRegistry.setProjection(Projections.getProjectionByCode(annotation.get().projectionCode()));
+                ProjectionRegistry.setProjection(Projections.getProjectionByCode(annotation.get().value()));
             } else {
                 ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
             }

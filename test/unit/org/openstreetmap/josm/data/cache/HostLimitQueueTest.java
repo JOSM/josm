@@ -12,26 +12,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TileJobOptions;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Simple tests for ThreadPoolExecutor / HostLimitQueue veryfing, that this pair works OK
  * @author Wiktor Niesiobedzki
  */
+@BasicPreferences
+@Timeout(20)
 class HostLimitQueueTest {
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20 * 1000);
-
     /**
      * Mock class for tests
      */

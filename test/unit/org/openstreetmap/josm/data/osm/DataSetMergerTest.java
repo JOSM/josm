@@ -17,27 +17,17 @@ import java.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.ProjectionRegistry;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link DataSetMerger}.
  */
+@BasicPreferences
+@Projection
 class DataSetMergerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private DataSet my;
     private DataSet their;
 
@@ -50,7 +40,6 @@ class DataSetMergerTest {
         my.setVersion("0.6");
         their = new DataSet();
         their.setVersion("0.6");
-        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
     }
 
     private void runConsistencyTests(DataSet ds) {

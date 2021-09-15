@@ -29,9 +29,9 @@ import org.openstreetmap.josm.testutils.mockers.WindowlessNavigatableComponentMo
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @BasicPreferences
 @HTTP // Prevent MOTD from throwing
+@LayerEnvironment
 @ExtendWith(Main.MainExtension.class)
 @StaticClassCleanup(MainApplication.class)
-@LayerEnvironment
 public @interface Main {
     /**
      * Get the class to use as the mocker for the map view

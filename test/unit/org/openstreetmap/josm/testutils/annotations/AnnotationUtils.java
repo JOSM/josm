@@ -6,10 +6,13 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * Useful methods for annotation extensions
@@ -55,15 +58,29 @@ public final class AnnotationUtils {
                 continue;
             }
             final boolean isFinal = (field.getModifiers() & Modifier.FINAL) != 0;
-            if (field.get(null) instanceof Collection && isFinal) {
-                // Clear all collections (assume they start empty)
-                try {
-                    ((Collection<?>) field.get(null)).clear();
-                } catch (UnsupportedOperationException e) {
-                    // Probably an unmodifiable collection
-                    System.err.println("Unable to clear " + field);
+            final Object fieldObject = field.get(null);
+            if (isFinal) {
+                if (fieldObject instanceof Collection) {
+                    // Clear all collections (assume they start empty)
+                    try {
+                        ((Collection<?>) fieldObject).clear();
+                    } catch (UnsupportedOperationException e) {
+                        // Probably an unmodifiable collection
+                        Logging.error("Unable to clear {0}", field);
+                    }
+                } else if (fieldObject instanceof Map) {
+                    // Clear all maps (assume they start empty)
+                    try {
+                        ((Map<?, ?>) fieldObject).clear();
+                    } catch (UnsupportedOperationException e) {
+                        // Probably an unmodifiable collection
+                        Logging.error("Unable to clear {0}", field);
+                    }
+                } else if (fieldObject instanceof MultiMap) {
+                    // Clear multimap
+                    ((MultiMap<?, ?>) fieldObject).clear();
                 }
-            } else if (!isFinal) {
+            } else {
                 // Only reset static fields, but not final static fields
                 field.set(null, null);
             }

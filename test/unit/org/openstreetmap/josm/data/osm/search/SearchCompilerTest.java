@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Presets;
 import org.openstreetmap.josm.tools.Logging;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -55,6 +56,7 @@ import nl.jqno.equalsverifier.Warning;
  */
 // We need prefs for this. We access preferences when creating OSM primitives
 @BasicPreferences
+@Presets
 @Timeout(30)
 class SearchCompilerTest {
     private static final class SearchContext {

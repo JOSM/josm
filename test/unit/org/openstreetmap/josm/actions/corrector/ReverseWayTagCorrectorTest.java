@@ -17,12 +17,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link ReverseWayTagCorrector} class.
  */
+@BasicPreferences
 class ReverseWayTagCorrectorTest {
     /**
      * Tests that {@code ReverseWayTagCorrector.TagSwitcher} satisfies utility class criteria.

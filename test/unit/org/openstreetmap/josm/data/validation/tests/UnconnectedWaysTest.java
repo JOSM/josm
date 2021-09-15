@@ -27,8 +27,8 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 /**
  * Unit tests of {@code UnconnectedWays} class.
  */
-@LayerEnvironment
 @BasicPreferences
+@LayerEnvironment
 @Projection
 class UnconnectedWaysTest {
 

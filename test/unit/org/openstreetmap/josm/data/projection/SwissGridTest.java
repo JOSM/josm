@@ -4,36 +4,23 @@ package org.openstreetmap.josm.data.projection;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 
 /**
  * Unit tests for the Swiss projection grid.
  */
+@BasicPreferences
+@HTTP
+@ProjectionNadGrids
+@org.openstreetmap.josm.testutils.annotations.Projection(SwissGridTest.SWISS_EPSG_CODE)
 class SwissGridTest {
-    private static final String SWISS_EPSG_CODE = "EPSG:21781";
+    static final String SWISS_EPSG_CODE = "EPSG:21781";
     private final boolean debug = false;
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projectionNadGrids();
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        ProjectionRegistry.setProjection(Projections.getProjectionByCode(SWISS_EPSG_CODE)); // Swiss grid
-    }
 
     // CHECKSTYLE.OFF: LineLength
     // CHECKSTYLE.OFF: SingleSpaceSeparator

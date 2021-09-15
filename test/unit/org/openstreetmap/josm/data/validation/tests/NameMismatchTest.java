@@ -8,11 +8,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 
 /**
  * JUnit Test of "Name mismatch" validation test.
  */
+@BasicPreferences
 @I18n
 class NameMismatchTest {
     List<TestError> test(String primitive) {

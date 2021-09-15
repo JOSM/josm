@@ -29,6 +29,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
 @ExtendWith(Presets.PresetsExtension.class)
+@StaticClassCleanup(TaggingPresets.class)
 public @interface Presets {
 
     /** {@code true} to clear presets between tests. Alternatively, re-annotate specific tests with this annotation. */
@@ -42,7 +43,10 @@ public @interface Presets {
     class PresetsExtension implements AfterAllCallback, AfterEachCallback, BeforeAllCallback, BeforeEachCallback {
         @Override
         public void afterAll(ExtensionContext context) throws Exception {
-            TaggingPresets.destroy();
+            // If @Main was called, the necessary vars for destroy to work have been initialized
+            if (AnnotationUtils.findFirstParentAnnotation(context, Main.class).isPresent()) {
+                TaggingPresets.destroy();
+            }
         }
 
         @Override

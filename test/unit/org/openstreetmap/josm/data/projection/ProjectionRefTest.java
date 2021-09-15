@@ -35,12 +35,13 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.PlatformManager;
 
@@ -61,6 +62,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This means the test does not verify our definitions, but the correctness
  * of the algorithm, given a certain definition.
  */
+@BasicPreferences
+@HTTP
+@ProjectionNadGrids
 class ProjectionRefTest {
 
     private static final String CS2CS_EXE = "cs2cs";
@@ -84,13 +88,6 @@ class ProjectionRefTest {
 
     static boolean debug;
     static List<String> forcedCodes;
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projectionNadGrids().timeout(90_000);
 
     /**
      * Program entry point.

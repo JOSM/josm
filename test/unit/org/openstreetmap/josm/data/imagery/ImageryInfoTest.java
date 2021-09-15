@@ -10,12 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.StructUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.MultiMap;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  *
@@ -23,14 +19,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  */
 class ImageryInfoTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Test if extended URL is returned properly
      */
