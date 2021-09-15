@@ -15,11 +15,15 @@ import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
+import org.openstreetmap.josm.testutils.annotations.Presets;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Unit tests for class {@link PostDownloadHandler}.
  */
+@MapStyles
+@Presets
 class PostDownloadHandlerTest {
     private static DownloadTask newTask(final List<Object> errorObjects) {
         return new DownloadTask() {

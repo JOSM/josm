@@ -28,6 +28,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
  * Unit tests of {@link QuadBuckets}.
  */
 @BasicPreferences
+@Projection
 class QuadBucketsTest {
     @SuppressWarnings("unchecked")
     private void removeAllTest(DataSet ds) throws ReflectiveOperationException {

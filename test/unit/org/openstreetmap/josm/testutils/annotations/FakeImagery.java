@@ -48,6 +48,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
+@BasicPreferences
 @BasicWiremock
 @ExtendWith(FakeImagery.FakeImageryExtension.class)
 @ExtendWith(FakeImagery.FakeImageryParameterResolver.class)
@@ -165,10 +166,6 @@ public @interface FakeImagery {
 
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
-            if (context.getStore(ExtensionContext.Namespace.create(BasicPreferences.BasicPreferencesExtension.class))
-                    .get("preferences") == null) {
-                fail("FakeImageryExtension requires preferences (try @BasicPreferences)");
-            }
             super.beforeAll(context);
 
             // Get the wiremock server

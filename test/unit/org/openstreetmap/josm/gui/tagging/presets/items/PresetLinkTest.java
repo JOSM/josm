@@ -7,27 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.swing.JPanel;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Presets;
 
 /**
  * Unit tests of {@link PresetLink} class.
  */
 @BasicPreferences
+@Presets
 class PresetLinkTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rule = new JOSMTestRules().presets();
-
     /**
      * Unit test for {@link PresetLink#addToPanel}.
      */

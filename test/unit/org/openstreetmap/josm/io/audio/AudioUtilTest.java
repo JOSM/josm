@@ -5,25 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link AudioUtil} class.
  */
+@BasicPreferences
 class AudioUtilTest {
 
     private static final double EPSILON = 1e-11;
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
 
     /**
      * Test method for {@code AudioUtil#getCalibratedDuration(File)}

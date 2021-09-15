@@ -6,24 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.swing.JPanel;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link Label} class.
  */
+@BasicPreferences
 class LabelTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test for {@link Label#addToPanel}.
      */

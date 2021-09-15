@@ -18,10 +18,9 @@ import java.util.concurrent.ForkJoinPool;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.TimeZoneAnnotation;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
 import net.trajano.commons.testing.UtilityClassTestUtil;
@@ -29,12 +28,10 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests of {@link DateUtils} class.
  */
-@I18n
 @BasicPreferences
+@I18n
+@TimeZoneAnnotation
 public class DateUtilsTest {
-    // Solely needed for setting clock to UTC. To be replaced with @TimeZoneAnnotation
-    @RegisterExtension
-    JOSMTestRules josmTestRules = new JOSMTestRules();
     /**
      * Tests that {@code DateUtils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs

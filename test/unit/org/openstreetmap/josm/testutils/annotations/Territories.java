@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Optional;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -53,16 +52,7 @@ public @interface Territories {
      * @author Taylor Smock
      *
      */
-    class TerritoriesExtension implements BeforeAllCallback, AfterAllCallback {
-        /** This state is only used to avoid re-initializing the Territories class */
-        private static Initialize state = Initialize.NONE;
-        @Override
-        public void afterAll(ExtensionContext context) throws Exception {
-            synchronized (TerritoriesExtension.class) {
-                state = Initialize.NONE;
-            }
-        }
-
+    class TerritoriesExtension implements BeforeAllCallback {
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
             Optional<Territories> annotation = AnnotationSupport.findAnnotation(context.getElement(), Territories.class);
@@ -70,12 +60,12 @@ public @interface Territories {
                 Initialize current = annotation.get().value();
                 // Avoid potential race conditions if tests are parallelized
                 synchronized (TerritoriesExtension.class) {
-                    if (current == Initialize.INTERNAL && state != Initialize.ALL && state != Initialize.INTERNAL) {
+                    if (current == Initialize.INTERNAL) {
                         org.openstreetmap.josm.tools.Territories.initializeInternalData();
-                        state = Initialize.INTERNAL;
-                    } else if (current == Initialize.ALL && state != Initialize.ALL) {
+                    } else if (current == Initialize.ALL) {
                         org.openstreetmap.josm.tools.Territories.initialize();
-                        state = Initialize.ALL;
+                    } else if (current == Initialize.NONE) {
+                        AnnotationUtils.resetStaticClass(org.openstreetmap.josm.tools.Territories.class);
                     }
                 }
             }

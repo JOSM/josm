@@ -2,37 +2,28 @@
 package org.openstreetmap.josm.io.audio;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Stopwatch;
 
 /**
  * Unit tests of {@link AudioPlayer} class.
  */
-@Disabled("unresolved sporadic deadlock - see #13809")
+@BasicPreferences
+//@Disabled("unresolved sporadic deadlock - see #13809")
 class AudioPlayerTest {
 
     // We play wav files of about 4 seconds + pause, so define timeout at 16 seconds
     private static final long MAX_DURATION = 16000;
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
 
     /**
      * Test method for {@code AudioPlayer#play(URL)}

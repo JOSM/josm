@@ -16,12 +16,14 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 
 /**
  * Unit tests of {@link DownloadAlongTrackAction} class.
  */
 @BasicPreferences
+@LayerEnvironment
 class DownloadAlongTrackActionTest {
     private static PleaseWaitRunnable createTask(String file) throws Exception {
         // click "Download" when presented with the appropriate HelpAwareOptionPane
@@ -37,23 +39,18 @@ class DownloadAlongTrackActionTest {
         };
 
         final OsmDataLayer layer = new OsmDataLayer(new DataSet(), DownloadAlongTrackActionTest.class.getName(), null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            // Perform action
-            final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + file);
-            final PleaseWaitRunnable retval = new DownloadAlongTrackAction(Collections.singleton(gpx)).createTask();
+        MainApplication.getLayerManager().addLayer(layer);
+        // Perform action
+        final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + file);
+        final PleaseWaitRunnable retval = new DownloadAlongTrackAction(Collections.singleton(gpx)).createTask();
 
-            // assert that we were indeed presented with the expected HelpAwareOptionPane
-            assertEquals(1, haMocker.getInvocationLog().size());
-            assertEquals(0, haMocker.getInvocationLog().get(0)[0]);
-            assertEquals("DownloadAlongPanel", haMocker.getInvocationLog().get(0)[1]);
-            assertEquals("Download from OSM along this track", haMocker.getInvocationLog().get(0)[2]);
+        // assert that we were indeed presented with the expected HelpAwareOptionPane
+        assertEquals(1, haMocker.getInvocationLog().size());
+        assertEquals(0, haMocker.getInvocationLog().get(0)[0]);
+        assertEquals("DownloadAlongPanel", haMocker.getInvocationLog().get(0)[1]);
+        assertEquals("Download from OSM along this track", haMocker.getInvocationLog().get(0)[2]);
 
-            return retval;
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        return retval;
     }
 
     /**

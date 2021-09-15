@@ -33,10 +33,11 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
-import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.JosmHome;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
+import org.openstreetmap.josm.testutils.annotations.Presets;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.StaticClassCleanup;
 import org.openstreetmap.josm.testutils.annotations.Territories;
@@ -47,13 +48,14 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Integration tests of {@link PluginHandler} class.
  */
-@BasicPreferences
-@Projection
 @Main
-@Territories
-@StaticClassCleanup(PluginHandler.class)
+@JosmHome("test/config/unit/pluginHandlerTestIT-josm.home")
 @HTTPS
-@LayerEnvironment
+@MapStyles
+@Presets
+@Projection
+@StaticClassCleanup(PluginHandler.class)
+@Territories
 @Timeout(value = 10, unit = TimeUnit.MINUTES)
 public class PluginHandlerTestIT {
 

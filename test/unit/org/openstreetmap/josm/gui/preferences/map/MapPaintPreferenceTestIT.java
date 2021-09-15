@@ -25,20 +25,22 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruct
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.AbstractExtendedSourceEntryTestCase;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
+import org.openstreetmap.josm.testutils.annotations.JosmHome;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Integration tests of {@link MapPaintPreference} class.
  */
-@IntegrationTest
-@BasicPreferences
-@Timeout(value = 15, unit = TimeUnit.MINUTES)
 @HTTP
 @HTTPS
+@JosmHome("test/config/unit/mapPaintPreferencesTestIT-josm.home")
+@MapStyles
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
+@IntegrationTest
 class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
     /**
      * Setup test

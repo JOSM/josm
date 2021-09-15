@@ -5,27 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Unit tests of {@link PrefEntry} class.
  */
+@BasicPreferences
 class PrefEntryTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test of {@link PrefEntry#PrefEntry}.
      */

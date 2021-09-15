@@ -32,6 +32,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link ExceptionUtil} class.
  */
 @BasicPreferences
+//@OsmApiType(OsmApiType.APIType.FAKE)
 class ExceptionUtilTest {
 
     /**

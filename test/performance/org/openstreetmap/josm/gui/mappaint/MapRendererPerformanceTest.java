@@ -43,7 +43,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -51,7 +53,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Performance test of map renderer.
  */
 @Main
+@MapStyles
 @Projection
+@Territories
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 public class MapRendererPerformanceTest {
 

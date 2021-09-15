@@ -17,10 +17,10 @@ import org.openstreetmap.josm.tools.HttpClient;
  * Automatic test of imagery synchronization between JOSM and ELI.
  * See <a href="https://josm.openstreetmap.de/wiki/ImageryCompare">JOSM wiki</a>
  */
-@IntegrationTest
-@Timeout(20)
-@HTTP
 @BasicPreferences
+@HTTP
+@Timeout(20)
+@IntegrationTest
 class ImageryCompareTestIT {
 
     private static final String BLACK_PREFIX = "<pre style=\"margin:3px;color:black\">";

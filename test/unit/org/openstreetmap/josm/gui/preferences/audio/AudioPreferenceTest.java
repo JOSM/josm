@@ -3,25 +3,18 @@ package org.openstreetmap.josm.gui.preferences.audio;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.JosmHome;
 
 /**
  * Unit tests of {@link AudioPreference} class.
  */
+@JosmHome
+@BasicPreferences
 class AudioPreferenceTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test of {@link AudioPreference#AudioPreference}.
      */

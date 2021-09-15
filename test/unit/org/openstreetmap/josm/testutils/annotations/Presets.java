@@ -28,6 +28,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @Documented
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
+@BasicPreferences
 @ExtendWith(Presets.PresetsExtension.class)
 @StaticClassCleanup(TaggingPresets.class)
 public @interface Presets {

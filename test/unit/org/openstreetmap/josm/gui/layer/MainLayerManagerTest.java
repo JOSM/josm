@@ -20,12 +20,14 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Tests {@link MainLayerManager}.
  * @author Michael Zangl
  */
+@BasicPreferences
 class MainLayerManagerTest extends LayerManagerTest {
 
     private MainLayerManager layerManagerWithActive;

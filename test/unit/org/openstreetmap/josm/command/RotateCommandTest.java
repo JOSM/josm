@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -29,6 +30,7 @@ import nl.jqno.equalsverifier.Warning;
  */
 // Prefs are needed for nodes
 @BasicPreferences
+@LayerEnvironment
 @Projection
 class RotateCommandTest {
     private CommandTestData testData;

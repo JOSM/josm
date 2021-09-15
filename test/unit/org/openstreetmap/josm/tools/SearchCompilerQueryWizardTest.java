@@ -6,22 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 
 /**
  * Unit tests of {@link SearchCompilerQueryWizard} class.
  */
+@BasicPreferences
+@I18n("de")
 class SearchCompilerQueryWizardTest {
-    /**
-     * Base test environment is enough
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().i18n("de");
-
     private static String constructQuery(String s) {
         return SearchCompilerQueryWizard.constructQuery(s);
     }

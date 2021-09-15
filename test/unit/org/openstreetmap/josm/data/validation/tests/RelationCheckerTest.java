@@ -15,13 +15,11 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Presets;
 
 /**
  * Unit tests of {@link RelationChecker} class.
  */
-@BasicPreferences
 @Presets
 class RelationCheckerTest {
     private static RelationChecker getRelationChecker() {

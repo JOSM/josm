@@ -8,25 +8,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 /**
  * Unit tests of {@link DuplicateAction} class.
  */
 // TMS layer needs prefs. Platform for LayerListDialog shortcuts.
 @BasicPreferences
+@LayerEnvironment
 class DuplicateActionTest {
-    // Needed for layer cleanup
-    @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules();
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/4539">#4539</a>.
      * @throws Exception if an error occurs

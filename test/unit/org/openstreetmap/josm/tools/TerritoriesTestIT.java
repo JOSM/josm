@@ -7,26 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Integration tests of {@link Territories} class.
  */
 @IntegrationTest
+@HTTP
+@Projection
+@org.openstreetmap.josm.testutils.annotations.Territories(org.openstreetmap.josm.testutils.annotations.Territories.Initialize.NONE)
 class TerritoriesTestIT {
-
-    /**
-     * Test rules.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().projection();
-
-
     /**
      * Test of {@link Territories#initialize} method.
      */

@@ -11,27 +11,18 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.AbstractCoordinateFormat;
 import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.TimeZoneAnnotation;
 
 /**
  * EXIF metadata extraction test
  * @since 6209
  */
+@TimeZoneAnnotation
 class ExifReaderTest {
-    /**
-     * Set the timezone and timeout.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private File orientationSampleFile, directionSampleFile;
 
     /**

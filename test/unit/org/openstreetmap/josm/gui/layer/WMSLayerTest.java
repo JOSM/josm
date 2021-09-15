@@ -5,28 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 /**
  * Unit tests of {@link WMSLayer} class.
  */
 @BasicPreferences
+@LayerEnvironment
 class WMSLayerTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection();
-
     /**
      * Unit test of {@link WMSLayer#WMSLayer}.
      */
@@ -34,12 +24,7 @@ class WMSLayerTest {
     void testWMSLayer() {
         WMSLayer wms = new WMSLayer(new ImageryInfo("test wms", "http://localhost"));
         MainApplication.getLayerManager().addLayer(wms);
-        try {
-            assertEquals(ImageryType.WMS, wms.getInfo().getImageryType());
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(wms);
-        }
+        assertEquals(ImageryType.WMS, wms.getInfo().getImageryType());
     }
 
     /**

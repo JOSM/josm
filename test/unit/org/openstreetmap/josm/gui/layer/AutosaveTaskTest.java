@@ -27,18 +27,14 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AutosaveTask.AutosaveLayerInfo;
-import org.openstreetmap.josm.testutils.annotations.FullPreferences;
-import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link AutosaveTask}.
  */
-@FullPreferences
 @Projection
 @Main
-@LayerEnvironment
 class AutosaveTaskTest {
 
     private AutosaveTask task;

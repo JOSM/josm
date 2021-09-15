@@ -4,28 +4,18 @@ package org.openstreetmap.josm.gui.layer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 /**
  * Unit tests of {@link TMSLayer} class.
  */
 @BasicPreferences
+@LayerEnvironment
 public class TMSLayerTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection();
-
     /**
      * Creates a new TMS layer.
      * @return a new TMS layer
@@ -51,13 +41,8 @@ public class TMSLayerTest {
     }
 
     private static void test(ImageryType expected, TMSLayer layer) {
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            assertEquals(expected, layer.getInfo().getImageryType());
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        MainApplication.getLayerManager().addLayer(layer);
+        assertEquals(expected, layer.getInfo().getImageryType());
     }
 
     /**

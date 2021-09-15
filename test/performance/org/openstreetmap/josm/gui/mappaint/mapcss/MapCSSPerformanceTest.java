@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapRendererPerformanceTest;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
  *
  */
 @BasicPreferences
+@MapStyles
 @Projection
 class MapCSSPerformanceTest {
 

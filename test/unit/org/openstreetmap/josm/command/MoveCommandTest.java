@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -33,9 +34,10 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link MoveCommand} class.
  */
-@I18n
 // Prefs are required for nodes
 @BasicPreferences
+@I18n
+@LayerEnvironment
 @Projection
 class MoveCommandTest {
     private CommandTestDataWithRelation testData;

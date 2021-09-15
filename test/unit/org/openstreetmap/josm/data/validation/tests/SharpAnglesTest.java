@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -39,7 +40,7 @@ class SharpAnglesTest {
                 new Node(new LatLon(0.1, -0.2)), new Node(new LatLon(-0.1, -0.1)));
         way.addNode(way.firstNode());
         angles.visit(way);
-        Assert.assertEquals(0, angles.getErrors().size());
+        assertEquals(0, angles.getErrors().size());
     }
 
     /**
@@ -53,7 +54,7 @@ class SharpAnglesTest {
         way.addNode(way.firstNode());
         angles.setMaxLength(Double.MAX_VALUE);
         angles.visit(way);
-        Assert.assertEquals(1, angles.getErrors().size());
+        assertEquals(1, angles.getErrors().size());
     }
 
     /**
@@ -68,7 +69,7 @@ class SharpAnglesTest {
                 new Node(new LatLon(0.005031826787678042, 0.0020116540789620915)));
         angles.setMaxLength(Double.MAX_VALUE);
         angles.visit(way);
-        Assert.assertEquals(2, angles.getErrors().size());
+        assertEquals(2, angles.getErrors().size());
     }
 
     /**
@@ -80,7 +81,7 @@ class SharpAnglesTest {
                 new Node(new LatLon(0, 0)), new Node(new LatLon(0.1, 0.1)),
                 new Node(new LatLon(0.2, 0.3)), new Node(new LatLon(0.3, 0.1)));
         angles.visit(way);
-        Assert.assertEquals(0, angles.getErrors().size());
+        assertEquals(0, angles.getErrors().size());
     }
 
     /**
@@ -99,7 +100,7 @@ class SharpAnglesTest {
                 new Node(new LatLon(52.8902482, 8.4307568)));
         way.addNode(way.firstNode());
         angles.visit(way);
-        Assert.assertEquals(0, angles.getErrors().size());
+        assertEquals(0, angles.getErrors().size());
     }
 
     /**
@@ -112,22 +113,22 @@ class SharpAnglesTest {
                 new Node(new LatLon(0, 0.01)));
         angles.setMaxLength(Double.MAX_VALUE);
         angles.visit(way);
-        Assert.assertEquals(1, angles.getErrors().size());
+        assertEquals(1, angles.getErrors().size());
         angles.getErrors().clear();
 
         way.put("highway", "rest_area");
         angles.visit(way);
-        Assert.assertEquals(0, angles.getErrors().size());
+        assertEquals(0, angles.getErrors().size());
 
         way.put("highway", "residential");
         angles.visit(way);
-        Assert.assertEquals(1, angles.getErrors().size());
+        assertEquals(1, angles.getErrors().size());
         angles.getErrors().clear();
         way.put("area", "yes");
         angles.visit(way);
-        Assert.assertEquals(0, angles.getErrors().size());
+        assertEquals(0, angles.getErrors().size());
         way.put("area", "no");
         angles.visit(way);
-        Assert.assertEquals(1, angles.getErrors().size());
+        assertEquals(1, angles.getErrors().size());
     }
 }

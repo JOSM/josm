@@ -11,8 +11,10 @@ import java.lang.annotation.Target;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Use the JOSM home directory. See {@link JOSMTestRules}.
@@ -34,9 +37,17 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @ExtendWith(JosmHome.JosmHomeExtension.class)
 public @interface JosmHome {
+
+    /**
+     * The location to use for JOSM home. Mostly useful for integration tests where caching files may be
+     * useful. Otherwise, a temporary directory is used.
+     * @return The preference location
+     */
+    String value() default "";
+
     /**
      * Create a JOSM home directory. Prefer using {@link JosmHome}.
      * @author Taylor Smock
@@ -44,27 +55,35 @@ public @interface JosmHome {
     class JosmHomeExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
         @Override
         public void afterAll(ExtensionContext context) throws Exception {
-            Path tempDir = context.getStore(Namespace.create(JosmHome.class)).get("home", Path.class);
-            Files.walkFileTree(tempDir, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
+            Optional<JosmHome> annotation = AnnotationUtils.findFirstParentAnnotation(context, JosmHome.class);
+            if (annotation.isPresent() && Utils.isBlank(annotation.get().value())) {
+                Path tempDir = context.getStore(Namespace.create(JosmHome.class)).get("home", Path.class);
+                Files.walkFileTree(tempDir, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            }
         }
 
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
-            Path tempDir = Files.createTempDirectory(UUID.randomUUID().toString());
-            context.getStore(Namespace.create(JosmHome.class)).put("home", tempDir);
+            Optional<JosmHome> annotation = AnnotationUtils.findFirstParentAnnotation(context, JosmHome.class);
+            Path tempDir = annotation.map(JosmHome::value).filter(string -> !Utils.isBlank(string))
+                    .map(Paths::get).orElse(Files.createTempDirectory(UUID.randomUUID().toString()));
             File home = tempDir.toFile();
+            if (!home.exists()) {
+                home.mkdirs();
+            }
+            context.getStore(Namespace.create(JosmHome.class)).put("home", tempDir);
             System.setProperty("josm.home", home.getAbsolutePath());
             JosmBaseDirectories.getInstance().clearMemos();
         }

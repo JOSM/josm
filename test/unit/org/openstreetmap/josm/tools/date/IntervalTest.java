@@ -9,8 +9,12 @@ import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.TimeZoneAnnotation;
 
 @BasicPreferences
+@I18n
+@TimeZoneAnnotation
 class IntervalTest {
     /**
      * Setup test.

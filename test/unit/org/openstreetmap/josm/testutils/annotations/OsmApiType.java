@@ -64,9 +64,10 @@ public @interface OsmApiType {
 
         @Override
         public void afterEach(ExtensionContext context) throws Exception {
-            // Reset to none
-            Config.getPref().put("osm-server.url", null);
+            // Reset to invalid
+            Config.getPref().put("osm-server.url", "https://invalid.url");
             AnnotationUtils.resetStaticClass(OsmApi.class);
+            AnnotationUtils.resetStaticClass(FakeOsmApi.class);
         }
 
         @Override

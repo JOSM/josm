@@ -7,24 +7,15 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.testutils.annotations.MeasurementSystemAnnotation;
 
 /**
  * Unit tests of {@link SystemOfMeasurement} class.
  */
+@MeasurementSystemAnnotation
 class SystemOfMeasurementTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Test of {@link SystemOfMeasurement#getDistText} method.
      */

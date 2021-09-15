@@ -43,9 +43,9 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.JavaProperty;
+import org.openstreetmap.josm.testutils.annotations.JosmHome;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
 import org.openstreetmap.josm.testutils.annotations.Projection;
@@ -60,11 +60,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link MainApplication} class.
  */
-@BasicPreferences
-@Main
-@Projection
 @HTTPS
+@Main
 @OsmApiType(OsmApiType.APIType.DEV)
+@Projection
 @Timeout(20)
 @StaticClassCleanup(HttpClient.class)
 public class MainApplicationTest {
@@ -170,7 +169,10 @@ public class MainApplicationTest {
      */
     @Test
     @JavaProperty
+    // Reuse downloads from plugin handler test, if it has already run. Otherwise, pre-cache two plugins.
+    @JosmHome("test/config/unit/pluginHandlerTestIT-josm.home")
     @StaticClassCleanup(PluginHandler.class)
+    @Timeout(60)
     void testUpdateAndLoadPlugins() throws PluginListParseException {
         System.setProperty("josm.plugins", "buildings_tools,log4j");
         SplashProgressMonitor monitor = new SplashProgressMonitor("foo", e -> {

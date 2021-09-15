@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,10 +58,13 @@ public @interface JosmDefaults {
 
         @Override
         public void afterEach(ExtensionContext context) throws Exception {
+            // Get Timeout, if set
+            long timeOut = AnnotationUtils.findFirstParentAnnotation(context, Timeout.class)
+                    .map(timeout -> timeout.unit().toMillis(timeout.value())).orElse(10_000L);
             // Sync EDT and worker threads
             TestUtils.syncEDTAndWorkerThreads();
 
-            assertTrue(ForkJoinPool.commonPool().awaitQuiescence(10, TimeUnit.SECONDS));
+            assertTrue(ForkJoinPool.commonPool().awaitQuiescence(timeOut, TimeUnit.MILLISECONDS));
 
             Window[] windows = Window.getWindows();
             if (windows.length != 0) {

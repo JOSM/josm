@@ -9,20 +9,13 @@ import java.net.URLConnection;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 /**
  * Unit tests of {@link Handler} class.
  */
+@LayerEnvironment
 class HandlerTest {
-
-    /**
-     * Use the test rules to remove any layers and reset state.
-     */
-    @RegisterExtension
-    public final JOSMTestRules rules = new JOSMTestRules();
-
     /**
      * Setup test.
      */

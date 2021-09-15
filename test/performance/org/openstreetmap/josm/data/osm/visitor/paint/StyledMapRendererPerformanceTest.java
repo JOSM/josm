@@ -9,14 +9,18 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 
 /**
  * Performance test of {@code StyledMapRenderer}.
  */
 @FullPreferences
+@MapStyles
+@Projection
 class StyledMapRendererPerformanceTest extends AbstractMapRendererPerformanceTestParent {
 
     @BeforeAll

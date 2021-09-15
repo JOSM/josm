@@ -11,27 +11,18 @@ import org.CustomMatchers;
 import org.CustomMatchers.ErrorMode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Tests the method {@link RenderingCLI#determineRenderingArea(org.openstreetmap.josm.data.osm.DataSet)}.
  */
+@Projection
 class RenderingCLIAreaTest {
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().territories();
-
     public static Collection<Object[]> runs() {
         Collection<Object[]> runs = new ArrayList<>();
 

@@ -23,14 +23,12 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link ChildOrParentSelector}.
  */
-@BasicPreferences
 @Projection
 @Main
 class ChildOrParentSelectorTest {

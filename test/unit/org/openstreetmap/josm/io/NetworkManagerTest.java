@@ -9,25 +9,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.OsmApiType;
 
 /**
  * Unit tests of {@link NetworkManager} class.
  */
-@BasicPreferences
+@OsmApiType(OsmApiType.APIType.DEV)
 class NetworkManagerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().devAPI().main().projection();
 
     /**
      * Unit test of {@link NetworkManager#addNetworkError},

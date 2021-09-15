@@ -20,11 +20,9 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayerTest;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadWmsAlongTrackAction.PrecacheWmsTask;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.FakeImagery;
 import org.openstreetmap.josm.testutils.annotations.I18n;
-import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.fake_imagery.ConstSource;
@@ -35,13 +33,11 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 /**
  * Unit tests of {@link DownloadWmsAlongTrackAction} class.
  */
-@BasicPreferences
 @FakeImagery
-@Projection
-@Main
-@Timeout(20)
-@LayerEnvironment
 @I18n
+@Main
+@Projection
+@Timeout(20)
 class DownloadWmsAlongTrackActionTest {
     /**
      * Test action without layer.

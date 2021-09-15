@@ -17,33 +17,31 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
 import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 /**
  * Test parts of {@link PluginHandler} class when the reported JOSM version is too old for the plugin.
  */
+@AssumeRevision("Revision: 6000\n")
 @BasicPreferences(true)
 @BasicWiremock
-@AssumeRevision("Revision: 6000\n")
+@Main
 class PluginHandlerJOSMTooOldTest {
-    @RegisterExtension
-    @SuppressWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    JOSMTestRules josmTestRules = new JOSMTestRules().main();
 
     /**
      * Plugin server mock.

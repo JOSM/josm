@@ -7,24 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.advanced.ListEditor.ListSettingTableModel;
 
 /**
  * Unit tests of {@link ListEditor} class.
  */
 class ListEditorTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test of {@link ListSettingTableModel} class.
      */

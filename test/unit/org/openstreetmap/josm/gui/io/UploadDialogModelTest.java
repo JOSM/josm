@@ -1,15 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
@@ -17,12 +14,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
  */
 @BasicPreferences
 public class UploadDialogModelTest {
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    public JOSMTestRules test = new JOSMTestRules().main();
-
     /**
      * Test of {@link UploadDialogModel}.
      */

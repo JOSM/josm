@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.TestUtils;
@@ -42,14 +41,13 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValu
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link MapCSSParser}.
  */
+@BasicPreferences
 class MapCSSParserTest {
 
     protected static Environment getEnvironment(String key, String value) {
@@ -59,13 +57,6 @@ class MapCSSParserTest {
     protected static MapCSSParser getParser(String stringToParse) {
         return new MapCSSParser(new StringReader(stringToParse));
     }
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
 
     @Test
     void testDeclarations() throws Exception {

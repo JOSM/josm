@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.annotations.FullPreferences;
+import org.openstreetmap.josm.testutils.annotations.FakeImagery;
 import org.openstreetmap.josm.testutils.annotations.Main;
 
 /**
  * Unit tests of {@link ImageryPreference} class.
  */
-@FullPreferences
+@FakeImagery
 @Main
 class ImageryPreferenceTest {
     /**

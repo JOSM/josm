@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,10 +42,10 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.AbstractTransformer;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
 /**
@@ -174,7 +175,14 @@ public @interface BasicWiremock {
 
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
-            getWiremock(context).start();
+            final WireMockServer wireMockServer = getWiremock(context);
+            // Account for multiple extensions being set and calling beforeAll
+            if (!wireMockServer.isRunning()) {
+                wireMockServer.start();
+            }
+            // Store default stubs
+            context.getStore(ExtensionContext.Namespace.create(BasicWiremock.class)).put("stubMappings", wireMockServer.getStubMappings());
+            // Set annotated wiremocks
             setWireMocks(context);
         }
 
@@ -185,6 +193,11 @@ public @interface BasicWiremock {
             } else {
                 setWireMocks(context);
             }
+            // Set default stubs
+            final List<?> defaultStubs = context.getStore(ExtensionContext.Namespace.create(BasicWiremock.class))
+                    .getOrDefault("stubMappings", List.class, Collections.emptyList());
+            final WireMockServer wireMockServer = getWiremock(context);
+            defaultStubs.stream().filter(StubMapping.class::isInstance).map(StubMapping.class::cast).forEach(wireMockServer::addStubMapping);
         }
 
         /**
@@ -238,8 +251,7 @@ public @interface BasicWiremock {
 
     /**
      * A class specifically to mock OSM API calls.
-     * Note: If using this, the osm-server.url is appended with {@code "/osmApi"} so that different extensions don't
-     * conflict.
+     * Note: If using this, the osm-server.url is appended with {@code "/api"}.
      */
     class OsmApiExtension extends WireMockExtension {
         /** This gives the default mock priority for this extension. Lower == higher priority */
@@ -259,11 +271,7 @@ public @interface BasicWiremock {
                 fail("OsmApiExtension requires @BasicPreferences");
             }
             super.beforeAll(context);
-            Config.getPref().put("osm-server.url", getWiremock(context).url("/osmApi"));
-            // This stub is needed so that the API initialization doesn't throw
-            getWiremock(context).stubFor(WireMock.get(WireMock.urlPathMatching("/osmApi/.*"))
-                    .willReturn(WireMock.aResponse().withBodyFile("api/{{request.path.[1]}}").withStatus(200)
-                    .withHeader("Content-Type", "text/xml").withTransformers("response-template")).atPriority(MOCK_PRIORITY));
+            Config.getPref().put("osm-server.url", getWiremock(context).url("__files/api"));
             OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         }
     }

@@ -9,7 +9,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -17,7 +17,8 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link RelationMemberConflictResolverCommand} class.
  */
-@BasicPreferences
+// The `conflict` field is somehow dependent upon Territories.
+@Territories
 class RelationMemberConflictResolverCommandTest {
     /**
      * Unit test of methods {@link RelationMemberConflictResolverCommand#equals} and {@link RelationMemberConflictResolverCommand#hashCode}.
