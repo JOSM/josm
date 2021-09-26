@@ -64,7 +64,7 @@ class CertificateAmendmentTestIT {
         // signed by letsencrypt's cross-sign CA
         connect("https://letsencrypt.org", true);
         // signed by letsencrypt's cross-sign CA, requires SNI
-        connect("https://acme-v01.api.letsencrypt.org", true);
+        connect("https://acme-v02.api.letsencrypt.org", true);
     }
 
     /**
