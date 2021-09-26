@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -188,8 +186,10 @@ public class PrefJPanel extends JPanel {
 
     private void initComponents() {
         CbAction action = new CbAction(this);
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(buildFilterPanel());
+        GBC gbc = GBC.eol().insets(3).fill(GBC.HORIZONTAL);
+
+        setLayout(new GridBagLayout());
+        add(buildFilterPanel(), gbc);
 
         // This is the list of shortcuts:
         TableHelper.setFont(shortcutTable, getClass());
@@ -205,9 +205,8 @@ public class PrefJPanel extends JPanel {
         JScrollPane listScrollPane = new JScrollPane();
         listScrollPane.setViewportView(shortcutTable);
 
-        JPanel listPane = new JPanel(new GridLayout());
-        listPane.add(listScrollPane);
-        add(listPane);
+        gbc.weighty = 1;
+        add(listScrollPane, gbc.fill(GBC.BOTH));
 
         // and here follows the edit area. I won't object to someone re-designing it, it looks, um, "minimalistic" ;)
 
@@ -222,7 +221,7 @@ public class PrefJPanel extends JPanel {
         cbAlt.setAction(action);
         cbAlt.setText(ALT); // see above for why no tr()
         tfKey.setAction(action);
-        tfKey.setModel(new DefaultComboBoxModel<>(keyList.values().toArray(new String[keyList.size()])));
+        tfKey.getModel().addAllElements(keyList.values());
         cbMeta.setAction(action);
         cbMeta.setText(META); // see above for why no tr()
 
@@ -242,7 +241,8 @@ public class PrefJPanel extends JPanel {
 
         action.actionPerformed(null); // init checkboxes
 
-        add(shortcutEditPane);
+        gbc.weighty = 0;
+        add(shortcutEditPane, gbc);
     }
 
     private JPanel buildFilterPanel() {
