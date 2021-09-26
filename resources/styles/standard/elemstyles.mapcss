@@ -1552,6 +1552,8 @@ way[man_made=pipeline][!waterway] {
     width: 2;
     color: pipeline#660000;
 }
+area[man_made=petroleum_well],
+area[man_made=pump],
 area[pipeline=substation] {
     fill-color: pipeline_substation#eeeeee;
 }
@@ -1571,15 +1573,60 @@ node[man_made=manhole] {
     icon-image: "presets/misc/manhole.svg";
     set icon_z17;
 }
+node[man_made=petroleum_well] {
+    icon-image: "presets/landmark/petroleum_well.svg";
+    set icon_z17;
+}
+node[man_made=petroleum_well][substance=gas] {
+    icon-image: "presets/landmark/gas_well.svg";
+    set icon_z17;
+}
+node[man_made=petroleum_well][substance=oil] {
+    icon-image: "presets/landmark/oil_well.svg";
+    set icon_z17;
+}
+node[man_made=petroleum_well][mechanical_coupling=nodding_donkey] {
+    icon-image: "presets/landmark/well_donkey.svg";
+    set icon_z17;
+}
+node[man_made=petroleum_well][mechanical_coupling=nodding_donkey][substance=gas] {
+    icon-image: "presets/landmark/gas_well_donkey.svg";
+    set icon_z17;
+}
+node[man_made=petroleum_well][mechanical_coupling=nodding_donkey][substance=oil] {
+    icon-image: "presets/landmark/oil_well_donkey.svg";
+    set icon_z17;
+}
+node[man_made=pump] {
+    icon-image: "presets/landmark/pump.svg";
+    set icon_z17;
+}
+node[man_made=pump][substance=gas] {
+    icon-image: "presets/landmark/pump_gas.svg";
+    set icon_z17;
+}
+node[man_made=pump][substance=oil] {
+    icon-image: "presets/landmark/pump_oil.svg";
+    set icon_z17;
+}
+node[man_made=pump][substance=sewage] {
+    icon-image: "presets/landmark/pump_sewage.svg";
+    set icon_z17;
+}
+node[man_made=pump][substance=steam] {
+    icon-image: "presets/landmark/pump_steam.svg";
+    set icon_z17;
+}
+node[man_made=pump][substance=~/(^|_)?water$/] {
+    icon-image: "presets/landmark/pump_water.svg";
+    set icon_z17;
+}
 node[man_made=breakwater],
 node[man_made=groyne],
 node[man_made=embankment],
+node[man_made=pumping_rig],
 node[man_made=pipeline] {
     icon-image: "presets/misc/deprecated.svg";
-    set icon_z17;
-}
-node[man_made=petroleum_well][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
     set icon_z17;
 }
 area[man_made=reservoir_covered],
@@ -1587,6 +1634,7 @@ area[man_made=wastewater_plant],
 area[man_made=watermill],
 area[man_made=water_well],
 area[man_made=windmill],
+area[man_made=windpump],
 area[man_made=works],
 area[man_made=water_works] {
     fill-color: manmade#d8d8d8;
@@ -1615,8 +1663,32 @@ node[man_made=water_well] {
     icon-image: "presets/landmark/water_well.svg";
     set icon_z17;
 }
+node[man_made=water_well][mechanical_coupling=nodding_donkey] {
+    icon-image: "presets/landmark/water_well_donkey.svg";
+    set icon_z17;
+}
 node[man_made=windmill] {
     icon-image: "presets/landmark/windmill.svg";
+    set icon_z17;
+}
+node[man_made=windpump] {
+    icon-image: "presets/landmark/windpump.svg";
+    set icon_z17;
+}
+node[man_made=windpump][substance=gas] {
+    icon-image: "presets/landmark/windpump_gas.svg";
+    set icon_z17;
+}
+node[man_made=windpump][substance=oil] {
+    icon-image: "presets/landmark/windpump_oil.svg";
+    set icon_z17;
+}
+node[man_made=windpump][substance=sewage] {
+    icon-image: "presets/landmark/windpump_sewage.svg";
+    set icon_z17;
+}
+node[man_made=windpump][substance=steam] {
+    icon-image: "presets/landmark/windpump_steam.svg";
     set icon_z17;
 }
 node[man_made=works] {

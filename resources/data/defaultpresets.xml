@@ -472,9 +472,26 @@
             <combo key="canoe" text="Canoe" values="yes,designated,destination,delivery,permissive,permit,private,no" values_sort="false" />
         </optional>
     </chunk>
-    <chunk id="operator_substance">
-        <text key="operator" text="Operator" />
-        <combo key="substance" text="Substance" values="water,gas,heat,oil,sewage" />
+    <chunk id="substance">
+        <combo key="substance" text="Substance" values="water,hot_water,steam,sewage,gas,oil" values_sort="false" values_searchable="true" />
+    </chunk>
+    <chunk id="handle">
+        <optional text="Only in case of manual actuator or manual mechanical drive: ">
+        <combo key="handle" text="Handle" values="wheel,cross,lever,crank,button,no" values_context="handle" values_sort="false" values_searchable="true" />
+        <combo key="turn_to_close" text="Direction to close" values="clockwise,anti_clockwise" />
+        </optional>
+        <space />
+    </chunk>
+    <chunk id="pumpMechanism">
+        <combo key="pump_mechanism" text="Pump mechanism" values="gear,screw,progressive_cavity,diaphragm,peristaltic,rope,rotary_vane,piston,centrifugal,axial_flow,eductor_jet,ram,siphon,pulser,airlift" values_sort="false" values_searchable="true" />
+    </chunk>
+    <chunk id="mechCoupling">
+        <combo key="mechanical_coupling" text="Mechanical coupling" values="direct,reducer,gearbox,nodding_donkey,belt" values_sort="false" values_searchable="true" />
+    </chunk>
+    <chunk id="pump_details">
+        <reference ref="pumpMechanism" />
+        <combo key="mechanical_driver" text="Mechanical driver" values="manual,electric_motor,combustion_engine,reciprocating_solenoid,cylinder,turbine" values_sort="false" values_searchable="true" />
+        <reference ref="mechCoupling" />
     </chunk>
     <chunk id="support">
         <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" values_context="mounting/support" />
@@ -2045,6 +2062,7 @@
                 <reference ref="name_operator" />
                 <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
                 <text key="pressure" text="Pressure (bar)" />
+                <text key="flow_rate" text="Flow rate with unit of measure" />
                 <combo key="material" text="Material" values="metal,steel" />
             </optional>
         </item> <!-- Penstock -->
@@ -5602,38 +5620,92 @@
             <link wiki="Tag:man_made=chimney" />
             <space />
             <key key="man_made" value="chimney" />
-            <reference ref="name_operator" />
+            <reference ref="name_ref_operator" />
             <text key="height" text="Height (meters)" length="7" />
         </item> <!-- Chimney -->
         <item name="Kiln" icon="presets/misc/kiln.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=kiln" />
             <space />
             <key key="man_made" value="kiln" />
-            <reference ref="name_operator" />
+            <reference ref="name_ref_operator" />
             <combo key="product" text="Product" values="lime,charcoal,bricks" />
         </item> <!-- Kiln -->
         <item name="Windmill" icon="presets/landmark/windmill.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=windmill" />
             <space />
             <key key="man_made" value="windmill" />
-            <text key="name" text="Name" />
+            <reference ref="name_ref_operator" />
         </item> <!-- Windmill -->
+        <item name="Windpump" icon="presets/landmark/windpump.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=windpump" />
+            <space />
+            <key key="man_made" value="windpump" />
+            <reference ref="substance" />
+            <optional>
+                <reference ref="pumpMechanism" />
+                <reference ref="mechCoupling" />
+                <reference ref="handle" />
+                <text key="pressure" text="Pressure (bar)" />
+                <text key="flow_rate" text="Flow rate with unit of measure" />
+                <space />
+                <reference ref="name_ref_operator" />
+                <text key="manufacturer" text="Manufacturer" />
+            </optional>
+            <preset_link preset_name="Pump" text="Similar but different tags:" />
+            <preset_link preset_name="Water Well" text="Similar but different tags:" />
+            <preset_link preset_name="Petroleum Well" text="Similar but different tags:" />
+        </item> <!-- Windpump-->
+        <item name="Pump" icon="presets/landmark/pump.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=pump" />
+            <space />
+            <key key="man_made" value="pump" />
+            <reference ref="substance" />
+            <optional>
+                <reference ref="pump_details" />
+                <reference ref="handle" />
+                <text key="pressure" text="Pressure (bar)" />
+                <text key="flow_rate" text="Flow rate with unit of measure" />
+                <space />
+                <reference ref="name_ref_operator" />
+                <text key="manufacturer" text="Manufacturer" />
+                <combo key="location" text="Location" values="outdoor,indoor,underground,underwater" values_context="pump" />
+            </optional>
+            <preset_link preset_name="Windpump" text="Similar but different tags:" />
+            <preset_link preset_name="Water Well" text="Similar but different tags:" />
+            <preset_link preset_name="Petroleum Well" text="Similar but different tags:" />
+        </item> <!-- Pump -->
+        <item name="Petroleum Well" icon="presets/landmark/petroleum_well.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=petroleum_well" />
+            <space />
+            <key key="man_made" value="petroleum_well" />
+            <combo key="substance" text="Substance" values="gas,oil" />
+            <optional>
+                <reference ref="pump_details" />
+                <reference ref="handle" />
+                <text key="pressure" text="Pressure (bar)" />
+                <text key="flow_rate" text="Flow rate with unit of measure" />
+                <space />
+                <reference ref="name_ref_operator" />
+                <text key="manufacturer" text="Manufacturer" />
+            </optional>
+            <preset_link preset_name="Water Well" text="Similar but different tags:" />
+            <preset_link preset_name="Windpump" text="Similar but different tags:" />
+            <preset_link preset_name="Pump" text="Similar but different tags:" />
+        </item> <!-- Petroleum Well -->
         <item name="Gasometer" icon="presets/landmark/gasometer.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=gasometer" />
-            <space />
             <key key="man_made" value="gasometer" />
             <optional>
-                <reference ref="name_operator" />
+                <reference ref="name_ref_operator" />
                 <combo key="building" text="Building" values="gasometer" values_context="building" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Gasometer -->
         <item name="Silo" icon="presets/landmark/silo.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=silo" />
-            <space />
             <key key="man_made" value="silo" />
             <optional>
-                <reference ref="name_operator" />
+                <reference ref="name_ref_operator" />
                 <combo key="building" text="Building" values="silo" values_context="building" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
@@ -5642,7 +5714,7 @@
             <link wiki="Tag:man_made=storage_tank" />
             <key key="man_made" value="storage_tank" />
             <optional>
-                <reference ref="name_operator" />
+                <reference ref="name_ref_operator" />
                 <combo key="building" text="Building" values="storage_tank" values_context="building" />
                 <combo key="content"  text="Content" values="fuel,manure,oil,sewage,silage,slurry,water,wine" values_context="content" />
                 <text key="height" text="Height (meters)" length="7" />
@@ -5650,27 +5722,24 @@
         </item> <!-- Storage Tank -->
         <item name="Bunker Silo" icon="presets/landmark/bunker_silo.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=bunker_silo" />
-            <space />
             <key key="man_made" value="bunker_silo" />
             <optional>
-                <reference ref="name_operator" />
+                <reference ref="name_ref_operator" />
             </optional>
         </item> <!-- Bunker Silo -->
         <item name="Crane" icon="presets/landmark/crane.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=crane" />
-            <space />
             <key key="man_made" value="crane" />
             <optional>
                 <combo key="crane:type" text="Type" values="floor-mounted_crane,gantry_crane,portal_crane,travel_lift" />
-                <reference ref="name_operator" />
+                <reference ref="name_ref_operator" />
             </optional>
         </item> <!-- Crane -->
         <item name="Goods conveyor" icon="presets/landmark/goods_conveyor.svg" type="way" preset_name_label="true">
             <link wiki="Tag:man_made=goods_conveyor" />
-            <space />
             <key key="man_made" value="goods_conveyor" />
             <optional>
-                <reference ref="name_operator" />
+                <reference ref="name_ref_operator" />
                 <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
                 <checkgroup columns="3">
                     <check key="covered" text="Covered" />
@@ -5683,8 +5752,8 @@
             <link wiki="Tag:man_made=pumping_station" />
             <space />
             <key key="man_made" value="pumping_station" />
-            <reference ref="name_ref" />
-            <reference ref="operator_substance" />
+            <reference ref="name_ref_operator" />
+            <reference ref="substance" />
         </item> <!-- Pumping station -->
         <item name="Mineshaft" icon="presets/landmark/mine.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=mineshaft" />
@@ -5945,29 +6014,29 @@
             <link wiki="Tag:man_made=pipeline" />
             <space />
             <key key="man_made" value="pipeline" />
-            <reference ref="name_ref" />
-            <reference ref="operator_substance" />
+            <reference ref="name_ref_operator" />
+            <reference ref="substance" />
             <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="pipeline" />
             <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
             <text key="pressure" text="Pressure (bar)" />
+            <text key="flow_rate" text="Flow rate with unit of measure" />
         </item> <!-- Pipeline -->
         <item name="Pipeline Substation" icon="presets/misc/pipeline_substation.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:pipeline=substation" />
             <space />
             <key key="pipeline" value="substation" />
             <text key="name" text="Name" />
-            <combo key="substation" text="Type" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" />
-            <text key="ref" text="Reference" />
-            <reference ref="operator_substance" />
+            <combo key="substation" text="Type" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" values_searchable="true" />
+            <reference ref="ref_operator" />
+            <reference ref="substance" />
         </item> <!-- Pipeline Substation -->
         <item name="Pipeline Valve" icon="presets/misc/valve.svg" type="node" preset_name_label="true">
             <link wiki="Tag:pipeline=valve" />
             <space />
             <key key="pipeline" value="valve" />
-            <combo key="valve" text="Valve type" values="butterfly,globe,ball,plug,gate,needle,spool" values_context="valve" />
-            <combo key="actuator" text="Actuator" values="electric_motor,hydraulic_cylinder,manual,pneumatic_cylinder,solenoid,thermostatic" values_context="actuator" />
-            <combo key="handle" text="Handle" values="lever,wheel,cross,button" values_context="handle" />
-            <combo key="turn_to_close" text="Direction to close" values="clockwise,anti_clockwise" />
+            <combo key="valve" text="Valve type" values="butterfly,globe,ball,plug,gate,needle,spool" values_context="valve" values_searchable="true" />
+            <combo key="actuator" text="Actuator" values="manual,electric_motor,hydraulic_cylinder,pneumatic_cylinder,solenoid,thermostatic" values_context="actuator" values_searchable="true" values_sort="false" />
+            <reference ref="handle" />
             <combo key="sensor:position" text="Position sensor" values="optical,mechanical,inductive,yes" />
             <reference ref="ref_operator" />
         </item> <!-- Pipeline Valve -->
@@ -5975,7 +6044,7 @@
             <link wiki="Key:marker" />
             <space />
             <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key" />
-            <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" />
+            <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" values_searchable="true" />
             <optional>
                 <reference ref="ref_operator" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
@@ -6023,10 +6092,18 @@
             <link wiki="Tag:man_made=water_well" />
             <space />
             <key key="man_made" value="water_well" />
+            <combo key="pump" text="Pump" values="yes,no,manual,powered" values_sort="false"/>
             <optional>
-                <text key="name" text="Name" />
-                <combo key="pump" text="Pump" values="yes,no,manual,powered"  values_sort="false"/>
+                <reference ref="pump_details" />
+                <reference ref="handle" />
+                <text key="pressure" text="Pressure (bar)" />
+                <text key="flow_rate" text="Flow rate with unit of measure" />
+                <space />
+                <reference ref="name_ref_operator" />
             </optional>
+            <preset_link preset_name="Petroleum Well" text="Similar but different tags:" />
+            <preset_link preset_name="Windpump" text="Similar but different tags:" />
+            <preset_link preset_name="Pump" text="Similar but different tags:" />
         </item> <!-- Water Well -->
     </group> <!-- Water -->
     <group name="Bridges" icon="presets/transport/bridge/bridge.svg">

@@ -125,11 +125,18 @@ way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
   group: tr("missing tag");
 }
 
-/* {0.tag} without {1.key} (warning level), #18411, #18246 */
+/* {0.key} without {1.tag}, {2.tag}, {3.tag} or {4.tag}, #20530 */
+*[pump_mechanism][man_made!=pump][man_made!=windpump][man_made!=water_well][man_made!=petroleum_well] {
+  throwWarning: tr("{0} without {1}, {2}, {3} or {4}", "{0.key}", "{1.tag}", "{2.tag}", "{3.tag}", "{4.tag}");
+  group: tr("missing tag");
+}
+
+/* {0.tag} without {1.key} (warning level), #18411, #18246, #20530 */
 way[railway=construction][!construction],
 way[highway=construction][!construction],
 node[traffic_sign=maxspeed][!maxspeed][!/^maxspeed:.+/],
-node[actuator=manual][!handle],
+*[actuator=manual][!handle],
+*[mechanical_driver=manual][!handle],
 node[emergency=fire_hydrant][!fire_hydrant:type],
 way[     boundary=administrative][!admin_level],
 relation[boundary=administrative][!admin_level],
@@ -245,7 +252,7 @@ way[usage=penstock][waterway!=pressurised] {
   group: tr("missing tag");
 }
 
-/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888 */
+/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530 */
 *[power=plant][/^generator:/],
 *[power=generator][/^plant:/],
 *[power=plant][voltage],
@@ -255,6 +262,8 @@ node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
 *[amenity=vending_machine][shop],
 *[noname?][name],
+*[actuator][handle][actuator !~ /(^|;)manual(;|$)/],
+*[mechanical_driver][handle][mechanical_driver !~ /(^|;)manual(;|$)/],
 way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][oneway:bicycle!=no][oneway:psv!=no],
 way[oneway=yes][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][oneway:bicycle!=no][oneway:psv!=no],
 way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][oneway:bicycle!=no][oneway:psv!=no],

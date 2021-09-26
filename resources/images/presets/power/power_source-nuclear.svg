@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
-   sodipodi:version="0.32"
-   inkscape:version="0.91 r13725"
-   version="1.0"
-   sodipodi:docname="power_source-nuclear.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   version="1.0">
   <defs
      id="defs15" />
   <metadata
@@ -42,64 +34,6 @@
       </cc:License>
     </rdf:RDF>
   </metadata>
-  <sodipodi:namedview
-     inkscape:window-height="988"
-     inkscape:window-width="1680"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     guidetolerance="10.0"
-     gridtolerance="10.0"
-     objecttolerance="10.0"
-     borderopacity="1.0"
-     bordercolor="#666666"
-     pagecolor="#ffffff"
-     id="base"
-     showgrid="true"
-     inkscape:zoom="33.37544"
-     inkscape:cx="6.6382163"
-     inkscape:cy="6.2111108"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg2">
-    <inkscape:grid
-       type="xygrid"
-       id="grid2383"
-       visible="true"
-       enabled="true" />
-  </sodipodi:namedview>
-  <sodipodi:namedview
-     id="namedview10"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.052568"
-     inkscape:cx="9.9125234"
-     inkscape:cy="9.2770693"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:snap-bbox="true"
-     inkscape:object-paths="true"
-     inkscape:object-nodes="true"
-     inkscape:bbox-paths="true"
-     inkscape:bbox-nodes="true"
-     gridtolerance="30"
-     inkscape:window-width="1172"
-     inkscape:window-height="805"
-     inkscape:window-x="122"
-     inkscape:window-y="11">
-    <inkscape:grid
-       type="xygrid"
-       id="grid12"
-       visible="true"
-       enabled="true"
-       spacingx="0.5px"
-       spacingy="0.5px"
-       empspacing="2" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -136,18 +70,15 @@
     <path
        id="path4369"
        d="m 14,3.074 -2.5,4.33 C 12.396,7.922 13.001,8.889 13.001,10 L 18,10 C 18,7.041 16.39,4.457 14,3.074 Z"
-       style="fill:#000000"
-       inkscape:connector-curvature="0" />
+       style="fill:#000000" />
     <path
        id="path4371"
        d="m 2.006,10 4.999,0 C 7.005,8.964 7.54,7.957 8.501,7.402 L 6.002,3.072 C 3.441,4.552 2.008,7.238 2.006,10 Z"
-       style="fill:#000000"
-       inkscape:connector-curvature="0" />
+       style="fill:#000000" />
     <path
        id="path4373"
        d="m 14,16.925 -2.5,-4.329 c -0.897,0.516 -2.037,0.556 -2.998,10e-4 l -2.499,4.328 c 2.562,1.481 5.604,1.377 7.997,0 z"
-       style="fill:#000000"
-       inkscape:connector-curvature="0" />
+       style="fill:#000000" />
     <circle
        id="path4395"
        style="fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1"

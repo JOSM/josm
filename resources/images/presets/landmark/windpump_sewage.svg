@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   preserveAspectRatio="xMidYMid meet"
+   viewBox="0 0 16 16"
+   width="16"
+   height="16"
+   id="svg90">
+  <metadata
+     id="metadata94">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs12">
+    <path
+       d="M16 0C16 0 16 0 16 0C16 9.6 16 14.93 16 16C16 16 16 16 16 16C6.4 16 1.07 16 0 16C0 16 0 16 0 16C0 6.4 0 1.07 0 0C0 0 0 0 0 0C9.6 0 14.93 0 16 0Z"
+       id="ccRwnaUUk" />
+    <path
+       d="M8.31 6.11L4.77 16"
+       id="ceIUUXiUW" />
+    <path
+       d="M7.75 6.11L11.29 16"
+       id="a12gRlD1Ax" />
+    <path
+       d=""
+       id="d8zFyV8x0" />
+    <path
+       d="M7.04 8.29L6.07 6.59L7.03 4.88L8.96 4.87L9.93 6.57L8.97 8.27L7.04 8.29Z"
+       id="bINovgSx" />
+    <path
+       d="M9.67 11.3L5.49 14.3"
+       id="aiVw1qwfp" />
+    <path
+       d="M12.77 2.35L15.13 3.35L14.06 5.53L9.71 6.75L8.94 4.97L12.77 2.35Z"
+       id="bPr1Y3e7R" />
+    <path
+       d="M1.59 5.14L0.95 2.67L3.33 2.18L6.94 4.88L6.01 6.58L1.59 5.14Z"
+       id="exj7SiCrz" />
+    <path
+       d="M14.28 8.31L14.96 10.78L12.59 11.3L8.94 8.64L9.85 6.93L14.28 8.31Z"
+       id="bzrjfThtT" />
+    <path
+       d="M3.66 11.48L1.2 10.78L1.99 8.48L6.16 6.75L7.15 8.41L3.66 11.48Z"
+       id="bJHJhycjc" />
+  </defs>
+  <g
+     id="g88">
+    <path
+       style="fill:#ee82ee;fill-rule:evenodd;stroke:#ee82ee;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 1,15 C 1,15 1,1 1,1 c 0,0 14,0 14,0 0,0 0,14 0,14 0,0 -14,0 -14,0 z"
+       id="path880" />
+    <g
+       id="g86">
+      <g
+         id="g20">
+        <g
+           id="g18">
+          <use
+             xlink:href="#ccRwnaUUk"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#000000"
+             stroke-width="1"
+             stroke-opacity="0"
+             id="use16"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g26">
+        <g
+           id="g24">
+          <use
+             xlink:href="#ceIUUXiUW"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#000000"
+             stroke-width="1"
+             stroke-opacity="1"
+             id="use22"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g32">
+        <g
+           id="g30">
+          <use
+             xlink:href="#a12gRlD1Ax"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#000000"
+             stroke-width="1"
+             stroke-opacity="1"
+             id="use28"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g38">
+        <g
+           id="g36">
+          <use
+             xlink:href="#d8zFyV8x0"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#000000"
+             stroke-width="1"
+             stroke-opacity="1"
+             id="use34"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g46">
+        <use
+           xlink:href="#bINovgSx"
+           opacity="1"
+           fill="#b6b6b6"
+           fill-opacity="1"
+           id="use40"
+           x="0"
+           y="0"
+           width="100%"
+           height="100%" />
+        <g
+           id="g44">
+          <use
+             xlink:href="#bINovgSx"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#494949"
+             stroke-width="1"
+             stroke-opacity="1"
+             id="use42"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g52">
+        <g
+           id="g50">
+          <use
+             xlink:href="#aiVw1qwfp"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#000000"
+             stroke-width="1"
+             stroke-opacity="1"
+             id="use48"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g60">
+        <use
+           xlink:href="#bPr1Y3e7R"
+           opacity="1"
+           fill="#b6b6b6"
+           fill-opacity="1"
+           id="use54"
+           x="0"
+           y="0"
+           width="100%"
+           height="100%" />
+        <g
+           id="g58">
+          <use
+             xlink:href="#bPr1Y3e7R"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#494949"
+             stroke-width="0.8"
+             stroke-opacity="1"
+             id="use56"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g68">
+        <use
+           xlink:href="#exj7SiCrz"
+           opacity="1"
+           fill="#b6b6b6"
+           fill-opacity="1"
+           id="use62"
+           x="0"
+           y="0"
+           width="100%"
+           height="100%" />
+        <g
+           id="g66">
+          <use
+             xlink:href="#exj7SiCrz"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#494949"
+             stroke-width="0.8"
+             stroke-opacity="1"
+             id="use64"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g76">
+        <use
+           xlink:href="#bzrjfThtT"
+           opacity="1"
+           fill="#b6b6b6"
+           fill-opacity="1"
+           id="use70"
+           x="0"
+           y="0"
+           width="100%"
+           height="100%" />
+        <g
+           id="g74">
+          <use
+             xlink:href="#bzrjfThtT"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#494949"
+             stroke-width="0.8"
+             stroke-opacity="1"
+             id="use72"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+      <g
+         id="g84">
+        <use
+           xlink:href="#bJHJhycjc"
+           opacity="1"
+           fill="#b6b6b6"
+           fill-opacity="1"
+           id="use78"
+           x="0"
+           y="0"
+           width="100%"
+           height="100%" />
+        <g
+           id="g82">
+          <use
+             xlink:href="#bJHJhycjc"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#494949"
+             stroke-width="0.8"
+             stroke-opacity="1"
+             id="use80"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -2277,6 +2277,45 @@ way[shoulder=none] {
   fixChangeKey: "building:roof:shape => roof:shape";
 }
 
+/* #20530 */
+*[man_made=pumping_rig][!pump_mechanism][!mechanical_driver][!mechanical_coupling] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=petroleum_well";
+  suggestAlternative: "man_made=water_well";
+  fixAdd: "pump_mechanism=piston";
+  fixAdd: "mechanical_driver=combustion_engine";
+  fixAdd: "mechanical_coupling=nodding_donkey";
+  group: tr("deprecated tagging");
+  set pumping_ring_no_mech;
+}
+*[man_made=pumping_rig]!.pumping_ring_no_mech {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=petroleum_well";
+  suggestAlternative: "man_made=water_well";
+  group: tr("deprecated tagging");
+}
+*[pump:type=beam_pump][!pump_mechanism][!mechanical_driver][!mechanical_coupling] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "pump_mechanism";
+  fixRemove: "pump:type";
+  fixAdd: "pump_mechanism=piston";
+  fixAdd: "mechanical_driver=combustion_engine";
+  fixAdd: "mechanical_coupling=nodding_donkey";
+  group: tr("deprecated tagging");
+  set beam_pump_no_mech
+}
+*[pump:type]!.beam_pump_no_mech {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "pump_mechanism";
+  group: tr("deprecated tagging");
+}
+*[substance=heat] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "substance=hot_water";
+  suggestAlternative: "substance=steam";
+  group: tr("deprecated tagging");
+}
+
 /* #20959 */
 *[landuse=school] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
