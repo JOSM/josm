@@ -109,6 +109,33 @@ way[cutline                    ][man_made!=cutline],
   group: tr("missing tag");
 }
 
+/* #20742 - No warning about barrier with inappropriate access tags on highway */
+way[highway=~/^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link)$/][!access][!vehicle] > node[barrier][barrier!~/entrance|border_control|height_restrictor|toll_booth/][!access][!motor_vehicle][!vehicle] {
+  throwWarning: tr("{0} without access tags such as {1}, {2}, or {3}.", "{0.tag}", "{2.key}", "{3.key}", "{4.key}");
+  group: tr("suspicious barrier");
+}
+
+way[highway=~/^(footway|path|bridleway|cycleway|service)$/] > node[barrier]:connection {
+  set barrierSmallRoadConnection;
+}
+
+way[highway=~/^(unclassified|residential)$/] >[index = 1] node.barrierSmallRoadConnection,
+way[highway=~/^(unclassified|residential)$/] >[index = -1] node.barrierSmallRoadConnection {
+  set barrierAllowedAtConnection;
+}
+
+/* 20742; warnings for major roads set by other rule, also issue 20742 */
+way[highway=~/^(unclassified|residential)$/] > node[barrier][barrier!=bollard][!access][!access:conditional][!vehicle][!vehicle:conditional][!motor_vehicle][!motor_vehicle:conditional].barrierSmallRoadConnection!.barrierAllowedAtConnection {
+  throwWarning: tr("Suspicious {0} on a connection of a small highway with a larger highway", "{0.tag}");
+  set hasWarningForBarrierOnWay;
+  group: tr("suspicious barrier");
+}
+
+way[highway=~/^(unclassified|residential)$/] > node[barrier].barrierSmallRoadConnection!.hasWarningForBarrierOnWay {
+  throwOther: tr("Suspicious {0} on a connection of a small highway with a larger highway", "{0.tag}");
+  group: tr("suspicious barrier");
+}
+
 /* {0.key} without {1.tag} or {2.tag} */
 *[bridge:movable               ][bridge!=movable][man_made!=bridge],
 *[substation                   ][power!=substation][pipeline!=substation],
