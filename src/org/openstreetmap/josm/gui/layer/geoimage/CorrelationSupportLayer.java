@@ -42,6 +42,18 @@ public final class CorrelationSupportLayer extends OsmDataLayer implements GpxDa
         rebuildGpxData();
     }
 
+    @Override
+    public GpxData toGpxData() {
+        GpxData gpxData = new GpxData();
+        fillGpxData(gpxData, data, getAssociatedFile(), CORRELATION_PREFIX);
+        return gpxData;
+    }
+
+    @Override
+    public CorrelationSupportLayer duplicate(String newName) {
+        return new CorrelationSupportLayer(gpxData, newName);
+    }
+
     private void rebuildGpxData() {
         gpxData.beginUpdate();
         try {

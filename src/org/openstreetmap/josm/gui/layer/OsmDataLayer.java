@@ -1354,4 +1354,14 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         new OsmExporter().exportData(file, this, true /* no backup with appended ~ */);
         return true;
     }
+
+    /**
+     * Duplicates this layer with a new name and a copy of this layer dataset.
+     * @param newName name of new layer
+     * @return A copy of this layer
+     * @since 18233
+     */
+    public OsmDataLayer duplicate(String newName) {
+        return new OsmDataLayer(new DataSet(getDataSet()), newName, null);
+    }
 }
