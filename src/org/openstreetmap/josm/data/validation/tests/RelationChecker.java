@@ -154,7 +154,7 @@ public class RelationChecker extends Test implements TaggingPresetListener {
                     .message(tr("Route scheme is unspecified. Add {0} ({1}=public_transport; {2}=legacy)", "public_transport:version", "2", "1"))
                     .primitives(n)
                     .build());
-        } else if (allroles.isEmpty()) {
+        } else if (n.hasKey("type") && allroles.isEmpty()) {
             errors.add(TestError.builder(this, Severity.OTHER, RELATION_UNKNOWN)
                     .message(tr("Relation type is unknown"))
                     .primitives(n)
