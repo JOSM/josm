@@ -15,12 +15,14 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Unit tests for class {@link HistoryWay}.
  */
 @BasicPreferences
+@Users
 class HistoryWayTest {
     private static HistoryWay create(Instant d) {
         return new HistoryWay(

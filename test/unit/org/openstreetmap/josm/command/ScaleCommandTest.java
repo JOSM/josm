@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -31,6 +32,7 @@ import nl.jqno.equalsverifier.Warning;
 @BasicPreferences
 @LayerEnvironment
 @Projection
+@Users
 class ScaleCommandTest {
     private CommandTestData testData;
 

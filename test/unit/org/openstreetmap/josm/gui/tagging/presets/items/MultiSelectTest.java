@@ -9,11 +9,13 @@ import javax.swing.JPanel;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Presets;
 
 /**
  * Unit tests of {@link MultiSelect} class.
  */
 @Main
+@Presets
 class MultiSelectTest {
     /**
      * Unit test for {@link MultiSelect#addToPanel}.

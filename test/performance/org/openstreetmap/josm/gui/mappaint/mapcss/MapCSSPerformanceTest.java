@@ -22,6 +22,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * This performance test measures the time for a full run of MapPaintVisitor.visitAll()
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @BasicPreferences
 @MapStyles
 @Projection
+@Users
 class MapCSSPerformanceTest {
 
     /* ------------------------ configuration section  ---------------------------- */

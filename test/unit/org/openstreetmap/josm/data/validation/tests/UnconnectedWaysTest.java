@@ -23,6 +23,7 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@code UnconnectedWays} class.
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @BasicPreferences
 @LayerEnvironment
 @Projection
+@Users
 class UnconnectedWaysTest {
 
     private UnconnectedWays bib;

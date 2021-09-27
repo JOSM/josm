@@ -41,12 +41,14 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * JUnit Test of {@link MapCSSTagChecker}.
  */
 @Territories
+@Users
 class MapCSSTagCheckerTest {
     /**
      * Setup test.

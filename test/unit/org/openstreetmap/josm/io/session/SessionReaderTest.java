@@ -27,12 +27,14 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests for Session reading.
  */
 @BasicPreferences
 @Projection
+@Users
 class SessionReaderTest {
     private static String getSessionDataDir() {
         return TestUtils.getTestDataRoot() + "/sessions";

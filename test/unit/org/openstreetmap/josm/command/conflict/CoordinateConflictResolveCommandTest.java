@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -28,6 +29,7 @@ import nl.jqno.equalsverifier.Warning;
  */
 @BasicPreferences
 @LayerEnvironment
+@Users
 class CoordinateConflictResolveCommandTest {
 
     private CommandTestData testData;

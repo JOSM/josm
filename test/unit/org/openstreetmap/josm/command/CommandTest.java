@@ -3,6 +3,7 @@ package org.openstreetmap.josm.command;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -15,10 +16,10 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link Command} class.
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 @I18n
 // We need prefs for nodes / data sets.
 @BasicPreferences
+@Users
 public class CommandTest {
     /**
      * Unit test of methods {@link Command#equals} and {@link Command#hashCode}.

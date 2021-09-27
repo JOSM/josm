@@ -20,9 +20,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.platform.commons.support.ReflectionSupport;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -32,6 +34,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.AbstractReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.JosmHome;
@@ -41,6 +44,7 @@ import org.openstreetmap.josm.testutils.annotations.Presets;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.StaticClassCleanup;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -57,6 +61,7 @@ import org.openstreetmap.josm.tools.Utils;
 @StaticClassCleanup(PluginHandler.class)
 @Territories
 @Timeout(value = 10, unit = TimeUnit.MINUTES)
+@Users
 public class PluginHandlerTestIT {
 
     private static final List<String> errorsToIgnore = new ArrayList<>();
@@ -69,6 +74,22 @@ public class PluginHandlerTestIT {
     @BeforeAll
     public static void beforeClass() throws IOException {
         errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(PluginHandlerTestIT.class));
+    }
+
+    /**
+     * Clean up after plugin tests. This is only used for specific instances where plugins don't clean up after themselves.
+     * @throws Exception if one of the plugin-specific cleanups fails
+     */
+    @AfterAll
+    public static void afterClass() throws Exception {
+        // SDS does not properly clean up after itself -- it adds something to AbstractReader#postprocessors, which
+        // pollutes other tests.
+        // Technically, we could serialize/deserialize the class instead (the static field is volatile)
+        List<?> postProcessors = (List<?>) ReflectionSupport.tryToReadFieldValue(
+                AbstractReader.class.getDeclaredField("postprocessors"), null).get();
+        if (postProcessors != null) {
+            postProcessors.clear();
+        }
     }
 
     /**

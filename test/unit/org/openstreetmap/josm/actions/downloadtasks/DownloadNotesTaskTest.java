@@ -12,12 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests for class {@link DownloadNotesTask}.
  */
 @ExtendWith(BasicWiremock.OsmApiExtension.class)
 @LayerEnvironment
+@Users
 class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
 
     /**

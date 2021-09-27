@@ -14,6 +14,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 
@@ -24,6 +25,7 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemp
 @BasicWiremock(responseTransformers = ResponseTemplateTransformer.class)
 @ExtendWith(BasicWiremock.OsmApiExtension.class)
 @Projection
+@Users
 class OsmServerHistoryReaderTest {
     /**
      * Tests node history fetching.

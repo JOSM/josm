@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -30,6 +31,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
  * Unit tests for class {@link CombineWayAction}.
  */
 @BasicPreferences
+@Users
 class CombineWayActionTest {
     /**
      * Non-regression test for bug #11957.

@@ -16,11 +16,13 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of the {@code NoteData} class.
  */
 @BasicPreferences
+@Users
 class NoteDataTest {
     /**
      * Unit test for {@link NoteData#NoteData}

@@ -8,7 +8,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -102,20 +101,18 @@ public @interface BasicPreferences {
         private void resetConfigVariables(Preferences pref) throws ReflectiveOperationException {
             final Field configField = AbstractProperty.class.getDeclaredField("preferences");
             configField.setAccessible(true);
-            for (Path classPath : ReflectionUtils.getAllClasspathRootDirectories()) {
-                for (Class<?> clazz : ReflectionSupport.findAllClassesInClasspathRoot(classPath.toUri(), tClazz -> true, tClazz -> true)) {
-                    try {
-                        for (Field field : clazz.getDeclaredFields()) {
-                            if (ReflectionUtils.isStatic(field) && AbstractProperty.class.isAssignableFrom(field.getType())) {
-                                field.setAccessible(true);
-                                if (field.get(null) != null) {
-                                    configField.set(field.get(null), pref);
-                                }
+            for (Class<?> clazz : ReflectionSupport.findAllClassesInPackage("org.openstreetmap.josm", tClazz -> true, tClazz -> true)) {
+                try {
+                    for (Field field : clazz.getDeclaredFields()) {
+                        if (ReflectionUtils.isStatic(field) && AbstractProperty.class.isAssignableFrom(field.getType())) {
+                            field.setAccessible(true);
+                            if (field.get(null) != null) {
+                                configField.set(field.get(null), pref);
                             }
                         }
-                    } catch (NoClassDefFoundError noClassDefFoundError) {
-                        Logging.warn("{0}: No class definition found", clazz.getName());
                     }
+                } catch (NoClassDefFoundError noClassDefFoundError) {
+                    Logging.warn("{0}: No class definition found", clazz.getName());
                 }
             }
 

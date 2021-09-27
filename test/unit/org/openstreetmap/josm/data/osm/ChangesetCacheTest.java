@@ -17,12 +17,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Unit test of {@link ChangesetCache}
  */
 @BasicPreferences
+@Users
 class ChangesetCacheTest {
     private static final ChangesetCache cache = ChangesetCache.getInstance();
 

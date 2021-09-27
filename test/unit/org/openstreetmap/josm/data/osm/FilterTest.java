@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -31,6 +32,7 @@ import nl.jqno.equalsverifier.Warning;
  * Unit tests for class {@link Filter}.
  */
 @BasicPreferences
+@Users
 class FilterTest {
     @Test
     void testBasic() throws SearchParseError {

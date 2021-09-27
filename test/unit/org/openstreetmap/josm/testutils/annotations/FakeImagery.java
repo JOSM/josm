@@ -11,13 +11,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -285,22 +282,12 @@ public @interface FakeImagery {
                 throws ParameterResolutionException {
             ExtensionContext.Store store = extensionContext.getStore(
                     ExtensionContext.Namespace.create(FakeImageryExtension.class));
-            if (store.get(ConstSource.class) != null && parameterContext.isAnnotated(FakeImagery.class)
-                    && List.class.isAssignableFrom(parameterContext.getParameter().getType())) {
-                 Optional<Method> optionalMethod = ReflectionUtils.findMethod(parameterContext.getParameter().getParameterizedType().getClass(),
-                         "getActualTypeArguments");
-                 if (!optionalMethod.isPresent() || !optionalMethod.get().getReturnType().isAssignableFrom(Type[].class)) {
-                     // We can't check the type. Therefore, we must hope that everything goes well.
-                     return true;
-                 }
-                 Type[] types = (Type[]) ReflectionUtils.invokeMethod(optionalMethod.get(),
-                         parameterContext.getParameter().getParameterizedType());
-                 return types.length == 1 && ConstSource.class.isAssignableFrom((Class<?>) types[0]);
-            }
-            return false;
+            return store.get(ConstSource.class) != null && parameterContext.isAnnotated(FakeImagery.class)
+                    && List.class.isAssignableFrom(parameterContext.getParameter().getType());
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public List<ConstSource> resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
                 throws ParameterResolutionException {
             ExtensionContext.Store store = extensionContext.getStore(

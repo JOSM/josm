@@ -7,12 +7,14 @@ import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Performance test of {@code MapCSSTagChecker}.
  */
 @Main
 @Territories
+@Users
 class MapCSSTagCheckerPerformanceTest {
 
     private MapCSSTagChecker tagChecker;

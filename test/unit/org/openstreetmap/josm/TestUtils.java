@@ -33,6 +33,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -629,10 +631,12 @@ public final class TestUtils {
                     () -> GuiHelper.runInEDTAndWaitAndReturn(
                         () -> ((ThreadPoolExecutor) MainApplication.worker).getQueue().isEmpty()
                     )
-                ).get();
+                ).get(5, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException e) {
                 // inconclusive - retry...
                 workerQueueEmpty = false;
+            } catch (TimeoutException timeoutException) {
+                fail(timeoutException);
             }
         }
     }

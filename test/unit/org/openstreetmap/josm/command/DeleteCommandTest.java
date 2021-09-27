@@ -29,6 +29,7 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.DeleteCommandCallback;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -41,6 +42,7 @@ import nl.jqno.equalsverifier.Warning;
 @DeleteCommandCallback
 @I18n
 @LayerEnvironment
+@Users
 class DeleteCommandTest {
     private CommandTestDataWithRelation testData;
 

@@ -13,11 +13,13 @@ import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link HistoryBrowserDialog} class.
  */
 @BasicPreferences
+@Users
 class HistoryBrowserDialogTest {
     /**
      * Test for {@link HistoryBrowserDialog#buildTitle}.

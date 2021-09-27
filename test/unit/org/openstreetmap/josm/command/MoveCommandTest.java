@@ -27,6 +27,7 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -39,6 +40,7 @@ import nl.jqno.equalsverifier.Warning;
 @I18n
 @LayerEnvironment
 @Projection
+@Users
 class MoveCommandTest {
     private CommandTestDataWithRelation testData;
 

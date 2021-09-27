@@ -7,11 +7,13 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests for class {@link ChangesetDiscussionComment}.
  */
 @BasicPreferences(true)
+@Users
 class ChangesetDiscussionCommentTest {
     /**
      * Unit test of {@link ChangesetDiscussionComment} constructor.

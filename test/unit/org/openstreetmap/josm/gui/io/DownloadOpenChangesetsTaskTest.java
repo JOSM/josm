@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
 import org.openstreetmap.josm.testutils.annotations.OsmOAuth;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -32,6 +33,7 @@ import mockit.MockUp;
  */
 @OsmApiType(OsmApiType.APIType.DEV)
 @OsmOAuth
+@Users
 class DownloadOpenChangesetsTaskTest {
     /**
      * OAuth wizard mocker.

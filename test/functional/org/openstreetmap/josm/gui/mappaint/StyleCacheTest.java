@@ -30,6 +30,7 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.tools.Pair;
 @MapStyles
 @Projection
 @Timeout(60)
+@Users
 class StyleCacheTest {
 
     private static final int IMG_WIDTH = 1400;

@@ -13,12 +13,14 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests of {@link ImportHandler} class.
  */
 @Main
+@Users
 class ImportHandlerTest {
     private static ImportHandler newHandler(String url) throws RequestHandlerBadRequestException {
         ImportHandler req = new ImportHandler();

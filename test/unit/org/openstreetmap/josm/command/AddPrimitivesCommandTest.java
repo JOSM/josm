@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -24,17 +25,18 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link AddPrimitivesCommand} class.
  */
-@I18n
 // We need prefs for nodes.
 @BasicPreferences
+@I18n
+@Users
 class AddPrimitivesCommandTest {
     /**
      * Test if the add command is executed correctly and does not set the modified flag.

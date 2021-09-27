@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
@@ -50,6 +51,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author Michael Zangl
  */
 @BasicPreferences
+@MapStyles
 @Projection
 public class MapCSSRendererTest {
     private static final String TEST_DATA_BASE = "/renderer/";

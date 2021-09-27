@@ -11,6 +11,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of the {@code MultipolygonBuilder} class.
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @BasicPreferences
 @Projection
 @Timeout(15)
+@Users
 class MultipolygonBuilderTest {
     /**
      * Non-regression test for ticket #12376.

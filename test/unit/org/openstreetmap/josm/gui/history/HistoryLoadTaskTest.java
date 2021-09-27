@@ -24,6 +24,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.xml.sax.SAXException;
 
 /**
@@ -33,6 +34,7 @@ import org.xml.sax.SAXException;
 @HTTP
 @OsmApiType(OsmApiType.APIType.DEV)
 @Timeout(20)
+@Users
 class HistoryLoadTaskTest {
     /**
      * Unit test of {@link HistoryLoadTask#getLoadingMessage}

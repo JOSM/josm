@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.NoteReader;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -18,6 +19,7 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests for class {@link NoteComment}.
  */
+@Users
 class NoteTest {
     /**
      * Unit test of {@link Note#toString} method.

@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link HistoryBrowserModel} class.
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.testutils.annotations.OsmApiType;
 @BasicPreferences
 @OsmApiType(OsmApiType.APIType.DEV)
 @Timeout(30)
+@Users
 class HistoryBrowserModelTest {
     /**
      * Test for {@link HistoryBrowserModel#HistoryBrowserModel}.

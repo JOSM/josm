@@ -12,6 +12,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -21,6 +22,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @FullPreferences
 @MapStyles
 @Projection
+@Users
 class StyledMapRendererPerformanceTest extends AbstractMapRendererPerformanceTestParent {
 
     @BeforeAll

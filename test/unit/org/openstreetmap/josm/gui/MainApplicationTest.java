@@ -50,6 +50,7 @@ import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.StaticClassCleanup;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
@@ -66,6 +67,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @Projection
 @Timeout(20)
 @StaticClassCleanup(HttpClient.class)
+@Users
 public class MainApplicationTest {
 
     /**

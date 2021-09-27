@@ -17,12 +17,14 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests for class {@link PurgeAction}.
  */
 @Main
 @Projection
+@Users
 class PurgeActionTest {
     /**
      * Non-regression test for ticket #12038.

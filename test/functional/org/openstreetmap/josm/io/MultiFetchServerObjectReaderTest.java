@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -53,6 +54,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @Main
 @OsmApiType(OsmApiType.APIType.DEV)
 @Timeout(value = 60, unit = TimeUnit.SECONDS)
+@Users
 class MultiFetchServerObjectReaderTest {
     private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 

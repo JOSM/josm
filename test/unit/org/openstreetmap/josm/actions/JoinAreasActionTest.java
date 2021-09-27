@@ -36,6 +36,7 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.DeleteCommandCallback;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -45,6 +46,7 @@ import org.openstreetmap.josm.tools.Utils;
 @DeleteCommandCallback
 @Main
 @Territories(Territories.Initialize.ALL)
+@Users
 class JoinAreasActionTest {
     /**
      * Non-regression test for bug #9599.

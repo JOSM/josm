@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -32,6 +33,7 @@ import nl.jqno.equalsverifier.Warning;
 @BasicPreferences
 // CommandTestDataWithRelation adds a new layer to the layer manager
 @LayerEnvironment
+@Users
 class ChangeMembersCommandTest {
     private CommandTestDataWithRelation testData;
 

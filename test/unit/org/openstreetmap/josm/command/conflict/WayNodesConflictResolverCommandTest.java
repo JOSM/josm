@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -19,6 +20,7 @@ import nl.jqno.equalsverifier.Warning;
  */
 // The `conflict` field is somehow dependent upon Territories.
 @Territories
+@Users
 class WayNodesConflictResolverCommandTest {
     /**
      * Unit test of methods {@link WayNodesConflictResolverCommand#equals} and {@link WayNodesConflictResolverCommand#hashCode}.

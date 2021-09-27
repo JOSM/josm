@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetNameTemplateList;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @BasicPreferences
 @ExtendWith(Presets.PresetsExtension.class)
 @StaticClassCleanup(TaggingPresets.class)
+@StaticClassCleanup(TaggingPresetNameTemplateList.class)
 public @interface Presets {
 
     /** {@code true} to clear presets between tests. Alternatively, re-annotate specific tests with this annotation. */

@@ -13,21 +13,25 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.data.osm.UserInfo;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
+import org.openstreetmap.josm.tools.Logging;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link UserIdentityManager} class.
  */
 @BasicPreferences
+@Users
 class UserIdentityManagerTest {
     private static UserInfo newUserInfo() {
         return newUserInfo(1, "a description");
@@ -38,6 +42,16 @@ class UserIdentityManagerTest {
         userInfo.setId(id);
         userInfo.setDescription(description);
         return userInfo;
+    }
+
+    @BeforeEach
+    void setUp() {
+        // Config gets reset from time to time, so UserIdentityManager isn't necessarily listening
+        try {
+            Config.getPref().addPreferenceChangeListener(UserIdentityManager.getInstance());
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Logging.trace(illegalArgumentException);
+        }
     }
 
     /**

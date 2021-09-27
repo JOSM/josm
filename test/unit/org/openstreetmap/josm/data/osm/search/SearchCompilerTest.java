@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Presets;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Logging;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -58,6 +59,7 @@ import nl.jqno.equalsverifier.Warning;
 @BasicPreferences
 @Presets
 @Timeout(30)
+@Users
 class SearchCompilerTest {
     private static final class SearchContext {
         final DataSet ds = new DataSet();

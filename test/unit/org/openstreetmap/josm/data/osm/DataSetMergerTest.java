@@ -21,12 +21,14 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests for class {@link DataSetMerger}.
  */
 @BasicPreferences
 @Projection
+@Users
 class DataSetMergerTest {
     private DataSet my;
     private DataSet their;

@@ -28,22 +28,20 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.annotations.HTTP;
-import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Unit test of {@link CreateMultipolygonAction}
  */
-@HTTP
-@LayerEnvironment
 @Main
 @MapStyles
 @Projection
+@Users
 class CreateMultipolygonActionTest {
     private static Map<String, String> getRefToRoleMap(Relation relation) {
         Map<String, String> refToRole = new TreeMap<>();

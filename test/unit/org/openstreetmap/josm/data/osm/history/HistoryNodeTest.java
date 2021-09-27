@@ -15,11 +15,13 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests for class {@link HistoryNode}.
  */
 @BasicPreferences
+@Users
 class HistoryNodeTest {
     private static HistoryNode create(Instant d) {
         return new HistoryNode(

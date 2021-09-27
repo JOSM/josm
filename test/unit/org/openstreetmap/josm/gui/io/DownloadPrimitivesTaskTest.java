@@ -14,12 +14,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link DownloadPrimitivesTask} class.
  */
 @OsmApiType(OsmApiType.APIType.DEV)
 @Timeout(20)
+@Users
 class DownloadPrimitivesTaskTest {
     /**
      * Test of {@link DownloadPrimitivesTask} class.

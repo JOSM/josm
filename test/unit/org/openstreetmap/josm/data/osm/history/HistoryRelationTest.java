@@ -14,11 +14,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests for class {@link HistoryRelation}.
  */
 @BasicPreferences
+@Users
 class HistoryRelationTest {
     private static HistoryRelation create(Instant d) {
         return new HistoryRelation(

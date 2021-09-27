@@ -46,6 +46,7 @@ import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -57,6 +58,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @Projection
 @Territories
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
+@Users
 public class MapRendererPerformanceTest {
 
     private static final boolean DUMP_IMAGE = false; // dump images to file for debugging purpose
@@ -175,7 +177,9 @@ public class MapRendererPerformanceTest {
         if (hideIconsSetting != null) {
             hideIconsSetting.setValue(true);
         }
-        MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
+        if (MapPaintStyles.getStyles().getStyleSources().size() > defaultStyleIdx) {
+            MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
+        }
     }
 
     private static class PerformanceTester {
@@ -329,7 +333,7 @@ public class MapRendererPerformanceTest {
     }
 
     private static void setFilterStyleActive(boolean active) {
-        if (filterStyle != null) {
+        if (filterStyle != null && MapPaintStyles.getStyles().getStyleSources().contains(filterStyle)) {
             if (filterStyle.active != active) {
                 MapPaintStyles.toggleStyleActive(filterStyleIdx);
             }

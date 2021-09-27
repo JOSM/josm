@@ -18,12 +18,14 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Performance test of {@code ValidationTask}.
  */
 @LayerEnvironment
 @Territories
+@Users
 class ValidationTaskPerformanceTest {
 
     private List<org.openstreetmap.josm.data.validation.Test> tests;

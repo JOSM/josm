@@ -1,19 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Instant;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link ChangesetQuery}
  */
 @BasicPreferences
+@Users
 class ChangesetQueryTest {
     /**
      * Unit tests of {@link ChangesetQuery#getQueryString()}

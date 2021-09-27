@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -34,10 +35,11 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link ChangeCommand} class.
  */
-@I18n
 // We need prefs for nodes.
 @BasicPreferences
+@I18n
 @LayerEnvironment
+@Users
 class ChangeCommandTest {
     private CommandTestData testData;
 

@@ -58,6 +58,8 @@ public @interface JosmDefaults {
 
         @Override
         public void afterEach(ExtensionContext context) throws Exception {
+            // Reset the log level to INFO.
+            Logging.setLogLevel(Logging.LEVEL_INFO);
             // Get Timeout, if set
             long timeOut = AnnotationUtils.findFirstParentAnnotation(context, Timeout.class)
                     .map(timeout -> timeout.unit().toMillis(timeout.value())).orElse(10_000L);

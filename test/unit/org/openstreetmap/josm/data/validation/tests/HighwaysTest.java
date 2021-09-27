@@ -19,12 +19,14 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit test of {@link HighwaysTest}.
  */
 @BasicPreferences
 @Projection
+@Users
 class HighwaysTest {
     private static Way createTestSetting(String highway, String highwayLink) {
         DataSet ds = new DataSet();

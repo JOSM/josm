@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferenceTest;
@@ -28,7 +29,6 @@ import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link PluginHandler} class.

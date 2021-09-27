@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link DuplicateAction} class.
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 // TMS layer needs prefs. Platform for LayerListDialog shortcuts.
 @BasicPreferences
 @LayerEnvironment
+@Users
 class DuplicateActionTest {
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/4539">#4539</a>.
