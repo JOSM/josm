@@ -114,8 +114,10 @@ public class BoundingBoxSelection implements DownloadSelection {
         final JButton btnCopy = new JButton(tr("Copy bounds"), ImageProvider.get("copy", ImageSizes.SMALLICON));
         btnCopy.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent arg0) {
-                ClipboardUtils.copyString(gui.currentBounds.encodeAsString(","));
+            public void mouseClicked(MouseEvent e) {
+                if (gui.currentBounds != null) {
+                    ClipboardUtils.copyString(gui.currentBounds.encodeAsString(","));
+                }
             }
         });
         dlg.add(btnCopy, GBC.eop().insets(20, 20, 0, 0));
@@ -123,7 +125,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         final JButton btnClear = new JButton(tr("Clear textarea"));
         btnClear.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent arg0) {
+            public void mouseClicked(MouseEvent e) {
                 tfOsmUrl.setText("");
             }
         });
