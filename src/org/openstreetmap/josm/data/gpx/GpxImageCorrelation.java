@@ -272,13 +272,14 @@ public final class GpxImageCorrelation {
         } else if (prevWp != null) {
             // This code gives a simple linear interpolation of the coordinates between current and
             // previous track point assuming a constant speed in between
+            LatLon nextCoorForDirection = nextWp != null ? nextWp.getCoor() : null;
             while (i >= 0) {
                 final GpxImageEntry curImg = images.get(i);
-                final GpxImageEntry curTmp = curImg.getTmp();
                 final long imgTime = curImg.getExifInstant().toEpochMilli();
                 if (imgTime < prevWpTime) {
                     break;
                 }
+                final GpxImageEntry curTmp = curImg.getTmp();
                 if (!curTmp.hasNewGpsData()) {
                     // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
                     final double timeDiff = (double) (imgTime - prevWpTime) / Math.abs(curWpTime - prevWpTime);
@@ -286,8 +287,8 @@ public final class GpxImageCorrelation {
                     final LatLon prevCoor = prevWp.getCoor();
                     final LatLon curCoor = curWp.getCoor();
                     LatLon position = prevCoor.interpolate(curCoor, timeDiff);
-                    if (nextWp != null && (shiftXY || dirpos.isSetImageDirection())) {
-                        double direction = curCoor.bearing(nextWp.getCoor());
+                    if (nextCoorForDirection != null && (shiftXY || dirpos.isSetImageDirection())) {
+                        double direction = position.bearing(nextCoorForDirection);
                         if (dirpos.isSetImageDirection()) {
                             curTmp.setExifImgDir(computeDirection(direction, dirpos.getImageDirectionAngleOffset()));
                         }
@@ -310,6 +311,7 @@ public final class GpxImageCorrelation {
                     curTmp.flagNewGpsData();
                     curImg.tmpUpdated();
 
+                    nextCoorForDirection = curCoor;
                     ret++;
                 }
                 i--;
