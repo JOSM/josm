@@ -390,8 +390,6 @@
         <reference ref="voltage_frequency" />
     </chunk>
     <chunk id="power_generator">
-        <link wiki="Tag:power=generator" />
-        <space />
         <key key="power" value="generator" />
         <reference ref="name_ref_operator" />
         <text key="start_date" text="Start date" />
@@ -6193,6 +6191,7 @@
                 <key key="generator:method" value="combustion" />
                 <combo key="generator:type" text="Generator Type" values="gas_turbine,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=biofuel" />
             </item> <!-- Power Generator -->
             <item name="Biogas Power Generator" icon="presets/power/power_source-biofuel.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="biogas" />
@@ -6200,6 +6199,7 @@
                 <key key="generator:method" value="combustion" />
                 <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=biogas" />
             </item> <!-- Biogas Power Generator -->
             <item name="Biomass Power Generator" icon="presets/power/power_source-biofuel.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="biomass" />
@@ -6212,6 +6212,7 @@
                     <list_entry value="steam_turbine" short_description="combustion" />
                 </combo>
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=biomass" />
             </item> <!-- Biomass Power Generator -->
             <item name="Coal Power Generator" icon="presets/power/power_source-coal.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="coal" />
@@ -6219,6 +6220,7 @@
                 <key key="generator:method" value="combustion" />
                 <combo key="generator:type" text="Generator Type" values="steam_generator,steam_turbine" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=coal" />
             </item> <!-- Coal Power Generator -->
             <item name="Gas Power Generator" icon="presets/power/power_source-gas.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="gas" />
@@ -6226,6 +6228,7 @@
                 <key key="generator:method" value="combustion" />
                 <combo key="generator:type" text="Generator Type" values="combined_cycle,gas_turbine,reciprocating_engine,steam_generator,steam_turbine" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=gas" />
             </item> <!-- Gas Power Generator -->
             <item name="Oil Power Generator" icon="presets/power/power_source-oil.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="oil" />
@@ -6233,6 +6236,7 @@
                 <key key="generator:method" value="combustion" />
                 <combo key="generator:type" text="Generator Type" values="steam_generator,steam_turbine" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=oil" />
             </item> <!-- Oil Power Generator -->
             <item name="Diesel Power Generator" icon="presets/power/power_source-oil.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="diesel" />
@@ -6247,6 +6251,7 @@
                 <key key="generator:method" value="combustion" />
                 <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=gasoline" />
             </item> <!-- Gasoline Power Generator -->
             <item name="Nuclear Reactor" icon="presets/power/power_source-nuclear.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="nuclear" />
@@ -6272,6 +6277,7 @@
                     <list_entry value="VVER" display_value="Vodo-Vodyanoi Energetichesky Reactor (VVER)" short_description="fission" />
                 </combo>
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=nuclear" />
             </item> <!-- Nuclear Reactor -->
             <item name="Solar Power Generator" icon="presets/power/power_source-sun.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="solar" />
@@ -6283,6 +6289,7 @@
                     <list_entry value="steam_turbine" short_description="thermal" />
                 </combo>
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=solar" />
             </item> <!-- Solar Power Generator -->
             <item name="Waste Power Generator" icon="presets/power/power_source-waste.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="waste" />
@@ -6296,6 +6303,7 @@
                 </combo>
                 <combo key="generator:type" text="Generator Type" values="bioreactor,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=waste" />
             </item> <!-- Waste Power Generator -->
             <item name="Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="hydro" />
@@ -6308,6 +6316,7 @@
                     <list_entry value="pelton_turbine" short_description="run-of-the-river / water-storage" />
                 </combo>
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=hydro" />
             </item> <!-- Water Turbine -->
             <item name="Tidal Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="tidal" />
@@ -6319,22 +6328,26 @@
                     <list_entry value="vertical_axis" short_description="stream" />
                 </combo>
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=tidal" />
             </item> <!-- Tidal Water Turbine -->
             <item name="Wave Energy Converter" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="wave" />
                 <reference ref="power_generator" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=wave" />
             </item> <!-- Wave Energy Converter -->
             <item name="Osmotic Power Generator" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="osmotic" />
                 <reference ref="power_generator" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=osmotic" />
             </item> <!-- Osmotic Power Generator -->
             <item name="Geothermal Power Generator" icon="presets/power/power_source-geothermal.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="geothermal" />
                 <reference ref="power_generator" />
                 <combo key="generator:type" text="Generator Type" values="heat_pump,steam_turbine" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=geothermal" />
             </item> <!-- Geothermal Power Generator -->
             <item name="Wind Turbine" icon="presets/power/power_source-wind.svg" type="node,closedway" preset_name_label="true">
                 <key key="generator:source" value="wind" />
@@ -6342,6 +6355,7 @@
                 <key key="generator:method" value="wind_turbine" />
                 <combo key="generator:type" text="Generator Type" values="horizontal_axis,vertical_axis" />
                 <reference ref="power_output" />
+                <link wiki="Tag:generator:source=wind" />
             </item> <!-- Wind Turbine -->
         </group> <!-- Power Generator -->
         <separator/>
