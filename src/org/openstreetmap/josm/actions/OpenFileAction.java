@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -77,7 +78,8 @@ public class OpenFileAction extends DiskAccessAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AbstractFileChooser fc = createAndOpenFileChooser(true, true, null);
+        AbstractFileChooser fc = createAndOpenFileChooser(true, true, null, null, JFileChooser.FILES_AND_DIRECTORIES,
+                true, null);
         if (fc == null)
             return;
         File[] files = fc.getSelectedFiles();
