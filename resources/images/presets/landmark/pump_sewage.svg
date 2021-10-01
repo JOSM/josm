@@ -26,13 +26,9 @@
          rdf:resource="http://creativecommons.org/ns#DerivativeWorks" /><cc:requires
          rdf:resource="http://creativecommons.org/ns#ShareAlike" /></cc:License></rdf:RDF></metadata><defs
    id="defs18">
-	
-	
 </defs>
-
-
 <path
-   style="fill:#ee82ee;fill-rule:evenodd;stroke:#ee82ee;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+   style="fill:#1d5575;fill-rule:evenodd;stroke:#1d5575;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
    d="m 1,1 c 0,0 14,0 14,0 0,0 0,14 0,14 C 15,15 1,15 1,15 1,15 1,1 1,1 Z"
    id="path3011" /><g
    id="g3542"><g
