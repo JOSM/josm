@@ -1122,7 +1122,6 @@ public final class DomainValidator extends AbstractValidator {
         "ril", // ril Reliance Industries Limited
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
         "rip", // rip United TLD Holdco Ltd.
-        "rmit", // rmit Royal Melbourne Institute of Technology
         "rocher", // rocher Ferrero Trading Lux S.A.
         "rocks", // rocks United TLD Holdco, LTD.
         "rodeo", // rodeo Top Level Domain Holdings Limited
