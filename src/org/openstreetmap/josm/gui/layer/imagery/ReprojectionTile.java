@@ -201,7 +201,8 @@ public class ReprojectionTile extends Tile {
         } catch (NegativeArraySizeException | IllegalArgumentException e) {
             // See #19746 + #17387 - https://bugs.openjdk.java.net/browse/JDK-4690476
             throw BugReport.intercept(e).put("targetDim", targetDim).put("key", getKey())
-                .put("projCurrent", projCurrent).put("projServer", projServer).put("pbServer", pbServer);
+                .put("projCurrent", projCurrent).put("projServer", projServer).put("pbServer", pbServer)
+                .put("pbTarget", pbTarget).put("pbTargetAligned", pbTargetAligned).put("scale", scale);
         }
     }
 
