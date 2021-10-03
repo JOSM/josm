@@ -149,6 +149,7 @@ public final class GpxImageCorrelation {
         if (trkTag && prevWp != null) {
             ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, offset, false, trkTagTime, null, dirpos);
         }
+        Logging.debug("Correlated {0} total points", ret);
         return ret;
     }
 
@@ -210,7 +211,6 @@ public final class GpxImageCorrelation {
     private static int matchPoints(List<? extends GpxImageEntry> images, WayPoint prevWp, long prevWpTime, WayPoint curWp, long curWpTime,
             long offset, boolean interpolate, int tagTime, WayPoint nextWp, GpxImageDirectionPositionSettings dirpos) {
 
-        int ret = 0;
         final boolean isLast = nextWp == null;
 
         // i is the index of the timewise last photo that has the same or earlier EXIF time
@@ -221,10 +221,18 @@ public final class GpxImageCorrelation {
             i = getLastIndexOfListBefore(images, curWpTime);
         }
 
-        // no photos match
-        if (i < 0)
-            return 0;
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("Correlating images for i={1} - curWp={2}/{3} - prevWp={4}/{5} - nextWp={6} - tagTime={7} - interpolate={8}",
+                    i, curWp, curWpTime, prevWp, prevWpTime, nextWp, tagTime, interpolate);
+        }
 
+        // no photos match
+        if (i < 0) {
+            Logging.debug("Correlated nothing, no photos match");
+            return 0;
+        }
+
+        int ret = 0;
         Double speed = null;
         Double prevElevation = null;
 
@@ -272,7 +280,8 @@ public final class GpxImageCorrelation {
         } else if (prevWp != null) {
             // This code gives a simple linear interpolation of the coordinates between current and
             // previous track point assuming a constant speed in between
-            LatLon nextCoorForDirection = nextWp != null ? nextWp.getCoor() : null;
+            @SuppressWarnings("null")
+            LatLon nextCoorForDirection = nextWp.getCoor();
             while (i >= 0) {
                 final GpxImageEntry curImg = images.get(i);
                 final long imgTime = curImg.getExifInstant().toEpochMilli();
@@ -317,6 +326,7 @@ public final class GpxImageCorrelation {
                 i--;
             }
         }
+        Logging.debug("Correlated {0} image(s)", ret);
         return ret;
     }
 
