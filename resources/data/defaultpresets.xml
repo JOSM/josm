@@ -5602,6 +5602,7 @@
         <item name="Flagpole" icon="presets/misc/flag.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=flagpole" />
             <key key="man_made" value="flagpole" />
+            <combo key="flag:type" text="Type" values="advertising,athletic,governmental,military,municipal,national,organisation,regional,religious,signal" values_context="flag" match="keyvalue!" values_searchable="true" />
         </item> <!-- Flagpole -->
         <item name="Cross" icon="presets/landmark/cross.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=cross" />
