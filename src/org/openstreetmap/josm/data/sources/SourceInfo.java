@@ -489,7 +489,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
      * @param <W> The type of active id to get
      * @param clazz The class of the type of id
      * @return sorted list of activated source IDs
-     * @since 13536, xxx (extracted)
+     * @since 13536, 16545 (extracted)
      */
     public static <W extends SourceInfo<?, ?, ?, ?>> Collection<String> getActiveIds(Class<W> clazz) {
         IPreferences pref = Config.getPref();

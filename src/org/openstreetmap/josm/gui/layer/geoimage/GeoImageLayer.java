@@ -867,12 +867,12 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     @Override
     public void jumpToNextMarker() {
-        data.selectNextImage();
+        data.setSelectedImage(data.getNextImage());
     }
 
     @Override
     public void jumpToPreviousMarker() {
-        data.selectPreviousImage();
+        data.setSelectedImage(data.getPreviousImage());
     }
 
     /**

@@ -15,11 +15,12 @@ import java.awt.event.WindowEvent;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
-
+import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -32,10 +33,11 @@ import javax.swing.SwingConstants;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
+import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
-import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
+import org.openstreetmap.josm.gui.dialogs.DialogsPanel;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.layer.LayerVisibilityAction;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -49,7 +51,6 @@ import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -220,8 +221,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentData != null) {
-                currentData.selectNextImage();
+            if (ImageViewerDialog.this.currentEntry != null) {
+                ImageViewerDialog.this.currentEntry.selectNextImage(ImageViewerDialog.this);
             }
         }
     }
@@ -235,8 +236,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentData != null) {
-                currentData.selectPreviousImage();
+            if (ImageViewerDialog.this.currentEntry != null) {
+                ImageViewerDialog.this.currentEntry.selectPreviousImage(ImageViewerDialog.this);
             }
         }
     }
@@ -250,8 +251,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentData != null) {
-                currentData.selectFirstImage();
+            if (ImageViewerDialog.this.currentEntry != null) {
+                ImageViewerDialog.this.currentEntry.selectFirstImage(ImageViewerDialog.this);
             }
         }
     }
@@ -265,8 +266,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentData != null) {
-                currentData.selectLastImage();
+            if (ImageViewerDialog.this.currentEntry != null) {
+                ImageViewerDialog.this.currentEntry.selectLastImage(ImageViewerDialog.this);
             }
         }
     }
@@ -308,8 +309,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentData != null) {
-                currentData.removeSelectedImages();
+            if (ImageViewerDialog.this.currentEntry != null) {
+                IImageEntry<?> imageEntry = ImageViewerDialog.this.currentEntry;
+                if (imageEntry.isRemoveSupported()) {
+                    imageEntry.remove();
+                }
             }
         }
     }
@@ -324,8 +328,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentData != null && currentData.getSelectedImage() != null) {
-                List<ImageEntry> toDelete = currentData.getSelectedImages();
+            if (currentEntry != null) {
+                List<IImageEntry<?>> toDelete = currentEntry instanceof ImageEntry ?
+                        new ArrayList<>(((ImageEntry) currentEntry).getDataSet().getSelectedImages())
+                        : Collections.singletonList(currentEntry);
                 int size = toDelete.size();
 
                 int result = new ExtendedDialog(
@@ -346,9 +352,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         .getValue();
 
                 if (result == 2) {
-                    for (ImageEntry delete : toDelete) {
-                        if (Utils.deleteFile(delete.getFile())) {
-                            currentData.removeImage(delete, false);
+                    final List<ImageData> imageDataCollection = toDelete.stream().filter(ImageEntry.class::isInstance)
+                            .map(ImageEntry.class::cast).map(ImageEntry::getDataSet).distinct().collect(Collectors.toList());
+                    for (IImageEntry<?> delete : toDelete) {
+                        if (delete.isRemoveSupported() && delete.remove()) {
                             Logging.info("File {0} deleted.", delete.getFile());
                         } else {
                             JOptionPane.showMessageDialog(
@@ -359,8 +366,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                                     );
                         }
                     }
-                    currentData.notifyImageUpdate();
-                    currentData.updateSelectedImage();
+                    imageDataCollection.forEach(data -> {
+                        data.notifyImageUpdate();
+                        data.updateSelectedImage();
+                    });
                 }
             }
         }
@@ -375,8 +384,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentData != null) {
-                ClipboardUtils.copyString(String.valueOf(currentData.getSelectedImage().getFile()));
+            if (currentEntry != null) {
+                ClipboardUtils.copyString(String.valueOf(currentEntry.getFile()));
             }
         }
     }
@@ -425,28 +434,35 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         return wasEnabled;
     }
 
-    private transient ImageData currentData;
-    private transient ImageEntry currentEntry;
+    private transient IImageEntry<?> currentEntry;
 
     /**
      * Displays a single image for the given layer.
-     * @param data the image data
+     * @param ignoredData the image data
      * @param entry image entry
      * @see #displayImages
      */
-    public void displayImage(ImageData data, ImageEntry entry) {
-        displayImages(data, Collections.singletonList(entry));
+    public void displayImage(ImageData ignoredData, ImageEntry entry) {
+        displayImages(Collections.singletonList(entry));
+    }
+
+    /**
+     * Displays a single image for the given layer.
+     * @param entry image entry
+     * @see #displayImages
+     */
+    public void displayImage(IImageEntry<?> entry) {
+        this.displayImages(Collections.singletonList(entry));
     }
 
     /**
      * Displays images for the given layer.
-     * @param data the image data
      * @param entries image entries
-     * @since 15333
+     * @since 18246
      */
-    public void displayImages(ImageData data, List<ImageEntry> entries) {
+    public void displayImages(List<IImageEntry<?>> entries) {
         boolean imageChanged;
-        ImageEntry entry = entries != null && entries.size() == 1 ? entries.get(0) : null;
+        IImageEntry<?> entry = entries != null && entries.size() == 1 ? entries.get(0) : null;
 
         synchronized (this) {
             // TODO: pop up image dialog but don't load image again
@@ -457,90 +473,116 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 MainApplication.getMap().mapView.zoomTo(entry.getPos());
             }
 
-            currentData = data;
             currentEntry = entry;
         }
 
         if (entry != null) {
-            setNextEnabled(data.hasNextImage());
-            setPreviousEnabled(data.hasPreviousImage());
-            btnDelete.setEnabled(true);
-            btnDeleteFromDisk.setEnabled(entry.getFile() != null);
-            btnCopyPath.setEnabled(true);
-
-            if (imageChanged) {
-                cancelLoadingImage();
-                // Set only if the image is new to preserve zoom and position if the same image is redisplayed
-                // (e.g. to update the OSD).
-                imgLoadingFuture = imgDisplay.setImage(entry);
-            }
-            setTitle(tr("Geotagged Images") + (!entry.getDisplayName().isEmpty() ? " - " + entry.getDisplayName() : ""));
-            StringBuilder osd = new StringBuilder(entry.getDisplayName());
-            if (entry.getElevation() != null) {
-                osd.append(tr("\nAltitude: {0} m", Math.round(entry.getElevation())));
-            }
-            if (entry.getSpeed() != null) {
-                osd.append(tr("\nSpeed: {0} km/h", Math.round(entry.getSpeed())));
-            }
-            if (entry.getExifImgDir() != null) {
-                osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
-            }
-
-            DateTimeFormatter dtf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM)
-                    // Set timezone to UTC since UTC is assumed when parsing the EXIF timestamp,
-                    // see see org.openstreetmap.josm.tools.ExifReader.readTime(com.drew.metadata.Metadata)
-                    .withZone(ZoneOffset.UTC);
-
-            if (entry.hasExifTime()) {
-                osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifInstant())));
-            }
-            if (entry.hasGpsTime()) {
-                osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsInstant())));
-            }
-            Optional.ofNullable(entry.getIptcCaption()).map(s -> tr("\nCaption: {0}", s)).ifPresent(osd::append);
-            Optional.ofNullable(entry.getIptcHeadline()).map(s -> tr("\nHeadline: {0}", s)).ifPresent(osd::append);
-            Optional.ofNullable(entry.getIptcKeywords()).map(s -> tr("\nKeywords: {0}", s)).ifPresent(osd::append);
-            Optional.ofNullable(entry.getIptcObjectName()).map(s -> tr("\nObject name: {0}", s)).ifPresent(osd::append);
-
-            imgDisplay.setOsdText(osd.toString());
+            this.updateButtonsNonNullEntry(entry, imageChanged);
         } else {
-            boolean hasMultipleImages = entries != null && entries.size() > 1;
-            // if this method is called to reinitialize dialog content with a blank image,
-            // do not actually show the dialog again with a blank image if currently hidden (fix #10672)
-            setTitle(tr("Geotagged Images"));
-            imgDisplay.setImage(null);
-            imgDisplay.setOsdText("");
-            setNextEnabled(false);
-            setPreviousEnabled(false);
-            btnDelete.setEnabled(hasMultipleImages);
-            btnDeleteFromDisk.setEnabled(hasMultipleImages);
-            btnCopyPath.setEnabled(false);
-            if (hasMultipleImages) {
-                imgDisplay.setEmptyText(tr("Multiple images selected"));
-                btnFirst.setEnabled(!isFirstImageSelected(data));
-                btnLast.setEnabled(!isLastImageSelected(data));
-            }
-            imgDisplay.setImage(null);
-            imgDisplay.setOsdText("");
+            this.updateButtonsNullEntry(entries);
             return;
         }
         if (!isDialogShowing()) {
-            setIsDocked(false);     // always open a detached window when an image is clicked and dialog is closed
+            setIsDocked(false); // always open a detached window when an image is clicked and dialog is closed
             showDialog();
-        } else {
-            if (isDocked && isCollapsed) {
-                expand();
-                dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
-            }
+        } else if (isDocked && isCollapsed) {
+            expand();
+            dialogsPanel.reconstruct(DialogsPanel.Action.COLLAPSED_TO_DEFAULT, this);
         }
     }
 
-    private static boolean isLastImageSelected(ImageData data) {
-        return data.isImageSelected(data.getImages().get(data.getImages().size() - 1));
+    /**
+     * Update buttons for null entry
+     * @param entries {@code true} if multiple images are selected
+     */
+    private void updateButtonsNullEntry(List<IImageEntry<?>> entries) {
+        boolean hasMultipleImages = entries != null && entries.size() > 1;
+        // if this method is called to reinitialize dialog content with a blank image,
+        // do not actually show the dialog again with a blank image if currently hidden (fix #10672)
+        setTitle(tr("Geotagged Images"));
+        imgDisplay.setImage(null);
+        imgDisplay.setOsdText("");
+        setNextEnabled(false);
+        setPreviousEnabled(false);
+        btnDelete.setEnabled(hasMultipleImages);
+        btnDeleteFromDisk.setEnabled(hasMultipleImages);
+        btnCopyPath.setEnabled(false);
+        if (hasMultipleImages) {
+            imgDisplay.setEmptyText(tr("Multiple images selected"));
+            btnFirst.setEnabled(!isFirstImageSelected(entries));
+            btnLast.setEnabled(!isLastImageSelected(entries));
+        }
+        imgDisplay.setImage(null);
+        imgDisplay.setOsdText("");
     }
 
-    private static boolean isFirstImageSelected(ImageData data) {
-        return data.isImageSelected(data.getImages().get(0));
+    /**
+     * Update the image viewer buttons for the new entry
+     * @param entry The new entry
+     * @param imageChanged {@code true} if it is not the same image as the previous image.
+     */
+    private void updateButtonsNonNullEntry(IImageEntry<?> entry, boolean imageChanged) {
+        setNextEnabled(entry.getNextImage() != null);
+        setPreviousEnabled(entry.getPreviousImage() != null);
+        btnDelete.setEnabled(true);
+        btnDeleteFromDisk.setEnabled(entry.getFile() != null);
+        btnCopyPath.setEnabled(true);
+
+        if (imageChanged) {
+            cancelLoadingImage();
+            // Set only if the image is new to preserve zoom and position if the same image is redisplayed
+            // (e.g. to update the OSD).
+            imgLoadingFuture = imgDisplay.setImage(entry);
+        }
+        setTitle(tr("Geotagged Images") + (!entry.getDisplayName().isEmpty() ? " - " + entry.getDisplayName() : ""));
+        StringBuilder osd = new StringBuilder(entry.getDisplayName());
+        if (entry.getElevation() != null) {
+            osd.append(tr("\nAltitude: {0} m", Math.round(entry.getElevation())));
+        }
+        if (entry.getSpeed() != null) {
+            osd.append(tr("\nSpeed: {0} km/h", Math.round(entry.getSpeed())));
+        }
+        if (entry.getExifImgDir() != null) {
+            osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
+        }
+
+        DateTimeFormatter dtf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM)
+                // Set timezone to UTC since UTC is assumed when parsing the EXIF timestamp,
+                // see see org.openstreetmap.josm.tools.ExifReader.readTime(com.drew.metadata.Metadata)
+                .withZone(ZoneOffset.UTC);
+
+        if (entry.hasExifTime()) {
+            osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifInstant())));
+        }
+        if (entry.hasGpsTime()) {
+            osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsInstant())));
+        }
+        Optional.ofNullable(entry.getIptcCaption()).map(s -> tr("\nCaption: {0}", s)).ifPresent(osd::append);
+        Optional.ofNullable(entry.getIptcHeadline()).map(s -> tr("\nHeadline: {0}", s)).ifPresent(osd::append);
+        Optional.ofNullable(entry.getIptcKeywords()).map(s -> tr("\nKeywords: {0}", s)).ifPresent(osd::append);
+        Optional.ofNullable(entry.getIptcObjectName()).map(s -> tr("\nObject name: {0}", s)).ifPresent(osd::append);
+
+        imgDisplay.setOsdText(osd.toString());
+    }
+
+    /**
+     * Displays images for the given layer.
+     * @param ignoredData the image data (unused, may be {@code null})
+     * @param entries image entries
+     * @since 18246 (signature)
+     * @deprecated Use {@link #displayImages(List)} (The data param is no longer used)
+     */
+    @Deprecated
+    public void displayImages(ImageData ignoredData, List<IImageEntry<?>> entries) {
+        this.displayImages(entries);
+    }
+
+    private static boolean isLastImageSelected(List<IImageEntry<?>> data) {
+        return data.stream().anyMatch(image -> data.contains(image.getLastImage()));
+    }
+
+    private static boolean isFirstImageSelected(List<IImageEntry<?>> data) {
+        return data.stream().anyMatch(image -> data.contains(image.getFirstImage()));
     }
 
     /**
@@ -575,9 +617,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     /**
      * Returns the currently displayed image.
      * @return Currently displayed image or {@code null}
-     * @since 6392
+     * @since 18246 (signature)
      */
-    public static ImageEntry getCurrentImage() {
+    public static IImageEntry<?> getCurrentImage() {
         return getInstance().currentEntry;
     }
 
@@ -598,10 +640,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
-        if (e.getRemovedLayer() instanceof GeoImageLayer) {
+        if (e.getRemovedLayer() instanceof GeoImageLayer && this.currentEntry instanceof ImageEntry) {
             ImageData removedData = ((GeoImageLayer) e.getRemovedLayer()).getImageData();
-            if (removedData == currentData) {
-                displayImages(null, null);
+            if (removedData == ((ImageEntry) this.currentEntry).getDataSet()) {
+                displayImages(null);
             }
             removedData.removeImageDataUpdateListener(this);
         }
@@ -626,8 +668,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     }
 
     private void showLayer(Layer newLayer) {
-        if (currentData == null && newLayer instanceof GeoImageLayer) {
-            ((GeoImageLayer) newLayer).getImageData().selectFirstImage();
+        if (this.currentEntry == null && newLayer instanceof GeoImageLayer) {
+            ImageData imageData = ((GeoImageLayer) newLayer).getImageData();
+            imageData.setSelectedImage(imageData.getFirstImage());
         }
     }
 
@@ -640,11 +683,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void selectedImageChanged(ImageData data) {
-        displayImages(data, data.getSelectedImages());
+        displayImages(new ArrayList<>(data.getSelectedImages()));
     }
 
     @Override
     public void imageDataUpdated(ImageData data) {
-        displayImages(data, data.getSelectedImages());
+        displayImages(new ArrayList<>(data.getSelectedImages()));
     }
 }

@@ -12,11 +12,10 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -26,10 +25,14 @@ import java.util.concurrent.Future;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
+import org.openstreetmap.josm.data.imagery.street_level.Projections;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.geoimage.viewers.projections.IImageViewer;
+import org.openstreetmap.josm.gui.layer.geoimage.viewers.projections.ImageProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -38,6 +41,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProcessor;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -49,11 +53,14 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class ImageDisplay extends JComponent implements Destroyable, PreferenceChangedListener, FilterChangeListener {
 
+    /** The current image viewer */
+    private IImageViewer iImageViewer;
+
     /** The file that is currently displayed */
-    private ImageEntry entry;
+    private IImageEntry<?> entry;
 
     /** The previous file that is currently displayed. Cleared on paint. Only used to help improve UI error information. */
-    private ImageEntry oldEntry;
+    private IImageEntry<?> oldEntry;
 
     /** The image currently displayed */
     private transient BufferedImage image;
@@ -261,9 +268,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     /** The thread that reads the images. */
     protected class LoadImageRunnable implements Runnable {
 
-        private final ImageEntry entry;
+        private final IImageEntry<?> entry;
 
-        LoadImageRunnable(ImageEntry entry) {
+        LoadImageRunnable(IImageEntry<?> entry) {
             this.entry = entry;
         }
 
@@ -295,7 +302,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                     updateProcessedImage();
                     // This will clear the loading info box
                     ImageDisplay.this.oldEntry = ImageDisplay.this.entry;
-                    visibleRect = new VisRect(0, 0, width, height);
+                    visibleRect = getIImageViewer(entry).getDefaultVisibleRectangle(ImageDisplay.this, image);
 
                     selectedRect = null;
                     errorLoading = false;
@@ -307,7 +314,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         }
     }
 
-    private class ImgDisplayMouseListener implements MouseListener, MouseWheelListener, MouseMotionListener {
+    private class ImgDisplayMouseListener extends MouseAdapter {
 
         private MouseEvent lastMouseEvent;
         private Point mousePointInImg;
@@ -330,65 +337,57 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         }
 
         private void mouseWheelMovedImpl(int x, int y, int rotation, boolean refreshMousePointInImg) {
-            ImageEntry entry;
-            Image image;
-            VisRect visibleRect;
+            IImageEntry<?> currentEntry;
+            IImageViewer imageViewer;
+            Image currentImage;
+            VisRect currentVisibleRect;
 
             synchronized (ImageDisplay.this) {
-                entry = ImageDisplay.this.entry;
-                image = ImageDisplay.this.image;
-                visibleRect = ImageDisplay.this.visibleRect;
+                currentEntry = ImageDisplay.this.entry;
+                currentImage = ImageDisplay.this.image;
+                currentVisibleRect = ImageDisplay.this.visibleRect;
+                imageViewer = ImageDisplay.this.iImageViewer;
             }
 
             selectedRect = null;
 
-            if (image == null)
+            if (currentImage == null)
                 return;
 
             // Calculate the mouse cursor position in image coordinates to center the zoom.
             if (refreshMousePointInImg)
-                mousePointInImg = comp2imgCoord(visibleRect, x, y, getSize());
+                mousePointInImg = comp2imgCoord(currentVisibleRect, x, y, getSize());
 
             // Apply the zoom to the visible rectangle in image coordinates
             if (rotation > 0) {
-                visibleRect.width = (int) (visibleRect.width * ZOOM_STEP.get());
-                visibleRect.height = (int) (visibleRect.height * ZOOM_STEP.get());
+                currentVisibleRect.width = (int) (currentVisibleRect.width * ZOOM_STEP.get());
+                currentVisibleRect.height = (int) (currentVisibleRect.height * ZOOM_STEP.get());
             } else {
-                visibleRect.width = (int) (visibleRect.width / ZOOM_STEP.get());
-                visibleRect.height = (int) (visibleRect.height / ZOOM_STEP.get());
+                currentVisibleRect.width = (int) (currentVisibleRect.width / ZOOM_STEP.get());
+                currentVisibleRect.height = (int) (currentVisibleRect.height / ZOOM_STEP.get());
             }
 
             // Check that the zoom doesn't exceed MAX_ZOOM:1
-            if (visibleRect.width < getSize().width / MAX_ZOOM.get()) {
-                visibleRect.width = (int) (getSize().width / MAX_ZOOM.get());
-            }
-            if (visibleRect.height < getSize().height / MAX_ZOOM.get()) {
-                visibleRect.height = (int) (getSize().height / MAX_ZOOM.get());
-            }
+            ensureMaxZoom(currentVisibleRect);
 
-            // Set the same ratio for the visible rectangle and the display area
-            int hFact = visibleRect.height * getSize().width;
-            int wFact = visibleRect.width * getSize().height;
-            if (hFact > wFact) {
-                visibleRect.width = hFact / getSize().height;
+            // The size of the visible rectangle is limited by the image size or the viewer implementation.
+            if (imageViewer != null) {
+                imageViewer.checkAndModifyVisibleRectSize(currentImage, currentVisibleRect);
             } else {
-                visibleRect.height = wFact / getSize().width;
+                currentVisibleRect.checkRectSize();
             }
-
-            // The size of the visible rectangle is limited by the image size.
-            visibleRect.checkRectSize();
 
             // Set the position of the visible rectangle, so that the mouse cursor doesn't move on the image.
-            Rectangle drawRect = calculateDrawImageRectangle(visibleRect, getSize());
-            visibleRect.x = mousePointInImg.x + ((drawRect.x - x) * visibleRect.width) / drawRect.width;
-            visibleRect.y = mousePointInImg.y + ((drawRect.y - y) * visibleRect.height) / drawRect.height;
+            Rectangle drawRect = calculateDrawImageRectangle(currentVisibleRect, getSize());
+            currentVisibleRect.x = mousePointInImg.x + ((drawRect.x - x) * currentVisibleRect.width) / drawRect.width;
+            currentVisibleRect.y = mousePointInImg.y + ((drawRect.y - y) * currentVisibleRect.height) / drawRect.height;
 
             // The position is also limited by the image size
-            visibleRect.checkRectPos();
+            currentVisibleRect.checkRectPos();
 
             synchronized (ImageDisplay.this) {
-                if (ImageDisplay.this.entry == entry) {
-                    ImageDisplay.this.visibleRect = visibleRect;
+                if (ImageDisplay.this.entry == currentEntry) {
+                    ImageDisplay.this.visibleRect = currentVisibleRect;
                 }
             }
             ImageDisplay.this.repaint();
@@ -416,24 +415,24 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         @Override
         public void mouseClicked(MouseEvent e) {
             // Move the center to the clicked point.
-            ImageEntry entry;
-            Image image;
-            VisRect visibleRect;
+            IImageEntry<?> currentEntry;
+            Image currentImage;
+            VisRect currentVisibleRect;
 
             synchronized (ImageDisplay.this) {
-                entry = ImageDisplay.this.entry;
-                image = ImageDisplay.this.image;
-                visibleRect = ImageDisplay.this.visibleRect;
+                currentEntry = ImageDisplay.this.entry;
+                currentImage = ImageDisplay.this.image;
+                currentVisibleRect = ImageDisplay.this.visibleRect;
             }
 
-            if (image == null)
+            if (currentImage == null)
                 return;
 
             if (ZOOM_ON_CLICK.get()) {
                 // click notions are less coherent than wheel, refresh mousePointInImg on each click
                 lastMouseEvent = null;
 
-                if (mouseIsZoomSelecting(e) && !isAtMaxZoom(visibleRect)) {
+                if (mouseIsZoomSelecting(e) && !isAtMaxZoom(currentVisibleRect)) {
                     // zoom in if clicked with the zoom button
                     mouseWheelMovedImpl(e.getX(), e.getY(), -1, true);
                     return;
@@ -446,17 +445,17 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             }
 
             // Calculate the translation to set the clicked point the center of the view.
-            Point click = comp2imgCoord(visibleRect, e.getX(), e.getY(), getSize());
-            Point center = getCenterImgCoord(visibleRect);
+            Point click = comp2imgCoord(currentVisibleRect, e.getX(), e.getY(), getSize());
+            Point center = getCenterImgCoord(currentVisibleRect);
 
-            visibleRect.x += click.x - center.x;
-            visibleRect.y += click.y - center.y;
+            currentVisibleRect.x += click.x - center.x;
+            currentVisibleRect.y += click.y - center.y;
 
-            visibleRect.checkRectPos();
+            currentVisibleRect.checkRectPos();
 
             synchronized (ImageDisplay.this) {
-                if (ImageDisplay.this.entry == entry) {
-                    ImageDisplay.this.visibleRect = visibleRect;
+                if (ImageDisplay.this.entry == currentEntry) {
+                    ImageDisplay.this.visibleRect = currentVisibleRect;
                 }
             }
             ImageDisplay.this.repaint();
@@ -466,21 +465,21 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
          * a picture part) */
         @Override
         public void mousePressed(MouseEvent e) {
-            Image image;
-            VisRect visibleRect;
+            Image currentImage;
+            VisRect currentVisibleRect;
 
             synchronized (ImageDisplay.this) {
-                image = ImageDisplay.this.image;
-                visibleRect = ImageDisplay.this.visibleRect;
+                currentImage = ImageDisplay.this.image;
+                currentVisibleRect = ImageDisplay.this.visibleRect;
             }
 
-            if (image == null)
+            if (currentImage == null)
                 return;
 
             selectedRect = null;
 
             if (mouseIsDragging(e) || mouseIsZoomSelecting(e))
-                mousePointInImg = comp2imgCoord(visibleRect, e.getX(), e.getY(), getSize());
+                mousePointInImg = comp2imgCoord(currentVisibleRect, e.getX(), e.getY(), getSize());
         }
 
         @Override
@@ -488,67 +487,70 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             if (!mouseIsDragging(e) && !mouseIsZoomSelecting(e))
                 return;
 
-            ImageEntry entry;
-            Image image;
-            VisRect visibleRect;
+            IImageEntry<?> imageEntry;
+            Image currentImage;
+            VisRect currentVisibleRect;
 
             synchronized (ImageDisplay.this) {
-                entry = ImageDisplay.this.entry;
-                image = ImageDisplay.this.image;
-                visibleRect = ImageDisplay.this.visibleRect;
+                imageEntry = ImageDisplay.this.entry;
+                currentImage = ImageDisplay.this.image;
+                currentVisibleRect = ImageDisplay.this.visibleRect;
             }
 
-            if (image == null)
+            if (currentImage == null)
                 return;
 
             if (mouseIsDragging(e) && mousePointInImg != null) {
-                Point p = comp2imgCoord(visibleRect, e.getX(), e.getY(), getSize());
-                visibleRect.isDragUpdate = true;
-                visibleRect.x += mousePointInImg.x - p.x;
-                visibleRect.y += mousePointInImg.y - p.y;
-                visibleRect.checkRectPos();
+                Point p = comp2imgCoord(currentVisibleRect, e.getX(), e.getY(), getSize());
+                getIImageViewer(entry).mouseDragged(this.mousePointInImg, p, currentVisibleRect);
+                currentVisibleRect.checkRectPos();
                 synchronized (ImageDisplay.this) {
-                    if (ImageDisplay.this.entry == entry) {
-                        ImageDisplay.this.visibleRect = visibleRect;
+                    if (ImageDisplay.this.entry == imageEntry) {
+                        ImageDisplay.this.visibleRect = currentVisibleRect;
                     }
+                }
+                // We have to update the mousePointInImg for 360 image panning, as otherwise the panning
+                // never stops.
+                // This does not work well with the perspective viewer at this time (2021-08-26).
+                if (entry != null && Projections.EQUIRECTANGULAR == entry.getProjectionType()) {
+                    this.mousePointInImg = p;
                 }
                 ImageDisplay.this.repaint();
             }
 
             if (mouseIsZoomSelecting(e) && mousePointInImg != null) {
-                Point p = comp2imgCoord(visibleRect, e.getX(), e.getY(), getSize());
-                visibleRect.checkPointInside(p);
-                VisRect selectedRect = new VisRect(
-                        p.x < mousePointInImg.x ? p.x : mousePointInImg.x,
-                        p.y < mousePointInImg.y ? p.y : mousePointInImg.y,
+                Point p = comp2imgCoord(currentVisibleRect, e.getX(), e.getY(), getSize());
+                currentVisibleRect.checkPointInside(p);
+                VisRect selectedRectTemp = new VisRect(
+                        Math.min(p.x, mousePointInImg.x),
+                        Math.min(p.y, mousePointInImg.y),
                         p.x < mousePointInImg.x ? mousePointInImg.x - p.x : p.x - mousePointInImg.x,
                         p.y < mousePointInImg.y ? mousePointInImg.y - p.y : p.y - mousePointInImg.y,
-                        visibleRect);
-                selectedRect.checkRectSize();
-                selectedRect.checkRectPos();
-                ImageDisplay.this.selectedRect = selectedRect;
+                        currentVisibleRect);
+                selectedRectTemp.checkRectSize();
+                selectedRectTemp.checkRectPos();
+                ImageDisplay.this.selectedRect = selectedRectTemp;
                 ImageDisplay.this.repaint();
             }
-
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            ImageEntry entry;
-            Image image;
-            VisRect visibleRect;
+            IImageEntry<?> currentEntry;
+            Image currentImage;
+            VisRect currentVisibleRect;
 
             synchronized (ImageDisplay.this) {
-                entry = ImageDisplay.this.entry;
-                image = ImageDisplay.this.image;
-                visibleRect = ImageDisplay.this.visibleRect;
+                currentEntry = ImageDisplay.this.entry;
+                currentImage = ImageDisplay.this.image;
+                currentVisibleRect = ImageDisplay.this.visibleRect;
             }
 
-            if (image == null)
+            if (currentImage == null)
                 return;
 
             if (mouseIsDragging(e)) {
-                visibleRect.isDragUpdate = false;
+                currentVisibleRect.isDragUpdate = false;
             }
 
             if (mouseIsZoomSelecting(e) && selectedRect != null) {
@@ -556,21 +558,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 int oldHeight = selectedRect.height;
 
                 // Check that the zoom doesn't exceed MAX_ZOOM:1
-                if (selectedRect.width < getSize().width / MAX_ZOOM.get()) {
-                    selectedRect.width = (int) (getSize().width / MAX_ZOOM.get());
-                }
-                if (selectedRect.height < getSize().height / MAX_ZOOM.get()) {
-                    selectedRect.height = (int) (getSize().height / MAX_ZOOM.get());
-                }
-
-                // Set the same ratio for the visible rectangle and the display area
-                int hFact = selectedRect.height * getSize().width;
-                int wFact = selectedRect.width * getSize().height;
-                if (hFact > wFact) {
-                    selectedRect.width = hFact / getSize().height;
-                } else {
-                    selectedRect.height = wFact / getSize().width;
-                }
+                ensureMaxZoom(selectedRect);
 
                 // Keep the center of the selection
                 if (selectedRect.width != oldWidth) {
@@ -585,9 +573,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             }
 
             synchronized (ImageDisplay.this) {
-                if (entry == ImageDisplay.this.entry) {
+                if (currentEntry == ImageDisplay.this.entry) {
                     if (selectedRect == null) {
-                        ImageDisplay.this.visibleRect = visibleRect;
+                        ImageDisplay.this.visibleRect = currentVisibleRect;
                     } else {
                         ImageDisplay.this.visibleRect.setBounds(selectedRect);
                         selectedRect = null;
@@ -596,28 +584,13 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             }
             ImageDisplay.this.repaint();
         }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-            // Do nothing
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-            // Do nothing
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            // Do nothing
-        }
     }
 
     /**
      * Constructs a new {@code ImageDisplay} with no image processor.
      */
     public ImageDisplay() {
-        this(image -> image);
+        this(imageObject -> imageObject);
     }
 
     /**
@@ -652,14 +625,14 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      * Sets a new source image to be displayed by this {@code ImageDisplay}.
      * @param entry new source image
      * @return a {@link Future} representing pending completion of the image loading task
-     * @since 18150
+     * @since 18246 (signature)
      */
-    public Future<?> setImage(ImageEntry entry) {
+    public Future<?> setImage(IImageEntry<?> entry) {
         LoadImageRunnable runnable = setImage0(entry);
         return runnable != null ? MainApplication.worker.submit(runnable) : null;
     }
 
-    protected LoadImageRunnable setImage0(ImageEntry entry) {
+    protected LoadImageRunnable setImage0(IImageEntry<?> entry) {
         synchronized (this) {
             this.oldEntry = this.entry;
             this.entry = entry;
@@ -707,25 +680,26 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     private void updateProcessedImage() {
         processedImage = image == null ? null : imageProcessor.process(image);
-        GuiHelper.runInEDT(() -> repaint());
+        GuiHelper.runInEDT(this::repaint);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        ImageEntry entry;
-        ImageEntry oldEntry;
-        BufferedImage image;
-        VisRect visibleRect;
-        boolean errorLoading;
+        IImageEntry<?> currentEntry;
+        IImageEntry<?> currentOldEntry;
+        IImageViewer currentImageViewer;
+        BufferedImage currentImage;
+        VisRect currentVisibleRect;
+        boolean currentErrorLoading;
 
         synchronized (this) {
-            image = this.processedImage;
-            entry = this.entry;
-            oldEntry = this.oldEntry;
-            visibleRect = this.visibleRect;
-            errorLoading = this.errorLoading;
+            currentImage = this.processedImage;
+            currentEntry = this.entry;
+            currentOldEntry = this.oldEntry;
+            currentVisibleRect = this.visibleRect;
+            currentErrorLoading = this.errorLoading;
         }
 
         if (g instanceof Graphics2D) {
@@ -734,77 +708,49 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
         Dimension size = getSize();
         // Draw the image first, then draw error information
-        if (image != null && (entry != null || oldEntry != null)) {
-            Rectangle r = new Rectangle(visibleRect);
-            Rectangle target = calculateDrawImageRectangle(visibleRect, size);
+        if (currentImage != null && (currentEntry != null || currentOldEntry != null)) {
+            currentImageViewer = this.getIImageViewer(currentEntry);
+            Rectangle r = new Rectangle(currentVisibleRect);
+            Rectangle target = calculateDrawImageRectangle(currentVisibleRect, size);
 
-            g.drawImage(image,
-                    target.x, target.y, target.x + target.width, target.y + target.height,
-                    r.x, r.y, r.x + r.width, r.y + r.height, null);
-
-            if (selectedRect != null) {
-                Point topLeft = img2compCoord(visibleRect, selectedRect.x, selectedRect.y, size);
-                Point bottomRight = img2compCoord(visibleRect,
-                        selectedRect.x + selectedRect.width,
-                        selectedRect.y + selectedRect.height, size);
-                g.setColor(new Color(128, 128, 128, 180));
-                g.fillRect(target.x, target.y, target.width, topLeft.y - target.y);
-                g.fillRect(target.x, target.y, topLeft.x - target.x, target.height);
-                g.fillRect(bottomRight.x, target.y, target.x + target.width - bottomRight.x, target.height);
-                g.fillRect(target.x, bottomRight.y, target.width, target.y + target.height - bottomRight.y);
-                g.setColor(Color.black);
-                g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
-            }
-            if (errorLoading && entry != null) {
-                String loadingStr = tr("Error on file {0}", entry.getDisplayName());
+            currentImageViewer.paintImage(g, currentImage, target, r);
+            paintSelectedRect(g, target, currentVisibleRect, size);
+            if (currentErrorLoading && currentEntry != null) {
+                String loadingStr = tr("Error on file {0}", currentEntry.getDisplayName());
                 Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
-                g.drawString(loadingStr,
-                        (int) ((size.width - noImageSize.getWidth()) / 2),
+                g.drawString(loadingStr, (int) ((size.width - noImageSize.getWidth()) / 2),
                         (int) ((size.height - noImageSize.getHeight()) / 2));
             }
-            if (osdText != null) {
-                FontMetrics metrics = g.getFontMetrics(g.getFont());
-                int ascent = metrics.getAscent();
-                Color bkground = new Color(255, 255, 255, 128);
-                int lastPos = 0;
-                int pos = osdText.indexOf('\n');
-                int x = 3;
-                int y = 3;
-                String line;
-                while (pos > 0) {
-                    line = osdText.substring(lastPos, pos);
-                    Rectangle2D lineSize = metrics.getStringBounds(line, g);
-                    g.setColor(bkground);
-                    g.fillRect(x, y, (int) lineSize.getWidth(), (int) lineSize.getHeight());
-                    g.setColor(Color.black);
-                    g.drawString(line, x, y + ascent);
-                    y += (int) lineSize.getHeight();
-                    lastPos = pos + 1;
-                    pos = osdText.indexOf('\n', lastPos);
-                }
-
-                line = osdText.substring(lastPos);
-                Rectangle2D lineSize = g.getFontMetrics(g.getFont()).getStringBounds(line, g);
-                g.setColor(bkground);
-                g.fillRect(x, y, (int) lineSize.getWidth(), (int) lineSize.getHeight());
-                g.setColor(Color.black);
-                g.drawString(line, x, y + ascent);
-            }
+            paintOsdText(g);
         }
+        paintErrorMessage(g, currentEntry, currentOldEntry, currentImage, currentErrorLoading, size);
+    }
+
+    /**
+     * Paint an error message
+     * @param g The graphics to paint on
+     * @param imageEntry The current image entry
+     * @param oldImageEntry The old image entry
+     * @param bufferedImage The image being painted
+     * @param currentErrorLoading If there was an error loading the image
+     * @param size The size of the component
+     */
+    private void paintErrorMessage(Graphics g, IImageEntry<?> imageEntry, IImageEntry<?> oldImageEntry,
+            BufferedImage bufferedImage, boolean currentErrorLoading, Dimension size) {
         final String errorMessage;
         // If the new entry is null, then there is no image.
-        if (entry == null) {
+        if (imageEntry == null) {
             if (emptyText == null) {
                 emptyText = tr("No image");
             }
             errorMessage = emptyText;
-        } else if (image == null || !Objects.equals(entry, oldEntry)) {
+        } else if (bufferedImage == null || !Objects.equals(imageEntry, oldImageEntry)) {
             // The image is not necessarily null when loading anymore. If the oldEntry is not the same as the new entry,
             // we are probably still loading the image. (oldEntry gets set to entry when the image finishes loading).
-            if (!errorLoading) {
-                errorMessage = tr("Loading {0}", entry.getDisplayName());
+            if (!currentErrorLoading) {
+                errorMessage = tr("Loading {0}", imageEntry.getDisplayName());
             } else {
-                errorMessage = tr("Error on file {0}", entry.getDisplayName());
+                errorMessage = tr("Error on file {0}", imageEntry.getDisplayName());
             }
         } else {
             errorMessage = null;
@@ -827,6 +773,64 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             int lly = (int) ((size.height - errorStringSize.getHeight()) / 2);
             g.setColor(getForeground());
             g.drawString(errorMessage, llx, lly);
+        }
+    }
+
+    /**
+     * Paint OSD text
+     * @param g The graphics to paint on
+     */
+    private void paintOsdText(Graphics g) {
+        if (osdText != null) {
+            FontMetrics metrics = g.getFontMetrics(g.getFont());
+            int ascent = metrics.getAscent();
+            Color bkground = new Color(255, 255, 255, 128);
+            int lastPos = 0;
+            int pos = osdText.indexOf('\n');
+            int x = 3;
+            int y = 3;
+            String line;
+            while (pos > 0) {
+                line = osdText.substring(lastPos, pos);
+                Rectangle2D lineSize = metrics.getStringBounds(line, g);
+                g.setColor(bkground);
+                g.fillRect(x, y, (int) lineSize.getWidth(), (int) lineSize.getHeight());
+                g.setColor(Color.black);
+                g.drawString(line, x, y + ascent);
+                y += (int) lineSize.getHeight();
+                lastPos = pos + 1;
+                pos = osdText.indexOf('\n', lastPos);
+            }
+
+            line = osdText.substring(lastPos);
+            Rectangle2D lineSize = g.getFontMetrics(g.getFont()).getStringBounds(line, g);
+            g.setColor(bkground);
+            g.fillRect(x, y, (int) lineSize.getWidth(), (int) lineSize.getHeight());
+            g.setColor(Color.black);
+            g.drawString(line, x, y + ascent);
+        }
+    }
+
+    /**
+     * Paint the selected rectangle
+     * @param g The graphics to paint on
+     * @param target The target area (i.e., the selection)
+     * @param visibleRectTemp The current visible rect
+     * @param size The size of the component
+     */
+    private void paintSelectedRect(Graphics g, Rectangle target, VisRect visibleRectTemp, Dimension size) {
+        if (selectedRect != null) {
+            Point topLeft = img2compCoord(visibleRectTemp, selectedRect.x, selectedRect.y, size);
+            Point bottomRight = img2compCoord(visibleRectTemp,
+                    selectedRect.x + selectedRect.width,
+                    selectedRect.y + selectedRect.height, size);
+            g.setColor(new Color(128, 128, 128, 180));
+            g.fillRect(target.x, target.y, target.width, topLeft.y - target.y);
+            g.fillRect(target.x, target.y, topLeft.x - target.x, target.height);
+            g.fillRect(bottomRight.x, target.y, target.x + target.width - bottomRight.x, target.height);
+            g.fillRect(target.x, bottomRight.y, target.width, target.y + target.height - bottomRight.y);
+            g.setColor(Color.black);
+            g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
         }
     }
 
@@ -853,6 +857,13 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                          visibleRect.y + visibleRect.height / 2);
     }
 
+    /**
+     * calculateDrawImageRectangle
+     *
+     * @param visibleRect the part of the image that should be drawn (in image coordinates)
+     * @param compSize the part of the component where the image should be drawn (in component coordinates)
+     * @return the part of compRect with the same width/height ratio as the image
+     */
     static VisRect calculateDrawImageRectangle(VisRect visibleRect, Dimension compSize) {
         return calculateDrawImageRectangle(visibleRect, new Rectangle(0, 0, compSize.width, compSize.height));
     }
@@ -906,36 +917,116 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      * the component size.
      */
     public void zoomBestFitOrOne() {
-        ImageEntry entry;
-        Image image;
-        VisRect visibleRect;
+        IImageEntry<?> currentEntry;
+        Image currentImage;
+        VisRect currentVisibleRect;
 
         synchronized (this) {
-            entry = this.entry;
-            image = this.image;
-            visibleRect = this.visibleRect;
+            currentEntry = this.entry;
+            currentImage = this.image;
+            currentVisibleRect = this.visibleRect;
         }
 
-        if (image == null)
+        if (currentImage == null)
             return;
 
-        if (visibleRect.width != image.getWidth(null) || visibleRect.height != image.getHeight(null)) {
+        if (currentVisibleRect.width != currentImage.getWidth(null) || currentVisibleRect.height != currentImage.getHeight(null)) {
             // The display is not at best fit. => Zoom to best fit
-            visibleRect.reset();
+            currentVisibleRect.reset();
         } else {
             // The display is at best fit => zoom to 1:1
-            Point center = getCenterImgCoord(visibleRect);
-            visibleRect.setBounds(center.x - getWidth() / 2, center.y - getHeight() / 2,
+            Point center = getCenterImgCoord(currentVisibleRect);
+            currentVisibleRect.setBounds(center.x - getWidth() / 2, center.y - getHeight() / 2,
                     getWidth(), getHeight());
-            visibleRect.checkRectSize();
-            visibleRect.checkRectPos();
+            currentVisibleRect.checkRectSize();
+            currentVisibleRect.checkRectPos();
         }
 
         synchronized (this) {
-            if (this.entry == entry) {
-                this.visibleRect = visibleRect;
+            if (this.entry == currentEntry) {
+                this.visibleRect = currentVisibleRect;
             }
         }
         repaint();
+    }
+
+    /**
+     * Get the image viewer for an entry
+     * @param entry The entry to get the viewer for. May be {@code null}.
+     * @return The new image viewer, may be {@code null}
+     */
+    private IImageViewer getIImageViewer(IImageEntry<?> entry) {
+        IImageViewer imageViewer;
+        IImageEntry<?> imageEntry;
+        synchronized (this) {
+            imageViewer = this.iImageViewer;
+            imageEntry = entry == null ? this.entry : entry;
+        }
+        if (imageEntry == null || (imageViewer != null && imageViewer.getSupportedProjections().contains(imageEntry.getProjectionType()))) {
+            return imageViewer;
+        }
+        try {
+            imageViewer = ImageProjectionRegistry.getViewer(imageEntry.getProjectionType()).getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new JosmRuntimeException(e);
+        }
+        synchronized (this) {
+            if (imageEntry.equals(this.entry)) {
+                this.removeComponentListener(this.iImageViewer);
+                this.iImageViewer = imageViewer;
+                imageViewer.componentResized(new ComponentEvent(this, ComponentEvent.COMPONENT_RESIZED));
+                this.addComponentListener(this.iImageViewer);
+            }
+        }
+        return imageViewer;
+    }
+
+    /**
+     * Ensure that a rectangle isn't zoomed in too much
+     * @param rectangle The rectangle to get (typically the visible area)
+     */
+    private void ensureMaxZoom(final Rectangle rectangle) {
+        if (rectangle.width < getSize().width / MAX_ZOOM.get()) {
+            rectangle.width = (int) (getSize().width / MAX_ZOOM.get());
+        }
+        if (rectangle.height < getSize().height / MAX_ZOOM.get()) {
+            rectangle.height = (int) (getSize().height / MAX_ZOOM.get());
+        }
+
+        // Set the same ratio for the visible rectangle and the display area
+        int hFact = rectangle.height * getSize().width;
+        int wFact = rectangle.width * getSize().height;
+        if (hFact > wFact) {
+            rectangle.width = hFact / getSize().height;
+        } else {
+            rectangle.height = wFact / getSize().width;
+        }
+    }
+
+    /**
+     * Update the visible rectangle (ensure zoom does not exceed specified values).
+     * Specifically only visible for {@link IImageViewer} implementations.
+     * @since 18246
+     */
+    public void updateVisibleRectangle() {
+        final VisRect currentVisibleRect;
+        final Image mouseImage;
+        final IImageViewer iImageViewer;
+        synchronized (this) {
+            currentVisibleRect = this.visibleRect;
+            mouseImage = this.image;
+            iImageViewer = this.getIImageViewer(this.entry);
+        }
+        if (mouseImage != null && currentVisibleRect != null && iImageViewer != null) {
+            final Image maxImageSize = iImageViewer.getMaxImageSize(this, mouseImage);
+            final VisRect maxVisibleRect = new VisRect(0, 0, maxImageSize.getWidth(null), maxImageSize.getHeight(null));
+            maxVisibleRect.setRect(currentVisibleRect);
+            ensureMaxZoom(maxVisibleRect);
+
+            maxVisibleRect.checkRectSize();
+            synchronized (this) {
+                this.visibleRect = maxVisibleRect;
+            }
+        }
     }
 }

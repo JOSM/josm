@@ -15,13 +15,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Objects;
-
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
+import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.Logging;
  * Stores info about each image, with an optional thumbnail
  * @since 2662
  */
-public class ImageEntry extends GpxImageEntry {
+public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry> {
 
     private Image thumbnail;
     private ImageData dataSet;
@@ -135,12 +135,68 @@ public class ImageEntry extends GpxImageEntry {
         return Objects.equals(thumbnail, other.thumbnail) && Objects.equals(dataSet, other.dataSet);
     }
 
+    @Override
+    public ImageEntry getNextImage() {
+        return this.dataSet.getNextImage();
+    }
+
+    @Override
+    public void selectNextImage(final ImageViewerDialog imageViewerDialog) {
+        IImageEntry.super.selectNextImage(imageViewerDialog);
+        this.dataSet.setSelectedImage(this.getNextImage());
+    }
+
+    @Override
+    public ImageEntry getPreviousImage() {
+        return this.dataSet.getPreviousImage();
+    }
+
+    @Override
+    public void selectPreviousImage(ImageViewerDialog imageViewerDialog) {
+        IImageEntry.super.selectPreviousImage(imageViewerDialog);
+        this.dataSet.setSelectedImage(this.getPreviousImage());
+    }
+
+    @Override
+    public ImageEntry getFirstImage() {
+        return this.dataSet.getFirstImage();
+    }
+
+    @Override
+    public void selectFirstImage(ImageViewerDialog imageViewerDialog) {
+        IImageEntry.super.selectFirstImage(imageViewerDialog);
+        this.dataSet.setSelectedImage(this.getFirstImage());
+    }
+
+    @Override
+    public ImageEntry getLastImage() {
+        return this.dataSet.getLastImage();
+    }
+
+    @Override
+    public void selectLastImage(ImageViewerDialog imageViewerDialog) {
+        IImageEntry.super.selectLastImage(imageViewerDialog);
+        this.dataSet.setSelectedImage(this.getLastImage());
+    }
+
+    @Override
+    public boolean isRemoveSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean remove() {
+        this.dataSet.removeImage(this, false);
+        return true;
+    }
+
     /**
      * Reads the image represented by this entry in the given target dimension.
      * @param target the desired dimension used for {@linkplain IIOParam#setSourceSubsampling subsampling} or {@code null}
      * @return the read image, or {@code null}
      * @throws IOException if any I/O error occurs
      */
+    @Override
     public BufferedImage read(Dimension target) throws IOException {
         URL imageUrl = getImageUrl();
         Logging.info(tr("Loading {0}", imageUrl));

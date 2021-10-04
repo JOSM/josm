@@ -29,7 +29,7 @@ public final class FilterWorker {
      * @param filters the filters
      * @return true, if the filter state (normal / disabled / hidden) of any primitive has changed in the process
      * @throws SearchParseError if the search expression in a filter cannot be parsed
-     * @since 12383, xxx (generics)
+     * @since 12383, 17862 (generics)
      */
     public static <T extends IPrimitive & IFilterablePrimitive> boolean executeFilters(Collection<T> all, Filter... filters)
             throws SearchParseError {

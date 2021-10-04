@@ -3,18 +3,25 @@ package org.openstreetmap.josm.data.gpx;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+import javax.imageio.IIOParam;
 
 import org.openstreetmap.josm.data.IQuadBucketType;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.street_level.Projections;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -33,6 +40,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.jpeg.JpegDirectory;
+import com.drew.metadata.xmp.XmpDirectory;
 
 /**
  * Stores info about each image
@@ -44,6 +52,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     private LatLon exifCoor;
     private Double exifImgDir;
     private Instant exifTime;
+    private Projections cameraProjection = Projections.UNKNOWN;
     /**
      * Flag isNewGpsData indicates that the GPS data of the image is new or has changed.
      * GPS data includes the position, speed, elevation, time (e.g. as extracted from the GPS track).
@@ -477,7 +486,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         return Objects.hash(height, width, isNewGpsData,
             elevation, exifCoor, exifGpsTime, exifImgDir, exifOrientation, exifTime,
             iptcCaption, iptcHeadline, iptcKeywords, iptcObjectName,
-            file, gpsTime, pos, speed, tmp);
+            file, gpsTime, pos, speed, tmp, cameraProjection);
     }
 
     @Override
@@ -504,7 +513,8 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             && Objects.equals(gpsTime, other.gpsTime)
             && Objects.equals(pos, other.pos)
             && Objects.equals(speed, other.speed)
-            && Objects.equals(tmp, other.tmp);
+            && Objects.equals(tmp, other.tmp)
+            && cameraProjection == other.cameraProjection;
     }
 
     /**
@@ -753,6 +763,27 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             ifNotNull(ExifReader.readKeywords(dirIptc), this::setIptcKeywords);
             ifNotNull(ExifReader.readObjectName(dirIptc), this::setIptcObjectName);
         }
+
+        for (XmpDirectory xmpDirectory : metadata.getDirectoriesOfType(XmpDirectory.class)) {
+            Map<String, String> properties = xmpDirectory.getXmpProperties();
+            final String projectionType = "GPano:ProjectionType";
+            if (properties.containsKey(projectionType)) {
+                Stream.of(Projections.values()).filter(p -> p.name().equalsIgnoreCase(properties.get(projectionType)))
+                        .findFirst().ifPresent(projection -> this.cameraProjection = projection);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Reads the image represented by this entry in the given target dimension.
+     * @param target the desired dimension used for {@linkplain IIOParam#setSourceSubsampling subsampling} or {@code null}
+     * @return the read image, or {@code null}
+     * @throws IOException if any I/O error occurs
+     * @since 18246
+     */
+    public BufferedImage read(Dimension target) throws IOException {
+        throw new UnsupportedOperationException("read not implemented for " + this.getClass().getSimpleName());
     }
 
     private static class NoMetadataReaderWarning extends Exception {
@@ -765,6 +796,15 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         if (value != null) {
             setter.accept(value);
         }
+    }
+
+    /**
+     * Get the projection type for this entry
+     * @return The projection type
+     * @since 18246
+     */
+    public Projections getProjectionType() {
+        return this.cameraProjection;
     }
 
     /**

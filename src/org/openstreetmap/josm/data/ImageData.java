@@ -132,8 +132,22 @@ public class ImageData implements Data {
     }
 
     /**
-     * Select the first image of the sequence
+     * Get the first image on the layer
+     * @return The first image
+     * @since 18246
      */
+    public ImageEntry getFirstImage() {
+        if (!this.data.isEmpty()) {
+            return this.data.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * Select the first image of the sequence
+     * @deprecated Use {@link #getFirstImage()} in conjunction with {@link #setSelectedImage}
+     */
+    @Deprecated
     public void selectFirstImage() {
         if (!data.isEmpty()) {
             setSelectedImageIndex(0);
@@ -141,8 +155,22 @@ public class ImageData implements Data {
     }
 
     /**
-     * Select the last image of the sequence
+     * Get the last image in the layer
+     * @return The last image
+     * @since 18246
      */
+    public ImageEntry getLastImage() {
+        if (!this.data.isEmpty()) {
+            return this.data.get(this.data.size() - 1);
+        }
+        return null;
+    }
+
+    /**
+     * Select the last image of the sequence
+     * @deprecated Use {@link #getLastImage()} with {@link #setSelectedImage}
+     */
+    @Deprecated
     public void selectLastImage() {
         setSelectedImageIndex(data.size() - 1);
     }
@@ -166,12 +194,38 @@ public class ImageData implements Data {
     }
 
     /**
-     * Select the next image of the sequence
+     * Get the image next to the current image
+     * @return The next image
+     * @since 18246
      */
+    public ImageEntry getNextImage() {
+        if (this.hasNextImage()) {
+            return this.data.get(this.selectedImagesIndex.get(0) + 1);
+        }
+        return null;
+    }
+
+    /**
+     * Select the next image of the sequence
+     * @deprecated Use {@link #getNextImage()} in conjunction with {@link #setSelectedImage}
+     */
+    @Deprecated
     public void selectNextImage() {
         if (hasNextImage()) {
             setSelectedImageIndex(selectedImagesIndex.get(0) + 1);
         }
+    }
+
+    /**
+     * Get the image previous to the current image
+     * @return The previous image
+     * @since 18246
+     */
+    public ImageEntry getPreviousImage() {
+        if (this.hasPreviousImage()) {
+            return this.data.get(Integer.max(0, selectedImagesIndex.get(0) - 1));
+        }
+        return null;
     }
 
     /**
@@ -184,7 +238,9 @@ public class ImageData implements Data {
 
     /**
      * Select the previous image of the sequence
+     * @deprecated Use {@link #getPreviousImage()} with {@link #setSelectedImage}
      */
+    @Deprecated
     public void selectPreviousImage() {
         if (data.isEmpty()) {
             return;

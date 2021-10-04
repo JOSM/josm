@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * This class is (no longer) thread safe.
  * @param <T> type of object extending {@link IQuadBucketType}.
- * @since 2165 ({@link IPrimitive} only), xxx for {@link IQuadBucketType}
+ * @since 2165 ({@link IPrimitive} only), 17459 for {@link IQuadBucketType}
  */
 public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
     private static final boolean CONSISTENCY_TESTING = false;
