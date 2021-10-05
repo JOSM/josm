@@ -693,6 +693,24 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             }
         }
 
+        IptcDirectory dirIptc = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+        if (dirIptc != null) {
+            ifNotNull(ExifReader.readCaption(dirIptc), this::setIptcCaption);
+            ifNotNull(ExifReader.readHeadline(dirIptc), this::setIptcHeadline);
+            ifNotNull(ExifReader.readKeywords(dirIptc), this::setIptcKeywords);
+            ifNotNull(ExifReader.readObjectName(dirIptc), this::setIptcObjectName);
+        }
+
+        for (XmpDirectory xmpDirectory : metadata.getDirectoriesOfType(XmpDirectory.class)) {
+            Map<String, String> properties = xmpDirectory.getXmpProperties();
+            final String projectionType = "GPano:ProjectionType";
+            if (properties.containsKey(projectionType)) {
+                Stream.of(Projections.values()).filter(p -> p.name().equalsIgnoreCase(properties.get(projectionType)))
+                        .findFirst().ifPresent(projection -> this.cameraProjection = projection);
+                break;
+            }
+        }
+
         // Changed to silently cope with no time info in exif. One case
         // of person having time that couldn't be parsed, but valid GPS info
         Instant time = null;
@@ -755,24 +773,6 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         }
 
         ifNotNull(dirGps.getGpsDate(), d -> setExifGpsTime(d.toInstant()));
-
-        IptcDirectory dirIptc = metadata.getFirstDirectoryOfType(IptcDirectory.class);
-        if (dirIptc != null) {
-            ifNotNull(ExifReader.readCaption(dirIptc), this::setIptcCaption);
-            ifNotNull(ExifReader.readHeadline(dirIptc), this::setIptcHeadline);
-            ifNotNull(ExifReader.readKeywords(dirIptc), this::setIptcKeywords);
-            ifNotNull(ExifReader.readObjectName(dirIptc), this::setIptcObjectName);
-        }
-
-        for (XmpDirectory xmpDirectory : metadata.getDirectoriesOfType(XmpDirectory.class)) {
-            Map<String, String> properties = xmpDirectory.getXmpProperties();
-            final String projectionType = "GPano:ProjectionType";
-            if (properties.containsKey(projectionType)) {
-                Stream.of(Projections.values()).filter(p -> p.name().equalsIgnoreCase(properties.get(projectionType)))
-                        .findFirst().ifPresent(projection -> this.cameraProjection = projection);
-                break;
-            }
-        }
     }
 
     /**
