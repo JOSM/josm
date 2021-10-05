@@ -139,6 +139,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             } else {
                 l.setToolTipText(tr("Clears the key ''{0}''.", key));
             }
+            l.setIcon(value.getIcon());
             return l;
         }
     }
