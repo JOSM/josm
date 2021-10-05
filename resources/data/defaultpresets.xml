@@ -3012,17 +3012,17 @@
             </optional>
             <space />
             <checkgroup columns="3">
-                <check key="bus"        text="Bus" icon="presets/transport/bus.svg" />
-                <check key="trolleybus" text="Trolleybus" icon="presets/transport/trolleybus.svg" />
-                <check key="share_taxi" text="Share taxi" icon="presets/transport/share_taxi.svg" />
-                <check key="train"      text="Train" icon="presets/transport/train.svg" />
-                <check key="light_rail" text="Light Rail" icon="presets/transport/railway/light_rail.svg" />
-                <check key="subway"     text="Subway" icon="presets/transport/railway/subway.svg" />
-                <check key="tram"       text="Tram" icon="presets/transport/railway/tram.svg" />
-                <check key="monorail"   text="Monorail" icon="presets/transport/railway/monorail.svg" />
-                <check key="funicular"  text="Funicular" icon="presets/transport/railway/funicular.svg" />
-                <check key="aerialway"  text="Aerialway" icon="presets/transport/aerialway/station.svg" />
-                <check key="ferry"      text="Ferry" icon="presets/nautical/ferry.svg" />
+                <check key="bus"        text="Bus" icon="presets/transport/bus.svg" disable_off="true" />
+                <check key="trolleybus" text="Trolleybus" icon="presets/transport/trolleybus.svg" disable_off="true" />
+                <check key="share_taxi" text="Share taxi" icon="presets/transport/share_taxi.svg" disable_off="true" />
+                <check key="train"      text="Train" icon="presets/transport/train.svg" disable_off="true" />
+                <check key="light_rail" text="Light Rail" icon="presets/transport/railway/light_rail.svg" disable_off="true" />
+                <check key="subway"     text="Subway" icon="presets/transport/railway/subway.svg" disable_off="true" />
+                <check key="tram"       text="Tram" icon="presets/transport/railway/tram.svg" disable_off="true" />
+                <check key="monorail"   text="Monorail" icon="presets/transport/railway/monorail.svg" disable_off="true" />
+                <check key="funicular"  text="Funicular" icon="presets/transport/railway/funicular.svg" disable_off="true" />
+                <check key="aerialway"  text="Aerialway" icon="presets/transport/aerialway/station.svg" disable_off="true" />
+                <check key="ferry"      text="Ferry" icon="presets/nautical/ferry.svg" disable_off="true" />
             </checkgroup>
         </item> <!-- Stop Position -->
         <item name="Platform" type="node,way,closedway,multipolygon" icon="presets/transport/platform.svg" preset_name_label="true">
