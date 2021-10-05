@@ -11,10 +11,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.importexport.ImageImporter;
@@ -33,11 +37,13 @@ import org.openstreetmap.josm.tools.Utils;
 final class ImagesLoader extends PleaseWaitRunnable {
 
     private boolean canceled;
-    private GeoImageLayer layer;
+    private final List<GeoImageLayer> layers = new ArrayList<>();
     private final Collection<File> selection;
     private final Set<String> loadedDirectories = new HashSet<>();
     private final Set<String> errorMessages;
     private final GpxLayer gpxLayer;
+
+    private static final BooleanProperty PROP_ONE_LAYER_PER_FOLDER = new BooleanProperty("geoimage.one-layer-per-folder", false);
 
     /**
      * Constructs a new {@code ImagesLoader}.
@@ -72,7 +78,7 @@ final class ImagesLoader extends PleaseWaitRunnable {
         progressMonitor.setTicksCount(files.size());
 
         // read the image files
-        List<ImageEntry> entries = new ArrayList<>(files.size());
+        Map<String, List<ImageEntry>> entries = new TreeMap<>();
 
         for (File f : files) {
 
@@ -85,9 +91,14 @@ final class ImagesLoader extends PleaseWaitRunnable {
 
             ImageEntry e = new ImageEntry(f);
             e.extractExif();
-            entries.add(e);
+            File parentFile = f.getParentFile();
+            entries.computeIfAbsent(parentFile != null ? parentFile.getName() : "", x -> new ArrayList<>()).add(e);
         }
-        layer = new GeoImageLayer(entries, gpxLayer);
+        if (Boolean.TRUE.equals(PROP_ONE_LAYER_PER_FOLDER.get())) {
+            entries.entrySet().stream().map(e -> new GeoImageLayer(e.getValue(), gpxLayer, e.getKey())).forEach(layers::add);
+        } else {
+            layers.add(new GeoImageLayer(entries.values().stream().flatMap(List<ImageEntry>::stream).collect(Collectors.toList()), gpxLayer));
+        }
         files.clear();
     }
 
@@ -159,7 +170,7 @@ final class ImagesLoader extends PleaseWaitRunnable {
                     JOptionPane.ERROR_MESSAGE
                     );
         }
-        if (layer != null) {
+        for (GeoImageLayer layer : layers) {
             MainApplication.getLayerManager().addLayer(layer);
 
             if (!canceled && !layer.getImageData().getImages().isEmpty()) {

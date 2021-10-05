@@ -165,7 +165,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      * @since 18078
      */
     public GeoImageLayer(final List<ImageEntry> data, GpxData gpxData, final String name, boolean useThumbs) {
-        super(name != null ? name : tr("Geotagged Images"));
+        super(!Utils.isBlank(name) ? name : tr("Geotagged Images"));
         this.data = new ImageData(data);
         this.gpxData = gpxData;
         this.useThumbs = useThumbs;
