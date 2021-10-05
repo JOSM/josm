@@ -122,6 +122,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static JButton createButton(AbstractAction action, Dimension buttonDim) {
         JButton btn = new JButton(action);
         btn.setPreferredSize(buttonDim);
+        btn.addPropertyChangeListener("enabled", propertyChangeEvent -> action.setEnabled(Boolean.TRUE.equals(propertyChangeEvent.getNewValue())));
         return btn;
     }
 
