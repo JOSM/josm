@@ -1084,7 +1084,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         Color[] nextUserColor = userColor1;
 
         // select by index
-        if (tableIdx < lut.length) {
+        if (tableIdx >= 0 && tableIdx < lut.length) {
             nextUserColor = lut[ tableIdx ];
         }
 
