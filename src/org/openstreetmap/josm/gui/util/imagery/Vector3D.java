@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util.imagery;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * A basic 3D vector class (immutable)
  * @author Taylor Smock (documentation, spherical conversions)
@@ -236,7 +238,7 @@ public final class Vector3D {
     public boolean equals(Object o) {
         if (o instanceof Vector3D) {
             Vector3D other = (Vector3D) o;
-            return this.x == other.x && this.y == other.y && this.z == other.z;
+            return Utils.equalsEpsilon(this.x, other.x) && Utils.equalsEpsilon(this.y, other.y) && Utils.equalsEpsilon(this.z, other.z);
         }
         return false;
     }

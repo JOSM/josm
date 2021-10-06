@@ -182,7 +182,7 @@ public class CameraPlane {
         setRotation(vec.getPolarAngle(), vec.getAzimuthalAngle());
     }
 
-    public Vector3D getRotation() {
+    public synchronized Vector3D getRotation() {
         return this.rotation;
     }
 
