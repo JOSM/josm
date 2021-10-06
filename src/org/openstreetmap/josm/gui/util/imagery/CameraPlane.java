@@ -160,8 +160,8 @@ public class CameraPlane {
     public void setRotationFromDelta(final Point from, final Point to) {
         // Bound check (bounds are essentially the image viewer component)
         if (from.x < 0 || from.y < 0 || to.x < 0 || to.y < 0
-            || from.x > this.vectors.length || from.y > this.vectors[0].length
-            || to.x > this.vectors.length || to.y > this.vectors[0].length) {
+            || from.x > this.vectors.length - 1 || from.y > this.vectors[from.x].length - 1
+            || to.x > this.vectors.length - 1 || to.y > this.vectors[to.x].length - 1) {
             return;
         }
         Vector3D f1 = this.vectors[from.x][from.y];
