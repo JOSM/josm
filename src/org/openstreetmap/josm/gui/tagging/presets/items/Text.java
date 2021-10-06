@@ -137,12 +137,13 @@ public class Text extends KeyedItem {
             // The selected primitives have different values for this key.   <b>Note:</b> this
             // cannot be an AutoCompComboBox because the values in the dropdown are different from
             // those we autocomplete on.
-            JosmComboBox<String> comboBox = new JosmComboBox<>(usage.values.toArray(new String[0]));
+            JosmComboBox<String> comboBox = new JosmComboBox<>();
+            comboBox.getModel().addAllElements(usage.map.keySet());
             comboBox.setEditable(true);
             comboBox.setEditor(editor);
-            comboBox.getEditor().setItem(DIFFERENT);
+            comboBox.getEditor().setItem(DIFFERENT_I18N);
             value = comboBox;
-            originalValue = DIFFERENT;
+            originalValue = DIFFERENT_I18N;
         }
         initializeLocaleText(null);
 

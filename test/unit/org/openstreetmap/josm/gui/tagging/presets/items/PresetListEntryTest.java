@@ -25,6 +25,6 @@ class PresetListEntryTest {
      */
     @Test
     void testTicket12416() {
-        assertTrue(new PresetListEntry("").getListDisplay(200).contains(" "));
+        assertTrue(new PresetListEntry("", null).getListDisplay(200).contains(" "));
     }
 }

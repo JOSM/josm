@@ -12,11 +12,13 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
@@ -29,6 +31,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompTextField;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.OrientationAction;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -74,21 +77,36 @@ public class Combo extends ComboMultiSelect {
         delimiter = ',';
     }
 
-    @Override
-    protected JComponent addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support) {
-        if (!usage.unused()) {
-            for (String s : usage.values) {
-                presetListEntries.add(new PresetListEntry(s));
-            }
+    private void addEntry(PresetListEntry entry) {
+        if (!seenValues.containsKey(entry.value)) {
+            dropDownModel.addElement(entry);
+            seenValues.put(entry.value, entry);
         }
-        if (def != null) {
-            presetListEntries.add(new PresetListEntry(def));
-        }
-        presetListEntries.add(new PresetListEntry(""));
+    }
 
+    @Override
+    protected boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
+        initializeLocaleText(null);
+        usage = determineTextUsage(support.getSelected(), key);
+        seenValues = new TreeMap<>();
+        // get the standard values from the preset definition
+        initListEntries();
+
+        // init the model
         dropDownModel = new AutoCompComboBoxModel<PresetListEntry>(Comparator.naturalOrder());
-        autoCompModel = new AutoCompComboBoxModel<AutoCompletionItem>(Comparator.naturalOrder());
-        presetListEntries.forEach(dropDownModel::addElement);
+
+        if (!usage.hasUniqueValue() && !usage.unused()) {
+            addEntry(PresetListEntry.ENTRY_DIFFERENT);
+        }
+        presetListEntries.forEach(this::addEntry);
+        if (default_ != null) {
+            addEntry(new PresetListEntry(default_, this));
+        }
+        addEntry(PresetListEntry.ENTRY_EMPTY);
+
+        usage.map.forEach((value, count) -> {
+            addEntry(new PresetListEntry(value, this));
+        });
 
         combobox = new JosmComboBox<>(dropDownModel);
         AutoCompComboBoxEditor<AutoCompletionItem> editor = new AutoCompComboBoxEditor<>();
@@ -97,7 +115,7 @@ public class Combo extends ComboMultiSelect {
         // The default behaviour of JComboBox is to size the editor according to the tallest item in
         // the dropdown list.  We don't want that to happen because we want to show taller items in
         // the list than in the editor.  We can't use
-        // {@code combobox.setPrototypeDisplayValue(new PresetListEntry(" "));} because that would
+        // {@code combobox.setPrototypeDisplayValue(PresetListEntry.ENTRY_EMPTY);} because that would
         // set a fixed cell height in JList.
         combobox.setPreferredHeight(combobox.getPreferredSize().height);
 
@@ -106,6 +124,7 @@ public class Combo extends ComboMultiSelect {
         combobox.setRenderer(new ComboMultiSelectListCellRenderer(combobox, combobox.getRenderer(), 200, key));
         combobox.setEditable(editable);
 
+        autoCompModel = new AutoCompComboBoxModel<AutoCompletionItem>(Comparator.naturalOrder());
         getAllForKeys(Arrays.asList(key)).forEach(autoCompModel::addElement);
         getDisplayValues().forEach(s -> autoCompModel.addElement(new AutoCompletionItem(s, AutoCompletionPriority.IS_IN_STANDARD)));
 
@@ -119,25 +138,51 @@ public class Combo extends ComboMultiSelect {
             tf.setMaxTextLength(length);
         }
 
+        JLabel label = addLabel(p);
+
         if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
-            p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
+            p.add(combobox, GBC.std().fill(GBC.HORIZONTAL)); // NOSONAR
             JButton button = new JButton(new ChooseColorAction());
             button.setOpaque(true);
             button.setBorderPainted(false);
             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            p.add(button, GBC.eol().fill(GBC.VERTICAL));
+            p.add(button, GBC.eol().fill(GBC.VERTICAL)); // NOSONAR
             ActionListener updateColor = ignore -> button.setBackground(getColor());
             updateColor.actionPerformed(null);
             combobox.addActionListener(updateColor);
         } else {
-            p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL));
+            p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL)); // NOSONAR
         }
 
-        Object itemToSelect = getItemToSelect(default_, support, false);
-        combobox.setSelectedItemText(itemToSelect == null ? null : itemToSelect.toString());
-        combobox.addActionListener(l -> support.fireItemValueModified(this, key, getSelectedValue()));
+        String valueToSelect = getInitialValue(default_);
+        if (valueToSelect != null) {
+            PresetListEntry selItem = find(valueToSelect);
+            if (selItem != null) {
+                combobox.setSelectedItem(selItem);
+            } else {
+                combobox.setText(valueToSelect);
+            }
+        }
+        combobox.addActionListener(l -> support.fireItemValueModified(this, key, getSelectedItem().value));
         combobox.addComponentListener(new ComponentListener());
-        return combobox;
+
+        label.setLabelFor(combobox);
+        combobox.setToolTipText(getKeyTooltipText());
+        combobox.applyComponentOrientation(OrientationAction.getValueOrientation(key));
+
+        return true;
+    }
+
+    /**
+     * Finds the PresetListEntry that matches value.
+     * <p>
+     * Looks in the model for an element whose {@code value} matches {@code value}.
+     *
+     * @param value The value to match.
+     * @return The entry or null
+     */
+    private PresetListEntry find(String value) {
+        return dropDownModel.asCollection().stream().filter(o -> o.value.equals(value)).findAny().orElse(null);
     }
 
     class ChooseColorAction extends AbstractAction {
@@ -160,22 +205,27 @@ public class Combo extends ComboMultiSelect {
     }
 
     protected Color getColor() {
-        String colorString = String.valueOf(getSelectedValue());
+        String colorString = getSelectedItem().value;
         return colorString.startsWith("#")
                 ? ColorHelper.html2color(colorString)
                 : CSSColors.get(colorString);
     }
 
     @Override
-    protected Object getSelectedItem() {
-        return combobox.getSelectedItem();
-    }
-
-    @Override
-    protected String getDisplayIfNull() {
-        if (combobox.isEditable())
-            return combobox.getEditor().getItem().toString();
-        else
-            return null;
+    protected PresetListEntry getSelectedItem() {
+        Object sel = combobox.getSelectedItem();
+        if (sel instanceof PresetListEntry)
+            // selected from the dropdown
+            return (PresetListEntry) sel;
+        if (sel instanceof String) {
+            // free edit.  If the free edit corresponds to a known entry, use that entry.  This is
+            // to avoid that we write a display_value to the tag's value, eg. if the user did an
+            // undo.
+            PresetListEntry selItem = dropDownModel.find((String) sel);
+            if (selItem != null)
+                return selItem;
+            return new PresetListEntry((String) sel, this);
+        }
+        return PresetListEntry.ENTRY_EMPTY;
     }
 }

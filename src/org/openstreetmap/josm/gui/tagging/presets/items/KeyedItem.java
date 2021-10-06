@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.NoSuchElementException;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import javax.swing.JPopupMenu;
 
@@ -26,9 +26,12 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
  */
 public abstract class KeyedItem extends TextItem {
 
-    /** Translation of "&lt;different&gt;". Use in combo boxes to display an entry matching several different values. */
-    protected static final String DIFFERENT = tr("<different>");
+    /** The constant value {@code "<different>"}. */
+    protected static final String DIFFERENT = "<different>";
+    /** Translation of {@code "<different>"}. */
+    protected static final String DIFFERENT_I18N = tr(DIFFERENT);
 
+    /** True if the default value should also be set on primitives that already have tags.  */
     protected static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     /** Last value of each key used in presets, used for prefilling corresponding fields */
@@ -99,10 +102,8 @@ public abstract class KeyedItem extends TextItem {
      * TODO merge with {@link org.openstreetmap.josm.data.osm.TagCollection}
      */
     public static class Usage {
-        /**
-         * A set of values that were used for this key.
-         */
-        public final SortedSet<String> values = new TreeSet<>(); // NOSONAR
+        /** Usage count for all values used for this key */
+        public final SortedMap<String, Integer> map = new TreeMap<>();
         private boolean hadKeys;
         private boolean hadEmpty;
 
@@ -111,7 +112,7 @@ public abstract class KeyedItem extends TextItem {
          * @return <code>true</code> if there was exactly one value.
          */
         public boolean hasUniqueValue() {
-            return values.size() == 1 && !hadEmpty;
+            return map.size() == 1 && !hadEmpty;
         }
 
         /**
@@ -119,7 +120,7 @@ public abstract class KeyedItem extends TextItem {
          * @return <code>true</code> if it was unused.
          */
         public boolean unused() {
-            return values.isEmpty();
+            return map.isEmpty();
         }
 
         /**
@@ -128,7 +129,7 @@ public abstract class KeyedItem extends TextItem {
          * @throws NoSuchElementException if there is no such value.
          */
         public String getFirst() {
-            return values.first();
+            return map.firstKey();
         }
 
         /**
@@ -151,7 +152,7 @@ public abstract class KeyedItem extends TextItem {
         for (OsmPrimitive s : sel) {
             String v = s.get(key);
             if (v != null) {
-                returnValue.values.add(v);
+                returnValue.map.merge(v, 1, Integer::sum);
             } else {
                 returnValue.hadEmpty = true;
             }
@@ -167,7 +168,7 @@ public abstract class KeyedItem extends TextItem {
         for (OsmPrimitive s : sel) {
             String booleanValue = OsmUtils.getNamedOsmBoolean(s.get(key));
             if (booleanValue != null) {
-                returnValue.values.add(booleanValue);
+                returnValue.map.merge(booleanValue, 1, Integer::sum);
             }
         }
         return returnValue;
@@ -202,7 +203,7 @@ public abstract class KeyedItem extends TextItem {
     public Boolean matches(Map<String, String> tags) {
         switch (MatchType.ofString(match)) {
         case NONE:
-            return null;
+            return null; // NOSONAR
         case KEY:
             return tags.containsKey(key) ? Boolean.TRUE : null;
         case KEY_REQUIRED:

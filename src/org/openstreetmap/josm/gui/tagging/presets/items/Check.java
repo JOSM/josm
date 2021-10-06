@@ -39,12 +39,12 @@ public class Check extends KeyedItem {
 
         // find out if our key is already used in the selection.
         final Usage usage = determineBooleanUsage(support.getSelected(), key);
-        final String oneValue = usage.values.isEmpty() ? null : usage.values.last();
+        final String oneValue = usage.map.isEmpty() ? null : usage.map.lastKey();
         def = "on".equals(default_) ? Boolean.TRUE : "off".equals(default_) ? Boolean.FALSE : null;
 
         initializeLocaleText(null);
 
-        if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
+        if (usage.map.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
             if (def != null && !PROP_FILL_DEFAULT.get()) {
                 // default is set and filling default values feature is disabled - check if all primitives are untagged
                 for (OsmPrimitive s : support.getSelected()) {

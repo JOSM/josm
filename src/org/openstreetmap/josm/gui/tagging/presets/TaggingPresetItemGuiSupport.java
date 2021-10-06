@@ -24,6 +24,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProvider {
 
     private final Collection<OsmPrimitive> selected;
+    /** True if all selected primitives matched this preset at the moment it was openend. */
     private final boolean presetInitiallyMatches;
     private final Supplier<Collection<Tag>> changedTagsSupplier;
     private final ListenerList<ChangeListener> listeners = ListenerList.create();
@@ -83,9 +84,9 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
     }
 
     /**
-     * Returns whether the preset initially matched (before opening the dialog)
+     * Returns true if all selected primitives matched this preset (before opening the dialog)
      *
-     * @return whether the preset initially matched
+     * @return true if the preset initially matched
      */
     public boolean isPresetInitiallyMatches() {
         return presetInitiallyMatches;

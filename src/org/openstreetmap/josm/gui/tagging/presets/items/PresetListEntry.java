@@ -16,15 +16,27 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Preset list entry.
+ * <p>
+ * Used for controls that offer a list of items to choose from like {@link Combo} and
+ * {@link MultiSelect}.
  */
 public class PresetListEntry implements Comparable<PresetListEntry> {
-    /** Entry value */
+    /** Used to display an entry matching several different values. */
+    protected static final PresetListEntry ENTRY_DIFFERENT = new PresetListEntry(KeyedItem.DIFFERENT, null);
+    /** Used to display an empty entry used to clear values. */
+    protected static final PresetListEntry ENTRY_EMPTY = new PresetListEntry("", null);
+
+    /**
+     * This is the value that is going to be written to the tag on the selected primitive(s). Except
+     * when the value is {@code "<different>"}, which is never written, or the value is empty, which
+     * deletes the tag.  {@code value} is never translated.
+     */
     public String value; // NOSONAR
-    /** The context used for translating {@link #value} */
-    public String value_context; // NOSONAR
-    /** Value displayed to the user */
+    /** The ComboMultiSelect that displays the list */
+    public ComboMultiSelect cms; // NOSONAR
+    /** Text displayed to the user instead of {@link #value}. */
     public String display_value; // NOSONAR
-    /** Text to be displayed below {@code display_value}. */
+    /** Text to be displayed below {@link #display_value} in the combobox list. */
     public String short_description; // NOSONAR
     /** The location of icon file to display */
     public String icon; // NOSONAR
@@ -35,19 +47,28 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
     /** The localized version of {@link #short_description}. */
     public String locale_short_description; // NOSONAR
 
+    private String cachedDisplayValue = null;
+    private String cachedShortDescription = null;
+    private ImageIcon cachedIcon = null;
+
     /**
      * Constructs a new {@code PresetListEntry}, uninitialized.
+     *
+     * Public default constructor is needed by {@link org.openstreetmap.josm.tools.XmlObjectParser.Parser#startElement}
      */
     public PresetListEntry() {
-        // Public default constructor is needed
     }
 
     /**
-     * Constructs a new {@code PresetListEntry}, initialized with a value.
+     * Constructs a new {@code PresetListEntry}, initialized with a value and
+     * {@link ComboMultiSelect} context.
+     *
      * @param value value
+     * @param cms the ComboMultiSelect
      */
-    public PresetListEntry(String value) {
+    public PresetListEntry(String value, ComboMultiSelect cms) {
         this.value = value;
+        this.cms = cms;
     }
 
     /**
@@ -60,14 +81,21 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
      * @return HTML formatted contents
      */
     public String getListDisplay(int width) {
-        if (value.equals(KeyedItem.DIFFERENT)) {
-            return "<b>" + KeyedItem.DIFFERENT + "</b>";
+        String displayValue = getDisplayValue();
+        Integer count = cms == null ? null : cms.usage.map.get(value);
+
+        if (count != null) {
+            displayValue = String.format("%s (%d)", displayValue, count);
         }
 
-        String shortDescription = getShortDescription(true);
-        String displayValue = getDisplayValue();
+        if (this.equals(ENTRY_DIFFERENT)) {
+            return "<html><b>" + Utils.escapeReservedCharactersHTML(displayValue) + "</b></html>";
+        }
+
+        String shortDescription = getShortDescription();
 
         if (shortDescription.isEmpty()) {
+            // avoids a collapsed list entry if value == ""
             if (displayValue.isEmpty()) {
                 return " ";
             }
@@ -86,36 +114,60 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
      * @return the entry icon, or {@code null}
      */
     public ImageIcon getIcon() {
-        return icon == null ? null : TaggingPresetItem.loadImageIcon(icon, TaggingPresetReader.getZipIcons(), (int) icon_size);
+        if (icon != null && cachedIcon == null) {
+            cachedIcon = TaggingPresetItem.loadImageIcon(icon, TaggingPresetReader.getZipIcons(), (int) icon_size);
+        }
+        return cachedIcon;
     }
 
     /**
-     * Returns the contents of the current item view.
+     * Returns the contents displayed in the current item view.
      * @return the value to display
      */
     public String getDisplayValue() {
-        return Utils.firstNonNull(locale_display_value, tr(display_value), trc(value_context, value));
+        if (cachedDisplayValue == null) {
+            if (cms != null && cms.values_no_i18n) {
+                cachedDisplayValue = Utils.firstNonNull(value, " ");
+            } else {
+                cachedDisplayValue = Utils.firstNonNull(
+                    locale_display_value, tr(display_value), trc(cms == null ? null : cms.values_context, value), " ");
+            }
+        }
+        return cachedDisplayValue;
     }
 
     /**
      * Returns the short description to display.
-     * @param translated whether the text must be translated
      * @return the short description to display
      */
-    public String getShortDescription(boolean translated) {
-        String shortDesc = translated
-                ? Utils.firstNonNull(locale_short_description, tr(short_description))
-                        : short_description;
-        return shortDesc == null ? "" : shortDesc;
+    public String getShortDescription() {
+        if (cachedShortDescription == null) {
+            cachedShortDescription = Utils.firstNonNull(locale_short_description, tr(short_description), "");
+        }
+        return cachedShortDescription;
+    }
+
+    /**
+     * Returns the tooltip for this entry.
+     * @param key the tag key
+     * @return the tooltip
+     */
+    public String getToolTipText(String key) {
+        if (this.equals(ENTRY_DIFFERENT)) {
+            return tr("Keeps the original values of the selected objects unchanged.");
+        }
+        if (value != null && !value.isEmpty()) {
+            return tr("Sets the key ''{0}'' to the value ''{1}''.", key, value);
+        }
+        return tr("Clears the key ''{0}''.", key);
     }
 
     // toString is mainly used to initialize the Editor
     @Override
     public String toString() {
-        if (KeyedItem.DIFFERENT.equals(value))
-            return KeyedItem.DIFFERENT;
-        String displayValue = getDisplayValue();
-        return displayValue != null ? displayValue.replaceAll("\\s*<.*>\\s*", " ") : ""; // remove additional markup, e.g. <br>
+        if (this.equals(ENTRY_DIFFERENT))
+            return getDisplayValue();
+        return getDisplayValue().replaceAll("\\s*<.*>\\s*", " "); // remove additional markup, e.g. <br>
     }
 
     @Override
@@ -133,6 +185,6 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
 
     @Override
     public int compareTo(PresetListEntry o) {
-        return AlphanumComparator.getInstance().compare(this.getDisplayValue(), o.getDisplayValue());
+        return AlphanumComparator.getInstance().compare(this.value, o.value);
     }
 }
