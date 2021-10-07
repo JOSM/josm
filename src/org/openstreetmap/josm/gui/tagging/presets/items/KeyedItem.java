@@ -106,6 +106,7 @@ public abstract class KeyedItem extends TextItem {
         public final SortedMap<String, Integer> map = new TreeMap<>();
         private boolean hadKeys;
         private boolean hadEmpty;
+        private int selectedCount;
 
         /**
          * Check if there is exactly one value for this key.
@@ -139,6 +140,35 @@ public abstract class KeyedItem extends TextItem {
         public boolean hadKeys() {
             return hadKeys;
         }
+
+        /**
+         * Returns the number of primitives selected.
+         * @return the number of primitives selected.
+         */
+        public int getSelectedCount() {
+            return selectedCount;
+        }
+
+        /**
+         * Splits multiple values and adds their usage counts as single value.
+         * <p>
+         * A value of {@code regional;pizza} will increment the count of {@code regional} and of
+         * {@code pizza}.
+         * @param delimiter The delimiter used for splitting.
+         * @return A new usage object with the new counts.
+         */
+        public Usage splitValues(String delimiter) {
+            Usage usage = new Usage();
+            usage.hadEmpty = hadEmpty;
+            usage.hadKeys = hadKeys;
+            usage.selectedCount = selectedCount;
+            map.forEach((value, count) -> {
+                for (String v : value.split(String.valueOf(delimiter), -1)) {
+                    usage.map.merge(v, count, Integer::sum);
+                }
+            });
+            return usage;
+        }
     }
 
     /**
@@ -149,6 +179,7 @@ public abstract class KeyedItem extends TextItem {
      */
     public static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
+        returnValue.selectedCount = sel.size();
         for (OsmPrimitive s : sel) {
             String v = s.get(key);
             if (v != null) {
@@ -165,6 +196,7 @@ public abstract class KeyedItem extends TextItem {
 
     protected static Usage determineBooleanUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
+        returnValue.selectedCount = sel.size();
         for (OsmPrimitive s : sel) {
             String booleanValue = OsmUtils.getNamedOsmBoolean(s.get(key));
             if (booleanValue != null) {

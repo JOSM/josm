@@ -47,7 +47,7 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
     public static final String PROP_MAXIMUM_ROW_COUNT = "gui.combobox.maximum-row-count";
 
     /** the configured maximum row count or null */
-    private Integer configMaximumRowCount = null;
+    private Integer configMaximumRowCount;
 
     /**
      * The preferred height of the combobox when closed.  Use if the items in the list dropdown are

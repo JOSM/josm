@@ -47,9 +47,9 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
     /** The localized version of {@link #short_description}. */
     public String locale_short_description; // NOSONAR
 
-    private String cachedDisplayValue = null;
-    private String cachedShortDescription = null;
-    private ImageIcon cachedIcon = null;
+    private String cachedDisplayValue;
+    private String cachedShortDescription;
+    private ImageIcon cachedIcon;
 
     /**
      * Constructs a new {@code PresetListEntry}, uninitialized.
@@ -82,10 +82,10 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
      */
     public String getListDisplay(int width) {
         String displayValue = getDisplayValue();
-        Integer count = cms == null ? null : cms.usage.map.get(value);
+        Integer count = getCount();
 
-        if (count != null) {
-            displayValue = String.format("%s (%d)", displayValue, count);
+        if (count > 0 && cms.usage.getSelectedCount() > 1) {
+            displayValue = tr("{0} ({1})", displayValue, count);
         }
 
         if (this.equals(ENTRY_DIFFERENT)) {
@@ -181,6 +181,15 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    /**
+     * Returns how many selected primitives had this value set.
+     * @return see above
+     */
+    public int getCount() {
+        Integer count = cms == null ? null : cms.usage.map.get(value);
+        return count == null ? 0 : count;
     }
 
     @Override

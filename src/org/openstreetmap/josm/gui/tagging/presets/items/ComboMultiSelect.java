@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
      */
     protected final List<PresetListEntry> presetListEntries = new ArrayList<>();
     /** Helps avoid duplicate list entries */
-    protected Map<String, PresetListEntry> seenValues = new TreeMap<>();
+    protected final Map<String, PresetListEntry> seenValues = new TreeMap<>();
     protected Usage usage;
     /** Used to see if the user edited the value. May be null. */
     protected String originalValue;
@@ -130,13 +131,17 @@ public abstract class ComboMultiSelect extends KeyedItem {
             JList<? extends PresetListEntry> list, PresetListEntry value, int index, boolean isSelected, boolean cellHasFocus) {
 
             JLabel l = (JLabel) renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            l.setComponentOrientation(component.getComponentOrientation());
             if (index != -1) {
                 // index -1 is set when measuring the size of the cell and when painting the
                 // editor-ersatz of a readonly combobox. fixes #6157
                 l.setText(value.getListDisplay(width));
             }
-            l.setToolTipText(value.getToolTipText(key));
+            if (value.getCount() > 0) {
+                l.setFont(l.getFont().deriveFont(Font.ITALIC + Font.BOLD));
+            }
             l.setIcon(value.getIcon());
+            l.setToolTipText(value.getToolTipText(key));
             return l;
         }
     }
@@ -220,9 +225,9 @@ public abstract class ComboMultiSelect extends KeyedItem {
         }
     }
 
-    private List<String> getValuesFromCode(String values_from) {
+    private List<String> getValuesFromCode(String valuesFrom) {
         // get the values from a Java function
-        String[] classMethod = values_from.split("#", -1);
+        String[] classMethod = valuesFrom.split("#", -1);
         if (classMethod.length == 2) {
             try {
                 Method method = Class.forName(classMethod[0]).getMethod(classMethod[1]);
@@ -314,18 +319,21 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * <p>
      * The initial value is the value shown in the control when the preset dialogs opens.
      *
-     * @param def The default value
+     * @param usage The key Usage
      * @return The initial value to use.
      */
-    protected String getInitialValue(String def) {
+    protected String getInitialValue(Usage usage) {
         String initialValue = null;
+        originalValue = null;
 
         if (usage.hasUniqueValue()) {
             // all selected primitives have the same not empty value for this key
             initialValue = usage.getFirst();
+            originalValue = initialValue;
         } else if (!usage.unused()) {
             // at least one primitive has a value for this key (but not all have the same one)
             initialValue = DIFFERENT;
+            originalValue = initialValue;
         } else if (PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
             // at this point no primitive had any value for this key
             // use the last value no matter what
@@ -335,9 +343,8 @@ public abstract class ComboMultiSelect extends KeyedItem {
             initialValue = LAST_VALUES.get(key);
         } else if (!usage.hadKeys()) {
             // use the default only on objects with no keys at all
-            initialValue = def;
+            initialValue = default_;
         }
-        originalValue = initialValue;
         return initialValue;
     }
 

@@ -12,7 +12,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -88,12 +87,12 @@ public class Combo extends ComboMultiSelect {
     protected boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
         initializeLocaleText(null);
         usage = determineTextUsage(support.getSelected(), key);
-        seenValues = new TreeMap<>();
+        seenValues.clear();
         // get the standard values from the preset definition
         initListEntries();
 
         // init the model
-        dropDownModel = new AutoCompComboBoxModel<PresetListEntry>(Comparator.naturalOrder());
+        dropDownModel = new AutoCompComboBoxModel<>(Comparator.<PresetListEntry>naturalOrder());
 
         if (!usage.hasUniqueValue() && !usage.unused()) {
             addEntry(PresetListEntry.ENTRY_DIFFERENT);
@@ -124,7 +123,7 @@ public class Combo extends ComboMultiSelect {
         combobox.setRenderer(new ComboMultiSelectListCellRenderer(combobox, combobox.getRenderer(), 200, key));
         combobox.setEditable(editable);
 
-        autoCompModel = new AutoCompComboBoxModel<AutoCompletionItem>(Comparator.naturalOrder());
+        autoCompModel = new AutoCompComboBoxModel<>(Comparator.<AutoCompletionItem>naturalOrder());
         getAllForKeys(Arrays.asList(key)).forEach(autoCompModel::addElement);
         getDisplayValues().forEach(s -> autoCompModel.addElement(new AutoCompletionItem(s, AutoCompletionPriority.IS_IN_STANDARD)));
 
@@ -154,7 +153,7 @@ public class Combo extends ComboMultiSelect {
             p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL)); // NOSONAR
         }
 
-        String valueToSelect = getInitialValue(default_);
+        String valueToSelect = getInitialValue(usage);
         if (valueToSelect != null) {
             PresetListEntry selItem = find(valueToSelect);
             if (selItem != null) {

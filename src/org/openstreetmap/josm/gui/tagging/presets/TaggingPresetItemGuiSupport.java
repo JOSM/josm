@@ -30,7 +30,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
     private final ListenerList<ChangeListener> listeners = ListenerList.create();
 
     /** whether to fire events or not */
-    private boolean enabled = false;
+    private boolean enabled;
 
     /**
      * Returns whether firing of events is enabled
