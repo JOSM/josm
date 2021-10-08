@@ -37,7 +37,7 @@ public class AutoCompTextField<E> extends JosmTextField implements TableCellEdit
     /** true if the combobox should autocomplete */
     private boolean autocompleteEnabled = true;
     /** a filter to enforce max. text length */
-    private MaxLengthDocumentFilter docFilter;
+    private transient MaxLengthDocumentFilter docFilter;
     /** the model */
     protected AutoCompComboBoxModel<E> model;
     /** Whether to autocomplete numbers */
@@ -202,12 +202,8 @@ public class AutoCompTextField<E> extends JosmTextField implements TableCellEdit
      *
      * @param l the autoComp listener to be removed
      */
-    public synchronized void removeActionListener(AutoCompListener l) {
-        if ((l != null) && (getAction() == l)) {
-            setAction(null);
-        } else {
-            listenerList.remove(AutoCompListener.class, l);
-        }
+    public synchronized void removeAutoCompListener(AutoCompListener l) {
+        listenerList.remove(AutoCompListener.class, l);
     }
 
     /**
@@ -244,6 +240,8 @@ public class AutoCompTextField<E> extends JosmTextField implements TableCellEdit
                     case AutoCompEvent.AUTOCOMP_BEFORE:
                         ((AutoCompListener) listeners[i + 1]).autoCompBefore(e);
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -260,22 +258,22 @@ public class AutoCompTextField<E> extends JosmTextField implements TableCellEdit
      */
     @Override
     public void keyTyped(KeyEvent e) {
-        if (autocompleteEnabled) {
-            // if selection is at the end
-            if (getSelectionEnd() == getText().length()) {
-                final String oldText = getText().substring(0, getSelectionStart());
-                // We got the event before the editor component could see it. Let the editor do its job first.
-                SwingUtilities.invokeLater(() -> autocomplete(oldText));
-            }
+        // if selection is at the end
+        if (autocompleteEnabled && getSelectionEnd() == getText().length()) {
+            final String oldText = getText().substring(0, getSelectionStart());
+            // We got the event before the editor component could see it. Let the editor do its job first.
+            SwingUtilities.invokeLater(() -> autocomplete(oldText));
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        // not interested
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        // not interested
     }
 
     /* ------------------------------------------------------------------------------------ */

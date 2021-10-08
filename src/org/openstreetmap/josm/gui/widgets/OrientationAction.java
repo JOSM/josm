@@ -34,10 +34,10 @@ import org.openstreetmap.josm.tools.PlatformManager;
  */
 public class OrientationAction extends AbstractAction implements PropertyChangeListener {
     /** Default for {@link #RTL_LANGUAGES} */
-    public static final List<String> DEFAULT_RTL_LANGUAGES = Arrays.asList("ar", "he", "fa", "iw", "ur", "lld");
+    private static final List<String> DEFAULT_RTL_LANGUAGES = Arrays.asList("ar", "he", "fa", "iw", "ur");
 
     /** Default for {@link #LOCALIZED_KEYS} */
-    public static final List<String> DEFAULT_LOCALIZED_KEYS = Arrays.asList(
+    private static final List<String> DEFAULT_LOCALIZED_KEYS = Arrays.asList(
         "(\\p{Alnum}+_)?name", "addr", "description", "fixme", "note", "source", "strapline", "operator");
 
     /**
@@ -56,12 +56,13 @@ public class OrientationAction extends AbstractAction implements PropertyChangeL
     public static final ListProperty LOCALIZED_KEYS = new ListProperty("properties.localized-keys", DEFAULT_LOCALIZED_KEYS);
 
     private static final Pattern LANG_PATTERN = Pattern.compile(":([a-z]{2,3})$");
+    private static final String NEW_STATE = "newState";
 
     private Component component;
     private ImageIcon iconRTL;
     private ImageIcon iconLTR;
-    protected static Set<String> RTLLanguages = new HashSet<>(RTL_LANGUAGES.get());
-    protected static Pattern localizedKeys = compile_localized_keys();
+    protected static final Set<String> RTLLanguages = new HashSet<>(RTL_LANGUAGES.get());
+    protected static final Pattern localizedKeys = compileLocalizedKeys();
 
     /**
      * Constructs a new {@code OrientationAction}.
@@ -83,7 +84,7 @@ public class OrientationAction extends AbstractAction implements PropertyChangeL
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        firePropertyChange("orientationAction", null, getValue("newState"));
+        firePropertyChange("orientationAction", null, getValue(NEW_STATE));
     }
 
     /**
@@ -94,12 +95,12 @@ public class OrientationAction extends AbstractAction implements PropertyChangeL
             putValue(Action.NAME, tr("Right to Left"));
             putValue(Action.SMALL_ICON, iconRTL);
             putValue(Action.SHORT_DESCRIPTION, tr("Switch the text orientation to Right-to-Left."));
-            putValue("newState", ComponentOrientation.RIGHT_TO_LEFT);
+            putValue(NEW_STATE, ComponentOrientation.RIGHT_TO_LEFT);
         } else {
             putValue(Action.NAME, tr("Left to Right"));
             putValue(Action.SMALL_ICON, iconLTR);
             putValue(Action.SHORT_DESCRIPTION, tr("Switch the text orientation to Left-to-Right."));
-            putValue("newState", ComponentOrientation.LEFT_TO_RIGHT);
+            putValue(NEW_STATE, ComponentOrientation.LEFT_TO_RIGHT);
         }
     }
 
@@ -205,7 +206,7 @@ public class OrientationAction extends AbstractAction implements PropertyChangeL
         return ComponentOrientation.LEFT_TO_RIGHT;
     }
 
-    private static Pattern compile_localized_keys() {
+    private static Pattern compileLocalizedKeys() {
         return Pattern.compile("^(" + String.join("|", LOCALIZED_KEYS.get()) + ")$");
     }
 }

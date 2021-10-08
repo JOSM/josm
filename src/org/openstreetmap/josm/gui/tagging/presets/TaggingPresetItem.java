@@ -42,7 +42,7 @@ public abstract class TaggingPresetItem {
     /**
      * Display OSM keys as {@linkplain org.openstreetmap.josm.gui.widgets.OsmIdTextField#setHint hint}
      */
-    protected static BooleanProperty DISPLAY_KEYS_AS_HINT = new BooleanProperty("taggingpreset.display-keys-as-hint", true);
+    protected static final BooleanProperty DISPLAY_KEYS_AS_HINT = new BooleanProperty("taggingpreset.display-keys-as-hint", true);
 
     protected void initAutoCompletionField(AutoCompletingTextField field, String... key) {
         initAutoCompletionField(field, Arrays.asList(key));
@@ -96,7 +96,7 @@ public abstract class TaggingPresetItem {
      * @return {@code true} if matches (positive), {@code null} if neutral, {@code false} if mismatches (negative).
      */
     public Boolean matches(Map<String, String> tags) {
-        return null;
+        return null; // NOSONAR
     }
 
     protected static Set<TaggingPresetType> getType(String types) throws SAXException {

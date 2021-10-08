@@ -52,7 +52,7 @@ public final class TaggingPresets {
     /**
      * Sort presets menu alphabetically
      */
-    public static BooleanProperty SORT_MENU = new BooleanProperty("taggingpreset.sortvalues", true);
+    public static final BooleanProperty SORT_MENU = new BooleanProperty("taggingpreset.sortvalues", true);
     /**
      * Custom icon sources
      */

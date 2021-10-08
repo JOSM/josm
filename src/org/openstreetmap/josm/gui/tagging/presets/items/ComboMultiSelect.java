@@ -259,7 +259,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
      */
     private List<String> checkListsSameLength(List<String> a, List<String> b, String name) {
         if (a != null && a.size() != b.size()) {
-            Logging.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''{2}List'' must be the same as in ''values''",
+            Logging.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''{2}'' must be the same as in ''values''",
                             key, text, name));
             Logging.error(tr("Detailed information: {0} <> {1}", a, b));
             return null; // NOSONAR
@@ -291,10 +291,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         List<String> localeShortDescriptionsList = splitEscaped(delimiter, locale_short_descriptions);
         List<String> shortDescriptionsList = splitEscaped(delimiter, short_descriptions);
 
-        displayList = checkListsSameLength(displayList, valueList, "display");
-        localeDisplayList = checkListsSameLength(localeDisplayList, valueList, "localeDisplay");
-        shortDescriptionsList = checkListsSameLength(shortDescriptionsList, valueList, "shortDescriptions");
-        localeShortDescriptionsList = checkListsSameLength(localeShortDescriptionsList, valueList, "localeShortDescriptions");
+        displayList = checkListsSameLength(displayList, valueList, "display_values");
+        localeDisplayList = checkListsSameLength(localeDisplayList, valueList, "locale_display_values");
+        shortDescriptionsList = checkListsSameLength(shortDescriptionsList, valueList, "short_descriptions");
+        localeShortDescriptionsList = checkListsSameLength(localeShortDescriptionsList, valueList, "locale_short_descriptions");
 
         for (int i = 0; i < valueList.size(); i++) {
             final PresetListEntry e = new PresetListEntry(valueList.get(i), this);
