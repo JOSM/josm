@@ -84,7 +84,10 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
     }
 
     /**
-     * Returns true if all selected primitives matched this preset (before opening the dialog)
+     * Returns true if all selected primitives matched this preset (before opening the dialog).
+     * <p>
+     * This usually means that the preset dialog was opened from the Tags / Memberships panel as
+     * opposed to being opened by selection from the menu or toolbar or the search.
      *
      * @return true if the preset initially matched
      */

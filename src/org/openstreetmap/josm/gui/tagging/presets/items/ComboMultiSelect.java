@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.widgets.JosmListCellRenderer;
@@ -93,7 +94,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
     /** Helps avoid duplicate list entries */
     protected final Map<String, PresetListEntry> seenValues = new TreeMap<>();
     protected Usage usage;
-    /** Used to see if the user edited the value. May be null. */
+    /** Used to see if the user edited the value. */
     protected String originalValue;
 
     /**
@@ -317,14 +318,20 @@ public abstract class ComboMultiSelect extends KeyedItem {
     /**
      * Returns the initial value to use for this preset.
      * <p>
-     * The initial value is the value shown in the control when the preset dialogs opens.
+     * The initial value is the value shown in the control when the preset dialog opens. For a
+     * discussion of all the options see the enclosed tickets.
      *
      * @param usage The key Usage
+     * @param support The support
      * @return The initial value to use.
+     *
+     * @see "https://josm.openstreetmap.de/ticket/5564"
+     * @see "https://josm.openstreetmap.de/ticket/12733"
+     * @see "https://josm.openstreetmap.de/ticket/17324"
      */
-    protected String getInitialValue(Usage usage) {
+    protected String getInitialValue(Usage usage, TaggingPresetItemGuiSupport support) {
         String initialValue = null;
-        originalValue = null;
+        originalValue = "";
 
         if (usage.hasUniqueValue()) {
             // all selected primitives have the same not empty value for this key
@@ -334,18 +341,15 @@ public abstract class ComboMultiSelect extends KeyedItem {
             // at least one primitive has a value for this key (but not all have the same one)
             initialValue = DIFFERENT;
             originalValue = initialValue;
-        } else if (PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
+        } else if (!usage.hadKeys() || isForceUseLastAsDefault() || PROP_FILL_DEFAULT.get()) {
             // at this point no primitive had any value for this key
-            // use the last value no matter what
-            initialValue = LAST_VALUES.get(key);
-        } else if (!usage.hadKeys() && isUseLastAsDefault()) {
-            // use the last value only on objects with no keys at all
-            initialValue = LAST_VALUES.get(key);
-        } else if (!usage.hadKeys()) {
-            // use the default only on objects with no keys at all
-            initialValue = default_;
+            if (!support.isPresetInitiallyMatches() && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
+                initialValue = LAST_VALUES.get(key);
+            } else {
+                initialValue = default_;
+            }
         }
-        return initialValue;
+        return initialValue != null ? initialValue : "";
     }
 
     @Override
@@ -353,8 +357,6 @@ public abstract class ComboMultiSelect extends KeyedItem {
         String value = getSelectedItem().value;
 
         // no change if same as before
-        if (value.isEmpty() && originalValue == null)
-            return;
         if (value.equals(originalValue))
             return;
         changedTags.add(new Tag(key, value));

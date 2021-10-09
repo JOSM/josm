@@ -153,15 +153,14 @@ public class Combo extends ComboMultiSelect {
             p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL)); // NOSONAR
         }
 
-        String valueToSelect = getInitialValue(usage);
-        if (valueToSelect != null) {
-            PresetListEntry selItem = find(valueToSelect);
-            if (selItem != null) {
-                combobox.setSelectedItem(selItem);
-            } else {
-                combobox.setText(valueToSelect);
-            }
+        String initialValue = getInitialValue(usage, support);
+        PresetListEntry selItem = find(initialValue);
+        if (selItem != null) {
+            combobox.setSelectedItem(selItem);
+        } else {
+            combobox.setText(initialValue);
         }
+
         combobox.addActionListener(l -> support.fireItemValueModified(this, key, getSelectedItem().value));
         combobox.addComponentListener(new ComponentListener());
 

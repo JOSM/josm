@@ -48,7 +48,7 @@ public class MultiSelect extends ComboMultiSelect {
         model.clear();
         // disable if the selected primitives have different values
         list.setEnabled(usage.hasUniqueValue() || usage.unused());
-        String initialValue = getInitialValue(usage);
+        String initialValue = getInitialValue(usage, support);
 
         // Add values from the preset.
         presetListEntries.forEach(this::addEntry);
@@ -61,7 +61,7 @@ public class MultiSelect extends ComboMultiSelect {
         }
 
         // Select the values in the initial value.
-        if (initialValue != null && !DIFFERENT.equals(initialValue)) {
+        if (!initialValue.isEmpty() && !DIFFERENT.equals(initialValue)) {
             for (String value : initialValue.split(String.valueOf(delimiter), -1)) {
                 PresetListEntry e = new PresetListEntry(value, this);
                 addEntry(e);

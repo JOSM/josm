@@ -27,7 +27,7 @@ class ComboTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().i18n("de");
+    public JOSMTestRules test = new JOSMTestRules().preferences().main().i18n("de");
 
     /**
      * Unit test for {@link Combo#addToPanel}.
@@ -54,8 +54,9 @@ class ComboTest {
         OsmPrimitive waySI = OsmUtils.createPrimitive("way addr:country=SI");
         KeyedItem.LAST_VALUES.clear();
         KeyedItem.LAST_VALUES.put("addr:country", "AT");
-
+        Combo.PROP_FILL_DEFAULT.put(false);
         combo.use_last_as_default = 0;
+
         combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, way));
         assertEquals("", combo.getSelectedItem().value);
         combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, wayTagged));
@@ -78,6 +79,19 @@ class ComboTest {
         assertEquals("SI", combo.getSelectedItem().value);
         combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, wayAT, waySI));
         assertEquals(Combo.DIFFERENT, combo.getSelectedItem().value);
+
+        Combo.PROP_FILL_DEFAULT.put(true);
+        combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, way));
+        assertEquals("AT", combo.getSelectedItem().value);
+        combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, wayTagged));
+        assertEquals("AT", combo.getSelectedItem().value);
+        combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, wayAT));
+        assertEquals("AT", combo.getSelectedItem().value);
+        combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, waySI));
+        assertEquals("SI", combo.getSelectedItem().value);
+        combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, wayAT, waySI));
+        assertEquals(Combo.DIFFERENT, combo.getSelectedItem().value);
+        Combo.PROP_FILL_DEFAULT.put(false);
         combo.default_ = null;
 
         combo.use_last_as_default = 1; // untagged objects only
@@ -103,6 +117,7 @@ class ComboTest {
         assertEquals("SI", combo.getSelectedItem().value);
         combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false, wayAT, waySI));
         assertEquals(Combo.DIFFERENT, combo.getSelectedItem().value);
+        combo.use_last_as_default = 0;
 
         KeyedItem.LAST_VALUES.clear();
     }
