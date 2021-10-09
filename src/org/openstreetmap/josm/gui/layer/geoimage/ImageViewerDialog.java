@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -48,6 +49,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
+import org.openstreetmap.josm.gui.util.imagery.Vector3D;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -122,7 +124,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static JButton createButton(AbstractAction action, Dimension buttonDim) {
         JButton btn = new JButton(action);
         btn.setPreferredSize(buttonDim);
-        btn.addPropertyChangeListener("enabled", propertyChangeEvent -> action.setEnabled(Boolean.TRUE.equals(propertyChangeEvent.getNewValue())));
+        btn.addPropertyChangeListener("enabled", e -> action.setEnabled(Boolean.TRUE.equals(e.getNewValue())));
         return btn;
     }
 
@@ -622,6 +624,16 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      */
     public static IImageEntry<?> getCurrentImage() {
         return getInstance().currentEntry;
+    }
+
+    /**
+     * Returns the rotation of the currently displayed image.
+     * @param entry The entry to get the rotation for. May be {@code null}.
+     * @return the rotation of the currently displayed image, or {@code null}
+     * @since 18263
+     */
+    public Vector3D getRotation(IImageEntry<?> entry) {
+        return imgDisplay.getRotation(entry);
     }
 
     /**

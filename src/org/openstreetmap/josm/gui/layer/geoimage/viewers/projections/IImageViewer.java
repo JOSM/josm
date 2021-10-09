@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.openstreetmap.josm.data.imagery.street_level.Projections;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay;
+import org.openstreetmap.josm.gui.util.imagery.Vector3D;
 
 /**
  * An interface for image viewers for specific projections
@@ -44,9 +45,10 @@ public interface IImageViewer extends ComponentListener {
     /**
      * Get the current rotation in the image viewer
      * @return The rotation
+     * @since 18263
      */
-    default double getRotation() {
-        return 0;
+    default Vector3D getRotation() {
+        return null;
     }
 
     /**

@@ -31,11 +31,13 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.geoimage.viewers.projections.IImageViewer;
 import org.openstreetmap.josm.gui.layer.geoimage.viewers.projections.ImageProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.imagery.Vector3D;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -509,13 +511,17 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         ImageDisplay.this.visibleRect = currentVisibleRect;
                     }
                 }
-                // We have to update the mousePointInImg for 360 image panning, as otherwise the panning
-                // never stops.
+                // We have to update the mousePointInImg for 360 image panning, as otherwise the panning never stops.
                 // This does not work well with the perspective viewer at this time (2021-08-26).
-                if (entry != null && Projections.EQUIRECTANGULAR == entry.getProjectionType()) {
+                boolean is360panning = entry != null && Projections.EQUIRECTANGULAR == entry.getProjectionType();
+                if (is360panning) {
                     this.mousePointInImg = p;
                 }
                 ImageDisplay.this.repaint();
+                if (is360panning) {
+                    // repaint direction arrow
+                    MainApplication.getLayerManager().getLayersOfType(GeoImageLayer.class).forEach(AbstractMapViewPaintable::invalidate);
+                }
             }
 
             if (mouseIsZoomSelecting(e) && mousePointInImg != null) {
@@ -979,6 +985,16 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             }
         }
         return imageViewer;
+    }
+
+    /**
+     * Get the rotation in the image viewer for an entry
+     * @param entry The entry to get the rotation for. May be {@code null}.
+     * @return the current rotation in the image viewer, or {@code null}
+     * @since 18263
+     */
+    public Vector3D getRotation(IImageEntry<?> entry) {
+        return entry != null ? getIImageViewer(entry).getRotation() : null;
     }
 
     /**

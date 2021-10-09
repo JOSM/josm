@@ -55,8 +55,8 @@ public class Equirectangular extends ComponentAdapter implements IImageViewer {
     }
 
     @Override
-    public double getRotation() {
-        return this.cameraPlane.getRotation().getAzimuthalAngle();
+    public Vector3D getRotation() {
+        return this.cameraPlane.getRotation();
     }
 
     @Override

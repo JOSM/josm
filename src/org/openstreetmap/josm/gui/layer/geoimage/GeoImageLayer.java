@@ -62,6 +62,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.util.imagery.Vector3D;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -451,63 +452,63 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         for (ImageEntry e: data.getSelectedImages()) {
             if (e != null && e.getPos() != null) {
                 Point p = mv.getPoint(e.getPos());
-
-                int imgWidth;
-                int imgHeight;
-                if (useThumbs && e.hasThumbnail()) {
-                    Dimension d = scaledDimension(e.getThumbnail());
-                    if (d != null) {
-                        imgWidth = d.width;
-                        imgHeight = d.height;
-                    } else {
-                        imgWidth = -1;
-                        imgHeight = -1;
-                    }
-                } else {
-                    imgWidth = selectedIcon.getIconWidth();
-                    imgHeight = selectedIcon.getIconHeight();
-                }
+                Dimension imgDim = getImageDimension(e);
 
                 if (e.getExifImgDir() != null) {
-                    // Multiplier must be larger than sqrt(2)/2=0.71.
-                    double arrowlength = Math.max(25, Math.max(imgWidth, imgHeight) * 0.85);
-                    double arrowwidth = arrowlength / 1.4;
-
-                    double dir = e.getExifImgDir();
-                    // Rotate 90 degrees CCW
-                    double headdir = (dir < 90) ? dir + 270 : dir - 90;
-                    double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
-                    double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
-
-                    double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
-                    double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
-
-                    double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
-                    double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
-
-                    double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
-                    double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
-
-                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g.setColor(new Color(255, 255, 255, 192));
-                    int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
-                    int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
-                    g.fillPolygon(xar, yar, 4);
-                    g.setColor(Color.black);
-                    g.setStroke(new BasicStroke(1.2f));
-                    g.drawPolyline(xar, yar, 3);
+                    Vector3D imgRotation = ImageViewerDialog.getInstance().getRotation(e);
+                    drawDirectionArrow(g, p, e.getExifImgDir()
+                            + (imgRotation != null ? Utils.toDegrees(imgRotation.getPolarAngle()) : 0d), imgDim);
                 }
 
                 if (useThumbs && e.hasThumbnail()) {
                     g.setColor(new Color(128, 0, 0, 122));
-                    g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
+                    g.fillRect(p.x - imgDim.width / 2, p.y - imgDim.height / 2, imgDim.width, imgDim.height);
                 } else {
                     selectedIcon.paintIcon(mv, g,
-                            p.x - imgWidth / 2,
-                            p.y - imgHeight / 2);
+                            p.x - imgDim.width / 2,
+                            p.y - imgDim.height / 2);
                 }
             }
         }
+    }
+
+    protected Dimension getImageDimension(ImageEntry e) {
+        if (useThumbs && e.hasThumbnail()) {
+            Dimension d = scaledDimension(e.getThumbnail());
+            return d != null ? d : new Dimension(-1, -1);
+        } else {
+            return new Dimension(selectedIcon.getIconWidth(), selectedIcon.getIconHeight());
+        }
+    }
+
+    protected static void drawDirectionArrow(Graphics2D g, Point p, double dir, Dimension imgDim) {
+        System.out.println(dir);
+        // Multiplier must be larger than sqrt(2)/2=0.71.
+        double arrowlength = Math.max(25, Math.max(imgDim.width, imgDim.height) * 0.85);
+        double arrowwidth = arrowlength / 1.4;
+
+        // Rotate 90 degrees CCW
+        double headdir = (dir < 90) ? dir + 270 : dir - 90;
+        double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
+        double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
+
+        double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
+        double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
+
+        double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
+        double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
+
+        double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
+        double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(new Color(255, 255, 255, 192));
+        int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
+        int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
+        g.fillPolygon(xar, yar, 4);
+        g.setColor(Color.black);
+        g.setStroke(new BasicStroke(1.2f));
+        g.drawPolyline(xar, yar, 3);
     }
 
     @Override
