@@ -121,6 +121,12 @@
             </checkgroup>
         </optional>
     </chunk>
+    <chunk id="check_crossing_access">
+        <checkgroup columns="2">
+            <check key="bicycle" text="Cross by bicycle" icon="presets/vehicle/restriction/plain/bicycle.svg" disable_off="true" />
+            <check key="horse" text="Cross on horseback" icon="presets/vehicle/restriction/plain/horse.svg" disable_off="true" />
+        </checkgroup>
+    </chunk>
     <chunk id="common_advertising">
         <text key="height" text="Height (meters)" length="7" />
         <combo key="animated" text="Animated" values="yes,winding_posters,screen,trivision_blades,revolving,digital_messages,digital_prices,no" values_sort="false" />
@@ -1321,15 +1327,22 @@
                 <combo key="traffic_signals:direction" text="Direction" values="forward,backward,both" />
             </optional>
             <optional text="Optional crossing attributes:">
-                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,unmarked,no" />
+                <combo key="crossing" text="Pedestrian crossing type" >
+                    <list_entry value="uncontrolled" icon="presets/vehicle/crossing.svg" />
+                    <list_entry value="traffic_signals" icon="presets/vehicle/crossing_traffic_signals.svg" />
+                    <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
+                    <list_entry value="no" />
+                </combo>
                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
                 <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
-                <check key="crossing:island" text="With island" />
-                <check key="button_operated" text="Button operated" />
-                <check key="traffic_signals:sound" text="Sound signals" />
                 <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
-                <check key="bicycle" text="Cross by bicycle" />
-                <check key="horse" text="Cross on horseback" />
+                <check key="crossing:island" text="With island" />
+                <reference ref="check_crossing_access" />
+                <label text="In case of crossing traffic signals:" />
+                <checkgroup columns="2">
+                    <check key="button_operated" text="Button operated" />
+                    <check key="traffic_signals:sound" text="Sound signals" />
+                </checkgroup>
             </optional>
             <optional text="Optional values for specific countries">
                 <text key="name" text="Name" />
@@ -1375,11 +1388,12 @@
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             <check key="crossing:island" text="With island" />
-            <check key="bicycle" text="Cross by bicycle" />
-            <check key="horse" text="Cross on horseback" />
+            <reference ref="check_crossing_access" />
             <label text="In case of traffic signals:" />
-            <check key="button_operated" text="Button operated" />
-            <check key="traffic_signals:sound" text="Sound signals" />
+            <checkgroup columns="2">
+                <check key="button_operated" text="Button operated" />
+                <check key="traffic_signals:sound" text="Sound signals" />
+            </checkgroup>
         </item> <!-- Pedestrian Crossing -->
         <group name="Traffic Calming" icon="presets/vehicle/choker.svg">
             <item name="Bump" icon="presets/vehicle/bump.svg" type="node,way" preset_name_label="true">
@@ -2408,8 +2422,7 @@
             <optional>
                 <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals" />
                 <reference ref="supervised" />
-                <check key="horse" text="Cross on horseback" />
-                <check key="bicycle" text="Cross by bicycle" />
+                <reference ref="check_crossing_access" />
                 <check key="crossing:light" text="Traffic lights" />
                 <check key="crossing:bell" text="Sound signals" />
                 <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
