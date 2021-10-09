@@ -1238,7 +1238,6 @@ public final class DomainValidator extends AbstractValidator {
         "surgery", // surgery Tin Avenue, LLC
         "suzuki", // suzuki SUZUKI MOTOR CORPORATION
         "swatch", // swatch The Swatch Group Ltd
-        "swiftcover", // swiftcover Swiftcover Insurance Services Limited
         "swiss", // swiss Swiss Confederation
         "sydney", // sydney State of New South Wales, Department of Premier and Cabinet
         "systems", // systems Dash Cypress, LLC
