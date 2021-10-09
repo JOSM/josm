@@ -1292,6 +1292,10 @@ node[power=generator] {
     icon-image: "presets/power/generator.svg";
     set icon_z17;
 }
+node[power=heliostat] {
+    icon-image: "presets/power/heliostat.svg";
+    set icon_z17;
+}
 node[power=substation] {
     icon-image: "presets/power/substation.svg";
     set icon_z17;
