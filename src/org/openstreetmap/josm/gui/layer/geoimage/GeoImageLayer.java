@@ -482,7 +482,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     protected static void drawDirectionArrow(Graphics2D g, Point p, double dir, Dimension imgDim) {
-        System.out.println(dir);
         // Multiplier must be larger than sqrt(2)/2=0.71.
         double arrowlength = Math.max(25, Math.max(imgDim.width, imgDim.height) * 0.85);
         double arrowwidth = arrowlength / 1.4;

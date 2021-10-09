@@ -82,13 +82,15 @@ public class MultiSelect extends ComboMultiSelect {
             // have icons of different sizes. Calculate the size of the first {@code rows} entries
             // and size the scrollpane accordingly.
             Rectangle r = list.getCellBounds(0, Math.min(rows, model.size() - 1));
-            Insets insets = list.getInsets();
-            r.width += insets.left + insets.right;
-            r.height += insets.top + insets.bottom;
-            insets = sp.getInsets();
-            r.width += insets.left + insets.right;
-            r.height += insets.top + insets.bottom;
-            sp.setPreferredSize(new Dimension(r.width, r.height));
+            if (r != null) {
+                Insets insets = list.getInsets();
+                r.width += insets.left + insets.right;
+                r.height += insets.top + insets.bottom;
+                insets = sp.getInsets();
+                r.width += insets.left + insets.right;
+                r.height += insets.top + insets.bottom;
+                sp.setPreferredSize(new Dimension(r.width, r.height));
+            }
         }
         p.add(sp, GBC.eol().fill(GBC.HORIZONTAL)); // NOSONAR
 

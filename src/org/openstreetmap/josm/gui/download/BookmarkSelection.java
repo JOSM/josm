@@ -308,7 +308,9 @@ public class BookmarkSelection implements DownloadSelection {
             if (idx < 0 || idx >= bookmarks.getModel().getSize())
                 return;
             Bookmark b = bookmarks.getModel().getElementAt(idx);
-            parent.startDownload(b.getArea());
+            if (b != null) {
+                parent.startDownload(b.getArea());
+            }
         }
     }
 }
