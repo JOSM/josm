@@ -1088,7 +1088,6 @@ public final class DomainValidator extends AbstractValidator {
         "qpon", // qpon dotCOOL, Inc.
         "quebec", // quebec PointQuébec Inc
         "quest", // quest Quest ION Limited
-        "qvc", // qvc QVC, Inc.
         "racing", // racing Premier Registry Limited
         "radio", // radio European Broadcasting Union (EBU)
         "raid", // raid Johnson Shareholdings, Inc.
