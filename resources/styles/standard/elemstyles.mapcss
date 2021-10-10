@@ -5359,6 +5359,7 @@ area[setting("place_fill_colour")][place=isolated_dwelling],
 area[setting("place_fill_colour")][place=neighbourhood],
 area[setting("place_fill_colour")][place=suburb],
 area[setting("place_fill_colour")][place=locality],
+area[setting("place_fill_colour")][place=city_block],
 area[place=island],
 area[place=islet] {
     fill-color: place#8de3cb;
@@ -5378,6 +5379,7 @@ node[place=neighbourhood],
 node[place=hamlet],
 node[place=isolated_dwelling],
 node[place=farm],
+node[place=city_block],
 node[place=island],
 node[place=islet] {
     set icon_z0;
@@ -5431,6 +5433,10 @@ node[place=isolated_dwelling] {
 }
 node[place=farm] {
     icon-image: "presets/place/farm.svg";
+    z-index: 2.1;
+}
+node[place=city_block] {
+    icon-image: "presets/place/cityblock.svg";
     z-index: 2.1;
 }
 node|z15-[place=locality],
