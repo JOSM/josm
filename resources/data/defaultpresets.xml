@@ -6214,7 +6214,7 @@
                     <list_entry value="coal" display_value="Coal" icon="presets/power/power_source-coal.svg" />
                     <list_entry value="nuclear" display_value="Nuclear" icon="presets/power/power_source-nuclear.svg" />
                     <list_entry value="geothermal" display_value="Geothermal" icon="presets/power/power_source-geothermal.svg" />
-                    <list_entry value="hydro" display_value="Hygro" icon="presets/power/power_source-water.svg" />
+                    <list_entry value="hydro" display_value="Hydro" icon="presets/power/power_source-water.svg" />
                     <list_entry value="osmotic" display_value="Osmotic" icon="presets/power/power_source-water.svg" />
                     <list_entry value="tidal" display_value="Tidal" icon="presets/power/power_source-water.svg" />
                     <list_entry value="wave" display_value="Wave" icon="presets/power/power_source-water.svg" />
