@@ -347,13 +347,22 @@ public class PluginInformation {
         if (link != null) {
             sb.append(" <a href=\"").append(link).append("\">").append(tr("More info...")).append("</a>");
         }
-        if (downloadlink != null
-                && !downloadlink.startsWith("https://josm.openstreetmap.de/osmsvn/applications/editors/josm/dist/")
-                && !downloadlink.startsWith("https://github.com/JOSM/")) {
+        if (isExternal()) {
             sb.append("<p>&nbsp;</p><p>").append(tr("<b>Plugin provided by an external source:</b> {0}", downloadlink)).append("</p>");
         }
         sb.append("</body></html>");
         return sb.toString();
+    }
+
+    /**
+     * Determines if this plugin comes from an external, non-official source.
+     * @return {@code true} if this plugin comes from an external, non-official source.
+     * @since 18267
+     */
+    public boolean isExternal() {
+        return downloadlink != null
+                && !downloadlink.startsWith("https://josm.openstreetmap.de/osmsvn/applications/editors/josm/dist/")
+                && !downloadlink.startsWith("https://github.com/JOSM/");
     }
 
     /**

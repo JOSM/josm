@@ -199,6 +199,17 @@ public class PluginHandlerTestIT {
             }
         }
 
+        // Skip unofficial plugins in headless mode, too much work for us for little added-value
+        if (GraphicsEnvironment.isHeadless()) {
+            for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
+                PluginInformation pi = it.next();
+                if (pi.isExternal()) {
+                    System.out.println("Ignoring " + pi.name + " (unofficial plugin in headless mode)");
+                    it.remove();
+                }
+            }
+        }
+
         System.out.println("Filtered plugin list contains " + plugins.size() + " plugins");
 
         // Download plugins
