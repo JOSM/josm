@@ -432,13 +432,19 @@
     </chunk>
     <chunk id="power_source_values">
     </chunk>
-    <chunk id="power_pole">
+    <chunk id="utilities">
+        <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" values_searchable="true"/>
+    </chunk>
+    <chunk id="pole">
         <text key="height" text="Height (meters)" length="7" />
         <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+        <reference ref="ref_operator" />
+    </chunk>
+    <chunk id="power_pole">
         <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
         <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
         <check key="location:transition" text="Location transition" disable_off="true" />
-        <reference ref="ref_operator" />
+        <reference ref="pole" />
     </chunk>
     <chunk id="rating_phases">
         <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
@@ -5812,6 +5818,14 @@
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
         <separator/>
+        <item name="Utility Pole" icon="presets/tower/pole.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:man_made=utility_pole" />
+            <space />
+            <key key="man_made" value="utility_pole" />
+            <reference ref="pole" />
+            <reference ref="utilities" />
+            <preset_link preset_name="Pole" text="Similar preset:" />
+        </item> <!-- Utility Pole -->
         <item name="Street Lamp" icon="presets/misc/streetlamp.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=street_lamp" />
             <space />
@@ -6073,7 +6087,7 @@
             <link wiki="Key:marker" />
             <space />
             <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key" />
-            <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" values_searchable="true" />
+            <reference ref="utilities" />
             <optional>
                 <reference ref="ref_operator" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
@@ -6703,6 +6717,7 @@
             <space />
             <key key="power" value="pole" />
             <reference ref="power_pole" />
+            <preset_link preset_name="Utility Pole" text="Similar preset:" />
         </item> <!-- Pole -->
         <item name="Pole with Switch" icon="presets/power/pole_switch.svg" type="node" preset_name_label="true">
             <link wiki="Tag:power=pole" />

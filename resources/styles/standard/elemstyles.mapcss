@@ -1787,6 +1787,45 @@ node[man_made=communications_tower] {
     icon-image: "presets/tower/communications_tower.svg";
     set icon_z17;
 }
+node|z17-[man_made=utility_pole][utility][utility!=power][utility!=street_lighting]::utility_casing {
+    utility_casing: #fdfdf8;
+}
+node|z17-[man_made=utility_pole][utility=gas]::utility_casing {
+    utility_casing: #ffff00;
+}
+node|z17-[man_made=utility_pole][utility=oil]::utility_casing {
+    utility_casing: #708090;
+}
+node|z17-[man_made=utility_pole][utility=telecom]::utility_casing,
+node|z17-[man_made=utility_pole][utility=television]::utility_casing {
+    utility_casing: #21bd00;
+}
+node|z17-[man_made=utility_pole][utility=water]::utility_casing {
+    utility_casing: #2090cf;
+}
+node|z17-[man_made=utility_pole][utility=sewerage]::utility_casing {
+    utility_casing: #1d5575;
+}
+node|z17-[man_made=utility_pole][utility=waste]::utility_casing {
+    utility_casing: #ee82ee;
+}
+node[man_made=utility_pole].utility_casing::utility_casing {
+    symbol-fill-color: prop("utility_casing");
+    symbol-shape: circle;
+    symbol-size: 12;
+}
+node[man_made=utility_pole] {
+    icon-image: "presets/tower/pole.svg";
+    set icon_z17;
+}
+node[man_made=utility_pole][utility~=power] {
+    icon-image: "presets/power/pole.svg";
+    set icon_z17;
+}
+node[man_made=utility_pole][utility~=street_lighting] {
+    icon-image: "presets/tower/pole_street_light.svg";
+    set icon_z17;
+}
 
 /****************/
 /* telecom tags */
