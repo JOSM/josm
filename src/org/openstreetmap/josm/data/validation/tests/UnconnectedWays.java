@@ -111,21 +111,38 @@ public abstract class UnconnectedWays extends Test {
     public static class UnconnectedRailways extends UnconnectedWays {
         static final int UNCONNECTED_RAILWAYS = 1321;
         /**
-         * Constructs a new {@code UnconnectedRailways} test.
-         */
+        * Constructs a new {@code UnconnectedRailways} test.
+        */
         public UnconnectedRailways() {
             super(tr("Unconnected railways"), UNCONNECTED_RAILWAYS, false);
         }
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            return p.hasTagDifferent(RAILWAY, "abandoned", "platform", "razed");
+            if (p.hasTag(RAILWAY, "construction") && p.hasKey("construction"))
+                return p.hasTagDifferent("construction", "platform", "platform_edge", "service_station", "station");
+            return p.hasTagDifferent(RAILWAY, "proposed", "planned", "abandoned", "razed", "disused", "no",
+                    "platform", "platform_edge", "service_station", "station");
         }
 
         @Override
         protected boolean ignoreUnconnectedEndNode(Node n) {
-            return n.hasTag(RAILWAY, "buffer_stop")
-                || n.isKeyTrue("noexit");
+            if (n.hasTag(RAILWAY, "buffer_stop") || n.isKeyTrue("noexit"))
+                return true;
+            // See #21038. Check also if next node to end node is a buffer stop.
+            Way parent = getWantedParentWay(n);
+            if (parent != null && parent.getNodesCount() > 1) {
+                Node next = null;
+                if (n == parent.firstNode())
+                    next = parent.getNode(1);
+                else if (n == parent.lastNode()) {
+                    next = parent.getNode(parent.getNodesCount() - 2);
+                }
+                if (next != null)
+                    return next.hasTag(RAILWAY, "buffer_stop");
+            }
+            return false;
+
         }
     }
 
@@ -238,6 +255,8 @@ public abstract class UnconnectedWays extends Test {
         middlenodes = new HashSet<>();
         othernodes = new HashSet<>();
         mindist = Config.getPref().getDouble(PREFIX + ".node_way_distance", 10.0);
+        if (this instanceof UnconnectedRailways)
+            mindist = Config.getPref().getDouble(PREFIX + ".node_way_distance_railway", 1.0);
         minmiddledist = Config.getPref().getDouble(PREFIX + ".way_way_distance", 0.0);
         ds = OsmDataManager.getInstance().getActiveDataSet();
         dsArea = ds == null ? null : ds.getDataSourceArea();
@@ -321,7 +340,7 @@ public abstract class UnconnectedWays extends Test {
      * @param endnode the node which is known to be an end node of the wanted way
      * @return the wanted way
      */
-    private Way getWantedParentWay(Node endnode) {
+    protected Way getWantedParentWay(Node endnode) {
         for (Way w : endnode.getParentWays()) {
             if (isWantedWay(w))
                 return w;
