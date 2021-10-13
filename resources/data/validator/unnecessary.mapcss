@@ -30,11 +30,12 @@ way:closed[shop    ][area?] {
   fixRemove: "{2.key}";
 }
 
-/* #14256, #15664 */
-area:closed[highway=rest_area][area?],
-area:closed[highway=services][area?],
-area:closed[aeroway=aerodrome][area?],
-area:closed[aeroway=helipad][area?] {
+/* #14256, #15664, #20681 */
+way:closed[highway=rest_area][area?],
+way:closed[highway=services][area?],
+way:closed[aeroway=aerodrome][area?],
+way:closed[waterway=riverbank][area?],
+way:closed[aeroway=helipad][area?] {
   throwWarning: tr("{0} is unnecessary for {1}", "{2.tag}", "{1.tag}");
   group: tr("unnecessary tag");
   fixRemove: "{2.key}";
