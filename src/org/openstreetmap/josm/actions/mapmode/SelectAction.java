@@ -837,27 +837,17 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             ed.toggleEnable("movedHiddenElements");
             showConfirmMoveDialog(ed);
         }
+
         final Command lastCommand = UndoRedoHandler.getInstance().getLastCommand();
         if (lastCommand == null) {
             Logging.warn("No command found in undo/redo history, skipping confirmOrUndoMovement");
             return;
         }
+
+        SelectAction.checkCommandForLargeDistance(lastCommand);
+
         final int moveCount = lastCommand.getParticipatingPrimitives().size();
-        if (lastCommand instanceof MoveCommand) {
-            final double moveDistance = ((MoveCommand) lastCommand).getDistance(n -> !n.isNew());
-            if (Double.isFinite(moveDistance) && moveDistance > Config.getPref().getInt("warn.move.maxdistance", 200)) {
-                final ConfirmMoveDialog ed = new ConfirmMoveDialog();
-                ed.setContent(trn(
-                        "You moved {0} element by a distance of {1}. "
-                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
-                        "You moved {0} elements by a distance of {1}. "
-                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
-                        moveCount, moveCount, SystemOfMeasurement.getSystemOfMeasurement().getDistText(moveDistance)));
-                ed.toggleEnable("movedLargeDistance");
-                showConfirmMoveDialog(ed);
-            }
-        }
-        int max = Config.getPref().getInt("warn.move.maxelements", 20);
+        final int max = Config.getPref().getInt("warn.move.maxelements", 20);
         if (moveCount > max) {
             final ConfirmMoveDialog ed = new ConfirmMoveDialog();
             ed.setContent(
@@ -874,7 +864,25 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         }
     }
 
-    private void showConfirmMoveDialog(ConfirmMoveDialog ed) {
+    static void checkCommandForLargeDistance(Command lastCommand) {
+        final int moveCount = lastCommand.getParticipatingPrimitives().size();
+        if (lastCommand instanceof MoveCommand) {
+            final double moveDistance = ((MoveCommand) lastCommand).getDistance(n -> !n.isNew());
+            if (Double.isFinite(moveDistance) && moveDistance > Config.getPref().getInt("warn.move.maxdistance", 200)) {
+                final ConfirmMoveDialog ed = new ConfirmMoveDialog();
+                ed.setContent(trn(
+                        "You moved {0} element by a distance of {1}. "
+                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
+                        "You moved {0} elements by a distance of {1}. "
+                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
+                        moveCount, moveCount, SystemOfMeasurement.getSystemOfMeasurement().getDistText(moveDistance)));
+                ed.toggleEnable("movedLargeDistance");
+                showConfirmMoveDialog(ed);
+            }
+        }
+    }
+
+    private static void showConfirmMoveDialog(ConfirmMoveDialog ed) {
         if (ed.showDialog().getValue() != 1) {
             UndoRedoHandler.getInstance().undo();
         }

@@ -511,6 +511,8 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
 
                 UndoRedoHandler.getInstance().add(
                         new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
+
+                SelectAction.checkCommandForLargeDistance(UndoRedoHandler.getInstance().getLastCommand());
             }
         }
 
