@@ -377,8 +377,10 @@ public interface Selector {
                 } else {
                     toIgnore = null;
                 }
-
+                boolean filterWithTested = e.toMatchForSurrounding != null && !e.toMatchForSurrounding.isEmpty();
                 for (IPrimitive p : primitives) {
+                    if (filterWithTested && !e.toMatchForSurrounding.contains(p))
+                        continue;
                     if (isPrimitiveUsable(p) && Objects.equals(layer, OsmUtils.getLayer(p))
                             && left.matches(new Environment(p).withParent(e.osm)) && isArea(p)
                             && (toIgnore == null || !toIgnore.contains(p))) {

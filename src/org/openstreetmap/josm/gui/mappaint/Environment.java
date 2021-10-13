@@ -88,6 +88,11 @@ public class Environment {
     public Map<IPrimitive, Area> mpAreaCache;
 
     /**
+     * Can be null, may contain primitives when surrounding objects of the primitives are tested
+     */
+    public Set<IPrimitive> toMatchForSurrounding;
+
+    /**
      * Creates a new uninitialized environment.
      */
     public Environment() {
@@ -140,6 +145,7 @@ public class Environment {
         this.intersections = other.intersections;
         this.crossingWaysMap = other.crossingWaysMap;
         this.mpAreaCache = other.mpAreaCache;
+        this.toMatchForSurrounding = other.toMatchForSurrounding;
     }
 
     /**

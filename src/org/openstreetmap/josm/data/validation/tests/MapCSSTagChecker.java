@@ -60,6 +60,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     private MapCSSStyleIndex indexData;
     private final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
     private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
+    private static final Set<IPrimitive> toMatchForSurrounding = new HashSet<>();
     static final boolean ALL_TESTS = true;
     static final boolean ONLY_SELECTED_TESTS = false;
 
@@ -160,8 +161,9 @@ public class MapCSSTagChecker extends Test.TagTest {
             indexData = createMapCSSTagCheckerIndex(checks, includeOtherSeverity, ALL_TESTS);
         }
 
-        Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         env.mpAreaCache = mpAreaCache;
+        env.toMatchForSurrounding = toMatchForSurrounding;
 
         Iterator<MapCSSRule> candidates = indexData.getRuleCandidates(p);
         while (candidates.hasNext()) {
@@ -219,6 +221,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         final List<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         env.mpAreaCache = mpAreaCache;
+        env.toMatchForSurrounding = toMatchForSurrounding;
         for (Set<MapCSSTagCheckerRule> schecks : checksCol) {
             for (MapCSSTagCheckerRule check : schecks) {
                 boolean ignoreError = Severity.OTHER == check.getSeverity() && !includeOtherSeverity;
@@ -368,6 +371,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         // always clear the cache to make sure that we catch changes in geometry
         mpAreaCache.clear();
         ruleToCheckMap.clear();
+        toMatchForSurrounding.clear();
         super.endTest();
     }
 
@@ -387,6 +391,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         mpAreaCache.clear();
+        toMatchForSurrounding.clear();
 
         Set<OsmPrimitive> surrounding = new HashSet<>();
         for (Entry<String, Set<MapCSSTagCheckerRule>> entry : checks.entrySet()) {
@@ -467,6 +472,8 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
         }
 
+        toMatchForSurrounding.clear();
+        toMatchForSurrounding.addAll(tested);
         for (OsmPrimitive p : surrounding) {
             if (tested.contains(p))
                 continue;
