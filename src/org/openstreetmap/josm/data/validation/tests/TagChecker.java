@@ -544,9 +544,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      *  else a set which might be empty.
      */
     private static Set<String> getPresetValues(String key) {
-        Set<String> res = TaggingPresets.getPresetValues(key);
-        if (!Utils.isEmpty(res))
-            return res;
+        if (TaggingPresets.isKeyInPresets(key)) {
+            return TaggingPresets.getPresetValues(key);
+        }
         if (additionalPresetsValueData.contains(key))
             return Collections.emptySet();
         // null means key is not known
@@ -558,9 +558,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * @param key key
      * @return {@code true} if the given key is in internal presets
      * @since 9023
+     * @deprecated Use {@link TaggingPresets#isKeyInPresets(String)} instead
      */
+    @Deprecated
     public static boolean isKeyInPresets(String key) {
-        return !Utils.isEmpty(TaggingPresets.getPresetValues(key));
+        return TaggingPresets.isKeyInPresets(key);
     }
 
     /**
@@ -882,7 +884,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (!checkValues || key == null || Utils.isEmpty(value))
             return;
         if (additionalPresetsValueData != null && !isTagIgnored(key, value)) {
-            if (!isKeyInPresets(key)) {
+            if (!TaggingPresets.isKeyInPresets(key)) {
                 spellCheckKey(withErrors, p, key);
             } else if (!isTagInPresets(key, value)) {
                 if (oftenUsedTags.contains(key, value)) {
@@ -906,7 +908,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (ignoreDataEquals.contains(prettifiedKey)) {
             fixedKey = prettifiedKey;
         } else {
-            fixedKey = isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
+            fixedKey = TaggingPresets.isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
         }
         if (fixedKey == null && ignoreDataTag.stream().anyMatch(a -> a.getKey().equals(prettifiedKey))) {
             fixedKey = prettifiedKey;

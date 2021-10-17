@@ -214,6 +214,16 @@ public final class TaggingPresets {
     }
 
     /**
+     * Determines if the given key is in the loaded presets.
+     * @param key key
+     * @return {@code true} if the given key in the loaded presets
+     * @since xxx
+     */
+    public static boolean isKeyInPresets(String key) {
+        return PRESET_TAG_CACHE.get(key) != null;
+    }
+
+    /**
      * Replies a new collection of all presets matching the parameters.
      *
      * @param t the preset types to include
