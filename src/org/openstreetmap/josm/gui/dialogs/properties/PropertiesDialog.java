@@ -99,7 +99,9 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetListener;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.AbstractTag2LinkPopupListener;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
@@ -110,6 +112,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -138,7 +141,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class PropertiesDialog extends ToggleDialog
-implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener {
+implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener, PreferenceChangedListener, TaggingPresetListener {
 
     /**
      * hook for roadsigns plugin to display a small button in the upper right corner of this dialog
@@ -238,13 +241,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Select objects for which to change tags.") + "</p></html>");
 
-    private final PreferenceChangedListener preferenceListener = e -> {
-                if (MainApplication.getLayerManager().getActiveData() != null) {
-                    // Re-load data when display preference change
-                    updateSelection();
-                }
-            };
-
     private final transient TaggingPresetHandler presetHandler = new TaggingPresetCommandHandler();
 
     private PopupMenuLauncher popupMenuLauncher;
@@ -307,7 +303,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         editHelper.loadTagsIfNeeded();
 
-        Config.getPref().addKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
+        Config.getPref().addKeyPreferenceChangeListener("display.discardable-keys", this);
+        TaggingPresets.addListener(this);
     }
 
     @Override
@@ -620,7 +617,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         destroyTaginfoNationalActions();
         membershipTable.removeMouseListener(popupMenuLauncher);
         super.destroy();
-        Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
+        Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", this);
+        TaggingPresets.removeListener(this);
         Container parent = pluginHook.getParent();
         if (parent != null) {
             parent.remove(pluginHook);
@@ -762,6 +760,35 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         if (PROP_AUTORESIZE_TAGS_TABLE.get()) {
             // resize table's columns to fit content
             TableHelper.computeColumnsWidth(tagTable);
+        }
+    }
+
+    /* ---------------------------------------------------------------------------------- */
+    /* PreferenceChangedListener                                                          */
+    /* ---------------------------------------------------------------------------------- */
+
+    /**
+     * Re-load data when display preference change
+     */
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        if (MainApplication.getLayerManager().getActiveData() != null) {
+            updateSelection();
+        }
+    }
+
+
+    /* ---------------------------------------------------------------------------------- */
+    /* TaggingPresetListener                                                              */
+    /* ---------------------------------------------------------------------------------- */
+
+    /**
+     * Updates the preset list when Presets preference changes.
+     */
+    @Override
+    public void taggingPresetsModified() {
+        if (MainApplication.getLayerManager().getActiveData() != null) {
+            updateSelection();
         }
     }
 
