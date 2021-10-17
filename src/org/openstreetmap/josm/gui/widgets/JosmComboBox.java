@@ -297,16 +297,14 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
      *
      * @return the list or null
      */
-    @SuppressWarnings("unchecked")
-    public JList<E> getList() {
+    @SuppressWarnings("rawtypes")
+    public JList getList() {
         Object popup = getUI().getAccessibleChild(this, 0);
         if (popup != null && popup instanceof javax.swing.plaf.basic.ComboPopup) {
             return ((javax.swing.plaf.basic.ComboPopup) popup).getList();
         }
         return null;
     }
-
-    // get the popup list
 
     /**
      * Draw the hint text for read-only comboboxes.
@@ -387,6 +385,7 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
 
         try {
             // First try an implementation-dependent method to get the exact number.
+            @SuppressWarnings("unchecked")
             JList<E> jList = getList();
 
             // Calculate the free space available on screen
