@@ -54,10 +54,17 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
      * {@link javax.swing.DefaultComboBoxModel}.
      *
      * @param element the element to get the index of
-     * @return an int representing the index position, where 0 is the first position
+     * @return the index of the first occurrence of the specified element in this model,
+     *         or -1 if this model does not contain the element
      */
     public int getIndexOf(E element) {
         return elements.indexOf(element);
+    }
+
+    protected void doAddElement(E element) {
+        if (element != null && (maxSize == -1 || getSize() < maxSize)) {
+            elements.add(element);
+        }
     }
 
     //
@@ -78,14 +85,22 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
      */
     @Override
     public void addElement(E element) {
-        if (element != null && (maxSize == -1 || getSize() < maxSize)) {
-            elements.add(element);
-        }
+        doAddElement(element);
+        fireIntervalAdded(this, elements.size() - 1, elements.size() - 1);
     }
 
     @Override
     public void removeElement(Object elem) {
-        elements.remove(elem);
+        int index = elements.indexOf(elem);
+        if (elem == selected) {
+            if (index == 0) {
+                setSelectedItem(getSize() == 1 ? null : getElementAt(index + 1));
+            } else {
+                setSelectedItem(getElementAt(index - 1));
+            }
+        }
+        if (elements.remove(elem))
+            fireIntervalRemoved(this, index, index);
     }
 
     @Override
@@ -114,6 +129,7 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
             removeElementAt(getSize() - 1);
         }
         elements.add(index, element);
+        fireIntervalAdded(this, index, index);
     }
 
     //
@@ -166,7 +182,11 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
      * @param elems The elements to add.
      */
     public void addAllElements(Collection<E> elems) {
-        elems.forEach(e -> addElement(e));
+        int index0 = elements.size();
+        elems.forEach(e -> doAddElement(e));
+        int index1 = elements.size() - 1;
+        if (index0 <= index1)
+            fireIntervalAdded(this, index0, index1);
     }
 
     /**
@@ -177,7 +197,11 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
      *               {@code String}.
      */
     public void addAllElements(Collection<String> strings, Function<String, E> buildE) {
-        strings.forEach(s -> addElement(buildE.apply(s)));
+        int index0 = elements.size();
+        strings.forEach(s -> doAddElement(buildE.apply(s)));
+        int index1 = elements.size() - 1;
+        if (index0 <= index1)
+            fireIntervalAdded(this, index0, index1);
     }
 
     /**
@@ -204,11 +228,10 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
      */
     public void removeAllElements() {
         if (!elements.isEmpty()) {
-            int firstIndex = 0;
             int lastIndex = elements.size() - 1;
             elements.clear();
             selected = null;
-            fireIntervalRemoved(this, firstIndex, lastIndex);
+            fireIntervalRemoved(this, 0, lastIndex);
         } else {
             selected = null;
         }

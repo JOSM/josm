@@ -11,22 +11,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Collections;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
+import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
+import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -44,30 +46,39 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *   whether the changeset should be closed after the next upload</li>
  * </ul>
  */
-public class ChangesetManagementPanel extends JPanel implements ListDataListener {
+public class ChangesetManagementPanel extends JPanel implements ItemListener, ChangesetCacheListener {
     static final String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
     static final String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
 
-    private JRadioButton rbUseNew;
-    private JRadioButton rbExisting;
     private JosmComboBox<Changeset> cbOpenChangesets;
+    private JosmComboBoxModel<Changeset> model;
     private JCheckBox cbCloseAfterUpload;
-    private OpenChangesetComboBoxModel model;
-
-    /** the changeset comment model */
-    private final transient UploadDialogModel uploadDialogModel;
+    private JButton btnClose;
 
     /**
      * Constructs a new {@code ChangesetManagementPanel}.
      *
-     * @param uploadDialogModel The tag editor model.
-     *
-     * @since 18173 (signature)
+     * @since 18283 (signature)
      */
-    public ChangesetManagementPanel(UploadDialogModel uploadDialogModel) {
-        this.uploadDialogModel = uploadDialogModel;
+    public ChangesetManagementPanel() {
         build();
-        refreshGUI();
+    }
+
+    /**
+     * Initializes this life cycle of the panel.
+     *
+     * @since 18283
+     */
+    public void initLifeCycle() {
+        refreshChangesets();
+    }
+
+    /**
+     * Returns the model in use.
+     * @return the model
+     */
+    public JosmComboBoxModel<Changeset> getModel() {
+        return model;
     }
 
     /**
@@ -75,126 +86,89 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
      */
     protected void build() {
         setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createTitledBorder(tr("Please select a changeset:")));
+
         GridBagConstraints gc = new GridBagConstraints();
-        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-
-        ButtonGroup bgUseNewOrExisting = new ButtonGroup();
-
-        gc.gridwidth = 4;
         gc.gridx = 0;
         gc.gridy = 0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(0, 0, 5, 0);
-        add(new JMultilineLabel(
-                tr("Please decide what changeset the data is uploaded to and whether to close the changeset after the next upload.")), gc);
-
-        gc.gridwidth = 4;
-        gc.gridy = 1;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(0, 0, 0, 0);
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        rbUseNew = new JRadioButton(tr("Upload to a new changeset"));
-        rbUseNew.setToolTipText(tr("Open a new changeset and use it in the next upload"));
-        bgUseNewOrExisting.add(rbUseNew);
-        add(rbUseNew, gc);
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.insets = new Insets(3, 3, 3, 3);
 
-        gc.gridx = 0;
-        gc.gridy = 2;
-        gc.gridwidth = 1;
-        gc.weightx = 0.0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        rbExisting = new JRadioButton(tr("Upload to an existing changeset"));
-        rbExisting.setToolTipText(tr("Upload data to an already existing and open changeset"));
-        bgUseNewOrExisting.add(rbExisting);
-        add(rbExisting, gc);
+        gc.gridwidth = 3;
+        add(new JMultilineLabel(tr(
+            "Please select which changeset the data shall be uploaded to and whether to close that changeset after the next upload."
+            )), gc);
 
-        gc.gridx = 1;
-        gc.gridy = 2;
         gc.gridwidth = 1;
-        gc.weightx = 1.0;
-        model = new OpenChangesetComboBoxModel();
-        ChangesetCache.getInstance().addChangesetCacheListener(model);
+        gc.gridy++;
+        model = new JosmComboBoxModel<>();
         cbOpenChangesets = new JosmComboBox<>(model);
-        cbOpenChangesets.setToolTipText(tr("Select an open changeset"));
+        cbOpenChangesets.setToolTipText(tr("Select a changeset"));
         cbOpenChangesets.setRenderer(new ChangesetCellRenderer());
-        cbOpenChangesets.addItemListener(new ChangesetListItemStateListener());
         Dimension d = cbOpenChangesets.getPreferredSize();
         d.width = 200;
         cbOpenChangesets.setPreferredSize(d);
         d.width = 100;
         cbOpenChangesets.setMinimumSize(d);
-        model.addListDataListener(this);
         add(cbOpenChangesets, gc);
+        int h = cbOpenChangesets.getPreferredSize().height;
+        Dimension prefSize = new Dimension(h, h);
 
-        gc.gridx = 2;
-        gc.gridy = 2;
-        gc.weightx = 0.0;
-        gc.gridwidth = 1;
+        gc.gridx++;
         gc.weightx = 0.0;
         JButton btnRefresh = new JButton(new RefreshAction());
-        btnRefresh.setMargin(new Insets(0, 0, 0, 0));
+        btnRefresh.setPreferredSize(prefSize);
+        btnRefresh.setMinimumSize(prefSize);
         add(btnRefresh, gc);
 
-        gc.gridx = 3;
-        gc.gridy = 2;
-        gc.gridwidth = 1;
+        gc.gridx++;
         CloseChangesetAction closeChangesetAction = new CloseChangesetAction();
-        JButton btnClose = new JButton(closeChangesetAction);
-        btnClose.setMargin(new Insets(0, 0, 0, 0));
-        cbOpenChangesets.addItemListener(closeChangesetAction);
-        rbExisting.addItemListener(closeChangesetAction);
+        btnClose = new JButton(closeChangesetAction);
+        btnClose.setPreferredSize(prefSize);
+        btnClose.setMinimumSize(prefSize);
         add(btnClose, gc);
 
+        gc.gridy++;
         gc.gridx = 0;
-        gc.gridy = 3;
-        gc.gridwidth = 4;
+        gc.gridwidth = 3;
         gc.weightx = 1.0;
         cbCloseAfterUpload = new JCheckBox(tr("Close changeset after upload"));
         cbCloseAfterUpload.setToolTipText(tr("Select to close the changeset after the next upload"));
         add(cbCloseAfterUpload, gc);
+
+        cbOpenChangesets.addItemListener(this);
+        cbOpenChangesets.addItemListener(closeChangesetAction);
+
         cbCloseAfterUpload.setSelected(Config.getPref().getBoolean("upload.changeset.close", true));
         cbCloseAfterUpload.addItemListener(new CloseAfterUploadItemStateListener());
 
-        rbUseNew.getModel().addItemListener(new RadioButtonHandler());
-        rbExisting.getModel().addItemListener(new RadioButtonHandler());
-    }
-
-    protected void refreshGUI() {
-        rbExisting.setEnabled(model.getSize() > 0);
-        if (model.getSize() == 0 && !rbUseNew.isSelected()) {
-            rbUseNew.setSelected(true);
-        }
-        cbOpenChangesets.setEnabled(model.getSize() > 0 && rbExisting.isSelected());
+        ChangesetCache.getInstance().addChangesetCacheListener(this);
     }
 
     /**
      * Sets the changeset to be used in the next upload
+     * <p>
+     * Note: The changeset may be a new changeset that was automatically opened because the old
+     * changeset overflowed.  In that case it was already added to the changeset cache and the
+     * combobox.
      *
      * @param cs the changeset
+     * @see UploadPrimitivesTask#handleChangesetFullResponse
      */
     public void setSelectedChangesetForNextUpload(Changeset cs) {
-        int idx = model.getIndexOf(cs);
-        if (idx >= 0) {
-            rbExisting.setSelected(true);
-            model.setSelectedItem(cs);
-        }
+        model.setSelectedItem(cs);
     }
 
     /**
-     * Replies the currently selected changeset. null, if no changeset is
-     * selected or if the user has chosen to use a new changeset.
+     * Returns the currently selected changeset or an empty new one.
      *
-     * @return the currently selected changeset. null, if no changeset is
-     * selected.
+     * @return the currently selected changeset
      */
     public Changeset getSelectedChangeset() {
-        if (rbUseNew.isSelected())
-            return null;
-        return (Changeset) cbOpenChangesets.getSelectedItem();
+        return Optional.ofNullable((Changeset) model.getSelectedItem()).orElse(new Changeset());
     }
 
     /**
@@ -205,36 +179,12 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         return cbCloseAfterUpload.isSelected();
     }
 
-    /* ---------------------------------------------------------------------------- */
-    /* Interface ListDataListener                                                   */
-    /* ---------------------------------------------------------------------------- */
-    @Override
-    public void contentsChanged(ListDataEvent e) {
-        refreshGUI();
-    }
-
-    @Override
-    public void intervalAdded(ListDataEvent e) {
-        refreshGUI();
-    }
-
-    @Override
-    public void intervalRemoved(ListDataEvent e) {
-        refreshGUI();
-    }
-
     /**
      * Listens to changes in the selected changeset and fires property change events.
      */
-    class ChangesetListItemStateListener implements ItemListener {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            Changeset cs = (Changeset) cbOpenChangesets.getSelectedItem();
-            if (cs == null) return;
-            if (rbExisting.isSelected()) {
-                firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
-            }
-        }
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        firePropertyChange(SELECTED_CHANGESET_PROP, null, model.getSelectedItem());
     }
 
     /**
@@ -255,28 +205,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
                 Config.getPref().putBoolean("upload.changeset.close", false);
                 break;
             default: // Do nothing
-            }
-        }
-    }
-
-    /**
-     * Listens to changes in the two radio buttons rbUseNew and rbUseExisting.
-     */
-    class RadioButtonHandler implements ItemListener {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            if (rbUseNew.isSelected()) {
-                cbOpenChangesets.setEnabled(false);
-                firePropertyChange(SELECTED_CHANGESET_PROP, null, null);
-            } else if (rbExisting.isSelected()) {
-                cbOpenChangesets.setEnabled(true);
-                if (cbOpenChangesets.getSelectedItem() == null) {
-                    model.selectFirstChangeset();
-                }
-                Changeset cs = (Changeset) cbOpenChangesets.getSelectedItem();
-                if (cs == null) return;
-                uploadDialogModel.putAll(cs.getKeys());
-                firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
             }
         }
     }
@@ -314,16 +242,41 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         }
 
         protected void refreshEnabledState() {
-            setEnabled(
-                    cbOpenChangesets.getModel().getSize() > 0
-                    && cbOpenChangesets.getSelectedItem() != null
-                    && rbExisting.isSelected()
-            );
+            setEnabled(!getSelectedChangeset().isNew());
         }
 
         @Override
         public void itemStateChanged(ItemEvent e) {
             refreshEnabledState();
         }
+    }
+
+    /**
+     * Refreshes the changesets combobox form the server.
+     * <p>
+     * Note: This calls into {@link #refreshCombo} through {@link #changesetCacheUpdated}
+     *
+     * @see ChangesetCache#refreshChangesetsFromServer
+     */
+    protected void refreshChangesets() {
+        try {
+            ChangesetCache.getInstance().refreshChangesetsFromServer();
+        } catch (OsmTransferException e) {
+            return;
+        }
+    }
+
+    private void refreshCombo() {
+        Changeset selected = (Changeset) cbOpenChangesets.getSelectedItem();
+        model.removeAllElements();
+        model.addElement(new Changeset());
+        model.addAllElements(ChangesetCache.getInstance().getOpenChangesetsForCurrentUser());
+        cbOpenChangesets.setSelectedItem(selected != null && model.getIndexOf(selected) != -1 ? selected : model.getElementAt(0));
+    }
+
+    @Override
+    public void changesetCacheUpdated(ChangesetCacheEvent event) {
+        // This listener might have been called by a background task.
+        SwingUtilities.invokeLater(() -> refreshCombo());
     }
 }

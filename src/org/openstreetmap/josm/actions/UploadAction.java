@@ -35,6 +35,7 @@ import org.openstreetmap.josm.io.ChangesetUpdater;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -239,8 +240,8 @@ public class UploadAction extends AbstractUploadAction {
         ChangesetUpdater.check();
 
         final UploadDialog dialog = UploadDialog.getUploadDialog();
-        dialog.initLifeCycle(layer.getDataSet());
         dialog.setUploadedPrimitives(apiData);
+        dialog.initLifeCycle(layer.getDataSet());
         dialog.setVisible(true);
         dialog.rememberUserInput();
         if (dialog.isCanceled()) {
@@ -266,6 +267,9 @@ public class UploadAction extends AbstractUploadAction {
         }
 
         UploadStrategySpecification uploadStrategySpecification = dialog.getUploadStrategySpecification();
+        Logging.info("Starting upload with tags {0}", changesetTags);
+        Logging.info(uploadStrategySpecification.toString());
+        Logging.info(cs.toString());
         dialog.clean();
 
         if (Config.getPref().getBoolean(IS_ASYNC_UPLOAD_ENABLED, true)) {

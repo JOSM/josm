@@ -317,7 +317,7 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
                 .ifPresent(value -> {
                 throw new IllegalArgumentException("Changeset tag value is too long: "+value);
         });
-        this.tags = keys;
+        this.tags = new HashMap<>(keys);
     }
 
     /**

@@ -23,6 +23,10 @@ import org.openstreetmap.josm.tools.Utils;
 public class UploadDialogModel extends TagEditorModel {
     /** the "created_by" changeset OSM key */
     private static final String CREATED_BY = "created_by";
+    /** the "comment" changeset OSM key */
+    public static final String COMMENT = "comment";
+    /** the "source" changeset OSM key */
+    public static final String SOURCE = "source";
     /** the user-agent */
     private final String agent = Version.getInstance().getAgentString(false);
     /** whether to extract hashtags from comment */
@@ -38,7 +42,7 @@ public class UploadDialogModel extends TagEditorModel {
                 locked = true;
                 // add "hashtags" if any
                 if (hashtags) {
-                    put("hashtags", findHashTags(getValue("comment")));
+                    put("hashtags", findHashTags(getValue(COMMENT)));
                 }
                 // add/update "created_by"
                 final String createdBy = getValue(CREATED_BY);
@@ -115,9 +119,11 @@ public class UploadDialogModel extends TagEditorModel {
         List<TagModel> l = tags.stream().filter(tm -> tm.getName().equals(key)).collect(Collectors.toList());
         if (!l.isEmpty()) {
             if (value != null)
-                l.get(0).setValue(value);
+                for (TagModel tm : l) {
+                    tm.setValue(value);
+                }
             else
-                tags.remove(l.get(0));
+                tags.removeIf(tm -> tm.getName().equals(key));
         } else if (value != null) {
             tags.add(new TagModel(key, value));
         }
@@ -162,7 +168,17 @@ public class UploadDialogModel extends TagEditorModel {
     public void putAll(DataSet dataSet) {
         if (dataSet != null) {
             putAll(dataSet.getChangeSetTags());
-            put("comment", addHashTagsFromDataSet(getValue("comment"), dataSet));
+            put(COMMENT, addHashTagsFromDataSet(getValue(COMMENT), dataSet));
         }
+    }
+
+    /**
+     * Determines if the key is "comment" or "source".
+     * @param key changeset key
+     * @return {@code true} if the key is "comment" or "source"
+     * @since 18283
+     */
+    public static boolean isCommentOrSource(String key) {
+        return COMMENT.equals(key) || SOURCE.equals(key);
     }
 }

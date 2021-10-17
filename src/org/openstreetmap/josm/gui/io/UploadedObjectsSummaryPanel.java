@@ -28,11 +28,6 @@ import org.openstreetmap.josm.gui.PrimitiveRenderer;
  * @since 2599
  */
 public class UploadedObjectsSummaryPanel extends JPanel {
-    /**
-     * The swing property name for the number of objects to upload
-     */
-    public static final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
-
     /** the list with the added primitives */
     private PrimitiveList lstAdd;
     private JLabel lblAdd;
@@ -145,8 +140,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
             gcList.gridy = y;
             add(spDelete, gcList);
         }
-
-        firePropertyChange(NUM_OBJECTS_TO_UPLOAD_PROP, 0, getNumObjectsToUpload());
+        revalidate();
     }
 
     /**

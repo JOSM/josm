@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * TagEditorModel is a table model to use with {@link TagEditorPanel}.
@@ -53,7 +54,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     private transient OsmPrimitive primitive;
 
-    private EndEditListener endEditListener;
+    private transient EndEditListener endEditListener;
 
     /**
      * Creates a new tag editor model. Internally allocates two selection models
@@ -278,8 +279,6 @@ public class TagEditorModel extends AbstractTableModel {
      * @param tagIndices a list of tag indices
      */
     public void deleteTagNames(int... tagIndices) {
-        if (tags == null)
-            return;
         commitPendingEdit();
         for (int tagIdx : tagIndices) {
             TagModel tag = tags.get(tagIdx);
@@ -297,8 +296,6 @@ public class TagEditorModel extends AbstractTableModel {
      * @param tagIndices the lit of tag indices
      */
     public void deleteTagValues(int... tagIndices) {
-        if (tags == null)
-            return;
         commitPendingEdit();
         for (int tagIdx : tagIndices) {
             TagModel tag = tags.get(tagIdx);
@@ -332,8 +329,6 @@ public class TagEditorModel extends AbstractTableModel {
      * @param tagIndices the list of tag indices
      */
     public void deleteTags(int... tagIndices) {
-        if (tags == null)
-            return;
         commitPendingEdit();
         List<TagModel> toDelete = Arrays.stream(tagIndices).mapToObj(tags::get).filter(Objects::nonNull).collect(Collectors.toList());
         toDelete.forEach(tags::remove);
@@ -441,12 +436,19 @@ public class TagEditorModel extends AbstractTableModel {
             if (tag.getValueCount() > 1) {
                 continue;
             }
+            boolean isKeyEmpty = Utils.isStripEmpty(tag.getName());
+            boolean isValueEmpty = Utils.isStripEmpty(tag.getValue());
 
-            // tag name holds an empty key. Don't apply it to the selection.
-            if (!keepEmpty && (tag.getName().trim().isEmpty() || tag.getValue().trim().isEmpty())) {
+            // just the empty line at the bottom of the JTable
+            if (isKeyEmpty && isValueEmpty) {
                 continue;
             }
-            result.put(tag.getName().trim(), tag.getValue().trim());
+
+            // tag name holds an empty key. Don't apply it to the selection.
+            if (!keepEmpty && (isKeyEmpty || isValueEmpty)) {
+                continue;
+            }
+            result.put(Utils.strip(tag.getName()), Utils.strip(tag.getValue()));
         }
         return result;
     }
@@ -496,7 +498,7 @@ public class TagEditorModel extends AbstractTableModel {
 
         // tag name holds an empty key. Don't apply it to the selection.
         //
-        if (tag.getName().trim().isEmpty())
+        if (Utils.isStripEmpty(tag.getName()))
             return null;
 
         return new ChangePropertyCommand(primitives, tag.getName(), tag.getValue());
@@ -528,7 +530,7 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public List<String> getKeys() {
         return tags.stream()
-                .filter(tag -> !tag.getName().trim().isEmpty())
+                .filter(tag -> !Utils.isStripEmpty(tag.getName()))
                 .map(TagModel::getName)
                 .collect(Collectors.toList());
     }

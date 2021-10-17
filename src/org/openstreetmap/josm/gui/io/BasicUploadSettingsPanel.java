@@ -102,6 +102,21 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         build();
     }
 
+    protected void build() {
+        setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        GBC gbc = GBC.eop().fill(GBC.HORIZONTAL);
+        add(buildUploadCommentPanel(), gbc);
+        add(buildUploadSourcePanel(), gbc);
+        add(pnlUploadParameterSummary, gbc);
+        if (Config.getPref().getBoolean("upload.show.review.request", true)) {
+            add(cbRequestReview, gbc);
+            cbRequestReview.addItemListener(this);
+        }
+        add(areaValidatorFeedback, gbc);
+        add(new JPanel(), GBC.std().fill(GBC.BOTH));
+    }
+
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createTitledBorder(tr("Provide a brief comment for the changes you are uploading:")));
@@ -113,8 +128,9 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         editor.addKeyListener(this);
         editor.addFocusListener(this);
         editor.addActionListener(this);
-        pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
-        pnl.add(uploadCommentFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
+        GBC gbc = GBC.eol().insets(3).fill(GBC.HORIZONTAL);
+        pnl.add(hcbUploadComment, gbc);
+        pnl.add(uploadCommentFeedback, gbc);
         return pnl;
     }
 
@@ -141,9 +157,6 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         obtainSource.add(obtainSourceAutomatically, GBC.std().anchor(GBC.WEST));
         obtainSource.add(obtainSourceOnce, GBC.std().anchor(GBC.WEST));
         obtainSource.add(new JLabel(), GBC.eol().fill(GBC.HORIZONTAL));
-        if (Config.getPref().getBoolean("upload.show.automatic.source", true)) {
-            pnl.add(obtainSource, GBC.eol().insets(0, 0, 10, 3).fill(GBC.HORIZONTAL));
-        }
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
         hcbUploadSource.getEditorComponent().setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
@@ -152,16 +165,20 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         editor.addKeyListener(this);
         editor.addFocusListener(this);
         editor.addActionListener(this);
-        pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
-        pnl.add(hcbUploadSourceFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
-
+        GBC gbc = GBC.eol().insets(3).fill(GBC.HORIZONTAL);
+        if (Config.getPref().getBoolean("upload.show.automatic.source", true)) {
+            pnl.add(obtainSource, gbc);
+        }
+        pnl.add(hcbUploadSource, gbc);
+        pnl.add(hcbUploadSourceFeedback, gbc);
         return pnl;
     }
 
     /**
      * Initializes this life cycle of the panel.
      *
-     * Adds any changeset tags to the map.
+     * Adds the comment and source tags from history, and/or obtains the source from the layer if
+     * the user said so.
      *
      * @param map Map where tags are added to.
      * @since 18173
@@ -178,6 +195,9 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         hcbUploadComment.discardAllUndoableEdits();
         hcbUploadSource.getModel().prefs().load(SOURCE_HISTORY_KEY, getDefaultSources());
         hcbUploadSource.discardAllUndoableEdits();
+        hcbUploadComment.getEditorComponent().requestFocusInWindow();
+        uploadCommentValidator.validate();
+        uploadSourceValidator.validate();
     }
 
     /**
@@ -234,21 +254,6 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
         return Arrays.asList(areaValidator, uploadCommentValidator, uploadSourceValidator);
     }
 
-    protected void build() {
-        setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        GBC gbc = GBC.eol().insets(0, 0, 0, 20).fill(GBC.HORIZONTAL);
-        add(buildUploadCommentPanel(), gbc);
-        add(buildUploadSourcePanel(), gbc);
-        add(pnlUploadParameterSummary, gbc);
-        if (Config.getPref().getBoolean("upload.show.review.request", true)) {
-            add(cbRequestReview, gbc);
-            cbRequestReview.addItemListener(this);
-        }
-        add(areaValidatorFeedback, gbc);
-        add(new JPanel(), GBC.std().fill(GBC.BOTH));
-    }
-
     /**
      * Remembers the user input in the preference settings
      */
@@ -265,15 +270,6 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
 
         // store current value of obtaining source automatically
         Config.getPref().putBoolean("upload.source.obtainautomatically", obtainSourceAutomatically.isSelected());
-    }
-
-    /**
-     * Initializes the panel for user input
-     */
-    public void startUserInput() {
-        hcbUploadComment.getEditorComponent().requestFocusInWindow();
-        uploadCommentValidator.validate();
-        uploadSourceValidator.validate();
     }
 
     /**

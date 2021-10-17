@@ -12,9 +12,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.OsmServerChangesetReader;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -252,6 +256,36 @@ public final class ChangesetCache implements PreferenceChangedListener {
             return new ArrayList<>(SubclassFilteredCollection.filter(getOpenChangesets(),
                     object -> UserIdentityManager.getInstance().isCurrentUser(object.getUser())));
         }
+    }
+
+    /**
+     * Refreshes the changesets from the server.
+     * <p>
+     * The server automatically closes changesets after a timeout.  We don't get notified of this
+     * fact when it happens.  This method requests a fresh list from the server and updates the
+     * local list.  Calling this method reduces (but does not eliminate) the probability of
+     * attempting an upload to an already closed changeset.
+     *
+     * @throws OsmTransferException on server error
+     */
+    public void refreshChangesetsFromServer() throws OsmTransferException {
+        OsmServerChangesetReader reader;
+        synchronized (this) {
+            reader = new OsmServerChangesetReader();
+        }
+        List<Changeset> server = reader.queryChangesets(ChangesetQuery.forCurrentUser().beingOpen(true), null);
+        Logging.info("{0} open changesets on server", server.size());
+
+        DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
+        // flag timed out changesets
+        for (Changeset cs : getOpenChangesetsForCurrentUser()) {
+            if (!server.contains(cs))
+                remove(cs.getId(), e);
+        }
+        for (Changeset cs: server) {
+            update(cs, e);
+        }
+        fireChangesetCacheEvent(e);
     }
 
     /* ------------------------------------------------------------------------- */

@@ -17,6 +17,6 @@ class ChangesetManagementPanelTest {
      */
     @Test
     void testChangesetManagementPanel() {
-        assertNotNull(new ChangesetManagementPanel(new UploadDialogModel()));
+        assertNotNull(new ChangesetManagementPanel());
     }
 }

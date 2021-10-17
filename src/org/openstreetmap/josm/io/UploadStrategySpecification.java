@@ -150,6 +150,12 @@ public class UploadStrategySpecification {
     }
 
     @Override
+    public String toString() {
+        return String.format("Strategy: %s, ChunkSize: %d, Policy: %s, Close after: %b",
+            strategy.toString(), chunkSize, policy == null ? "none" : policy.toString(), closeChangesetAfterUpload);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(strategy, chunkSize, policy, closeChangesetAfterUpload);
     }

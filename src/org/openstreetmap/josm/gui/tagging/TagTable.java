@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JosmTable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the tabular editor component for OSM tags.
@@ -88,7 +89,7 @@ public class TagTable extends JosmTable implements EndEditListener {
             } else if (col == 1 && row == getRowCount()-1) {
                 // we are at the end. Append an empty row and move the focus to its second column
                 String key = ((TagModel) model.getValueAt(row, 0)).getName();
-                if (!key.trim().isEmpty()) {
+                if (!Utils.isStripEmpty(key)) {
                     model.appendNewTag();
                     col = 0;
                     row++;
@@ -242,7 +243,7 @@ public class TagTable extends JosmTable implements EndEditListener {
                 cEditor.stopCellEditing();
             }
             final int rowIdx = model.getRowCount()-1;
-            if (rowIdx < 0 || !((TagModel) model.getValueAt(rowIdx, 0)).getName().trim().isEmpty()) {
+            if (rowIdx < 0 || !Utils.isStripEmpty(((TagModel) model.getValueAt(rowIdx, 0)).getName())) {
                 model.appendNewTag();
             }
             requestFocusInCell(model.getRowCount()-1, 0);

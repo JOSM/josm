@@ -387,6 +387,9 @@ public class OsmApi extends OsmConnection {
                     ((OsmPrimitive) osm).getDataSet().lock();
                 }
             }
+        } catch (ChangesetClosedException e) {
+            e.setSource(ChangesetClosedException.Source.UPDATE_CHANGESET);
+            throw e;
         } catch (NumberFormatException e) {
             throw new OsmTransferException(errHandler.apply(ret), e);
         }
@@ -528,8 +531,11 @@ public class OsmApi extends OsmConnection {
             initialize(monitor);
             // send "\r\n" instead of empty string, so we don't send zero payload - workaround bugs in proxy software
             sendPutRequest("changeset/" + changeset.getId() + "/close", "\r\n", monitor);
-            changeset.setOpen(false);
+        } catch (ChangesetClosedException e) {
+            e.setSource(ChangesetClosedException.Source.CLOSE_CHANGESET);
+            throw e;
         } finally {
+            changeset.setOpen(false);
             monitor.finishTask();
         }
     }
@@ -564,9 +570,8 @@ public class OsmApi extends OsmConnection {
     public Collection<OsmPrimitive> uploadDiff(Collection<? extends OsmPrimitive> list, ProgressMonitor monitor)
             throws OsmTransferException {
         try {
+            ensureValidChangeset();
             monitor.beginTask("", list.size() * 2);
-            if (changeset == null)
-                throw new OsmTransferException(tr("No changeset present for diff upload."));
 
             initialize(monitor);
 
@@ -593,7 +598,8 @@ public class OsmApi extends OsmConnection {
                     getChangeset(),
                     monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)
             );
-        } catch (OsmTransferException e) {
+        } catch (ChangesetClosedException e) {
+            e.setSource(ChangesetClosedException.Source.UPLOAD_DATA);
             throw e;
         } catch (XmlParsingException e) {
             throw new OsmTransferException(e);
@@ -751,7 +757,7 @@ public class OsmApi extends OsmConnection {
                     throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
                 case HttpURLConnection.HTTP_CONFLICT:
                     if (ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
-                        throw new ChangesetClosedException(errorBody, ChangesetClosedException.Source.UPLOAD_DATA);
+                        throw new ChangesetClosedException(errorBody, ChangesetClosedException.Source.UNSPECIFIED);
                     else
                         throw new OsmApiException(retCode, errorHeader, errorBody);
                 case HttpURLConnection.HTTP_UNAUTHORIZED:

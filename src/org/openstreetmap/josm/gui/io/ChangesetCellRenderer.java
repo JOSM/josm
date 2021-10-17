@@ -62,19 +62,24 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
         }
         if (cs != null) {
             setIcon(icon);
-            StringBuilder sb = new StringBuilder();
-            String comment = cs.getComment();
-            if (!comment.isEmpty()) {
-                sb.append(cs.getId()).append(" - ").append(comment);
-            } else if (cs.get("name") != null) {
-                sb.append(cs.getId()).append(" - ").append(cs.get("name"));
+            if (cs.getId() == 0) {
+                setText("New changeset");
             } else {
-                sb.append(tr("Changeset {0}", cs.getId()));
+                StringBuilder sb = new StringBuilder();
+                String comment = cs.getComment();
+                if (!comment.isEmpty()) {
+                    sb.append(cs.getId()).append(" - ").append(comment);
+                } else if (cs.get("name") != null) {
+                    sb.append(cs.getId()).append(" - ").append(cs.get("name"));
+                } else {
+                    sb.append(tr("Changeset {0}", cs.getId()));
+                }
+                setText(sb.toString());
             }
-            setText(sb.toString());
             setToolTipText(buildToolTipText(cs));
         } else {
-            setText(tr("No open changesets"));
+            setIcon(null);
+            setText("");
         }
         return this;
     }

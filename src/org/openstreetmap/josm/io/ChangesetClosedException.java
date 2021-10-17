@@ -30,6 +30,9 @@ public class ChangesetClosedException extends OsmTransferException {
      */
     public static final String ERROR_HEADER_PATTERN = "The changeset (\\d+) was closed at (.*)";
 
+    /**
+     * Identifies when the changeset exception occurred.
+     */
     public enum Source {
         /**
          * The exception was thrown when a changeset was updated. This most likely means
@@ -42,6 +45,12 @@ public class ChangesetClosedException extends OsmTransferException {
          * exceeded.
          */
         UPLOAD_DATA,
+        /**
+         * The exception was thrown when we tried to close a changeset.  Probably the changeset
+         * already timed out on the server.
+         * @since 18283
+         */
+        CLOSE_CHANGESET,
         /**
          * Unspecified source
          */
@@ -162,6 +171,11 @@ public class ChangesetClosedException extends OsmTransferException {
         return source;
     }
 
+    /**
+     * Sets the source where the exception was thrown
+     *
+     * @param source the source where the exception was thrown
+     */
     public void setSource(Source source) {
         this.source = source == null ? Source.UNSPECIFIED : source;
     }

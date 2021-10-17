@@ -53,7 +53,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         if (selectedChangeset == null || selectedChangeset.isNew()) {
             return tr("Objects are uploaded to a <strong>new changeset</strong>.");
         } else {
-            return tr("Objects are uploaded to the <strong>open changeset</strong> {0} with upload comment ''{1}''.",
+            return tr("Objects are uploaded to the <strong>open changeset</strong> {0} ''{1}''.",
                     selectedChangeset.getId(),
                     selectedChangeset.getComment()
             );
@@ -198,9 +198,6 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
             updateSummary();
         } else if (evt.getPropertyName().equals(ChangesetManagementPanel.CLOSE_CHANGESET_AFTER_UPLOAD)) {
             closeChangesetAfterNextUpload = (Boolean) evt.getNewValue();
-            updateSummary();
-        } else if (evt.getPropertyName().equals(UploadedObjectsSummaryPanel.NUM_OBJECTS_TO_UPLOAD_PROP)) {
-            numObjects = (Integer) evt.getNewValue();
             updateSummary();
         } else if (evt.getPropertyName().equals(UploadStrategySelectionPanel.UPLOAD_STRATEGY_SPECIFICATION_PROP)) {
             this.spec = (UploadStrategySpecification) evt.getNewValue();
