@@ -545,7 +545,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      */
     private static Set<String> getPresetValues(String key) {
         Set<String> res = TaggingPresets.getPresetValues(key);
-        if (res != null)
+        if (!Utils.isEmpty(res))
             return res;
         if (additionalPresetsValueData.contains(key))
             return Collections.emptySet();
@@ -560,7 +560,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * @since 9023
      */
     public static boolean isKeyInPresets(String key) {
-        return TaggingPresets.getPresetValues(key) != null;
+        return !Utils.isEmpty(TaggingPresets.getPresetValues(key));
     }
 
     /**

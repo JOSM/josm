@@ -204,13 +204,13 @@ public final class TaggingPresets {
     /**
      * Return set of values for a key in the tagging presets
      * @param key the key
-     * @return set of values for a key in the tagging presets or null if none is found
+     * @return set of values for a key in the tagging presets
      */
     public static Set<String> getPresetValues(String key) {
         Set<String> values = PRESET_TAG_CACHE.get(key);
         if (values != null)
             return Collections.unmodifiableSet(values);
-        return null;
+        return Collections.emptySet();
     }
 
     /**
