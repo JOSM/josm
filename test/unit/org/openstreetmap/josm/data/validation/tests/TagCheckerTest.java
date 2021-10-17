@@ -390,4 +390,15 @@ class TagCheckerTest {
     void testTicket20754() {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Yuułuʔiłʔatḥ Lands"));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/21348">Bug #21348</a>.
+     * Key ref is in presets but without any value.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    void testTicket21348() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node power=tower ref=12"));
+        assertEquals(0, errors.size());
+    }
 }
