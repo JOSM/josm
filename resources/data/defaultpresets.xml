@@ -91,6 +91,7 @@
         <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
         <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,25" length="5" values_sort="false" />
         <reference ref="highway_yesno" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
     </chunk>
     <chunk id="railway_service_gauge_electrified_yesno">
         <reference ref="railway_service" />
@@ -2418,6 +2419,7 @@
             <optional>
                 <reference ref="railway_service" />
                 <reference ref="highway_yesno" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
             </optional>
         </item> <!-- Disused Rail -->
         <item name="Abandoned Rail" icon="presets/transport/railway/abandoned_rail.svg" type="way" preset_name_label="true">
@@ -2426,6 +2428,7 @@
             <optional>
                 <reference ref="railway_service" />
                 <reference ref="highway_yesno" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
             </optional>
         </item> <!-- Abandoned Rail -->
         <separator/>
@@ -5781,6 +5784,7 @@
                     <check key="bridge" text="Bridge" disable_off="true" />
                     <check key="tunnel" text="Tunnel" disable_off="true" />
                 </checkgroup>
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
             </optional>
         </item> <!-- Goods conveyor -->
         <item name="Pumping station" icon="presets/misc/pumping_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6174,7 +6178,11 @@
             <space />
             <key key="man_made" value="bridge" />
             <optional>
-                <reference ref="name_layer" />
+                <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
+                <combo key="bridge" text="Bridge" values="aqueduct,boardwalk,cantilever,covered,low_water_crossing,movable,trestle,viaduct" />
+                <combo key="bridge:structure" text="Structure" values="arch,beam,cable-stayed,floating,humpback,simple-suspension,suspension,truss" match="key" />
+                <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter,retractable,tilt" match="key" />
             </optional>
         </item> <!-- Bridge outline -->
     </group> <!-- Bridges -->
@@ -6194,13 +6202,13 @@
             <link wiki="Tag:military=bunker" />
             <key key="military" value="bunker" />
             <optional>
-               <combo key="bunker_type" text="Type" values="command,foxhole,gun_emplacement,hardened_aircraft_shelter,mg_nest,munitions,observation,personnel_shelter,pillbox,technical,tobruk" values_context="bunker" values_searchable="true" />
-               <combo key="location" text="Location" values="overground,underground,underwater" values_context="bunker" />
-               <combo key="building" text="Building" values="bunker,yes" values_context="building" />
-               <text key="name" text="Name" />
-               <reference ref="POI_access" />
-               <check key="historic" text="Historic" />
-               <check key="ruins" text="Ruins" />
+                <combo key="bunker_type" text="Type" values="command,foxhole,gun_emplacement,hardened_aircraft_shelter,mg_nest,munitions,observation,personnel_shelter,pillbox,technical,tobruk" values_context="bunker" values_searchable="true" />
+                <combo key="location" text="Location" values="overground,underground,underwater" values_context="bunker" />
+                <combo key="building" text="Building" values="bunker,yes" values_context="building" />
+                <text key="name" text="Name" />
+                <reference ref="POI_access" />
+                <check key="historic" text="Historic" />
+                <check key="ruins" text="Ruins" />
             </optional>
         </item> <!-- Bunker -->
         <item name="Range" icon="presets/sport/range.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -9514,11 +9522,16 @@
             <link wiki="Relations/Proposed/Bridges_and_Tunnels" />
             <space />
             <key key="type" value="bridge" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
-            <reference ref="name_ref" />
-            <text key="height" text="Height (meters)" length="7" />
-            <text key="length" text="Length (meters)" />
-            <text key="operator" text="Operator" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" length="3" values_sort="false" />
+            <optional>
+                <combo key="bridge" text="Bridge" values="aqueduct,boardwalk,cantilever,covered,low_water_crossing,movable,trestle,viaduct" />
+                <combo key="bridge:structure" text="Structure" values="arch,beam,cable-stayed,floating,humpback,simple-suspension,suspension,truss" match="key" />
+                <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter,retractable,tilt" match="key" />
+                <reference ref="name_ref" />
+                <text key="height" text="Height (meters)" length="7" />
+                <text key="length" text="Length (meters)" />
+                <text key="operator" text="Operator" />
+            </optional>
             <roles>
                 <role key="across" text="ways supported by (on top of) the bridge" requisite="optional" type="way" />
                 <role key="under" text="ways passing under the bridge" requisite="optional" type="way" />
@@ -9530,10 +9543,12 @@
             <link wiki="Relations/Proposed/Bridges_and_Tunnels" />
             <space />
             <key key="type" value="tunnel" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
-            <reference ref="name_ref" />
-            <text key="length" text="Length (meters)" />
-            <text key="operator" text="Operator" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
+            <optional>
+                <reference ref="name_ref" />
+                <text key="length" text="Length (meters)" />
+                <text key="operator" text="Operator" />
+            </optional>
             <roles>
                 <role key="through" text="ways passing through the tunnel" requisite="required" type="way" />
                 <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway,multipolygon" />
