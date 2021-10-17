@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Stores info about each image, with an optional thumbnail
@@ -188,6 +189,16 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
     public boolean remove() {
         this.dataSet.removeImage(this, false);
         return true;
+    }
+
+    @Override
+    public boolean isDeleteSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean delete() {
+        return Utils.deleteFile(this.getFile());
     }
 
     /**

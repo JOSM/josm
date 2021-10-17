@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+
 import javax.imageio.IIOParam;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog;
 /**
  * An interface for image entries that will be shown in {@link org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay}
  * @author Taylor Smock
+ * @param <I> type of image
  * @since 18246
  */
 public interface IImageEntry<I extends IImageEntry<I>> {
@@ -89,6 +91,26 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @return {@code true} if removal is supported
      */
     default boolean isRemoveSupported() {
+        return false;
+    }
+
+    /**
+     * Delete the image
+     * @return {@code true} if deletion was successful
+     * @throws UnsupportedOperationException If the implementation does not support deletion.
+     * Use {@link #isDeleteSupported()}} to check for support.
+     * @since 18278
+     */
+    default boolean delete() {
+        throw new UnsupportedOperationException("remove is not supported for " + this.getClass().getSimpleName());
+    }
+
+    /**
+     * Check if image deletion is supported
+     * @return {@code true} if deletion is supported
+     * @since 18278
+     */
+    default boolean isDeleteSupported() {
         return false;
     }
 

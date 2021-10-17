@@ -358,7 +358,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                     final List<ImageData> imageDataCollection = toDelete.stream().filter(ImageEntry.class::isInstance)
                             .map(ImageEntry.class::cast).map(ImageEntry::getDataSet).distinct().collect(Collectors.toList());
                     for (IImageEntry<?> delete : toDelete) {
-                        if (delete.isRemoveSupported() && delete.remove()) {
+                        // We have to be able to remove the image from the layer and the image from its storage location
+                        // If either are false, then don't remove the image.
+                        if (delete.isRemoveSupported() && delete.isDeleteSupported() && delete.remove() && delete.delete()) {
                             Logging.info("File {0} deleted.", delete.getFile());
                         } else {
                             JOptionPane.showMessageDialog(
