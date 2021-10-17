@@ -212,7 +212,7 @@ public class Highways extends Test {
         cyclistWays = 0;
         carsWays = 0;
 
-        if (n.hasTag("highway","crossing") && !n.hasKey("crossing"))
+        if (n.hasTag("highway", "crossing") && !n.hasKey("crossing"))
             return; // see #20905 handled by mapcss test
 
         for (Way w : n.getParentWays()) {
