@@ -1,168 +1,87 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   id="svg2"
-   sodipodi:version="0.32"
-   inkscape:version="0.91 r13725"
-   version="1.0"
-   sodipodi:docname="power_source-gas.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   width="16.0px"
+   height="16.0px"
+   viewBox="0 0 16.0 16.0"
+   version="1.1"
+   id="SVGRoot">
+  <defs
+     id="defs1801" />
   <metadata
-     id="metadata10">
+     id="metadata1804">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <cc:license
-           rdf:resource="http://web.resource.org/cc/PublicDomain" />
         <dc:title></dc:title>
-      </cc:Work>
-      <cc:License
-         rdf:about="http://web.resource.org/cc/PublicDomain">
-        <cc:permits
-           rdf:resource="http://web.resource.org/cc/Reproduction" />
-        <cc:permits
-           rdf:resource="http://web.resource.org/cc/Distribution" />
-        <cc:permits
-           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <sodipodi:namedview
-     inkscape:window-height="1018"
-     inkscape:window-width="1920"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     guidetolerance="10.0"
-     gridtolerance="10.0"
-     objecttolerance="10.0"
-     borderopacity="1.0"
-     bordercolor="#666666"
-     pagecolor="#ffffff"
-     id="base"
-     showgrid="true"
-     inkscape:zoom="32"
-     inkscape:cx="6.9004192"
-     inkscape:cy="10.644037"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:current-layer="svg2"
-     inkscape:window-maximized="1">
-    <inkscape:grid
-       type="xygrid"
-       id="grid2383"
-       visible="true"
-       enabled="true" />
-  </sodipodi:namedview>
-  <sodipodi:namedview
-     id="namedview10"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.052568"
-     inkscape:cx="9.9125234"
-     inkscape:cy="9.2770693"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:snap-bbox="true"
-     inkscape:object-paths="true"
-     inkscape:object-nodes="true"
-     inkscape:bbox-paths="true"
-     inkscape:bbox-nodes="true"
-     gridtolerance="30"
-     inkscape:window-width="1172"
-     inkscape:window-height="805"
-     inkscape:window-x="122"
-     inkscape:window-y="11">
-    <inkscape:grid
-       type="xygrid"
-       id="grid12"
-       visible="true"
-       enabled="true"
-       spacingx="0.5px"
-       spacingy="0.5px"
-       empspacing="2" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <cc:license
-           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
       <cc:License
-         rdf:about="http://web.resource.org/cc/PublicDomain">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
-           rdf:resource="http://web.resource.org/cc/Reproduction" />
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
-           rdf:resource="http://web.resource.org/cc/Distribution" />
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
         <cc:permits
-           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
       </cc:License>
     </rdf:RDF>
   </metadata>
-  <ellipse
-     style="fill:#EE82EE;fill-opacity:1;stroke:#000000;stroke-width:0.80000001;stroke-opacity:1"
-     id="background"
-     cx="8"
-     cy="8"
-     rx="7.6000004"
-     ry="7.5999999" />
-  <rect
-     style="fill:#000000"
-     x="5"
-     y="7"
-     width="2"
-     height="6"
-     id="rect2939" />
-  <path
-     inkscape:connector-curvature="0"
-     style="fill:none;stroke:#000000;stroke-width:0.80864745;stroke-opacity:1"
-     d="m 5.9796932,4.5406871 c 0,0 0,-1.6020611 1.6326736,-1.6020611 1.6326736,0 1.6326736,-1.6020611 1.6326736,-1.6020611"
-     id="path2941" />
-  <rect
-     style="fill:#000000"
-     x="8"
-     y="8"
-     width="2"
-     height="5"
-     id="rect2943" />
-  <rect
-     style="fill:#000000"
-     x="5"
-     y="5"
-     width="1.9999994"
-     height="0.99999976"
-     id="rect2947" />
-  <rect
-     style="fill:#000000"
-     x="8"
-     y="6"
-     width="2.0000012"
-     height="0.99999595"
-     id="rect2949" />
-  <path
-     inkscape:connector-curvature="0"
-     style="fill:none;stroke:#000000;stroke-width:0.69512463;stroke-opacity:1"
-     d="m 9.06003,5.2659558 c 0,0 0,-1.3571756 1.424129,-1.3571756 1.424129,0 1.424129,-1.3571757 1.424129,-1.3571757"
-     id="path2941-2" />
+  <g
+     id="g2965">
+    <circle
+       style="fill:#ee82ee;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-opacity:1"
+       id="background"
+       cx="8"
+       cy="8"
+       r="7.6" />
+    <g
+       id="g1855"
+       transform="translate(0,0.39702381)">
+      <rect
+         style="fill:#000000"
+         x="5"
+         y="7"
+         width="2"
+         height="6"
+         id="rect2939" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.808647;stroke-opacity:1"
+         d="m 5.9796932,4.5406871 c 0,0 0,-1.6020611 1.6326736,-1.6020611 1.6326736,0 1.6326736,-1.6020611 1.6326736,-1.6020611"
+         id="path2941" />
+      <rect
+         style="fill:#000000"
+         x="8"
+         y="8"
+         width="2"
+         height="5"
+         id="rect2943" />
+      <rect
+         style="fill:#000000"
+         x="5"
+         y="5"
+         width="2"
+         height="1"
+         id="rect2947" />
+      <rect
+         style="fill:#000000"
+         x="8"
+         y="6"
+         width="2"
+         height="1"
+         id="rect2949" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.695125;stroke-opacity:1"
+         d="m 9.06003,5.2659558 c 0,0 0,-1.3571756 1.424129,-1.3571756 1.424129,0 1.424129,-1.3571757 1.424129,-1.3571757"
+         id="path2941-2" />
+    </g>
+  </g>
 </svg>
