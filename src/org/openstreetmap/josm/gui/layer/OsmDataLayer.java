@@ -148,9 +148,6 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     private static final int HATCHED_SIZE = 15;
     // U+2205 EMPTY SET
     private static final String IS_EMPTY_SYMBOL = "\u2205";
-    private static final String IS_DIRTY_SYMBOL = "*";
-    /** Property used to know if this layer has to be saved on disk */
-    public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     /** Property used to know if this layer has to be uploaded */
     public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
@@ -1070,15 +1067,6 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     @Override
     public boolean requiresSaveToFile() {
         return getAssociatedFile() != null && requiresSaveToFile;
-    }
-
-    /**
-     * Determines if this layer is "dirty", i.e., requires save or upload
-     * @return if this layer is "dirty"
-     * @since 17626
-     */
-    public boolean isDirty() {
-        return requiresSaveToFile() || (requiresUploadToServer() && !isUploadDiscouraged());
     }
 
     @Override

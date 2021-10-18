@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gpx version="1.1" creator="JOSM GPX export" xmlns="http://www.topografix.com/GPX/1/1"
+    xmlns:josm="http://josm.openstreetmap.de/gpx-extensions-1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://josm.openstreetmap.de/gpx-extensions-1.1 http://josm.openstreetmap.de/gpx-extensions-1.1.xsd">
+  <metadata>
+    <time>2021-10-16T18:27:12.351Z</time>
+    <bounds minlat="42.72659" minlon="-0.00749" maxlat="42.72665" maxlon="-0.00747"/>
+    <extensions>
+      <josm:layerPreferences>
+        <josm:entry key="markers.color" value="#34567812"/>
+      </josm:layerPreferences>
+    </extensions>
+  </metadata>
+  <wpt lat="42.72665" lon="-0.00747">
+    <time>2021-01-01T10:15:30Z</time>
+  </wpt>
+  <wpt lat="42.72659" lon="-0.00749"/>
+</gpx>

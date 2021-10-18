@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io.session;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -46,7 +45,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -617,15 +615,6 @@ public class SessionReader {
                     layer.setOpacity(opacity);
                 } catch (NumberFormatException ex) {
                     Logging.warn(ex);
-                }
-            }
-            String colorString = el.getAttribute("color");
-            if (colorString != null) {
-                try {
-                    Color color = ColorHelper.html2color(colorString);
-                    layer.setColor(color);
-                } catch (RuntimeException ex) {
-                    Logging.warn("Cannot parse color " + colorString);
                 }
             }
             layer.setName(names.get(entry.getKey()));

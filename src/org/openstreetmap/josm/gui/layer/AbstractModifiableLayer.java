@@ -17,6 +17,13 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public abstract class AbstractModifiableLayer extends Layer implements DownloadFromServer, UploadToServer, SaveToFile, Lockable {
 
     /**
+     * Property used to know if this layer has to be saved on disk.
+     * @since 18287 
+     */
+    public static final String REQUIRES_SAVE_TO_DISK_PROP = AbstractModifiableLayer.class.getName() + ".requiresSaveToDisk";
+    static final String IS_DIRTY_SYMBOL = "*";
+
+    /**
      * Constructs a new {@code ModifiableLayer}.
      * @param name Layer name
      */
@@ -52,6 +59,16 @@ public abstract class AbstractModifiableLayer extends Layer implements DownloadF
     public boolean isUploadDiscouraged() {
         // Override if needed
         return false;
+    }
+
+    /**
+     * Determines if this layer is "dirty", i.e. requires save or upload
+     * @return if this layer is "dirty"
+     * @since 18287
+     */
+    public boolean isDirty() {
+        // Override if needed
+        return requiresSaveToFile() || (requiresUploadToServer() && !isUploadDiscouraged());
     }
 
     /**

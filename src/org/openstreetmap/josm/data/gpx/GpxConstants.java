@@ -100,6 +100,12 @@ public interface GpxConstants {
     String META_BOUNDS = META_PREFIX + "bounds";
 
     /**
+     * The creator element that will be written when exporting a GPX file
+     * @since 18287
+     */
+    String JOSM_CREATOR_NAME = "JOSM GPX export";
+
+    /**
      * Namespace for the XSD
      */
     String XML_URI_XSD = "http://www.w3.org/2001/XMLSchema-instance";

@@ -25,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -45,9 +46,9 @@ public class MainFrame extends JFrame {
     private final transient LayerStateChangeListener updateTitleOnLayerStateChange = (layer, newValue) -> onLayerChange(layer);
 
     private final transient PropertyChangeListener updateTitleOnSaveChange = evt -> {
-        if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
+        if (evt.getPropertyName().equals(AbstractModifiableLayer.REQUIRES_SAVE_TO_DISK_PROP)
                 || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
-            OsmDataLayer layer = (OsmDataLayer) evt.getSource();
+            AbstractModifiableLayer layer = (AbstractModifiableLayer) evt.getSource();
             onLayerChange(layer);
         }
     };
@@ -186,7 +187,7 @@ public class MainFrame extends JFrame {
         getRootPane().putClientProperty("Window.documentModified", dirty);
     }
 
-    private void onLayerChange(OsmDataLayer layer) {
+    private void onLayerChange(AbstractModifiableLayer layer) {
         if (layer == MainApplication.getLayerManager().getEditLayer()) {
             refreshTitle();
         }

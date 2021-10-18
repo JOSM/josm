@@ -503,7 +503,7 @@ class GpxDataTest {
         col.add("josm", "from-server", "true");
         EqualsVerifier.forClass(GpxData.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
-            .withIgnoredFields("creator", "fromServer", "storageFile", "initializing", "updating",
+            .withIgnoredFields("creator", "fromServer", "fromSession", "storageFile", "initializing", "updating",
                     "suppressedInvalidate", "listeners", "tracks", "routes", "waypoints", "proxy", "segSpans", "modified")
             .withPrefabValues(WayPoint.class, new WayPoint(LatLon.NORTH_POLE), new WayPoint(LatLon.SOUTH_POLE))
             .withPrefabValues(ListenerList.class, ListenerList.create(), ListenerList.create())

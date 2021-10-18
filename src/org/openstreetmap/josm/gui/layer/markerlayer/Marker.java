@@ -189,7 +189,9 @@ public class Marker implements TemplateEngineDataProvider, ILatLon, Destroyable 
      */
     public WayPoint convertToWayPoint() {
         WayPoint wpt = new WayPoint(getCoor());
-        wpt.setTimeInMillis((long) (time * 1000));
+        if (time > 0d) {
+            wpt.setTimeInMillis((long) (time * 1000));
+        }
         if (text != null) {
             wpt.getExtensions().add("josm", "text", text);
         } else if (dataProvider != null) {

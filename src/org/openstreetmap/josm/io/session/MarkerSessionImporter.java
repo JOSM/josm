@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -14,7 +13,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -50,21 +48,7 @@ public class MarkerSessionImporter implements SessionLayerImporter {
 
                 support.addPostLayersTask(importData.getPostLayerTask());
 
-                GpxLayer gpxLayer = null;
-                List<SessionReader.LayerDependency> deps = support.getLayerDependencies();
-                if (!deps.isEmpty()) {
-                    Layer layer = deps.get(0).getLayer();
-                    if (layer instanceof GpxLayer) {
-                        gpxLayer = (GpxLayer) layer;
-                    }
-                }
-
-                MarkerLayer markerLayer = importData.getMarkerLayer();
-                if (markerLayer != null) {
-                    markerLayer.fromLayer = gpxLayer;
-                }
-
-                return markerLayer;
+                return importData.getMarkerLayer();
             }
         } catch (XPathExpressionException e) {
             throw new IllegalDataException(e);

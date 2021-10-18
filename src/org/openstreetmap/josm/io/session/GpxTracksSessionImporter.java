@@ -54,6 +54,9 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
                 } else {
                     importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), progressMonitor);
                 }
+                if (importData.getGpxLayer() != null && importData.getGpxLayer().data != null) {
+                    importData.getGpxLayer().data.fromSession = true;
+                }
 
                 support.addPostLayersTask(importData.getPostLayerTask());
                 return getLayer(importData);

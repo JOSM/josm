@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.date.Interval;
  *
  * @author Raphael Mack &lt;ramack@raphael-mack.de&gt;
  */
-public class GpxData extends WithAttributes implements Data {
+public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
 
     /**
      * Constructs a new GpxData.
@@ -67,6 +67,11 @@ public class GpxData extends WithAttributes implements Data {
      * A boolean flag indicating if the data was read from the OSM server.
      */
     public boolean fromServer;
+    /**
+     * A boolean flag indicating if the data was read from a session file.
+     * @since 18287
+     */
+    public boolean fromSession;
 
     /**
      * Creator metadata for this file (usually software)
@@ -1016,12 +1021,7 @@ public class GpxData extends WithAttributes implements Data {
         return Collections.unmodifiableCollection(dataSources);
     }
 
-    /**
-     * The layer specific prefs formerly saved in the preferences, e.g. drawing options.
-     * NOT the track specific settings (e.g. color, width)
-     * @return Modifiable map
-     * @since 15496
-     */
+    @Override
     public Map<String, String> getLayerPrefs() {
         return layerPrefs;
     }
@@ -1136,7 +1136,7 @@ public class GpxData extends WithAttributes implements Data {
             suppressedInvalidate = true;
         } else {
             if (setModified) {
-                modified = true;
+                setModified(true);
             }
             if (listeners.hasListeners()) {
                 GpxDataChangeEvent e = new GpxDataChangeEvent(this);
@@ -1178,6 +1178,14 @@ public class GpxData extends WithAttributes implements Data {
          * @param e The event
          */
         void gpxDataChanged(GpxDataChangeEvent e);
+
+        /**
+         * Called when the modified state of the data changed
+         * @param modified the new modified state
+         */
+        default void modifiedStateChanged(boolean modified) {
+            // Override if needed
+        }
     }
 
     /**
@@ -1216,8 +1224,14 @@ public class GpxData extends WithAttributes implements Data {
      * @param value modified flag
      * @since 15496
      */
+    @Override
     public void setModified(boolean value) {
-        modified = value;
+        if (!initializing && modified != value) {
+            modified = value;
+            if (listeners.hasListeners()) {
+                listeners.fireEvent(l -> l.modifiedStateChanged(modified));
+            }
+        }
     }
 
     /**

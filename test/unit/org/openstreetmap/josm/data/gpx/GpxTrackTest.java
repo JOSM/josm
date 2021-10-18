@@ -8,8 +8,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -31,7 +31,7 @@ class GpxTrackTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests weather the track can read and write colors.
+     * Tests whether the track can read and write colors.
      */
     @Test
     void testColors() {

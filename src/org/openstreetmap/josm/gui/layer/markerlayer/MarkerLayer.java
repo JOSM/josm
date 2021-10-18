@@ -20,7 +20,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.swing.AbstractAction;
@@ -37,6 +39,7 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxExtension;
 import org.openstreetmap.josm.data.gpx.GpxLink;
+import org.openstreetmap.josm.data.gpx.IGpxLayerPrefs;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -56,6 +59,7 @@ import org.openstreetmap.josm.gui.layer.gpx.ConvertFromMarkerLayerAction;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -76,7 +80,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     /**
      * A list of markers.
      */
-    public final List<Marker> data;
+    public final MarkerData data;
     private boolean mousePressed;
     public GpxLayer fromLayer;
     private Marker currentMarker;
@@ -100,17 +104,20 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
         super(name);
         this.setAssociatedFile(associatedFile);
-        this.data = new ArrayList<>();
+        this.data = new MarkerData();
         this.fromLayer = fromLayer;
         double firstTime = -1.0;
         String lastLinkedFile = "";
 
+        if (fromLayer == null || fromLayer.data == null) {
+            data.ownLayerPrefs = indata.getLayerPrefs();
+        }
+
+        String cs = GPXSettingsPanel.tryGetDataPrefLocal(data, "markers.color");
         Color c = null;
-        String cs = GPXSettingsPanel.tryGetLayerPrefLocal(indata, "markers.color");
         if (cs != null) {
-            try {
-                c = Color.decode(cs);
-            } catch (NumberFormatException ex) {
+            c = ColorHelper.html2color(cs);
+            if (c == null) {
                 Logging.warn("Could not read marker color: " + cs);
             }
         }
@@ -459,7 +466,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
      * @return <code>true</code> if text should be shown, <code>false</code> otherwise.
      */
     private boolean isTextOrIconShown() {
-        return Boolean.parseBoolean(GPXSettingsPanel.getLayerPref(fromLayer, "markers.show-text"));
+        return Boolean.parseBoolean(GPXSettingsPanel.getDataPref(data, "markers.show-text"));
     }
 
     @Override
@@ -475,13 +482,11 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     @Override
     public void setColor(Color color) {
         setPrivateColors(color);
-        if (fromLayer != null) {
-            String cs = null;
-            if (color != null) {
-                cs = String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
-            }
-            GPXSettingsPanel.putLayerPrefLocal(fromLayer, "markers.color", cs);
+        String cs = null;
+        if (color != null) {
+            cs = ColorHelper.color2html(color);
         }
+        GPXSettingsPanel.putDataPrefLocal(data, "markers.color", cs);
         invalidate();
     }
 
@@ -533,7 +538,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            GPXSettingsPanel.putLayerPrefLocal(layer.fromLayer, "markers.show-text", Boolean.toString(!layer.isTextOrIconShown()));
+            GPXSettingsPanel.putDataPrefLocal(layer.data, "markers.show-text", Boolean.toString(!layer.isTextOrIconShown()));
             layer.invalidate();
         }
 
@@ -615,6 +620,43 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 return;
             addAudioMarker(playHeadMarker.time, playHeadMarker.getCoor());
             invalidate();
+        }
+    }
+
+    /**
+     * the data of a MarkerLayer
+     * @since 18287
+     */
+    public class MarkerData extends ArrayList<Marker> implements IGpxLayerPrefs {
+
+        private Map<String, String> ownLayerPrefs;
+
+        @Override
+        public Map<String, String> getLayerPrefs() {
+            if (ownLayerPrefs == null && fromLayer != null && fromLayer.data != null) {
+                return fromLayer.data.getLayerPrefs();
+            }
+            // fallback to own layerPrefs if the corresponding gpxLayer has already been deleted
+            // by the user or never existed when loaded from a session file
+            if (ownLayerPrefs == null) {
+                ownLayerPrefs = new HashMap<>();
+            }
+            return ownLayerPrefs;
+        }
+
+        /**
+         * Transfers the layerPrefs from the GpxData to MarkerData (when GpxData is deleted)
+         * @param gpxLayerPrefs the layerPrefs from the GpxData object
+         */
+        public void transferLayerPrefs(Map<String, String> gpxLayerPrefs) {
+            ownLayerPrefs = new HashMap<>(gpxLayerPrefs);
+        }
+
+        @Override
+        public void setModified(boolean value) {
+            if (fromLayer != null && fromLayer.data != null) {
+                fromLayer.data.setModified(value);
+            }
         }
     }
 }

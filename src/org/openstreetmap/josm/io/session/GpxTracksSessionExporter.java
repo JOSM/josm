@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.GpxWriter;
@@ -15,6 +16,8 @@ import org.openstreetmap.josm.io.GpxWriter;
  * @since 5501
  */
 public class GpxTracksSessionExporter extends GenericSessionExporter<GpxLayer> {
+
+    private Instant metaTime;
 
     /**
      * Constructs a new {@code GpxTracksSessionExporter}.
@@ -36,7 +39,14 @@ public class GpxTracksSessionExporter extends GenericSessionExporter<GpxLayer> {
     protected void addDataFile(OutputStream out) {
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         GpxWriter w = new GpxWriter(new PrintWriter(writer));
+        if (metaTime != null) {
+            w.setMetaTime(metaTime);
+        }
         w.write(layer.data);
         w.flush();
+    }
+
+    protected void setMetaTime(Instant metaTime) {
+        this.metaTime = metaTime;
     }
 }

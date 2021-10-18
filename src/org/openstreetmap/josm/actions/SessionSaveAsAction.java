@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -32,12 +33,14 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileFilter;
 
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
@@ -59,6 +62,8 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
     private transient List<Layer> layers;
     private transient Map<Layer, SessionLayerExporter> exporters;
     private transient MultiMap<Layer, Layer> dependencies;
+
+    private static final BooleanProperty SAVE_LOCAL_FILES_PROPERTY = new BooleanProperty("session.savelocal", true);
 
     /**
      * Constructs a new {@code SessionSaveAsAction}.
@@ -158,6 +163,34 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
                 .filter(layer -> exporters.get(layer) != null && exporters.get(layer).shallExport())
                 .collect(Collectors.toList());
 
+        Stream<Layer> layersToSaveStream = layersOut.stream()
+                .filter(layer -> layer.isSavable()
+                        && layer instanceof AbstractModifiableLayer
+                        && ((AbstractModifiableLayer) layer).requiresSaveToFile()
+                        && exporters.get(layer) != null
+                        && !exporters.get(layer).requiresZip());
+
+        if (SAVE_LOCAL_FILES_PROPERTY.get()) {
+            // individual files must be saved before the session file as the location may change
+            if (layersToSaveStream
+                .map(layer -> SaveAction.getInstance().doSave(layer, true))
+                .collect(Collectors.toList()) // force evaluation of all elements
+                .contains(false)) {
+
+                new Notification(tr("Not all local files referenced by the session file could be saved."
+                        + "<br>Make sure you save them before closing JOSM."))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .setDuration(Notification.TIME_LONG)
+                    .show();
+            }
+        } else if (layersToSaveStream.anyMatch(l -> true)) {
+            new Notification(tr("Not all local files referenced by the session file are saved yet."
+                    + "<br>Make sure you save them before closing JOSM."))
+                .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                .setDuration(Notification.TIME_LONG)
+                .show();
+        }
+
         int active = -1;
         Layer activeLayer = getLayerManager().getActiveLayer();
         if (activeLayer != null) {
@@ -250,6 +283,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         }
 
         protected final Component build() {
+            JPanel op = new JPanel(new GridBagLayout());
             JPanel ip = new JPanel(new GridBagLayout());
             for (Layer layer : layers) {
                 JPanel wrapper = new JPanel(new GridBagLayout());
@@ -272,7 +306,13 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             p.add(sp, GBC.eol().fill());
             final JTabbedPane tabs = new JTabbedPane();
             tabs.addTab(tr("Layers"), p);
-            return tabs;
+            op.add(tabs, GBC.eol().fill());
+            JCheckBox chkSaveLocal = new JCheckBox(tr("Save all local files to disk"), SAVE_LOCAL_FILES_PROPERTY.get());
+            chkSaveLocal.addChangeListener(l -> {
+                SAVE_LOCAL_FILES_PROPERTY.put(chkSaveLocal.isSelected());
+            });
+            op.add(chkSaveLocal);
+            return op;
         }
 
         protected final Component getDisabledExportPanel(Layer layer) {

@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -31,6 +32,8 @@ import org.w3c.dom.Element;
  * @since 5684
  */
 public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> {
+
+    private Instant metaTime;
 
     /**
      * Constructs a new {@code MarkerSessionExporter}.
@@ -86,8 +89,15 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
     protected void addDataFile(OutputStream out) {
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         MarkerWriter w = new MarkerWriter(new PrintWriter(writer));
+        if (metaTime != null) {
+            w.setMetaTime(metaTime);
+        }
         w.write(layer);
         w.flush();
+    }
+
+    protected void setMetaTime(Instant metaTime) {
+        this.metaTime = metaTime;
     }
 
     /**
@@ -109,6 +119,11 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
          */
         public void write(MarkerLayer layer) {
             GpxData data = new GpxData();
+            layer.data.getLayerPrefs().forEach((k, v) -> {
+                if (k != null && k.indexOf("markers.") == 0) {
+                    data.getLayerPrefs().put(k, v);
+                }
+            });
             data.put(GpxData.META_DESC, "exported JOSM marker layer");
             for (Marker m : layer.data) {
                 data.waypoints.add(m.convertToWayPoint());

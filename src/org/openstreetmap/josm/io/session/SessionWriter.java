@@ -43,7 +43,6 @@ import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
-import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -240,9 +239,6 @@ public class SessionWriter {
             el.setAttribute("visible", Boolean.toString(layer.isVisible()));
             if (!Utils.equalsEpsilon(layer.getOpacity(), 1.0)) {
                 el.setAttribute("opacity", Double.toString(layer.getOpacity()));
-            }
-            if (layer.getColor() != null) {
-                el.setAttribute("color", ColorHelper.color2html(layer.getColor()));
             }
             Set<Layer> deps = dependencies.get(layer);
             final String depends = deps == null ? "" : deps.stream().map(depLayer -> {

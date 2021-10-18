@@ -148,8 +148,12 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
 
         validprefixes = namespaces.stream().map(n -> n.getPrefix()).collect(Collectors.toList());
 
+        data.creator = JOSM_CREATOR_NAME;
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
-        out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"");
+
+        out.print("<gpx version=\"1.1\" creator=\"");
+        out.print(JOSM_CREATOR_NAME);
+        out.println("\" xmlns=\"http://www.topografix.com/GPX/1/1\"");
 
         StringBuilder schemaLocations = new StringBuilder("http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
 

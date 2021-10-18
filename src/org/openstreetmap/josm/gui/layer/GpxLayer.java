@@ -33,8 +33,9 @@ import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxDataContainer;
+import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
+import org.openstreetmap.josm.data.gpx.GpxDataContainer;
 import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -58,6 +59,7 @@ import org.openstreetmap.josm.gui.layer.gpx.ImportImagesAction;
 import org.openstreetmap.josm.gui.layer.gpx.MarkersFromNamedPointsAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -85,7 +87,17 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
     /**
      * Added as field to be kept as reference.
      */
-    private final GpxDataChangeListener dataChangeListener = e -> this.invalidate();
+    private final GpxDataChangeListener dataChangeListener = new GpxDataChangeListener() {
+        @Override
+        public void gpxDataChanged(GpxDataChangeEvent e) {
+            invalidate();
+        }
+
+        @Override
+        public void modifiedStateChanged(boolean modified) {
+            GuiHelper.runInEDT(() -> propertyChangeSupport.firePropertyChange(REQUIRES_SAVE_TO_DISK_PROP, !modified, modified));
+        }
+    };
     /**
      * The MarkerLayer imported from the same file.
      */
@@ -375,6 +387,11 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
     }
 
     @Override
+    public String getLabel() {
+        return isDirty() ? super.getLabel() + ' ' + IS_DIRTY_SYMBOL : super.getLabel();
+    }
+
+    @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
         if (data != null) {
             v.visit(data.recalculateBounds());
@@ -554,7 +571,7 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
 
     @Override
     public boolean requiresSaveToFile() {
-        return isModified() && isLocalFile();
+        return data != null && isModified() && (isLocalFile() || data.fromSession);
     }
 
     @Override
@@ -621,6 +638,9 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
 
     @Override
     public synchronized void destroy() {
+        if (linkedMarkerLayer != null && MainApplication.getLayerManager().containsLayer(linkedMarkerLayer)) {
+            linkedMarkerLayer.data.transferLayerPrefs(data.getLayerPrefs());
+        }
         data.clear();
         data = null;
         super.destroy();

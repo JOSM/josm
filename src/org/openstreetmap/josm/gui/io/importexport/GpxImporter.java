@@ -147,6 +147,7 @@ public class GpxImporter extends FileImporter {
             }
             if (data.gpxLayer != null) {
                 MainApplication.getLayerManager().addLayer(data.gpxLayer);
+                MainApplication.getLayerManager().setActiveLayer(data.gpxLayer);
             }
             data.postLayerTask.run();
         });

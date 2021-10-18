@@ -1,19 +1,24 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -41,8 +46,6 @@ import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for Session writing.
@@ -108,7 +111,7 @@ class SessionWriterTest {
         MainApplication.getLayerManager().addLayer(createOsmLayer());
     }
 
-    private byte[] testWrite(List<Layer> layers, final boolean zip) throws IOException {
+    private Map<String, byte[]> testWrite(List<Layer> layers, final boolean zip) throws IOException {
         Map<Layer, SessionLayerExporter> exporters = new HashMap<>();
         if (zip) {
             SessionWriter.registerSessionLayerExporter(OsmDataLayer.class, OsmHeadlessJozExporter.class);
@@ -118,7 +121,13 @@ class SessionWriterTest {
             SessionWriter.registerSessionLayerExporter(GpxLayer.class, GpxHeadlessJosExporter.class);
         }
         for (final Layer l : layers) {
-            exporters.put(l, SessionWriter.getSessionLayerExporter(l));
+            SessionLayerExporter s = SessionWriter.getSessionLayerExporter(l);
+            exporters.put(l, s);
+            if (s instanceof GpxTracksSessionExporter) {
+                ((GpxTracksSessionExporter) s).setMetaTime(Instant.parse("2021-10-16T18:27:12.351Z"));
+            } else if (s instanceof MarkerSessionExporter) {
+                ((MarkerSessionExporter) s).setMetaTime(Instant.parse("2021-10-16T18:27:12.351Z"));
+            }
         }
         SessionWriter sw = new SessionWriter(layers, -1, exporters, new MultiMap<Layer, Layer>(), zip);
         File file = new File(System.getProperty("java.io.tmpdir"), getClass().getName()+(zip ? ".joz" : ".jos"));
@@ -127,9 +136,15 @@ class SessionWriterTest {
             if (!zip) {
                 return null;
             }
-            try (ZipFile zipFile = new ZipFile(file);
-                 InputStream input = zipFile.getInputStream(zipFile.getEntry("session.jos"))) {
-                return Utils.readBytesFromStream(input);
+            try (ZipFile zipFile = new ZipFile(file)) {
+                return Collections.list(zipFile.entries()).stream().collect(Collectors.toMap(ZipEntry::getName, e -> {
+                    try {
+                        return Utils.readBytesFromStream(zipFile.getInputStream(e));
+                    } catch (IOException ex) {
+                        fail(ex);
+                    }
+                    return null;
+                }));
             }
         } finally {
             if (file.exists()) {
@@ -146,7 +161,9 @@ class SessionWriterTest {
 
     private GpxLayer createGpxLayer() {
         GpxData data = new GpxData();
-        data.waypoints.add(new WayPoint(new LatLon(42.72665, -0.00747)));
+        WayPoint wp = new WayPoint(new LatLon(42.72665, -0.00747));
+        wp.setInstant(Instant.parse("2021-01-01T10:15:30.00Z"));
+        data.waypoints.add(wp);
         data.waypoints.add(new WayPoint(new LatLon(42.72659, -0.00749)));
         GpxLayer layer = new GpxLayer(data, "GPX layer name");
         layer.setAssociatedFile(new File("data.gpx"));
@@ -232,10 +249,21 @@ class SessionWriterTest {
     @Test
     void testWriteGpxAndMarkerJoz() throws IOException {
         GpxLayer gpx = createGpxLayer();
-        byte[] bytes = testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
+        Map<String, byte[]> bytes = testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
+
         Path path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/gpx_markers.jos");
         String expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
-        String actual = new String(bytes, StandardCharsets.UTF_8).replace("\r", "");
+        String actual = new String(bytes.get("session.jos"), StandardCharsets.UTF_8).replace("\r", "");
+        assertEquals(expected, actual);
+
+        path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/data_export.gpx");
+        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        actual = new String(bytes.get("layers/01/data.gpx"), StandardCharsets.UTF_8).replace("\r", "");
+        assertEquals(expected, actual);
+
+        path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/markers.gpx");
+        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        actual = new String(bytes.get("layers/02/data.gpx"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
     }
 

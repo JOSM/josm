@@ -29,6 +29,7 @@ import javax.swing.JSlider;
 import org.apache.commons.jcs3.access.exception.InvalidArgumentException;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.IGpxLayerPrefs;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
@@ -173,6 +174,18 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @return the value
      */
     public static String getLayerPref(GpxLayer layer, String key) {
+        GpxData data = layer != null ? layer.data : null;
+        return getDataPref(data, key);
+    }
+
+    /**
+     * Reads the preference for the given layer or the default preference if not available
+     * @param data the data. Can be <code>null</code>, default preference will be returned then
+     * @param key the drawing key to be read, without "draw.rawgps."
+     * @return the value
+     * @since 18287
+     */
+    public static String getDataPref(IGpxLayerPrefs data, String key) {
         Object d = DEFAULT_PREFS.get(key);
         String ds;
         if (d != null) {
@@ -181,7 +194,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             Logging.warn("No default value found for layer preference \"" + key + "\".");
             ds = null;
         }
-        return Optional.ofNullable(tryGetLayerPrefLocal(layer, key)).orElse(Config.getPref().get("draw.rawgps." + key, ds));
+        return Optional.ofNullable(tryGetDataPrefLocal(data, key)).orElse(Config.getPref().get("draw.rawgps." + key, ds));
     }
 
     /**
@@ -191,7 +204,19 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @return the integer value
      */
     public static int getLayerPrefInt(GpxLayer layer, String key) {
-        String s = getLayerPref(layer, key);
+        GpxData data = layer != null ? layer.data : null;
+        return getDataPrefInt(data, key);
+    }
+
+    /**
+     * Reads the integer preference for the given data or the default preference if not available
+     * @param data the data. Can be <code>null</code>, default preference will be returned then
+     * @param key the drawing key to be read, without "draw.rawgps."
+     * @return the integer value
+     * @since 18287
+     */
+    public static int getDataPrefInt(IGpxLayerPrefs data, String key) {
+        String s = getDataPref(data, key);
         if (s != null) {
             try {
                 return Integer.parseInt(s);
@@ -214,7 +239,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @return the value or <code>null</code> if not found
      */
     public static String tryGetLayerPrefLocal(GpxLayer layer, String key) {
-        return layer != null ? tryGetLayerPrefLocal(layer.data, key) : null;
+        return layer != null ? tryGetDataPrefLocal(layer.data, key) : null;
     }
 
     /**
@@ -223,7 +248,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @param key the drawing key to be read, without "draw.rawgps."
      * @return the value or <code>null</code> if not found
      */
-    public static String tryGetLayerPrefLocal(GpxData data, String key) {
+    public static String tryGetDataPrefLocal(IGpxLayerPrefs data, String key) {
         return data != null ? data.getLayerPrefs().get(key) : null;
     }
 
@@ -237,7 +262,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         String v = value == null ? null : value.toString();
         if (layers != null) {
             for (GpxLayer l : layers) {
-                putLayerPrefLocal(l.data, key, v);
+                putDataPrefLocal(l.data, key, v);
             }
         } else {
             Config.getPref().put("draw.rawgps." + key, v);
@@ -252,7 +277,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      */
     public static void putLayerPrefLocal(GpxLayer layer, String key, String value) {
         if (layer == null || layer.data == null) return;
-        putLayerPrefLocal(layer.data, key, value);
+        putDataPrefLocal(layer.data, key, value);
     }
 
     /**
@@ -260,8 +285,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @param data <code>GpxData</code> to put the drawingOptions. Must not be <code>null</code>
      * @param key the drawing key to be written, without "draw.rawgps."
      * @param value the value or <code>null</code> to remove key
+     * @since 18287
      */
-    public static void putLayerPrefLocal(GpxData data, String key, String value) {
+    public static void putDataPrefLocal(IGpxLayerPrefs data, String key, String value) {
+        if (data == null) return;
+        data.setModified(true);
         if (Utils.isBlank(value) ||
                 (getLayerPref(null, key).equals(value) && DEFAULT_PREFS.get(key) != null && DEFAULT_PREFS.get(key).toString().equals(value))) {
             data.getLayerPrefs().remove(key);
