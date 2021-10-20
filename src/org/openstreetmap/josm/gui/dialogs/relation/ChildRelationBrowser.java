@@ -211,8 +211,6 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * Action for editing the currently selected relation
-     *
-     *
      */
     class EditAction extends AbstractAction implements TreeSelectionListener {
         EditAction() {
@@ -234,7 +232,7 @@ public class ChildRelationBrowser extends JPanel {
             //
             for (int i = 0; i < Math.min(selection.length, 10); i++) {
                 Relation r = (Relation) selection[i].getLastPathComponent();
-                if (r.isIncomplete()) {
+                if (!r.isUsable()) {
                     continue;
                 }
                 RelationEditor editor = RelationEditor.getEditor(getLayer(), r, null);
