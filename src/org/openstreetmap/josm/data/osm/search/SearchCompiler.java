@@ -2128,7 +2128,7 @@ public class SearchCompiler {
             Match expression = parseExpression();
             if (!tokenizer.readIfEqual(Token.RIGHT_PARENT))
                 throw new SearchParseError(Token.RIGHT_PARENT, tokenizer.nextToken());
-            return expression;
+            return expression != null ? expression : Always.INSTANCE;
         } else if (tokenizer.readIfEqual(Token.NOT)) {
             return new Not(parseFactor(tr("Missing operator for NOT")));
         } else if (tokenizer.readIfEqual(Token.KEY)) {
