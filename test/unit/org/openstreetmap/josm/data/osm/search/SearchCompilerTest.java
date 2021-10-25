@@ -840,4 +840,14 @@ class SearchCompilerTest {
     void testNonRegression21300(final String searchString) {
         assertThrows(SearchParseError.class, () -> SearchCompiler.compile(searchString));
     }
+
+    /**
+     * Non-regression test for JOSM #21463
+     */
+    @Test
+    void testNonRegression21463() throws SearchParseError {
+        final SearchCompiler.Match c = SearchCompiler.compile("foo () () () bar");
+        assertTrue(c.match(OsmUtils.createPrimitive("node foo=bar")));
+        assertFalse(c.match(OsmUtils.createPrimitive("node name=bar")));
+    }
 }
