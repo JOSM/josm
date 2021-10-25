@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -12,14 +13,18 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -59,6 +64,8 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * Dialog to view and manipulate geo-tagged images from a {@link GeoImageLayer}.
  */
 public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener, ActiveLayerChangeListener, ImageDataUpdateListener {
+    private static final String GEOIMAGE_FILLER = marktr("Geoimage: {0}");
+    private static final String DIALOG_FOLDER = "dialogs";
 
     private final ImageryFilterSettings imageryFilterSettings = new ImageryFilterSettings();
 
@@ -131,6 +138,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static JButton createNavigationButton(AbstractAction action, Dimension buttonDim) {
         JButton btn = createButton(action, buttonDim);
         btn.setEnabled(false);
+        action.addPropertyChangeListener(l -> {
+            if ("enabled".equals(l.getPropertyName())) {
+                btn.setEnabled(action.isEnabled());
+            }
+        });
         return btn;
     }
 
@@ -215,63 +227,136 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         dialog = null;
     }
 
-    private class ImageNextAction extends JosmAction {
+    /**
+     * This literally exists to silence sonarlint complaints.
+     */
+    @FunctionalInterface
+    private interface SerializableUnaryOperator<I> extends UnaryOperator<I>, Serializable {
+    }
+
+    private abstract class ImageAction extends JosmAction {
+        final SerializableUnaryOperator<IImageEntry<?>> supplier;
+        ImageAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut,
+                boolean registerInToolbar, String toolbarId, boolean installAdaptors,
+                final SerializableUnaryOperator<IImageEntry<?>> supplier) {
+            super(name, icon, tooltip, shortcut, registerInToolbar, toolbarId, installAdaptors);
+            Objects.requireNonNull(supplier);
+            this.supplier = supplier;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            final IImageEntry<?> entry = ImageViewerDialog.this.currentEntry;
+            if (entry != null) {
+                IImageEntry<?> nextEntry = this.getSupplier().apply(entry);
+                entry.selectImage(ImageViewerDialog.this, nextEntry);
+            }
+            this.resetRememberActions();
+        }
+
+        void resetRememberActions() {
+            for (ImageRememberAction action : Arrays.asList(ImageViewerDialog.this.imageLastAction, ImageViewerDialog.this.imageFirstAction)) {
+                action.last = null;
+                action.updateEnabledState();
+            }
+        }
+
+        SerializableUnaryOperator<IImageEntry<?>> getSupplier() {
+            return this.supplier;
+        }
+
+        @Override
+        protected void updateEnabledState() {
+            final IImageEntry<?> entry = ImageViewerDialog.this.currentEntry;
+            this.setEnabled(entry != null && this.getSupplier().apply(entry) != null);
+        }
+    }
+
+    private class ImageNextAction extends ImageAction {
         ImageNextAction() {
-            super(null, new ImageProvider("dialogs", "next"), tr("Next"), Shortcut.registerShortcut(
-                    "geoimage:next", tr("Geoimage: {0}", tr("Show next Image")), KeyEvent.VK_PAGE_DOWN, Shortcut.DIRECT),
-                  false, null, false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (ImageViewerDialog.this.currentEntry != null) {
-                ImageViewerDialog.this.currentEntry.selectNextImage(ImageViewerDialog.this);
-            }
+            super(null, new ImageProvider(DIALOG_FOLDER, "next"), tr("Next"), Shortcut.registerShortcut(
+                    "geoimage:next", tr(GEOIMAGE_FILLER, tr("Show next Image")), KeyEvent.VK_PAGE_DOWN, Shortcut.DIRECT),
+                  false, null, false, IImageEntry::getNextImage);
         }
     }
 
-    private class ImagePreviousAction extends JosmAction {
+    private class ImagePreviousAction extends ImageAction {
         ImagePreviousAction() {
-            super(null, new ImageProvider("dialogs", "previous"), tr("Previous"), Shortcut.registerShortcut(
-                    "geoimage:previous", tr("Geoimage: {0}", tr("Show previous Image")), KeyEvent.VK_PAGE_UP, Shortcut.DIRECT),
-                  false, null, false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (ImageViewerDialog.this.currentEntry != null) {
-                ImageViewerDialog.this.currentEntry.selectPreviousImage(ImageViewerDialog.this);
-            }
+            super(null, new ImageProvider(DIALOG_FOLDER, "previous"), tr("Previous"), Shortcut.registerShortcut(
+                    "geoimage:previous", tr(GEOIMAGE_FILLER, tr("Show previous Image")), KeyEvent.VK_PAGE_UP, Shortcut.DIRECT),
+                  false, null, false, IImageEntry::getPreviousImage);
         }
     }
 
-    private class ImageFirstAction extends JosmAction {
+    /** This class exists to remember the last entry, and go back if clicked again when it would not otherwise be enabled */
+    private abstract class ImageRememberAction extends ImageAction {
+        private final ImageProvider defaultIcon;
+        transient IImageEntry<?> last;
+        ImageRememberAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut,
+                boolean registerInToolbar, String toolbarId, boolean installAdaptors, SerializableUnaryOperator<IImageEntry<?>> supplier) {
+            super(name, icon, tooltip, shortcut, registerInToolbar, toolbarId, installAdaptors, supplier);
+            this.defaultIcon = icon;
+        }
+
+        public void updateIcon() {
+            if (this.last != null) {
+                new ImageProvider(DIALOG_FOLDER, "history").getResource().attachImageIcon(this, true);
+            } else {
+                this.defaultIcon.getResource().attachImageIcon(this, true);
+            }
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            final IImageEntry<?> current = ImageViewerDialog.this.currentEntry;
+            final IImageEntry<?> expected = this.supplier.apply(current);
+            if (current != null) {
+                IImageEntry<?> nextEntry = this.getSupplier().apply(current);
+                current.selectImage(ImageViewerDialog.this, nextEntry);
+            }
+            this.resetRememberActions();
+            if (!Objects.equals(current, expected)) {
+                this.last = current;
+            } else {
+                this.last = null;
+            }
+            this.updateEnabledState();
+        }
+
+        @Override
+        protected void updateEnabledState() {
+            final IImageEntry<?> current = ImageViewerDialog.this.currentEntry;
+            final IImageEntry<?> nextEntry = current != null ? this.getSupplier().apply(current) : null;
+            if (this.last == null && nextEntry != null && nextEntry.equals(current)) {
+                this.setEnabled(false);
+            } else {
+                super.updateEnabledState();
+            }
+            this.updateIcon();
+        }
+
+        @Override
+        SerializableUnaryOperator<IImageEntry<?>> getSupplier() {
+            if (this.last != null) {
+                return entry -> this.last;
+            }
+            return super.getSupplier();
+        }
+    }
+
+    private class ImageFirstAction extends ImageRememberAction {
         ImageFirstAction() {
-            super(null, new ImageProvider("dialogs", "first"), tr("First"), Shortcut.registerShortcut(
-                    "geoimage:first", tr("Geoimage: {0}", tr("Show first Image")), KeyEvent.VK_HOME, Shortcut.DIRECT),
-                  false, null, false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (ImageViewerDialog.this.currentEntry != null) {
-                ImageViewerDialog.this.currentEntry.selectFirstImage(ImageViewerDialog.this);
-            }
+            super(null, new ImageProvider(DIALOG_FOLDER, "first"), tr("First"), Shortcut.registerShortcut(
+                    "geoimage:first", tr(GEOIMAGE_FILLER, tr("Show first Image")), KeyEvent.VK_HOME, Shortcut.DIRECT),
+                  false, null, false, IImageEntry::getFirstImage);
         }
     }
 
-    private class ImageLastAction extends JosmAction {
+    private class ImageLastAction extends ImageRememberAction {
         ImageLastAction() {
-            super(null, new ImageProvider("dialogs", "last"), tr("Last"), Shortcut.registerShortcut(
-                    "geoimage:last", tr("Geoimage: {0}", tr("Show last Image")), KeyEvent.VK_END, Shortcut.DIRECT),
-                  false, null, false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (ImageViewerDialog.this.currentEntry != null) {
-                ImageViewerDialog.this.currentEntry.selectLastImage(ImageViewerDialog.this);
-            }
+            super(null, new ImageProvider(DIALOG_FOLDER, "last"), tr("Last"), Shortcut.registerShortcut(
+                    "geoimage:last", tr(GEOIMAGE_FILLER, tr("Show last Image")), KeyEvent.VK_END, Shortcut.DIRECT),
+                  false, null, false, IImageEntry::getLastImage);
         }
     }
 
@@ -293,7 +378,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageZoomAction extends JosmAction {
         ImageZoomAction() {
-            super(null, new ImageProvider("dialogs", "zoom-best-fit"), tr("Zoom best fit and 1:1"), null,
+            super(null, new ImageProvider(DIALOG_FOLDER, "zoom-best-fit"), tr("Zoom best fit and 1:1"), null,
                   false, null, false);
         }
 
@@ -305,8 +390,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageRemoveAction extends JosmAction {
         ImageRemoveAction() {
-            super(null, new ImageProvider("dialogs", "delete"), tr("Remove photo from layer"), Shortcut.registerShortcut(
-                    "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", tr("Remove photo from layer")), KeyEvent.VK_DELETE, Shortcut.SHIFT),
+            super(null, new ImageProvider(DIALOG_FOLDER, "delete"), tr("Remove photo from layer"), Shortcut.registerShortcut(
+                    "geoimage:deleteimagefromlayer", tr(GEOIMAGE_FILLER, tr("Remove photo from layer")), KeyEvent.VK_DELETE, Shortcut.SHIFT),
                   false, null, false);
         }
 
@@ -323,9 +408,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageRemoveFromDiskAction extends JosmAction {
         ImageRemoveFromDiskAction() {
-            super(null, new ImageProvider("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"),
+            super(null, new ImageProvider(DIALOG_FOLDER, "geoimage/deletefromdisk"), tr("Delete image file from disk"),
                     Shortcut.registerShortcut("geoimage:deletefilefromdisk",
-                            tr("Geoimage: {0}", tr("Delete image file from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
+                            tr(GEOIMAGE_FILLER, tr("Delete image file from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
                     false, null, false);
         }
 
@@ -383,7 +468,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private class ImageCopyPathAction extends JosmAction {
         ImageCopyPathAction() {
             super(null, new ImageProvider("copy"), tr("Copy image path"), Shortcut.registerShortcut(
-                    "geoimage:copypath", tr("Geoimage: {0}", tr("Copy image path")), KeyEvent.VK_C, Shortcut.ALT_CTRL_SHIFT),
+                    "geoimage:copypath", tr(GEOIMAGE_FILLER, tr("Copy image path")), KeyEvent.VK_C, Shortcut.ALT_CTRL_SHIFT),
                   false, null, false);
         }
 
@@ -397,7 +482,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageCollapseAction extends JosmAction {
         ImageCollapseAction() {
-            super(null, new ImageProvider("dialogs", "collapse"), tr("Move dialog to the side pane"), null,
+            super(null, new ImageProvider(DIALOG_FOLDER, "collapse"), tr("Move dialog to the side pane"), null,
                   false, null, false);
         }
 
@@ -413,7 +498,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      * @param value {@code true} to enable the button, {@code false} otherwise
      */
     public void setPreviousEnabled(boolean value) {
-        btnFirst.setEnabled(value);
+        this.imageFirstAction.updateEnabledState();
+        this.btnFirst.setEnabled(value || this.imageFirstAction.isEnabled());
         btnPrevious.setEnabled(value);
     }
 
@@ -423,7 +509,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      */
     public void setNextEnabled(boolean value) {
         btnNext.setEnabled(value);
-        btnLast.setEnabled(value);
+        this.imageLastAction.updateEnabledState();
+        this.btnLast.setEnabled(value || this.imageLastAction.isEnabled());
     }
 
     /**
@@ -439,7 +526,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         return wasEnabled;
     }
 
-    private transient IImageEntry<?> currentEntry;
+    private transient IImageEntry<? extends IImageEntry<?>> currentEntry;
 
     /**
      * Displays a single image for the given layer.
@@ -479,6 +566,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             }
 
             currentEntry = entry;
+
+            for (ImageAction action : Arrays.asList(this.imageFirstAction, this.imagePreviousAction,
+                    this.imageNextAction, this.imageLastAction)) {
+                action.updateEnabledState();
+            }
         }
 
         if (entry != null) {
@@ -527,18 +619,20 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      * @param imageChanged {@code true} if it is not the same image as the previous image.
      */
     private void updateButtonsNonNullEntry(IImageEntry<?> entry, boolean imageChanged) {
-        setNextEnabled(entry.getNextImage() != null);
-        setPreviousEnabled(entry.getPreviousImage() != null);
-        btnDelete.setEnabled(true);
-        btnDeleteFromDisk.setEnabled(entry.getFile() != null);
-        btnCopyPath.setEnabled(true);
-
         if (imageChanged) {
             cancelLoadingImage();
             // Set only if the image is new to preserve zoom and position if the same image is redisplayed
             // (e.g. to update the OSD).
             imgLoadingFuture = imgDisplay.setImage(entry);
         }
+
+        // Update buttons after setting the new entry
+        setNextEnabled(entry.getNextImage() != null);
+        setPreviousEnabled(entry.getPreviousImage() != null);
+        btnDelete.setEnabled(entry.isRemoveSupported());
+        btnDeleteFromDisk.setEnabled(entry.isDeleteSupported() && entry.isRemoveSupported());
+        btnCopyPath.setEnabled(true);
+
         setTitle(tr("Geotagged Images") + (!entry.getDisplayName().isEmpty() ? " - " + entry.getDisplayName() : ""));
         StringBuilder osd = new StringBuilder(entry.getDisplayName());
         if (entry.getElevation() != null) {

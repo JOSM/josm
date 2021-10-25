@@ -25,7 +25,7 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @param imageViewerDialog The image viewer to update
      */
     default void selectNextImage(final ImageViewerDialog imageViewerDialog) {
-        imageViewerDialog.displayImage(this.getNextImage());
+        this.selectImage(imageViewerDialog, this.getNextImage());
     }
 
     /**
@@ -39,7 +39,7 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @param imageViewerDialog The image viewer to update
      */
     default void selectPreviousImage(final ImageViewerDialog imageViewerDialog) {
-        imageViewerDialog.displayImage(this.getPreviousImage());
+        this.selectImage(imageViewerDialog, this.getPreviousImage());
     }
 
     /**
@@ -53,7 +53,7 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @param imageViewerDialog The image viewer to update
      */
     default void selectFirstImage(final ImageViewerDialog imageViewerDialog) {
-        imageViewerDialog.displayImage(this.getFirstImage());
+        this.selectImage(imageViewerDialog, this.getFirstImage());
     }
 
     /**
@@ -67,7 +67,17 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @param imageViewerDialog The image viewer to update
      */
     default void selectLastImage(final ImageViewerDialog imageViewerDialog) {
-        imageViewerDialog.displayImage(this.getLastImage());
+        this.selectImage(imageViewerDialog, this.getLastImage());
+    }
+
+    /**
+     * Select a specific image
+     * @param imageViewerDialog The image viewer to update
+     * @param entry The image to select
+     * @since 18290
+     */
+    default void selectImage(final ImageViewerDialog imageViewerDialog, final IImageEntry<?> entry) {
+        imageViewerDialog.displayImage(entry);
     }
 
     /**

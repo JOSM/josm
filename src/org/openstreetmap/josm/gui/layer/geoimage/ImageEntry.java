@@ -142,20 +142,8 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
     }
 
     @Override
-    public void selectNextImage(final ImageViewerDialog imageViewerDialog) {
-        IImageEntry.super.selectNextImage(imageViewerDialog);
-        this.dataSet.setSelectedImage(this.getNextImage());
-    }
-
-    @Override
     public ImageEntry getPreviousImage() {
         return this.dataSet.getPreviousImage();
-    }
-
-    @Override
-    public void selectPreviousImage(ImageViewerDialog imageViewerDialog) {
-        IImageEntry.super.selectPreviousImage(imageViewerDialog);
-        this.dataSet.setSelectedImage(this.getPreviousImage());
     }
 
     @Override
@@ -164,20 +152,16 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
     }
 
     @Override
-    public void selectFirstImage(ImageViewerDialog imageViewerDialog) {
-        IImageEntry.super.selectFirstImage(imageViewerDialog);
-        this.dataSet.setSelectedImage(this.getFirstImage());
+    public void selectImage(ImageViewerDialog imageViewerDialog, IImageEntry<?> entry) {
+        IImageEntry.super.selectImage(imageViewerDialog, entry);
+        if (entry instanceof ImageEntry) {
+            this.dataSet.setSelectedImage((ImageEntry) entry);
+        }
     }
 
     @Override
     public ImageEntry getLastImage() {
         return this.dataSet.getLastImage();
-    }
-
-    @Override
-    public void selectLastImage(ImageViewerDialog imageViewerDialog) {
-        IImageEntry.super.selectLastImage(imageViewerDialog);
-        this.dataSet.setSelectedImage(this.getLastImage());
     }
 
     @Override
