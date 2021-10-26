@@ -682,7 +682,7 @@ public class Preferences extends AbstractPreferences {
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     @Override
-    public synchronized boolean putSetting(final String key, Setting<?> setting) {
+    public boolean putSetting(final String key, Setting<?> setting) {
         CheckParameterUtil.ensureParameterNotNull(key);
         if (setting != null && setting.getValue() == null)
             throw new IllegalArgumentException("setting argument must not have null value");
