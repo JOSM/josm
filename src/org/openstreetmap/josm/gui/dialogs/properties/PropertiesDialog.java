@@ -111,7 +111,6 @@ import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
@@ -141,7 +140,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class PropertiesDialog extends ToggleDialog
-implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener, PreferenceChangedListener, TaggingPresetListener {
+implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener, TaggingPresetListener {
+    private final BooleanProperty PROP_DISPLAY_DISCARDABLE_KEYS = new BooleanProperty("display.discardable-keys", false);
 
     /**
      * hook for roadsigns plugin to display a small button in the upper right corner of this dialog
@@ -303,7 +303,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         editHelper.loadTagsIfNeeded();
 
-        Config.getPref().addKeyPreferenceChangeListener("display.discardable-keys", this);
         TaggingPresets.addListener(this);
     }
 
@@ -617,7 +616,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         destroyTaginfoNationalActions();
         membershipTable.removeMouseListener(popupMenuLauncher);
         super.destroy();
-        Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", this);
         TaggingPresets.removeListener(this);
         Container parent = pluginHook.getParent();
         if (parent != null) {
@@ -650,7 +648,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         // re-load tag data
         tagData.setRowCount(0);
 
-        final boolean displayDiscardableKeys = Config.getPref().getBoolean("display.discardable-keys", false);
+        final boolean displayDiscardableKeys = PROP_DISPLAY_DISCARDABLE_KEYS.get();
         final Map<String, Integer> keyCount = new HashMap<>();
         final Map<String, String> tags = new HashMap<>();
         valueCount.clear();
@@ -768,15 +766,17 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     /* ---------------------------------------------------------------------------------- */
 
     /**
-     * Re-load data when display preference change
+     * Reloads data when the {@code display.discardable-keys} preference changes
      */
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
-        if (MainApplication.getLayerManager().getActiveData() != null) {
-            updateSelection();
+        super.preferenceChanged(e);
+        if (PROP_DISPLAY_DISCARDABLE_KEYS.getKey().equals(e.getKey())) {
+            if (MainApplication.getLayerManager().getActiveData() != null) {
+                updateSelection();
+            }
         }
     }
-
 
     /* ---------------------------------------------------------------------------------- */
     /* TaggingPresetListener                                                              */
