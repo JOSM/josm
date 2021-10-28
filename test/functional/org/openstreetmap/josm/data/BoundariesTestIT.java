@@ -29,7 +29,7 @@ class BoundariesTestIT {
             "AN", "BU", "CS", "NT", "TP", "YU", "ZR");
 
     private static final List<String> EXCEPTIONNALY_RESERVED_ISO3166_1_CODES = Arrays.asList(
-            "AC", "CP", "DG", "EA", "EU", "EZ", "FX", "IC", "SU", "TA", "UK", "UN");
+            "AC", "CP", "DG", "EA", "EU", "EZ", "FX", "IC", "SU", "TA", "UK", "UN", "XK");
 
     private static final List<String> ISO3166_2_CODES = Arrays.asList(
             "AU-ACT", "AU-NSW", "AU-NT", "AU-QLD", "AU-SA", "AU-TAS", "AU-VIC", "AU-WA",
