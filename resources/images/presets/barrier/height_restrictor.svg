@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="f" width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="a">
+   <stop stop-color="#4d4d4d" offset="0"/>
+   <stop stop-color="#ccc" offset=".3"/>
+   <stop stop-color="#4d4d4d" offset="1"/>
+  </linearGradient>
+  <linearGradient id="d" x1="1.13" x2="2.885" y1="1039" y2="1039" gradientTransform="translate(0,-1028)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <linearGradient id="e" x1="1.13" x2="2.885" y1="1039" y2="1039" gradientTransform="translate(13,-1028)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+ </defs>
+ <g stroke-width=".2">
+  <rect x="14" y="6" width="1" height="10" fill="url(#e)" stroke="#f2f2f2" style="paint-order:stroke fill markers"/>
+  <rect x="1" y="6" width="1" height="10" fill="url(#d)" stroke="#f2f2f2" style="paint-order:stroke fill markers"/>
+  <rect x="1" y="6" width="14" height="2" fill="#fff" stroke="#4d4d4d" style="paint-order:fill markers stroke"/>
+ </g>
+ <circle cx="8" cy="3" r="2" fill="#ff0c0c" stroke="#000" stroke-width=".1"/>
+ <circle cx="8" cy="3" r="1.33" fill="#fff"/>
+ <g fill="#ff0c0c">
+  <rect x="1.09" y="6.09" width="1.9" height="1.8" style="paint-order:fill markers stroke"/>
+  <rect x="5" y="6.1" width="2" height="1.8" style="paint-order:fill markers stroke"/>
+  <rect x="9" y="6.1" width="2" height="1.8" style="paint-order:fill markers stroke"/>
+  <rect x="13" y="6.1" width="1.9" height="1.8" style="paint-order:fill markers stroke"/>
+ </g>
+</svg>

@@ -1750,6 +1750,15 @@
             <key key="barrier" value="jersey_barrier" />
             <combo key="material" text="Material" values="concrete,plastic" />
         </item> <!-- Jersey Barrier -->
+        <item name="Log" icon="presets/barrier/log.svg"  type="node,way" preset_name_label="true">
+            <link wiki="Tag:barrier=log" />
+            <key key="barrier" value="log" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
+        </item> <!-- Log -->
         <item name="Ditch" name_context="Barrier" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=ditch" />
             <key key="barrier" value="ditch" />
@@ -1849,6 +1858,17 @@
             <reference ref="check_access_nomotor" />
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Kissing Gate -->
+        <item name="Height Restrictor" icon="presets/barrier/height_restrictor.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:barrier=height_restrictor" />
+            <key key="barrier" value="height_restrictor" />
+            <reference ref="optional_maxheight_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
+        </item> <!-- Height Restrictor -->
         <item name="Chain" icon="presets/barrier/chain.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=chain" />
             <key key="barrier" value="chain" />
@@ -1876,12 +1896,24 @@
             <link wiki="Tag:barrier=turnstile" />
             <key key="barrier" value="turnstile" />
             <reference ref="optional_maxwidth" />
+            <text key="maxlength" text="Max. length (meters)" match="key" />
             <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
             <space />
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Turnstile -->
+        <item name="Full-Height Turnstile" icon="presets/barrier/full-height_turnstile.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:barrier=full-height_turnstile" />
+            <key key="barrier" value="full-height_turnstile" />
+            <reference ref="optional_maxheight_maxwidth" />
+            <text key="maxlength" text="Max. length (meters)" match="key" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <preset_link preset_name="Access Restrictions" />
+        </item> <!-- Full-Height Turnstile -->
         <item name="Sally Port" icon="presets/barrier/sally_port.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=sally_port" />
             <space />
@@ -1905,6 +1937,7 @@
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
                 <text key="width" text="Width (meters)" />
                 <text key="maxheight" text="Max. height (meters)" />
+                <text key="maxwidth" text="Max. width (meters)" match="key" />
                 <space />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <text key="maxspeed:forward" text="Max. speed in way direction" />
