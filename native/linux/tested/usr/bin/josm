@@ -62,6 +62,9 @@ if [ "$JAVACMD" ]; then
         JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
     elif [[ "${JAVACMD}" =~ 'java-1' ]]; then
         JAVA_OPTS="--module-path /usr/share/openjfx/lib --add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
+        JAVA_OPTS="$JAVA_OPTS --add-exports=java.base/sun.security.action=ALL-UNNAMED"
+        JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED"
+        JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED"
     fi
     set +e
     while true; do
