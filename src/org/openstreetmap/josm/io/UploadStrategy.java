@@ -92,6 +92,6 @@ public enum UploadStrategy {
      * @param strategy the strategy to save
      */
     public static void saveToPreferences(UploadStrategy strategy) {
-        Config.getPref().put("osm-server.upload-strategy", strategy.getPreferenceValue());
+        Config.getPref().put("osm-server.upload-strategy", strategy != null ? strategy.getPreferenceValue() : null);
     }
 }
