@@ -446,16 +446,16 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         int numTagDecisions = modelTagConflictResolver.getNumDecisions();
         int numRelationDecisions = modelRelConflictResolver.getNumDecisions();
 
-
         if (numTagDecisions > 0 && numRelationDecisions > 0 && getHeight() > 0) {
             // see #12536: Take the space for buttons and checkbox into account.
             double hPopup = getHeight();
-            double h1 = (pnlRelationMemberConflictResolver.getHeight() + pnlTagConflictResolver.getHeight());
-            double correction = h1 > 0 ? ((hPopup-h1)/hPopup) : 0;
+            double h1 = pnlRelationMemberConflictResolver.getHeight() + pnlTagConflictResolver.getHeight();
+            double correction = h1 > 0 && hPopup > h1 ? ((hPopup-h1)/hPopup) : 0;
 
             double nTop = 3.5 + numTagDecisions;
             double nBottom = 5.5 + numRelationDecisions;
-            spTagConflictTypes.setDividerLocation(nTop/(nTop+nBottom) - correction);
+            double ratio = nTop/(nTop+nBottom);
+            spTagConflictTypes.setDividerLocation(ratio > correction ? ratio - correction : ratio);
         }
     }
 
