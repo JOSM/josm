@@ -274,7 +274,9 @@ public final class ChangesetCache implements PreferenceChangedListener {
         synchronized (this) {
             reader = new OsmServerChangesetReader();
         }
-        List<Changeset> server = UserIdentityManager.getInstance().isAnonymous() ? Collections.emptyList() : reader.queryChangesets(ChangesetQuery.forCurrentUser().beingOpen(true), null);
+        List<Changeset> server = UserIdentityManager.getInstance().isAnonymous() ?
+                Collections.emptyList() :
+                    reader.queryChangesets(ChangesetQuery.forCurrentUser().beingOpen(true), null);
         Logging.info("{0} open changesets on server", server.size());
 
         DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
