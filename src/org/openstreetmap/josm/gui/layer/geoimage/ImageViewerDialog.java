@@ -13,6 +13,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -57,6 +58,7 @@ import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.util.imagery.Vector3D;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -79,6 +81,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private final ImageFirstAction imageFirstAction = new ImageFirstAction();
     private final ImageLastAction imageLastAction = new ImageLastAction();
     private final ImageCopyPathAction imageCopyPathAction = new ImageCopyPathAction();
+    private final ImageOpenExternalAction imageOpenExternalAction = new ImageOpenExternalAction();
     private final LayerVisibilityAction visibilityAction = new LayerVisibilityAction(Collections::emptyList,
             () -> Collections.singleton(imageryFilterSettings));
 
@@ -114,6 +117,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private JButton btnCollapse;
     private JButton btnDelete;
     private JButton btnCopyPath;
+    private JButton btnOpenExternal;
     private JButton btnDeleteFromDisk;
     private JToggleButton tbCentre;
 
@@ -159,6 +163,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDelete = createButton(imageRemoveAction, buttonDim);
         btnDeleteFromDisk = createButton(imageRemoveFromDiskAction, buttonDim);
         btnCopyPath = createButton(imageCopyPathAction, buttonDim);
+        btnOpenExternal = createButton(imageOpenExternalAction, buttonDim);
 
         btnNext = createNavigationButton(imageNextAction, buttonDim);
         btnLast = createNavigationButton(imageLastAction, buttonDim);
@@ -185,6 +190,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         buttons.add(btnDeleteFromDisk);
         buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(btnCopyPath);
+        buttons.add(btnOpenExternal);
         buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(createButton(visibilityAction, buttonDim));
 
@@ -219,6 +225,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         imageCenterViewAction.destroy();
         imageCollapseAction.destroy();
         imageCopyPathAction.destroy();
+        imageOpenExternalAction.destroy();
         imageRemoveAction.destroy();
         imageRemoveFromDiskAction.destroy();
         imageZoomAction.destroy();
@@ -229,6 +236,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     /**
      * This literally exists to silence sonarlint complaints.
+     * @param <I> the type of the operand and result of the operator
      */
     @FunctionalInterface
     private interface SerializableUnaryOperator<I> extends UnaryOperator<I>, Serializable {
@@ -493,6 +501,23 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
     }
 
+    private class ImageOpenExternalAction extends JosmAction {
+        ImageOpenExternalAction() {
+            super(null, new ImageProvider("external-link"), tr("Open image in external viewer"), null, false, null, false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (currentEntry != null) {
+                try {
+                    PlatformManager.getPlatform().openUrl(currentEntry.getFile().toURI().toURL().toExternalForm());
+                } catch (IOException ex) {
+                    Logging.error(ex);
+                }
+            }
+        }
+    }
+
     /**
      * Enables (or disables) the "Previous" button.
      * @param value {@code true} to enable the button, {@code false} otherwise
@@ -604,6 +629,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDelete.setEnabled(hasMultipleImages);
         btnDeleteFromDisk.setEnabled(hasMultipleImages);
         btnCopyPath.setEnabled(false);
+        btnOpenExternal.setEnabled(false);
         if (hasMultipleImages) {
             imgDisplay.setEmptyText(tr("Multiple images selected"));
             btnFirst.setEnabled(!isFirstImageSelected(entries));
@@ -632,6 +658,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDelete.setEnabled(entry.isRemoveSupported());
         btnDeleteFromDisk.setEnabled(entry.isDeleteSupported() && entry.isRemoveSupported());
         btnCopyPath.setEnabled(true);
+        btnOpenExternal.setEnabled(true);
 
         setTitle(tr("Geotagged Images") + (!entry.getDisplayName().isEmpty() ? " - " + entry.getDisplayName() : ""));
         StringBuilder osd = new StringBuilder(entry.getDisplayName());
