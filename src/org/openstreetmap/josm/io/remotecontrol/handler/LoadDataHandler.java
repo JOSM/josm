@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class LoadDataHandler extends RequestHandler {
 
-    private static final String OSM_MIME_TYPE = "application/x-osm+xml";
+    private static final String OSM_MIME_TYPE = "application/vnd.openstreetmap.data+xml";
 
     /**
      * The remote control command name used to import data.

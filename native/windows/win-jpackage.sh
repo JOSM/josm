@@ -76,6 +76,7 @@ do
     --file-associations native/file-associations/jos.properties \
     --file-associations native/file-associations/joz.properties \
     --file-associations native/file-associations/osm.properties \
+    --file-associations native/file-associations/xz.properties \
     --file-associations native/file-associations/zip.properties \
     --add-launcher HWConsole=native/windows/MLConsole.properties \
     --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom,javafx.controls,javafx.media,javafx.swing,javafx.web
