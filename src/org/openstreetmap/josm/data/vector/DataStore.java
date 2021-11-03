@@ -66,7 +66,7 @@ class DataStore<O extends IPrimitive, N extends INode, W extends IWay<N>, R exte
 
     /**
      * Get the primitives map.
-     * @implNote The returned map is a {@link Collections#synchronizedMap}. Please synchronize on it.
+     * The returned map is a {@link Collections#synchronizedMap}. Please synchronize on it.
      * @return The Primitives map.
      */
     public Map<PrimitiveId, O> getPrimitivesMap() {
@@ -89,7 +89,6 @@ class DataStore<O extends IPrimitive, N extends INode, W extends IWay<N>, R exte
      * Add a primitive to this dataset
      * @param primitive The primitive to remove
      */
-    @SuppressWarnings("squid:S2445")
     protected void removePrimitive(O primitive) {
         if (primitive == null) {
             return;

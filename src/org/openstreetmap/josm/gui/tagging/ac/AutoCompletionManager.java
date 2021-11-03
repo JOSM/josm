@@ -289,7 +289,7 @@ public class AutoCompletionManager implements DataSetListener {
      */
     public void populateWithMemberRoles(AutoCompletionList list, Relation r) {
         CheckParameterUtil.ensureParameterNotNull(list, "list");
-        Collection<TaggingPreset> presets = r != null ? TaggingPresets.getMatchingPresets(null, r.getKeys(), false) : null;
+        Collection<TaggingPreset> presets = r != null ? TaggingPresets.getMatchingPresets(null, r.getKeys(), false) : Collections.emptyList();
         if (r != null && !Utils.isEmpty(presets)) {
             for (TaggingPreset tp : presets) {
                 if (tp.roles != null) {

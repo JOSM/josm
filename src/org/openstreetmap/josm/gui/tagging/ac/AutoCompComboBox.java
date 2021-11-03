@@ -2,9 +2,6 @@
 package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.awt.im.InputContext;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.Locale;
 
 import javax.swing.ComboBoxEditor;
@@ -95,54 +92,6 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements AutoCompList
         String savedText = getText();
         setSelectedItem(item);
         setText(savedText);
-    }
-
-    /**
-     * Sets the items of the combobox to the given {@code String}s in reversed order (last element
-     * first).
-     *
-     * @param elems The string items to set
-     * @deprecated Has been moved to the model, where it belongs. Use
-     *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel#addAllStrings} instead. Probably you want to use
-     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#load} and
-     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#save}.
-     */
-    @Deprecated
-    public void setPossibleItems(Collection<E> elems) {
-        // We have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        LinkedList<E> reversed = new LinkedList<>(elems);
-        Collections.reverse(reversed);
-        setPossibleAcItems(reversed);
-    }
-
-    /**
-     * Sets the items of the combobox to the given {@code String}s in top down order.
-     *
-     * @param elems The strings to set.
-     * @since 15011
-     * @deprecated Has been moved to the model, where it belongs. Use
-     *     {@link org.openstreetmap.josm.gui.widgets.HistoryComboBoxModel#addAllStrings} instead. Probably you want to use
-     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#load} and
-     *     {@link org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel.Preferences#save}.
-     */
-    @Deprecated
-    public void setPossibleItemsTopDown(Collection<E> elems) {
-        setPossibleAcItems(elems);
-    }
-
-    /**
-     * Sets the items of the combobox to the given {@code AutoCompletionItem}s.
-     *
-     * @param elems AutoCompletionItem items
-     * @since 12859
-     * @deprecated Use {@link AutoCompComboBoxModel#addAllElements} instead.
-     */
-    @Deprecated
-    public void setPossibleAcItems(Collection<E> elems) {
-        Object oldValue = getEditor().getItem();
-        getModel().removeAllElements();
-        getModel().addAllElements(elems);
-        getEditor().setItem(oldValue);
     }
 
     /**
