@@ -93,13 +93,16 @@
         </condition>
         <!-- For Java specific stuff by version -->
         <condition property="isJava9"><matches string="${ant.java.version}" pattern="(1.)?(9|1[0-9])" /></condition>
-        <condition property="isJava10"><matches string="${ant.java.version}" pattern="1[0-9]" /></condition>
-        <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]" /></condition>
-        <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]" /></condition>
-        <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]" /></condition>
-        <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]" /></condition>
-        <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]" /></condition>
-        <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]" /></condition>
+        <condition property="isJava10"><matches string="${ant.java.version}" pattern="(1|2)[0-9]" /></condition>
+        <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava19"><matches string="${ant.java.version}" pattern="19|[2-9][0-9]" /></condition>
+        <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition>
+        <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
         <!-- Disable jacoco on Java 18+, see https://github.com/jacoco/jacoco/pull/1132 -->
         <condition property="coverageByDefault">
             <not>
@@ -182,6 +185,8 @@ Build-Date: ${build.tstamp}
                 <!-- Java 9 stuff. Entries are safely ignored by Java 8 -->
                 <attribute name="Add-Exports" value="java.base/sun.security.action java.desktop/com.apple.eawt java.desktop/com.sun.imageio.spi java.desktop/com.sun.imageio.plugins.jpeg javafx.graphics/com.sun.javafx.application jdk.deploy/com.sun.deploy.config" />
                 <attribute name="Add-Opens" value="java.base/java.lang java.base/java.nio java.base/jdk.internal.loader java.base/jdk.internal.ref java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
+                <!-- Indicate that this jar may have version specific classes. Only used in Java9+. -->
+                <attribute name="Multi-Release" value="true"/>
             </manifest>
         </jar>
         <!-- Sign jar if all environment variables are set -->
@@ -202,10 +207,101 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </java>
     </target>
+    <macrodef name="call-javac-compile">
+        <attribute name="sourcepath" default=""/>
+        <attribute name="srcdir" default="${src.dir}"/>
+        <attribute name="fork" default="yes"/>
+        <attribute name="excludes" default=""/>
+        <attribute name="includes" default="**/*.java"/>
+        <attribute name="destdir" default="${build.dir}"/>
+        <attribute name="debug" default="on"/>
+        <attribute name="includeantruntime" default="false"/>
+        <attribute name="encoding" default="UTF-8"/>
+        <attribute name="release" default="${java.lang.version}"/>
+        <element name="cp-elements" optional="true"/>
+        <sequential>
+          <javac sourcepath="@{sourcepath}" srcdir="@{srcdir}" fork="@{fork}"
+            includes="@{includes}" excludes="@{excludes}" destdir="@{destdir}" release="@{release}"
+            debug="@{debug}" includeantruntime="@{includeantruntime}" encoding="@{encoding}">
+              <compilerarg value="-J-Xbootclasspath/p:${toString:errorprone_javac.classpath}" unless:set="isJava9"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg line="-XDcompilePolicy=simple"/>
+              <compilerarg value="-processorpath"/>
+              <compilerarg value="${toString:errorprone.classpath}:${toString:semanticdb.classpath}"/>
+              <compilerarg value="-Xlint:cast"/>
+              <compilerarg value="-Xlint:deprecation"/>
+              <compilerarg value="-Xlint:dep-ann"/>
+              <compilerarg value="-Xlint:divzero"/>
+              <compilerarg value="-Xlint:empty"/>
+              <compilerarg value="-Xlint:finally"/>
+              <compilerarg value="-Xlint:overrides"/>
+              <!--<compilerarg value="-Xlint:rawtypes"/>-->
+              <compilerarg value="-Xlint:static"/>
+              <compilerarg value="-Xlint:try"/>
+              <compilerarg value="-Xlint:unchecked"/>
+              <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
+              <compilerarg value="-XDignore.symbol.file"/>
+              <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsGetClass:OFF -Xep:UndefinedEquals:OFF -Xep:BadImport:OFF -Xep:AnnotateFormatMethod:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF -Xep:RestrictedApiChecker:OFF -Xep:InlineMeSuggester:OFF" unless:set="noErrorProne"/>
+              <compilerarg line="-Xmaxwarns 1000"/>
+              <compilerarg value="-Xplugin:semanticdb -sourceroot:@{srcdir} -targetroot:${build.dir}/semanticdb" if:set="lsif" />
+              <classpath>
+                  <path refid="runtime.path"/>
+                  <cp-elements/>
+              </classpath>
+          </javac>
+      </sequential>
+    </macrodef>
+    <macrodef name="call-javac-compile-mrjar">
+      <!--
+        See https://openjdk.java.net/jeps/238 for the specification
+        The big bits are that the version specific files should be in META-INF/versions/${javaVersion}/
+        using the same package scheme. And that the files in the version specific directories are *full*
+        implementations of the class they are replacing.
+      -->
+      <attribute name="release"/>
+      <sequential>
+        <condition property="java@{release}DirExists">
+          <and>
+            <isset property="isJava@{release}"/>
+            <resourceexists>
+              <file file="${src.dir}/main/java-@{release}"/>
+            </resourceexists>
+          </and>
+        </condition>
+        <echo message="Compiling Java @{release} files" if:true="${java@{release}DirExists}"/>
+        <mkdir dir="${build.dir}/META-INF/versions/@{release}" if:true="${java@{release}DirExists}"/>
+        <call-javac-compile srcdir="${src.dir}/main/java-@{release}" destdir="${build.dir}/META-INF/versions/@{release}" release="@{release}" if:true="${java@{release}DirExists}">
+            <cp-elements>
+              <pathelement path="${build.dir}"/>
+            </cp-elements>
+        </call-javac-compile>
+      </sequential>
+    </macrodef>
     <target name="compile" depends="init,javacc" unless="compile.notRequired" description="Compile JOSM">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
         <!-- JOSM -->
+        <call-javac-compile excludes="**/package-info.java,**/module-info.java,main/**" release="${java.lang.version}"/>
+        <!-- Java 11 specific files (2018-09 LTS) -->
+        <call-javac-compile-mrjar release="11"/>
+        <!-- Java 17 specific files (2021-09 LTS) -->
+        <call-javac-compile-mrjar release="17"/>
+        <!-- Java 18 specific files -->
+        <call-javac-compile-mrjar release="18"/>
+        <!-- Java 19 specific files -->
+        <call-javac-compile-mrjar release="19"/>
+        <!-- Java 20 specific files -->
+        <call-javac-compile-mrjar release="20"/>
+        <!-- Java 21 specific files (2023-09 LTS) -->
+        <call-javac-compile-mrjar release="21"/>
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
             excludes="com/**,org/apache/commons/**,**/package-info.java"
             destdir="${build.dir}" release="${java.lang.version}" debug="on" includeantruntime="false" encoding="UTF-8">
