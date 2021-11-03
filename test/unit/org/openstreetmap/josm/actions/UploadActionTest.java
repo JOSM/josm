@@ -9,7 +9,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -26,6 +26,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Territories;
 
 import mockit.Invocation;
 import mockit.Mock;
@@ -38,14 +39,23 @@ import mockit.MockUp;
 @BasicPreferences
 class UploadActionTest {
     // Only needed for layer cleanup. And user identity cleanup. And ensuring that data isn't accidentally uploaded.
+    // Note that the setUp method can be replaced by the @Territories extension, when that is merged.
     @RegisterExtension
     JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeAPI();
+
+    @BeforeAll
+    static void setUp() {
+        // Territories is needed due to test pollution. One of the listeners
+        // that may get registered on SelectionEventManager requires
+        // Territories. Rather unfortunately, we also need the external data to
+        // avoid the NPE.
+        Territories.initialize();
+    }
 
     /**
      * Non-regression test for JOSM #21476.
      */
     @Test
-    @Ignore("doesn't work on CI")
     void testNonRegression21476() {
         TestUtils.assumeWorkingJMockit();
         Logging.clearLastErrorAndWarnings();
