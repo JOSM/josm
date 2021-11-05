@@ -65,7 +65,8 @@ public class PluginListParser {
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
                     final String[] keyValue = line.split("\\s*:\\s*", 2);
-                    manifest.put(new Attributes.Name(keyValue[0].substring(1)), keyValue[1]);
+                    if (keyValue.length >= 2)
+                        manifest.put(new Attributes.Name(keyValue[0].substring(1)), keyValue[1]);
                     continue;
                 }
                 addPluginInformation(ret, name, url, manifest);
