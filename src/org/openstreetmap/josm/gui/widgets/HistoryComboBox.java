@@ -28,7 +28,9 @@ public class HistoryComboBox extends AutoCompComboBox<String> {
      * add another but move it to the top. The item is then selected.
      */
     public void addCurrentItemToHistory() {
-        String newItem = getModel().addTopElement(getEditor().getItem().toString());
-        getModel().setSelectedItem(newItem);
+        String item = getEditorItemAsString();
+        if (item != null) {
+            getModel().setSelectedItem(getModel().addTopElement(item));
+        }
     }
 }

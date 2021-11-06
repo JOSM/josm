@@ -433,7 +433,7 @@ public class TagEditHelper {
      * @since 18173
      */
     public static String getEditItem(AutoCompComboBox<AutoCompletionItem> cb) {
-        return Utils.removeWhiteSpaces(cb.getEditor().getItem().toString());
+        return Utils.removeWhiteSpaces(cb.getEditorItemAsString());
     }
 
     /**

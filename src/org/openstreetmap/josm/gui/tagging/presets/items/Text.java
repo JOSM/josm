@@ -3,13 +3,13 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -222,7 +222,7 @@ public class Text extends KeyedItem {
 
     private static String getValue(Component comp) {
         if (comp instanceof JosmComboBox) {
-            return ((JosmComboBox<?>) comp).getEditor().getItem().toString();
+            return ((JosmComboBox<?>) comp).getEditorItemAsString();
         } else if (comp instanceof JosmTextField) {
             return ((JosmTextField) comp).getText();
         } else if (comp instanceof JPanel) {

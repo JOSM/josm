@@ -172,6 +172,15 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
     }
 
     /**
+     * Returns the string representation of current edited item, or null.
+     * @return the string representation of current edited item, or null
+     * @since 18313
+     */
+    public String getEditorItemAsString() {
+        return editor != null && editor.getItem() != null ? editor.getItem().toString() : null;
+    }
+
+    /**
      * Returns the text in the combobox editor.
      * @return the text
      * @see JTextComponent#getText
