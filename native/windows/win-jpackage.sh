@@ -69,6 +69,7 @@ do
     --win-dir-chooser \
     --win-shortcut \
     --win-menu \
+    --win-menu-group "JOSM" \
     --file-associations native/file-associations/bz2.properties \
     --file-associations native/file-associations/geojson.properties \
     --file-associations native/file-associations/gpx.properties \
