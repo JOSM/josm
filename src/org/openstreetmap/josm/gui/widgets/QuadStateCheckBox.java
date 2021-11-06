@@ -151,7 +151,7 @@ public class QuadStateCheckBox extends JCheckBox {
     /**
      * Button model for the {@code QuadStateCheckBox}.
      */
-    private final class QuadStateDecorator implements ButtonModel {
+    private final class QuadStateDecorator extends ToggleButtonModel {
         private final ButtonModel other;
         private String propertyText;
 
