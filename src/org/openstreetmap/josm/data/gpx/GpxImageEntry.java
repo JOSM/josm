@@ -731,7 +731,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
         try {
-            if (dirExif != null) {
+            if (dirExif != null && dirExif.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
                 setExifOrientation(dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION));
             }
         } catch (MetadataException ex) {
@@ -739,7 +739,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         }
 
         try {
-            if (dir != null) {
+            if (dir != null && dir.containsTag(JpegDirectory.TAG_IMAGE_WIDTH) && dir.containsTag(JpegDirectory.TAG_IMAGE_HEIGHT)) {
                 // there are cases where these do not match width and height stored in dirExif
                 setWidth(dir.getInt(JpegDirectory.TAG_IMAGE_WIDTH));
                 setHeight(dir.getInt(JpegDirectory.TAG_IMAGE_HEIGHT));

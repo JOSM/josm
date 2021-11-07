@@ -176,7 +176,7 @@ public final class ExifReader {
      * @since 6209
      */
     public static LatLon readLatLon(GpsDirectory dirGps) throws MetadataException {
-        if (dirGps != null && dirGps.getTagCount() > 1) {
+        if (dirGps != null && dirGps.containsTag(GpsDirectory.TAG_LATITUDE) && dirGps.containsTag(GpsDirectory.TAG_LONGITUDE)) {
             double lat = readAxis(dirGps, GpsDirectory.TAG_LATITUDE, GpsDirectory.TAG_LATITUDE_REF, 'S');
             double lon = readAxis(dirGps, GpsDirectory.TAG_LONGITUDE, GpsDirectory.TAG_LONGITUDE_REF, 'W');
             return new LatLon(lat, lon);
@@ -296,13 +296,11 @@ public final class ExifReader {
      */
     public static Double readElevation(File filename) {
         try {
-            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
-            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
-            return readElevation(dirGps);
+            return readElevation(JpegMetadataReader.readMetadata(filename).getFirstDirectoryOfType(GpsDirectory.class));
         } catch (JpegProcessingException | IOException e) {
             Logging.error(e);
+            return null;
         }
-        return null;
     }
 
     /**
