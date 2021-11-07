@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -28,7 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -44,6 +44,8 @@ import org.openstreetmap.josm.gui.io.importexport.FileImporter;
 import org.openstreetmap.josm.gui.io.importexport.Options;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
+import org.openstreetmap.josm.gui.widgets.NativeFileChooser;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -78,8 +80,16 @@ public class OpenFileAction extends DiskAccessAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AbstractFileChooser fc = createAndOpenFileChooser(true, true, null, null, JFileChooser.FILES_AND_DIRECTORIES,
-                true, null);
+        final AbstractFileChooser fc;
+        // If the user explicitly wants native file dialogs, let them use it.
+        // Rather unfortunately, this means that they will not be able to select files and directories.
+        if (FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get()
+                // This is almost redundant, as the JDK currently doesn't support this with (all?) native file choosers.
+                && !NativeFileChooser.supportsSelectionMode(FILES_AND_DIRECTORIES)) {
+            fc = createAndOpenFileChooser(true, true, null);
+        } else {
+            fc = createAndOpenFileChooser(true, true, null, null, FILES_AND_DIRECTORIES, true, null);
+        }
         if (fc == null)
             return;
         File[] files = fc.getSelectedFiles();
