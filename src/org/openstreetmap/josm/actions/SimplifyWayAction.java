@@ -36,6 +36,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -404,24 +405,46 @@ public class SimplifyWayAction extends JosmAction {
 
         Node fromN = wnew.get(from);
         Node toN = wnew.get(to);
-
+        EastNorth p1 = fromN.getEastNorth();
+        EastNorth p2 = toN.getEastNorth();
         // Get max xte
         int imax = -1;
         double xtemax = 0;
         for (int i = from + 1; i < to; i++) {
             Node n = wnew.get(i);
+            EastNorth p = n.getEastNorth();
+            double ldx = p2.getX() - p1.getX();
+            double ldy = p2.getY() - p1.getY();
+            double offset;
+            //segment zero length
+            if (ldx == 0 && ldy == 0)
+                offset = 0;
+            else {
+                double pdx = p.getX() - p1.getX();
+                double pdy = p.getY() - p1.getY();
+                offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
+            }
+            final double distRad;
             // CHECKSTYLE.OFF: SingleSpaceSeparator
-            double xte = Math.abs(Ellipsoid.WGS84.a
-                    * xtd(fromN.lat() * Math.PI / 180, fromN.lon() * Math.PI / 180, toN.lat() * Math.PI / 180,
-                            toN.lon() * Math.PI / 180,     n.lat() * Math.PI / 180,   n.lon() * Math.PI / 180));
+            if (offset <= 0) {
+                distRad = dist(fromN.lat() * Math.PI / 180, fromN.lon() * Math.PI / 180,
+                                   n.lat() * Math.PI / 180,     n.lon() * Math.PI / 180);
+            } else if (offset >= 1) {
+                distRad = dist(toN.lat() * Math.PI / 180, toN.lon() * Math.PI / 180,
+                                 n.lat() * Math.PI / 180,   n.lon() * Math.PI / 180);
+            } else {
+                distRad = xtd(fromN.lat() * Math.PI / 180, fromN.lon() * Math.PI / 180,
+                                toN.lat() * Math.PI / 180,   toN.lon() * Math.PI / 180,
+                                  n.lat() * Math.PI / 180,     n.lon() * Math.PI / 180);
+            }
             // CHECKSTYLE.ON: SingleSpaceSeparator
+            double xte = Math.abs(distRad);
             if (xte > xtemax) {
                 xtemax = xte;
                 imax = i;
             }
         }
-
-        if (imax != -1 && xtemax >= threshold) {
+        if (imax != -1 && Ellipsoid.WGS84.a * xtemax >= threshold) {
             // Segment cannot be simplified - try shorter segments
             buildSimplifiedNodeList(wnew, from, imax, threshold, simplifiedNodes);
             buildSimplifiedNodeList(wnew, imax, to, threshold, simplifiedNodes);
