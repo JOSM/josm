@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <radialGradient id="radialGradient3310" cx="8" cy="8" r="8" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#00e54d" offset="0"/>
+   <stop stop-color="#008015" offset="1"/>
+  </radialGradient>
+ </defs>
+ <circle cx="8" cy="8" r="8" fill="url(#radialGradient3310)" fill-rule="evenodd" stroke-linecap="square" stroke-width=".2562" style="paint-order:stroke fill markers"/>
+ <path d="m2 6 2 6.5h8l2-6.5" fill="none" stroke="#fff" stroke-width="1px"/>
+ <g fill="#fff" fill-rule="evenodd">
+  <circle cx="6" cy="10" r="1" style="paint-order:stroke fill markers"/>
+  <circle cx="9" cy="10" r="1" style="paint-order:stroke fill markers"/>
+  <circle cx="8" cy="7" r="1" style="paint-order:stroke fill markers"/>
+  <circle cx="11" cy="7" r="1" style="paint-order:stroke fill markers"/>
+ </g>
+</svg>
