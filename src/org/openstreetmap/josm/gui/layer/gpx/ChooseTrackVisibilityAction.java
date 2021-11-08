@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -183,6 +184,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 String url = (String) t.getValueAt(row, col);
                 if (Utils.isEmpty(url)) {
                     return;
+                }
+                // Apparently track URLs are no longer complete URLs, but only paths
+                // We'll prefix the browse URL to get something to navigate to again.
+                if (!url.startsWith("http")) {
+                    url = Config.getUrls().getBaseBrowseUrl() + url;
                 }
                 OpenBrowser.displayUrl(url);
             }
