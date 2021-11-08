@@ -110,11 +110,11 @@ public class ValidateUploadHook implements UploadHook {
         errorPanel.expandAll();
         HtmlPanel pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
-                + tr("The following are results of automatic validation. Try fixing"
-                + " these, but be careful (don''t destroy valid data)."
-                + " When in doubt ignore them.<br>When you"
-                + " cancel this dialog, you can find the entries in the validator"
-                + " side panel to inspect them.")
+                + tr("The JOSM data validator partially checked the objects to be"
+                + " uploaded and found some problems. Try fixing them, but do not"
+                + " harm valid data. When in doubt ignore the findings.<br>"
+                + " You can see the findings in the Validator Results panel too."
+                + " Further checks on all data can be started from that panel.")
                 + "<table align=\"center\">"
                 + "<tr><td align=\"left\"><b>"+tr("Errors")
                 + "&nbsp;</b></td><td align=\"left\">"
@@ -124,7 +124,7 @@ public class ValidateUploadHook implements UploadHook {
                 + tr("Fix these when possible.")+"</td></tr>"
                 + "<tr><td align=\"left\"><b>"+tr("Other")
                 + "&nbsp;</b></td><td align=\"left\">"
-                + tr("Informational warnings, expect many false entries.")+"</td></tr>"
+                + tr("Informational hints, expect many false entries.")+"</td></tr>"
                 + "</table>"
         );
         pnlMessage.setPreferredSize(new Dimension(500, 150));
