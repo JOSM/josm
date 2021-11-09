@@ -11,12 +11,15 @@ import java.util.List;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -51,7 +54,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         boolean done = false;
         GpxData result = null;
         final int pointsPerPage = 5000; // see https://wiki.openstreetmap.org/wiki/API_v0.6#GPS_traces
-        String url = "trackpoints?bbox="+b.getMinLon()+','+b.getMinLat()+','+b.getMaxLon()+','+b.getMaxLat()+"&page=";
+        final String url = getBaseUrl() + "trackpoints?bbox="+b.getMinLon()+','+b.getMinLat()+','+b.getMaxLon()+','+b.getMaxLat()+"&page=";
         for (int i = 0; !done && !isCanceled(); ++i) {
             progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * pointsPerPage, (i + 1) * pointsPerPage));
             try (InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true))) {
@@ -62,6 +65,20 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 GpxReader reader = new GpxReader(in);
                 gpxParsedProperly = reader.parse(false);
                 GpxData currentGpx = reader.getGpxData();
+
+                // #21538 - Apparently track URLs are no longer complete URLs, but only paths
+                // We'll prefix the browse URL to get something to navigate to again.
+                final String browseUrl = Config.getUrls().getBaseBrowseUrl();
+                for (IGpxTrack track : currentGpx.tracks) {
+                    Object trackUrl = track.get("url");
+                    if (trackUrl instanceof String) {
+                        String sTrackUrl = (String) trackUrl;
+                        if (!Utils.isBlank(sTrackUrl) && !sTrackUrl.startsWith("http")) {
+                            track.put("url", browseUrl + sTrackUrl);
+                        }
+                    }
+                }
+
                 long count = 0;
                 if (currentGpx.hasTrackPoints()) {
                     count = currentGpx.getTrackPoints().count();
