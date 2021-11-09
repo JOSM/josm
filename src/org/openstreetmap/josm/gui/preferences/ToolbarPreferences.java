@@ -76,6 +76,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetListener;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.ReorderableTableModel;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -90,7 +92,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Toolbar preferences.
  * @since 172
  */
-public class ToolbarPreferences implements PreferenceSettingFactory {
+public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPresetListener {
 
     private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
 
@@ -1022,6 +1024,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             control.setComponentPopupMenu(popupMenu);
         });
         MapFrame.TOOLBAR_VISIBLE.addListener(e -> refreshToolbarControl());
+        TaggingPresets.addListener(this);
     }
 
     private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
@@ -1138,6 +1141,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
         if (toolbar != null) {
+            actions.put(toolbar, action);
             regactions.put(toolbar, action);
         }
         return action;
@@ -1152,6 +1156,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public Action unregister(Action action) {
         Object toolbar = action.getValue("toolbar");
         if (toolbar instanceof String) {
+            actions.remove(toolbar);
             return regactions.remove(toolbar);
         }
         return null;
@@ -1284,4 +1289,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     }
 
     private static final DataFlavor ACTION_FLAVOR = new DataFlavor(ActionDefinition.class, "ActionItem");
+
+    @Override
+    public void taggingPresetsModified() {
+        refreshToolbarControl();
+    }
 }

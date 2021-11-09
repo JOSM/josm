@@ -90,6 +90,7 @@ public final class TaggingPresets {
         for (TaggingPreset tp: taggingPresets) {
             if (!(tp instanceof TaggingPresetSeparator)) {
                 MainApplication.getToolbar().register(tp);
+                MainApplication.getLayerManager().addActiveLayerChangeListener(tp);
             }
         }
         if (taggingPresets.isEmpty()) {
@@ -137,12 +138,16 @@ public final class TaggingPresets {
      */
     public static void destroy() {
         ToolbarPreferences toolBar = MainApplication.getToolbar();
-        taggingPresets.forEach(toolBar::unregister);
+        for (TaggingPreset tp: taggingPresets) {
+            toolBar.unregister(tp);
+            if (!(tp instanceof TaggingPresetSeparator)) {
+                MainApplication.getLayerManager().removeActiveLayerChangeListener(tp);
+            }
+        }
         taggingPresets.clear();
         PRESET_TAG_CACHE.clear();
         PRESET_ROLE_CACHE.clear();
         MainApplication.getMenu().presetsMenu.removeAll();
-        listeners.forEach(TaggingPresetListener::taggingPresetsModified);
     }
 
     /**

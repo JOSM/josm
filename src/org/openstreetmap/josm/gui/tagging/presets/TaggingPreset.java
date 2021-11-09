@@ -177,7 +177,6 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * Use this as default item for "do not select anything".
      */
     public TaggingPreset() {
-        MainApplication.getLayerManager().addActiveLayerChangeListener(this);
         updateEnabledState();
     }
 
