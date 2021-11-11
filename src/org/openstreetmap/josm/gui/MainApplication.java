@@ -1034,6 +1034,11 @@ public class MainApplication {
         }
         // Disable automatic POST retry after 5 minutes, see #17882 / https://bugs.openjdk.java.net/browse/JDK-6382788
         Utils.updateSystemProperty("sun.net.http.retryPost", "false");
+        if (Utils.getJavaVersion() >= 17) {
+            // Allow security manager, otherwise it raises a warning in Java 17 and throws an error with Java 18+
+            // See https://bugs.openjdk.java.net/browse/JDK-8271301 / https://bugs.openjdk.java.net/browse/JDK-8270380
+            Utils.updateSystemProperty("java.security.manager", "allow");
+        }
     }
 
     /**
