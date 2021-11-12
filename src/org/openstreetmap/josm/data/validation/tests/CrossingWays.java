@@ -125,9 +125,9 @@ public abstract class CrossingWays extends Test {
                 return true;
             if (isWaterArea(w1) && isWaterArea(w2))
                 return true; // handled by mapcss tests
-            if (w1.hasKey(RAILWAY) && w2.hasKey(RAILWAY) && w1.hasTag(RAILWAY, "yard") != w2.hasTag(RAILWAY, "yard")) {
-                return true; // see #20089
-            }
+            if (w1.hasKey(RAILWAY) && w2.hasKey(RAILWAY) && (w1.hasTag(RAILWAY, "yard") != w2.hasTag(RAILWAY, "yard")
+                    || w1.hasTag(RAILWAY, "halt") != w2.hasTag(RAILWAY, "halt")))
+                return true;  // see #20089, #21541
             return (w1.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && isWaterArea(w2))
                     || (w2.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && isWaterArea(w1));
         }
