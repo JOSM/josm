@@ -121,6 +121,7 @@ import org.openstreetmap.josm.actions.audio.AudioNextAction;
 import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
+import org.openstreetmap.josm.actions.history.DownloadHistorySelectionAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -200,6 +201,8 @@ public class MainMenu extends JMenuBar {
     public final JosmAction updateSelection = new UpdateSelectionAction();
     /** File / Update modified **/
     public final JosmAction updateModified = new UpdateModifiedAction();
+    /** File / Download history for selection **/
+    public final JosmAction downloadHistorySelection = new DownloadHistorySelectionAction();
     /** File / Upload data **/
     public final JosmAction upload = new UploadAction();
     /** File / Upload selection **/
@@ -753,6 +756,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, update);
         add(fileMenu, updateSelection);
         add(fileMenu, updateModified);
+        add(fileMenu, downloadHistorySelection);
         fileMenu.addSeparator();
         add(fileMenu, upload);
         add(fileMenu, uploadSelection);
