@@ -6794,6 +6794,15 @@
                 <reference ref="ref_operator" />
             </optional>
         </item> <!-- Catenary mast -->
+        <item name="Connection" icon="presets/power/connection.svg" name_context="power" type="node" preset_name_label="true">
+            <link wiki="Tag:power=connection" />
+            <space />
+            <key key="power" value="connection" />
+            <optional>
+                <reference ref="cables" />
+                <reference ref="ref_operator" />
+            </optional>
+        </item> <!-- Connection -->
         <item name="Insulator" icon="presets/power/insulator.svg" type="node,way" preset_name_label="true">
             <link wiki="Tag:power=insulator" />
             <space />
@@ -6802,6 +6811,7 @@
             <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
             <reference ref="ref_operator" />
         </item> <!-- Insulator -->
+        <separator/>
         <item name="Power Line" icon="presets/power/line.svg" type="way" preset_name_label="true">
             <link wiki="Tag:power=line" />
             <space />

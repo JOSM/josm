@@ -1265,6 +1265,10 @@ node[power=catenary_mast] {
     icon-image: "presets/power/catenary_mast.svg";
     set icon_z17;
 }
+node[power=connection] {
+    icon-image: "presets/power/connection.svg";
+    set icon_z17;
+}
 node[power=insulator] {
     icon-image: "presets/power/insulator.svg";
     set icon_z17;

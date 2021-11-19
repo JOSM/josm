@@ -44,7 +44,7 @@ public class PowerLines extends Test {
     static final Collection<String> BUILDING_STATION_TAGS = Arrays.asList("transformer_tower");
     /** Values for {@code power} key interpreted as allowed power items */
     static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear",
-            "portal", "terminal", "insulator");
+            "portal", "terminal", "insulator", "connection");
 
     private final Set<Node> badConnections = new LinkedHashSet<>();
     private final Set<Node> missingTowerOrPole = new LinkedHashSet<>();
@@ -55,7 +55,7 @@ public class PowerLines extends Test {
      * Constructs a new {@code PowerLines} test.
      */
     public PowerLines() {
-        super(tr("Power lines"), tr("Checks for nodes in power lines that do not have a power=tower/pole tag."));
+        super(tr("Power lines"), tr("Checks for nodes in power lines that do not have a power=tower/pole/connection tag."));
     }
 
     @Override
@@ -121,7 +121,7 @@ public class PowerLines extends Test {
         for (Node n : missingTowerOrPole) {
             if (!isInPowerStation(n)) {
                 errors.add(TestError.builder(this, Severity.WARNING, POWER_LINES)
-                        .message(tr("Missing power tower/pole within power line"))
+                        .message(tr("Missing power tower/pole/connection within power line"))
                         .primitives(n)
                         .build());
             }
