@@ -416,7 +416,7 @@ public class SearchDialog extends ExtendedDialog {
                 GBC.eol());
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("history"))
-                .addKeyword("was <i>expr</i>", "was ", tr("historic state of object"), "was building=*"),
+                .addKeyword("was <i>expr</i>", "was ", tr("match <i>expr</i> in any object version (current and historic)"), "was building=*"),
                 GBC.eol());
         }
         if (options.overpassQuery) {
