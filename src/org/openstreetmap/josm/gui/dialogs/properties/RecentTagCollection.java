@@ -53,7 +53,7 @@ class RecentTagCollection {
     }
 
     public void add(Tag tag) {
-        if (!tagsToIgnore.match(tag)) {
+        if (!isIgnored(tag)) {
             recentTags.put(tag, null);
         }
     }
@@ -68,7 +68,7 @@ class RecentTagCollection {
 
     public void setTagsToIgnore(SearchCompiler.Match tagsToIgnore) {
         this.tagsToIgnore = tagsToIgnore;
-        recentTags.keySet().removeIf(tagsToIgnore::match);
+        recentTags.keySet().removeIf(this::isIgnored);
     }
 
     public void setTagsToIgnore(SearchSetting tagsToIgnore) throws SearchParseError {
@@ -82,5 +82,9 @@ class RecentTagCollection {
                 : settingToUpdate.text + " OR " + forTag;
         setTagsToIgnore(settingToUpdate);
         return settingToUpdate;
+    }
+
+    public boolean isIgnored(Tag tag) {
+        return tagsToIgnore.match(tag);
     }
 }

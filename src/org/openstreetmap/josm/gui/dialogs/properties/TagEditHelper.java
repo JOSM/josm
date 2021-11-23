@@ -521,7 +521,7 @@ public class TagEditHelper {
             mainPanel.add(p, BorderLayout.CENTER);
 
             autocomplete = AutoCompletionManager.of(OsmDataManager.getInstance().getActiveDataSet());
-            List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
+            List<AutoCompletionItem> keyList = getAutocompleteKeys(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
 
             keys = new AutoCompComboBox<>();
             keys.getModel().setComparator(Comparator.naturalOrder()); // according to Comparable
@@ -679,6 +679,48 @@ public class TagEditHelper {
         }
 
         /**
+         * Get a filtered list of suggested autocompletion keys. Ignored keys are excluded.
+         *
+         * @param autocomplete the autocompletion manager
+         * @param comparator sorting order for the items
+         * @return a list of {@code AutoCompletionItem} key suggestions
+         */
+        protected List<AutoCompletionItem> getAutocompleteKeys(AutoCompletionManager autocomplete, Comparator<AutoCompletionItem> comparator) {
+            return autocomplete.getTagKeys(comparator)
+                .stream().filter(acItem -> !recentTags.isIgnored(new Tag(acItem.getValue())))
+                .collect(Collectors.toList());
+        }
+
+        /**
+         * Get a filtered list of suggested autocompletion values for the given key. Ignored tags are excluded.
+         *
+         * @param autocomplete the autocompletion manager
+         * @param comparator sorting order for the items
+         * @param key the key for which values should be autocompleted
+         * @return a list of {@code AutoCompletionItem} value suggestions
+         */
+        protected List<AutoCompletionItem> getAutocompleteValues(AutoCompletionManager autocomplete, Comparator<AutoCompletionItem> comparator, 
+                                                                    String key) {
+            return autocomplete.getTagValues(getAutocompletionKeys(key), comparator)
+                .stream()
+                .filter(acItem -> !recentTags.isIgnored(new Tag(key, acItem.getValue())))
+                .collect(Collectors.toList());
+        }
+
+        /**
+         * Updates the keys model (e.g. if the ignore list has changed)
+         *
+         * @param autocomplete the autocompletion manager
+         * @param comparator sorting order for the items in the combo dropdown
+         */
+        protected void updateKeyModel(AutoCompletionManager autocomplete, Comparator<AutoCompletionItem> comparator) {
+            String key = keys.getText();
+            keys.getModel().removeAllElements();
+            keys.getModel().addAllElements(getAutocompleteKeys(autocomplete, comparator));
+            keys.setSelectedItemText(key);
+        }
+
+        /**
          * Updates the values model if the key has changed
          *
          * @param autocomplete the autocompletion manager
@@ -691,7 +733,7 @@ public class TagEditHelper {
                 // key has changed, reload model
                 String savedText = values.getText();
                 values.getModel().removeAllElements();
-                values.getModel().addAllElements(autocomplete.getTagValues(getAutocompletionKeys(key), comparator));
+                values.getModel().addAllElements(getAutocompleteValues(autocomplete, comparator, key));
                 values.applyComponentOrientation(OrientationAction.getNamelikeOrientation(key));
                 values.setSelectedItemText(savedText);
                 values.getEditor().selectAll();
@@ -829,7 +871,7 @@ public class TagEditHelper {
 
             cacheRecentTags();
             autocomplete = AutoCompletionManager.of(OsmDataManager.getInstance().getActiveDataSet());
-            List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
+            List<AutoCompletionItem> keyList = getAutocompleteKeys(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
 
             // remove the object's tag keys from the list
             keyList.removeIf(item -> containsDataKey(item.getValue()));
@@ -838,9 +880,10 @@ public class TagEditHelper {
 
             updateValueModel(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
 
-            // pre-fill first recent tag for which the key is not already present
+            // pre-fill first recent tag for which the key is not already present and which is not ignored
             tags.stream()
                     .filter(tag -> !containsDataKey(tag.getKey()))
+                    .filter(tag -> !recentTags.isIgnored(tag))
                     .findFirst()
                     .ifPresent(tag -> {
                         keys.setSelectedItemText(tag.getKey());
@@ -1142,6 +1185,10 @@ public class TagEditHelper {
                     if (tagsToIgnore != null) {
                         recentTags.ignoreTag(tag, tagsToIgnore);
                         PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
+                        cacheRecentTags();
+                        suggestRecentlyAddedTags();
+                        updateKeyModel(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
+                        updateValueModel(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
                     }
                 } catch (SearchParseError parseError) {
                     throw new IllegalStateException(parseError);
@@ -1165,6 +1212,10 @@ public class TagEditHelper {
                     tagsToIgnore = newTagsToIngore;
                     recentTags.setTagsToIgnore(tagsToIgnore);
                     PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
+                    cacheRecentTags();
+                    suggestRecentlyAddedTags();
+                    updateKeyModel(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
+                    updateValueModel(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
                 } catch (SearchParseError parseError) {
                     warnAboutParseError(parseError);
                 }
