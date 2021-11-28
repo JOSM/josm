@@ -71,6 +71,12 @@ setting::note_annotation {
   default: false;
 }
 
+setting::area_highway_opacity {
+    type: double;
+    label: tr("area:highway opacity");
+    default: 0.1;
+}
+
 /*********************/
 /* turn restrictions */
 /*********************/
@@ -530,6 +536,223 @@ node[barrier=hampshire_gate][!is_prop_set(icon-image)] {
     set icon_z17;
 }
 
+/*********************/
+/* area:highway tags */
+/*********************/
+
+area["area:highway"="motorway"]:closed {
+    fill-color: motorway#809bc0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="motorway_link"]:closed {
+    fill-color: motorway#809bc0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="trunk"]:closed {
+    fill-color: trunk#7fc97f;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="trunk_link"]:closed {
+    fill-color: trunk#7fc97f;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="primary"]:closed {
+    fill-color: primary#fb805f;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="primary_link"]:closed {
+    fill-color: primary#fb805f;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="secondary"]:closed {
+    fill-color: secondary#fdbf6f;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="secondary_link"]:closed {
+    fill-color: secondary#fdbf6f;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="tertiary"]:closed {
+    fill-color: tertiary#f7f496;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="tertiary_link"]:closed {
+    fill-color: tertiary#f7f496;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="unclassified"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="residential"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="road"]:closed {
+    fill-color: highway_road#770000;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="living_street"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+    dashes-background-color: livingdashed#00ff00;
+}
+area["area:highway"="pedestrian"]:closed {
+    fill-color: foot#00ff00;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="raceway"]:closed {
+    fill-color: raceway#ff80ff;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="service"]:closed {
+    fill-color: service#809bc0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="cycleway"]:closed {
+    fill-color: bicycle#b100ff;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="footway"]:closed {
+    fill-color: foot#00ff00;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="track"]:closed {
+    fill-color: highway_track#6e541c;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="bridleway"]:closed {
+    fill-color: horse#a18559;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="path"]:closed {
+    fill-color: foot#00ff00;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="construction"]:closed {
+    fill-color: construction#ffff00;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="steps"]:closed {
+    fill-color: foot#00ff00;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="bus_guideway"]:closed {
+    fill-color: rail#404040;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="escape"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="traffic_island"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="platform"]:closed {
+    fill-color: highway_platform#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="bus_stop"]:closed {
+    fill-color: bus#89cbeb;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="busway"]:closed {
+    fill-color: bus#89cbeb;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="shoulder"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="emergency_bay"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="passing_place"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="turning_circle"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+area["area:highway"="turning_loop"]:closed {
+    fill-color: street#c0c0c0;
+    fill-opacity: setting("area_highway_opacity");
+    width: 1;
+    dashes: 9,3;
+}
+
+
 /****************/
 /* highway tags */
 /****************/
@@ -726,13 +949,7 @@ way[highway=raceway] {
 way[highway=raceway][area?], relation[type=multipolygon][highway=raceway] {
     fill-color: raceway#ff80ff;
 }
-area[junction=yes] {
-    fill-color: junction#c0c0c0;
-}
-node[junction=yes] {
-    icon-image: "presets/vehicle/junction.svg";
-    set icon_z17;
-}
+
 node[highway=traffic_mirror] {
     icon-image: "presets/vehicle/traffic_mirror.svg";
     set icon_z17;
@@ -975,6 +1192,15 @@ node[traffic_calming=mini_bumps] {
 /* junction tag */
 /****************/
 
+area["junction"][!"junction"?!] {
+    set junctionArea;
+}
+
+node[junction=yes] {
+    icon-image: "presets/vehicle/junction.svg";
+    set icon_z17;
+}
+
 node[junction=roundabout] {
     icon-image: "presets/vehicle/restriction/roundabout_left.svg";
     set icon_z17;
@@ -982,6 +1208,30 @@ node[junction=roundabout] {
 node:righthandtraffic[junction=roundabout] {
     icon-image: "presets/vehicle/restriction/roundabout_right.svg";
     set icon_z17;
+}
+
+area.junctionArea[!"area:highway"] {
+    fill-color: junction#c0c0c0;
+}
+
+/********************************/
+/* area:highway + junction tags */
+/********************************/
+
+area.junctionArea["area:highway"]:closed {
+    dashes-background-color: junction#c0c0c0;
+}
+area.junctionArea["area:highway"]:clockwise:closed {
+    right-casing-width: 10;
+    right-casing-color: junction#c0c0c0;
+    right-casing-linejoin: miter;
+    right-casing-opacity: setting("area_highway_opacity") + 0.1;
+}
+area.junctionArea["area:highway"]:anticlockwise:closed {
+    left-casing-width: 10;
+    left-casing-color: junction#c0c0c0;
+    left-casing-linejoin: miter;
+    left-casing-opacity: setting("area_highway_opacity") + 0.1;
 }
 
 /*****************/
