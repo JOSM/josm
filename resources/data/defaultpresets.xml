@@ -37,7 +37,7 @@
         <text key="maxspeed:forward" text="Max. speed in way direction" />
         <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
         <space />
-        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
         <reference ref="surface_smoothness" />
     </chunk>
     <chunk id="highway_yesno">
@@ -91,7 +91,7 @@
         <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
         <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,25" length="5" values_sort="false" />
         <reference ref="highway_yesno" />
-        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
     </chunk>
     <chunk id="railway_service_gauge_electrified_yesno">
         <reference ref="railway_service" />
@@ -158,7 +158,7 @@
     </chunk>
     <chunk id="name_layer">
         <text key="name" text="Name" />
-        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
     </chunk>
     <chunk id="service_times">
         <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 09:30,11:00|Sa,Su,PH 09:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" />
@@ -473,7 +473,7 @@
         <optional>
             <text key="name" text="Name" />
             <text key="bridge:name" text="Bridge name" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" length="3" values_sort="false" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="1" length="3" values_sort="false" />
             <space />
             <text key="maxspeed" text="Max. speed (km/h)" />
             <text key="maxspeed:forward" text="Max. speed in way direction" />
@@ -486,7 +486,7 @@
         </optional>
     </chunk>
     <chunk id="waterway">
-        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
         <check key="intermittent" text="Intermittent" disable_off="true" />
         <check key="seasonal" text="Seasonal" disable_off="true" />
         <check key="tidal" text="In the tidal range" disable_off="true" />
@@ -891,7 +891,7 @@
             <text key="maxspeed" text="Max. speed (km/h)" default="30" />
             <optional>
                 <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline" />
                 <checkgroup columns="4">
@@ -913,7 +913,7 @@
             <check key="noname" text="Street has no name" disable_off="true" />
             <optional>
                 <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <checkgroup columns="2">
@@ -930,7 +930,7 @@
             <text key="name" text="Name" />
             <check key="noname" text="Street has no name" disable_off="true" />
             <optional>
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <reference ref="surface_smoothness" />
                 <check key="area" text="Area" />
                 <reference ref="highway_yesno_incline" />
@@ -1292,7 +1292,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <combo key="level" text="Storeys" values="1;2,0;1,-1;0,-2;-1,1.5;2,1;1.5,0.5;1,0;0.5,-0.5;0,-1;-0.5,-1.5;-1,-2;-1.5" values_sort="false" values_no_i18n="true" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <reference ref="surface" />
                 <text key="step_count" text="Amount of Steps" />
                 <space />
@@ -1934,7 +1934,7 @@
             <key key="tunnel" value="yes" />
             <optional>
                 <text key="name" text="Name" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
                 <text key="width" text="Width (meters)" />
                 <text key="maxheight" text="Max. height (meters)" />
                 <text key="maxwidth" text="Max. width (meters)" match="key" />
@@ -2039,7 +2039,7 @@
             <text key="name" text="Name" />
             <optional>
                 <combo key="canal" text="Type" values="qanat" values_searchable="true" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" values_searchable="true" />
                 <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" values_context="usage" values_searchable="true" />
                 <text key="width" text="Width (meters)" />
@@ -2117,7 +2117,7 @@
             <key key="tunnel" value="culvert" />
             <optional>
                 <text key="name" text="Name" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
                 <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Culvert -->
@@ -2431,7 +2431,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_yesno" />
                 <check key="oneway" text="Oneway" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <reference ref="surface_smoothness" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <text key="width" text="Width (meters)" />
@@ -2453,7 +2453,7 @@
             <optional>
                 <reference ref="railway_service" />
                 <reference ref="highway_yesno" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
             </optional>
         </item> <!-- Disused Rail -->
         <item name="Abandoned Rail" icon="presets/transport/railway/abandoned_rail.svg" type="way" preset_name_label="true">
@@ -2462,7 +2462,7 @@
             <optional>
                 <reference ref="railway_service" />
                 <reference ref="highway_yesno" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
             </optional>
         </item> <!-- Abandoned Rail -->
         <separator/>
@@ -5818,7 +5818,7 @@
                     <check key="bridge" text="Bridge" disable_off="true" />
                     <check key="tunnel" text="Tunnel" disable_off="true" />
                 </checkgroup>
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
             </optional>
         </item> <!-- Goods conveyor -->
         <item name="Pumping station" icon="presets/misc/pumping_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6213,7 +6213,7 @@
             <key key="man_made" value="bridge" />
             <optional>
                 <text key="name" text="Name" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="1" length="3" values_sort="false" />
                 <combo key="bridge" text="Bridge" values="aqueduct,boardwalk,cantilever,covered,low_water_crossing,movable,trestle,viaduct" />
                 <combo key="bridge:structure" text="Structure" values="arch,beam,cable-stayed,floating,humpback,simple-suspension,suspension,truss" match="key" />
                 <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter,retractable,tilt" match="key" />
@@ -6821,7 +6821,7 @@
             <optional>
                 <reference ref="cables_circuits" />
                 <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" values_sort="false" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
         </item> <!-- Power Line -->
@@ -6834,7 +6834,7 @@
             <optional>
                 <reference ref="cables_circuits" />
                 <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="power cable" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
         </item> <!-- Power Cable -->
@@ -9565,7 +9565,7 @@
             <link wiki="Relations/Proposed/Bridges_and_Tunnels" />
             <space />
             <key key="type" value="bridge" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" length="3" values_sort="false" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="1" length="3" values_sort="false" />
             <optional>
                 <combo key="bridge" text="Bridge" values="aqueduct,boardwalk,cantilever,covered,low_water_crossing,movable,trestle,viaduct" />
                 <combo key="bridge:structure" text="Structure" values="arch,beam,cable-stayed,floating,humpback,simple-suspension,suspension,truss" match="key" />
@@ -9586,7 +9586,7 @@
             <link wiki="Relations/Proposed/Bridges_and_Tunnels" />
             <space />
             <key key="type" value="tunnel" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
             <optional>
                 <reference ref="name_ref" />
                 <text key="length" text="Length (meters)" />
