@@ -155,7 +155,10 @@ jobs:
           fi
           unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip
           mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
+          brew install advancecomp
+          advzip -z -4 dist/josm-custom.jar
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
+          advzip -z -4 app/JOSM.zip
 
       - name: Setup Windows PATH
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
