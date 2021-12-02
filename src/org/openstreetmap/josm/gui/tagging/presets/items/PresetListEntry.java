@@ -188,7 +188,7 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
      * @return see above
      */
     public int getCount() {
-        Integer count = cms == null ? null : cms.usage.map.get(value);
+        Integer count = cms == null || cms.usage == null ? null : cms.usage.map.get(value);
         return count == null ? 0 : count;
     }
 
