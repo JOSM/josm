@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadAlongPanel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -27,6 +28,9 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
 
     private static final String PREF_DOWNLOAD_ALONG_WAY_DISTANCE = "downloadAlongWay.distance";
     private static final String PREF_DOWNLOAD_ALONG_WAY_AREA = "downloadAlongWay.area";
+
+	// Ask user to confirm the download if there are more than this many requests.
+    private static final String PREF_DOWNLOAD_ALONG_WAY_DL_REQ_CONFIRM = "downloadAlongWay.numDownloadRequestConfirmation";
 
     private static final String PREF_DOWNLOAD_ALONG_WAY_OSM = "downloadAlongWay.download.osm";
     private static final String PREF_DOWNLOAD_ALONG_WAY_GPS = "downloadAlongWay.download.gps";
@@ -71,7 +75,8 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
                 }
             }
         }
-        return createCalcTask(alongPath, panel, tr("Download from OSM along selected ways"), 1 == ret);
+        int confirmNumDownloads = Config.getPref().getInt(PREF_DOWNLOAD_ALONG_WAY_DL_REQ_CONFIRM, 1);
+        return createCalcTask(alongPath, panel, tr("Download from OSM along selected ways"), 1 == ret, confirmNumDownloads);
     }
 
     @Override

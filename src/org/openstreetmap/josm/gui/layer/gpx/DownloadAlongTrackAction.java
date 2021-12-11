@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -39,6 +40,9 @@ public class DownloadAlongTrackAction extends DownloadAlongAction implements Lay
     private static final String PREF_DOWNLOAD_ALONG_TRACK_DISTANCE = "downloadAlongTrack.distance";
     private static final String PREF_DOWNLOAD_ALONG_TRACK_AREA = "downloadAlongTrack.area";
     private static final String PREF_DOWNLOAD_ALONG_TRACK_NEAR = "downloadAlongTrack.near";
+	// Ask user to confirm the download if there are more than this many requests.
+    private static final String PREF_DOWNLOAD_ALONG_TRACK_DL_REQ_CONFIRM = "downloadAlongTrack.numDownloadRequestConfirmation";
+
 
     private final transient Collection<GpxData> data;
 
@@ -85,7 +89,8 @@ public class DownloadAlongTrackAction extends DownloadAlongAction implements Lay
                 gpxPath.closePath();
             });
         }
-        return createCalcTask(gpxPath, panel, tr("Download from OSM along this track"), 1 == ret);
+        int confirmNumDownloads = Config.getPref().getInt(PREF_DOWNLOAD_ALONG_TRACK_DL_REQ_CONFIRM, 1);
+        return createCalcTask(gpxPath, panel, tr("Download from OSM along this track"), 1 == ret, confirmNumDownloads);
     }
 
     @Override

@@ -125,15 +125,16 @@ public abstract class DownloadAlongAction extends JosmAction {
      * @param gpxDownload Set to true if GPX data should be downloaded
      * @param title the title string for the confirmation dialog
      * @param newLayer Set to true if all areas should be put into a single new layer
+     * @param confirmNumDownloads Require user to confirm if more than this many download requests, otherwise don't ask
      */
     protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title,
-            boolean newLayer) {
+            boolean newLayer, int confirmNumDownloads) {
         List<Rectangle2D> toDownload = new ArrayList<>();
         addToDownload(a, a.getBounds(), toDownload, maxArea);
         if (toDownload.isEmpty()) {
             return;
         }
-        if (toDownload.size() > 1) {
+        if (toDownload.size() > confirmNumDownloads) {
             JPanel msg = new JPanel(new GridBagLayout());
             msg.add(new JLabel(trn(
                     "<html>This action will require {0} individual<br>download request. Do you wish<br>to continue?</html>",
@@ -185,9 +186,10 @@ public abstract class DownloadAlongAction extends JosmAction {
      * @param panel the panel that was displayed to the user and now contains his selections
      * @param confirmTitle the title to display in the confirmation panel
      * @param newLayer Set to true if all areas should be put into a single new layer
+     * @param confirmNumDownloads Require user to confirm if more than this many download requests, otherwise don't ask
      * @return the task or null if canceled by user
      */
-    protected PleaseWaitRunnable createCalcTask(Path2D alongPath, DownloadAlongPanel panel, String confirmTitle, boolean newLayer) {
+    protected PleaseWaitRunnable createCalcTask(Path2D alongPath, DownloadAlongPanel panel, String confirmTitle, boolean newLayer, int confirmNumDownloads) {
         /*
          * Find the average latitude for the data we're contemplating, so we can know how many
          * metres per degree of longitude we have.
@@ -253,7 +255,7 @@ public abstract class DownloadAlongAction extends JosmAction {
                     return;
                 }
                 confirmAndDownloadAreas(new Area(downloadPath), maxArea, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
-                        confirmTitle, newLayer);
+                        confirmTitle, newLayer, confirmNumDownloads);
             }
 
             /**
