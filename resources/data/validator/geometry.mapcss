@@ -357,8 +357,8 @@ area:closed[place=island][eval(areasize()) < 500000] {
   fixAdd: "place=islet";
 }
 
-/* #12561 - building larger than Aalsmeer Flower Auction (518000) and Tesla factory (510000) */
-area:closed[building][building!=no][eval(areasize()) > 520000] {
+/* #12561 - building larger than Lada car factory (906280 m^2 in OSM) way id 47121317 at N53.56, E49.25, https://en.wikipedia.org/wiki/List_of_largest_buildings#Largest_footprint*/
+area:closed[building][building!=no][eval(areasize()) > 920000] {
   throwError: tr("Too large building");
 }
 
