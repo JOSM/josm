@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.CancelAction;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link ChangesetCacheManager} class.
@@ -136,7 +136,7 @@ class ChangesetCacheManagerTest {
             new WindowMocker();
         }
 
-        DownloadSelectedChangesetContentAction action = new DownloadSelectedChangesetContentAction(ChangesetCacheManager.buildModel());
+        DownloadSelectedChangesetContentAction action = new DownloadSelectedChangesetContentAction(buildModel());
         action.valueChanged(null);
         action.actionPerformed(new ActionEvent(new JDialog().getComponent(0), ActionEvent.ACTION_PERFORMED, "foo"));
     }
@@ -152,7 +152,7 @@ class ChangesetCacheManagerTest {
             new WindowMocker();
         }
 
-        DownloadSelectedChangesetsAction action = new DownloadSelectedChangesetsAction(ChangesetCacheManager.buildModel());
+        DownloadSelectedChangesetsAction action = new DownloadSelectedChangesetsAction(buildModel());
         action.valueChanged(null);
         action.actionPerformed(new ActionEvent(new JDialog().getComponent(0), ActionEvent.ACTION_PERFORMED, "foo"));
     }
@@ -207,7 +207,7 @@ class ChangesetCacheManagerTest {
      */
     @Test
     void testRemoveFromCacheAction() {
-        RemoveFromCacheAction action = new RemoveFromCacheAction(ChangesetCacheManager.buildModel());
+        RemoveFromCacheAction action = new RemoveFromCacheAction(buildModel());
         action.valueChanged(null);
         action.actionPerformed(null);
     }
@@ -217,6 +217,12 @@ class ChangesetCacheManagerTest {
      */
     @Test
     void testShowDetailAction() {
-        new ShowDetailAction(ChangesetCacheManager.buildModel()).actionPerformed(null);
+        new ShowDetailAction(buildModel()).actionPerformed(null);
+    }
+
+    private static ChangesetCacheManagerModel buildModel() {
+        ChangesetCacheManagerModel model = ChangesetCacheManager.buildModel();
+        model.setChangesetCacheTableRowSorter(new ChangesetCacheTableRowSorter(model));
+        return model;
     }
 }
