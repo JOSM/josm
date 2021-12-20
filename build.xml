@@ -1116,6 +1116,9 @@ Build-Date: ${build.tstamp}
                 <exclude name="org/apache/commons/compress/compressors/xz/XZUtils*"/>
                 <exclude name="org/apache/commons/compress/compressors/z/**"/>
                 <exclude name="org/apache/commons/compress/compressors/zstandard/**"/>
+                <exclude name="org/apache/commons/compress/java/util/jar/Pack200*"/>
+                <exclude name="org/apache/commons/compress/harmony/pack200/**"/>
+                <exclude name="org/apache/commons/compress/harmony/unpack200/**"/>
                 <exclude name="org/apache/commons/compress/parallel/**"/>
                 <exclude name="org/apache/commons/compress/utils/ArchiveUtils*"/>
                 <exclude name="org/apache/commons/jcs3/auxiliary/disk/jdbc/**"/>
