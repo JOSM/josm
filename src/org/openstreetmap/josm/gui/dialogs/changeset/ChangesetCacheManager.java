@@ -109,6 +109,7 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     private ChangesetCacheManagerModel model;
+    private ChangesetCacheTableRowSorter sorter;
     private JSplitPane spContent;
     private boolean needsSplitPaneAdjustment;
 
@@ -271,7 +272,7 @@ public class ChangesetCacheManager extends JFrame {
                 new ChangesetCacheTableColumnModel(),
                 model.getSelectionModel()
         );
-        tblChangesets.setRowSorter(new ChangesetCacheTableRowSorter(model));
+        tblChangesets.setRowSorter(sorter);
         tblChangesets.addMouseListener(new MouseEventHandler());
         InputMapUtils.addEnterAction(tblChangesets, new ShowDetailAction(model));
         model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer(model));
@@ -303,6 +304,8 @@ public class ChangesetCacheManager extends JFrame {
         cp.setLayout(new BorderLayout());
 
         model = buildModel();
+        sorter = new ChangesetCacheTableRowSorter(model);
+        model.setChangesetCacheTableRowSorter(sorter);
         actRemoveFromCacheAction = new RemoveFromCacheAction(model);
         actCloseSelectedChangesetsAction = new CloseSelectedChangesetsAction(model);
         actDownloadSelectedChangesets = new DownloadSelectedChangesetsAction(model);

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +32,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     private final transient List<Changeset> data = new ArrayList<>();
     private final DefaultListSelectionModel selectionModel;
+    private transient ChangesetCacheTableRowSorter sorter;
     private transient Changeset changesetInDetailView;
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
@@ -87,14 +89,8 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @return the list of selected changesets
      */
     public List<Changeset> getSelectedChangesets() {
-        List<Changeset> ret = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++) {
-            Changeset cs = data.get(i);
-            if (selectionModel.isSelectedIndex(i)) {
-                ret.add(cs);
-            }
-        }
-        return ret;
+        return Arrays.stream(TableHelper.getSelectedIndices(selectionModel))
+                .map(sorter::convertRowIndexToModel).mapToObj(data::get).collect(Collectors.toList());
     }
 
     /**
@@ -163,6 +159,10 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     protected void sort() {
         data.sort(Comparator.comparingInt(Changeset::getId).reversed());
+    }
+
+    void setChangesetCacheTableRowSorter(ChangesetCacheTableRowSorter sorter) {
+        this.sorter = sorter;
     }
 
     /* ------------------------------------------------------------------------------ */
