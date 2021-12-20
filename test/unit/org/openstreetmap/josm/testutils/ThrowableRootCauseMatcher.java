@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.testutils;
 
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -53,7 +52,6 @@ public class ThrowableRootCauseMatcher<T extends Throwable> extends TypeSafeMatc
      * @param matcher matcher
      * @return new {@code ThrowableRootCauseMatcher} instance
      */
-    @Factory
     public static <T extends Throwable> Matcher<T> hasRootCause(final Matcher<T> matcher) {
         return new ThrowableRootCauseMatcher<>(matcher);
     }

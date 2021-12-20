@@ -86,7 +86,7 @@ public class TopLevelJavadocCheck extends AbstractCheck {
     @Override
     public void visitToken(DetailAST ast) {
         DetailAST parent = ast.getParent();
-        if (parent == null || parent.getType() == TokenTypes.EOF) {
+        if (parent == null || parent.getType() == TokenTypes.COMPILATION_UNIT) {
             foundTopLevelClass = true;
             if (!hasJavadoc(ast)) {
                 this.log(ast.getLineNo(), "incomplete or missing Javadoc for top level class or interface");

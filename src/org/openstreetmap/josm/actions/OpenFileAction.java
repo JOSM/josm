@@ -247,7 +247,7 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesWithUnknownImporter(Collection<File> files) {
-            final StringBuilder msg = new StringBuilder(128).append("<html>").append(
+            final StringBuilder msg = new StringBuilder(115 + 30 * files.size()).append("<html>").append(
                     trn("Cannot open {0} file because file does not exist or no suitable file importer is available.",
                         "Cannot open {0} files because files do not exist or no suitable file importer is available.",
                         files.size(),

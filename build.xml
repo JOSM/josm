@@ -1145,6 +1145,10 @@ Build-Date: ${build.tstamp}
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
     </target>
     <target name="ivy-checkdepsupdate" description="Display dependency updates on the console" depends="resolve">
+        <ivy:resolve log="quiet" file="${tools.ivy}" keep="true" conf="*"/>
+        <ivy:checkdepsupdate/>
+        <echo message="${line.separator}"/>
+        <ivy:resolve log="quiet" file="${base.dir}/ivy.xml" keep="true" conf="*"/>
         <ivy:checkdepsupdate/>
     </target>
     <target name="api-dependency-tree" description="Displays Ivy dependency tree for JOSM API" depends="resolve">

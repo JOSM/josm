@@ -182,7 +182,7 @@ public abstract class AbstractMapRenderer implements Rendering {
     }
 
     /**
-     * Reads all the settings from preferences. Calls the @{link #getColors}
+     * Reads all the settings from preferences. Calls the {@link #getColors}
      * function.
      *
      * @param virtual <code>true</code> if virtual nodes are used

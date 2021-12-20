@@ -378,15 +378,16 @@ public abstract class HttpClient {
          * @see HttpURLConnection#getInputStream()
          * @see HttpURLConnection#getErrorStream()
          */
-        @SuppressWarnings("resource")
+        @SuppressWarnings({"resource",
+                /* All 4 `InputStream in` reassignments would close the original when the returned stream is closed */
+                "PMD.CloseResource"})
         public final InputStream getContent() throws IOException {
-            InputStream in = getInputStream();
-            in = new ProgressInputStream(in, getContentLength(), monitor);
-            in = "gzip".equalsIgnoreCase(getContentEncoding())
-                    ? new GZIPInputStream(in)
-                    : "deflate".equalsIgnoreCase(getContentEncoding())
-                    ? new InflaterInputStream(in)
-                    : in;
+            InputStream in = new ProgressInputStream(getInputStream(), getContentLength(), monitor);
+            if ("gzip".equalsIgnoreCase(getContentEncoding())) {
+                in = new GZIPInputStream(in);
+            } else if ("deflate".equalsIgnoreCase(getContentEncoding())) {
+                in = new InflaterInputStream(in);
+            }
             Compression compression = Compression.NONE;
             if (uncompress) {
                 final String contentType = getContentType();

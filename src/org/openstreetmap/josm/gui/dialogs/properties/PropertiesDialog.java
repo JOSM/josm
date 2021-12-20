@@ -574,7 +574,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     }
 
     /**
-     * Update selection status, call @{link #selectionChanged} function.
+     * Update selection status, call {@link #selectionChanged} function.
      */
     private void updateSelection() {
         // Parameter is ignored in this class

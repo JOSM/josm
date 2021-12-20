@@ -263,13 +263,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     rv.append(' ').append(tr("Segment collapsed due to its direction reversing."));
             }
         } else {
-            if (mode == Mode.translate)
+            if (mode == Mode.translate) {
                 rv = new StringBuilder(tr("Move a segment along its normal, then release the mouse button."));
-            else if (mode == Mode.translate_node)
+            } else if (mode == Mode.translate_node) {
                 rv = new StringBuilder(tr("Move the node along one of the segments, then release the mouse button."));
-            else if (mode == Mode.extrude || mode == Mode.create_new)
+            } else if (mode == Mode.extrude || mode == Mode.create_new) {
                 rv = new StringBuilder(tr("Draw a rectangle of the desired size, then release the mouse button."));
-            else {
+            } else {
                 Logging.warn("Extrude: unknown mode " + mode);
                 rv = new StringBuilder();
             }

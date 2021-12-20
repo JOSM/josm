@@ -565,12 +565,15 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             sb.append(way.get("ref"));
         }
         if (sb.length() == 0) {
-            sb.append(
-                    way.hasKey("highway") ? tr("highway") :
-                    way.hasKey("railway") ? tr("railway") :
-                    way.hasKey("waterway") ? tr("waterway") :
-                    way.hasKey("landuse") ? tr("landuse") : ""
-                    );
+            if (way.hasKey("highway")) {
+                sb.append(tr("highway"));
+            } else if (way.hasKey("railway")) {
+                sb.append("railway");
+            } else if (way.hasKey("waterway")) {
+                sb.append(tr("waterway"));
+            } else if (way.hasKey("landuse")) {
+                sb.append(tr("landuse"));
+            }
         }
 
         int nodesNo = way.isClosed() ? (way.getNumNodes() -1) : way.getNumNodes();
@@ -580,7 +583,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         /* note: length == 0 should no longer happen, but leave the bracket code
            nevertheless, who knows what future brings */
-        sb.append((sb.length() > 0) ? (" ("+nodes+')') : nodes);
+        if (sb.length() > 0) {
+            sb.append(" (").append(nodes).append(')');
+        } else {
+            sb.append(nodes);
+        }
         decorateNameWithId(sb, way);
         return sb.toString();
     }

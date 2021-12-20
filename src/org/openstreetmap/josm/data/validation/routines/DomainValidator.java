@@ -1990,7 +1990,7 @@ public final class DomainValidator extends AbstractValidator {
             //            (halfwidth ideographic full stop).
             char lastChar = input.charAt(length-1); // fetch original last char
             switch(lastChar) {
-                case '\u002E': // "." full stop
+                case '.':      // "." full stop, AKA U+002E
                 case '\u3002': // ideographic full stop
                 case '\uFF0E': // fullwidth full stop
                 case '\uFF61': // halfwidth ideographic full stop

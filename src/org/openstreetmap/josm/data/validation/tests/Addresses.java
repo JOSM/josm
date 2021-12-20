@@ -363,7 +363,7 @@ public class Addresses extends Test {
     static double getDistance(OsmPrimitive a, OsmPrimitive b) {
         LatLon centerA = a.getBBox().getCenter();
         LatLon centerB = b.getBBox().getCenter();
-        return (centerA.greatCircleDistance(centerB));
+        return centerA.greatCircleDistance(centerB);
     }
 
     protected void checkDistance(OsmPrimitive house, Collection<Way> street) {
