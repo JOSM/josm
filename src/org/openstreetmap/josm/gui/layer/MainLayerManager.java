@@ -268,7 +268,11 @@ public class MainLayerManager extends LayerManager {
         GuiHelper.assertCallFromEdt();
         if (event.getPreviousActiveLayer() != activeLayer || event.getPreviousDataLayer() != osmDataLayer) {
             for (ActiveLayerChangeListener l : activeLayerChangeListeners) {
-                l.activeOrEditLayerChanged(event);
+                try {
+                    l.activeOrEditLayerChanged(event);
+                } catch (RuntimeException e) {
+                    Logging.logWithStackTrace(Logging.LEVEL_ERROR, "Error in layer change listener", e);
+                }
             }
         }
     }
