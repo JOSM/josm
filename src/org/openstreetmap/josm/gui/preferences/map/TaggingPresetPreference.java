@@ -130,10 +130,8 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
                         }
                     }
                 sources.removeSources(sourcesToRemove);
-                return true;
-            } else {
-                return true;
             }
+            return true;
         }
     }
 

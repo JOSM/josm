@@ -348,10 +348,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 char ch = s.charAt(i);
                 if (ch == '\\' || ch == '(' || ch == '{' || ch == ',' || ch == ')' || ch == '}' || ch == '=') {
                     result.append('\\');
-                    result.append(ch);
-                } else {
-                    result.append(ch);
                 }
+                result.append(ch);
             }
         }
 

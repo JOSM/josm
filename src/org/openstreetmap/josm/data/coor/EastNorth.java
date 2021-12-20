@@ -53,7 +53,7 @@ public class EastNorth extends Coordinate {
     }
 
     /**
-     * Adds the coordinates of an other EastNorth instance to this one.
+     * Adds the coordinates of another EastNorth instance to this one.
      * @param other The other instance.
      * @return The new EastNorth position.
      */
@@ -157,7 +157,7 @@ public class EastNorth extends Coordinate {
     }
 
     /**
-     * Returns an EastNorth representing the this EastNorth rotated around
+     * Returns an EastNorth representing this EastNorth rotated around
      * a given EastNorth by a given angle
      * @param pivot the center of the rotation
      * @param angle the angle of the rotation

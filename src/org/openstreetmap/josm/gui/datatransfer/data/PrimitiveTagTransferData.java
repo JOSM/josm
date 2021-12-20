@@ -41,7 +41,7 @@ public class PrimitiveTagTransferData implements Serializable {
 
         for (PrimitiveData primitive : source) {
             tags.get(primitive.getType()).add(TagCollection.from(primitive));
-            counts.merge(primitive.getType(), 1, (a, b) -> a + b);
+            counts.merge(primitive.getType(), 1, Integer::sum);
         }
     }
 

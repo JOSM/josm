@@ -217,14 +217,13 @@ public final class TaggingPresetReader {
                     // pop last id on end of object, don't process further
                     lastIds.pop();
                     ((Chunk) o).id = null;
-                    continue;
                 } else {
                     // if preset item contains an id, store a mapping for later usage
                     String lastId = ((Chunk) o).id;
                     lastIds.push(lastId);
                     byId.put(lastId, new ArrayList<>());
-                    continue;
                 }
+                continue;
             } else if (!lastIds.isEmpty()) {
                 // add object to mapping for later usage
                 byId.get(lastIds.peek()).add(o);
