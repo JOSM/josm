@@ -319,7 +319,6 @@ public final class DomainValidator extends AbstractValidator {
         "aeg", // aeg Aktiebolaget Electrolux
         "aero", // aero Societe Internationale de Telecommunications Aeronautique (SITA INC USA)
         "aetna", // aetna Aetna Life Insurance Company
-        "afamilycompany", // afamilycompany Johnson Shareholdings, Inc.
         "afl", // afl Australian Football League
         "africa", // africa ZA Central Registry NPC trading as Registry.Africa
         "agakhan", // agakhan Fondation Aga Khan (Aga Khan Foundation)
@@ -597,7 +596,6 @@ public final class DomainValidator extends AbstractValidator {
         "drive", // drive Charleston Road Registry Inc.
         "dtv", // dtv Dish DBS Corporation
         "dubai", // dubai Dubai Smart Government Department
-        "duck", // duck Johnson Shareholdings, Inc.
         "dunlop", // dunlop The Goodyear Tire &amp; Rubber Company
         "dupont", // dupont E. I. du Pont de Nemours and Company
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
@@ -708,7 +706,6 @@ public final class DomainValidator extends AbstractValidator {
         "gifts", // gifts Goose Sky, LLC
         "gives", // gives United TLD Holdco Ltd.
         "giving", // giving Giving Limited
-        "glade", // glade Johnson Shareholdings, Inc.
         "glass", // glass Black Cover, LLC
         "gle", // gle Charleston Road Registry Inc.
         "global", // global Dot Global Domain Registry Limited
@@ -1006,7 +1003,6 @@ public final class DomainValidator extends AbstractValidator {
         "nyc", // nyc The City of New York by and through the New York City Department of Information Technology &amp; Telecommunications
         "obi", // obi OBI Group Holding SE &amp; Co. KGaA
         "observer", // observer Top Level Spectrum, Inc.
-        "off", // off Johnson Shareholdings, Inc.
         "office", // office Microsoft Corporation
         "okinawa", // okinawa BusinessRalliart inc.
         "olayan", // olayan Crescent Holding GmbH
@@ -1091,7 +1087,6 @@ public final class DomainValidator extends AbstractValidator {
         "quest", // quest Quest ION Limited
         "racing", // racing Premier Registry Limited
         "radio", // radio European Broadcasting Union (EBU)
-        "raid", // raid Johnson Shareholdings, Inc.
         "read", // read Amazon Registry Services, Inc.
         "realestate", // realestate dotRealEstate LLC
         "realtor", // realtor Real Estate Domains LLC
@@ -1160,7 +1155,6 @@ public final class DomainValidator extends AbstractValidator {
         "schule", // schule Outer Moon, LLC
         "schwarz", // schwarz Schwarz Domains und Services GmbH &amp; Co. KG
         "science", // science dot Science Limited
-        "scjohnson", // scjohnson Johnson Shareholdings, Inc.
         "scot", // scot Dot Scot Registry Limited
         "search", // search Charleston Road Registry Inc.
         "seat", // seat SEAT, S.A. (Sociedad Unipersonal)
