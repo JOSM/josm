@@ -157,6 +157,10 @@ public class AutoCompTextField<E> extends JosmTextField implements TableCellEdit
         if (unSelected.length() <= oldText.length())
             // do not autocomplete on control or deleted chars
             return;
+        if (getInputMethodRequests().getCommittedTextLength() != getDocument().getLength()) {
+            // do not autocomplete if there is uncommitted text (breaks Microsoft Japanese IME, see #21507)
+            return;
+        }
         if (!AUTOCOMPLETE_NUMBERS && IS_NUMBER.matcher(newText).matches())
             return;
 
