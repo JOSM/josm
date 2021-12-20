@@ -8817,6 +8817,7 @@
             <link wiki="Tag:landuse=meadow" />
             <space />
             <key key="landuse" value="meadow" />
+            <combo key="meadow" text="Type of meadow" values="agricultural,pasture" values_context="meadow" />
             <reference ref="optional_name" />
         </item> <!-- Meadow -->
         <item name="Orchard" icon="presets/landuse/orchard.svg" type="closedway,multipolygon" preset_name_label="true">
