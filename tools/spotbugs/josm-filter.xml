@@ -7,10 +7,19 @@
         <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME" />
     </Match>
     <Match>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
         <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS" />
     </Match>
     <Match>
         <Bug pattern="IL_INFINITE_LOOP" />
+    </Match>
+    <Match>
+        <Bug pattern="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" />
     </Match>
     <Match>
         <Bug pattern="NM_CONFUSING" />
@@ -34,10 +43,6 @@
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
     </Match>
 
-    <Match>
-        <Bug pattern="EI_EXPOSE_REP2" />
-        <Class name="org.openstreetmap.josm.tools.CopyList" />
-    </Match>
     <Match>
         <Bug pattern="SF_SWITCH_FALLTHROUGH" />
         <Class name="org.openstreetmap.josm.data.projection.proj.AzimuthalEquidistant" />
