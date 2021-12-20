@@ -85,6 +85,12 @@ public class Shape {
         };
     }
 
+    /**
+     * Check if the coordinates are inside this shape.
+     * @see Polygon#contains(int, int)
+     * @param latlon The latlon to look for
+     * @return {@code true} if the LatLon is inside the shape.
+     */
     public boolean contains(LatLon latlon) {
         return coords.contains(
                 latlon.getX() * LatLon.MAX_SERVER_INV_PRECISION,
@@ -114,8 +120,8 @@ public class Shape {
         }
 
         coords.addPoint(
-                (int) (lon * LatLon.MAX_SERVER_INV_PRECISION),
-                (int) (lat * LatLon.MAX_SERVER_INV_PRECISION));
+                (int) Math.round((lon * LatLon.MAX_SERVER_INV_PRECISION)),
+                (int) Math.round((lat * LatLon.MAX_SERVER_INV_PRECISION)));
     }
 
     @Override
