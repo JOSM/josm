@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.GraphicsEnvironment;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -36,6 +37,11 @@ final class ExitActionTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main();
 
+    @BeforeAll
+    static void beforeAll() {
+        assumeTrue(Utils.getJavaVersion() < 18 || "allow".equals(System.getProperty("java.security.manager")));
+    }
+
     /**
      * Unit test of {@link ExitAction#actionPerformed}
      */
@@ -43,7 +49,6 @@ final class ExitActionTest {
     @ExpectSystemExitWithStatus(0)
     void testActionPerformed() {
         TestUtils.assumeWorkingJMockit();
-        assumeTrue(Utils.getJavaVersion() < 18 || "allow".equals(System.getProperty("java.security.manager")));
 
         boolean[] workerShutdownCalled = {false};
         boolean[] workerShutdownNowCalled = {false};
