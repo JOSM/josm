@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.GraphicsEnvironment;
 
@@ -14,6 +15,7 @@ import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
 
@@ -41,6 +43,7 @@ final class ExitActionTest {
     @ExpectSystemExitWithStatus(0)
     void testActionPerformed() {
         TestUtils.assumeWorkingJMockit();
+        assumeTrue(Utils.getJavaVersion() < 18 || "allow".equals(System.getProperty("java.security.manager")));
 
         boolean[] workerShutdownCalled = {false};
         boolean[] workerShutdownNowCalled = {false};
