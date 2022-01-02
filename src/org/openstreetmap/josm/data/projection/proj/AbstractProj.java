@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.projection.proj;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract base class providing utilities for implementations of the Proj
@@ -169,6 +170,10 @@ public abstract class AbstractProj implements Proj {
 
     // Iteratively solve equation (7-9) from Snyder.
     final double cphi2(final double ts) {
+        if (Double.isNaN(ts)) {
+            Logging.warn("Trying to project invalid NaN coordinates");
+            return Double.NaN;
+        }
         final double eccnth = 0.5 * e;
         double phi = (Math.PI/2) - 2.0 * Math.atan(ts);
         for (int i = 0; i < MAXIMUM_ITERATIONS; i++) {
