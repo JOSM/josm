@@ -16,7 +16,7 @@
         <!-- javacc->default -->
         <dependency org="net.java.dev.javacc" name="javacc" rev="7.0.10" conf="javacc->default"/>
         <!-- checkstyle->default -->
-        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="9.2" conf="checkstyle->default"/>
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="9.2.1" conf="checkstyle->default"/>
         <!-- proguard->default -->
         <dependency org="com.guardsquare" name="proguard-ant" rev="7.2.0-beta5" conf="proguard->default"/>
         <!-- pmd->default -->

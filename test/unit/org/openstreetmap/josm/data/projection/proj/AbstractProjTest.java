@@ -36,7 +36,8 @@ class AbstractProjTest {
         @Override
         public Bounds getAlgorithmBounds() {
             return null;
-        }};
+        }
+    };
 
     @Test
     void testCphi2NaN() {

@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Polygon;
 import java.text.MessageFormat;
 import java.util.AbstractList;
@@ -12,8 +14,6 @@ import java.util.stream.Stream;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Data class to store the outline for background imagery coverage.
@@ -87,9 +87,9 @@ public class Shape {
 
     /**
      * Check if the coordinates are inside this shape.
-     * @see Polygon#contains(int, int)
      * @param latlon The latlon to look for
      * @return {@code true} if the LatLon is inside the shape.
+     * @see Polygon#contains(int, int)
      */
     public boolean contains(LatLon latlon) {
         return coords.contains(
