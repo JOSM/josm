@@ -29,6 +29,8 @@ then
     echo "CERT_MACOS_P12, CERT_MACOS_PW and APPLE_ID_PW are not set in the environment."
     echo "A JOSM.app will be created but not signed nor notarized."
     SIGNAPP=false
+    KEYCHAINPATH=false
+    JPACKAGEOPTIONS=""
 else
     echo "Preparing certificates/keychain for signing…"
 
@@ -46,15 +48,10 @@ else
     rm $CERTIFICATE_P12
     SIGNAPP=true
     echo "Signing preparation done."
+    JPACKAGEOPTIONS="--mac-sign --mac-signing-keychain $KEYCHAINPATH"
 fi
 
 set -u
-
-if $SIGNAPP; then
-  JPACKAGEOPTIONS="--mac-sign --mac-signing-keychain $KEYCHAINPATH"
-else
-  JPACKAGEOPTIONS=""
-fi
 
 echo "Building and signing app"
 jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
@@ -75,10 +72,8 @@ jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --app-version "$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "JOSM" \
-    --mac-sign \
     --mac-package-identifier de.openstreetmap.josm \
     --mac-package-signing-prefix de.openstreetmap.josm \
-    --mac-signing-keychain $KEYCHAINPATH \
     --file-associations native/file-associations/bz2.properties \
     --file-associations native/file-associations/geojson.properties \
     --file-associations native/file-associations/gpx.properties \
