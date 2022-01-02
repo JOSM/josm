@@ -45,7 +45,10 @@ public class MapPaintMenu extends JMenu implements MapPaintStylesUpdateListener 
         }
 
         private void toggleStyle() {
-            MapPaintStyles.toggleStyleActive(MapPaintStyles.getStyles().getStyleSources().indexOf(style));
+            int index = MapPaintStyles.getStyles().getStyleSources().indexOf(style);
+            if (index >= 0) {
+                MapPaintStyles.toggleStyleActive(index);
+            }
             updateButton();
         }
 
