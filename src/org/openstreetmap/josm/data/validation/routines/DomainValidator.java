@@ -886,7 +886,6 @@ public final class DomainValidator extends AbstractValidator {
         "lipsy", // lipsy Lipsy Ltd
         "live", // live United TLD Holdco Ltd.
         "living", // living Lifestyle Domain Holdings, Inc.
-        "lixil", // lixil LIXIL Group Corporation
         "llc", // llc Afilias plc
         "llp", // llp Dot Registry LLC
         "loan", // loan dot Loan Limited
