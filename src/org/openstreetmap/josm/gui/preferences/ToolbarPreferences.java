@@ -575,7 +575,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
      * Key: Registered name (property "toolbar" of action).
      * Value: The action to execute.
      */
-    private final Map<String, Action> actions = new ConcurrentHashMap<>();
     private final Map<String, Action> regactions = new ConcurrentHashMap<>();
 
     private final DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode(tr("Actions"));
@@ -1026,7 +1025,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         TaggingPresets.addListener(this);
     }
 
-    private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
+    private void loadAction(DefaultMutableTreeNode node, MenuElement menu, Map<String, Action> actionsInMenu) {
         Object userObject = null;
         MenuElement menuElement = menu;
         if (menu.getSubElements().length > 0 &&
@@ -1052,12 +1051,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                         continue;
                     } else {
                         String toolbar = (String) tb;
-                        Action r = actions.get(toolbar);
+                        Action r = actionsInMenu.get(toolbar);
                         if (r != null && r != action && !toolbar.startsWith(IMAGERY_PREFIX)) {
                             Logging.info(tr("Toolbar action {0} overwritten: {1} gets {2}",
                             toolbar, r.getClass().getName(), action.getClass().getName()));
                         }
-                        actions.put(toolbar, action);
+                        actionsInMenu.put(toolbar, action);
                     }
                 } else {
                     userObject = menuItem.getText();
@@ -1065,15 +1064,15 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             }
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(userObject);
             node.add(newNode);
-            loadAction(newNode, item);
+            loadAction(newNode, item, actionsInMenu);
         }
     }
 
-    private void loadActions() {
+    private void loadActions(Map<String, Action> actionsInMenu) {
         rootActionsNode.removeAllChildren();
-        loadAction(rootActionsNode, MainApplication.getMenu());
+        loadAction(rootActionsNode, MainApplication.getMenu(), actionsInMenu);
         for (Map.Entry<String, Action> a : regactions.entrySet()) {
-            if (actions.get(a.getKey()) == null) {
+            if (actionsInMenu.get(a.getKey()) == null) {
                 rootActionsNode.add(new DefaultMutableTreeNode(a.getValue()));
             }
         }
@@ -1098,10 +1097,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
     }
 
     private Collection<ActionDefinition> getDefinedActions() {
-        loadActions();
+        Map<String, Action> actionsInMenu = new ConcurrentHashMap<>();
+
+        loadActions(actionsInMenu);
 
         Map<String, Action> allActions = new ConcurrentHashMap<>(regactions);
-        allActions.putAll(actions);
+        allActions.putAll(actionsInMenu);
         ActionParser actionParser = new ActionParser(allActions);
 
         Collection<ActionDefinition> result = new ArrayList<>();
@@ -1140,7 +1141,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             }
         }
         if (toolbar != null) {
-            actions.put(toolbar, action);
             regactions.put(toolbar, action);
         }
         return action;
@@ -1155,7 +1155,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
     public Action unregister(Action action) {
         Object toolbar = action.getValue("toolbar");
         if (toolbar instanceof String) {
-            actions.remove(toolbar);
             return regactions.remove(toolbar);
         }
         return null;
