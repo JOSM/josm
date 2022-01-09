@@ -1295,7 +1295,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
 
     /**
      * Call with {@code true} when all plugins were loaded.
-     * @since xxx
+     * @since 18361
      */
     public void enableInfoAboutMissingAction() {
         this.showInfoAboutMissingActions = true;
