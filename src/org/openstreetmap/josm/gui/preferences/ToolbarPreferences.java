@@ -1025,7 +1025,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         TaggingPresets.addListener(this);
     }
 
-    private void loadAction(DefaultMutableTreeNode node, MenuElement menu, Map<String, Action> actionsInMenu) {
+    private static void loadAction(DefaultMutableTreeNode node, MenuElement menu, Map<String, Action> actionsInMenu) {
         Object userObject = null;
         MenuElement menuElement = menu;
         if (menu.getSubElements().length > 0 &&
@@ -1300,6 +1300,5 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
     public void enableInfoAboutMissingAction() {
         this.showInfoAboutMissingActions = true;
     }
-
 
 }
