@@ -582,6 +582,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
 
     public final JToolBar control = new JToolBar();
     private final Map<Object, ActionDefinition> buttonActions = new ConcurrentHashMap<>(30);
+    private boolean showInfoAboutMissingActions;
 
     @Override
     public PreferenceSetting createPreferenceSetting() {
@@ -1112,7 +1113,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 ActionDefinition a = actionParser.loadAction(s);
                 if (a != null) {
                     result.add(a);
-                } else {
+                } else if (showInfoAboutMissingActions) {
                     Logging.info("Could not load tool definition "+s);
                 }
             }
@@ -1292,4 +1293,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
     public void taggingPresetsModified() {
         refreshToolbarControl();
     }
+
+    /**
+     * Call with {@code true} when all plugins were loaded.
+     * @since xxx
+     */
+    public void enableInfoAboutMissingAction() {
+        this.showInfoAboutMissingActions = true;
+    }
+
+
 }
