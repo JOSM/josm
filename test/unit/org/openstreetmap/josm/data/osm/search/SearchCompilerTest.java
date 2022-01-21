@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Presets;
 import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Logging;
@@ -57,6 +58,7 @@ import nl.jqno.equalsverifier.Warning;
  */
 // We need prefs for this. We access preferences when creating OSM primitives
 @BasicPreferences
+@Main
 @Presets
 @Timeout(30)
 @Users

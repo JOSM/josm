@@ -224,6 +224,7 @@ public @interface FakeImagery {
                         ExtensionContext.Namespace.create(FakeImageryExtension.class));
                 if (options.contains(Options.CLEAR_SLIPPY_MAP_SOURCES)) {
                     try {
+                        @SuppressWarnings("unchecked")
                         final List<SlippyMapBBoxChooser.TileSourceProvider> slippyMapProviders =
                                 (List<SlippyMapBBoxChooser.TileSourceProvider>)
                                         getPrivateStaticField(SlippyMapBBoxChooser.class, "providers");
@@ -257,10 +258,12 @@ public @interface FakeImagery {
         private static void cleanup(final ExtensionContext context) {
             final ExtensionContext.Store store = context.getStore(
                     ExtensionContext.Namespace.create(FakeImageryExtension.class));
+            @SuppressWarnings("unchecked")
             final List<SlippyMapBBoxChooser.TileSourceProvider> slippyMapProviders = (List<SlippyMapBBoxChooser.TileSourceProvider>)
                     store.remove(SLIPPY_MAP_PROVIDERS, List.class);
             final SlippyMapBBoxChooser.TileSourceProvider slippyMapDefaultProvider = store.remove(SLIPPY_MAP_DEFAULT_PROVIDER,
                     SlippyMapBBoxChooser.TileSourceProvider.class);
+            @SuppressWarnings("unchecked")
             final List<ImageryInfo> originalImageryInfoList = (List<ImageryInfo>) store.remove(ORIGINAL_IMAGERY_INFO_LIST, List.class);
             // clean up to original state
             if (slippyMapDefaultProvider != null && slippyMapProviders != null) {

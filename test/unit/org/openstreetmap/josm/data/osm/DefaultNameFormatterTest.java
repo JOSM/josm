@@ -23,6 +23,7 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Presets;
 import org.openstreetmap.josm.testutils.annotations.Users;
 import org.xml.sax.SAXException;
@@ -38,6 +39,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @BasicPreferences
 @BasicWiremock
 @HTTP
+@Main
 @Presets
 @Users
 class DefaultNameFormatterTest {

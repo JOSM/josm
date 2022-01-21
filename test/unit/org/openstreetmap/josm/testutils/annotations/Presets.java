@@ -9,12 +9,11 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetNameTemplateList;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -43,26 +42,16 @@ public @interface Presets {
      * @author Taylor Smock
      *
      */
-    class PresetsExtension implements AfterAllCallback, AfterEachCallback, BeforeAllCallback, BeforeEachCallback {
-        @Override
-        public void afterAll(ExtensionContext context) throws Exception {
-            // If @Main was called, the necessary vars for destroy to work have been initialized
-            if (AnnotationUtils.findFirstParentAnnotation(context, Main.class).isPresent()) {
-                TaggingPresets.destroy();
-            }
-        }
-
-        @Override
-        public void afterEach(ExtensionContext context) throws Exception {
-            if (context.getElement().isPresent() && context.getElement().get().isAnnotationPresent(Presets.class)
-                    || AnnotationUtils.findFirstParentAnnotation(context, Presets.class).map(Presets::value).orElse(false)) {
-                this.afterAll(context);
-            }
-        }
-
+    class PresetsExtension implements BeforeAllCallback, BeforeEachCallback {
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
-            TaggingPresets.readFromPreferences();
+            // If @Main was called, do the full initialization (note: @Main only gets run beforeEach)
+            if (AnnotationUtils.findFirstParentAnnotation(context, Main.class).isPresent()
+                && MainApplication.getMenu() != null) {
+                TaggingPresets.initialize();
+            } else {
+                TaggingPresets.readFromPreferences();
+            }
         }
 
         @Override
