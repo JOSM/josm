@@ -288,7 +288,7 @@ public final class GuiHelper {
      * @since 10271
      */
     public static void assertCallFromEdt() {
-        if (!SwingUtilities.isEventDispatchThread()) {
+        if (!SwingUtilities.isEventDispatchThread() && !GraphicsEnvironment.isHeadless()) {
             throw new IllegalStateException(
                     "Needs to be called from the EDT thread, not from " + Thread.currentThread().getName());
         }

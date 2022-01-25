@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.Command;
@@ -46,7 +47,7 @@ final class MapCSSTagCheckerAsserts {
      * @param assertionConsumer The handler for assertion error messages
      */
     static void checkAsserts(final MapCSSTagCheckerRule check, final Map<String, Boolean> assertions,
-                             final MapCSSTagChecker.AssertionConsumer assertionConsumer) {
+                             final Consumer<String> assertionConsumer) {
         final DataSet ds = new DataSet();
         Logging.debug("Check: {0}", check);
         for (final Map.Entry<String, Boolean> i : assertions.entrySet()) {

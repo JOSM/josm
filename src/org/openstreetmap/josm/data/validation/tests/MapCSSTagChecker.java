@@ -254,13 +254,6 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     /**
-     * A handler for assertion error messages (for not fulfilled "assertMatch", "assertNoMatch").
-     */
-    @FunctionalInterface
-    interface AssertionConsumer extends Consumer<String> {
-    }
-
-    /**
      * Adds a new MapCSS config file from the given URL.
      * @param url The unique URL of the MapCSS config file
      * @return List of tag checks and parsing errors, or null
@@ -274,7 +267,18 @@ public class MapCSSTagChecker extends Test.TagTest {
         return addMapCSS(url, checkAssertions ? Logging::warn : null);
     }
 
-    synchronized ParseResult addMapCSS(String url, AssertionConsumer assertionConsumer) throws ParseException, IOException {
+    /**
+     * Adds a new MapCSS config file from the given URL. <br />
+     * NOTE: You should prefer {@link #addMapCSS(String)} unless you <i>need</i> to know what the assertions return.
+     *
+     * @param url The unique URL of the MapCSS config file
+     * @param assertionConsumer A string consumer for error messages.
+     * @return List of tag checks and parsing errors, or null
+     * @throws ParseException if the config file does not match MapCSS syntax
+     * @throws IOException if any I/O error occurs
+     * @since 18365 (public, primarily for ValidatorCLI)
+     */
+    public synchronized ParseResult addMapCSS(String url, Consumer<String> assertionConsumer) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         ParseResult result;
         try (CachedFile cache = new CachedFile(url);

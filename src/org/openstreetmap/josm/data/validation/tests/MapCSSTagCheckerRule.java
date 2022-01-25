@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +32,6 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.AssertionConsumer;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
@@ -106,7 +106,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
 
     private static final String POSSIBLE_THROWS = "throwError/throwWarning/throwOther";
 
-    static MapCSSTagCheckerRule ofMapCSSRule(final MapCSSRule rule, AssertionConsumer assertionConsumer) throws IllegalDataException {
+    static MapCSSTagCheckerRule ofMapCSSRule(final MapCSSRule rule, Consumer<String> assertionConsumer) throws IllegalDataException {
         final MapCSSTagCheckerRule check = new MapCSSTagCheckerRule(rule);
         final Map<String, Boolean> assertions = new HashMap<>();
         for (Instruction i : rule.declaration.instructions) {
@@ -185,7 +185,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
         return readMapCSS(css, null);
     }
 
-    static MapCSSTagChecker.ParseResult readMapCSS(Reader css, AssertionConsumer assertionConsumer) throws ParseException {
+    static MapCSSTagChecker.ParseResult readMapCSS(Reader css, Consumer<String> assertionConsumer) throws ParseException {
         CheckParameterUtil.ensureParameterNotNull(css, "css");
 
         final MapCSSStyleSource source = new MapCSSStyleSource("");

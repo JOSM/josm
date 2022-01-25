@@ -97,10 +97,11 @@ public class OsmImporter extends FileImporter {
         final OsmImporterData data = loadLayer(in, associatedFile,
                 associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), pm);
 
+        final OsmDataLayer layer = data.getLayer();
+        // Note: addLayer calls GuiHelper.runInEDTAndWaitWithException
+        MainApplication.getLayerManager().addLayer(layer);
         // FIXME: remove UI stuff from IO subsystem
         GuiHelper.runInEDT(() -> {
-            OsmDataLayer layer = data.getLayer();
-            MainApplication.getLayerManager().addLayer(layer);
             data.getPostLayerTask().run();
             data.getLayer().onPostLoadFromFile();
         });

@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompTextField;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -52,7 +53,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
     private static class PreferencePanel extends JPanel {
 
-        public JosmTextField input;
+        public AutoCompTextField<String> input;
         private HistoryComboBox cbInput;
 
         PreferencePanel(String initialText, ActionListener listener) {
@@ -60,7 +61,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
         }
 
         private void build(String initialText, final ActionListener listener) {
-            input = new JosmTextField(30);
+            input = new AutoCompTextField<>(30);
             cbInput = new HistoryComboBox();
             cbInput.setEditor(new BasicComboBoxEditor() {
                 @Override

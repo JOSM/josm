@@ -233,6 +233,10 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
      * Ticks handling
     ==================*/
 
+    /**
+     * Update progress message
+     * @param value The percentage of completion (this and child progress)
+     */
     protected abstract void updateProgress(double value);
 
     @Override

@@ -98,6 +98,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
+import org.openstreetmap.josm.data.validation.ValidatorCLI;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
@@ -311,6 +312,7 @@ public class MainApplication {
         registerCLIModule(JOSM_CLI_MODULE);
         registerCLIModule(ProjectionCLI.INSTANCE);
         registerCLIModule(RenderingCLI.INSTANCE);
+        registerCLIModule(ValidatorCLI.INSTANCE);
     }
 
     /**
@@ -660,7 +662,8 @@ public class MainApplication {
                 tr("commands")+":\n"+
                 "\trunjosm     "+tr("launch JOSM (default, performed when no command is specified)")+'\n'+
                 "\trender      "+tr("render data and save the result to an image file")+'\n'+
-                "\tproject     "+tr("convert coordinates from one coordinate reference system to another")+"\n\n"+
+                "\tproject     " + tr("convert coordinates from one coordinate reference system to another")+ '\n' +
+                "\tvalidate    " + tr("validate data") + "\n\n" +
                 tr("For details on the {0} and {1} commands, run them with the {2} option.", "render", "project", "--help")+'\n'+
                 tr("The remainder of this help page documents the {0} command.", "runjosm")+"\n\n"+
                 tr("options")+":\n"+
