@@ -3,6 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -23,6 +26,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.UniqueIdGenerator;
 import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -33,6 +37,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 @BasicPreferences
 @Users
 class CombineWayActionTest {
+
     /**
      * Non-regression test for bug #11957.
      * @throws IOException if any I/O error occurs
@@ -116,11 +121,19 @@ class CombineWayActionTest {
      * @throws IOException if any I/O error occurs
      * @throws IllegalDataException if OSM parsing fails
      */
+    @UniqueIdGenerator
     @Test
     void testTicket18367NeedsSplit() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18367, "split-and-reverse.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ArrayList<Way> selection = new ArrayList<>(ds.getWays());
+            // There are two valid ways to go about this. ids are from xml file.
+            // 1. Start with node id=-202219
+            // 2. Start with node id=-202225
+            // These are the first/last nodes of way id=-202222, which has 5 nodes. The other way has 6 nodes.
+            // Get the nodes now, before anything might get reversed.
+            final Node startOne = ds.getWays().stream().filter(way -> way.getNodesCount() == 5).map(Way::firstNode).findFirst().orElse(null);
+            final Node startTwo = ds.getWays().stream().filter(way -> way.getNodesCount() == 5).map(Way::lastNode).findFirst().orElse(null);
             double expectedLen = getOriginalLength(selection);
             List<Node> path = CombineWayAction.tryJoin(selection);
             assertFalse(path.isEmpty());
@@ -130,7 +143,13 @@ class CombineWayActionTest {
             List<Way> reversedWays = new LinkedList<>();
             List<Way> unreversedWays = new LinkedList<>();
             CombineWayAction.detectReversedWays(selection, path, reversedWays, unreversedWays);
-            assertFalse(reversedWays.isEmpty());
+
+            if (Objects.equals(combined.firstNode(), startOne)) {
+                assertTrue(reversedWays.isEmpty(), "Splitting on node id=-202219 does not require a reversal");
+                fail("We shouldn't hit this...");
+            } else if (Objects.equals(combined.firstNode(), startTwo)) {
+                assertFalse(reversedWays.isEmpty(), "Splitting on node id=-202225 requires a reversal");
+            }
         }
     }
 
