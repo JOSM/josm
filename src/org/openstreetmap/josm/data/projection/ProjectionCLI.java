@@ -19,6 +19,7 @@ import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
+import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.tools.OptionParser;
 
 /**
@@ -75,9 +76,9 @@ public class ProjectionCLI implements CLIModule {
             run(fromStr, toStr, otherPositional);
         } catch (ProjectionConfigurationException | IllegalArgumentException | IOException ex) {
             System.err.println(tr("Error: {0}", ex.getMessage()));
-            System.exit(1);
+            Lifecycle.exitJosm(true, 1);
         }
-        System.exit(0);
+        Lifecycle.exitJosm(true, 0);
     }
 
     /**
@@ -85,7 +86,7 @@ public class ProjectionCLI implements CLIModule {
      */
     private static void showHelp() {
         System.out.println(getHelp());
-        System.exit(0);
+        Lifecycle.exitJosm(true, 0);
     }
 
     private static String getHelp() {

@@ -277,7 +277,7 @@ public class MainApplication {
                 args = new ProgramArguments(argArray);
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
-                System.exit(1);
+                Lifecycle.exitJosm(true, 1);
             }
             mainJOSM(args);
         }
@@ -1240,7 +1240,7 @@ public class MainApplication {
                     Logging.log(Logging.LEVEL_ERROR,
                             tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
                             s.toUpperCase(Locale.ENGLISH), Option.OFFLINE.getName(), Arrays.toString(OnlineResource.values())), e);
-                    System.exit(1);
+                    Lifecycle.exitJosm(true, 1);
                     return;
                 }
             }

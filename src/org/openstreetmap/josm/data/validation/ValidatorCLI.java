@@ -68,9 +68,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 18365
  */
 public class ValidatorCLI implements CLIModule {
-	/**
-	 * The unique instance.
-	 */
+    /**
+     * The unique instance.
+     */
     public static final ValidatorCLI INSTANCE = new ValidatorCLI();
 
     /** The input file(s) */
@@ -384,7 +384,7 @@ public class ValidatorCLI implements CLIModule {
         switch (option) {
         case HELP:
             showHelp();
-            System.exit(0);
+            Lifecycle.exitJosm(true, 0);
             break;
         case DEBUG:
             this.logLevel = Logging.LEVEL_DEBUG;

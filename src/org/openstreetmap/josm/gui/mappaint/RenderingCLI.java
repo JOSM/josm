@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.mappaint.RenderingHelper.StyleData;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.MemoryPreferences;
 import org.openstreetmap.josm.tools.Http1Client;
@@ -176,7 +177,7 @@ public class RenderingCLI implements CLIModule {
                 e.printStackTrace();
             }
             System.err.println(tr("Error - file not found: ''{0}''", e.getMessage()));
-            System.exit(1);
+            Lifecycle.exitJosm(true, 1);
         } catch (IllegalArgumentException | IllegalDataException | IOException e) {
             if (Logging.isDebugEnabled()) {
                 e.printStackTrace();
@@ -184,9 +185,9 @@ public class RenderingCLI implements CLIModule {
             if (e.getMessage() != null) {
                 System.err.println(tr("Error: {0}", e.getMessage()));
             }
-            System.exit(1);
+            Lifecycle.exitJosm(true, 1);
         }
-        System.exit(0);
+        Lifecycle.exitJosm(true, 0);
     }
 
     /**
@@ -227,7 +228,7 @@ public class RenderingCLI implements CLIModule {
         switch (o) {
         case HELP:
             showHelp();
-            System.exit(0);
+            Lifecycle.exitJosm(true, 0);
             break;
         case DEBUG:
             argDebug = true;
