@@ -601,6 +601,12 @@ public class ImageryProvidersPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent evt) {
             layerInfo.loadDefaults(true, MainApplication.worker, false);
+            this.updateTableArea();
+            // Ensure that the table is updated properly if someone cancels the download. See JOSM #21797.
+            MainApplication.worker.execute(() -> GuiHelper.runInEDTAndWait(this::updateTableArea));
+        }
+
+        private void updateTableArea() {
             defaultModel.fireTableDataChanged();
             defaultTable.getSelectionModel().clearSelection();
             defaultTableListener.clearMap();
