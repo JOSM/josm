@@ -2510,6 +2510,20 @@
         <item name="Railway Signal" icon="presets/transport/railway/signal.svg" type="node" preset_name_label="true">
             <link wiki="Tag:railway=signal" />
             <key key="railway" value="signal" />
+            <combo key="railway:signal:position"
+                   text="Signal position"
+                   de.text="Signalstandort"
+                   values="left,right,bridge"
+                   display_values="left in direction of OSM way,right in direction of OSM way,on a bridge over the tracks"
+                   de.display_values="Links von Wegrichtung,Rechts von Wegrichtung,Signalbrücke"
+            />
+            <combo key="railway:signal:direction"
+                   text="Direction"
+                   de.text="Anzeigerichtung"
+                   values="forward,backward"
+                   display_values="in direction of OSM way,against direction of OSM way"
+                   de.display_values="In Wegrichtung,Entgegen Wegrichtung"
+            />
             <reference ref="ref_operator" />
         </item> <!-- Railway Signal -->
         <item name="Railway milestone" icon="presets/transport/railway/milestone.svg" type="node" preset_name_label="true">
