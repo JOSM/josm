@@ -59,6 +59,16 @@ public class GenericRelationEditorTest {
             }
 
             @Override
+            public boolean isDirtyRelation(boolean ignoreUninterestingTags) {
+                return false;
+            }
+
+            @Override
+            public boolean isDirtyEditor() {
+                return false;
+            }
+
+            @Override
             public Relation getRelationSnapshot() {
                 return r;
             }

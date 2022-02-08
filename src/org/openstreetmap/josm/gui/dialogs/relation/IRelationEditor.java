@@ -39,7 +39,29 @@ public interface IRelationEditor {
      *
      * @return true if the currently edited relation has been changed elsewhere.
      */
-    boolean isDirtyRelation();
+    default boolean isDirtyRelation() {
+        return isDirtyRelation(false);
+    }
+
+    /**
+     * Replies true if the currently edited relation has been changed elsewhere.
+     *
+     * In this case a relation editor can't apply updates to the relation directly. Rather,
+     * it has to create a conflict.
+     *
+     * @param ignoreUninterestingTags whether to ignore uninteresting tag changes
+     * @return true if the currently edited relation has been changed elsewhere.
+     */
+    boolean isDirtyRelation(boolean ignoreUninterestingTags);
+
+    /**
+     * Replies true if the relation has been changed in the editor (but not yet applied).
+     *
+     * Reloading data from the relation would cause the pending changes to be lost.
+     *
+     * @return true if the currently edited relation has been changed in the editor.
+     */
+    boolean isDirtyEditor();
 
     /**
      * Reloads data from relation.

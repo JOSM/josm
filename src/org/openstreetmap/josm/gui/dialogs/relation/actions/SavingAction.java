@@ -192,8 +192,6 @@ abstract class SavingAction extends AbstractRelationEditorAction {
     }
 
     protected boolean isEditorDirty() {
-        Relation snapshot = editorAccess.getEditor().getRelationSnapshot();
-        return (snapshot != null && !getMemberTableModel().hasSameMembersAs(snapshot)) || getTagModel().isDirty()
-                || getEditor().getRelation() == null || getEditor().getRelation().getDataSet() == null;
+        return editorAccess.getEditor().isDirtyEditor();
     }
 }

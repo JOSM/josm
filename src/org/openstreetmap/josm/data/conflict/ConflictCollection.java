@@ -316,8 +316,8 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * Returns the list of conflicts involving nodes.
-     * @return The list of conflicts involving nodes.
+     * Returns the list of conflicts involving ways.
+     * @return The list of conflicts involving ways.
      * @since 6555
      */
     public final Collection<Conflict<? extends OsmPrimitive>> getWayConflicts() {
@@ -325,8 +325,8 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * Returns the list of conflicts involving nodes.
-     * @return The list of conflicts involving nodes.
+     * Returns the list of conflicts involving relations.
+     * @return The list of conflicts involving relations.
      * @since 6555
      */
     public final Collection<Conflict<? extends OsmPrimitive>> getRelationConflicts() {

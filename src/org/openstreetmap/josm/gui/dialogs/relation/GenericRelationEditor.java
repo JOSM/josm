@@ -62,6 +62,7 @@ import org.openstreetmap.josm.data.validation.tests.RelationChecker;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.ScrollViewport;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AbstractRelationEditorAction;
@@ -1048,10 +1049,27 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     @Override
     public void commandChanged(int queueSize, int redoSize) {
         Relation r = getRelation();
-        if (r != null && r.getDataSet() == null) {
-            // see #19915
-            setRelation(null);
-            applyAction.updateEnabledState();
+        if (r != null) {
+            if (r.getDataSet() == null) {
+                // see #19915
+                setRelation(null);
+                applyAction.updateEnabledState();
+            } else if (isDirtyRelation()) {
+                if (!isDirtyEditor()) {
+                    reloadDataFromRelation();
+                } else {
+                    new Notification(tr("Relation modified outside of relation editor with pending changes. Conflict resolution required."))
+                    .setIcon(JOptionPane.WARNING_MESSAGE).show();
+                }
+            }
         }
+    }
+
+    @Override
+    public boolean isDirtyEditor() {
+        Relation snapshot = getRelationSnapshot();
+        Relation relation = getRelation();
+        return (snapshot != null && !memberTableModel.hasSameMembersAs(snapshot)) ||
+                tagEditorPanel.getModel().isDirty() || relation == null || relation.getDataSet() == null;
     }
 }
