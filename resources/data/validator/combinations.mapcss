@@ -75,9 +75,11 @@ way[have_riverbank             ][!waterway],
   assertMatch: "node source:addr:postcode=postman";
 }
 
-/* {0.key} without {1.key} (info level) */
+/* {0.key} without {1.key} (info level), #21736 */
 way[lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1],
 way[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
+way[lanes:forward][!lanes:backward][oneway=~/^(yes|-1)$/][/^oneway:(psv|bus)$/=~/^no$/],
+way[lanes:backward][!lanes:forward][oneway=~/^(yes|-1)$/][/^oneway:(psv|bus)$/=~/^no$/],
 *[leaf_type ][!leaf_cycle],
 *[leaf_cycle][!leaf_type] {
   throwOther: tr("{0} without {1}", "{0.key}", "{1.key}");
@@ -279,7 +281,7 @@ way[usage=penstock][waterway!=pressurised] {
   group: tr("missing tag");
 }
 
-/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530 */
+/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530, #21736 */
 *[power=plant][/^generator:/],
 *[power=generator][/^plant:/],
 *[power=plant][voltage],
@@ -291,10 +293,10 @@ node[transformer=distribution][voltage][power=pole],
 *[noname?][name],
 *[actuator][handle][actuator !~ /(^|;)manual(;|$)/],
 *[mechanical_driver][handle][mechanical_driver !~ /(^|;)manual(;|$)/],
-way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][oneway:bicycle!=no][oneway:psv!=no],
-way[oneway=yes][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][oneway:bicycle!=no][oneway:psv!=no],
-way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][oneway:bicycle!=no][oneway:psv!=no],
-way[oneway=-1 ][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][oneway:bicycle!=no][oneway:psv!=no] {
+way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/],
+way[oneway=yes][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/],
+way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/],
+way[oneway=-1 ][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
   group: tr("suspicious tag combination");
   assertMatch: "way power=plant generator:source=wind";
