@@ -92,12 +92,15 @@ public final class ImageryPatterns {
      */
     static String handleApiKeyTemplate(final String id, final String url) {
         if (id != null && url != null) {
-            try {
-                final String apiKey = FeatureAdapter.retrieveApiKey(id);
-                return PATTERN_API_KEY.matcher(url).replaceAll(apiKey);
-            } catch (IOException | NullPointerException e) {
-                // Match rough behavior in JMapViewer TemplatedTMSTileSource, but with better error message.
-                throw new IllegalArgumentException(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", id), e);
+            final Matcher matcher = PATTERN_API_KEY.matcher(url);
+            if (matcher.matches()) {
+                try {
+                    final String apiKey = FeatureAdapter.retrieveApiKey(id);
+                    return matcher.replaceAll(apiKey);
+                } catch (IOException | NullPointerException e) {
+                    // Match rough behavior in JMapViewer TemplatedTMSTileSource, but with better error message.
+                    throw new IllegalArgumentException(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", id), e);
+                }
             }
         }
         return url;
