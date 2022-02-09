@@ -1,8 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.TestUtils;
@@ -437,5 +442,42 @@ class WMTSTileSourceTest {
         assertEquals("https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015" +
                         "/MapServer/WMTS/tile/1.0.0/tilecache_Ortho_2013_2015/default/default028mm/11/6299/7373.jpg",
                 source.getTileUrl(11, tile.getXIndex(), tile.getYIndex()));
+    }
+
+    @Test
+    void testApiKeyValid() {
+        assumeFalse(testImagery12168 == null);
+        try {
+            ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
+            FeatureAdapter.registerApiKeyAdapter(id -> TestUtils.getTestDataRoot());
+            ImageryInfo testImageryWMTS = new ImageryInfo(testImagery12168);
+            testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot(), "{apikey}"));
+            assertTrue(testImageryWMTS.getUrl().contains("{apikey}"));
+            testImageryWMTS.setId("WMTSTileSourceTest#testApiKeyValid");
+            WMTSTileSource ts = assertDoesNotThrow(() -> new WMTSTileSource(testImageryWMTS, ProjectionRegistry.getProjection()));
+            assertEquals("http://www.ngi.be/cartoweb/1.0.0/topo/default/3812/1/3/2.png",
+                    ts.getTileUrl(1, 2, 3));
+        } finally {
+            FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());
+        }
+    }
+
+    @Test
+    void testApiKeyInvalid() {
+        assumeFalse(testImagery12168 == null);
+        try {
+            ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
+            FeatureAdapter.registerApiKeyAdapter(id -> null);
+            ImageryInfo testImageryWMTS = new ImageryInfo(testImagery12168);
+            testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot(), "{apikey}"));
+            assertTrue(testImageryWMTS.getUrl().contains("{apikey}"));
+            testImageryWMTS.setId("TemplatedWMSTileSourceTest#testApiKeyInvalid");
+            org.openstreetmap.josm.data.projection.Projection projection = Projections.getProjectionByCode("EPSG:4326");
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new WMTSTileSource(testImageryWMTS, projection));
+            assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", testImageryWMTS.getId()),
+                    exception.getMessage());
+        } finally {
+            FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());
+        }
     }
 }

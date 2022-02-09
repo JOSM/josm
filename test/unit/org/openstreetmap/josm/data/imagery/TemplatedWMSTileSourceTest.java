@@ -2,10 +2,13 @@
 package org.openstreetmap.josm.data.imagery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
@@ -198,6 +201,45 @@ class TemplatedWMSTileSourceTest {
                         + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG:4326&"
                         + "BBOX=540.0000000,-1350.0000000,900.0000000,-990.0000000&WIDTH=256&HEIGHT=256",
                 ts.getTileUrl(1, 2, 3));
+    }
+
+    @Test
+    void testApiKeyValid() {
+        try {
+            Projection projection = Projections.getProjectionByCode("EPSG:4326");
+            ProjectionRegistry.setProjection(projection);
+            FeatureAdapter.registerApiKeyAdapter(id -> "test_api_key");
+            ImageryInfo testImageryWMS = new ImageryInfo("test imagery",
+                    "https://maps.six.nsw.gov.au/arcgis/services/{apikey}/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&"
+                            + "REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&"
+                            + "MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE", "wms", null, null);
+            testImageryWMS.setId("TemplatedWMSTileSourceTest#testApiKeyValid");
+            TemplatedWMSTileSource ts = new TemplatedWMSTileSource(testImageryWMS, projection);
+            assertEquals("https://maps.six.nsw.gov.au/arcgis/services/test_api_key/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&"
+                            + "VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&BBOX=-1350.0000000,540.0000000,-990.0000000,900.0000000&WIDTH=512&"
+                            + "HEIGHT=512&LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE",
+                    ts.getTileUrl(1, 2, 3));
+        } finally {
+            FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());
+        }
+    }
+
+    @Test
+    void testApiKeyInvalid() {
+        try {
+            FeatureAdapter.registerApiKeyAdapter(id -> null);
+            ImageryInfo testImageryWMS = new ImageryInfo("test imagery",
+                    "https://maps.six.nsw.gov.au/arcgis/services/{apikey}/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&"
+                            + "REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&"
+                            + "MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE", "wms", null, null);
+            testImageryWMS.setId("TemplatedWMSTileSourceTest#testApiKeyInvalid");
+            Projection projection = Projections.getProjectionByCode("EPSG:4326");
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new TemplatedWMSTileSource(testImageryWMS, projection));
+            assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", testImageryWMS.getId()),
+                    exception.getMessage());
+        } finally {
+            FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());
+        }
     }
 
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
