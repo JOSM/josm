@@ -360,7 +360,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         super(info);
         CheckParameterUtil.ensureThat(info.getDefaultLayers().size() < 2, "At most 1 default layer for WMTS is supported");
         this.headers.putAll(info.getCustomHttpHeaders());
-        this.baseUrl = GetCapabilitiesParseHelper.normalizeCapabilitiesUrl(ImageryPatterns.handleHeaderTemplate(info.getUrl(), headers));
+        this.baseUrl = GetCapabilitiesParseHelper.normalizeCapabilitiesUrl(
+                ImageryPatterns.handleApiKeyTemplate(info.getId(), ImageryPatterns.handleHeaderTemplate(info.getUrl(), headers)));
         WMTSCapabilities capabilities = getCapabilities(baseUrl, headers);
         this.layers = capabilities.getLayers();
         this.baseUrl = capabilities.getBaseUrl();

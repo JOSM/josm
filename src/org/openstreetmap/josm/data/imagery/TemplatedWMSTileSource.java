@@ -44,7 +44,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         this.serverProjections = new TreeSet<>(info.getServerProjections());
         this.headers.putAll(info.getCustomHttpHeaders());
         this.date = info.getDate();
-        this.baseUrl = ImageryPatterns.handleHeaderTemplate(baseUrl, headers);
+        this.baseUrl = ImageryPatterns.handleApiKeyTemplate(info.getId(), ImageryPatterns.handleHeaderTemplate(baseUrl, headers));
         initProjection();
         // Bounding box coordinates have to be switched for WMS 1.3.0 EPSG:4326.
         //
