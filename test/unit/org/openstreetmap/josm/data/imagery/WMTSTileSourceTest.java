@@ -473,7 +473,8 @@ class WMTSTileSourceTest {
             assertTrue(testImageryWMTS.getUrl().contains("{apikey}"));
             testImageryWMTS.setId("TemplatedWMSTileSourceTest#testApiKeyInvalid");
             org.openstreetmap.josm.data.projection.Projection projection = Projections.getProjectionByCode("EPSG:4326");
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new WMTSTileSource(testImageryWMTS, projection));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new WMTSTileSource(testImageryWMTS, projection));
             assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", testImageryWMTS.getId()),
                     exception.getMessage());
         } finally {

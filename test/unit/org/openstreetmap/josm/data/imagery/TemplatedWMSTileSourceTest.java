@@ -234,7 +234,8 @@ class TemplatedWMSTileSourceTest {
                             + "MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE", "wms", null, null);
             testImageryWMS.setId("TemplatedWMSTileSourceTest#testApiKeyInvalid");
             Projection projection = Projections.getProjectionByCode("EPSG:4326");
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new TemplatedWMSTileSource(testImageryWMS, projection));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new TemplatedWMSTileSource(testImageryWMS, projection));
             assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", testImageryWMS.getId()),
                     exception.getMessage());
         } finally {
