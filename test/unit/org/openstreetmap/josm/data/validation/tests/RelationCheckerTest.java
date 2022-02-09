@@ -150,7 +150,7 @@ class RelationCheckerTest {
         final Way outline = TestUtils.newWay("", new Node(0, 0), new Node(0, 1), new Node(1, 1),
                 new Node(1, 0));
         outline.addNode(outline.firstNode());
-        final Way part = TestUtils.newWay("", outline.firstNode(), outline.getNode(1), outline.getNode(2),
+        final Way part = TestUtils.newWay("building:part=yes", outline.firstNode(), outline.getNode(1), outline.getNode(2),
                 outline.lastNode());
         r.addMember(new RelationMember("outline", outline));
         r.addMember(new RelationMember("part", part));
