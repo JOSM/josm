@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -145,9 +146,14 @@ class RelationCheckerTest {
 
     @Test
     void testBuildingMemberExpression() {
-        Relation r = createRelation("type=building");
-        r.addMember(new RelationMember("outline", new Way()));
-        r.addMember(new RelationMember("part", new Way()));
+        final Relation r = createRelation("type=building");
+        final Way outline = TestUtils.newWay("", new Node(0, 0), new Node(0, 1), new Node(1, 1),
+                new Node(1, 0));
+        outline.addNode(outline.firstNode());
+        final Way part = TestUtils.newWay("", outline.firstNode(), outline.getNode(1), outline.getNode(2),
+                outline.lastNode());
+        r.addMember(new RelationMember("outline", outline));
+        r.addMember(new RelationMember("part", part));
         r.addMember(new RelationMember("level_-12", new Relation())); // fails (old tagging schema, #21048)
 
         List<TestError> errors = testRelation(r);
