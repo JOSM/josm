@@ -9,7 +9,6 @@ relation[!type] {
 /* from http://wiki.openstreetmap.org/wiki/Types_of_relation */
 /* see also #9071 */
 relation[type=boundary][!boundary][!disused:boundary],
-relation[type=building][!building],
 relation[type=destination_sign][!destination],
 relation[type=enforcement][!enforcement],
 relation[type=public_transport][!public_transport],
@@ -65,4 +64,10 @@ relation[type=route][route=horse] > way[horse=no],
 relation[type=route][route=horse] > way[horse=private],
 relation[type=route][route=horse] > way[horse=use_sidepath] { 
   throwWarning: tr("way with {0} is part of a {1} route relation", "{0.tag}", "{0.key}");
+}
+
+/* #21285, #21738 */
+relation[type=building][building] >[role=outline] *[building][parent_tag(building) != tag(building)] {
+  throwWarning: tr("{0} of {1} member and {0} relation differ", "{0.key}", "outline");
+  group: tr("suspicious tag combination");
 }
