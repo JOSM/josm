@@ -8,10 +8,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Patterns that can be replaced in imagery URLs.
@@ -93,13 +95,26 @@ public final class ImageryPatterns {
     static String handleApiKeyTemplate(final String id, final String url) {
         if (id != null && url != null) {
             final Matcher matcher = PATTERN_API_KEY.matcher(url);
-            if (matcher.matches()) {
+            if (matcher.find()) {
                 try {
-                    final String apiKey = FeatureAdapter.retrieveApiKey(id);
-                    return matcher.replaceAll(apiKey);
-                } catch (IOException | NullPointerException e) {
+                    return Optional.ofNullable(FeatureAdapter.retrieveApiKey(id))
+                            .map(matcher::replaceAll)
+                            /* None of the configured API key sites had an API key for the id. */
+                            .orElseThrow(() -> {
+                                // Give a more complete error message so that users can fix the problem without
+                                // opening a bug report. Hopefully.
+                                final String message;
+                                if (Config.getPref().getKeySet().contains("apikey.sites")) {
+                                    message = tr("Advanced preference ''{0}'' is not default. Please consider resetting it.", "apikey.sites");
+                                } else {
+                                    message = tr("API key for imagery with id={0} may not be available.", id);
+                                }
+                                return new IOException(message);
+                            });
+                } catch (IOException e) {
                     // Match rough behavior in JMapViewer TemplatedTMSTileSource, but with better error message.
-                    throw new IllegalArgumentException(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", id), e);
+                    throw new IllegalArgumentException(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.\n{1}",
+                            id, e.getMessage()), e);
                 }
             }
         }
