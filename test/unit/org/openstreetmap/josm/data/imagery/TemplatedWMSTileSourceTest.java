@@ -236,7 +236,9 @@ class TemplatedWMSTileSourceTest {
             Projection projection = Projections.getProjectionByCode("EPSG:4326");
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                             () -> new TemplatedWMSTileSource(testImageryWMS, projection));
-            assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", testImageryWMS.getId()),
+            assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.\n"
+                            + "API key for imagery with id=TemplatedWMSTileSourceTest#testApiKeyInvalid may not be available.",
+                            testImageryWMS.getId()),
                     exception.getMessage());
         } finally {
             FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());

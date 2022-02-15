@@ -471,11 +471,13 @@ class WMTSTileSourceTest {
             ImageryInfo testImageryWMTS = new ImageryInfo(testImagery12168);
             testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot(), "{apikey}"));
             assertTrue(testImageryWMTS.getUrl().contains("{apikey}"));
-            testImageryWMTS.setId("TemplatedWMSTileSourceTest#testApiKeyInvalid");
+            testImageryWMTS.setId("WMTSTileSourceTest#testApiKeyInvalid");
             org.openstreetmap.josm.data.projection.Projection projection = Projections.getProjectionByCode("EPSG:4326");
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                             () -> new WMTSTileSource(testImageryWMTS, projection));
-            assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.", testImageryWMTS.getId()),
+            assertEquals(tr("Could not retrieve API key for imagery with id={0}. Cannot add layer.\n" +
+                            "API key for imagery with id=WMTSTileSourceTest#testApiKeyInvalid may not be available.",
+                            testImageryWMTS.getId()),
                     exception.getMessage());
         } finally {
             FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());
