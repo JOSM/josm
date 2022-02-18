@@ -307,7 +307,8 @@ public class SyncEditorLayerIndex {
                     s.startsWith("***") ? "black" :
                         ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :
                             (s.startsWith("#") ? "indigo" :
-                                (s.startsWith("!") ? "orange" : "red")));
+                                (s.startsWith("!") ? "orange" :
+                                    (s.startsWith("~") ? "red" : "brown"))));
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</pre>";
         }
         if ((s.startsWith("+ ") || s.startsWith("+++ ELI") || s.startsWith("#")) && optionNoEli) {
@@ -502,24 +503,24 @@ public class SyncEditorLayerIndex {
 
         for (ImageryInfo e : josmEntries) {
             if (isBlank(getUrl(e))) {
-                myprintln("+++ JOSM-Entry without URL: " + getDescription(e));
+                myprintln("~~~ JOSM-Entry without URL: " + getDescription(e));
                 continue;
             }
             if (isBlank(e.getDate()) && e.getDate() != null) {
-                myprintln("+++ JOSM-Entry with empty Date: " + getDescription(e));
+                myprintln("~~~ JOSM-Entry with empty Date: " + getDescription(e));
                 continue;
             }
             if (isBlank(getName(e))) {
-                myprintln("+++ JOSM-Entry without Name: " + getDescription(e));
+                myprintln("~~~ JOSM-Entry without Name: " + getDescription(e));
                 continue;
             }
             String url = getUrlStripped(e);
             if (url.contains("{z}")) {
-                myprintln("+++ JOSM-URL uses {z} instead of {zoom}: "+getDescription(e));
+                myprintln("~~~ JOSM-URL uses {z} instead of {zoom}: "+getDescription(e));
                 url = url.replace("{z}", "{zoom}");
             }
             if (josmUrls.containsKey(url)) {
-                myprintln("+++ JOSM-URL is not unique: "+url);
+                myprintln("~~~ JOSM-URL is not unique: "+url);
             } else {
                 josmUrls.put(url, e);
             }
@@ -529,7 +530,7 @@ public class SyncEditorLayerIndex {
                 ReflectionUtils.setObjectsAccessible(origNameField);
                 origNameField.set(m, m.getOriginalName().replaceAll(" mirror server( \\d+)?", ""));
                 if (josmUrls.containsKey(url)) {
-                    myprintln("+++ JOSM-Mirror-URL is not unique: "+url);
+                    myprintln("~~~ JOSM-Mirror-URL is not unique: "+url);
                 } else {
                     josmUrls.put(url, m);
                     josmMirrors.put(url, m);
@@ -977,11 +978,11 @@ public class SyncEditorLayerIndex {
             for (Shape shape : getShapes(j)) {
                 List<Coordinate> p = shape.getPoints();
                 if (!p.get(0).equals(p.get(p.size()-1))) {
-                    myprintln("+++ JOSM shape "+num+" unclosed: "+getDescription(j));
+                    myprintln("~~~ JOSM shape "+num+" unclosed: "+getDescription(j));
                 }
                 for (int nump = 1; nump < p.size(); ++nump) {
                     if (Objects.equals(p.get(nump-1), p.get(nump))) {
-                        myprintln("+++ JOSM shape "+num+" double point at "+(nump-1)+": "+getDescription(j));
+                        myprintln("~~~ JOSM shape "+num+" double point at "+(nump-1)+": "+getDescription(j));
                     }
                 }
                 ++num;
@@ -1167,14 +1168,14 @@ public class SyncEditorLayerIndex {
             if ("wms".equals(getType(j))) {
                 String urlLc = url.toLowerCase(Locale.ENGLISH);
                 if (getProjections(j).isEmpty()) {
-                    myprintln("* WMS without projections: "+getDescription(j));
+                    myprintln("~ WMS without projections: "+getDescription(j));
                 } else {
                     List<String> unsupported = new LinkedList<>();
                     List<String> old = new LinkedList<>();
                     for (String p : getProjectionsUnstripped(j)) {
                         if ("CRS:84".equals(p)) {
                             if (!urlLc.contains("version=1.3")) {
-                                myprintln("* CRS:84 without WMS 1.3: "+getDescription(j));
+                                myprintln("~ CRS:84 without WMS 1.3: "+getDescription(j));
                             }
                         } else if (oldproj.containsKey(p)) {
                             old.add(p);
@@ -1183,17 +1184,17 @@ public class SyncEditorLayerIndex {
                         }
                     }
                     if (!unsupported.isEmpty()) {
-                        myprintln("* Projections "+String.join(", ", unsupported)+" not supported by JOSM: "+getDescription(j));
+                        myprintln("~ Projections "+String.join(", ", unsupported)+" not supported by JOSM: "+getDescription(j));
                     }
                     for (String o : old) {
-                        myprintln("* Projection "+o+" is an old unsupported code and has been replaced by "+oldproj.get(o)+": "
+                        myprintln("~ Projection "+o+" is an old unsupported code and has been replaced by "+oldproj.get(o)+": "
                                 + getDescription(j));
                     }
                 }
                 if (urlLc.contains("version=1.3") && !urlLc.contains("crs={proj}")) {
-                    myprintln("* WMS 1.3 with strange CRS specification: "+getDescription(j));
+                    myprintln("~ WMS 1.3 with strange CRS specification: "+getDescription(j));
                 } else if (urlLc.contains("version=1.1") && !urlLc.contains("srs={proj}")) {
-                    myprintln("* WMS 1.1 with strange SRS specification: "+getDescription(j));
+                    myprintln("~ WMS 1.1 with strange SRS specification: "+getDescription(j));
                 }
             }
             List<String> urls = new LinkedList<>();
@@ -1217,26 +1218,26 @@ public class SyncEditorLayerIndex {
                     try {
                         new ImageProvider(jt).get();
                     } catch (RuntimeException e) {
-                        myprintln("* Strange Icon: "+getDescription(j));
+                        myprintln("~ Strange Icon: "+getDescription(j));
                     }
                 }
             }
             Pattern patternU = Pattern.compile("^https?://([^/]+?)(:\\d+)?(/.*)?");
             for (String u : urls) {
                 if (!patternU.matcher(u).matches() || u.matches(".*[ \t]+$")) {
-                    myprintln("* Strange URL '"+u+"': "+getDescription(j));
+                    myprintln("~ Strange URL '"+u+"': "+getDescription(j));
                 } else {
                     try {
                         URL jurl = new URL(u.replaceAll("\\{switch:[^\\}]*\\}", "x"));
                         String domain = jurl.getHost();
                         int port = jurl.getPort();
                         if (!(domain.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) && !dv.isValid(domain))
-                            myprintln("* Strange Domain '"+domain+"': "+getDescription(j));
+                            myprintln("~ Strange Domain '"+domain+"': "+getDescription(j));
                         else if (80 == port || 443 == port) {
-                            myprintln("* Useless port '"+port+"': "+getDescription(j));
+                            myprintln("~ Useless port '"+port+"': "+getDescription(j));
                         }
                     } catch (MalformedURLException e) {
-                        myprintln("* Malformed URL '"+u+"': "+getDescription(j)+" => "+e.getMessage());
+                        myprintln("~ Malformed URL '"+u+"': "+getDescription(j)+" => "+e.getMessage());
                     }
                 }
             }
@@ -1245,9 +1246,9 @@ public class SyncEditorLayerIndex {
                 continue;
             }
             if (isBlank(id)) {
-                myprintln("* No JOSM-ID: "+getDescription(j));
+                myprintln("~ No JOSM-ID: "+getDescription(j));
             } else if (josmIds.containsKey(id)) {
-                myprintln("* JOSM-ID "+id+" not unique: "+getDescription(j));
+                myprintln("~ JOSM-ID "+id+" not unique: "+getDescription(j));
             } else {
                 josmIds.put(id, j);
             }
@@ -1256,27 +1257,27 @@ public class SyncEditorLayerIndex {
                 Pattern patternD = Pattern.compile("^(-|(\\d\\d\\d\\d)(-(\\d\\d)(-(\\d\\d))?)?)(;(-|(\\d\\d\\d\\d)(-(\\d\\d)(-(\\d\\d))?)?))?$");
                 Matcher m = patternD.matcher(d);
                 if (!m.matches()) {
-                    myprintln("* JOSM-Date '"+d+"' is strange: "+getDescription(j));
+                    myprintln("~ JOSM-Date '"+d+"' is strange: "+getDescription(j));
                 } else {
                     try {
                         Date first = verifyDate(m.group(2), m.group(4), m.group(6));
                         Date second = verifyDate(m.group(9), m.group(11), m.group(13));
                         if (second.compareTo(first) < 0) {
-                            myprintln("* JOSM-Date '"+d+"' is strange (second earlier than first): "+getDescription(j));
+                            myprintln("~ JOSM-Date '"+d+"' is strange (second earlier than first): "+getDescription(j));
                         }
                     } catch (Exception e) {
-                        myprintln("* JOSM-Date '"+d+"' is strange ("+e.getMessage()+"): "+getDescription(j));
+                        myprintln("~ JOSM-Date '"+d+"' is strange ("+e.getMessage()+"): "+getDescription(j));
                     }
                 }
             }
             if (isNotBlank(getAttributionUrl(j)) && isBlank(getAttributionText(j))) {
-                myprintln("* Attribution link without text: "+getDescription(j));
+                myprintln("~ Attribution link without text: "+getDescription(j));
             }
             if (isNotBlank(getLogoUrl(j)) && isBlank(getLogoImage(j))) {
-                myprintln("* Logo link without image: "+getDescription(j));
+                myprintln("~ Logo link without image: "+getDescription(j));
             }
             if (isNotBlank(getTermsOfUseText(j)) && isBlank(getTermsOfUseUrl(j))) {
-                myprintln("* Terms of Use text without link: "+getDescription(j));
+                myprintln("~ Terms of Use text without link: "+getDescription(j));
             }
             List<Shape> js = getShapes(j);
             if (!js.isEmpty()) {
@@ -1299,7 +1300,7 @@ public class SyncEditorLayerIndex {
                         || differentCoordinate(b.getMinLon(), minlon)
                         || differentCoordinate(b.getMaxLat(), maxlat)
                         || differentCoordinate(b.getMaxLon(), maxlon)) {
-                    myprintln("* Bounds do not match shape (is "+b.getMinLat()+","+b.getMinLon()+","+b.getMaxLat()+","+b.getMaxLon()
+                    myprintln("~ Bounds do not match shape (is "+b.getMinLat()+","+b.getMinLon()+","+b.getMaxLat()+","+b.getMaxLon()
                         + ", calculated <bounds min-lat='"+minlat+"' min-lon='"+minlon+"' max-lat='"+maxlat+"' max-lon='"+maxlon+"'>): "
                         + getDescription(j));
                 }
@@ -1308,9 +1309,9 @@ public class SyncEditorLayerIndex {
                     "photo", "elevation", "map", "historicmap", "osmbasedmap", "historicphoto", "qa", "other");
             String cat = getCategory(j);
             if (isBlank(cat)) {
-                myprintln("* No category: "+getDescription(j));
+                myprintln("~ No category: "+getDescription(j));
             } else if (!knownCategories.contains(cat)) {
-                myprintln("* Strange category "+cat+": "+getDescription(j));
+                myprintln("~ Strange category "+cat+": "+getDescription(j));
             }
         }
     }
