@@ -95,8 +95,7 @@
     </chunk>
     <chunk id="railway_service_gauge_electrified_yesno">
         <reference ref="railway_service" />
-        <combo key="tracks" text="Tracks" text_context="railway" values="1,2,3,4" length="4" />
-        <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
+        <combo key="gauge" text="Gauge (mm)" values="1676,1668,1638,1600,1588,1581,1524,1520,1495,1458,1450,1435,1372,1219,1067,1000,914,900,891,762,760,750,610,600" length="4" />
         <reference ref="railway_electrified_yesno" />
     </chunk>
     <chunk id="check_access_nomotor">
@@ -2378,7 +2377,9 @@
             <key key="railway" value="narrow_gauge" />
             <optional>
                 <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
-                <reference ref="railway_service_gauge_electrified_yesno" />
+                <reference ref="railway_service" />
+                <combo key="gauge" text="Gauge (mm)" values="1372,1219,1067,1000,914,900,891,762,760,750,610,600" length="4" />
+                <reference ref="railway_electrified_yesno" />
             </optional>
         </item> <!-- Narrow Gauge Rail -->
         <item name="Monorail" icon="presets/transport/railway/monorail.svg" type="way" preset_name_label="true">

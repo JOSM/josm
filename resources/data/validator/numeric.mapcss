@@ -390,13 +390,43 @@ way[frequency][frequency !~ /^(0|[1-9][0-9]*(\.[0-9]+)?)( (kHz|MHz|GHz|THz))?$/]
   assertNoMatch: "way frequency=123.5 MHz";
 }
 
-way[gauge][gauge !~ /^([1-9][0-9]{1,3}(;[1-9][0-9]{1,3})*|broad|standard|narrow)$/] {
+way[gauge][gauge      =~ /^(broad|standard|narrow)$/],
+relation[gauge][gauge =~ /^(broad|standard|narrow)$/] {
+  throwWarning: tr("imprecise value of {0}", "{0.tag}");
+  suggestAlternative: tr("an integer value in millimeters, without unit");
+  set imprecise_gauge;
+  assertNoMatch: "way gauge=something";
+  assertNoMatch: "way gauge=1435";
+  assertNoMatch: "way gauge=1000;1435";
+  assertNoMatch: "way gauge=2''10'";
+  assertMatch:   "way gauge=standard";
+  assertMatch:   "way gauge=narrow";
+}
+way[gauge][gauge      !~ /^([1-9][0-9]{1,3}(;[1-9][0-9]{1,3})*)$/]!.imprecise_gauge,
+relation[gauge][gauge !~ /^([1-9][0-9]{1,3}(;[1-9][0-9]{1,3})*)$/]!.imprecise_gauge {
   throwWarning: tr("unusual value of {0}", "{0.key}");
-  assertMatch: "way gauge=something";
+  set unusual_gauge;
+  assertMatch:   "way gauge=something";
+  assertMatch:   "way gauge=2''10'";
   assertNoMatch: "way gauge=1435";
   assertNoMatch: "way gauge=1000;1435";
   assertNoMatch: "way gauge=standard";
   assertNoMatch: "way gauge=narrow";
+}
+/* #21866 - warn on narrow_railway gauge values outside 89..1434 range, including multi values */
+way[/railway$/      =~ /^narrow_gauge$/][gauge][gauge !~ /^((14(?:3[0-4]|[4-9])|(?:14[0-2]|(?:1[0-3]|9)[0-9])[0-9]?|143|(?:[2-7][0-9]|1[5-9])[0-9]|8(?:[0-8][0-9]|9[0-9]?));?)+$/]!.imprecise_gauge!.unusual_gauge,
+relation[/railway$/ =~ /^narrow_gauge$/][gauge][gauge !~ /^((14(?:3[0-4]|[4-9])|(?:14[0-2]|(?:1[0-3]|9)[0-9])[0-9]?|143|(?:[2-7][0-9]|1[5-9])[0-9]|8(?:[0-8][0-9]|9[0-9]?));?)+$/]!.imprecise_gauge!.unusual_gauge[type=route]{
+  group: tr("suspicious tag combination");
+  throwWarning:  tr("unusual {0} value on narrow gauge railway", "{1.key}");
+  assertMatch:   "way railway=narrow_gauge gauge=88";
+  assertNoMatch: "way railway=narrow_gauge gauge=89";
+  assertNoMatch: "way railway=narrow_gauge gauge=1434";
+  assertMatch:   "way railway=narrow_gauge gauge=1435";
+  assertMatch:   "way railway=narrow_gauge gauge=1435;1500";
+  assertMatch:   "way railway=narrow_gauge gauge=60;600";
+  assertNoMatch: "way railway=narrow_gauge gauge=2''10'";
+  assertNoMatch: "way railway=narrow_gauge gauge=something";
+  assertNoMatch: "way railway=narrow_gauge gauge=narrow";
 }
 
 /* the numbers for percentage and degrees include could probably be bracketed a bit more precisely */
