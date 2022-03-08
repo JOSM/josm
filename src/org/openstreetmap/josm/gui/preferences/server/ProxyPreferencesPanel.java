@@ -27,7 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -297,8 +296,6 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         initFromPreferences();
         updateEnabledState();
-
-        HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#ProxySettings"));
     }
 
     /**
