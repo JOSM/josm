@@ -139,14 +139,17 @@ public class MapImage {
             return disabledImgCache;
         if (img == null)
             getImage(); // fix #7498 ?
-        Image disImg = GuiHelper.getDisabledImage(img);
-        if (disImg instanceof BufferedImage) {
-            disabledImgCache = (BufferedImage) disImg;
-        } else {
-            disabledImgCache = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics g = disabledImgCache.getGraphics();
-            g.drawImage(disImg, 0, 0, null);
-            g.dispose();
+        // This should fix #21919: NPE due to disabledImgCache being null (race condition with #loadImage())
+        synchronized (this) {
+            Image disImg = GuiHelper.getDisabledImage(img);
+            if (disImg instanceof BufferedImage) {
+                disabledImgCache = (BufferedImage) disImg;
+            } else {
+                disabledImgCache = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+                Graphics g = disabledImgCache.getGraphics();
+                g.drawImage(disImg, 0, 0, null);
+                g.dispose();
+            }
         }
         return disabledImgCache;
     }
