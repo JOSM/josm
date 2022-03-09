@@ -173,10 +173,21 @@ public class MainLayerManager extends LayerManager {
      * @param listener the listener.
      */
     public synchronized void addActiveLayerChangeListener(ActiveLayerChangeListener listener) {
-        if (activeLayerChangeListeners.contains(listener)) {
-            throw new IllegalArgumentException("Attempted to add listener that was already in list: " + listener);
+        for (int i = 0; i< activeLayerChangeListeners.size(); i++) {
+            if (activeLayerChangeListeners.get(i) == listener) {
+                Logging.error("");
+                Logging.error("Attempted to add listener that was already in list: " + listener);
+                showStackTrace(Thread.currentThread().getStackTrace());
+                return;
+            }
         }
         activeLayerChangeListeners.add(listener);
+    }
+
+    private void showStackTrace(StackTraceElement[] stackTrace) {
+        for (StackTraceElement st : stackTrace) {
+            Logging.error("\tat " + st);
+        }
     }
 
     /**
@@ -194,10 +205,20 @@ public class MainLayerManager extends LayerManager {
      * @param listener the listener.
      */
     public synchronized void removeActiveLayerChangeListener(ActiveLayerChangeListener listener) {
-        if (!activeLayerChangeListeners.contains(listener)) {
-            throw new IllegalArgumentException("Attempted to remove listener that was not in list: " + listener);
+        int old = -1;
+        for (int i = 0; i < activeLayerChangeListeners.size(); i++) {
+            if (activeLayerChangeListeners.get(i) == listener) {
+                old = i;
+                break;
+            }
         }
-        activeLayerChangeListeners.remove(listener);
+        if (old < 0) {
+            Logging.error("");
+            Logging.error("Attempted to remove listener that was not in list: " + listener);
+            showStackTrace(Thread.currentThread().getStackTrace());
+            return;
+        }
+        activeLayerChangeListeners.remove(old);
     }
 
     /**
@@ -206,9 +227,7 @@ public class MainLayerManager extends LayerManager {
      * @since 10508
      */
     public synchronized void addLayerAvailabilityListener(LayerAvailabilityListener listener) {
-        if (!layerAvailabilityListeners.add(listener)) {
-            throw new IllegalArgumentException("Attempted to add listener that was already in list: " + listener);
-        }
+        layerAvailabilityListeners.add(listener);
     }
 
     /**
