@@ -173,7 +173,7 @@ public class MainLayerManager extends LayerManager {
      * @param listener the listener.
      */
     public synchronized void addActiveLayerChangeListener(ActiveLayerChangeListener listener) {
-        for (int i = 0; i< activeLayerChangeListeners.size(); i++) {
+        for (int i = 0; i < activeLayerChangeListeners.size(); i++) {
             if (activeLayerChangeListeners.get(i) == listener) {
                 Logging.error("");
                 Logging.error("Attempted to add listener that was already in list: " + listener);
