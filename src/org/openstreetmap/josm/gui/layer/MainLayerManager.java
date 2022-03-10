@@ -184,7 +184,7 @@ public class MainLayerManager extends LayerManager {
         activeLayerChangeListeners.add(listener);
     }
 
-    private void showStackTrace(StackTraceElement[] stackTrace) {
+    private static void showStackTrace(StackTraceElement[] stackTrace) {
         for (StackTraceElement st : stackTrace) {
             Logging.error("\tat " + st);
         }
