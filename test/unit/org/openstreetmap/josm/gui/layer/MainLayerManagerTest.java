@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.gui.layer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Tests {@link MainLayerManager}.
@@ -145,7 +146,9 @@ class MainLayerManagerTest extends LayerManagerTest {
     void testAddActiveLayerChangeListenerTwice() {
         CapturingActiveLayerChangeListener listener = new CapturingActiveLayerChangeListener();
         layerManagerWithActive.addActiveLayerChangeListener(listener);
-        assertThrows(IllegalArgumentException.class, () -> layerManagerWithActive.addActiveLayerChangeListener(listener));
+        Logging.clearLastErrorAndWarnings();
+        layerManagerWithActive.addActiveLayerChangeListener(listener);
+        assertFalse(Logging.getLastErrorAndWarnings().isEmpty());
     }
 
     /**
@@ -171,8 +174,9 @@ class MainLayerManagerTest extends LayerManagerTest {
      */
     @Test
     void testRemoveActiveLayerChangeListenerNotInList() {
-        assertThrows(IllegalArgumentException.class,
-                () -> layerManagerWithActive.removeActiveLayerChangeListener(new CapturingActiveLayerChangeListener()));
+        Logging.clearLastErrorAndWarnings();
+        layerManagerWithActive.removeActiveLayerChangeListener(new CapturingActiveLayerChangeListener());
+        assertFalse(Logging.getLastErrorAndWarnings().isEmpty());
     }
 
     /**
