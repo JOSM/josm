@@ -1092,10 +1092,29 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
         return true;
     }
 
+    /**
+     * Put a key / value pair as a new attribute. Overrides key / value pair with the same key (if present).
+     *
+     * @param key the key
+     * @param value the value
+     */
     @Override
     public void put(String key, Object value) {
+        put(key, value, true);
+    }
+
+    /**
+     * Put a key / value pair as a new attribute. Overrides key / value pair with the same key (if present).
+     * Only sets the modified state when setModified is true.
+     *
+     * @param key the key
+     * @param value the value
+     * @param setModified whether to change the modified state
+     * @since 18399
+     */
+    public void put(String key, Object value, boolean setModified) {
         super.put(key, value);
-        invalidate();
+        fireInvalidate(setModified);
     }
 
     /**
@@ -1132,12 +1151,12 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
     }
 
     private void fireInvalidate(boolean setModified) {
+        if (setModified) {
+            setModified(true);
+        }
         if (updating || initializing) {
             suppressedInvalidate = true;
         } else {
-            if (setModified) {
-                setModified(true);
-            }
             if (listeners.hasListeners()) {
                 GpxDataChangeEvent e = new GpxDataChangeEvent(this);
                 listeners.fireEvent(l -> l.gpxDataChanged(e));
@@ -1158,10 +1177,9 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
      * @since 15496
      */
     public void endUpdate() {
-        boolean setModified = updating;
         updating = initializing = false;
         if (suppressedInvalidate) {
-            fireInvalidate(setModified);
+            fireInvalidate(false);
             suppressedInvalidate = false;
         }
     }

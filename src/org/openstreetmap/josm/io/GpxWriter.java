@@ -123,7 +123,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 e.put("value", entry.getValue());
             });
         }
-        data.put(META_TIME, (metaTime != null ? metaTime : Instant.now()).toString());
+        data.put(META_TIME, (metaTime != null ? metaTime : Instant.now()).toString(), false);
         data.endUpdate();
 
         Collection<IWithAttributes> all = new ArrayList<>();

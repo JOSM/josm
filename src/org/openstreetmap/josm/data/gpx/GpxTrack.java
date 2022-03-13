@@ -82,18 +82,21 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
 
     @Override
     public void setColor(Color color) {
-        setColorExtension(color);
+        setColorExtensionGPXD(color, true);
         colorCache = color;
     }
 
-    private void setColorExtension(Color color) {
+    private void setColorExtensionGPXD(Color color, boolean invalidate) {
         getExtensions().findAndRemove("gpxx", "DisplayColor");
         if (color == null) {
             getExtensions().findAndRemove("gpxd", "color");
         } else {
             getExtensions().addOrUpdate("gpxd", "color", String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue()));
         }
-        fireInvalidate();
+        colorFormat = ColorFormat.GPXD;
+        if (invalidate) {
+            fireInvalidate();
+        }
     }
 
     @Override
@@ -167,7 +170,7 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
                 closestGarminColorCache.put(c, colorString);
                 getExtensions().addIfNotPresent("gpxx", "TrackExtension").getExtensions().addOrUpdate("gpxx", "DisplayColor", colorString);
             } else if (cFormat == ColorFormat.GPXD) {
-                setColor(c);
+                setColorExtensionGPXD(c, false);
             }
             colorFormat = cFormat;
         }
