@@ -995,7 +995,32 @@
         <item name="Construction" icon="presets/transport/way/way_construction.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Key:construction" />
             <key key="highway" value="construction" />
-            <combo key="construction" text="Highway type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,service,bus_guideway,bridleway,living_street,pedestrian,track,path,footway,cycleway,steps" values_context="Highway" />
+            <combo key="construction" text="Highway type" values_sort="false" values_context="Highway">
+                <list_entry value="motorway" display_value="Motorway" icon="presets/transport/way/way_motorway.svg" />
+                <list_entry value="motorway_link" display_value="Motorway Link" icon="presets/transport/way/way_motorway_link.svg" />
+                <list_entry value="trunk" display_value="Trunk" icon="presets/transport/way/way_trunk.svg" />
+                <list_entry value="trunk_link" display_value="Trunk Link" icon="presets/transport/way/way_trunk_link.svg" />
+                <list_entry value="primary" display_value="Primary" icon="presets/transport/way/way_primary.svg" />
+                <list_entry value="primary_link" display_value="Primary Link" icon="presets/transport/way/way_primary_link.svg" />
+                <list_entry value="secondary" display_value="Secondary" icon="presets/transport/way/way_secondary.svg" />
+                <list_entry value="secondary_link" display_value="Secondary" icon="presets/transport/way/way_secondary_link.svg" />
+                <list_entry value="tertiary" display_value="Tertiary" icon="presets/transport/way/way_tertiary.svg" />
+                <list_entry value="tertiary_link" display_value="Tertiary Link" icon="presets/transport/way/way_tertiary_link.svg" />
+                <list_entry value="unclassified" display_value="Unclassified" icon="presets/transport/way/way_unclassified.svg" />
+                <list_entry value="residential" display_value="Residential" icon="presets/transport/way/way_residential.svg" />
+                <list_entry value="service" display_value="Service" icon="presets/transport/way/way_service.svg" />
+                <list_entry value="pedestrian" display_value="Pedestrian" icon="presets/transport/way/way_pedestrian.svg" />
+                <list_entry value="bus_guideway" display_value="Bus Guideway" icon="presets/transport/railway/bus_guideway.svg" />
+                <list_entry value="busway" display_value="Bus Rapid Transit" />
+                <list_entry value="escape" display_value="Escape" icon="presets/transport/way/way_escape.svg" />
+                <list_entry value="raceway" display_value="Raceway" icon="presets/sport/raceway.svg"  />
+                <list_entry value="track" display_value="Track" icon="presets/transport/way/track.svg" />
+                <list_entry value="path" display_value="Path" icon="presets/transport/way/path.svg" />
+                <list_entry value="bridleway" display_value="Dedicated Bridleway" icon="presets/transport/way/dedicated_bridleway.svg" />
+                <list_entry value="cycleway" display_value="Dedicated Cycleway" icon="presets/transport/way/dedicated_cycleway.svg" />
+                <list_entry value="footway" display_value="Dedicated Footway" icon="presets/transport/way/dedicated_footway.svg" />
+                <list_entry value="steps" display_value="Steps" icon="presets/transport/way/steps.svg" />
+            </combo>
             <optional>
                 <text key="name" text="Name" />
                 <space />
@@ -2442,7 +2467,16 @@
         <item name="Railway construction" icon="presets/transport/railway/railway_construction.svg" type="way" preset_name_label="true">
             <link wiki="Key:construction" />
             <key key="railway" value="construction" />
-            <combo key="construction" text="Railway type" values="rail,narrow_gauge,monorail,preserved,light_rail,subway,tram,funicular" />
+            <combo key="construction" text="Railway type" values_sort="false">
+                <list_entry value="rail" display_value="Rail" icon="presets/transport/railway/rail.svg" />
+                <list_entry value="narrow_gauge" display_value="Narrow Gauge Rail" icon="presets/transport/railway/narrow_gauge_rail.svg" />
+                <list_entry value="monorail" display_value="Monorail" icon="presets/transport/railway/monorail.svg" />
+                <list_entry value="preserved" display_value="Preserved" icon="presets/transport/railway/preserved.svg" />
+                <list_entry value="light_rail" display_value="Light Rail" icon="presets/transport/railway/light_rail.svg" />
+                <list_entry value="subway" display_value="Subway" icon="presets/transport/railway/subway.svg" />
+                <list_entry value="tram" display_value="Tram" icon="presets/transport/railway/tram.svg" />
+                <list_entry value="funicular" display_value="Funicular" icon="presets/transport/railway/funicular.svg" />
+            </combo>
             <optional>
                 <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
                 <reference ref="railway_service_gauge_electrified_yesno" />
@@ -5618,7 +5652,7 @@
             <space />
             <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
-                <text key="name" text="Name" />
+                <reference ref="name_operator" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
@@ -5629,7 +5663,7 @@
             <space />
             <combo key="building" text="Building" values="yes,residential,apartments,ger,house,hotel,hut,bungalow,dormitory,terrace,detached,farm,stilt_house" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
             <optional>
-                <text key="name" text="Name" />
+                <reference ref="name_operator" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
@@ -5639,12 +5673,23 @@
             <link wiki="Key:building:part" />
             <space />
             <combo key="building:part" text="Building part" values="allotment_house,bakehouse,barn,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,greenhouse,hangar,hospital,industrial,office,parking,retail,roof,ruins,school,shed,supermarket,toilets,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
-            <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <combo key="building:min_level" text="Skipped Levels" values="1,2,3,4,5,6,7,8,9,10" text_context="building" />
             <text key="height" text="Height (meters)" length="7" />
             <text key="min_height" text="Skipped height (meters)" />
         </item> <!-- Building part -->
+        <item name="Building construction" icon="presets/landmark/building_construction.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:building=construction" />
+            <space />
+            <key key="building" value="construction" />
+            <combo key="construction" text="Building type" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse" values_context="building" />
+            <optional>
+                <reference ref="name_operator" />
+                <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
+            <preset_link preset_name="Address" />
+        </item> <!-- Building construction -->
         <item name="Entrance" icon="presets/misc/entrance_yes.svg" type="node" preset_name_label="true">
             <link wiki="Key:entrance" />
             <space />
@@ -8995,7 +9040,19 @@
             <link wiki="Tag:landuse=construction" />
             <space />
             <key key="landuse" value="construction" />
-            <reference ref="optional_name" />
+            <combo key="construction" text="Construction type" values_context="landuse" values_sort="false">
+                <list_entry value="residential" display_value="Residential Area" icon="presets/landmark/building.svg" />
+                <list_entry value="education" display_value="Education" icon="presets/education/education.svg" />
+                <list_entry value="retail" display_value="Retail" icon="presets/shop/mall.svg" icon_size="16" />
+                <list_entry value="commercial" display_value="Commercial" icon="presets/landuse/commercial.svg" icon_size="16" />
+                <list_entry value="industrial" display_value="Industrial" icon="presets/landmark/works.svg" />
+                <list_entry value="garages" display_value="Garages" icon="presets/landuse/garages.svg" />
+                <list_entry value="railway" display_value="Railway Land" icon="presets/landuse/railway.svg" icon_size="16" />
+                <list_entry value="military" display_value="Military" icon="presets/landuse/military.svg" icon_size="16" />
+                <list_entry value="religous" display_value="Religious" icon="presets/religion/religion.svg" />
+                <list_entry value="cemetery" display_value="Cemetery" icon="presets/landuse/cemetery.svg" />
+            </combo>
+            <reference ref="optional_name_operator" />
         </item> <!-- Construction Area -->
         <item name="Brownfield" icon="presets/landuse/brownfield.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=brownfield" />

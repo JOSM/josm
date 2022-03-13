@@ -331,6 +331,22 @@ area[building][!building?!][wall?!],
 area[building:part][!building:part?!] {
     fill-color: buildingpart#dcbbbb;
 }
+area[building=construction][!construction] {
+    fill-color: building#cb9999;
+    width: 1;
+    color: construction#ffff00;
+    dashes: 9,9;
+}
+area[building=construction][construction] {
+    z-index: 1;
+    fill-color: buildingpart#dcbbbb;
+    width: 1;
+    dashes: 9,9;
+    casing-width: 1;
+    casing-color: construction#ffff00;
+    casing-linecap: round;
+    casing-dashes: 9,9;
+}
 node[building][!building?!] {
     icon-image: "presets/landmark/building.svg";
     set icon_z17;
@@ -345,6 +361,10 @@ node[building=garages] {
 }
 node[building=transformer_tower] {
     icon-image: "presets/power/transformer_tower.svg";
+    set icon_z17;
+}
+node[building=construction] {
+    icon-image: "presets/landmark/building_construction.svg";
     set icon_z17;
 }
 node[entrance=yes],
