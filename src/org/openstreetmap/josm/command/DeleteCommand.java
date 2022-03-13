@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -101,6 +102,22 @@ public class DeleteCommand extends Command {
          * @since 12763
          */
         boolean confirmDeletionFromRelation(Collection<RelationToChildReference> references);
+
+        /**
+         * Confirm before removing a collection of primitives from their parent relations, with the probability of
+         * deleting the parents as well.
+         * @param references the list of relation-to-child references
+         * @param parentsToDelete the list of parents to delete (the boolean part will be {@code true} if the user wants
+         *                        to delete the relation).
+         * @return {@code true} if the user confirms the deletion
+         * @since 18395
+         */
+        default boolean confirmDeletionFromRelation(Collection<RelationToChildReference> references,
+                Collection<Pair<Relation, Boolean>> parentsToDelete) {
+            // This is a default method. Ensure that all the booleans are false.
+            parentsToDelete.forEach(pair -> pair.b = false);
+            return confirmDeletionFromRelation(references);
+        }
     }
 
     private static volatile DeletionCallback callback;
@@ -437,25 +454,39 @@ public class DeleteCommand extends Command {
             }
         }
 
-        // get a confirmation that the objects to delete can be removed from their parent relations
-        //
-        if (!silent) {
-            Set<RelationToChildReference> references = RelationToChildReference.getRelationToChildReferences(primitivesToDelete);
-            references.removeIf(ref -> ref.getParent().isDeleted());
-            if (!references.isEmpty() && !callback.confirmDeletionFromRelation(references)) {
-                return null;
-            }
-        }
-
         // remove the objects from their parent relations
         //
         final Set<Relation> relationsToBeChanged = primitivesToDelete.stream()
                 .flatMap(p -> p.referrers(Relation.class))
                 .collect(Collectors.toSet());
+        final Set<Relation> additionalRelationsToDelete = new HashSet<>();
         for (Relation cur : relationsToBeChanged) {
             List<RelationMember> newMembers = cur.getMembers();
             cur.getMembersFor(primitivesToDelete).forEach(newMembers::remove);
             cmds.add(new ChangeMembersCommand(cur, newMembers));
+            // If we don't have any members, we probably ought to delete the relation as well.
+            if (newMembers.isEmpty()) {
+                additionalRelationsToDelete.add(cur);
+            }
+        }
+
+
+        // get a confirmation that the objects to delete can be removed from their parent relations
+        //
+        if (!silent) {
+            Set<RelationToChildReference> references = RelationToChildReference.getRelationToChildReferences(primitivesToDelete);
+            references.removeIf(ref -> ref.getParent().isDeleted());
+            final Collection<Pair<Relation, Boolean>> pairedRelations = additionalRelationsToDelete.stream()
+                    /*
+                     * Default to true, so that users have to make a choice to not delete.
+                     * Default implementation converts it to false, so this should be safe.
+                     */
+                    .map(relation -> new Pair<>(relation, true)).collect(Collectors.toSet());
+            if (!references.isEmpty() && !callback.confirmDeletionFromRelation(references, pairedRelations)) {
+                return null;
+            }
+            pairedRelations.stream().filter(pair -> Boolean.TRUE.equals(pair.b)).map(pair -> pair.a)
+                    .forEach(primitivesToDelete::add);
         }
 
         // build the delete command

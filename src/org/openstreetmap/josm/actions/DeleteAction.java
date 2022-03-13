@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -49,8 +51,15 @@ public final class DeleteAction extends JosmAction {
 
         @Override
         public boolean confirmDeletionFromRelation(Collection<RelationToChildReference> references) {
+            return this.confirmDeletionFromRelation(references, Collections.emptyList());
+        }
+
+        @Override
+        public boolean confirmDeletionFromRelation(Collection<RelationToChildReference> references,
+                Collection<Pair<Relation, Boolean>> parentsToDelete) {
             DeleteFromRelationConfirmationDialog dialog = DeleteFromRelationConfirmationDialog.getInstance();
             dialog.getModel().populate(references);
+            dialog.getDeletedRelationsModel().populate(parentsToDelete);
             dialog.setVisible(true);
             return !dialog.isCanceled();
         }

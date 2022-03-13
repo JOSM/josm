@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -34,6 +35,7 @@ import javax.swing.table.TableColumn;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
@@ -42,8 +44,11 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This dialog is used to get a user confirmation that a collection of primitives can be removed
@@ -68,14 +73,24 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /** the data model */
     private RelationMemberTableModel model;
+    /** The data model for deleting relations */
+    private RelationDeleteModel deletedRelationsModel;
+    /** The table to hide/show if the relations to delete are not empty*/
     private final HtmlPanel htmlPanel = new HtmlPanel();
     private boolean canceled;
     private final JButton btnOK = new JButton(new OKAction());
 
     protected JPanel buildRelationMemberTablePanel() {
         JTable table = new JTable(model, new RelationMemberTableColumnModel());
-        JPanel pnl = new JPanel(new BorderLayout());
-        pnl.add(new JScrollPane(table));
+        JPanel pnl = new JPanel(new GridBagLayout());
+        pnl.add(new JScrollPane(table), GBC.eol().fill());
+        JTable deletedRelationsTable = new JTable(this.deletedRelationsModel, new RelationDeleteTableColumnModel());
+        JScrollPane deletedRelationsModelTableScrollPane = new JScrollPane(deletedRelationsTable);
+        this.deletedRelationsModel.addTableModelListener(
+                e -> deletedRelationsModelTableScrollPane.setVisible(this.deletedRelationsModel.getRowCount() > 0));
+        // Default to not visible
+        deletedRelationsModelTableScrollPane.setVisible(false);
+        pnl.add(deletedRelationsModelTableScrollPane, GBC.eol().fill());
         return pnl;
     }
 
@@ -91,6 +106,8 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     protected final void build() {
         model = new RelationMemberTableModel();
         model.addTableModelListener(this);
+        this.deletedRelationsModel = new RelationDeleteModel();
+        this.deletedRelationsModel.addTableModelListener(this);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(htmlPanel, BorderLayout.NORTH);
         getContentPane().add(buildRelationMemberTablePanel(), BorderLayout.CENTER);
@@ -102,8 +119,8 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     }
 
     protected void updateMessage() {
-        int numObjectsToDelete = model.getNumObjectsToDelete();
-        int numParentRelations = model.getNumParentRelations();
+        int numObjectsToDelete = this.model.getNumObjectsToDelete() + this.deletedRelationsModel.getNumObjectsToDelete();
+        int numParentRelations = this.model.getNumParentRelations() + this.deletedRelationsModel.getNumParentRelations();
         final String msg1 = trn(
                 "Please confirm to remove <strong>{0} object</strong>.",
                 "Please confirm to remove <strong>{0} objects</strong>.",
@@ -119,7 +136,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     }
 
     protected void updateTitle() {
-        int numObjectsToDelete = model.getNumObjectsToDelete();
+        int numObjectsToDelete = this.model.getNumObjectsToDelete() + this.deletedRelationsModel.getNumObjectsToDelete();
         if (numObjectsToDelete > 0) {
             setTitle(trn("Deleting {0} object", "Deleting {0} objects", numObjectsToDelete, numObjectsToDelete));
         } else {
@@ -142,6 +159,15 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      */
     public RelationMemberTableModel getModel() {
         return model;
+    }
+
+    /**
+     * Replies the data model used for relations that should probably be deleted.
+     * @return the data model
+     * @since 18395
+     */
+    public RelationDeleteModel getDeletedRelationsModel() {
+        return this.deletedRelationsModel;
     }
 
     /**
@@ -173,6 +199,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
                 new WindowGeometry(this).remember(getClass().getName() + ".geometry");
             }
             model.data.clear();
+            this.deletedRelationsModel.data.clear();
         }
         super.setVisible(visible);
     }
@@ -321,6 +348,135 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         RelationMemberTableColumnModel() {
+            createColumns();
+        }
+    }
+
+    /**
+     * The table model which manages relations that will be deleted, if their children are deleted.
+     * @since 18395
+     */
+    public static class RelationDeleteModel extends DefaultTableModel {
+        private final transient List<Pair<Relation, Boolean>> data = new ArrayList<>();
+
+        @Override
+        public int getRowCount() {
+            // This is called in the super constructor. Before we have instantiated the list. Removing the null check
+            // WILL LEAD TO A SILENT NPE!
+            if (this.data == null) {
+                return 0;
+            }
+            return this.data.size();
+        }
+
+        /**
+         * Sets the data that should be displayed in the list.
+         * @param references A list of references to display
+         */
+        public void populate(Collection<Pair<Relation, Boolean>> references) {
+            this.data.clear();
+            if (references != null) {
+                this.data.addAll(references);
+            }
+            this.data.sort(Comparator.comparing(pair -> pair.a));
+            fireTableDataChanged();
+        }
+
+        /**
+         * Gets the list of children that are currently displayed.
+         * @return The children.
+         */
+        public Set<Relation> getObjectsToDelete() {
+            return this.data.stream().filter(relation -> relation.b).map(relation -> relation.a).collect(Collectors.toSet());
+        }
+
+        /**
+         * Gets the number of elements {@link #getObjectsToDelete()} would return.
+         * @return That number.
+         */
+        public int getNumObjectsToDelete() {
+            return getObjectsToDelete().size();
+        }
+
+        /**
+         * Gets the set of parent relations
+         * @return All parent relations of the references
+         */
+        public Set<OsmPrimitive> getParentRelations() {
+            return this.data.stream()
+                    .flatMap(pair -> Utils.filteredCollection(pair.a.getReferrers(), Relation.class).stream())
+                    .collect(Collectors.toSet());
+        }
+
+        /**
+         * Gets the number of elements {@link #getParentRelations()} would return.
+         * @return That number.
+         */
+        public int getNumParentRelations() {
+            return getParentRelations().size();
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            if (this.data.isEmpty()) {
+                return null;
+            }
+            Pair<Relation, Boolean> ref = this.data.get(rowIndex);
+            switch(columnIndex) {
+            case 0: return ref.a;
+            case 1: return ref.b;
+            default:
+                assert false : "Illegal column index";
+            }
+            return null;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return !this.data.isEmpty() && column == 1;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int row, int column) {
+            if (this.data.size() > row && column == 1 && aValue instanceof Boolean) {
+                this.data.get(row).b = ((Boolean) aValue);
+            }
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            switch (columnIndex) {
+            case 0:
+                return Relation.class;
+            case 1:
+                return Boolean.class;
+            default:
+                return super.getColumnClass(columnIndex);
+            }
+        }
+    }
+
+    private static class RelationDeleteTableColumnModel extends DefaultTableColumnModel {
+        protected final void createColumns() {
+            // column 0 - To Delete
+            TableColumn col = new TableColumn(0);
+            col.setHeaderValue(tr("Relation"));
+            col.setResizable(true);
+            col.setWidth(100);
+            col.setPreferredWidth(100);
+            col.setCellRenderer(new PrimitiveRenderer());
+            addColumn(col);
+
+            // column 0 - From Relation
+            col = new TableColumn(1);
+            final String toDelete = tr("To delete");
+            col.setHeaderValue(toDelete);
+            col.setResizable(true);
+            col.setPreferredWidth(toDelete.length());
+            addColumn(col);
+        }
+
+        RelationDeleteTableColumnModel() {
             createColumns();
         }
     }
