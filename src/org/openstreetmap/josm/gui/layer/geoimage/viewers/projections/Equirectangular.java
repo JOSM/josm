@@ -40,7 +40,7 @@ public class Equirectangular extends ComponentAdapter implements IImageViewer {
             currentCameraPlane = this.cameraPlane;
             currentOffscreenImage = this.offscreenImage;
         }
-        currentCameraPlane.mapping(image, currentOffscreenImage);
+        currentCameraPlane.mapping(image, currentOffscreenImage, visibleRect);
         if (target == null) {
             target = new Rectangle(0, 0, currentOffscreenImage.getWidth(null), currentOffscreenImage.getHeight(null));
         }

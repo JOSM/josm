@@ -2,9 +2,11 @@
 package org.openstreetmap.josm.gui.util.imagery;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferInt;
 import java.util.stream.IntStream;
@@ -249,15 +251,100 @@ public class CameraPlane {
         return new Vector3D(vecX, YAW_DIRECTION * vecY, vecZ);
     }
 
-    public void mapping(BufferedImage sourceImage, BufferedImage targetImage) {
+    /** Maps a panoramic view of sourceImage into targetImage based on current configuration of Camera Plane
+     * @param sourceImage The image to paint
+     * @param targetImage The target image
+     * @param visibleRect The part of target image which will be visible
+     */
+    public void mapping(BufferedImage sourceImage, BufferedImage targetImage, Rectangle visibleRect) {
         DataBuffer sourceBuffer = sourceImage.getRaster().getDataBuffer();
         DataBuffer targetBuffer = targetImage.getRaster().getDataBuffer();
         // Faster mapping
-        if (sourceBuffer.getDataType() == DataBuffer.TYPE_INT && targetBuffer.getDataType() == DataBuffer.TYPE_INT) {
+        if (sourceBuffer.getDataType() == DataBuffer.TYPE_BYTE && targetBuffer.getDataType() == DataBuffer.TYPE_BYTE) {
+            byte[] sourceImageBuffer = ((DataBufferByte) sourceImage.getRaster().getDataBuffer()).getData();
+            byte[] targetImageBuffer = ((DataBufferByte) targetImage.getRaster().getDataBuffer()).getData();
+            final boolean sourceHasAlphaChannel = sourceImage.getAlphaRaster() != null;
+            final boolean targetHasAlphaChannel = targetImage.getAlphaRaster() != null;
+            if (sourceHasAlphaChannel && targetHasAlphaChannel) {
+                final int pixelLength = 4;
+                IntStream.range(visibleRect.y, visibleRect.y + visibleRect.height).parallel()
+                        .forEach(y -> IntStream.range(visibleRect.x, visibleRect.x + visibleRect.width).forEach(x -> {
+                            final Point2D.Double p = mapPoint(x, y);
+                            int tx = ((int) (p.x * (sourceImage.getWidth() - 1)));
+                            int ty = ((int) (p.y * (sourceImage.getHeight() - 1)));
+                            int sourceOffset = (ty * sourceImage.getWidth() + tx) * pixelLength;
+                            int targetOffset = (y * targetImage.getWidth() + x) * pixelLength;
+                            byte a = sourceImageBuffer[sourceOffset];
+                            byte b = sourceImageBuffer[sourceOffset + 1];
+                            byte g = sourceImageBuffer[sourceOffset + 2];
+                            byte r = sourceImageBuffer[sourceOffset + 3];
+                            targetImageBuffer[targetOffset] = a;
+                            targetImageBuffer[targetOffset + 1] = b;
+                            targetImageBuffer[targetOffset + 2] = g;
+                            targetImageBuffer[targetOffset + 3] = r;
+                        }));
+            } else if (sourceHasAlphaChannel) {
+                final int sourcePixelLength = 4;
+                final int targetPixelLength = 3;
+                IntStream.range(visibleRect.y, visibleRect.y + visibleRect.height).parallel()
+                        .forEach(y -> IntStream.range(visibleRect.x, visibleRect.x + visibleRect.width).forEach(x -> {
+                            final Point2D.Double p = mapPoint(x, y);
+                            int tx = ((int) (p.x * (sourceImage.getWidth() - 1)));
+                            int ty = ((int) (p.y * (sourceImage.getHeight() - 1)));
+                            int sourceOffset = (ty * sourceImage.getWidth() + tx) * sourcePixelLength;
+                            int targetOffset = (y * targetImage.getWidth() + x) * targetPixelLength;
+                            //byte a = sourceImageBuffer[sourceOffset];
+                            byte b = sourceImageBuffer[sourceOffset + 1];
+                            byte g = sourceImageBuffer[sourceOffset + 2];
+                            byte r = sourceImageBuffer[sourceOffset + 3];
+                            targetImageBuffer[targetOffset] = b;
+                            targetImageBuffer[targetOffset + 1] = g;
+                            targetImageBuffer[targetOffset + 2] = r;
+
+                        }));
+            } else if (targetHasAlphaChannel) {
+                final int sourcePixelLength = 3;
+                final int targetPixelLength = 4;
+                IntStream.range(visibleRect.y, visibleRect.y + visibleRect.height).parallel()
+                        .forEach(y -> IntStream.range(visibleRect.x, visibleRect.x + visibleRect.width).forEach(x -> {
+                            final Point2D.Double p = mapPoint(x, y);
+                            int tx = ((int) (p.x * (sourceImage.getWidth() - 1)));
+                            int ty = ((int) (p.y * (sourceImage.getHeight() - 1)));
+                            int sourceOffset = (ty * sourceImage.getWidth() + tx) * sourcePixelLength;
+                            int targetOffset = (y * targetImage.getWidth() + x) * targetPixelLength;
+                            byte a = (byte) 255;
+                            byte b = sourceImageBuffer[sourceOffset];
+                            byte g = sourceImageBuffer[sourceOffset + 1];
+                            byte r = sourceImageBuffer[sourceOffset + 2];
+                            targetImageBuffer[targetOffset] = a;
+                            targetImageBuffer[targetOffset + 1] = b;
+                            targetImageBuffer[targetOffset + 2] = g;
+                            targetImageBuffer[targetOffset + 3] = r;
+
+                        }));
+            } else {
+                final int pixelLength = 3;
+                IntStream.range(visibleRect.y, visibleRect.y + visibleRect.height).parallel()
+                        .forEach(y -> IntStream.range(visibleRect.x, visibleRect.x + visibleRect.width).forEach(x -> {
+                            final Point2D.Double p = mapPoint(x, y);
+                            int tx = ((int) (p.x * (sourceImage.getWidth() - 1)));
+                            int ty = ((int) (p.y * (sourceImage.getHeight() - 1)));
+                            int sourceOffset = (ty * sourceImage.getWidth() + tx) * pixelLength;
+                            int targetOffset = (y * targetImage.getWidth() + x) * pixelLength;
+                            byte b = sourceImageBuffer[sourceOffset];
+                            byte g = sourceImageBuffer[sourceOffset + 1];
+                            byte r = sourceImageBuffer[sourceOffset + 2];
+                            targetImageBuffer[targetOffset] = b;
+                            targetImageBuffer[targetOffset + 1] = g;
+                            targetImageBuffer[targetOffset + 2] = r;
+                        }));
+            }
+        } else if (sourceBuffer.getDataType() == DataBuffer.TYPE_INT
+                && targetBuffer.getDataType() == DataBuffer.TYPE_INT) {
             int[] sourceImageBuffer = ((DataBufferInt) sourceImage.getRaster().getDataBuffer()).getData();
             int[] targetImageBuffer = ((DataBufferInt) targetImage.getRaster().getDataBuffer()).getData();
-            IntStream.range(0, targetImage.getHeight()).parallel()
-                    .forEach(y -> IntStream.range(0, targetImage.getWidth()).forEach(x -> {
+            IntStream.range(visibleRect.y, visibleRect.y + visibleRect.height).parallel()
+                    .forEach(y -> IntStream.range(visibleRect.x, visibleRect.x + visibleRect.width).forEach(x -> {
                         final Point2D.Double p = mapPoint(x, y);
                         int tx = (int) (p.x * (sourceImage.getWidth() - 1));
                         int ty = (int) (p.y * (sourceImage.getHeight() - 1));
@@ -267,8 +354,8 @@ public class CameraPlane {
         } else if (sourceBuffer.getDataType() == DataBuffer.TYPE_DOUBLE && targetBuffer.getDataType() == DataBuffer.TYPE_DOUBLE) {
             double[] sourceImageBuffer = ((DataBufferDouble) sourceImage.getRaster().getDataBuffer()).getData();
             double[] targetImageBuffer = ((DataBufferDouble) targetImage.getRaster().getDataBuffer()).getData();
-            IntStream.range(0, targetImage.getHeight()).parallel()
-                    .forEach(y -> IntStream.range(0, targetImage.getWidth()).forEach(x -> {
+            IntStream.range(visibleRect.y, visibleRect.y + visibleRect.height).parallel()
+                    .forEach(y -> IntStream.range(visibleRect.x, visibleRect.x + visibleRect.width).forEach(x -> {
                         final Point2D.Double p = mapPoint(x, y);
                         int tx = (int) (p.x * (sourceImage.getWidth() - 1));
                         int ty = (int) (p.y * (sourceImage.getHeight() - 1));
@@ -276,8 +363,8 @@ public class CameraPlane {
                         targetImageBuffer[y * targetImage.getWidth() + x] = color;
                     }));
         } else {
-            IntStream.range(0, targetImage.getHeight()).parallel()
-                .forEach(y -> IntStream.range(0, targetImage.getWidth()).parallel().forEach(x -> {
+            IntStream.range(visibleRect.y, visibleRect.y + visibleRect.height).parallel()
+                .forEach(y -> IntStream.range(visibleRect.x, visibleRect.x + visibleRect.width).parallel().forEach(x -> {
                     final Point2D.Double p = mapPoint(x, y);
                     targetImage.setRGB(x, y, sourceImage.getRGB((int) (p.x * (sourceImage.getWidth() - 1)),
                         (int) (p.y * (sourceImage.getHeight() - 1))));
