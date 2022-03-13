@@ -464,6 +464,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "urlname":
                 case "cmt":
                 case "desc":
+                case "fix":
                     currentWayPoint.put(localName, accumulator.toString());
                     break;
                 case "hdop":

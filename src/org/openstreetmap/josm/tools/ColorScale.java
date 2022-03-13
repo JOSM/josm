@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.util.Arrays;
 
 /**
  * Utility class that helps to work with color scale for coloring GPX tracks etc.
@@ -16,6 +17,7 @@ public final class ColorScale {
     private Color aboveMaxColor;
 
     private Color[] colors;
+    private String[] colorBarTitles;
     private String title = "";
     private int intervalCount = 5;
 
@@ -183,6 +185,18 @@ public final class ColorScale {
     }
 
     /**
+     * Adds titles to the color bar for a fixed scale
+     * @param titles Array of String, same length as the colors array
+     * @return This scale, for chaining
+     * @since 18396
+     */
+    public ColorScale addColorBarTitles(String[] titles) {
+        this.intervalCount = titles.length - 1;
+        this.colorBarTitles = titles;
+        return this;
+    }
+
+    /**
      * Sets the interval count for this scale
      * @param intervalCount The interval count hint
      * @return This scale, for chaining
@@ -234,16 +248,26 @@ public final class ColorScale {
         int fw, fh;
         FontMetrics fm = g.getFontMetrics();
         fh = fm.getHeight()/2;
-        fw = fm.stringWidth(String.valueOf(Math.max((int) Math.abs(max*valueScale),
-                (int) Math.abs(min*valueScale)))) + fm.stringWidth("0.123");
+        if (colorBarTitles != null && colorBarTitles.length > 0) {
+             fw = Arrays.asList(colorBarTitles).stream().mapToInt(title -> fm.stringWidth(title)).max().orElse(50);
+        } else {
+            fw = fm.stringWidth(
+                    String.valueOf(Math.max((int) Math.abs(max * valueScale), (int) Math.abs(min * valueScale))))
+                    + fm.stringWidth("0.123");
+        }
         g.setColor(noDataColor);
         if (title != null) {
             g.drawString(title, x-fw-3, y-fh*3/2);
         }
         for (int i = 0; i <= intervalCount; i++) {
             g.setColor(colors[(int) (1.0*i*n/intervalCount-1e-10)]);
-            final double val = min+i*(max-min)/intervalCount;
-            final String txt = String.format("%.3f", val*valueScale);
+            String txt;
+            if (colorBarTitles != null && i < colorBarTitles.length) {
+                txt = colorBarTitles[i];
+            } else {
+                final double val = min+i*(max-min)/intervalCount;
+                txt = String.format("%.3f", val*valueScale);
+            }
             if (w < h) {
                 g.drawString(txt, x-fw-3, y+i*h/intervalCount+fh/2);
             } else {

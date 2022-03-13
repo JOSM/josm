@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.gpx;
 
 import java.awt.Color;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -252,7 +251,7 @@ public interface GpxConstants {
     /**
      * Possible fix values. NMEA 0183 Version 4.00
      */
-    Collection<String> FIX_VALUES = Collections.unmodifiableList(
+    List<String> FIX_VALUES = Collections.unmodifiableList(
             Arrays.asList("none", "2d", "3d", "dgps", "pps", "rtk", "float rtk", "estimated", "manual", "simulated"));
 
     /**
