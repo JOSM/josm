@@ -88,6 +88,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.actions.PasteMembersAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.RefreshAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.RemoveAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.RemoveSelectedAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.ReplaceSelectedAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.ReverseAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.SelectAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.SelectPrimitivesForSelectedMembersAction;
@@ -737,10 +738,13 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
                 new AddSelectedAtEndAction(editorAccess)
                 ));
         groups.add(buildNativeGroup(20,
+                new ReplaceSelectedAction(editorAccess)
+                ));
+        groups.add(buildNativeGroup(30,
                 new SelectedMembersForSelectionAction(editorAccess),
                 new SelectPrimitivesForSelectedMembersAction(editorAccess)
                 ));
-        groups.add(buildNativeGroup(30,
+        groups.add(buildNativeGroup(40,
                 new RemoveSelectedAction(editorAccess)
                 ));
         groups.addAll(RelationEditorHooks.getSelectActions());
