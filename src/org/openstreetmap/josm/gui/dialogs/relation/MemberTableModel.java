@@ -177,9 +177,8 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     public void wayNodesChanged(WayNodesChangedEvent event) {
         if (hasMembersReferringTo(Collections.singleton(event.getChangedWay()))) {
             // refresh connectivity
-            for (int i = 0; i < members.size(); i++) {
-                fireTableCellUpdated(i, 2 /* the column with the connectivity arrow */);
-            }
+            fireTableChanged(new TableModelEvent(this, 0, members.size(),
+                    2 /* The column with the connectivity arrow */));
         }
     }
 
