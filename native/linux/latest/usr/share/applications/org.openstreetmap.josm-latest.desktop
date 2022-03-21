@@ -10,5 +10,5 @@ Terminal=false
 MimeType=application/geo+json;application/gpx+xml;application/gzip;application/vnd.openstreetmap.data+xml;application/x-bzip2;application/x-gpx+xml;application/x-josm-session+xml;application/x-josm-session+zip;application/x-osm+xml;application/x-xz;application/zip;x-scheme-handler/geo;
 StartupNotify=true
 Categories=Education;Geoscience;Maps;
-StartupWMClass=org-openstreetmap-josm-MainApplication
+StartupWMClass=org-openstreetmap-josm-gui-MainApplication
 Keywords=OpenStreetMap;OSM;
