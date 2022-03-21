@@ -15,6 +15,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Preferences related to Overpass API servers.
@@ -50,7 +51,16 @@ public class OverpassServerPanel extends JPanel {
      * Saves the current values to the preferences
      */
     public final void saveToPreferences() {
-        OverpassDownloadReader.OVERPASS_SERVER.put(overpassServer.getText());
+        // Get the new server -- add the trailing `/` if it does not exist to avoid duplicate entries.
+        // Other code locations assume that the URL has a trailing `/` as well.
+        String newServer = Utils.strip(overpassServer.getText());
+        if (!newServer.endsWith("/")) {
+            newServer += "/";
+        }
+        OverpassDownloadReader.OVERPASS_SERVER.put(newServer);
+        // Ensure that the new overpass server is added to history
+        overpassServer.setText(newServer);
+        overpassServer.addCurrentItemToHistory();
         overpassServer.getModel().prefs().save(OverpassDownloadReader.OVERPASS_SERVER_HISTORY);
         OverpassDownloadReader.FOR_MULTI_FETCH.put(forMultiFetch.isSelected());
     }
