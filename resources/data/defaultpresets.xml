@@ -22,7 +22,7 @@
         </combo>
     </chunk>
     <chunk id="sport_surface">
-        <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,decoturf,grass,sand,tartan,ground" />
+        <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,acrylic,grass,sand,tartan,ground" />
     </chunk>
     <chunk id="riding_surface">
         <combo key="leisure" text="Type" values="horse_riding,pitch,sports_centre,stadium,track" values_context="riding" />
