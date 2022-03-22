@@ -452,7 +452,7 @@ class WMTSTileSourceTest {
             FeatureAdapter.registerApiKeyAdapter(id -> TestUtils.getTestDataRoot());
             ImageryInfo testImageryWMTS = new ImageryInfo(testImagery12168);
             testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot(), "{apikey}"));
-            assertTrue(testImageryWMTS.getUrl().contains("{apikey}"));
+            assertTrue(testImageryWMTS.getUrl().contains("{apikey}"), testImageryWMTS.getUrl());
             testImageryWMTS.setId("WMTSTileSourceTest#testApiKeyValid");
             WMTSTileSource ts = assertDoesNotThrow(() -> new WMTSTileSource(testImageryWMTS, ProjectionRegistry.getProjection()));
             assertEquals("http://www.ngi.be/cartoweb/1.0.0/topo/default/3812/1/3/2.png",
@@ -470,7 +470,7 @@ class WMTSTileSourceTest {
             FeatureAdapter.registerApiKeyAdapter(id -> null);
             ImageryInfo testImageryWMTS = new ImageryInfo(testImagery12168);
             testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot(), "{apikey}"));
-            assertTrue(testImageryWMTS.getUrl().contains("{apikey}"));
+            assertTrue(testImageryWMTS.getUrl().contains("{apikey}"), testImageryWMTS.getUrl());
             testImageryWMTS.setId("WMTSTileSourceTest#testApiKeyInvalid");
             org.openstreetmap.josm.data.projection.Projection projection = Projections.getProjectionByCode("EPSG:4326");
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
