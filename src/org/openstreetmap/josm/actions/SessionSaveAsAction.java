@@ -116,7 +116,12 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             throw new UserCancelException();
         }
 
-        boolean zipRequired = layers.stream().map(l -> exporters.get(l))
+        // TODO: resolve dependencies for layers excluded by the user
+        List<Layer> layersOut = layers.stream()
+                .filter(layer -> exporters.get(layer) != null && exporters.get(layer).shallExport())
+                .collect(Collectors.toList());
+
+        boolean zipRequired = layersOut.stream().map(exporters::get)
                 .anyMatch(ex -> ex != null && ex.requiresZip());
 
         FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
@@ -157,11 +162,6 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
                 throw new UserCancelException();
             }
         }
-
-        // TODO: resolve dependencies for layers excluded by the user
-        List<Layer> layersOut = layers.stream()
-                .filter(layer -> exporters.get(layer) != null && exporters.get(layer).shallExport())
-                .collect(Collectors.toList());
 
         Stream<Layer> layersToSaveStream = layersOut.stream()
                 .filter(layer -> layer.isSavable()
