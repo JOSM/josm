@@ -130,7 +130,7 @@ public abstract class HttpClient {
      * @return Stripped URL (privacy related issues removed)
      */
     private String stripUrl(URL url) {
-        return url.toString().replaceAll("(token|key|connectId)=[^&]+","$1=...stripped...");
+        return url.toString().replaceAll("(token|key|connectId)=[^&]+", "$1=...stripped...");
     }
 
     /**
