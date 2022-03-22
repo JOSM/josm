@@ -321,6 +321,7 @@ public class SearchDialog extends ExtendedDialog {
                 GBC.eol());
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addKeyword("<i>key:</i>", null, tr("matches if ''key'' exists"))
+                .addKeyword("<i>key?</i>", null, tr("matches if ''key''' has a truthy value (''true'', ''yes'', ''1', ''on')"))
                 .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
                 .addKeyword("<i>key</i>~<i>regexp</i>", null, tr("value of ''key'' matching the regular expression ''regexp''"))
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
@@ -338,11 +339,17 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("<i>expr</i> <i>expr</i>", null,
                         tr("logical and (both expressions have to be satisfied)"),
                         trc("search string example", "Baker Street"))
+                .addKeyword("<i>expr</i> & <i>expr</i>", "& ", tr("logical and (both expressions have to be satisfied)"))
+                .addKeyword("<i>expr</i> AND <i>expr</i>", "AND ", tr("logical and (both expressions have to be satisfied)"))
                 .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
-                .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
+                .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)")),
+                GBC.eol());
+        hintPanel.add(new SearchKeywordRow(hcbSearchString)
+                .addKeyword("<i>expr</i> ^ <i>expr</i>", "^ ", tr("logical xor (one and only one expression has to be satisfied)"))
+                .addKeyword("<i>expr</i> XOR <i>expr</i>", "XOR ", tr("logical or (one and only one expression has to be satisfied)"))
                 .addKeyword("-<i>expr</i>", null, tr("logical not"))
                 .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions")),
-                GBC.eol());
+                GBC.eol().anchor(GBC.CENTER));
 
         SearchKeywordRow objectHints = new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("objects"))
