@@ -2326,6 +2326,14 @@ way[shoulder=none] {
   group: tr("deprecated tagging");
 }
 
+/* #21954 decoturf was added to JOSM presets in r8123 and replaced with acrylic in r18404 */
+*[surface=decoturf] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "surface=acrylic";
+  fixAdd: "surface=acrylic";
+  group: tr("deprecated tagging");
+}
+
 /* #20637 */
 *[role] {
   throwWarning: tr("{0} as a tag on an object. Roles are specified in the relation members list instead.", "{0.tag}", "{0.key}");
