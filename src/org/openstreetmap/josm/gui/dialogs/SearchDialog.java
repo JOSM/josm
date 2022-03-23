@@ -346,7 +346,7 @@ public class SearchDialog extends ExtendedDialog {
                 GBC.eol());
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addKeyword("<i>expr</i> ^ <i>expr</i>", "^ ", tr("logical xor (one and only one expression has to be satisfied)"))
-                .addKeyword("<i>expr</i> XOR <i>expr</i>", "XOR ", tr("logical or (one and only one expression has to be satisfied)"))
+                .addKeyword("<i>expr</i> XOR <i>expr</i>", "XOR ", tr("logical xor (one and only one expression has to be satisfied)"))
                 .addKeyword("-<i>expr</i>", null, tr("logical not"))
                 .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions")),
                 GBC.eol().anchor(GBC.CENTER));
