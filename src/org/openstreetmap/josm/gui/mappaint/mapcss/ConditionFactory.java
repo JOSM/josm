@@ -711,14 +711,14 @@ public final class ConditionFactory {
         }
 
         /**
-         * {@code closed} tests whether the way is closed or the relation is a closed multipolygon
+         * {@code :closed} tests whether the way is closed or the relation is a closed multipolygon
          * @param e MapCSS environment
          * @return {@code true} if the way is closed or the relation is a closed multipolygon
          */
         static boolean closed(Environment e) {
             if (e.osm instanceof IWay<?> && ((IWay<?>) e.osm).isClosed())
                 return true;
-            return e.osm instanceof IRelation<?> && ((IRelation<?>) e.osm).isMultipolygon();
+            return e.osm instanceof IRelation<?> && e.osm.isMultipolygon();
         }
 
         /**
@@ -732,7 +732,7 @@ public final class ConditionFactory {
         }
 
         /**
-         * {@code ;new} tests whether the object is new.
+         * {@code :new} tests whether the object is new.
          * @param e MapCSS environment
          * @return {@code true} if the object is new
          * @see IPrimitive#isNew()
@@ -783,16 +783,16 @@ public final class ConditionFactory {
         }
 
         /**
-         * {@code unconnected}: tests whether the object is a unconnected node.
+         * {@code :unconnected} tests whether the object is an unconnected node.
          * @param e MapCSS environment
-         * @return {@code true} if the object is a unconnected node
+         * @return {@code true} if the object is an unconnected node
          */
         static boolean unconnected(Environment e) {
             return e.osm instanceof Node && ((Node) e.osm).getParentWays().isEmpty();
         }
 
         /**
-         * {@code righthandtraffic} checks if there is right-hand traffic at the current location.
+         * {@code :righthandtraffic} checks if there is right-hand traffic at the current location.
          * @param e MapCSS environment
          * @return {@code true} if there is right-hand traffic at the current location
          * @see Functions#is_right_hand_traffic(Environment)
@@ -802,7 +802,7 @@ public final class ConditionFactory {
         }
 
         /**
-         * {@code clockwise} whether the way is closed and oriented clockwise,
+         * {@code :clockwise} whether the way is closed and oriented clockwise,
          * or non-closed and the 1st, 2nd and last node are in clockwise order.
          * @param e MapCSS environment
          * @return {@code true} if the way clockwise
@@ -813,7 +813,7 @@ public final class ConditionFactory {
         }
 
         /**
-         * {@code anticlockwise} whether the way is closed and oriented anticlockwise,
+         * {@code :anticlockwise} whether the way is closed and oriented anticlockwise,
          * or non-closed and the 1st, 2nd and last node are in anticlockwise order.
          * @param e MapCSS environment
          * @return {@code true} if the way clockwise
@@ -824,7 +824,7 @@ public final class ConditionFactory {
         }
 
         /**
-         * {@code unclosed-multipolygon} tests whether the object is an unclosed multipolygon.
+         * {@code :unclosed-multipolygon} tests whether the object is an unclosed multipolygon.
          * @param e MapCSS environment
          * @return {@code true} if the object is an unclosed multipolygon
          */
@@ -837,7 +837,7 @@ public final class ConditionFactory {
         private static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new InDataSourceArea(false);
 
         /**
-         * {@code in-downloaded-area} tests whether the object is within source area ("downloaded area").
+         * {@code :in-downloaded-area} tests whether the object is within source area ("downloaded area").
          * @param e MapCSS environment
          * @return {@code true} if the object is within source area ("downloaded area")
          * @see InDataSourceArea
@@ -846,6 +846,11 @@ public final class ConditionFactory {
             return e.osm instanceof OsmPrimitive && IN_DOWNLOADED_AREA.test((OsmPrimitive) e.osm);
         }
 
+        /**
+         * {@code :completely_downloaded} tests whether the object is completely downloaded
+         * @param e MapCSS environment
+         * @return {@code true} if the object is completely downloaded
+         */
         static boolean completely_downloaded(Environment e) {
             if (e.osm instanceof IRelation<?>) {
                 return !((IRelation<?>) e.osm).hasIncompleteMembers();
@@ -861,13 +866,18 @@ public final class ConditionFactory {
         static boolean closed2(Environment e) {
             if (e.osm instanceof IWay<?> && ((IWay<?>) e.osm).isClosed())
                 return true;
-            if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon()) {
+            if (e.osm instanceof Relation && e.osm.isMultipolygon()) {
                 Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) e.osm);
                 return multipolygon != null && multipolygon.getOpenEnds().isEmpty();
             }
             return false;
         }
 
+        /**
+         * {@code :selected} tests whether the object is selected in the editor
+         * @param e MapCSS environment
+         * @return {@code true} if the object is selected
+         */
         static boolean selected(Environment e) {
             if (e.mc != null) {
                 e.getCascade().setDefaultSelectedHandling(false);
@@ -876,7 +886,7 @@ public final class ConditionFactory {
         }
 
         /**
-         * Check if the object is highlighted (i.e., is hovered over)
+         * {@code :highlighted} tests whether the object is highlighted (i.e. is hovered over)
          * @param e The MapCSS environment
          * @return {@code true} if the object is highlighted
          * @see IPrimitive#isHighlighted
