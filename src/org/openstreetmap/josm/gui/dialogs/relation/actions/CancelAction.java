@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import javax.swing.RootPaneContainer;
 
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -47,7 +48,7 @@ public class CancelAction extends SavingAction {
         if ((!getMemberTableModel().hasSameMembersAs(snapshot) || getTagModel().isDirty())
          && !(snapshot == null && getTagModel().getTags().isEmpty())) {
             //give the user a chance to save the changes
-            int ret = confirmClosingByCancel();
+            int ret = confirmClosingByCancel(this.editorAccess.getChangedRelation());
             if (ret == 0) { //Yes, save the changes
                 //copied from OKAction.run()
                 Config.getPref().put("relation.editor.generic.lastrole", Utils.strip(tfRole.getText()));
@@ -60,7 +61,7 @@ public class CancelAction extends SavingAction {
         hideEditor();
     }
 
-    protected int confirmClosingByCancel() {
+    protected int confirmClosingByCancel(final IRelation<?> newRelation) {
         ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Yes, save the changes and close"),
@@ -81,6 +82,10 @@ public class CancelAction extends SavingAction {
                         null /* no specific help topic */
                 )
         };
+
+        // Keep users from saving invalid relations -- a relation MUST have at least a tag with the key "type"
+        // AND must contain at least one other OSM object.
+        options[0].setEnabled(newRelation.isUseful());
 
         return HelpAwareOptionPane.showOptionDialog(
                 MainApplication.getMainFrame(),

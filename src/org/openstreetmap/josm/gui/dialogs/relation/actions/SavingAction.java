@@ -54,8 +54,8 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         tagEditorModel.applyToPrimitive(newRelation);
         getMemberTableModel().applyToRelation(newRelation);
         // If the user wanted to create a new relation, but hasn't added any members or
-        // tags, don't add an empty relation
-        if (newRelation.isEmpty() && !newRelation.hasKeys())
+        // tags (specifically the "type" tag), don't add the relation
+        if (!newRelation.isUseful())
             return;
         UndoRedoHandler.getInstance().add(new AddCommand(getLayer().getDataSet(), newRelation));
 

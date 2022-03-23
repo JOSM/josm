@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
 import javax.swing.Action;
 
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
@@ -64,6 +66,23 @@ public interface IRelationEditorActionAccess {
      * @return The tag editor model.
      */
     TagEditorModel getTagModel();
+
+    /**
+     * Get the changed relation
+     * @return The changed relation (note: will not be part of a dataset). This should never be {@code null}.
+     * @since 18413
+     */
+    default IRelation<?> getChangedRelation() {
+        final Relation newRelation;
+        if (getEditor().getRelation() != null) {
+            newRelation = new Relation(getEditor().getRelation());
+        } else {
+            newRelation = new Relation();
+        }
+        getTagModel().applyToPrimitive(newRelation);
+        getMemberTableModel().applyToRelation(newRelation);
+        return newRelation;
+    }
 
     /**
      * Get the text field that is used to edit the role.

@@ -47,6 +47,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangeMembersCommand;
@@ -54,6 +55,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -132,6 +134,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     private final SelectionTableModel selectionTableModel;
 
     private final AutoCompletingTextField tfRole;
+    private final RelationEditorActionAccess actionAccess;
 
     /**
      * the menu item in the windows menu. Required to properly hide on dialog close.
@@ -262,13 +265,17 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
             selectedTabPane = sourceTabbedPane.getSelectedComponent();
         });
 
-        IRelationEditorActionAccess actionAccess = new RelationEditorActionAccess();
+        actionAccess = new RelationEditorActionAccess();
 
         refreshAction = new RefreshAction(actionAccess);
         applyAction = new ApplyAction(actionAccess);
         selectAction = new SelectAction(actionAccess);
         duplicateAction = new DuplicateRelationAction(actionAccess);
         deleteAction = new DeleteCurrentRelationAction(actionAccess);
+
+        this.memberTableModel.addTableModelListener(applyAction);
+        this.tagEditorPanel.getModel().addTableModelListener(applyAction);
+
         addPropertyChangeListener(deleteAction);
 
         okAction = new OKAction(actionAccess);
@@ -276,7 +283,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
 
         getContentPane().add(buildToolBar(refreshAction, applyAction, selectAction, duplicateAction, deleteAction), BorderLayout.NORTH);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
-        getContentPane().add(buildOkCancelButtonPanel(okAction, cancelAction), BorderLayout.SOUTH);
+        getContentPane().add(buildOkCancelButtonPanel(okAction, deleteAction, cancelAction), BorderLayout.SOUTH);
 
         setSize(findMaxDialogSize());
 
@@ -407,12 +414,39 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      *
      * @return the panel with the OK and the Cancel button
      */
-    protected static JPanel buildOkCancelButtonPanel(OKAction okAction, CancelAction cancelAction) {
-        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        pnl.add(new JButton(okAction));
+    protected final JPanel buildOkCancelButtonPanel(OKAction okAction, DeleteCurrentRelationAction deleteAction,
+            CancelAction cancelAction) {
+        final JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JButton okButton = new JButton(okAction);
+        final JButton deleteButton = new JButton(deleteAction);
+        okButton.setPreferredSize(deleteButton.getPreferredSize());
+        pnl.add(okButton);
+        pnl.add(deleteButton);
         pnl.add(new JButton(cancelAction));
         pnl.add(new JButton(new ContextSensitiveHelpAction(ht("/Dialog/RelationEditor"))));
+        // Keep users from saving invalid relations -- a relation MUST have at least a tag with the key "type"
+        // AND must contain at least one other OSM object.
+        final TableModelListener listener = l -> updateOkPanel(this.actionAccess.getChangedRelation(), okButton, deleteButton);
+        listener.tableChanged(null);
+        this.memberTableModel.addTableModelListener(listener);
+        this.tagEditorPanel.getModel().addTableModelListener(listener);
         return pnl;
+    }
+
+    /**
+     * Update the OK panel area
+     * @param newRelation What the new relation would "look" like if it were to be saved now
+     * @param okButton The OK button
+     * @param deleteButton The delete button
+     */
+    private void updateOkPanel(IRelation<?> newRelation, JButton okButton, JButton deleteButton) {
+        okButton.setVisible(newRelation.isUseful() || this.getRelationSnapshot() == null);
+        deleteButton.setVisible(!newRelation.isUseful() && this.getRelationSnapshot() != null);
+        if (this.getRelationSnapshot() == null && !newRelation.isUseful()) {
+            okButton.setText(tr("Delete"));
+        } else {
+            okButton.setText(tr("OK"));
+        }
     }
 
     /**
@@ -1001,7 +1035,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-                new EditAction(new RelationEditorActionAccess()).actionPerformed(null);
+                new EditAction(actionAccess).actionPerformed(null);
             }
         }
     }

@@ -138,4 +138,13 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
         return getMembers().stream().filter(rmv -> role.equals(rmv.getRole()))
                 .map(IRelationMember::getMember).collect(Collectors.toList());
     }
+
+    /**
+     * Check if this relation is useful
+     * @return {@code true} if this relation is useful
+     * @since 18413
+     */
+    default boolean isUseful() {
+        return !this.isEmpty() && this.hasKeys();
+    }
 }
