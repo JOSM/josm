@@ -9455,6 +9455,10 @@
                     <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
+                    <role key="north" text="northbound segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
+                    <role key="south" text="southbound segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
+                    <role key="west" text="westbound segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
+                    <role key="east" text="eastbound segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
                     <role key="link" text="link segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
