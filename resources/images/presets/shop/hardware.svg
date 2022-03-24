@@ -102,7 +102,6 @@
          y="0"
          x="0"
          xlink:href="#outline1"
-         class="outline-big"
          id="use4649"
          style="fill:#ac39ac;fill-opacity:1;stroke:#ac39ac;stroke-width:2.34710145;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <use
@@ -111,7 +110,6 @@
          y="0"
          x="0"
          xlink:href="#outline1"
-         class="outline-small"
          id="use4651"
          style="fill:#ac39ac;fill-opacity:1;stroke:#ac39ac;stroke-width:2.34710145;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <use
@@ -120,7 +118,6 @@
          y="0"
          x="0"
          xlink:href="#outline1"
-         class="aluminium4"
          id="use4653"
          style="fill:#ac39ac;fill-opacity:1;stroke:#ac39ac;stroke-width:2.34710145;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <use
@@ -128,19 +125,16 @@
          width="580"
          y="0"
          x="0"
-         class="stroke-highlight"
          xlink:href="#outline1"
          clip-path="url(#clipoutline1)"
          style="fill:#ac39ac;fill-opacity:1;stroke:#ac39ac;stroke-width:2.34710145;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="use4655" />
       <path
-         class="high-specularity"
          style="fill:#ac39ac;fill-opacity:1;stroke:#ac39ac;stroke-width:2.34710145;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="M 24.33,15.4 37.78,28.78 34.45,40.47 23.5,43.74 9.9319417,30 5.2,34.54 19.4,54.48 38.3,50.34 100.8,116.7 c 7.5,8.3 20.2,-2.67 11.14,-11.6 L 45.04,42 48.9,24.83 28.94,10.8 Z m 79.97,93.3 c 1.67,-1.67 4.63,-2 6.3,-0.3 1.7,1.67 3.06,4.63 0.65,7.84 -2,2 -5.2,1.92 -7.2,-0.24 -1.68,-1.68 -1.45,-5.6 0.25,-7.3 z"
          id="path4657"
          inkscape:connector-curvature="0" />
       <path
-         class="specularity"
          style="fill:#ac39ac;fill-opacity:1;stroke:#ac39ac;stroke-width:2.34710145;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="M 24.2,15.42 47.67,39.07 50.89,25.2 28.79,10.8 Z"
          id="path4659"
@@ -150,7 +144,6 @@
        id="use4686"
        clip-path="url(#clipoutline2)"
        xlink:href="#outline2"
-       class="stroke-highlight"
        x="0"
        y="0"
        width="580"

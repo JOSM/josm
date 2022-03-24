@@ -86,7 +86,6 @@
        id="XMLID_33_"
        x="-4.7683727e-007"
        y="1036.3621"
-       class="st0"
        width="16.000002"
        height="16.000042"
        style="fill:#c87137" />
@@ -94,7 +93,6 @@
        id="XMLID_32_"
        x="8.000001"
        y="1040.3622"
-       class="st1"
        width="4.000001"
        height="0.99997616"
        style="fill:#ffffff" />
@@ -102,7 +100,6 @@
        id="XMLID_31_"
        x="13.000002"
        y="1037.3621"
-       class="st1"
        width="3.0000005"
        height="1.0201575"
        style="fill:#ffffff" />
@@ -110,7 +107,6 @@
        id="XMLID_30_"
        x="11.000002"
        y="1049.3621"
-       class="st1"
        width="4.0000005"
        height="1.0000415"
        style="fill:#ffffff" />
@@ -118,7 +114,6 @@
        id="XMLID_29_"
        x="0.0046444535"
        y="1044.3621"
-       class="st1"
        width="2.9953556"
        height="0.99997544"
        style="fill:#ffffff" />
@@ -126,7 +121,6 @@
        id="XMLID_28_"
        x="5.0000005"
        y="1047.3621"
-       class="st1"
        width="4.0000005"
        height="1.0000411"
        style="fill:#ffffff" />
@@ -134,7 +128,6 @@
        id="XMLID_27_"
        x="0.93384117"
        y="1050.3621"
-       class="st1"
        width="4.0661592"
        height="1.0000416"
        style="fill:#ffffff" />
@@ -142,7 +135,6 @@
        id="XMLID_26_"
        x="1.9999999"
        y="1038.3621"
-       class="st1"
        width="4.000001"
        height="1.0000395"
        style="fill:#ffffff" />
@@ -150,7 +142,6 @@
        id="XMLID_25_"
        x="4.0000005"
        y="1042.3621"
-       class="st1"
        width="4.0000005"
        height="1.0000402"
        style="fill:#ffffff" />
@@ -158,7 +149,6 @@
        id="XMLID_24_"
        x="10.000001"
        y="1045.3621"
-       class="st1"
        width="4.0000014"
        height="1.0000405"
        style="fill:#ffffff" />
@@ -166,7 +156,6 @@
        id="g25"
        transform="matrix(0.07235156,0,0,0.07235156,-25.927739,1028.6929)">
       <path
-         class="st3"
          d="M 362.7,285.1"
          id="path27"
          inkscape:connector-curvature="0"
@@ -176,7 +165,6 @@
        id="g29"
        transform="matrix(0.07235156,0,0,0.07235156,-25.927739,1028.6929)">
       <path
-         class="st3"
          d="M 354.7,296.1"
          id="path31"
          inkscape:connector-curvature="0"
@@ -186,7 +174,6 @@
        id="g33"
        transform="matrix(0.07235156,0,0,0.07235156,-25.927739,1028.6929)">
       <path
-         class="st4"
          d="M 354.7,296.1"
          id="path35"
          inkscape:connector-curvature="0"

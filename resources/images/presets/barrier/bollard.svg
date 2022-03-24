@@ -205,7 +205,7 @@
          transform="matrix(1,0,0,0.962963,0,0.1203704)"
          id="path5223"
          d="M 4,3.25 3.75,5.25 4,10 4.25,5.25 4,3.25 Z"
-         style="fill:#ffffff;fill-opacity:0.875;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter5579)"
+         style="fill:#ffffff;fill-opacity:0.875;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          inkscape:connector-curvature="0" />
     </g>
   </g>
