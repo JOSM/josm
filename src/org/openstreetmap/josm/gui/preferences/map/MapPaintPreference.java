@@ -41,7 +41,7 @@ public class MapPaintPreference extends DefaultTabPreferenceSetting {
     private JCheckBox enableIconDefault;
 
     MapPaintPreference() {
-        super("dialogs/mapstyle", tr("Map Paint Styles"), tr("Map Paint Styles"));
+        super("dialogs/mapstyle", tr("Map Paint Styles"), tr("Adapt the rendering of OSM objects"));
     }
 
     private static final List<SourceProvider> styleSourceProviders = new ArrayList<>();

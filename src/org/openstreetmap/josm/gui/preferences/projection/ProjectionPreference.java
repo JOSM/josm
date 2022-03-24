@@ -105,7 +105,7 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
     public static final ProjectionChoice lambert = new LambertProjectionChoice();
 
     /**
-     * French departements in the Caribbean Sea and Indian Ocean.
+     * French regions in the Caribbean Sea and Indian Ocean.
      *
      * Using the UTM transvers Mercator projection and specific geodesic settings.
      */
