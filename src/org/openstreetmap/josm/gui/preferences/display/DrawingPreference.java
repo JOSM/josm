@@ -125,7 +125,7 @@ public class DrawingPreference extends DefaultTabPreferenceSetting {
         useWireframeAntialiasing.setSelected(Config.getPref().getBoolean("mappaint.wireframe.use-antialiasing", false));
 
         // highlighting
-        useHighlighting.setToolTipText(tr("Hightlight target nodes and ways while drawing or selecting"));
+        useHighlighting.setToolTipText(tr("Highlight target nodes and ways while drawing or selecting"));
         useHighlighting.setSelected(Config.getPref().getBoolean("draw.target-highlight", true));
 
         drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
