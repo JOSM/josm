@@ -441,7 +441,6 @@ public final class DomainValidator extends AbstractValidator {
         "broker", // broker DOTBROKER REGISTRY LTD
         "brother", // brother Brother Industries, Ltd.
         "brussels", // brussels DNS.be vzw
-        "budapest", // budapest Top Level Domain Holdings Limited
         "bugatti", // bugatti Bugatti International SA
         "build", // build Plan Bee LLC
         "builders", // builders Atomic Madison, LLC
