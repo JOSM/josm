@@ -548,7 +548,6 @@ public final class DomainValidator extends AbstractValidator {
         "crs", // crs Federated Co-operatives Limited
         "cruise", // cruise Viking River Cruises (Bermuda) Ltd.
         "cruises", // cruises Spring Way, LLC
-        "csc", // csc Alliance-One Services, Inc.
         "cuisinella", // cuisinella SALM S.A.S.
         "cymru", // cymru Nominet UK
         "cyou", // cyou Beijing Gamease Age Digital Technology Co., Ltd.
