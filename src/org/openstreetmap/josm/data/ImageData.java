@@ -379,6 +379,8 @@ public class ImageData implements Data {
         this.geoImages.remove(img);
         if (fireUpdateEvent) {
             notifyImageUpdate();
+            // Fix JOSM #21521 -- when an image is removed, we need to update the selected image
+            this.updateSelectedImage();
         }
     }
 

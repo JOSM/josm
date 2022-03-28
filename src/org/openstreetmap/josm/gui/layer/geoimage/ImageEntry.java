@@ -171,7 +171,7 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
 
     @Override
     public boolean remove() {
-        this.dataSet.removeImage(this, false);
+        this.dataSet.removeImage(this, true);
         return true;
     }
 
