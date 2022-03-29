@@ -16,6 +16,8 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.GpxRouteLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -139,15 +141,19 @@ public class GpxImporter extends FileImporter {
     public static void addLayers(final GpxImporterData data) {
         // FIXME: remove UI stuff from the IO subsystem
         GuiHelper.runInEDT(() -> {
+            MainLayerManager manager = MainApplication.getLayerManager();
             if (data.markerLayer != null) {
-                MainApplication.getLayerManager().addLayer(data.markerLayer);
+                manager.addLayer(data.markerLayer);
             }
             if (data.gpxRouteLayer != null) {
-                MainApplication.getLayerManager().addLayer(data.gpxRouteLayer);
+                manager.addLayer(data.gpxRouteLayer);
             }
             if (data.gpxLayer != null) {
-                MainApplication.getLayerManager().addLayer(data.gpxLayer);
-                MainApplication.getLayerManager().setActiveLayer(data.gpxLayer);
+                manager.addLayer(data.gpxLayer);
+                Layer activeLayer = manager.getActiveLayer();
+                if (activeLayer == null || activeLayer instanceof GpxLayer || activeLayer instanceof MarkerLayer) {
+                    manager.setActiveLayer(data.gpxLayer);
+                }
             }
             data.postLayerTask.run();
         });
