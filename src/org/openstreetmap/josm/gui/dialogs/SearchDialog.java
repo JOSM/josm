@@ -321,7 +321,7 @@ public class SearchDialog extends ExtendedDialog {
                 GBC.eol());
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addKeyword("<i>key:</i>", null, tr("matches if ''key'' exists"))
-                .addKeyword("<i>key?</i>", null, tr("matches if ''key'' has a truthy value (''true'', ''yes'', ''1', ''on'')"))
+                .addKeyword("<i>key?</i>", null, tr("matches if ''key'' has a truthy value (''true'', ''yes'', ''1'', ''on'')"))
                 .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
                 .addKeyword("<i>key</i>~<i>regexp</i>", null, tr("value of ''key'' matching the regular expression ''regexp''"))
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
