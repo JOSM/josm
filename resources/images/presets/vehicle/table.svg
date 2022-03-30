@@ -77,7 +77,6 @@
          id="XMLID_61_"
          x="147.89999"
          y="370.10001"
-         class="st4"
          width="6.5"
          height="14.1"
          style="fill:#808080;fill-opacity:1" />
@@ -87,15 +86,13 @@
        style="fill:#ffffff;fill-opacity:1"
        inkscape:connector-curvature="0"
        id="path3387-0"
-       d="m 5,1040.3621 -1,0 0,-2 1,0 z"
-       class="st5" />
+       d="m 5,1040.3621 -1,0 0,-2 1,0 z" />
     <path
        sodipodi:nodetypes="ccccc"
        style="fill:#ffffff;fill-opacity:1"
        inkscape:connector-curvature="0"
        id="path3387-0-9-4"
-       d="m 5,1050.3621 -1,0 0,-2 1,0 z"
-       class="st5" />
+       d="m 5,1050.3621 -1,0 0,-2 1,0 z" />
     <rect
        style="opacity:1;fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4156"
@@ -108,10 +105,8 @@
        style="fill:#ffffff;fill-opacity:1"
        inkscape:connector-curvature="0"
        id="path3387-0-9-7-4"
-       d="m 8.000001,1046.3621 -1,0 0,-4 1,0 z"
-       class="st5" />
+       d="m 8.000001,1046.3621 -1,0 0,-4 1,0 z" />
     <path
-       class="st5"
        d="m 2,1046.3621 -1,0 0,-4 1,0 z"
        id="path4177"
        inkscape:connector-curvature="0"
@@ -122,24 +117,20 @@
        style="fill:#ffffff;fill-opacity:1"
        inkscape:connector-curvature="0"
        id="path4179"
-       d="m 4,1046.3621 -1,0 0,-4 1,0 z"
-       class="st5" />
+       d="m 4,1046.3621 -1,0 0,-4 1,0 z" />
     <path
-       class="st5"
        d="m 6,1046.3621 -1,0 0,-4 1,0 z"
        id="path4181"
        inkscape:connector-curvature="0"
        style="fill:#ffffff;fill-opacity:1"
        sodipodi:nodetypes="ccccc" />
     <path
-       class="st5"
        d="m 5,1037.3621 -1,0 0,-1 1,0 z"
        id="path4183"
        inkscape:connector-curvature="0"
        style="fill:#ffffff;fill-opacity:1"
        sodipodi:nodetypes="ccccc" />
     <path
-       class="st5"
        d="m 5,1052.3621 -1,0 0,-1 1,0 z"
        id="path4185"
        inkscape:connector-curvature="0"

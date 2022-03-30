@@ -70,15 +70,12 @@
     <g
        style="fill-rule:evenodd;stroke-width:28.22200012;stroke-linejoin:round"
        clip-path="url(#presentation_clip_path)"
-       class="Slide"
        id="id1"
        transform="matrix(0.04819248,0,0,0.03543307,211.12182,-16.67605)">
       <g
-         id="g54"
-         class="Page">
+         id="g54">
         <g
-           id="g56"
-           class="com.sun.star.drawing.PolyPolygonShape">
+           id="g56">
           <g
              id="id3">
             <path
@@ -94,8 +91,7 @@
           </g>
         </g>
         <g
-           id="g63"
-           class="com.sun.star.drawing.PolyPolygonShape">
+           id="g63">
           <g
              id="id4">
             <path
@@ -111,8 +107,7 @@
           </g>
         </g>
         <g
-           id="g70"
-           class="com.sun.star.drawing.PolyPolygonShape">
+           id="g70">
           <g
              id="id5">
             <path
@@ -128,8 +123,7 @@
           </g>
         </g>
         <g
-           id="g77"
-           class="com.sun.star.drawing.ClosedFreeHandShape">
+           id="g77">
           <g
              id="id6">
             <path
@@ -145,8 +139,7 @@
           </g>
         </g>
         <g
-           id="g84"
-           class="com.sun.star.drawing.PolyPolygonShape">
+           id="g84">
           <g
              id="id7">
             <path
@@ -162,8 +155,7 @@
           </g>
         </g>
         <g
-           id="g91"
-           class="com.sun.star.drawing.PolyPolygonShape">
+           id="g91">
           <g
              id="id8">
             <path
@@ -179,8 +171,7 @@
           </g>
         </g>
         <g
-           id="g98"
-           class="com.sun.star.drawing.PolyPolygonShape">
+           id="g98">
           <g
              id="id9">
             <path
