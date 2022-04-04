@@ -483,7 +483,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentEntry != null) {
-                ClipboardUtils.copyString(String.valueOf(currentEntry.getFile()));
+                ClipboardUtils.copyString(String.valueOf(currentEntry.getImageURI()));
             }
         }
     }
@@ -510,7 +510,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         public void actionPerformed(ActionEvent e) {
             if (currentEntry != null) {
                 try {
-                    PlatformManager.getPlatform().openUrl(currentEntry.getFile().toURI().toURL().toExternalForm());
+                    PlatformManager.getPlatform().openUrl(currentEntry.getImageURI().toURL().toExternalForm());
                 } catch (IOException ex) {
                     Logging.error(ex);
                 }

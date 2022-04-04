@@ -2,10 +2,13 @@
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Mediawiki;
 
 /**
@@ -22,6 +25,16 @@ class WikimediaCommonsEntry extends ImageEntry {
     @Override
     protected URL getImageUrl() throws MalformedURLException {
         return new URL(Mediawiki.getImageUrl("https://upload.wikimedia.org/wikipedia/commons", title));
+    }
+
+    @Override
+    public URI getImageURI() {
+        try {
+            return new URI(Mediawiki.getImageUrl("https://upload.wikimedia.org/wikipedia/commons", this.title));
+        } catch (URISyntaxException e) {
+            // This should never happen.
+            throw new JosmRuntimeException(this.toString(), e);
+        }
     }
 
     @Override

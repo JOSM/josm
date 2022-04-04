@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 
@@ -155,6 +156,15 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @return associated file
      */
     File getFile();
+
+    /**
+     * Get the URI for the image
+     * @return The image URI
+     * @since 18427
+     */
+    default URI getImageURI() {
+        return this.getFile().toURI();
+    }
 
     /**
      * Returns the position value. The position value from the temporary copy
