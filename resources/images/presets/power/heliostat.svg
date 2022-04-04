@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    width="16"
    height="16"
-   viewBox="0 0 4.2333332 4.2333332"
+   viewBox="0 0 16 16"
    version="1.1"
-   id="svg103">
+   id="svg103"
+   sodipodi:docname="heliostat.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview42"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     width="16px"
+     inkscape:zoom="19.285435"
+     inkscape:cx="11.459425"
+     inkscape:cy="7.0001012"
+     inkscape:window-width="1920"
+     inkscape:window-height="1135"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg103" />
   <defs
      id="defs97">
     <linearGradient
@@ -146,7 +169,7 @@
        x2="284.92001"
        y1="669.77002"
        x1="284.92001"
-       gradientTransform="matrix(0.00782842,0,0,0.00782842,-0.11380738,-1.2542693)">
+       gradientTransform="matrix(0.02955263,0,0,0.02961267,-0.41863933,-4.7531131)">
       <stop
          style="stop-color:#9B9B9A"
          offset="0"
@@ -163,7 +186,8 @@
        y1="2.7444255"
        x2="2.0340495"
        y2="2.5912654"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(3.7750447,0,0,3.7827133,0.01098862,-0.0085718)" />
   </defs>
   <metadata
      id="metadata100">
@@ -173,7 +197,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
@@ -195,29 +218,30 @@
     </rdf:RDF>
   </metadata>
   <rect
-     y="2.585182"
-     x="1.8946526"
-     height="1.4037925"
-     width="0.44402808"
+     y="9.7704296"
+     x="7.1633873"
+     height="5.3101444"
+     width="1.6762258"
      fill="url(#SVGID_5_)"
      id="rect85"
-     style="fill:url(#SVGID_5_);stroke:#ffffff;stroke-width:0.00782841" />
+     style="fill:url(#SVGID_5_);stroke:#ffffff;stroke-width:0.0295826" />
   <ellipse
-     style="opacity:0.998;fill:#cccccc;fill-opacity:1;stroke:#dbe3e2;stroke-width:0.00724377;stroke-linejoin:round;stop-color:#000000"
+     style="opacity:0.998;fill:#cccccc;fill-opacity:1;stroke:#dbe3e2;stroke-width:0.0273733;stroke-linejoin:round;stop-color:#000000"
      id="path117-7"
-     cx="2.1166666"
-     cy="2.6095161"
-     rx="0.36218813"
-     ry="0.28132737" />
+     cx="8.0015001"
+     cy="9.8624792"
+     rx="1.3672764"
+     ry="1.0641809" />
   <ellipse
-     style="opacity:0.998;fill:url(#linearGradient877);stroke:#000000;stroke-width:0.00724377;stroke-linejoin:round;stop-color:#000000;fill-opacity:1"
+     style="opacity:0.998;fill:url(#linearGradient877);fill-opacity:1;stroke:#000000;stroke-width:0.0273733;stroke-linejoin:round;stop-color:#000000"
      id="path117"
-     cx="2.1166666"
-     cy="2.6095161"
-     rx="0.36218813"
-     ry="0.28132737" />
+     cx="8.0015001"
+     cy="9.8624792"
+     rx="1.3672764"
+     ry="1.0641809" />
   <g
-     id="g56">
+     id="g56"
+     transform="matrix(3.7750447,0,0,3.7827132,0.01098865,-0.00857185)">
     <path
        d="m 0.26003573,3.13808 v 0.1718956 c 0,0.029118 0.021262,0.04971 0.047481,0.04971 H 1.6036591 c 0.024058,0 0.0367,-0.016571 0.040819,-0.04971 L 1.7278728,2.5812531 H 2.5044686 L 2.5908291,3.30997 c 0.00608,0.030971 0.016402,0.04971 0.041514,0.04971 l 1.2935245,-3e-7 c 0.0262,0 0.04743,-0.023656 0.04743,-0.052784 V 3.1380742 L 2.745042,3.1456572 2.6488177,2.3254478 H 1.5875 L 1.4958728,3.1456572 H 0.26005723 Z"
        fill="url(#SVGID_6_)"
