@@ -38,7 +38,7 @@ public class CLIProgressMonitor extends AbstractProgressMonitor {
     @Override
     protected void doBeginTask() {
         if (!Utils.isBlank(this.title)) {
-            Logging.info(tr("Beginning task{2}: {0}{1}", this.title, this.customText,
+            Logging.info(tr("Beginning task {2}: {0}{1}", this.title, this.customText,
                     Optional.ofNullable(this.taskId).map(ProgressTaskId::getId).map(id -> ' ' + id).orElse("")));
         }
         this.startTime = Stopwatch.createStarted();
@@ -47,7 +47,7 @@ public class CLIProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     protected void doFinishTask() {
-        Logging.info(tr("Finishing task{2}: {0}{1} ({3})", this.title, this.customText,
+        Logging.info(tr("Finishing task {2}: {0}{1} ({3})", this.title, this.customText,
                 Optional.ofNullable(this.taskId).map(ProgressTaskId::getId).map(id -> ' ' + id).orElse(""), this.startTime));
         this.lastUpdateTime = null;
     }
@@ -71,7 +71,7 @@ public class CLIProgressMonitor extends AbstractProgressMonitor {
     protected void updateProgress(double value) {
         if (this.lastUpdateTime == null || this.lastUpdateTime.elapsed() > TimeUnit.SECONDS.toMillis(10)) {
             this.lastUpdateTime = Stopwatch.createStarted();
-            Logging.info(tr("Progress of task{2}: {0}{1} is {3}% ({4})", this.title, this.customText,
+            Logging.info(tr("Progress of task {2}: {0}{1} is {3}% ({4})", this.title, this.customText,
                     Optional.ofNullable(this.taskId).map(ProgressTaskId::getId).map(id -> ' ' + id).orElse(""), value * 100, this.startTime));
         }
     }
