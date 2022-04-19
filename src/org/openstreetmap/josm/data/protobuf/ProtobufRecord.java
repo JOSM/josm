@@ -32,7 +32,7 @@ public class ProtobufRecord implements AutoCloseable {
         byte wireType = (byte) (number.longValue() & 7);
         // By not using a stream, we reduce the number of allocations (for getting the WireType) from 257 MB to 40 MB.
         // (The remaining 40 MB is from WireType#values). By using the cached getAllValues(), we drop the 40 MB.
-        WireType tType = null;
+        WireType tType = WireType.UNKNOWN;
         for (WireType wType : WireType.getAllValues()) {
             if (wType.getTypeRepresentation() == wireType) {
                 tType = wType;
