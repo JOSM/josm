@@ -74,8 +74,13 @@ public interface IRelationEditorActionAccess {
      */
     default IRelation<?> getChangedRelation() {
         final Relation newRelation;
-        if (getEditor().getRelation() != null) {
-            newRelation = new Relation(getEditor().getRelation());
+        final Relation oldRelation = getEditor().getRelation();
+        if (oldRelation != null && oldRelation.getDataSet() != null && oldRelation.getDataSet().isLocked()) {
+            // If the dataset is locked, then we cannot change the relation. See JOSM #22024.
+            // This is due to the `setMembers` -> `addReferrer` call chain requires that the dataset is not read only.
+            return oldRelation;
+        } else if (oldRelation != null) {
+            newRelation = new Relation(oldRelation);
         } else {
             newRelation = new Relation();
         }
