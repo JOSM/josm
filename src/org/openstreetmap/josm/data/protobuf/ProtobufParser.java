@@ -3,11 +3,11 @@ package org.openstreetmap.josm.data.protobuf;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -155,7 +155,7 @@ public class ProtobufParser implements AutoCloseable {
     public WireType next() throws IOException {
         this.inputStream.mark(16);
         try {
-            return WireType.values()[this.inputStream.read() << 3];
+            return WireType.getAllValues()[this.inputStream.read() << 3];
         } finally {
             this.inputStream.reset();
         }
@@ -211,21 +211,17 @@ public class ProtobufParser implements AutoCloseable {
      * @throws IOException - if an IO error occurs
      */
     public byte[] nextVarInt() throws IOException {
-        List<Byte> byteList = new ArrayList<>();
+        // Using this reduces the allocations from 150 MB to 95 MB.
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(4);
         int currentByte = this.nextByte();
         while ((byte) (currentByte & MOST_SIGNIFICANT_BYTE) == MOST_SIGNIFICANT_BYTE && currentByte > 0) {
             // Get rid of the leading bit (shift left 1, then shift right 1 unsigned)
-            byteList.add((byte) (currentByte ^ MOST_SIGNIFICANT_BYTE));
+            byteArrayOutputStream.write((currentByte ^ MOST_SIGNIFICANT_BYTE));
             currentByte = this.nextByte();
         }
         // The last byte doesn't drop the most significant bit
-        byteList.add((byte) currentByte);
-        byte[] byteArray = new byte[byteList.size()];
-        for (int i = 0; i < byteList.size(); i++) {
-            byteArray[i] = byteList.get(i);
-        }
-
-        return byteArray;
+        byteArrayOutputStream.write(currentByte);
+        return byteArrayOutputStream.toByteArray();
     }
 
     /**

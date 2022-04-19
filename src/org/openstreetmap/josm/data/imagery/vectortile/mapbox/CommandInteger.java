@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.imagery.vectortile.mapbox;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 /**
  * An indicator for a command to be executed
@@ -21,8 +20,21 @@ public class CommandInteger {
     public CommandInteger(final int command) {
         // Technically, the int is unsigned, but it is easier to work with the long
         final long unsigned = Integer.toUnsignedLong(command);
-        this.type = Stream.of(Command.values()).filter(e -> e.getId() == (unsigned & 0x7)).findAny()
-                .orElseThrow(InvalidMapboxVectorTileException::new);
+        // By avoiding using a stream for getting the Command type, we go from 72 MB to 13 MB.
+        // By using a cached value for Command.values(), we further reduce the allocations to 5 MB (new short[] call
+        // at end of initializer)
+        Command rType = null;
+        for (Command tType : Command.getAllValues()) {
+            if (tType.getId() == (unsigned & 0x7)) {
+                rType = tType;
+                break;
+            }
+        }
+        this.type = rType;
+        if (this.type == null) {
+            throw new InvalidMapboxVectorTileException();
+        }
+
         // This is safe, since we are shifting right 3 when we converted an int to a long (for unsigned).
         // So we <i>cannot</i> lose anything.
         final int operationsInt = (int) (unsigned >> 3);

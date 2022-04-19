@@ -44,6 +44,8 @@ public enum WireType {
      */
     UNKNOWN(Byte.MAX_VALUE);
 
+    private static final WireType[] CACHED_VALUES = values();
+
     private final byte type;
 
     WireType(int value) {
@@ -57,5 +59,15 @@ public enum WireType {
      */
     public byte getTypeRepresentation() {
         return this.type;
+    }
+
+    /**
+     * Get a pre-calculated array of all {@link WireType} values.
+     * @return An array of values, meant as a drop-in replacement for {@link WireType#values()}
+     * <i>where the array is not modified</i>! This can significantly reduce allocations, as there is no defensive
+     * array copy.
+     */
+    static WireType[] getAllValues() {
+        return CACHED_VALUES;
     }
 }

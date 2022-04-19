@@ -25,6 +25,12 @@ public class Feature {
     private static final byte GEOMETRY_TYPE_FIELD = 3;
     private static final byte GEOMETRY_FIELD = 4;
     /**
+     * The number format instance to use (using a static instance gets rid of quite o few allocations)
+     * Doing this reduced the allocations of {@link #parseTagValue(String, Layer, Number)} from 22.79% of parent to
+     * 12.2% of parent.
+     */
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.ROOT);
+    /**
      * The geometry of the feature. Required.
      */
     private final List<CommandInteger> geometry = new ArrayList<>();
@@ -111,13 +117,13 @@ public class Feature {
             Object value = layer.getValue(number.intValue());
             if (value instanceof Double || value instanceof Float) {
                 // reset grouping if the instance is a singleton
-                final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
-                final boolean grouping = numberFormat.isGroupingUsed();
+
+                final boolean grouping = NUMBER_FORMAT.isGroupingUsed();
                 try {
-                    numberFormat.setGroupingUsed(false);
-                    this.tags.put(key, numberFormat.format(value));
+                    NUMBER_FORMAT.setGroupingUsed(false);
+                    this.tags.put(key, NUMBER_FORMAT.format(value));
                 } finally {
-                    numberFormat.setGroupingUsed(grouping);
+                    NUMBER_FORMAT.setGroupingUsed(grouping);
                 }
             } else {
                 this.tags.put(key, Utils.intern(value.toString()));

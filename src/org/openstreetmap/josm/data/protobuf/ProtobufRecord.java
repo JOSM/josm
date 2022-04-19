@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.protobuf;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
 
 import org.openstreetmap.josm.tools.Utils;
 
@@ -31,8 +30,16 @@ public class ProtobufRecord implements AutoCloseable {
         this.field = (int) number.longValue() >> 3;
         // 7 is 111 (so last three bits)
         byte wireType = (byte) (number.longValue() & 7);
-        this.type = Stream.of(WireType.values()).filter(wType -> wType.getTypeRepresentation() == wireType).findFirst()
-          .orElse(WireType.UNKNOWN);
+        // By not using a stream, we reduce the number of allocations (for getting the WireType) from 257 MB to 40 MB.
+        // (The remaining 40 MB is from WireType#values). By using the cached getAllValues(), we drop the 40 MB.
+        WireType tType = null;
+        for (WireType wType : WireType.getAllValues()) {
+            if (wType.getTypeRepresentation() == wireType) {
+                tType = wType;
+                break;
+            }
+        }
+        this.type = tType;
 
         if (this.type == WireType.VARINT) {
             this.bytes = parser.nextVarInt();
