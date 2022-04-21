@@ -63,7 +63,6 @@ import org.openstreetmap.josm.tools.WikiReader;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
@@ -491,14 +490,19 @@ public final class TestUtils {
      */
     @SuppressWarnings("null")
     public static void assumeWorkingEqualsVerifier() {
-        if (Utils.getJavaVersion() >= 16) {
+        // See https://github.com/raphw/byte-buddy/blob/master/byte-buddy-dep/src/main/java/net/bytebuddy/ClassFileVersion.java
+        // for currently supported Java versions.
+        if (Utils.getJavaVersion() >= 19) {
             // Byte Buddy often supports new class file versions for current EA releases if its experimental flag is set to true
             System.setProperty("net.bytebuddy.experimental", "true");
+        } else {
+            return;
         }
         try {
             // Workaround to https://github.com/jqno/equalsverifier/issues/177
             // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
-            nl.jqno.equalsverifier.internal.lib.bytebuddy.ClassFileVersion.ofThisVm();
+            // Note: if we change to the equalsverifier fat jar, use nl.jqno.equalsverifier.internal.lib instead of net
+            net.bytebuddy.ClassFileVersion.ofThisVm();
         } catch (IllegalArgumentException e) {
             assumeFalse(e != null);
         }

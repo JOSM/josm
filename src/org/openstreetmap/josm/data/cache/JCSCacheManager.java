@@ -7,6 +7,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -16,7 +17,6 @@ import java.util.logging.SimpleFormatter;
 
 import org.apache.commons.jcs3.JCS;
 import org.apache.commons.jcs3.access.CacheAccess;
-import org.apache.commons.jcs3.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs3.auxiliary.AuxiliaryCacheFactory;
 import org.apache.commons.jcs3.auxiliary.disk.behavior.IDiskCacheAttributes;
 import org.apache.commons.jcs3.auxiliary.disk.block.BlockDiskCacheAttributes;
@@ -186,7 +186,6 @@ public final class JCSCacheManager {
      * @param cachePath         path to disk cache. if null, no disk cache will be created
      * @return cache access object
      */
-    @SuppressWarnings("unchecked")
     public static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
         CacheAccess<K, V> cacheAccess = getCacheAccess(cacheName, getCacheAttributes(maxMemoryObjects));
 
@@ -194,13 +193,13 @@ public final class JCSCacheManager {
             CompositeCache<K, V> cc = cacheAccess.getCacheControl();
             try {
                 IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName);
-                if (cc.getAuxCaches().length == 0) {
-                    cc.setAuxCaches(new AuxiliaryCache[]{DISK_CACHE_FACTORY.createCache(
-                            diskAttributes, null, null, new StandardSerializer())});
+                if (cc.getAuxCacheList().isEmpty()) {
+                    cc.setAuxCaches(Collections.singletonList(DISK_CACHE_FACTORY.createCache(
+                            diskAttributes, null, null, new StandardSerializer())));
                 }
             } catch (Exception e) { // NOPMD
                 // in case any error in setting auxiliary cache, do not use disk cache at all - only memory
-                cc.setAuxCaches(new AuxiliaryCache[0]);
+                cc.setAuxCaches(Collections.emptyList());
                 Logging.debug(e);
             }
         }
