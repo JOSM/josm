@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2021102900, Last Updated Fri Oct 29 07:07:01 2021 UTC
+        // Taken from Version 2022042200, Last Updated Fri Apr 22 07:07:01 2022 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -833,6 +833,7 @@ public final class DomainValidator extends AbstractValidator {
         "kerryproperties", // kerryproperties Kerry Trading Co. Limited
         "kfh", // kfh Kuwait Finance House
         "kia", // kia KIA MOTORS CORPORATION
+        "kids", // kids DotKids Foundation Limited
         "kim", // kim Afilias Limited
         "kinder", // kinder Ferrero Trading Lux S.A.
         "kindle", // kindle Amazon Registry Service, Inc.
