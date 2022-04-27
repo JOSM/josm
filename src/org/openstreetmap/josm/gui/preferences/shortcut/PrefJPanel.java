@@ -107,6 +107,12 @@ public class PrefJPanel extends JPanel {
         KeyboardUtils.getExtendedKeyCodes(InputContext.getInstance().getLocale())
                 .forEach((key, value) -> list.put(key, value.toString()));
         list.put(Integer.valueOf(-1), "");
+
+        // Remove "look-alike" values. See JOSM #22020 comment 2. These override the standard left/right/up/down keys.
+        list.remove(KeyboardUtils.EXTENDED_KEYCODE_FLAG + 0x2190); // '←' (LEFTWARDS ARROW)
+        list.remove(KeyboardUtils.EXTENDED_KEYCODE_FLAG + 0x2191); // '↑' (UPWARDS ARROW)
+        list.remove(KeyboardUtils.EXTENDED_KEYCODE_FLAG + 0x2192); // '→' (RIGHTWARDS ARROW)
+        list.remove(KeyboardUtils.EXTENDED_KEYCODE_FLAG + 0x2193); // '↓' (DOWNWARDS ARROW)
         return list;
     }
 
