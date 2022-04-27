@@ -15,7 +15,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
@@ -37,6 +40,8 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -46,9 +51,11 @@ import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.admin.model.ServeEventQuery;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 
 /**
  * Tests the {@link HttpClient}.
@@ -233,6 +240,53 @@ class HttpClientTest {
     void testTooMuchRedirects() throws IOException {
         mockRedirects(false, 3);
         assertThrows(IOException.class, () -> HttpClient.create(url("/relative-redirect/3")).setMaxRedirects(2).connect(progress));
+    }
+
+    /**
+     * Ensure that we don't leak authorization headers
+     * See <a href="https://josm.openstreetmap.de/ticket/21935">JOSM #21935</a>
+     * @param authorization The various authorization configurations to test
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "Basic dXNlcm5hbWU6cGFzc3dvcmQ=", "Digest username=test_user",
+            /* OAuth 1.0 for OSM as implemented in JOSM core */
+            "OAuth oauth_consumer_key=\"test_key\", oauth_nonce=\"1234\", oauth_signature=\"test_signature\", "
+                    + "oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"0\", oauth_token=\"test_token\", "
+                    + "oauth_version=\"1.0\"",
+            /* OAuth 2.0, not yet implemented in JOSM core */
+            "Bearer some_random_token"
+        })
+    void testRedirectsToDifferentSite(String authorization) throws IOException {
+        final String localhost = "localhost";
+        final String localhostIp = "127.0.0.1";
+        final String otherServer = this.localServer.baseUrl().contains(localhost) ? localhostIp : localhost;
+        final UUID redirect = this.localServer.stubFor(get(urlEqualTo("/redirect/other-site"))
+                .willReturn(aResponse().withStatus(302).withHeader(
+                        "Location", localServer.url("/same-site/other-site")))).getId();
+        final UUID sameSite = this.localServer.stubFor(get(urlEqualTo("/same-site/other-site"))
+                .willReturn(aResponse().withStatus(302).withHeader(
+                        "Location", localServer.url("/other-site")
+                                .replace(otherServer == localhost ? localhostIp : localhost, otherServer)))).getId();
+        final UUID otherSite = this.localServer.stubFor(get(urlEqualTo("/other-site"))
+                .willReturn(aResponse().withStatus(200).withBody("other-site-here"))).getId();
+        final HttpClient client = HttpClient.create(url("/redirect/other-site"));
+        client.setHeader("Authorization", authorization);
+        try {
+            client.connect();
+            this.localServer.getServeEvents();
+            final ServeEvent first = this.localServer.getServeEvents(ServeEventQuery.forStubMapping(redirect)).getRequests().get(0);
+            final ServeEvent second = this.localServer.getServeEvents(ServeEventQuery.forStubMapping(sameSite)).getRequests().get(0);
+            final ServeEvent third = this.localServer.getServeEvents(ServeEventQuery.forStubMapping(otherSite)).getRequests().get(0);
+            assertAll(() -> assertEquals(3, this.localServer.getServeEvents().getRequests().size()),
+                    () -> assertEquals(authorization, first.getRequest().getHeader("Authorization"),
+                    "Authorization is expected for the first request: " + first.getRequest().getUrl()),
+                    () -> assertEquals(authorization, second.getRequest().getHeader("Authorization"),
+                            "Authorization is expected for the second request: " + second.getRequest().getUrl()),
+                    () -> assertFalse(third.getRequest().containsHeader("Authorization"),
+                    "Authorization is not expected for the third request: " + third.getRequest().getUrl()));
+        } finally {
+            client.disconnect();
+        }
     }
 
     /**

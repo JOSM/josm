@@ -188,9 +188,16 @@ public abstract class HttpClient {
                     throw new IOException(tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header." +
                             " Can''t redirect. Aborting.", cr.getResponseCode()));
                 } else if (maxRedirects > 0) {
+                    final URL oldUrl = url;
                     url = new URL(url, redirectLocation);
                     maxRedirects--;
                     logRequest(tr("Download redirected to ''{0}''", redirectLocation));
+                    // Fix JOSM #21935: Avoid leaking `Authorization` header on redirects.
+                    if (!Objects.equals(oldUrl.getHost(), this.url.getHost()) && this.getRequestHeader("Authorization") != null) {
+                        logRequest(tr("Download redirected to different host (''{0}'' -> ''{1}''), removing authorization headers",
+                                oldUrl.getHost(), url.getHost()));
+                        this.headers.remove("Authorization");
+                    }
                     response = connect();
                     successfulConnection = true;
                     return response;
