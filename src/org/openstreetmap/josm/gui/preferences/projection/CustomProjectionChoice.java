@@ -16,18 +16,15 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompTextField;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -53,7 +50,6 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
     private static class PreferencePanel extends JPanel {
 
-        public AutoCompTextField<String> input;
         private HistoryComboBox cbInput;
 
         PreferencePanel(String initialText, ActionListener listener) {
@@ -61,14 +57,8 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
         }
 
         private void build(String initialText, final ActionListener listener) {
-            input = new AutoCompTextField<>(30);
             cbInput = new HistoryComboBox();
-            cbInput.setEditor(new BasicComboBoxEditor() {
-                @Override
-                protected JosmTextField createEditorComponent() {
-                    return input;
-                }
-            });
+            cbInput.getEditorComponent().setColumns(30);
             List<String> samples = Arrays.asList(
                     "+proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90",
                     "+proj=tmerc +lat_0=0 +lon_0=9 +k_0=1 +x_0=3500000 +y_0=0 +ellps=bessel +nadgrids=BETA2007.gsb");
@@ -80,7 +70,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             final JLabel valStatus = new JLabel();
             valStatus.setVisible(false);
 
-            final AbstractTextComponentValidator val = new AbstractTextComponentValidator(input, false, false, false) {
+            final AbstractTextComponentValidator val = new AbstractTextComponentValidator(cbInput.getEditorComponent(), false, false, false) {
 
                 private String error;
 
@@ -98,7 +88,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                 public boolean isValid() {
                     try {
                         CustomProjection test = new CustomProjection();
-                        test.update(input.getText());
+                        test.update(cbInput.getEditorComponent().getText());
                     } catch (ProjectionConfigurationException ex) {
                         Logging.warn(ex);
                         error = ex.getMessage();
@@ -221,7 +211,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             throw new IllegalArgumentException("Unsupported panel: "+panel);
         }
         PreferencePanel prefPanel = (PreferencePanel) panel;
-        String pref = prefPanel.input.getText();
+        String pref = prefPanel.cbInput.getEditorComponent().getText();
         prefPanel.rememberHistory();
         return Collections.singleton(pref);
     }
