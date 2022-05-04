@@ -307,16 +307,44 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         int offset = 0;
         final ListSelectionModel selectionModel = getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        for (int row : selectedRows) {
-            row -= offset;
-            if (members.size() > row) {
-                members.remove(row);
-                selectionModel.removeIndexInterval(row, row);
-                offset++;
+        for (int[] row : groupRows(selectedRows)) {
+            if (members.size() > row[0] - offset) {
+                // Remove (inclusive)
+                members.subList(row[0] - offset, row[1] - offset + 1).clear();
+                selectionModel.removeIndexInterval(row[0] - offset, row[1] - offset);
+                offset += row[1] - row[0] + 1;
             }
         }
         selectionModel.setValueIsAdjusting(false);
         fireTableDataChanged();
+    }
+
+    /**
+     * Group rows for use in changing selection intervals, to avoid many small calls on large selections
+     * @param rows The rows to group
+     * @return A list of grouped rows, [lower, higher] (inclusive)
+     */
+    private static List<int[]> groupRows(int... rows) {
+        if (rows.length == 0) {
+            return Collections.emptyList();
+        }
+        List<int[]> groups = new ArrayList<>();
+        int[] current = {Integer.MIN_VALUE, Integer.MIN_VALUE};
+        groups.add(current);
+        for (int row : rows) {
+            if (current[0] == Integer.MIN_VALUE) {
+                current[0] = row;
+                current[1] = row;
+                continue;
+            }
+            if (current[1] == row - 1) {
+                current[1] = row;
+            } else {
+                current = new int[] {row, row};
+                groups.add(current);
+            }
+        }
+        return Collections.unmodifiableList(groups);
     }
 
     /**
@@ -444,11 +472,27 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
 
     void addMembersAtIndexKeepingOldSelection(final Iterable<RelationMember> newMembers, final int index) {
         int idx = index;
+        // Avoid having the inserted rows from being part of the selection. See JOSM #12617, #17906, #21889.
+        int[] originalSelection = null;
+        if (selectedIndices().anyMatch(selectedRow -> selectedRow == index)) {
+            originalSelection = getSelectedIndices();
+        }
         for (RelationMember member : newMembers) {
             members.add(idx++, member);
         }
         invalidateConnectionType();
         fireTableRowsInserted(index, idx - 1);
+        if (originalSelection != null) {
+            final DefaultListSelectionModel model = this.getSelectionModel();
+            model.setValueIsAdjusting(true);
+            model.clearSelection();
+            final int tIdx = idx;
+            // Avoiding many addSelectionInterval calls is critical for performance.
+            for (int[] row : groupRows(IntStream.of(originalSelection).map(i -> i < index ? i : i + tIdx - index).toArray())) {
+                model.addSelectionInterval(row[0], row[1]);
+            }
+            model.setValueIsAdjusting(false);
+        }
     }
 
     public void addMembersAtBeginning(List<? extends OsmPrimitive> primitives) {
