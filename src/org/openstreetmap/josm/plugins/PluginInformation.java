@@ -203,7 +203,6 @@ public class PluginInformation {
         this.icon = other.icon;
         this.iconPath = other.iconPath;
         this.canloadatruntime = other.canloadatruntime;
-        this.libraries = other.libraries;
         this.attr = new Attributes(other.attr);
         this.invalidManifestEntries.clear();
         this.invalidManifestEntries.addAll(other.invalidManifestEntries);
