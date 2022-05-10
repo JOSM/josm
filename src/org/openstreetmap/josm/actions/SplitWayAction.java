@@ -242,6 +242,7 @@ public class SplitWayAction extends JosmAction {
                 if (ds != null) {
                     ds.addDataSetListener(dataSetListener);
                 }
+                list.requestFocusInWindow();
             } else {
                 if (ds != null) {
                     ds.removeDataSetListener(dataSetListener);
