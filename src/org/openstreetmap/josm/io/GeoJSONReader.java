@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -69,7 +69,12 @@ public class GeoJSONReader extends AbstractReader {
     private static final String TYPE = "type";
     /** The record separator is 0x1E per RFC 7464 */
     private static final byte RECORD_SEPARATOR_BYTE = 0x1E;
-    private Projection projection = Projections.getProjectionByCode("EPSG:4326"); // WGS 84
+    /**
+     * WGS 84 is the specified CRS for geojson -- alternate coordinate systems are considered to be deprecated from
+     * GJ2008.
+     */
+    private static final String CRS_GEOJSON = "EPSG:4326";
+    private Projection projection = Projections.getProjectionByCode(CRS_GEOJSON); // WGS 84
 
     GeoJSONReader() {
         // Restricts visibility
@@ -92,13 +97,13 @@ public class GeoJSONReader extends AbstractReader {
             case "FeatureCollection":
                 JsonValue.ValueType valueType = object.get(FEATURES).getValueType();
                 CheckParameterUtil.ensureThat(valueType == JsonValue.ValueType.ARRAY, "features must be ARRAY, but is " + valueType);
-                parseFeatureCollection(object.getJsonArray(FEATURES));
+                parseFeatureCollection(object.getJsonArray(FEATURES), false);
                 break;
             case "Feature":
                 parseFeature(object);
                 break;
             case "GeometryCollection":
-                parseGeometryCollection(null, object);
+                parseGeometryCollection(null, object, false);
                 break;
             default:
                 parseGeometry(null, object);
@@ -106,7 +111,8 @@ public class GeoJSONReader extends AbstractReader {
     }
 
     /**
-     * Parse CRS as per https://geojson.org/geojson-spec.html#coordinate-reference-system-objects.
+     * Parse CRS as per <a href="https://geojson.org/geojson-spec.html#coordinate-reference-system-objects">
+     * https://geojson.org/geojson-spec.html#coordinate-reference-system-objects</a>.
      * CRS are obsolete in RFC7946 but still allowed for interoperability with older applications.
      * Only named CRS are supported.
      *
@@ -116,19 +122,19 @@ public class GeoJSONReader extends AbstractReader {
     private void parseCrs(final JsonObject crs) throws IllegalDataException {
         if (crs != null) {
             // Inspired by https://github.com/JOSM/geojson/commit/f13ceed4645244612a63581c96e20da802779c56
-            JsonObject properties = crs.getJsonObject("properties");
+            JsonObject properties = crs.getJsonObject(PROPERTIES);
             if (properties != null) {
                 switch (crs.getString(TYPE)) {
                     case NAME:
                         String crsName = properties.getString(NAME);
                         if ("urn:ogc:def:crs:OGC:1.3:CRS84".equals(crsName)) {
                             // https://osgeo-org.atlassian.net/browse/GEOT-1710
-                            crsName = "EPSG:4326";
+                            crsName = CRS_GEOJSON;
                         } else if (crsName.startsWith("urn:ogc:def:crs:EPSG:")) {
                             crsName = crsName.replace("urn:ogc:def:crs:", "");
                         }
                         projection = Optional.ofNullable(Projections.getProjectionByCode(crsName))
-                                .orElse(Projections.getProjectionByCode("EPSG:4326")); // WGS84
+                                .orElse(Projections.getProjectionByCode(CRS_GEOJSON)); // WGS84
                         break;
                     case LINK: // Not supported (security risk)
                     default:
@@ -138,79 +144,95 @@ public class GeoJSONReader extends AbstractReader {
         }
     }
 
-    private void parseFeatureCollection(final JsonArray features) {
-        for (JsonValue feature : features) {
-            if (feature instanceof JsonObject) {
-                parseFeature((JsonObject) feature);
-            }
+    private Optional<? extends OsmPrimitive> parseFeatureCollection(final JsonArray features, boolean createRelation) {
+        List<OsmPrimitive> primitives = features.stream().filter(JsonObject.class::isInstance).map(JsonObject.class::cast)
+                .map(this::parseFeature).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        if (createRelation && primitives.size() > 1) {
+            Relation relation = new Relation();
+            relation.setMembers(primitives.stream().map(osm -> new RelationMember("", osm)).collect(Collectors.toList()));
+            getDataSet().addPrimitive(relation);
+            return Optional.of(relation);
+        } else if (primitives.size() == 1) {
+            return Optional.of(primitives.get(0));
         }
+        return Optional.empty();
     }
 
-    private void parseFeature(final JsonObject feature) {
+    private Optional<? extends OsmPrimitive> parseFeature(final JsonObject feature) {
         JsonValue geometry = feature.get(GEOMETRY);
         if (geometry != null && geometry.getValueType() == JsonValue.ValueType.OBJECT) {
-            parseGeometry(feature, geometry.asJsonObject());
+            return parseGeometry(feature, geometry.asJsonObject());
         } else {
             JsonValue properties = feature.get(PROPERTIES);
             if (properties != null && properties.getValueType() == JsonValue.ValueType.OBJECT) {
-                parseNonGeometryFeature(feature, properties.asJsonObject());
+                return parseNonGeometryFeature(feature, properties.asJsonObject());
             } else {
                 Logging.warn(tr("Relation/non-geometry feature without properties found: {0}", feature));
             }
         }
+        return Optional.empty();
     }
 
-    private void parseNonGeometryFeature(final JsonObject feature, final JsonObject properties) {
+    private Optional<? extends OsmPrimitive> parseNonGeometryFeature(final JsonObject feature, final JsonObject properties) {
         // get relation type
         JsonValue type = properties.get(TYPE);
         if (type == null || properties.getValueType() == JsonValue.ValueType.STRING) {
             Logging.warn(tr("Relation/non-geometry feature without type found: {0}", feature));
-            return;
+            if (!feature.containsKey(FEATURES)) {
+                return Optional.empty();
+            }
         }
 
         // create misc. non-geometry feature
-        final Relation relation = new Relation();
-        fillTagsFromFeature(feature, relation);
-        relation.put(TYPE, type.toString());
-        getDataSet().addPrimitive(relation);
-    }
-
-    private void parseGeometryCollection(final JsonObject feature, final JsonObject geometry) {
-        for (JsonValue jsonValue : geometry.getJsonArray("geometries")) {
-            parseGeometry(feature, jsonValue.asJsonObject());
+        OsmPrimitive primitive = null;
+        if (feature.containsKey(FEATURES) && feature.get(FEATURES).getValueType() == JsonValue.ValueType.ARRAY) {
+            Optional<? extends OsmPrimitive> osm = parseFeatureCollection(feature.getJsonArray(FEATURES), true);
+            if (osm.isPresent()) {
+                primitive = osm.get();
+                fillTagsFromFeature(feature, primitive);
+            }
         }
+        return Optional.ofNullable(primitive);
     }
 
-    private void parseGeometry(final JsonObject feature, final JsonObject geometry) {
+    private Optional<Relation> parseGeometryCollection(final JsonObject feature, final JsonObject geometry, boolean createRelation) {
+        List<RelationMember> relationMembers = new ArrayList<>(geometry.getJsonArray("geometries").size());
+        for (JsonValue jsonValue : geometry.getJsonArray("geometries")) {
+            parseGeometry(feature, jsonValue.asJsonObject()).map(osm -> new RelationMember("", osm)).ifPresent(relationMembers::add);
+        }
+        if (createRelation) {
+            Relation relation = new Relation();
+            relation.setMembers(relationMembers);
+            getDataSet().addPrimitive(relation);
+            return Optional.of(fillTagsFromFeature(feature, relation));
+        }
+        return Optional.empty();
+    }
+
+    private Optional<? extends OsmPrimitive> parseGeometry(final JsonObject feature, final JsonObject geometry) {
         if (geometry == null) {
             parseNullGeometry(feature);
-            return;
+            return Optional.empty();
         }
 
         switch (geometry.getString(TYPE)) {
             case "Point":
-                parsePoint(feature, geometry.getJsonArray(COORDINATES));
-                break;
+                return parsePoint(feature, geometry.getJsonArray(COORDINATES));
             case "MultiPoint":
-                parseMultiPoint(feature, geometry);
-                break;
+                return parseMultiPoint(feature, geometry);
             case "LineString":
-                parseLineString(feature, geometry.getJsonArray(COORDINATES));
-                break;
+                return parseLineString(feature, geometry.getJsonArray(COORDINATES));
             case "MultiLineString":
-                parseMultiLineString(feature, geometry);
-                break;
+                return parseMultiLineString(feature, geometry);
             case "Polygon":
-                parsePolygon(feature, geometry.getJsonArray(COORDINATES));
-                break;
+                return parsePolygon(feature, geometry.getJsonArray(COORDINATES));
             case "MultiPolygon":
-                parseMultiPolygon(feature, geometry);
-                break;
+                return parseMultiPolygon(feature, geometry);
             case "GeometryCollection":
-                parseGeometryCollection(feature, geometry);
-                break;
+                return parseGeometryCollection(feature, geometry, true);
             default:
                 parseUnknown(geometry);
+                return Optional.empty();
         }
     }
 
@@ -230,34 +252,47 @@ public class GeoJSONReader extends AbstractReader {
         }
     }
 
-    private void parsePoint(final JsonObject feature, final JsonArray coordinates) {
-        fillTagsFromFeature(feature, createNode(getLatLon(coordinates)));
+    private Optional<Node> parsePoint(final JsonObject feature, final JsonArray coordinates) {
+        return Optional.of(fillTagsFromFeature(feature, createNode(getLatLon(coordinates))));
     }
 
-    private void parseMultiPoint(final JsonObject feature, final JsonObject geometry) {
+    private Optional<Relation> parseMultiPoint(final JsonObject feature, final JsonObject geometry) {
+        List<RelationMember> nodes = new ArrayList<>(geometry.getJsonArray(COORDINATES).size());
         for (JsonValue coordinate : geometry.getJsonArray(COORDINATES)) {
-            parsePoint(feature, coordinate.asJsonArray());
+            parsePoint(feature, coordinate.asJsonArray()).map(node -> new RelationMember("", node)).ifPresent(nodes::add);
         }
+        Relation returnRelation = new Relation();
+        returnRelation.setMembers(nodes);
+        getDataSet().addPrimitive(returnRelation);
+        return Optional.of(fillTagsFromFeature(feature, returnRelation));
     }
 
-    private void parseLineString(final JsonObject feature, final JsonArray coordinates) {
+    private Optional<Way> parseLineString(final JsonObject feature, final JsonArray coordinates) {
         if (!coordinates.isEmpty()) {
-            createWay(coordinates, false)
-                .ifPresent(way -> fillTagsFromFeature(feature, way));
+            Optional<Way> way = createWay(coordinates, false);
+            way.ifPresent(tWay -> fillTagsFromFeature(feature, tWay));
+            return way;
         }
+        return Optional.empty();
     }
 
-    private void parseMultiLineString(final JsonObject feature, final JsonObject geometry) {
+    private Optional<Relation> parseMultiLineString(final JsonObject feature, final JsonObject geometry) {
+        final List<RelationMember> ways = new ArrayList<>(geometry.getJsonArray(COORDINATES).size());
         for (JsonValue coordinate : geometry.getJsonArray(COORDINATES)) {
-            parseLineString(feature, coordinate.asJsonArray());
+            parseLineString(feature, coordinate.asJsonArray()).map(way -> new RelationMember("", way)).ifPresent(ways::add);
         }
+        final Relation relation = new Relation();
+        relation.setMembers(ways);
+        getDataSet().addPrimitive(relation);
+        return Optional.of(fillTagsFromFeature(feature, relation));
     }
 
-    private void parsePolygon(final JsonObject feature, final JsonArray coordinates) {
+    private Optional<? extends OsmPrimitive> parsePolygon(final JsonObject feature, final JsonArray coordinates) {
         final int size = coordinates.size();
         if (size == 1) {
-            createWay(coordinates.getJsonArray(0), true)
-                .ifPresent(way -> fillTagsFromFeature(feature, way));
+            Optional<Way> optionalWay = createWay(coordinates.getJsonArray(0), true);
+            optionalWay.ifPresent(way -> fillTagsFromFeature(feature, way));
+            return optionalWay;
         } else if (size > 1) {
             // create multipolygon
             final Relation multipolygon = new Relation();
@@ -272,13 +307,19 @@ public class GeoJSONReader extends AbstractReader {
             fillTagsFromFeature(feature, multipolygon);
             multipolygon.put(TYPE, "multipolygon");
             getDataSet().addPrimitive(multipolygon);
+            return Optional.of(multipolygon);
         }
+        return Optional.empty();
     }
 
-    private void parseMultiPolygon(final JsonObject feature, final JsonObject geometry) {
+    private Optional<Relation> parseMultiPolygon(final JsonObject feature, final JsonObject geometry) {
+        List<RelationMember> relationMembers = new ArrayList<>(geometry.getJsonArray(COORDINATES).size());
         for (JsonValue coordinate : geometry.getJsonArray(COORDINATES)) {
-            parsePolygon(feature, coordinate.asJsonArray());
+            parsePolygon(feature, coordinate.asJsonArray()).map(poly -> new RelationMember("", poly)).ifPresent(relationMembers::add);
         }
+        Relation relation = new Relation();
+        relation.setMembers(relationMembers);
+        return Optional.of(fillTagsFromFeature(feature, relation));
     }
 
     private Node createNode(final LatLon latlon) {
@@ -336,18 +377,21 @@ public class GeoJSONReader extends AbstractReader {
      * Merge existing tags in primitive (if any) with the values given in the GeoJSON feature.
      * @param feature the GeoJSON feature
      * @param primitive the OSM primitive
+     * @param <O> The primitive type
+     * @return The primitive passed in as {@code primitive} for easier chaining
      */
-    private static void fillTagsFromFeature(final JsonObject feature, final OsmPrimitive primitive) {
+    private static <O extends OsmPrimitive> O fillTagsFromFeature(final JsonObject feature, final O primitive) {
         if (feature != null) {
             TagCollection featureTags = getTags(feature);
             primitive.setKeys(new TagMap(primitive.isTagged() ? mergeAllTagValues(primitive, featureTags) : featureTags));
         }
+        return primitive;
     }
 
     private static TagCollection mergeAllTagValues(final OsmPrimitive primitive, TagCollection featureTags) {
         TagCollection tags = TagCollection.from(primitive).union(featureTags);
         TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tags);
-        TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(tags, Arrays.asList(primitive));
+        TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(tags, Collections.singletonList(primitive));
         TagConflictResolverModel tagModel = new TagConflictResolverModel();
         tagModel.populate(new TagCollection(tags), tags.getKeysWithMultipleValues());
         tagModel.actOnDecisions((k, d) -> d.keepAll());
@@ -454,7 +498,7 @@ public class GeoJSONReader extends AbstractReader {
                 List<Way> mpWays = new ArrayList<>();
                 Way replacement = null;
                 for (OsmPrimitive p : e.getPrimitives()) {
-                    if (p.isTagged() && p.referrers(Relation.class).count() == 0)
+                    if (p.isTagged() && !p.referrers(Relation.class).findAny().isPresent())
                         replacement = (Way) p;
                     else if (p.referrers(Relation.class).anyMatch(Relation::isMultipolygon))
                         mpWays.add((Way) p);
