@@ -44,13 +44,13 @@ class ImageDataTest {
         ImageData data = new ImageData();
         assertEquals(0, data.getImages().size());
         assertNull(data.getSelectedImage());
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         assertNull(data.getSelectedImage());
-        data.selectLastImage();
+        data.setSelectedImage(data.getLastImage());
         assertNull(data.getSelectedImage());
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         assertNull(data.getSelectedImage());
-        data.selectPreviousImage();
+        data.setSelectedImage(data.getPreviousImage());
         assertNull(data.getSelectedImage());
         assertFalse(data.hasNextImage());
         assertFalse(data.hasPreviousImage());
@@ -95,7 +95,7 @@ class ImageDataTest {
         List<ImageEntry> list = getOneImage();
 
         ImageData data = new ImageData(list);
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         assertEquals(1, data.getSelectedImages().size());
         assertEquals(list.get(0), data.getSelectedImages().get(0));
     }
@@ -106,7 +106,7 @@ class ImageDataTest {
         list.add(new ImageEntry());
 
         ImageData data = new ImageData(list);
-        data.selectLastImage();
+        data.setSelectedImage(data.getLastImage());
         assertEquals(1, data.getSelectedImages().size());
         assertEquals(list.get(1), data.getSelectedImages().get(0));
     }
@@ -117,12 +117,12 @@ class ImageDataTest {
 
         ImageData data = new ImageData(list);
         assertTrue(data.hasNextImage());
-        data.selectNextImage();
+        data.setSelectedImage(data.getNextImage());
         assertEquals(1, data.getSelectedImages().size());
         assertEquals(list.get(0), data.getSelectedImages().get(0));
         assertFalse(data.hasNextImage());
-        data.selectNextImage();
-        assertEquals(list.get(0), data.getSelectedImages().get(0));
+        data.setSelectedImage(data.getNextImage());
+        assertTrue(data.getSelectedImages().isEmpty());
     }
 
     @Test
@@ -132,13 +132,13 @@ class ImageDataTest {
 
         ImageData data = new ImageData(list);
         assertFalse(data.hasPreviousImage());
-        data.selectLastImage();
+        data.setSelectedImage(data.getLastImage());
         assertTrue(data.hasPreviousImage());
-        data.selectPreviousImage();
+        data.setSelectedImage(data.getPreviousImage());
         assertEquals(1, data.getSelectedImages().size());
         assertEquals(list.get(0), data.getSelectedImages().get(0));
-        data.selectPreviousImage();
-        assertEquals(list.get(0), data.getSelectedImages().get(0));
+        data.setSelectedImage(data.getPreviousImage());
+        assertTrue(data.getSelectedImages().isEmpty());
     }
 
     @Test
@@ -176,8 +176,8 @@ class ImageDataTest {
             listener.selectedImageChanged(data); times = 1;
         }};
         data.addImageDataUpdateListener(listener);
-        data.selectFirstImage();
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
+        data.setSelectedImage(data.getFirstImage());
     }
 
     @Test
@@ -186,7 +186,7 @@ class ImageDataTest {
         list.add(new ImageEntry());
 
         ImageData data = new ImageData(list);
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         data.addImageToSelection(list.get(1));
         data.removeSelectedImages();
         assertEquals(0, data.getImages().size());
@@ -198,9 +198,11 @@ class ImageDataTest {
         List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
         list.add(new ImageEntry());
+        // The images cannot be equal -- otherwise, some code gives us the wrong result.
+        list.get(1).setPos(LatLon.NORTH_POLE);
 
         ImageData data = new ImageData(list);
-        data.selectLastImage();
+        data.setSelectedImage(data.getLastImage());
         data.addImageToSelection(list.get(1));
         data.removeSelectedImages();
         assertEquals(1, data.getImages().size());
@@ -213,7 +215,7 @@ class ImageDataTest {
         list.add(new ImageEntry());
 
         ImageData data = new ImageData(list);
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         data.removeSelectedImages();
         assertEquals(1, data.getImages().size());
         assertEquals(1, data.getSelectedImages().size());
@@ -226,7 +228,7 @@ class ImageDataTest {
         list.add(new ImageEntry());
 
         ImageData data = new ImageData(list);
-        data.selectLastImage();
+        data.setSelectedImage(data.getLastImage());
         data.removeSelectedImages();
         assertEquals(1, data.getImages().size());
         assertEquals(1, data.getSelectedImages().size());
@@ -249,7 +251,7 @@ class ImageDataTest {
             listener.selectedImageChanged(data); times = 2;
         }};
         data.addImageDataUpdateListener(listener);
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         data.removeSelectedImages();
     }
 
@@ -269,7 +271,7 @@ class ImageDataTest {
             listener.selectedImageChanged(data); times = 2;
         }};
         data.addImageDataUpdateListener(listener);
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         data.removeSelectedImages();
     }
 
@@ -354,10 +356,10 @@ class ImageDataTest {
         list.add(new ImageEntry());
 
         ImageData data = new ImageData(list);
-        data.selectLastImage();
+        data.setSelectedImage(data.getLastImage());
         data.removeImageToSelection(list.get(1));
         assertEquals(0, data.getSelectedImages().size());
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         assertEquals(1, data.getSelectedImages().size());
     }
 
@@ -368,7 +370,7 @@ class ImageDataTest {
 
         ImageData data = new ImageData(list);
         assertFalse(data.isImageSelected(list.get(0)));
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         assertTrue(data.isImageSelected(list.get(0)));
         data.addImageToSelection(list.get(1));
         assertTrue(data.isImageSelected(list.get(0)));
@@ -393,7 +395,7 @@ class ImageDataTest {
         data.clearSelectedImage();
         assertEquals(0, data.getSelectedImages().size());
         data.addImageToSelection(list.get(1));
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         assertEquals(1, data.getSelectedImages().size());
     }
 
@@ -413,7 +415,7 @@ class ImageDataTest {
             listener.selectedImageChanged(data); times = 3;
         }};
         data.addImageDataUpdateListener(listener);
-        data.selectFirstImage();
+        data.setSelectedImage(data.getFirstImage());
         data.addImageToSelection(list.get(1));
         data.removeImageToSelection(list.get(0));
     }
