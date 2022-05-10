@@ -4,8 +4,10 @@ package org.openstreetmap.josm.actions.upload;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -63,9 +65,14 @@ public class UploadNotesTask {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             OsmApi api = OsmApi.getOsmApi();
-            for (Note note : noteData.getNotes()) {
+            final Collection<Note> modifiedNotes = noteData.getNotes().stream()
+                    .filter(note -> Optional.ofNullable(note.getLastComment()).map(NoteComment::isNew).orElse(false))
+                    .collect(Collectors.toList());
+            getProgressMonitor().setTicksCount(modifiedNotes.size());
+            for (Note note : modifiedNotes) {
+                getProgressMonitor().setCustomText(tr("Uploading notes {0}/{1}", getProgressMonitor().getTicks(),
+                        getProgressMonitor().getTicksCount()));
                 if (isCanceled) {
                     Logging.info("Note upload interrupted by user");
                     break;
@@ -73,9 +80,10 @@ public class UploadNotesTask {
                 for (NoteComment comment : note.getComments()) {
                     if (comment.isNew()) {
                         Logging.debug("found note change to upload");
-                        processNoteComment(monitor, api, note, comment);
+                        processNoteComment(getProgressMonitor(), api, note, comment);
                     }
                 }
+                getProgressMonitor().worked(1);
             }
         }
 
