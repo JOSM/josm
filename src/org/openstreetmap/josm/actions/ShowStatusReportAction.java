@@ -335,10 +335,11 @@ public final class ShowStatusReportAction extends JosmAction {
             if ("file-open.history".equals(key)
                     || "download.overpass.query".equals(key)
                     || "download.overpass.queries".equals(key)
+                    || "iodb.stored.offsets".equals(key)
                     || key.contains("username")
                     || key.contains("password")
                     || key.contains("access-token")) {
-                // Remove sensitive information from status report
+                // Remove sensitive or large information from status report
                 return;
             }
             text.append(paramCleanup(key))
