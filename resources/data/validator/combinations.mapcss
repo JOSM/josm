@@ -715,7 +715,7 @@ way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][on
 }
 
 /* #10932, #19609 */
-way[/^.*:lanes$/][highway][!lanes][!source:lanes],
+way[/^.*:lanes$/][!lanes][highway][!source:lanes],
 way[/^.*:lanes:(forward|backward|both_ways)$/][!lanes][highway],
 way[/^.*:lanes:both_ways$/][!lanes:both_ways][highway] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
