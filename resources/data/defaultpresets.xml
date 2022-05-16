@@ -1958,6 +1958,7 @@
             <key key="tunnel" value="yes" />
             <optional>
                 <text key="name" text="Name" />
+                <text key="tunnel:name" text="Tunnel name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" default="-1" length="3" values_sort="false" />
                 <text key="width" text="Width (meters)" />
                 <text key="maxheight" text="Max. height (meters)" />
