@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -120,6 +121,10 @@ public class MapCSSRuleIndex {
         }
     }
 
+    /** Valid key types for indexing (see {@link ConditionFactory.KeyMatchType}) */
+    private static final EnumSet<ConditionFactory.KeyMatchType> VALID_INDEX_KEY_TYPES = EnumSet.of(
+            ConditionFactory.KeyMatchType.EQ, ConditionFactory.KeyMatchType.TRUE, ConditionFactory.KeyMatchType.FALSE);
+
     /**
      * All rules this index is for. Once this index is built, this list is sorted.
      */
@@ -186,7 +191,7 @@ public class MapCSSRuleIndex {
     private static String findAnyRequiredKey(List<Condition> conds) {
         String key = null;
         for (Condition c : conds) {
-            if (c instanceof KeyCondition) {
+            if (c instanceof KeyCondition && VALID_INDEX_KEY_TYPES.contains(((KeyCondition) c).matchType)) {
                 KeyCondition keyCondition = (KeyCondition) c;
                 if (!keyCondition.negateResult) {
                     key = keyCondition.label;
