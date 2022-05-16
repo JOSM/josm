@@ -5653,7 +5653,8 @@
             <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <reference ref="name_operator" />
-                <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels:underground" text="Levels below ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
             <preset_link preset_name="Address" />
@@ -5664,7 +5665,8 @@
             <combo key="building" text="Building" values="yes,residential,apartments,ger,house,hotel,hut,bungalow,dormitory,terrace,detached,farm,stilt_house" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
             <optional>
                 <reference ref="name_operator" />
-                <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels:underground" text="Levels below ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
             <preset_link preset_name="Address" />
@@ -5673,8 +5675,9 @@
             <link wiki="Key:building:part" />
             <space />
             <combo key="building:part" text="Building part" values="allotment_house,bakehouse,barn,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,greenhouse,hangar,hospital,industrial,office,parking,retail,roof,ruins,school,shed,supermarket,toilets,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
-            <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+            <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <combo key="building:min_level" text="Skipped Levels" values="1,2,3,4,5,6,7,8,9,10" text_context="building" />
+            <combo key="building:levels:underground" text="Levels below ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" length="7" />
             <text key="min_height" text="Skipped height (meters)" />
         </item> <!-- Building part -->
@@ -5685,7 +5688,8 @@
             <combo key="construction" text="Building type" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse" values_context="building" />
             <optional>
                 <reference ref="name_operator" />
-                <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels:underground" text="Levels below ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
             <preset_link preset_name="Address" />
