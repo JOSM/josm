@@ -91,7 +91,7 @@ public class JosmMapViewer extends JMapViewer {
     public static class DefaultOsmTileSourceProvider implements TileSourceProvider {
 
         protected static final StringProperty DEFAULT_OSM_TILE_URL = new StringProperty(
-                "default.osm.tile.source.url", "https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");
+                "default.osm.tile.source.url", "https://tile.openstreetmap.org/{zoom}/{x}/{y}.png");
 
         @Override
         public List<TileSource> getTileSources() {

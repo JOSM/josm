@@ -85,11 +85,11 @@ class ImageryHandlerTest {
     void testBuildImageryInfo() throws Exception {
         String url = "https://localhost/imagery?title=osm"
                 + "&type=tms&min_zoom=3&max_zoom=23&category=osmbasedmap&country_code=XA"
-                + "&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png";
+                + "&url=https://tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png";
         ImageryInfo imageryInfo = newHandler(url).buildImageryInfo();
         assertEquals("osm", imageryInfo.getName());
         assertEquals(ImageryInfo.ImageryType.TMS, imageryInfo.getImageryType());
-        assertEquals("https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png", imageryInfo.getUrl());
+        assertEquals("https://tile.openstreetmap.org/{zoom}/{x}/{y}.png", imageryInfo.getUrl());
         assertEquals(3, imageryInfo.getMinZoom());
         assertEquals(23, imageryInfo.getMaxZoom());
         assertEquals(ImageryInfo.ImageryCategory.OSMBASEDMAP, imageryInfo.getImageryCategory());
