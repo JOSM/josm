@@ -102,11 +102,11 @@ public class OpeningHourTest extends TagTest {
         String prettifiedValue = null;
         try {
             final boolean strict = PREF_STRICT_MODE.get();
-            final List<Rule> rules = new OpeningHoursParser(new StringReader(value)).rules(strict);
+            final List<Rule> rules = new OpeningHoursParser(new StringReader(value)).rules(strict, false);
             prettifiedValue = Util.rulesToOpeningHoursString(rules);
             if (!Objects.equals(value, prettifiedValue) && !strict) {
                 // parse again in strict mode for detailed message
-                new OpeningHoursParser(new StringReader(value)).rules(true);
+                new OpeningHoursParser(new StringReader(value)).rules(true, false);
             }
         } catch (OpeningHoursParseException e) {
             String message = e.getExceptions().stream()
