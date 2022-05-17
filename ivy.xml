@@ -30,7 +30,7 @@
         <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
         <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.17.0" transitive="false"/>
         <dependency conf="api->default" org="com.formdev" name="svgSalamander" rev="1.1.3"/>
-        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.26.0"/>
+        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.27.0"/>
         <dependency conf="api->default" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2021.3.21"/>
         <!-- sources->sources -->
