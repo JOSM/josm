@@ -407,7 +407,12 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
             if (note != null) {
                 int selectedIndex = displayList.getSelectedIndex();
                 noteData.closeNote(note, dialog.getInputText());
-                noteData.setSelectedNote(model.getElementAt(selectedIndex));
+                // This is required since filtering may cause the model to not have any visible elements
+                if (model.getSize() > 0) {
+                    noteData.setSelectedNote(model.getElementAt(selectedIndex));
+                } else {
+                    noteData.setSelectedNote(null);
+                }
             }
         }
     }

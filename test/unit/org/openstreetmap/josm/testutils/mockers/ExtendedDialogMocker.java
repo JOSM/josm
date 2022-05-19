@@ -142,6 +142,37 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
         }
     }
 
+    /**
+     * Get the result field for an extended dialog instance
+     * @param instance The instance to get the result field for
+     * @return The result field. May be private.
+     * @throws NoSuchFieldException If the field cannot be found. Should never be thrown.
+     */
+    protected Field getResultField(ExtendedDialog instance) throws NoSuchFieldException {
+        // Note that subclasses of ExtendedDialogMocker will not have "result" as a declared field.
+        // Iterate up the chain until we get to a field that has "result" as a declared field.
+        // Only reason for this is just in case someone overrides the logic in ExtendedDialog.
+        Class<?> clazz = instance.getClass();
+        Field resultField = null;
+        // Store the exception, if any
+        NoSuchFieldException noSuchFieldException = null;
+        while (!Object.class.equals(clazz) && resultField == null) {
+            try {
+                resultField = clazz.getDeclaredField("result");
+            } catch (NoSuchFieldException e) {
+                clazz = instance.getClass().getSuperclass();
+                // Only save the first exception
+                if (noSuchFieldException == null) {
+                    noSuchFieldException = e;
+                }
+            }
+        }
+        if (resultField == null) {
+            throw noSuchFieldException;
+        }
+        return resultField;
+    }
+
     @Mock
     private void setupDialog(final Invocation invocation) {
         if (!GraphicsEnvironment.isHeadless()) {
@@ -159,7 +190,7 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
                 this.act(instance);
                 final int mockResult = this.getMockResult(instance);
                 // TODO check validity of mockResult?
-                Field resultField = instance.getClass().getDeclaredField("result");
+                final Field resultField = this.getResultField(instance);
                 resultField.setAccessible(true);
                 resultField.set(instance, mockResult);
                 Logging.info(
