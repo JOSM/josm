@@ -37,13 +37,13 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     protected boolean shift;
     /**
      * {@code true} if the meta key was pressed (the "Windows" key or the Mac "Command" key)
-     * @since xxx
+     * @since 18456
      */
     protected boolean meta;
     /**
      * {@code true} if the platform specific menu key was pressed ("ctrl" on Linux/Windows, "cmd" on Mac)
      * @see PlatformHook#getMenuShortcutKeyMaskEx()
-     * @since xxx
+     * @since 18456
      */
     protected boolean platformMenuShortcutKeyMask;
 

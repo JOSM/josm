@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Christiaan Welvaart &lt;cjw@time4t.net&gt;
  * @param <T> The type of {@link IRelationMember}
- * @since 1785, xxx (generics)
+ * @since 1785, 17862 (generics)
  */
 public class RelationNodeMap<T extends IRelationMember<? extends IPrimitive>> {
 
