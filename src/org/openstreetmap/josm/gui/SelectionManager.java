@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * Manages the selection of a rectangle or a lasso loop. Listening to left and right mouse button
@@ -185,7 +186,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1 && MainApplication.getLayerManager().getActiveDataSet() != null) {
             SelectByInternalPointAction.performSelection(MainApplication.getMap().mapView.getEastNorth(e.getX(), e.getY()),
                     (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0,
-                    (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0);
+                    (e.getModifiersEx() & PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()) != 0);
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             mousePosStart = mousePos = e.getPoint();
 

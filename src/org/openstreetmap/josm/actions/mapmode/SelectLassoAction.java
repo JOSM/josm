@@ -54,4 +54,9 @@ public class SelectLassoAction extends MapMode {
     public boolean layerIsSupported(Layer l) {
         return MainApplication.getMap().mapModeSelect.layerIsSupported(l);
     }
+
+    @Override
+    public String getModeHelpText() {
+        return MainApplication.getMap().mapModeSelect.getModeHelpText();
+    }
 }

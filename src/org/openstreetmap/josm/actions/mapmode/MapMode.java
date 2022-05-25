@@ -20,6 +20,8 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformHook;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -33,6 +35,17 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     protected boolean ctrl;
     protected boolean alt;
     protected boolean shift;
+    /**
+     * {@code true} if the meta key was pressed (the "Windows" key or the Mac "Command" key)
+     * @since xxx
+     */
+    protected boolean meta;
+    /**
+     * {@code true} if the platform specific menu key was pressed ("ctrl" on Linux/Windows, "cmd" on Mac)
+     * @see PlatformHook#getMenuShortcutKeyMaskEx()
+     * @since xxx
+     */
+    protected boolean platformMenuShortcutKeyMask;
 
     /**
      * Constructor for mapmodes without a menu
@@ -154,7 +167,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     }
 
     /**
-     * Update internal ctrl, alt, shift mask from given extended modifiers mask.
+     * Update internal ctrl, alt, shift, meta mask from given extended modifiers mask.
      * @param modifiers event extended modifiers mask
      * @since 12517
      */
@@ -162,6 +175,8 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
         ctrl = (modifiers & InputEvent.CTRL_DOWN_MASK) != 0;
         alt = (modifiers & (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK)) != 0;
         shift = (modifiers & InputEvent.SHIFT_DOWN_MASK) != 0;
+        meta = (modifiers & InputEvent.META_DOWN_MASK) != 0;
+        platformMenuShortcutKeyMask = (modifiers & PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()) != 0;
     }
 
     /**
