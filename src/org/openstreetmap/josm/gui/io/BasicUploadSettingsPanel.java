@@ -232,7 +232,7 @@ public class BasicUploadSettingsPanel extends JPanel implements ActionListener, 
      * Add the "source" tag
      * @return The source from the layer info.
      */
-    private String getSourceFromLayer() {
+    String getSourceFromLayer() {
         String source = MainApplication.getMap().mapView.getLayerInformationForSourceTag();
         return Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH);
     }

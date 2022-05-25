@@ -238,6 +238,10 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
         model.clear();
         model.putAll(map);          // init with tags from history
         model.putAll(this.dataSet); // overwrite with tags from the dataset
+        if (Config.getPref().getBoolean("upload.source.obtainautomatically", false)
+        && this.dataSet.getChangeSetTags().containsKey(UploadDialogModel.SOURCE)) {
+            model.put(UploadDialogModel.SOURCE, pnlBasicUploadSettings.getSourceFromLayer());
+        }
 
         tpConfigPanels.setSelectedIndex(0);
         pnlTagEditor.initAutoCompletion(MainApplication.getLayerManager().getEditLayer());

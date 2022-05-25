@@ -1278,6 +1278,11 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     }
 
     @Override
+    public String getChangesetSourceTag() {
+        return this.data.getChangeSetTags().getOrDefault("source", null);
+    }
+
+    @Override
     public AbstractUploadDialog getUploadDialog() {
         UploadDialog dialog = UploadDialog.getUploadDialog();
         dialog.setUploadedPrimitives(new APIDataSet(data));
