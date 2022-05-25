@@ -8014,9 +8014,7 @@
             <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" />
             <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" />
             <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" />
-            <check key="payment:ep_monedero" text="Mondero (ar)" match="keyvalue" />
             <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" />
-            <check key="payment:ep_moneo" text="Moneo (fr)" match="keyvalue" />
         </checkgroup>
         <space />
         <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="no" match="keyvalue" />
