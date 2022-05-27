@@ -9104,6 +9104,7 @@
             <link wiki="Key:addr" />
             <space />
             <text key="addr:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
+            <check key="nohousenumber" text="House has no house number" disable_off="true"/>
             <text key="addr:street" text="Street name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
             <optional>
                 <text key="addr:city" text="City name" use_last_as_default="force" match="key" />

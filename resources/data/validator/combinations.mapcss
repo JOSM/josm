@@ -285,7 +285,7 @@ area[construction][!building][!highway][!landuse]:closed,
   group: tr("missing tag");
 }
 
-/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530, #21736 */
+/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530, #21736, #22076 */
 *[power=plant][/^generator:/],
 *[power=generator][/^plant:/],
 *[power=plant][voltage],
@@ -295,6 +295,8 @@ node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
 *[amenity=vending_machine][shop],
 *[noname?][name],
+*[noref?][ref],
+*[nohousenumber?][addr:housenumber],
 *[actuator][handle][actuator !~ /(^|;)manual(;|$)/],
 *[mechanical_driver][handle][mechanical_driver !~ /(^|;)manual(;|$)/],
 way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/],
