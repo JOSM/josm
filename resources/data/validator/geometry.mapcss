@@ -322,7 +322,7 @@ way >[index=1] node,
 way >[index=-1] node {
   set first_last_node;
 }
-way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal|weighbridge|taxi|toilets)$/],
+way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal|weighbridge|taxi|toilets|ticket_validator)$/],
 way[highway] > node[building][!entrance],
 way[highway] > node[leisure][!entrance][leisure!=slipway][leisure!=fitness_station],
 way[highway] > node[office][!entrance],
