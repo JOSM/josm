@@ -651,6 +651,29 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
+     * Replies the segment lengths of the way as computed by {@link LatLon#greatCircleDistance}.
+     *
+     * @return The segment lengths of a way in metres, following way direction
+     * @since xxx
+     */
+    public double[] getSegmentLengths() {
+        List<Double> segmentLengths = new ArrayList<>();
+        Node lastN = null;
+        for (Node n:nodes) {
+            if (lastN != null) {
+                LatLon lastNcoor = lastN.getCoor();
+                LatLon coor = n.getCoor();
+                if (lastNcoor != null && coor != null) {
+                    double distance = coor.greatCircleDistance(lastNcoor);
+                    segmentLengths.add(distance);
+                }
+            }
+            lastN = n;
+        }
+        return segmentLengths.stream().mapToDouble(i -> i).toArray();
+    }
+
+    /**
      * Replies the length of the longest segment of the way, in metres, as computed by {@link LatLon#greatCircleDistance}.
      * @return The length of the segment, in metres
      * @since 8320

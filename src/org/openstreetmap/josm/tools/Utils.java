@@ -226,7 +226,7 @@ public final class Utils {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
-        return array;
+        return null;
     }
 
     /**
@@ -239,7 +239,7 @@ public final class Utils {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
-        return array;
+        return null;
     }
 
     /**
@@ -252,7 +252,7 @@ public final class Utils {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
-        return array;
+        return null;
     }
 
     /**
@@ -265,7 +265,7 @@ public final class Utils {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
-        return array;
+        return null;
     }
 
     /**
@@ -1301,6 +1301,44 @@ public final class Utils {
         } else {
             return distance > 0 && distance <= 2;
         }
+    }
+
+    /**
+     * Calculates the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of population.
+     * @param values an array of values
+     * @return standard deviation of the given array, or -1.0 if the array has less than two values
+     * @see #getStandardDeviation(double[], double)
+     * @since xxx
+     */
+    public static double getStandardDeviation(double[] values) {
+        return getStandardDeviation(values, Double.NaN);
+    }
+
+    /**
+     * Calculates the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of population with the given
+     * mean value.
+     * @param values an array of values
+     * @param mean precalculated average value of the array
+     * @return standard deviation of the given array, or -1.0 if the array has less than two values
+     * @see #getStandardDeviation(double[])
+     * @since xxx
+     */
+    public static double getStandardDeviation(double[] values, double mean) {
+        if (values.length < 2) {
+            return -1.0;
+        }
+
+        double standardDeviation = 0;
+
+        if (Double.isNaN(mean)) {
+            mean = Arrays.stream(values).average().orElse(0);
+        }
+
+        for (double length : values) {
+            standardDeviation += Math.pow(length - mean, 2);
+        }
+
+        return Math.sqrt(standardDeviation / values.length);
     }
 
     /**
