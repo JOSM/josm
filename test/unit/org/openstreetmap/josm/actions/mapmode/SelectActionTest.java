@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -94,7 +95,7 @@ class SelectActionTest {
         event = new MouseEvent(map,
                                MouseEvent.MOUSE_PRESSED,
                                0,
-                               InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
+                               InputEvent.BUTTON1_DOWN_MASK | PlatformManager.getPlatform().getMenuShortcutKeyMaskEx(),
                                100, 0,
                                1,
                                false, MouseEvent.BUTTON1);
@@ -102,7 +103,7 @@ class SelectActionTest {
         event = new MouseEvent(map,
                                MouseEvent.MOUSE_DRAGGED,
                                1000,
-                               InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
+                               InputEvent.BUTTON1_DOWN_MASK | PlatformManager.getPlatform().getMenuShortcutKeyMaskEx(),
                                50, 0,
                                1,
                                false, MouseEvent.BUTTON1);
@@ -110,7 +111,7 @@ class SelectActionTest {
         event = new MouseEvent(map,
                                MouseEvent.MOUSE_RELEASED,
                                2000,
-                               InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
+                               InputEvent.BUTTON1_DOWN_MASK | PlatformManager.getPlatform().getMenuShortcutKeyMaskEx(),
                                5, 0,
                                1,
                                false, MouseEvent.BUTTON1);
