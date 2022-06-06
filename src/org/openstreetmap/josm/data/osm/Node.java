@@ -292,9 +292,10 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     private boolean hasEqualCoordinates(Node other) {
-        final LatLon c1 = getCoor();
-        final LatLon c2 = other.getCoor();
-        return (c1 == null && c2 == null) || (c1 != null && c2 != null && c1.equalsEpsilon(c2));
+        if (this.isLatLonKnown() && other.isLatLonKnown()) {
+            return this.equalsEpsilon(other);
+        }
+        return false;
     }
 
     @Override

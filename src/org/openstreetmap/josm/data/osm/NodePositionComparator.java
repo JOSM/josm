@@ -16,7 +16,7 @@ public class NodePositionComparator implements Comparator<Node>, Serializable {
     @Override
     public int compare(Node n1, Node n2) {
 
-        if (n1.getCoor().equalsEpsilon(n2.getCoor()))
+        if (n1.equalsEpsilon(n2))
             return 0;
 
         int dLat = Double.compare(n1.lat(), n2.lat());

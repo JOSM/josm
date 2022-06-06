@@ -45,7 +45,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * Minimum difference in location to not be represented as the same position.
      * The API returns 7 decimals.
      */
-    public static final double MAX_SERVER_PRECISION = 1e-7;
+    public static final double MAX_SERVER_PRECISION = ILatLon.MAX_SERVER_PRECISION;
     /**
      * The inverse of the server precision
      * @see #MAX_SERVER_PRECISION
@@ -185,10 +185,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * @param other other lat/lon
      * @return <code>true</code> if the other point has almost the same lat/lon
      * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
+     * @deprecated since 18464 (use {@link ILatLon#equalsEpsilon(ILatLon)} instead)
      */
+    @Deprecated
     public boolean equalsEpsilon(LatLon other) {
-        double p = MAX_SERVER_PRECISION / 2;
-        return Math.abs(lat()-other.lat()) <= p && Math.abs(lon()-other.lon()) <= p;
+        return ILatLon.super.equalsEpsilon(other);
     }
 
     /**

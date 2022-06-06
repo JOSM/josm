@@ -15,6 +15,11 @@ import org.openstreetmap.josm.data.projection.Projecting;
  * @since 12161
  */
 public interface ILatLon {
+    /**
+     * Minimum difference in location to not be represented as the same position.
+     * The API returns 7 decimals.
+     */
+    double MAX_SERVER_PRECISION = 1e-7;
 
     /**
      * Returns the longitude, i.e., the east-west position in degrees.
@@ -50,5 +55,29 @@ public interface ILatLon {
         } else {
             return projecting.latlon2eastNorth(this);
         }
+    }
+
+    /**
+     * Determines if the other point has almost the same lat/lon values.
+     * @param other other lat/lon
+     * @return <code>true</code> if the other point has almost the same lat/lon
+     * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
+     * @since 18464 (extracted from {@link LatLon})
+     */
+    default boolean equalsEpsilon(ILatLon other) {
+        return equalsEpsilon(other, MAX_SERVER_PRECISION);
+    }
+
+    /**
+     * Determines if the other point has almost the same lat/lon values.
+     * @param other other lat/lon
+     * @param precision The precision to use
+     * @return <code>true</code> if the other point has almost the same lat/lon
+     * values, only differing by no more than 1 / precision.
+     * @since 18464 (extracted from {@link LatLon})
+     */
+    default boolean equalsEpsilon(ILatLon other, double precision) {
+        double p = precision / 2;
+        return Math.abs(lat() - other.lat()) <= p && Math.abs(lon() - other.lon()) <= p;
     }
 }
