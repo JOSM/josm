@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -242,6 +243,15 @@ public class UploadAction extends AbstractUploadAction {
         final UploadDialog dialog = UploadDialog.getUploadDialog();
         dialog.setUploadedPrimitives(apiData);
         dialog.initLifeCycle(layer.getDataSet());
+        Map<String, String> changesetTags = dialog.getChangeset().getKeys();
+        Map<String, String> originalChangesetTags = new HashMap<>(changesetTags);
+        for (UploadHook hook : UPLOAD_HOOKS) {
+            hook.modifyChangesetTags(changesetTags);
+        }
+        dialog.getModel().putAll(changesetTags);
+        if (!originalChangesetTags.equals(changesetTags)) {
+            dialog.setChangesetTagsModifiedProgramatically();
+        }
         dialog.setVisible(true);
         dialog.rememberUserInput();
         if (dialog.isCanceled()) {
@@ -258,10 +268,7 @@ public class UploadAction extends AbstractUploadAction {
 
         // Any hooks want to change the changeset tags?
         Changeset cs = dialog.getChangeset();
-        Map<String, String> changesetTags = cs.getKeys();
-        for (UploadHook hook : UPLOAD_HOOKS) {
-            hook.modifyChangesetTags(changesetTags);
-        }
+        changesetTags = cs.getKeys();
         for (UploadHook hook : LATE_UPLOAD_HOOKS) {
             hook.modifyChangesetTags(changesetTags);
         }
