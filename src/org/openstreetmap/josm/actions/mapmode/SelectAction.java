@@ -724,9 +724,32 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             return ds.update(() -> {
                 MoveCommand moveCmd = null;
                 if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                    EastNorth clampedEastNorth = currentEN;
+                    if (platformMenuShortcutKeyMask) {
+                        Way w = ds.getLastSelectedWay();
+                        if (w != null && w.getNodesCount() == 2) {
+                            double clamph = w.firstNode().getEastNorth().heading(w.lastNode().getEastNorth());
+                            double dh = startEN.heading(currentEN, clamph);
+                            switch ((int) (dh / (Math.PI/4))) {
+                            case 1:
+                            case 2:
+                                dh -= Math.PI/2;
+                                break;
+                            case 3:
+                            case 4:
+                                dh += Math.PI;
+                                break;
+                            case 5:
+                            case 6:
+                                dh += Math.PI/2;
+                                break;
+                            }
+                            clampedEastNorth = currentEN.rotate(startEN, -dh);
+                        }
+                    }
                     moveCmd = (MoveCommand) c;
                     moveCmd.saveCheckpoint();
-                    moveCmd.applyVectorTo(currentEN);
+                    moveCmd.applyVectorTo(clampedEastNorth);
                 } else if (!selection.isEmpty()) {
                     moveCmd = new MoveCommand(selection, startEN, currentEN);
                     UndoRedoHandler.getInstance().add(moveCmd);

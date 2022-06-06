@@ -600,6 +600,17 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                 primitive -> primitive instanceof Node || primitive instanceof Way);
     }
 
+    /**
+     * Returns the way selected last or null if no way primitives were selected or selection is empty.
+     * @return last way in selection or null
+     * @since 18468
+     */
+    public Way getLastSelectedWay() {
+        Way lastWay = null;
+        for (Way way: getSelectedWays()) lastWay = way;
+        return lastWay;
+    }
+
     @Override
     public Collection<WaySegment> getHighlightedVirtualNodes() {
         return Collections.unmodifiableCollection(highlightedVirtualNodes);
