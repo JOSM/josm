@@ -143,7 +143,7 @@ public class ListenerList<T> {
      * @return <code>true</code> if any are registered.
      */
     public boolean hasListeners() {
-        return !listeners.isEmpty();
+        return !listeners.isEmpty() || weakListeners.stream().map(l -> l.listener.get()).anyMatch(Objects::nonNull);
     }
 
     /**

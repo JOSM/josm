@@ -174,6 +174,16 @@ public class SessionWriter {
         }
 
         /**
+         * Get the index of the specified layer
+         * @param layer the layer
+         * @return the index of the specified layer
+         * @since 18466
+         */
+        public int getLayerIndexOf(Layer layer) {
+            return layers.indexOf(layer) + 1;
+        }
+
+        /**
          * Create a file inside the zip archive.
          *
          * @param zipPath the path inside the zip archive, e.g. "layers/03/data.xml"
@@ -234,6 +244,7 @@ public class SessionWriter {
             SessionLayerExporter exporter = exporters.get(layer);
             ExportSupport support = new ExportSupport(doc, index+1);
             Element el = exporter.export(support);
+            if (el == null) continue;
             el.setAttribute("index", Integer.toString(index+1));
             el.setAttribute("name", layer.getName());
             el.setAttribute("visible", Boolean.toString(layer.isVisible()));

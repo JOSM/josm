@@ -40,7 +40,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.openstreetmap.josm.actions.SessionSaveAsAction;
+import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.SessionSaveAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -92,7 +93,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     private final UploadAndSaveProgressRenderer pnlUploadLayers = new UploadAndSaveProgressRenderer();
 
     private final SaveAndProceedAction saveAndProceedAction = new SaveAndProceedAction();
-    private final SaveSessionAction saveSessionAction = new SaveSessionAction();
+    private final SaveSessionButtonAction saveSessionAction = new SaveSessionButtonAction();
     private final DiscardAndProceedAction discardAndProceedAction = new DiscardAndProceedAction();
     private final CancelAction cancelAction = new CancelAction();
     private transient SaveAndUploadTask saveAndUploadTask;
@@ -432,18 +433,19 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         }
     }
 
-    class SaveSessionAction extends SessionSaveAsAction {
+    class SaveSessionButtonAction extends JosmAction {
 
-        SaveSessionAction() {
-            super(false, false);
+        SaveSessionButtonAction() {
+            super(tr("Save Session"), "session", SessionSaveAction.getTooltip(), null, false, null, false);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                saveSession();
-                setUserAction(UserAction.PROCEED);
-                closeDialog();
+                if (SessionSaveAction.getInstance().saveSession(false, true)) {
+                    setUserAction(UserAction.PROCEED);
+                    closeDialog();
+                }
             } catch (UserCancelException ignore) {
                 Logging.trace(ignore);
             }

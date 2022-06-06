@@ -758,8 +758,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * @return GPX data
      */
     public static GpxData toGpxData(DataSet data, File file) {
-        GpxData gpxData = new GpxData();
+        GpxData gpxData = new GpxData(true);
         fillGpxData(gpxData, data, file, GpxConstants.GPX_PREFIX);
+        gpxData.endUpdate();
         return gpxData;
     }
 
@@ -1010,11 +1011,13 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            String name = getName().replaceAll("^" + tr("Converted from: {0}", ""), "");
             final GpxData gpxData = toGpxData();
-            final GpxLayer gpxLayer = new GpxLayer(gpxData, tr("Converted from: {0}", getName()));
+            final GpxLayer gpxLayer = new GpxLayer(gpxData, tr("Converted from: {0}", name), true);
             if (getAssociatedFile() != null) {
                 String filename = getAssociatedFile().getName().replaceAll(Pattern.quote(".gpx.osm") + '$', "") + ".gpx";
                 gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), filename));
+                gpxLayer.getGpxData().setModified(true);
             }
             MainApplication.getLayerManager().addLayer(gpxLayer, false);
             if (Config.getPref().getBoolean("marker.makeautomarkers", true) && !gpxData.waypoints.isEmpty()) {

@@ -191,6 +191,10 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
             String zipPath = "layers/" + String.format("%02d", support.getLayerIndex()) + "/data." + extension;
             file.appendChild(support.createTextNode(zipPath));
             addDataFile(support.getOutputStreamZip(zipPath));
+            layer.setAssociatedFile(null);
+            if (layer instanceof AbstractModifiableLayer) {
+                ((AbstractModifiableLayer) layer).onPostSaveToFile();
+            }
         } else {
             try {
                 File f = layer.getAssociatedFile();

@@ -19,8 +19,11 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Session exporter for {@link GpxLayer}.
@@ -56,6 +59,16 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
                 }
                 if (importData.getGpxLayer() != null && importData.getGpxLayer().data != null) {
                     importData.getGpxLayer().data.fromSession = true;
+                }
+                NodeList markerNodes = elem.getElementsByTagName("markerLayer");
+                if (markerNodes.getLength() > 0 && markerNodes.item(0).getNodeType() == Node.ELEMENT_NODE) {
+                    Element markerEl = (Element) markerNodes.item(0);
+                    try {
+                        int index = Integer.parseInt(markerEl.getAttribute("index"));
+                        support.addSubLayer(index, importData.getMarkerLayer(), markerEl);
+                    } catch (NumberFormatException ex) {
+                        Logging.warn(ex);
+                    }
                 }
 
                 support.addPostLayersTask(importData.getPostLayerTask());
