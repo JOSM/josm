@@ -395,6 +395,25 @@
         <reference ref="cables_circuits" />
         <reference ref="voltage_frequency" />
     </chunk>
+    <chunk id="power_source">
+        <list_entry value="biofuel" display_value="Biofuel" icon="presets/power/power_source-biofuel.svg" />
+        <list_entry value="oil" display_value="Oil" icon="presets/power/power_source-oil.svg" />
+        <list_entry value="diesel" display_value="Diesel" icon="presets/power/power_source-oil.svg" />
+        <list_entry value="gasoline" display_value="Gasoline" icon="presets/power/power_source-oil.svg" />
+        <list_entry value="biogas" display_value="Biogas" icon="presets/power/power_source-biofuel.svg" />
+        <list_entry value="gas" display_value="Gas" icon="presets/power/power_source-gas.svg" />
+        <list_entry value="biomass" display_value="Biomass" icon="presets/power/power_source-biofuel.svg" />
+        <list_entry value="waste" display_value="Waste" icon="presets/power/power_source-waste.svg" />
+        <list_entry value="coal" display_value="Coal" icon="presets/power/power_source-coal.svg" />
+        <list_entry value="nuclear" display_value="Nuclear" icon="presets/power/power_source-nuclear.svg" />
+        <list_entry value="geothermal" display_value="Geothermal" icon="presets/power/power_source-geothermal.svg" />
+        <list_entry value="hydro" display_value="Hydro" icon="presets/power/power_source-water.svg" />
+        <list_entry value="osmotic" display_value="Osmotic" icon="presets/power/power_source-water.svg" />
+        <list_entry value="tidal" display_value="Tidal" icon="presets/power/power_source-water.svg" />
+        <list_entry value="wave" display_value="Wave" icon="presets/power/power_source-water.svg" />
+        <list_entry value="solar" display_value="Solar" icon="presets/power/power_source-sun.svg" />
+        <list_entry value="wind" display_value="Wind" icon="presets/power/power_source-wind.svg" />
+    </chunk>
     <chunk id="power_generator">
         <key key="power" value="generator" />
         <reference ref="name_ref_operator" />
@@ -403,15 +422,15 @@
     <chunk id="power_output">
         <combo key="generator:plant" text="Plant generator type" values="output,intermediate" />
         <optional text="Output forms of energy:">
-            <combo key="generator:output:biogas" text="biogas" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:cold_water" text="cold water" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:cold_air" text="cold air" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:biogas" text="Biogas" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:electricity" text="Electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:hot_water" text="Hot Water" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:hot_air" text="Hot Air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:cold_water" text="Cold Water" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:cold_air" text="Cold Air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:compressed_air" text="Compressed Air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:steam" text="Steam" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:vacuum" text="Vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
             <space />
             <reference ref="voltage_frequency" />
         </optional>
@@ -421,14 +440,14 @@
         <reference ref="name_ref_operator" />
         <text key="start_date" text="Start date" />
         <optional text="Output forms of energy (optional):">
-            <combo key="plant:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="plant:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="plant:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="plant:output:cold_water" text="cold water" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="plant:output:cold_air" text="cold air" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="plant:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="plant:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="plant:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:electricity" text="Electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:hot_water" text="Hot Water" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:hot_air" text="Hot Air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:cold_water" text="Cold Water" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:cold_air" text="Cold Air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:compressed_air" text="Compressed Air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:steam" text="Steam" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="plant:output:vacuum" text="Vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
         </optional>
     </chunk>
     <chunk id="power_source_values">
@@ -6307,26 +6326,10 @@
             <item name="Power Plant" icon="presets/power/plant_plain.svg" type="closedway,multipolygon,relation" preset_name_label="true" match_expression="power=plant -(&quot;plant:source&quot;=biofuel|&quot;plant:source&quot;=biogas|&quot;plant:source&quot;=biomass|&quot;plant:source&quot;=coal|&quot;plant:source&quot;=diesel|&quot;plant:source&quot;=gas|&quot;plant:source&quot;=gasoline|&quot;plant:source&quot;=geothermal|&quot;plant:source&quot;=hydro|&quot;plant:source&quot;=nuclear|&quot;plant:source&quot;=oil|&quot;plant:source&quot;=osmotic|&quot;plant:source&quot;=solar|&quot;plant:source&quot;=tidal|&quot;plant:source&quot;=waste|&quot;plant:source&quot;=wave|&quot;plant:source&quot;=wind)">
                 <link wiki="Tag:power=plant" />
                 <space />
-                <reference ref="power_plant" />
-                <multiselect key="plant:source" text="Plant source" values_searchable="true" values_sort="false">
-                    <list_entry value="biofuel" display_value="Biofuel" icon="presets/power/power_source-biofuel.svg" />
-                    <list_entry value="oil" display_value="Oil" icon="presets/power/power_source-oil.svg" />
-                    <list_entry value="diesel" display_value="Diesel" icon="presets/power/power_source-oil.svg" />
-                    <list_entry value="gasoline" display_value="Gasoline" icon="presets/power/power_source-oil.svg" />
-                    <list_entry value="biogas" display_value="Biogas" icon="presets/power/power_source-biofuel.svg" />
-                    <list_entry value="gas" display_value="Gas" icon="presets/power/power_source-gas.svg" />
-                    <list_entry value="biomass" display_value="Biomass" icon="presets/power/power_source-biofuel.svg" />
-                    <list_entry value="waste" display_value="Waste" icon="presets/power/power_source-waste.svg" />
-                    <list_entry value="coal" display_value="Coal" icon="presets/power/power_source-coal.svg" />
-                    <list_entry value="nuclear" display_value="Nuclear" icon="presets/power/power_source-nuclear.svg" />
-                    <list_entry value="geothermal" display_value="Geothermal" icon="presets/power/power_source-geothermal.svg" />
-                    <list_entry value="hydro" display_value="Hydro" icon="presets/power/power_source-water.svg" />
-                    <list_entry value="osmotic" display_value="Osmotic" icon="presets/power/power_source-water.svg" />
-                    <list_entry value="tidal" display_value="Tidal" icon="presets/power/power_source-water.svg" />
-                    <list_entry value="wave" display_value="Wave" icon="presets/power/power_source-water.svg" />
-                    <list_entry value="solar" display_value="Solar" icon="presets/power/power_source-sun.svg" />
-                    <list_entry value="wind" display_value="Wind" icon="presets/power/power_source-wind.svg" />
+                <multiselect key="plant:source" text="Plant Source" values_searchable="true" values_sort="false">
+                    <reference ref="power_source" />
                 </multiselect>
+                <reference ref="power_plant" />
             </item> <!-- Power Plant -->
             <separator/>
             <item name="Biofuel Power Plant" icon="presets/power/plant_biofuel.svg" type="closedway,multipolygon,relation" preset_name_label="true">
@@ -6453,6 +6456,16 @@
             </item> <!-- Wind Power Plant -->
         </group> <!-- Power Plant -->
         <group name="Power Generator" icon="presets/power/generator.svg">
+            <item name="Power Generator" icon="presets/power/generator.svg" type="node,closedway,multipolygon" preset_name_label="true" match_expression="power=generator -(&quot;generator:source&quot;=biofuel|&quot;generator:source&quot;=biogas|&quot;generator:source&quot;=biomass|&quot;generator:source&quot;=coal|&quot;generator:source&quot;=diesel|&quot;generator:source&quot;=gas|&quot;generator:source&quot;=gasoline|&quot;generator:source&quot;=geothermal|&quot;generator:source&quot;=hydro|&quot;generator:source&quot;=nuclear|&quot;generator:source&quot;=oil|&quot;generator:source&quot;=osmotic|&quot;generator:source&quot;=solar|&quot;generator:source&quot;=tidal|&quot;generator:source&quot;=waste|&quot;generator:source&quot;=wave|&quot;generator:source&quot;=wind)">
+                <link wiki="Tag:power=generator" />
+                <space />
+                <combo key="generator:source" text="Generator Source" values_searchable="true" values_sort="false">
+                    <reference ref="power_source" />
+                </combo>
+                <reference ref="power_generator" />
+                <reference ref="power_output" />
+            </item> <!-- Power Generator -->
+            <separator/>
             <item name="Biofuel Power Generator" icon="presets/power/power_source-biofuel.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <link wiki="Tag:generator:source=biofuel" />
                 <key key="generator:source" value="biofuel" />
@@ -6461,7 +6474,7 @@
                 <key key="generator:method" value="combustion" match="none" />
                 <combo key="generator:type" text="Generator Type" values="gas_turbine,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
-            </item> <!-- Power Generator -->
+            </item> <!-- Biofuel Power Generator -->
             <item name="Biogas Power Generator" icon="presets/power/power_source-biofuel.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <link wiki="Tag:generator:source=biogas" />
                 <key key="generator:source" value="biogas" />
