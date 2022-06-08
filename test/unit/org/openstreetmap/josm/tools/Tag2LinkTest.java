@@ -1,12 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
@@ -22,7 +26,7 @@ class Tag2LinkTest {
     }
 
     void checkLinks(String... expected) {
-        Assert.assertEquals(Arrays.asList(expected), links);
+        assertEquals(Arrays.asList(expected), this.links);
     }
 
     /**
@@ -31,7 +35,27 @@ class Tag2LinkTest {
     @Test
     void testInitialize() {
         Tag2Link.initialize();
-        Assert.assertTrue("obtains at least 40 rules", Tag2Link.wikidataRules.size() > 40);
+        assertTrue(Tag2Link.wikidataRules.size() > 40, "obtains at least 40 rules");
+    }
+
+    /**
+     * Unit test for links that may come in multiple forms.
+     * Example: <a href="https://wiki.osm.org/wiki/Key:contact:facebook">https://wiki.openstreetmap.org/wiki/Key:contact:facebook</a>
+     *
+     * See also JOSM #21794
+     * @param value The tag value for "contact:facebook"
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"https://www.facebook.com/FacebookUserName", "FacebookUserName"})
+    void testUrlKeyMultipleForms(final String value) {
+        // We need the wikidata rules Since testInitialize tests initialization, reuse it.
+        if (!Tag2Link.wikidataRules.containsKey("contact:facebook")) {
+            this.testInitialize();
+        }
+        Tag2Link.getLinksForTag("contact:facebook", value, this::addLink);
+        this.checkLinks("Open unavatar.now.sh // https://unavatar.now.sh/facebook/FacebookUserName",
+                "Open facebook.com // https://www.facebook.com/FacebookUserName",
+                "Open messenger.com // https://www.messenger.com/t/FacebookUserName");
     }
 
     /**

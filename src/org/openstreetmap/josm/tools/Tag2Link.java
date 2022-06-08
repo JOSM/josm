@@ -10,11 +10,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
@@ -67,6 +68,7 @@ public final class Tag2Link {
 
     static final CachingProperty<List<String>> PREF_SEARCH_ENGINES = new ListProperty("tag2link.search",
             Arrays.asList("https://duckduckgo.com/?q=$1", "https://www.google.com/search?q=$1")).cached();
+    private static final Pattern PATTERN_DOLLAR_ONE = Pattern.compile("$1", Pattern.LITERAL);
 
     private Tag2Link() {
         // private constructor for utility class
@@ -147,7 +149,7 @@ public final class Tag2Link {
             return;
         }
 
-        final HashMap<OsmPrimitiveType, Optional<ImageResource>> memoize = new HashMap<>();
+        final Map<OsmPrimitiveType, Optional<ImageResource>> memoize = new EnumMap<>(OsmPrimitiveType.class);
         final Supplier<ImageResource> imageResource = () -> memoize
                 .computeIfAbsent(OsmPrimitiveType.NODE, type -> OsmPrimitiveImageProvider.getResource(key, value, type))
                 .orElse(null);
@@ -208,11 +210,22 @@ public final class Tag2Link {
                     tr("View category on Wikimedia Commons"), getWikimediaCommonsUrl(i), imageResource.get()));
         }
 
-        wikidataRules.getValues(key).forEach(urlFormatter -> {
+        final Set<String> formatterUrls = wikidataRules.getValues(key);
+        if (!formatterUrls.isEmpty()) {
             final String formattedValue = valueFormatter.getOrDefault(key, x -> x).apply(value);
-            final String url = urlFormatter.replace("$1", formattedValue);
-            linkConsumer.acceptLink(getLinkName(url, key), url, imageResource.get());
-        });
+
+            final String urlKey = formatterUrls.stream().map(urlFormatter -> PATTERN_DOLLAR_ONE.matcher(urlFormatter)
+                            .replaceAll(Matcher.quoteReplacement("(.*)"))).map(PatternUtils::compile)
+                            .map(pattern -> pattern.matcher(value)).filter(Matcher::matches)
+                            .map(matcher -> matcher.group(1)).findFirst().orElse(formattedValue);
+
+            formatterUrls.forEach(urlFormatter -> {
+                // Check if the current value matches the formatter pattern -- some keys can take a full url or a key for
+                // the formatter. Example: https://wiki.openstreetmap.org/wiki/Key:contact:facebook
+                final String url = PATTERN_DOLLAR_ONE.matcher(urlFormatter).replaceAll(urlKey);
+                linkConsumer.acceptLink(getLinkName(url, key), url, imageResource.get());
+            });
+        }
     }
 
     private static String getWikimediaCommonsUrl(String i) {
