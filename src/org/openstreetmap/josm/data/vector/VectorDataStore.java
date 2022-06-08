@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -24,6 +25,7 @@ import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Feature;
+import org.openstreetmap.josm.data.imagery.vectortile.mapbox.GeometryTypes;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Layer;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.INode;
@@ -293,12 +295,11 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
         // This was somewhat variant, with some runs being closer to ~560 MB (still -80%).
         final Map<ILatLon, VectorNode> nodeMap = new HashMap<>();
         for (Layer layer : tile.getLayers()) {
-            for (Feature feature : layer.getFeatures()) {
-                try {
-                    addFeatureData(tile, layer, feature, nodeMap);
-                } catch (IllegalArgumentException e) {
-                    Logging.error("Cannot add vector data for feature {0} of tile {1}: {2}", feature, tile, e.getMessage());
-                    Logging.error(e);
+            Map<GeometryTypes, List<Feature>> grouped = layer.getFeatures().stream().collect(Collectors.groupingBy(Feature::getGeometryType));
+            // Unknown -> Point -> LineString -> Polygon
+            for (GeometryTypes type : GeometryTypes.values()) {
+                if (grouped.containsKey(type)) {
+                    addFeatureData(tile, layer, grouped.get(type), nodeMap);
                 }
             }
         }
@@ -311,10 +312,21 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
                         .findAny().orElse(null)));
     }
 
+    private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Collection<Feature> features, Map<ILatLon, VectorNode> nodeMap) {
+        for (Feature feature : features) {
+            try {
+                addFeatureData(tile, layer, feature, nodeMap);
+            } catch (IllegalArgumentException e) {
+                Logging.error("Cannot add vector data for feature {0} of tile {1}: {2}", feature, tile, e.getMessage());
+                Logging.error(e);
+            }
+        }
+    }
+
     private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Feature feature, Map<ILatLon, VectorNode> nodeMap) {
         // This will typically be larger than primaryFeatureObjects, but this at least avoids quite a few ArrayList#grow calls
         List<VectorPrimitive> featureObjects = new ArrayList<>(feature.getGeometryObject().getShapes().size());
-        List<VectorPrimitive> primaryFeatureObjects = new ArrayList<>(featureObjects.size());
+        List<VectorPrimitive> primaryFeatureObjects = new ArrayList<>(feature.getGeometryObject().getShapes().size());
         for (Shape shape : feature.getGeometryObject().getShapes()) {
             primaryFeatureObjects.add(shapeToPrimaryFeatureObject(tile, layer, shape, featureObjects, nodeMap));
         }
