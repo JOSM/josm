@@ -12,7 +12,6 @@ import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.josm.data.IQuadBucketType;
-import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Feature;
@@ -162,7 +160,7 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
     }
 
     private synchronized <T extends Tile & VectorTile> VectorNode pointToNode(T tile, Layer layer,
-      Collection<VectorPrimitive> featureObjects, int x, int y, final Map<ILatLon, VectorNode> nodeMap) {
+      Collection<VectorPrimitive> featureObjects, int x, int y) {
         final BBox tileBbox;
         if (tile instanceof IQuadBucketType) {
             tileBbox = ((IQuadBucketType) tile).getBBox();
@@ -178,9 +176,6 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
                 tileBbox.getMaxLat() - (tileBbox.getMaxLat() - tileBbox.getMinLat()) * y / layerExtent,
                 tileBbox.getMinLon() + (tileBbox.getMaxLon() - tileBbox.getMinLon()) * x / layerExtent
         );
-        if (nodeMap.containsKey(coords)) {
-            return nodeMap.get(coords);
-        }
         final Collection<VectorNode> nodes = this.store
           .searchNodes(new BBox(coords.lon(), coords.lat(), VectorDataSet.DUPE_NODE_DISTANCE));
         final VectorNode node;
@@ -211,15 +206,14 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
         }
         node.setCoor(coords);
         featureObjects.add(node);
-        nodeMap.put(node.getCoor(), node);
         return node;
     }
 
     private <T extends Tile & VectorTile> List<VectorWay> pathToWay(T tile, Layer layer,
-      Collection<VectorPrimitive> featureObjects, Path2D shape, Map<ILatLon, VectorNode> nodeMap) {
+      Collection<VectorPrimitive> featureObjects, Path2D shape) {
         final PathIterator pathIterator = shape.getPathIterator(null);
         final List<VectorWay> ways = new ArrayList<>(
-                Utils.filteredCollection(pathIteratorToObjects(tile, layer, featureObjects, pathIterator, nodeMap), VectorWay.class));
+                Utils.filteredCollection(pathIteratorToObjects(tile, layer, featureObjects, pathIterator), VectorWay.class));
         // These nodes technically do not exist, so we shouldn't show them
         for (VectorWay way : ways) {
             for (VectorNode node : way.getNodes()) {
@@ -233,7 +227,7 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
     }
 
     private <T extends Tile & VectorTile> List<VectorPrimitive> pathIteratorToObjects(T tile, Layer layer,
-      Collection<VectorPrimitive> featureObjects, PathIterator pathIterator, Map<ILatLon, VectorNode> nodeMap) {
+      Collection<VectorPrimitive> featureObjects, PathIterator pathIterator) {
         final List<VectorNode> nodes = new ArrayList<>();
         final double[] coords = new double[6];
         final List<VectorPrimitive> ways = new ArrayList<>();
@@ -254,7 +248,7 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
                 nodes.clear();
             }
             if (PathIterator.SEG_MOVETO == type || PathIterator.SEG_LINETO == type) {
-                final VectorNode node = pointToNode(tile, layer, featureObjects, (int) coords[0], (int) coords[1], nodeMap);
+                final VectorNode node = pointToNode(tile, layer, featureObjects, (int) coords[0], (int) coords[1]);
                 nodes.add(node);
             } else if (PathIterator.SEG_CLOSE != type) {
                 // Vector Tiles only have MoveTo, LineTo, and ClosePath. Anything else is not supported at this time.
@@ -271,9 +265,9 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
     }
 
     private <T extends Tile & VectorTile> VectorRelation areaToRelation(T tile, Layer layer,
-      Collection<VectorPrimitive> featureObjects, Area area, Map<ILatLon, VectorNode> nodeMap) {
+      Collection<VectorPrimitive> featureObjects, Area area) {
         VectorRelation vectorRelation = new VectorRelation(layer.getName());
-        for (VectorPrimitive member : pathIteratorToObjects(tile, layer, featureObjects, area.getPathIterator(null), nodeMap)) {
+        for (VectorPrimitive member : pathIteratorToObjects(tile, layer, featureObjects, area.getPathIterator(null))) {
             final String role;
             if (member instanceof VectorWay && ((VectorWay) member).isClosed()) {
                 role = Geometry.isClockwise(((VectorWay) member).getNodes()) ? "outer" : "inner";
@@ -293,13 +287,12 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
     public <T extends Tile & VectorTile> void addDataTile(T tile) {
         // Using a map reduces the cost of addFeatureData from 2,715,158,632 bytes to 235,042,184 bytes (-91.3%)
         // This was somewhat variant, with some runs being closer to ~560 MB (still -80%).
-        final Map<ILatLon, VectorNode> nodeMap = new HashMap<>();
         for (Layer layer : tile.getLayers()) {
             Map<GeometryTypes, List<Feature>> grouped = layer.getFeatures().stream().collect(Collectors.groupingBy(Feature::getGeometryType));
             // Unknown -> Point -> LineString -> Polygon
             for (GeometryTypes type : GeometryTypes.values()) {
                 if (grouped.containsKey(type)) {
-                    addFeatureData(tile, layer, grouped.get(type), nodeMap);
+                    addFeatureData(tile, layer, grouped.get(type));
                 }
             }
         }
@@ -312,10 +305,10 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
                         .findAny().orElse(null)));
     }
 
-    private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Collection<Feature> features, Map<ILatLon, VectorNode> nodeMap) {
+    private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Collection<Feature> features) {
         for (Feature feature : features) {
             try {
-                addFeatureData(tile, layer, feature, nodeMap);
+                addFeatureData(tile, layer, feature);
             } catch (IllegalArgumentException e) {
                 Logging.error("Cannot add vector data for feature {0} of tile {1}: {2}", feature, tile, e.getMessage());
                 Logging.error(e);
@@ -323,12 +316,12 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
         }
     }
 
-    private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Feature feature, Map<ILatLon, VectorNode> nodeMap) {
+    private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Feature feature) {
         // This will typically be larger than primaryFeatureObjects, but this at least avoids quite a few ArrayList#grow calls
         List<VectorPrimitive> featureObjects = new ArrayList<>(feature.getGeometryObject().getShapes().size());
         List<VectorPrimitive> primaryFeatureObjects = new ArrayList<>(feature.getGeometryObject().getShapes().size());
         for (Shape shape : feature.getGeometryObject().getShapes()) {
-            primaryFeatureObjects.add(shapeToPrimaryFeatureObject(tile, layer, shape, featureObjects, nodeMap));
+            primaryFeatureObjects.add(shapeToPrimaryFeatureObject(tile, layer, shape, featureObjects));
         }
         final VectorPrimitive primitive;
         if (primaryFeatureObjects.size() == 1) {
@@ -373,15 +366,15 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
     }
 
     private <T extends Tile & VectorTile> VectorPrimitive shapeToPrimaryFeatureObject(
-            T tile, Layer layer, Shape shape, List<VectorPrimitive> featureObjects, Map<ILatLon, VectorNode> nodeMap) {
+            T tile, Layer layer, Shape shape, List<VectorPrimitive> featureObjects) {
         final VectorPrimitive primitive;
         if (shape instanceof Ellipse2D) {
             primitive = pointToNode(tile, layer, featureObjects,
-                    (int) ((Ellipse2D) shape).getCenterX(), (int) ((Ellipse2D) shape).getCenterY(), nodeMap);
+                    (int) ((Ellipse2D) shape).getCenterX(), (int) ((Ellipse2D) shape).getCenterY());
         } else if (shape instanceof Path2D) {
-            primitive = pathToWay(tile, layer, featureObjects, (Path2D) shape, nodeMap).stream().findFirst().orElse(null);
+            primitive = pathToWay(tile, layer, featureObjects, (Path2D) shape).stream().findFirst().orElse(null);
         } else if (shape instanceof Area) {
-            primitive = areaToRelation(tile, layer, featureObjects, (Area) shape, nodeMap);
+            primitive = areaToRelation(tile, layer, featureObjects, (Area) shape);
             primitive.put(RELATION_TYPE, MULTIPOLYGON_TYPE);
         } else {
             // We shouldn't hit this, but just in case

@@ -13,7 +13,7 @@ import java.util.HashSet;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -98,7 +98,11 @@ class VectorDataSetTest {
         layer = new MVTLayerMock(info);
     }
 
-    @Test
+    /**
+     * This failed about 1/2 times.
+     * It tests for node deduplication.
+     */
+    @RepeatedTest(10)
     void testNodeDeduplication() {
         final VectorDataSet dataSet = this.layer.getData();
         assertTrue(dataSet.allPrimitives().isEmpty());

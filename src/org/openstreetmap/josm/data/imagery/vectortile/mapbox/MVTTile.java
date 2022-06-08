@@ -4,8 +4,8 @@ package org.openstreetmap.josm.data.imagery.vectortile.mapbox;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,7 +52,7 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
             this.initLoading();
             ProtobufParser parser = new ProtobufParser(inputStream);
             Collection<ProtobufRecord> protobufRecords = parser.allRecords();
-            this.layers = new HashSet<>(protobufRecords.size());
+            this.layers = new ArrayList<>(protobufRecords.size());
             for (ProtobufRecord protoBufRecord : protobufRecords) {
                 if (protoBufRecord.getField() == Layer.LAYER_FIELD) {
                     try (ProtobufParser tParser = new ProtobufParser(protoBufRecord.getBytes())) {
@@ -65,7 +65,7 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
                     }
                 }
             }
-            this.layers = new HashSet<>(this.layers);
+            this.layers = new ArrayList<>(this.layers);
 
             this.extent = layers.stream().filter(Objects::nonNull).mapToInt(Layer::getExtent).max().orElse(Layer.DEFAULT_EXTENT);
             if (this.getData() != null) {
