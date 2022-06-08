@@ -18,6 +18,7 @@ public enum GeometryTypes {
      * and one {@link Command#ClosePath} command. See {@link Ring}s. */
     POLYGON;
 
+    private static final GeometryTypes[] CACHED_VALUES = values();
     /**
      * Rings used by {@link GeometryTypes#POLYGON}
      * @author Taylor Smock
@@ -27,5 +28,14 @@ public enum GeometryTypes {
         ExteriorRing,
         /** A ring that goes in the anti-clockwise direction */
         InteriorRing
+    }
+
+    /**
+     * A replacement for {@link #values()} which can be used when there are no changes to the underlying array.
+     * This is useful for avoiding unnecessary allocations.
+     * @return A cached array from {@link #values()}. Do not modify.
+     */
+    static GeometryTypes[] getAllValues() {
+        return CACHED_VALUES;
     }
 }

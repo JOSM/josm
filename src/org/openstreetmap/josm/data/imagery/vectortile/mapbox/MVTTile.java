@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -53,12 +52,11 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
             this.initLoading();
             ProtobufParser parser = new ProtobufParser(inputStream);
             Collection<ProtobufRecord> protobufRecords = parser.allRecords();
-            this.layers = new HashSet<>();
-            this.layers = protobufRecords.stream().map(protoBufRecord -> {
-                Layer mvtLayer = null;
+            this.layers = new HashSet<>(protobufRecords.size());
+            for (ProtobufRecord protoBufRecord : protobufRecords) {
                 if (protoBufRecord.getField() == Layer.LAYER_FIELD) {
                     try (ProtobufParser tParser = new ProtobufParser(protoBufRecord.getBytes())) {
-                        mvtLayer = new Layer(tParser.allRecords());
+                        this.layers.add(new Layer(tParser.allRecords()));
                     } catch (IOException e) {
                         Logging.error(e);
                     } finally {
@@ -66,8 +64,9 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
                         protoBufRecord.close();
                     }
                 }
-                return mvtLayer;
-            }).collect(Collectors.toCollection(HashSet::new));
+            }
+            this.layers = new HashSet<>(this.layers);
+
             this.extent = layers.stream().filter(Objects::nonNull).mapToInt(Layer::getExtent).max().orElse(Layer.DEFAULT_EXTENT);
             if (this.getData() != null) {
                 this.finishLoading();

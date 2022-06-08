@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery.vectortile.mapbox;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -26,10 +27,11 @@ public class Feature {
     private static final byte GEOMETRY_FIELD = 4;
     /**
      * The number format instance to use (using a static instance gets rid of quite o few allocations)
-     * Doing this reduced the allocations of {@link #parseTagValue(String, Layer, Number)} from 22.79% of parent to
+     * Doing this reduced the allocations of {@link #parseTagValue(String, Layer, Number, List)} from 22.79% of parent to
      * 12.2% of parent.
      */
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.ROOT);
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
     /**
      * The geometry of the feature. Required.
      */
@@ -47,7 +49,7 @@ public class Feature {
     /**
      * The tags of the feature. Optional.
      */
-    private TagMap tags;
+    private final TagMap tags;
     private Geometry geometryObject;
 
     /**
@@ -61,21 +63,29 @@ public class Feature {
         long tId = 0;
         GeometryTypes geometryTypeTemp = GeometryTypes.UNKNOWN;
         String key = null;
+        // Use a list where we can grow capacity easily (TagMap will do an array copy every time a tag is added)
+        // This lets us avoid most array copies (i.e., this should only happen if some software decided it would be
+        // a good idea to have multiple tag fields).
+        // By avoiding array copies in TagMap, Feature#init goes from 339 MB to 188 MB.
+        ArrayList<String> tagList = null;
         try (ProtobufParser parser = new ProtobufParser(record.getBytes())) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(4);
             while (parser.hasNext()) {
-                try (ProtobufRecord next = new ProtobufRecord(parser)) {
+                try (ProtobufRecord next = new ProtobufRecord(byteArrayOutputStream, parser)) {
                     if (next.getField() == TAG_FIELD) {
-                        if (tags == null) {
-                            tags = new TagMap();
-                        }
                         // This is packed in v1 and v2
-                        ProtobufPacked packed = new ProtobufPacked(next.getBytes());
+                        ProtobufPacked packed = new ProtobufPacked(byteArrayOutputStream, next.getBytes());
+                        if (tagList == null) {
+                            tagList = new ArrayList<>(packed.getArray().length);
+                        } else {
+                            tagList.ensureCapacity(tagList.size() + packed.getArray().length);
+                        }
                         for (Number number : packed.getArray()) {
-                            key = parseTagValue(key, layer, number);
+                            key = parseTagValue(key, layer, number, tagList);
                         }
                     } else if (next.getField() == GEOMETRY_FIELD) {
                         // This is packed in v1 and v2
-                        ProtobufPacked packed = new ProtobufPacked(next.getBytes());
+                        ProtobufPacked packed = new ProtobufPacked(byteArrayOutputStream, next.getBytes());
                         CommandInteger currentCommand = null;
                         for (Number number : packed.getArray()) {
                             if (currentCommand != null && currentCommand.hasAllExpectedParameters()) {
@@ -90,7 +100,8 @@ public class Feature {
                         }
                         // TODO fallback to non-packed
                     } else if (next.getField() == GEOMETRY_TYPE_FIELD) {
-                        geometryTypeTemp = GeometryTypes.values()[next.asUnsignedVarInt().intValue()];
+                        // by using getAllValues, we avoid 12.4 MB allocations
+                        geometryTypeTemp = GeometryTypes.getAllValues()[next.asUnsignedVarInt().intValue()];
                     } else if (next.getField() == ID_FIELD) {
                         tId = next.asUnsignedVarInt().longValue();
                     }
@@ -100,6 +111,11 @@ public class Feature {
         this.id = tId;
         this.geometryType = geometryTypeTemp;
         record.close();
+        if (tagList != null && !tagList.isEmpty()) {
+            this.tags = new TagMap(tagList.toArray(EMPTY_STRING_ARRAY));
+        } else {
+            this.tags = null;
+        }
     }
 
     /**
@@ -108,12 +124,14 @@ public class Feature {
      * @param key    The current key (or {@code null}, if {@code null}, the returned value will be the new key)
      * @param layer  The layer with key/value information
      * @param number The number to get the value from
+     * @param tagList The list to add the new value to
      * @return The new key (if {@code null}, then a value was parsed and added to tags)
      */
-    private String parseTagValue(String key, Layer layer, Number number) {
+    private String parseTagValue(String key, Layer layer, Number number, List<String> tagList) {
         if (key == null) {
             key = layer.getKey(number.intValue());
         } else {
+            tagList.add(key);
             Object value = layer.getValue(number.intValue());
             if (value instanceof Double || value instanceof Float) {
                 // reset grouping if the instance is a singleton
@@ -121,12 +139,12 @@ public class Feature {
                 final boolean grouping = NUMBER_FORMAT.isGroupingUsed();
                 try {
                     NUMBER_FORMAT.setGroupingUsed(false);
-                    this.tags.put(key, NUMBER_FORMAT.format(value));
+                    tagList.add(Utils.intern(NUMBER_FORMAT.format(value)));
                 } finally {
                     NUMBER_FORMAT.setGroupingUsed(grouping);
                 }
             } else {
-                this.tags.put(key, Utils.intern(value.toString()));
+                tagList.add(Utils.intern(value.toString()));
             }
             key = null;
         }

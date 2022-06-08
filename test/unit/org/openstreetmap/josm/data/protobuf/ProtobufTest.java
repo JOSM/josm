@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.geom.Ellipse2D;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -171,7 +172,7 @@ class ProtobufTest {
     @Test
     void testSimpleMessage() throws IOException {
         ProtobufParser parser = new ProtobufParser(new byte[] {(byte) 0x08, (byte) 0x96, (byte) 0x01});
-        ProtobufRecord record = new ProtobufRecord(parser);
+        ProtobufRecord record = new ProtobufRecord(new ByteArrayOutputStream(), parser);
         assertEquals(WireType.VARINT, record.getType());
         assertEquals(150, record.asUnsignedVarInt().intValue());
     }

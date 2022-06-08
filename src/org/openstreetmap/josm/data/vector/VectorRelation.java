@@ -90,6 +90,10 @@ public class VectorRelation extends VectorPrimitive implements IRelation<VectorR
     public void setMembers(List<VectorRelationMember> members) {
         this.members.clear();
         this.members.addAll(members);
+        for (VectorRelationMember member : members) {
+            member.getMember().addReferrer(this);
+        }
+        cachedBBox = null;
     }
 
     @Override
