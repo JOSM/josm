@@ -383,8 +383,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 boolean first = true;
                 String tmp = action.getName();
                 if (!tmp.isEmpty()) {
-                    result.append(first ? "{" : ",");
-                    result.append("name=");
+                    result.append("{name=");
                     escape(tmp);
                     first = false;
                 }
@@ -397,7 +396,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 }
                 if (!first) {
                     result.append('}');
-            }
+                }
             }
 
             return result.toString();
