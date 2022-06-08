@@ -12,11 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.StaticClassCleanup;
 
 /**
  * Test {@link Tag2Link}
  */
 @BasicPreferences
+@StaticClassCleanup(Tag2Link.class)
 class Tag2LinkTest {
 
     List<String> links = new ArrayList<>();
