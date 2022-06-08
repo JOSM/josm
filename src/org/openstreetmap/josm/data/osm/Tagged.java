@@ -72,7 +72,7 @@ public interface Tagged {
      * Add all key/value pairs. This <i>may</i> be more performant than {@link #put}, depending upon the implementation.
      * By default, this calls {@link #put} for each map entry.
      * @param tags The tag map to add
-     * @since xxx
+     * @since 18473
      */
     default void putAll(Map<String, String> tags) {
         for (Map.Entry<String, String> entry : tags.entrySet()) {
