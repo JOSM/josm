@@ -205,6 +205,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
     public void setNotes(Collection<Note> noteList) {
         model.setData(noteList);
         updateButtonStates();
+        selectionChanged();
         this.repaint();
     }
 
