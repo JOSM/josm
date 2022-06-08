@@ -96,7 +96,7 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
     private final transient UploadDialogModel model = new UploadDialogModel();
 
     private transient DataSet dataSet;
-    private ChangeListener changesetTagListener;
+    private transient ChangeListener changesetTagListener;
 
     /**
      * Constructs a new {@code UploadDialog}.
@@ -371,7 +371,7 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
      * This is called by {@link UploadAction} if {@link org.openstreetmap.josm.actions.upload.UploadHook}s change
      * the changeset tags.
      */
-    public void setChangesetTagsModifiedProgramatically() {
+    public synchronized void setChangesetTagsModifiedProgramatically() {
         final Color originalColor = this.tpConfigPanels.getBackgroundAt(1);
         this.tpConfigPanels.setBackgroundAt(1, WARNING_BACKGROUND);
         this.tpConfigPanels.setIconAt(1, ImageProvider.get("warning-small"));
@@ -382,8 +382,10 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
             if (this.tpConfigPanels.getSelectedIndex() == 1) {
                 tpConfigPanels.setBackgroundAt(1, originalColor);
                 tpConfigPanels.setIconAt(1, ImageProvider.get("apply"));
-                this.tpConfigPanels.removeChangeListener(this.changesetTagListener);
-                changesetTagListener = null;
+                synchronized (this) {
+                    this.tpConfigPanels.removeChangeListener(this.changesetTagListener);
+                    changesetTagListener = null;
+                }
             }
         };
 
@@ -574,14 +576,9 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e.getKey() != null
                 && e.getSource() != getClass()
-                && e.getSource() != BasicUploadSettingsPanel.class) {
-            switch (e.getKey()) {
-                case "osm-server.url":
-                    osmServerUrlChanged(e.getNewValue());
-                    break;
-                default:
-                    return;
-            }
+                && e.getSource() != BasicUploadSettingsPanel.class
+                && "osm-server.url".equals(e.getKey())) {
+            osmServerUrlChanged(e.getNewValue());
         }
     }
 
@@ -642,10 +639,12 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
     public void clean() {
         setUploadedPrimitives(null);
         dataSet = null;
-        if (this.changesetTagListener != null) {
-            this.changesetTagListener.stateChanged(null);
-            this.tpConfigPanels.removeChangeListener(this.changesetTagListener);
-            this.changesetTagListener = null;
+        synchronized (this) {
+            if (this.changesetTagListener != null) {
+                this.changesetTagListener.stateChanged(null);
+                this.tpConfigPanels.removeChangeListener(this.changesetTagListener);
+                this.changesetTagListener = null;
+            }
         }
     }
 }

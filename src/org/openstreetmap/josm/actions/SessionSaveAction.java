@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,6 +53,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.session.SessionLayerExporter;
@@ -251,10 +253,23 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             SaveActionBase.addToFileOpenHistory(sessionFile);
             if (removeFileOnSuccess != null) {
                 PreferencesUtils.removeFromList(Config.getPref(), "file-open.history", removeFileOnSuccess.getCanonicalPath());
-                removeFileOnSuccess.delete();
+                Files.deleteIfExists(removeFileOnSuccess.toPath());
                 removeFileOnSuccess = null;
             }
             showSavedNotification(savingNotification, sessionFile.getName());
+        } catch (SecurityException ex) {
+            Logging.error(ex);
+            if (removeFileOnSuccess != null) {
+                final String path = removeFileOnSuccess.getPath();
+                GuiHelper.runInEDT(() -> {
+                    Notification notification = new Notification(tr("Could not delete file: {0}\r{1}", path, ex.getMessage()));
+                    notification.setIcon(JOptionPane.WARNING_MESSAGE);
+                    notification.show();
+                });
+            } else {
+                // We should never hit this, unless something changes in the try block.
+                throw new JosmRuntimeException(ex);
+            }
         } catch (IOException ex) {
             Logging.error(ex);
             HelpAwareOptionPane.showMessageDialogInEDT(
@@ -272,7 +287,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
 
     /**
      * Sets the current session file. Asks the user if necessary
-     * @param saveAs alwas ask the user
+     * @param saveAs always ask the user
      * @param zipRequired zip
      * @return if the user was asked
      * @throws UserCancelException when the user has cancelled the save process
