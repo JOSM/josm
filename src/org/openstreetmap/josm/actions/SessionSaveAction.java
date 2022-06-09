@@ -262,7 +262,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             if (removeFileOnSuccess != null) {
                 final String path = removeFileOnSuccess.getPath();
                 GuiHelper.runInEDT(() -> {
-                    Notification notification = new Notification(tr("Could not delete file: {0}\r{1}", path, ex.getMessage()));
+                    Notification notification = new Notification(tr("Could not delete file: {0}<br>{1}", path, ex.getMessage()));
                     notification.setIcon(JOptionPane.WARNING_MESSAGE);
                     notification.show();
                 });
