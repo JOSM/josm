@@ -214,7 +214,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
      * Causes it to update or clear its selection in the UI.
      */
     public void selectionChanged() {
-        if (noteData == null || noteData.getSelectedNote() == null) {
+        if (noteData == null || noteData.getSelectedNote() == null || displayList.getModel().getSize() == 0) {
             displayList.clearSelection();
         } else {
             displayList.setSelectedValue(noteData.getSelectedNote(), true);
