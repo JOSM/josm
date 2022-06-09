@@ -401,7 +401,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     public void mousePressed(MouseEvent e) {
         mouseDownButton = e.getButton();
         // return early
-        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || mouseDownButton != MouseEvent.BUTTON1)
+        if (!mv.isActiveLayerVisible() || Boolean.FALSE.equals(this.getValue("active")) || mouseDownButton != MouseEvent.BUTTON1)
             return;
 
         // left-button mouse click only is processed here
@@ -743,6 +743,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                             case 6:
                                 dh += Math.PI/2;
                                 break;
+                            default:
+                                // Just in case we cannot clamp
                             }
                             clampedEastNorth = currentEN.rotate(startEN, -dh);
                         }
@@ -1148,11 +1150,12 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
                         // special case:  for cycle groups of 2, we can toggle to the
                         // true nearest primitive on mousePressed right away
-                        if (cycleList.size() == 2 && !waitForMouseUpParameter) {
-                            if (!(osm.equals(old) || osm.isNew() || platformMenuShortcutKeyMask)) {
+                        if (cycleList.size() == 2 && !waitForMouseUpParameter
+                                // This was a nested if statement (see commented code below)
+                                && (!(osm.equals(old) || osm.isNew() || platformMenuShortcutKeyMask))) {
                                 cyclePrims = false;
                                 osm = old;
-                            } // else defer toggling to mouseRelease time in those cases:
+                            // else defer toggling to mouseRelease time in those cases:
                             /*
                              * osm == old -- the true nearest node is the
                              * selected one osm is a new node -- do not break

@@ -56,10 +56,10 @@ public class Feature {
      * Create a new Feature
      *
      * @param layer  The layer the feature is part of (required for tags)
-     * @param record The record to create the feature from
+     * @param protobufRecord The record to create the feature from
      * @throws IOException - if an IO error occurs
      */
-    public Feature(Layer layer, ProtobufRecord record) throws IOException {
+    public Feature(Layer layer, ProtobufRecord protobufRecord) throws IOException {
         long tId = 0;
         GeometryTypes geometryTypeTemp = GeometryTypes.UNKNOWN;
         String key = null;
@@ -68,7 +68,7 @@ public class Feature {
         // a good idea to have multiple tag fields).
         // By avoiding array copies in TagMap, Feature#init goes from 339 MB to 188 MB.
         ArrayList<String> tagList = null;
-        try (ProtobufParser parser = new ProtobufParser(record.getBytes())) {
+        try (ProtobufParser parser = new ProtobufParser(protobufRecord.getBytes())) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(4);
             while (parser.hasNext()) {
                 try (ProtobufRecord next = new ProtobufRecord(byteArrayOutputStream, parser)) {
@@ -110,7 +110,7 @@ public class Feature {
         }
         this.id = tId;
         this.geometryType = geometryTypeTemp;
-        record.close();
+        protobufRecord.close();
         if (tagList != null && !tagList.isEmpty()) {
             this.tags = new TagMap(tagList.toArray(EMPTY_STRING_ARRAY));
         } else {
@@ -127,7 +127,7 @@ public class Feature {
      * @param tagList The list to add the new value to
      * @return The new key (if {@code null}, then a value was parsed and added to tags)
      */
-    private String parseTagValue(String key, Layer layer, Number number, List<String> tagList) {
+    private static String parseTagValue(String key, Layer layer, Number number, List<String> tagList) {
         if (key == null) {
             key = layer.getKey(number.intValue());
         } else {

@@ -80,15 +80,15 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
     private static final BooleanProperty SAVE_LOCAL_FILES_PROPERTY = new BooleanProperty("session.savelocal", true);
     private static final String TOOLTIP_DEFAULT = tr("Save the current session.");
 
-    protected FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
-    protected FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
+    protected transient FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
+    protected transient FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
 
     private File removeFileOnSuccess;
 
     private static String tooltip = TOOLTIP_DEFAULT;
-    protected static File sessionFile;
-    protected static boolean isZipSessionFile;
-    protected static List<WeakReference<Layer>> layersInSessionFile;
+    static File sessionFile;
+    static boolean isZipSessionFile;
+    static List<WeakReference<Layer>> layersInSessionFile;
 
     private static final SessionSaveAction instance = new SessionSaveAction();
 
@@ -96,7 +96,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
      * Returns the instance
      * @return the instance
      */
-    public static final SessionSaveAction getInstance() {
+    public static SessionSaveAction getInstance() {
         return instance;
     }
 
@@ -131,8 +131,8 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
     public void actionPerformed(ActionEvent e) {
         try {
             saveSession(false, false);
-        } catch (UserCancelException ignore) {
-            Logging.trace(ignore);
+        } catch (UserCancelException exception) {
+            Logging.trace(exception);
         }
     }
 
@@ -202,13 +202,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
         }
         setCurrentLayers(layersOut);
 
-
-        if (fn.indexOf('.') == -1) {
-            sessionFile = new File(sessionFile.getPath() + (isZipSessionFile ? ".joz" : ".jos"));
-            if (!SaveActionBase.confirmOverwrite(sessionFile)) {
-                throw new UserCancelException();
-            }
-        }
+        updateSessionFile(fn);
 
         Stream<Layer> layersToSaveStream = layersOut.stream()
                 .filter(layer -> layer.isSavable()
@@ -218,7 +212,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
                         && !exporters.get(layer).requiresZip());
 
         boolean success = true;
-        if (forceSaveAll || SAVE_LOCAL_FILES_PROPERTY.get()) {
+        if (forceSaveAll || Boolean.TRUE.equals(SAVE_LOCAL_FILES_PROPERTY.get())) {
             // individual files must be saved before the session file as the location may change
             if (layersToSaveStream
                 .map(layer -> SaveAction.getInstance().doSave(layer, true))
@@ -393,16 +387,20 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             }
 
             int numNoExporter = 0;
-            WHILE: while (numNoExporter != noExporter.size()) {
+            while (numNoExporter != noExporter.size()) {
                 numNoExporter = noExporter.size();
-                for (Layer layer : layers) {
-                    if (noExporter.contains(layer)) continue;
-                    for (Layer depLayer : dependencies.get(layer)) {
-                        if (noExporter.contains(depLayer)) {
-                            noExporter.add(layer);
-                            exporters.put(layer, null);
-                            break WHILE;
-                        }
+                updateExporters(noExporter);
+            }
+        }
+
+        private void updateExporters(Collection<Layer> noExporter) {
+            for (Layer layer : layers) {
+                if (noExporter.contains(layer)) continue;
+                for (Layer depLayer : dependencies.get(layer)) {
+                    if (noExporter.contains(depLayer)) {
+                        noExporter.add(layer);
+                        exporters.put(layer, null);
+                        return;
                     }
                 }
             }
@@ -435,9 +433,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             tabs.addTab(tr("Layers"), p);
             op.add(tabs, GBC.eol().fill());
             JCheckBox chkSaveLocal = new JCheckBox(tr("Save all local files to disk"), SAVE_LOCAL_FILES_PROPERTY.get());
-            chkSaveLocal.addChangeListener(l -> {
-                SAVE_LOCAL_FILES_PROPERTY.put(chkSaveLocal.isSelected());
-            });
+            chkSaveLocal.addChangeListener(l -> SAVE_LOCAL_FILES_PROPERTY.put(chkSaveLocal.isSelected()));
             op.add(chkSaveLocal);
             return op;
         }
@@ -495,6 +491,20 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
     }
 
     /**
+     * Update the session file
+     * @param fileName The filename to use. If there are no periods in the file, we update the extension.
+     * @throws UserCancelException If the user does not want to overwrite a previously existing file.
+     */
+    private static void updateSessionFile(String fileName) throws UserCancelException {
+        if (fileName.indexOf('.') == -1) {
+            sessionFile = new File(sessionFile.getPath() + (isZipSessionFile ? ".joz" : ".jos"));
+            if (!SaveActionBase.confirmOverwrite(sessionFile)) {
+                throw new UserCancelException();
+            }
+        }
+    }
+
+    /**
      * Sets the current session file and the layers included in that file
      * @param file file
      * @param zip if it is a zip session file
@@ -527,7 +537,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
      */
     public static void setCurrentLayers(List<Layer> layers) {
         layersInSessionFile = layers.stream()
-                .filter(l -> l instanceof AbstractModifiableLayer)
+                .filter(AbstractModifiableLayer.class::isInstance)
                 .map(WeakReference::new)
                 .collect(Collectors.toList());
     }
