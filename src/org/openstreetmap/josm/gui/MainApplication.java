@@ -271,15 +271,14 @@ public class MainApplication {
 
         @Override
         public void processArguments(String[] argArray) {
-            ProgramArguments args = null;
-            // construct argument table
             try {
-                args = new ProgramArguments(argArray);
+                // construct argument table
+                ProgramArguments args = new ProgramArguments(argArray);
+                mainJOSM(args);
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
                 Lifecycle.exitJosm(true, 1);
             }
-            mainJOSM(args);
         }
     };
 
