@@ -1,10 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.commons.jcs3.access.CacheAccess;
+import org.apache.commons.jcs3.engine.ElementAttributes;
 import org.apache.commons.jcs3.engine.behavior.IElementAttributes;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -23,7 +25,8 @@ public final class PatternUtils {
 
     static {
         // We don't want to keep these around forever, so set a reasonablish max idle life.
-        final IElementAttributes defaultAttributes = cache.getDefaultElementAttributes();
+        final IElementAttributes defaultAttributes = Optional.ofNullable(cache.getDefaultElementAttributes()).orElseGet(
+                ElementAttributes::new);
         defaultAttributes.setIdleTime(TimeUnit.HOURS.toSeconds(1));
         cache.setDefaultElementAttributes(defaultAttributes);
     }
