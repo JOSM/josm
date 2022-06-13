@@ -3,7 +3,7 @@ env:
   junit_platform_version: '1.7.2'
   # ANT_HOME is also our ant version
   ANT_HOME: 'apache-ant-1.10.12'
-  JAVAFX_VERSION: '17.0.3'
+  JAVAFX_VERSION: '17.0.2'
 on:
   push:
     branches: [master]
