@@ -103,10 +103,10 @@
         <condition property="isJava19"><matches string="${ant.java.version}" pattern="19|[2-9][0-9]" /></condition>
         <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition>
         <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
-        <!-- Disable jacoco on Java 18+, see https://github.com/jacoco/jacoco/pull/1132 -->
+        <!-- Disable jacoco on Java 19+, see https://github.com/jacoco/jacoco/pull/1282 -->
         <condition property="coverageByDefault">
             <not>
-                <isset property="isJava18"/>
+                <isset property="isJava19"/>
             </not>
         </condition>
         <condition property="java.library.dir" value="jmods" else="lib">
