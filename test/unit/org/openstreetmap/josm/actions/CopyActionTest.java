@@ -46,7 +46,7 @@ class CopyActionTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static public JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI().main().projection();
+    public static JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI().main().projection();
 
     /**
      * Test that copy action copies the selected primitive

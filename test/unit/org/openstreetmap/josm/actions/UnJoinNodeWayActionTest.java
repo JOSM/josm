@@ -41,7 +41,7 @@ final class UnJoinNodeWayActionTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static public JOSMTestRules test = new JOSMTestRules().projection().main();
+    public static JOSMTestRules test = new JOSMTestRules().projection().main();
 
     /**
      * Test case: Ignore irrelevant nodes

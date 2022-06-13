@@ -1152,16 +1152,16 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                         // true nearest primitive on mousePressed right away
                         if (cycleList.size() == 2 && !waitForMouseUpParameter
                                 // This was a nested if statement (see commented code below)
-                                && (!(osm.equals(old) || osm.isNew() || platformMenuShortcutKeyMask))) {
+                                && !(osm.equals(old) || osm.isNew() || platformMenuShortcutKeyMask)) {
                                 cyclePrims = false;
                                 osm = old;
-                            // else defer toggling to mouseRelease time in those cases:
-                            /*
-                             * osm == old -- the true nearest node is the
-                             * selected one osm is a new node -- do not break
-                             * unglue ways in ALT mode ctrl is pressed -- ctrl
-                             * generally works on mouseReleased
-                             */
+                                // else defer toggling to mouseRelease time in those cases:
+                                /*
+                                 * osm == old -- the true nearest node is the
+                                 * selected one osm is a new node -- do not break
+                                 * unglue ways in ALT mode ctrl is pressed -- ctrl
+                                 * generally works on mouseReleased
+                                 */
                         }
                     }
                 }

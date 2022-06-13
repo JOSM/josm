@@ -31,7 +31,7 @@ class PurgeActionTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static public JOSMTestRules test = new JOSMTestRules().main().projection();
+    public static JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Non-regression test for ticket #12038.
