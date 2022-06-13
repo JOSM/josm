@@ -221,6 +221,10 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
                 () -> tpConfigPanels.setSelectedIndex(2)
         );
 
+        // Set the initial state of the upload button
+        btnUpload.setEnabled(pnlBasicUploadSettings.getUploadTextValidators()
+                .stream().noneMatch(UploadTextComponentValidator::isUploadRejected));
+
         // Enable/disable the upload button if at least an upload validator rejects upload
         pnlBasicUploadSettings.getUploadTextValidators().forEach(v -> v.addChangeListener(e -> btnUpload.setEnabled(
                 pnlBasicUploadSettings.getUploadTextValidators().stream().noneMatch(UploadTextComponentValidator::isUploadRejected))));

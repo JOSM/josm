@@ -56,6 +56,7 @@ public @interface BasicPreferences {
             Preferences pref = Preferences.main();
             // Disable saving on put, just to avoid overwriting pref files
             pref.enableSaveOnPut(false);
+            pref.resetToDefault();
             Config.setPreferencesInstance(pref);
             Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
             Config.setUrlsProvider(JosmUrls.getInstance());
