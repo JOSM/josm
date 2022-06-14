@@ -1276,19 +1276,21 @@ public class MainApplication {
                                 /* in case of routing problems to the main openstreetmap domain don't enable IPv6 */
                                 for (InetAddress b : InetAddress.getAllByName("api.openstreetmap.org")) {
                                     if (b instanceof Inet6Address) {
-                                        if (b.isReachable(1000)) {
-                                            SSLSocketFactory.getDefault().createSocket(b, 443).close();
-                                        } else {
-                                            hasv6 = false;
-                                        }
+                                        //if (b.isReachable(1000)) {
+                                        SSLSocketFactory.getDefault().createSocket(b, 443).close();
+                                        //} else {
+                                        //    hasv6 = false;
+                                        //}
                                         break; /* we're done */
                                     }
                                 }
-                                Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
-                                if (!wasv6) {
-                                    Logging.info(tr("Detected usable IPv6 network, preferring IPv6 over IPv4 after next restart."));
-                                } else {
-                                    Logging.info(tr("Detected usable IPv6 network, preferring IPv6 over IPv4."));
+                                if(hasv6) {
+                                    Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
+                                    if (!wasv6) {
+                                        Logging.info(tr("Detected usable IPv6 network, preferring IPv6 over IPv4 after next restart."));
+                                    } else {
+                                        Logging.info(tr("Detected usable IPv6 network, preferring IPv6 over IPv4."));
+                                    }
                                 }
                             }
                             break; /* we're done */
@@ -1299,12 +1301,11 @@ public class MainApplication {
                     hasv6 = false;
                     Logging.trace(e);
                 }
+                Config.getPref().putBoolean("validated.ipv6", hasv6); // be sure it is stored before the restart!
                 if (wasv6 && !hasv6) {
                     Logging.info(tr("Detected no usable IPv6 network, preferring IPv4 over IPv6 after next restart."));
-                    Config.getPref().putBoolean("validated.ipv6", hasv6); // be sure it is stored before the restart!
                     RestartAction.restartJOSM();
                 }
-                Config.getPref().putBoolean("validated.ipv6", hasv6);
             }, "IPv6-checker").start();
         }
     }
