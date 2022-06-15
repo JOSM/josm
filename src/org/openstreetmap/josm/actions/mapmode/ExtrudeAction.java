@@ -37,6 +37,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -937,7 +938,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         // find out the movement distance, in metres
         double distance = ProjectionRegistry.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(
-                ProjectionRegistry.getProjection().eastNorth2latlon(n1movedEn));
+                (ILatLon) ProjectionRegistry.getProjection().eastNorth2latlon(n1movedEn));
         MainApplication.getMap().statusLine.setDist(distance);
         updateStatusLine();
 

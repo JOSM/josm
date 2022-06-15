@@ -388,7 +388,7 @@ class DrawSnapHelper {
 
         // find out the distance, in metres, between the base point and projected point
         LatLon mouseLatLon = mapView.getProjection().eastNorth2latlon(snapPoint);
-        double distance = this.drawAction.getCurrentBaseNode().getCoor().greatCircleDistance(mouseLatLon);
+        double distance = this.drawAction.getCurrentBaseNode().greatCircleDistance(mouseLatLon);
         double hdg = Utils.toDegrees(p0.heading(snapPoint));
         // heading of segment from current to calculated point, not to mouse position
 

@@ -468,7 +468,7 @@ public abstract class UnconnectedWays extends Test {
                 Node uncon = visited.iterator().next();
                 LatLon cl = ProjectionRegistry.getProjection().eastNorth2latlon(calcClosest(uncon));
                 // calculate real detour length, closest point might be somewhere between n1 and n2
-                double detourLen = len + node.getCoor().greatCircleDistance(cl);
+                double detourLen = len + node.greatCircleDistance(cl);
                 if (detourLen > maxLen)
                     return false;
                 // see #17914: flag also nodes which are very close
@@ -500,7 +500,7 @@ public abstract class UnconnectedWays extends Test {
                         final boolean containsN = visited.contains(next);
                         visited.add(next);
                         if (!containsN && isConnectedTo(next, visited,
-                                len + node.getCoor().greatCircleDistance(next.getCoor()), way)) {
+                                len + node.greatCircleDistance(next), way)) {
                             return true;
                         }
                     }
@@ -515,7 +515,7 @@ public abstract class UnconnectedWays extends Test {
 
         double getDist(Node n) {
             EastNorth closest = calcClosest(n);
-            return n.getCoor().greatCircleDistance(ProjectionRegistry.getProjection().eastNorth2latlon(closest));
+            return n.greatCircleDistance(ProjectionRegistry.getProjection().eastNorth2latlon(closest));
         }
 
         private boolean nearby(Node n, double dist) {
@@ -526,15 +526,15 @@ public abstract class UnconnectedWays extends Test {
         }
 
         private BBox getBounds(double fudge) {
-            double x1 = n1.getCoor().lon();
-            double x2 = n2.getCoor().lon();
+            double x1 = n1.lon();
+            double x2 = n2.lon();
             if (x1 > x2) {
                 double tmpx = x1;
                 x1 = x2;
                 x2 = tmpx;
             }
-            double y1 = n1.getCoor().lat();
-            double y2 = n2.getCoor().lat();
+            double y1 = n1.lat();
+            double y2 = n2.lat();
             if (y1 > y2) {
                 double tmpy = y1;
                 y1 = y2;

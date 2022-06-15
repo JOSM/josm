@@ -46,7 +46,7 @@ public class GpxTrackSegment extends WithAttributes implements IGpxTrackSegment 
         WayPoint last = null;
         for (WayPoint tpt : wayPoints) {
             if (last != null) {
-                Double d = last.getCoor().greatCircleDistance(tpt.getCoor());
+                Double d = last.greatCircleDistance(tpt);
                 if (!d.isNaN() && !d.isInfinite()) {
                     result += d;
                 }

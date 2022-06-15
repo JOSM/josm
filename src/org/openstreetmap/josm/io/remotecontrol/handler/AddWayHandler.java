@@ -18,6 +18,7 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -128,14 +129,14 @@ public class AddWayHandler extends RequestHandler {
         if (MainApplication.isDisplayingMapView()) {
             MapView mapView = MainApplication.getMap().mapView;
             nd = mapView.getNearestNode(mapView.getPoint(ll), OsmPrimitive::isUsable);
-            if (nd != null && nd.getCoor().greatCircleDistance(ll) > Config.getPref().getDouble("remote.tolerance", 0.1)) {
+            if (nd != null && nd.greatCircleDistance(ll) > Config.getPref().getDouble("remote.tolerance", 0.1)) {
                 nd = null; // node is too far
             }
         }
 
         Node prev = null;
         for (Entry<LatLon, Node> entry : addedNodes.entrySet()) {
-            LatLon lOld = entry.getKey();
+            ILatLon lOld = entry.getKey();
             if (lOld.greatCircleDistance(ll) < Config.getPref().getDouble("remotecontrol.tolerance", 0.1)) {
                 prev = entry.getValue();
                 break;

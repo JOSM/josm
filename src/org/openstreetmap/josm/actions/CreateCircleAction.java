@@ -191,10 +191,9 @@ public final class CreateCircleAction extends JosmAction {
         double r = n1.distance(center);
 
         // see #10777
-        LatLon ll1 = ProjectionRegistry.getProjection().eastNorth2latlon(n1);
         LatLon ll2 = ProjectionRegistry.getProjection().eastNorth2latlon(center);
 
-        double radiusInMeters = ll1.greatCircleDistance(ll2);
+        double radiusInMeters = nodes.get(0).greatCircleDistance(ll2);
 
         int numberOfNodesInCircle = (int) Math.ceil(6.0 * Math.pow(radiusInMeters, 0.5));
         // an odd number of nodes makes the distribution uneven

@@ -8,13 +8,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import net.trajano.commons.testing.UtilityClassTestUtil;
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.apache.commons.jcs3.auxiliary.disk.block.BlockDiskCacheAttributes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link JCSCacheManager}.
@@ -58,7 +58,7 @@ class JCSCacheManagerTest {
 
             CacheAccess<Object, Object> cache = JCSCacheManager.getCache("testUseBigDiskFile", 1, 100, "foobar");
             assertEquals(10*1024,
-                    ((BlockDiskCacheAttributes) cache.getCacheControl().getAuxCaches()[0].getAuxiliaryCacheAttributes()).getMaxKeySize(),
+                    ((BlockDiskCacheAttributes) cache.getCacheControl().getAuxCacheList().get(0).getAuxiliaryCacheAttributes()).getMaxKeySize(),
                     "BlockDiskCache use file size to calculate its size");
         }
     }

@@ -398,8 +398,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public double getDist100Pixel(boolean alwaysPositive) {
         int w = getWidth()/2;
         int h = getHeight()/2;
-        LatLon ll1 = getLatLon(w-50, h);
-        LatLon ll2 = getLatLon(w+50, h);
+        ILatLon ll1 = getLatLon(w-50, h);
+        ILatLon ll2 = getLatLon(w+50, h);
         double gcd = ll1.greatCircleDistance(ll2);
         if (alwaysPositive && gcd <= 0)
             return 0.1;
@@ -648,7 +648,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         LatLon ll1 = getLatLon(width / 2 - 50, height / 2);
         LatLon ll2 = getLatLon(width / 2 + 50, height / 2);
         if (ll1.isValid() && ll2.isValid() && b.contains(ll1) && b.contains(ll2)) {
-            double dm = ll1.greatCircleDistance(ll2);
+            double dm = ll1.greatCircleDistance((ILatLon) ll2);
             double den = 100 * getScale();
             double scaleMin = 0.01 * den / dm / 100;
             if (newScale < scaleMin && !Double.isInfinite(scaleMin)) {

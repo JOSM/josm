@@ -566,7 +566,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                             continue;
                         }
                         if (oldWp != null && trkPnt.getTimeInMillis() > oldWp.getTimeInMillis()) {
-                            double vel = trkPnt.getCoor().greatCircleDistance(oldWp.getCoor())
+                            double vel = trkPnt.greatCircleDistance(oldWp)
                                     / (trkPnt.getTime() - oldWp.getTime());
                             velocities.add(vel);
                         }
@@ -623,9 +623,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 oldWp = null;
             }
             for (WayPoint trkPnt : segment) {
-                LatLon c = trkPnt.getCoor();
                 trkPnt.customColoring = segment.getColor();
-                if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                if (Double.isNaN(trkPnt.lat()) || Double.isNaN(trkPnt.lon())) {
                     continue;
                 }
                 // now we are sure some color will be assigned
@@ -645,7 +644,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     }
                 }
                 if (oldWp != null) { // other coloring modes need segment for calcuation
-                    double dist = c.greatCircleDistance(oldWp.getCoor());
+                    double dist = trkPnt.greatCircleDistance(oldWp);
                     boolean noDraw = false;
                     switch (colored) {
                     case VELOCITY:
@@ -657,7 +656,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                         }
                         break;
                     case DIRECTION:
-                        double dirColor = oldWp.getCoor().bearing(trkPnt.getCoor());
+                        double dirColor = oldWp.bearing(trkPnt);
                         color = directionScale.getColor(dirColor);
                         break;
                     case TIME:
@@ -673,7 +672,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     }
                     if (!noDraw && (!segment.isUnordered() || !data.fromServer) && (maxLineLength == -1 || dist <= maxLineLength)) {
                         trkPnt.drawLine = true;
-                        double bearing = oldWp.getCoor().bearing(trkPnt.getCoor());
+                        double bearing = oldWp.bearing(trkPnt);
                         trkPnt.dir = ((int) (bearing / Math.PI * 4 + 1.5)) % 8;
                     } else {
                         trkPnt.drawLine = false;

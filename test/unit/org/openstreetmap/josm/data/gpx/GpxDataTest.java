@@ -25,6 +25,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
@@ -321,7 +322,7 @@ class GpxDataTest {
                 new WayPoint(new LatLon(-1, 1)));
         data.addTrack(track1);
         data.addTrack(track2);
-        assertEquals(3 * new LatLon(0, 0).greatCircleDistance(new LatLon(1, 1)), data.length(), 1);
+        assertEquals(3 * new LatLon(0, 0).greatCircleDistance((ILatLon) new LatLon(1, 1)), data.length(), 1);
     }
 
     /**

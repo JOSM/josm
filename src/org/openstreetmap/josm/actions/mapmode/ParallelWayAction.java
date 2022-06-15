@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -391,7 +392,8 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
 
         // Note: d is the distance in _projected units_
         double d = enp.distance(nearestPointOnRefLine);
-        double realD = mv.getProjection().eastNorth2latlon(enp).greatCircleDistance(mv.getProjection().eastNorth2latlon(nearestPointOnRefLine));
+        double realD = mv.getProjection().eastNorth2latlon(enp).greatCircleDistance(
+                (ILatLon) mv.getProjection().eastNorth2latlon(nearestPointOnRefLine));
         double snappedRealD = realD;
 
         boolean toTheRight = Geometry.angleIsClockwise(

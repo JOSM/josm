@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
@@ -170,7 +171,7 @@ class ProjectionTest {
             EastNorth en = p.latlon2eastNorth(ll1);
             LatLon ll2 = p.eastNorth2latlon(en);
             assertTrue(ll2.isValid(), p.toCode() + " at " + ll1 + " is " + ll2);
-            double dist = ll1.greatCircleDistance(ll2);
+            double dist = ll1.greatCircleDistance((ILatLon) ll2);
             if (dist > eps) {
                 error2 = true;
                 if (dist > maxDist) {

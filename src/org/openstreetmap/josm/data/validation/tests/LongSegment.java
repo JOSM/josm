@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -91,11 +90,11 @@ public class LongSegment extends Test {
     }
 
     private void visitWaySegment(Way w, int i) {
-        LatLon coor1 = w.getNode(i).getCoor();
-        LatLon coor2 = w.getNode(i + 1).getCoor();
+        Node oneI = w.getNode(i);
+        Node twoI = w.getNode(i + 1);
 
-        if (coor1 != null && coor2 != null) {
-            Double length = coor1.greatCircleDistance(coor2);
+        if (oneI.isLatLonKnown() && twoI.isLatLonKnown()) {
+            double length = oneI.greatCircleDistance(twoI);
             if (length > maxlength) {
                 addErrorForSegment(new WaySegment(w, i), length / 1000.0);
             }

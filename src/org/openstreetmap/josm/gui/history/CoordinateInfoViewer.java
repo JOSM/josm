@@ -1,5 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -23,6 +24,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.data.osm.Node;
@@ -407,8 +409,8 @@ public class CoordinateInfoViewer extends HistoryBrowserPanel {
         protected void refresh() {
             final Pair<LatLon, LatLon> coordinates = updater.getCoordinates();
             if (coordinates == null) return;
-            final LatLon coord = coordinates.a;
-            final LatLon oppositeCoord = coordinates.b;
+            final ILatLon coord = coordinates.a;
+            final ILatLon oppositeCoord = coordinates.b;
 
             // update distance
             //

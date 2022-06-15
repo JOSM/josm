@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -63,9 +64,9 @@ class RenderingCLIAreaTest {
                 isFP(scaleFeldberg4000, ErrorMode.RELATIVE, 1.5e-3),
                 CoreMatchers.is(bFeldberg)});
 
-        LatLon aFeldberg = bFeldberg.getMin();
-        LatLon aFeldberg200mRight = new LatLon(aFeldberg.lat(), 13.433008399004041);
-        LatLon aFeldberg150mUp = new LatLon(53.33134745249311, aFeldberg.lon());
+        ILatLon aFeldberg = bFeldberg.getMin();
+        ILatLon aFeldberg200mRight = new LatLon(aFeldberg.lat(), 13.433008399004041);
+        ILatLon aFeldberg150mUp = new LatLon(53.33134745249311, aFeldberg.lon());
         assertThat(aFeldberg.greatCircleDistance(aFeldberg200mRight), isFP(200.0, 0.01));
         assertThat(aFeldberg.greatCircleDistance(aFeldberg150mUp), isFP(150.0, 0.01));
 
@@ -141,7 +142,7 @@ class RenderingCLIAreaTest {
         return b.getMinLon() + "," + b.getMinLat() + "," + b.getMaxLon() + "," + b.getMaxLat();
     }
 
-    private static String param(LatLon ll) {
+    private static String param(ILatLon ll) {
         return ll.lon() + "," + ll.lat();
     }
 

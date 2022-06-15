@@ -36,6 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -143,8 +144,8 @@ public class SessionReader {
             // large, to keep it within projection bounds and
             // not too small to avoid rounding errors.
             double dist = 0.01 * proj.getDefaultZoomInPPD();
-            LatLon ll1 = proj.eastNorth2latlon(new EastNorth(centerEN.east() - dist, centerEN.north()));
-            LatLon ll2 = proj.eastNorth2latlon(new EastNorth(centerEN.east() + dist, centerEN.north()));
+            ILatLon ll1 = proj.eastNorth2latlon(new EastNorth(centerEN.east() - dist, centerEN.north()));
+            ILatLon ll2 = proj.eastNorth2latlon(new EastNorth(centerEN.east() + dist, centerEN.north()));
             double meterPerEasting = ll1.greatCircleDistance(ll2) / dist / 2;
             double scale = meterPerPixel / meterPerEasting; // unit: easting per pixel
             return new ViewportData(centerEN, scale);

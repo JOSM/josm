@@ -23,6 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -502,9 +503,9 @@ class GeometryTest {
     void testGetLatLonFrom(final Projection projection, final double lat, final double lon, final double angle, final double offsetInMeters) {
         ProjectionRegistry.setProjection(projection);
         final double offset = offsetInMeters / projection.getMetersPerUnit();
-        final LatLon original = new LatLon(lat, lon);
+        final ILatLon original = new LatLon(lat, lon);
 
-        final LatLon actual = (LatLon) Geometry.getLatLonFrom(original, Math.toRadians(angle), offset);
+        final ILatLon actual = Geometry.getLatLonFrom(original, Math.toRadians(angle), offset);
         // Due to degree -> radian -> degree conversion, there is a limit to how precise it can be
         assertEquals(offsetInMeters, original.greatCircleDistance(actual), 0.000_000_1);
         // The docs indicate that this should not be highly precise.

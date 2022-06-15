@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -631,7 +631,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
-     * Replies the length of the way, in metres, as computed by {@link LatLon#greatCircleDistance}.
+     * Replies the length of the way, in metres, as computed by {@link ILatLon#greatCircleDistance}.
      * @return The length of the way, in metres
      * @since 4138
      */
@@ -639,12 +639,8 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         double length = 0;
         Node lastN = null;
         for (Node n:nodes) {
-            if (lastN != null) {
-                LatLon lastNcoor = lastN.getCoor();
-                LatLon coor = n.getCoor();
-                if (lastNcoor != null && coor != null) {
-                    length += coor.greatCircleDistance(lastNcoor);
-                }
+            if (lastN != null && lastN.isLatLonKnown() && n.isLatLonKnown()) {
+                length += n.greatCircleDistance(lastN);
             }
             lastN = n;
         }
@@ -652,7 +648,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
-     * Replies the length of the longest segment of the way, in metres, as computed by {@link LatLon#greatCircleDistance}.
+     * Replies the length of the longest segment of the way, in metres, as computed by {@link ILatLon#greatCircleDistance}.
      * @return The length of the segment, in metres
      * @since 8320
      */
@@ -660,14 +656,10 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         double length = 0;
         Node lastN = null;
         for (Node n:nodes) {
-            if (lastN != null) {
-                LatLon lastNcoor = lastN.getCoor();
-                LatLon coor = n.getCoor();
-                if (lastNcoor != null && coor != null) {
-                    double l = coor.greatCircleDistance(lastNcoor);
-                    if (l > length) {
-                        length = l;
-                    }
+            if (lastN != null && lastN.isLatLonKnown() && n.isLatLonKnown()) {
+                double l = n.greatCircleDistance(lastN);
+                if (l > length) {
+                    length = l;
                 }
             }
             lastN = n;
