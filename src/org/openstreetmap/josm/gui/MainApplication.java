@@ -1284,7 +1284,7 @@ public class MainApplication {
                                         break; /* we're done */
                                     }
                                 }
-                                if(hasv6) {
+                                if (hasv6) {
                                     Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
                                     if (!wasv6) {
                                         Logging.info(tr("Detected usable IPv6 network, preferring IPv6 over IPv4 after next restart."));
