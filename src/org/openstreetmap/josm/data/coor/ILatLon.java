@@ -96,7 +96,7 @@ public interface ILatLon {
      * Uses <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>.
      * @param other the other point.
      * @return distance in metres.
-     * @since xxx (extracted from {@link LatLon})
+     * @since 18494 (extracted from {@link LatLon})
      */
     default double greatCircleDistance(ILatLon other) {
         double sinHalfLat = sin(toRadians(other.lat() - this.lat()) / 2);
@@ -127,7 +127,7 @@ public interface ILatLon {
      *
      * @param other the "destination" position
      * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
-     * @since xxx (extracted from {@link LatLon}, added in 9796)
+     * @since 18494 (extracted from {@link LatLon}, added in 9796)
      */
     default double bearing(ILatLon other) {
         double lat1 = toRadians(this.lat());

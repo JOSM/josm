@@ -218,7 +218,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * Uses <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>.
      * @param other the other point.
      * @return distance in metres.
-     * @deprecated since xxx (use {@link ILatLon#greatCircleDistance(ILatLon)} instead)
+     * @deprecated since 18494 (use {@link ILatLon#greatCircleDistance(ILatLon)} instead)
      */
     @Deprecated
     public double greatCircleDistance(LatLon other) {
@@ -239,7 +239,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * @param other the "destination" position
      * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
      * @since 9796
-     * @deprecated since xxx (use {@link ILatLon#bearing(ILatLon)} instead)
+     * @deprecated since 18494 (use {@link ILatLon#bearing(ILatLon)} instead)
      */
     @Deprecated
     public double bearing(LatLon other) {
