@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -149,7 +148,7 @@ public class PowerLines extends Test {
                     missingTags.add(n);
 
                 /// handle missing nodes
-                double segmentLen = n.getCoor().greatCircleDistance(prevNode.getCoor());
+                double segmentLen = n.greatCircleDistance(prevNode);
                 final Pair<Node, Node> pair = Pair.create(prevNode, n);
                 final Set<Way> crossingWaterWays = new HashSet<>(8);
                 final Set<Node> crossingPositions = new HashSet<>(8);
@@ -295,11 +294,8 @@ public class PowerLines extends Test {
         double max = Double.NEGATIVE_INFINITY;
 
         for (Node n : crossingNodes) {
-            LatLon refcoor = ref.getCoor();
-            LatLon coor = n.getCoor();
-
-            if (refcoor != null && coor != null) {
-                double dist = refcoor.greatCircleDistance(coor);
+            if (ref != null && ref.isLatLonKnown() && n != null && n.isLatLonKnown()) {
+                double dist = ref.greatCircleDistance(n);
 
                 if (dist < min)
                     min = dist;
