@@ -1400,8 +1400,8 @@ public final class Geometry {
         double rValue = Double.MAX_VALUE;
         if (one == null || two == null || one.isIncomplete()
                 || two.isIncomplete()) return Double.NaN;
-        if (one instanceof Node && two instanceof Node) {
-            rValue = ((Node) one).getCoor().greatCircleDistance(((Node) two).getCoor());
+        if (one instanceof ILatLon && two instanceof ILatLon) {
+            rValue = ((ILatLon) one).greatCircleDistance(((ILatLon) two));
         } else if (one instanceof Node && two instanceof Way) {
             rValue = getDistanceWayNode((Way) two, (Node) one);
         } else if (one instanceof Way && two instanceof Node) {

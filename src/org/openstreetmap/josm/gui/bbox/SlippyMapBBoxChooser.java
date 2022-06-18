@@ -28,6 +28,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -167,8 +168,8 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
         int h = getHeight() / 2;
         ICoordinate c1 = getPosition(w - 50, h);
         ICoordinate c2 = getPosition(w + 50, h);
-        final LatLon ll1 = new LatLon(c1.getLat(), c1.getLon());
-        final LatLon ll2 = new LatLon(c2.getLat(), c2.getLon());
+        final ILatLon ll1 = new LatLon(c1.getLat(), c1.getLon());
+        final ILatLon ll2 = new LatLon(c2.getLat(), c2.getLon());
         double gcd = ll1.greatCircleDistance(ll2);
         return gcd <= 0 ? 0.1 : gcd;
     }

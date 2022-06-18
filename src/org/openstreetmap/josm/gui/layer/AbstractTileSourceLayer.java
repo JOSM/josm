@@ -1636,16 +1636,24 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             myDrawString(g, tr("No tiles at this zoom level"), 120, 120);
         }
         if (Logging.isDebugEnabled()) {
-            myDrawString(g, tr("Current zoom: {0}", currentZoomLevel), 50, 140);
-            myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
-            myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
-            myDrawString(g, tr("Best zoom: {0}", getBestZoom()), 50, 185);
-            myDrawString(g, tr("Estimated cache size: {0}", estimateTileCacheSize()), 50, 200);
+            int xOffset = 50;
+            myDrawString(g, tr("Current zoom: {0}", currentZoomLevel), xOffset, 165);
+            myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), xOffset, 180);
+            myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), xOffset, 195);
+            myDrawString(g, tr("Best zoom: {0}", getBestZoom()), xOffset, 210);
+            myDrawString(g, tr("Estimated cache size: {0}", estimateTileCacheSize()), xOffset, 225);
             if (tileLoader instanceof TMSCachedTileLoader) {
-                int offset = 200;
+                int yOffset = 255;
+                myDrawString(g, tr("=== Cache stats ==="), xOffset, yOffset);
+                yOffset += 5;
                 for (String part: ((TMSCachedTileLoader) tileLoader).getStats().split("\n", -1)) {
-                    offset += 15;
-                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset);
+                    String regex = "^-{3,}(.+)";
+                    if (part.matches(regex)) {
+                        part = part.replaceAll(regex, "--- $1");
+                        yOffset += 5;
+                    }
+                    yOffset += 15;
+                    myDrawString(g, tr(part), xOffset, yOffset);
                 }
             }
         }

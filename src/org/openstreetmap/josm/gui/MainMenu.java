@@ -96,6 +96,7 @@ import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SearchNotesDownloadAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.SelectNonBranchingWaySequencesAction;
+import org.openstreetmap.josm.actions.SessionSaveAction;
 import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
@@ -176,8 +177,10 @@ public class MainMenu extends JMenuBar {
     public final SaveAction save = SaveAction.getInstance();
     /** File / Save As... **/
     public final SaveAsAction saveAs = SaveAsAction.getInstance();
+    /** File / Session &gt; Save Session **/
+    public SessionSaveAction sessionSave = SessionSaveAction.getInstance();
     /** File / Session &gt; Save Session As... **/
-    public SessionSaveAsAction sessionSaveAs;
+    public SessionSaveAsAction sessionSaveAs = new SessionSaveAsAction();
     /** File / Export to GPX... **/
     public final GpxExportAction gpxExport = new GpxExportAction();
     /** File / Download from OSM... **/
@@ -738,8 +741,8 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, save);
         add(fileMenu, saveAs);
-        sessionSaveAs = new SessionSaveAsAction();
-        ExpertToggleAction.addVisibilitySwitcher(fileMenu.add(sessionSaveAs));
+        add(fileMenu, sessionSave, true);
+        add(fileMenu, sessionSaveAs, true);
         add(fileMenu, gpxExport, true);
         fileMenu.addSeparator();
         add(fileMenu, download);

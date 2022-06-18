@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.vector;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -117,6 +118,11 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
 
     @Override
     public final List<VectorPrimitive> getReferrers(boolean allowWithoutDataset) {
+        if (this.referrers == null) {
+            return Collections.emptyList();
+        } else if (this.referrers instanceof VectorPrimitive) {
+            return Collections.singletonList((VectorPrimitive) this.referrers);
+        }
         return referrers(allowWithoutDataset, VectorPrimitive.class)
           .collect(Collectors.toList());
     }

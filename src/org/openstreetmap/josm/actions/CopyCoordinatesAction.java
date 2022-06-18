@@ -39,7 +39,6 @@ public class CopyCoordinatesAction extends JosmAction {
     public void actionPerformed(ActionEvent ae) {
         ICoordinateFormat coordinateFormat = CoordinateFormatManager.getDefaultFormat();
         String string = getSelectedNodes().stream()
-                .map(Node::getCoor)
                 .filter(Objects::nonNull)
                 .map(c -> coordinateFormat.toString(c, ", "))
                 .collect(Collectors.joining("\n"));

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -609,6 +610,38 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
             keys = newKeys;
             keysChangedImpl(originalKeys);
         }
+    }
+
+    @Override
+    public void putAll(Map<String, String> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return;
+        }
+        // Defensive copy of keys
+        String[] newKeys = keys;
+        Map<String, String> originalKeys = getKeys();
+        List<Map.Entry<String, String>> tagsToAdd = new ArrayList<>(tags.size());
+        for (Map.Entry<String, String> tag : tags.entrySet()) {
+            if (!Utils.isBlank(tag.getKey())) {
+                int keyIndex = indexOfKey(newKeys, tag.getKey());
+                // Realistically, we will not hit the newKeys == null branch. If it is null, keyIndex is always < 1
+                if (keyIndex < 0 || newKeys == null) {
+                    tagsToAdd.add(tag);
+                } else {
+                    newKeys[keyIndex + 1] = tag.getValue();
+                }
+            }
+        }
+        if (!tagsToAdd.isEmpty()) {
+            int index = newKeys != null ? newKeys.length : 0;
+            newKeys = newKeys != null ? Arrays.copyOf(newKeys, newKeys.length + 2 * tagsToAdd.size()) : new String[2 * tagsToAdd.size()];
+            for (Map.Entry<String, String> tag : tagsToAdd) {
+                newKeys[index++] = tag.getKey();
+                newKeys[index++] = tag.getValue();
+            }
+            keys = newKeys;
+        }
+        keysChangedImpl(originalKeys);
     }
 
     /**

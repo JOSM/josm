@@ -71,7 +71,8 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             if (err > 0) {
                 SimplifyWayAction.simplifyWays(ways, err);
             }
-            final OsmDataLayer osmLayer = new OsmDataLayer(ds, tr("Converted from: {0}", layer.getName()), null);
+            String name = layer.getName().replaceAll("^" + tr("Converted from: {0}", ""), "");
+            final OsmDataLayer osmLayer = new OsmDataLayer(ds, tr("Converted from: {0}", name), null);
             if (layer.getAssociatedFile() != null) {
                 osmLayer.setAssociatedFile(new File(layer.getAssociatedFile().getParentFile(),
                         layer.getAssociatedFile().getName() + ".osm"));

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -91,7 +92,7 @@ public final class GpxImageCorrelation {
                             double totalDist = 0;
                             List<Pair<Double, WayPoint>> nextWps = new ArrayList<>();
                             for (int j = i; j < size; j++) {
-                                totalDist += wps.get(j - 1).getCoor().greatCircleDistance(wps.get(j).getCoor());
+                                totalDist += wps.get(j - 1).greatCircleDistance(wps.get(j));
                                 nextWps.add(new Pair<>(totalDist, wps.get(j)));
                                 if (wps.get(j).hasDate()) {
                                     // ...if yes, interpolate everything in between
@@ -120,7 +121,7 @@ public final class GpxImageCorrelation {
                             firstSegment = false;
                             if (!trkInt || isFirst || prevWp == null ||
                                     Math.abs(curWpTime - prevWpTime) > TimeUnit.MINUTES.toMillis(trkTime) ||
-                                    prevWp.getCoor().greatCircleDistance(curWp.getCoor()) > trkDist) {
+                                    prevWp.greatCircleDistance(curWp) > trkDist) {
                                 isFirst = false;
                                 interpolate = false;
                                 if (trkTag) {
@@ -131,7 +132,7 @@ public final class GpxImageCorrelation {
                             // Apply settings for segments
                             if (!segInt || prevWp == null ||
                                     Math.abs(curWpTime - prevWpTime) > TimeUnit.MINUTES.toMillis(segTime) ||
-                                    prevWp.getCoor().greatCircleDistance(curWp.getCoor()) > segDist) {
+                                    prevWp.greatCircleDistance(curWp) > segDist) {
                                 interpolate = false;
                                 if (segTag) {
                                     tagTime = segTagTime;
@@ -237,7 +238,7 @@ public final class GpxImageCorrelation {
         Double prevElevation = null;
 
         if (prevWp != null && interpolate) {
-            double distance = prevWp.getCoor().greatCircleDistance(curWp.getCoor());
+            double distance = prevWp.greatCircleDistance(curWp);
             // This is in km/h, 3.6 * m/s
             if (curWpTime > prevWpTime) {
                 speed = 3600 * distance / (curWpTime - prevWpTime);
@@ -266,7 +267,7 @@ public final class GpxImageCorrelation {
                         curTmp.setPos(curWp.getCoor());
                     }
                     if (nextWp != null && dirpos.isSetImageDirection()) {
-                        double direction = curWp.getCoor().bearing(nextWp.getCoor());
+                        double direction = curWp.bearing(nextWp);
                         curTmp.setExifImgDir(computeDirection(direction, dirpos.getImageDirectionAngleOffset()));
                     }
                     curTmp.setGpsTime(curImg.getExifInstant().minusMillis(offset));
@@ -297,7 +298,7 @@ public final class GpxImageCorrelation {
                     final LatLon curCoor = curWp.getCoor();
                     LatLon position = prevCoor.interpolate(curCoor, timeDiff);
                     if (nextCoorForDirection != null && (shiftXY || dirpos.isSetImageDirection())) {
-                        double direction = position.bearing(nextCoorForDirection);
+                        double direction = position.bearing((ILatLon) nextCoorForDirection);
                         if (dirpos.isSetImageDirection()) {
                             curTmp.setExifImgDir(computeDirection(direction, dirpos.getImageDirectionAngleOffset()));
                         }
@@ -306,7 +307,7 @@ public final class GpxImageCorrelation {
                             final double offsetX = dirpos.getShiftImageX();
                             final double offsetY = dirpos.getShiftImageY();
                             final double r = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-                            final double orientation = (direction + LatLon.ZERO.bearing(new LatLon(offsetX, offsetY))) % (2 * Math.PI);
+                            final double orientation = (direction + LatLon.ZERO.bearing((ILatLon) new LatLon(offsetX, offsetY))) % (2 * Math.PI);
                             position = proj.eastNorth2latlon(proj.latlon2eastNorth(position)
                                     .add(r * Math.sin(orientation), r * Math.cos(orientation)));
                         }

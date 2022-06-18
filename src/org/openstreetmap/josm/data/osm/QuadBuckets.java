@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.data.IQuadBucketType;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 import org.openstreetmap.josm.tools.Logging;
@@ -173,6 +174,10 @@ public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
         }
 
         boolean matches(final T o, final BBox searchBbox) {
+            // Avoid allocations for point (AKA Node) objects
+            if (o instanceof ILatLon) {
+                return searchBbox.contains((ILatLon) o);
+            }
             return o.getBBox().intersects(searchBbox);
         }
 

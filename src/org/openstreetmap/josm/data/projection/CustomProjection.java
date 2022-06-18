@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.data.projection.datum.CentricDatum;
@@ -807,7 +808,7 @@ public class CustomProjection extends AbstractProjection {
                     if (enPole.isValid()) {
                         // project back and check if the result is somewhat reasonable
                         LatLon llBack = eastNorth2latlon(enPole);
-                        if (llBack.isValid() && ll.greatCircleDistance(llBack) < 1000) {
+                        if (llBack.isValid() && ll.greatCircleDistance((ILatLon) llBack) < 1000) {
                             polesEN.put(p, enPole);
                         }
                     }

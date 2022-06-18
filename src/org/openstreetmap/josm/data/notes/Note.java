@@ -29,9 +29,11 @@ public class Note {
 
     /**
      * Sorts notes in the following order:
-     * 1) Open notes
-     * 2) Closed notes
-     * 3) New notes
+     * <ol>
+     *     <li>Open notes</li>
+     *     <li>Closed notes</li>
+     *     <li>New notes</li>
+     * </ol>
      * Within each subgroup it sorts by ID
      */
     public static final Comparator<Note> DEFAULT_COMPARATOR = (n1, n2) -> {

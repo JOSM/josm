@@ -401,7 +401,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     public void mousePressed(MouseEvent e) {
         mouseDownButton = e.getButton();
         // return early
-        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || mouseDownButton != MouseEvent.BUTTON1)
+        if (!mv.isActiveLayerVisible() || Boolean.FALSE.equals(this.getValue("active")) || mouseDownButton != MouseEvent.BUTTON1)
             return;
 
         // left-button mouse click only is processed here
@@ -724,9 +724,34 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             return ds.update(() -> {
                 MoveCommand moveCmd = null;
                 if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                    EastNorth clampedEastNorth = currentEN;
+                    if (platformMenuShortcutKeyMask) {
+                        Way w = ds.getLastSelectedWay();
+                        if (w != null && w.getNodesCount() == 2) {
+                            double clamph = w.firstNode().getEastNorth().heading(w.lastNode().getEastNorth());
+                            double dh = startEN.heading(currentEN, clamph);
+                            switch ((int) (dh / (Math.PI/4))) {
+                            case 1:
+                            case 2:
+                                dh -= Math.PI/2;
+                                break;
+                            case 3:
+                            case 4:
+                                dh += Math.PI;
+                                break;
+                            case 5:
+                            case 6:
+                                dh += Math.PI/2;
+                                break;
+                            default:
+                                // Just in case we cannot clamp
+                            }
+                            clampedEastNorth = currentEN.rotate(startEN, -dh);
+                        }
+                    }
                     moveCmd = (MoveCommand) c;
                     moveCmd.saveCheckpoint();
-                    moveCmd.applyVectorTo(currentEN);
+                    moveCmd.applyVectorTo(clampedEastNorth);
                 } else if (!selection.isEmpty()) {
                     moveCmd = new MoveCommand(selection, startEN, currentEN);
                     UndoRedoHandler.getInstance().add(moveCmd);
@@ -1125,17 +1150,18 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
                         // special case:  for cycle groups of 2, we can toggle to the
                         // true nearest primitive on mousePressed right away
-                        if (cycleList.size() == 2 && !waitForMouseUpParameter) {
-                            if (!(osm.equals(old) || osm.isNew() || platformMenuShortcutKeyMask)) {
+                        if (cycleList.size() == 2 && !waitForMouseUpParameter
+                                // This was a nested if statement (see commented code below)
+                                && !(osm.equals(old) || osm.isNew() || platformMenuShortcutKeyMask)) {
                                 cyclePrims = false;
                                 osm = old;
-                            } // else defer toggling to mouseRelease time in those cases:
-                            /*
-                             * osm == old -- the true nearest node is the
-                             * selected one osm is a new node -- do not break
-                             * unglue ways in ALT mode ctrl is pressed -- ctrl
-                             * generally works on mouseReleased
-                             */
+                                // else defer toggling to mouseRelease time in those cases:
+                                /*
+                                 * osm == old -- the true nearest node is the
+                                 * selected one osm is a new node -- do not break
+                                 * unglue ways in ALT mode ctrl is pressed -- ctrl
+                                 * generally works on mouseReleased
+                                 */
                         }
                     }
                 }

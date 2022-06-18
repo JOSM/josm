@@ -50,7 +50,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for Session writing.
  */
-class SessionWriterTest {
+public class SessionWriterTest {
 
     protected static final class OsmHeadlessJosExporter extends OsmDataSessionExporter {
         public OsmHeadlessJosExporter(OsmDataLayer layer) {
@@ -122,6 +122,7 @@ class SessionWriterTest {
         }
         for (final Layer l : layers) {
             SessionLayerExporter s = SessionWriter.getSessionLayerExporter(l);
+            s.getExportPanel();
             exporters.put(l, s);
             if (s instanceof GpxTracksSessionExporter) {
                 ((GpxTracksSessionExporter) s).setMetaTime(Instant.parse("2021-10-16T18:27:12.351Z"));
@@ -153,13 +154,23 @@ class SessionWriterTest {
         }
     }
 
-    private OsmDataLayer createOsmLayer() {
+    /**
+     * Creates an OSM layer
+     * @return OSM layer
+     * @since 18466
+     */
+    public static OsmDataLayer createOsmLayer() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "OSM layer name", null);
         layer.setAssociatedFile(new File("data.osm"));
         return layer;
     }
 
-    private GpxLayer createGpxLayer() {
+    /**
+     * Creates a GPX layer
+     * @return GPX layer
+     * @since 18466
+     */
+    public static GpxLayer createGpxLayer() {
         GpxData data = new GpxData();
         WayPoint wp = new WayPoint(new LatLon(42.72665, -0.00747));
         wp.setInstant(Instant.parse("2021-01-01T10:15:30.00Z"));
@@ -170,21 +181,38 @@ class SessionWriterTest {
         return layer;
     }
 
-    private MarkerLayer createMarkerLayer(GpxLayer gpx) {
+    /**
+     * Creates a MarkerLayer
+     * @param gpx linked GPX layer
+     * @return MarkerLayer
+     * @since 18466
+     */
+    public static MarkerLayer createMarkerLayer(GpxLayer gpx) {
         MarkerLayer layer = new MarkerLayer(gpx.data, "Marker layer name", gpx.getAssociatedFile(), gpx);
         layer.setOpacity(0.5);
         layer.setColor(new Color(0x12345678, true));
+        gpx.setLinkedMarkerLayer(layer);
         return layer;
     }
 
-    private ImageryLayer createImageryLayer() {
+    /**
+     * Creates an ImageryLayer
+     * @return ImageryLayer
+     * @since 18466
+     */
+    public static ImageryLayer createImageryLayer() {
         TMSLayer layer = new TMSLayer(new ImageryInfo("the name", "http://www.url.com/"));
         layer.getDisplaySettings().setOffsetBookmark(
                 new OffsetBookmark(ProjectionRegistry.getProjection().toCode(), layer.getInfo().getId(), layer.getInfo().getName(), "", 12, 34));
         return layer;
     }
 
-    private NoteLayer createNoteLayer() {
+    /**
+     * Creates a NoteLayer
+     * @return NoteLayer
+     * @since 18466
+     */
+    public static NoteLayer createNoteLayer() {
         return new NoteLayer(Arrays.asList(new Note(LatLon.ZERO)), "layer name");
     }
 
@@ -249,11 +277,28 @@ class SessionWriterTest {
     @Test
     void testWriteGpxAndMarkerJoz() throws IOException {
         GpxLayer gpx = createGpxLayer();
-        Map<String, byte[]> bytes = testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
+        MarkerLayer markers = createMarkerLayer(gpx);
+        Map<String, byte[]> bytes = testWrite(Arrays.asList(gpx, markers), true);
 
-        Path path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/gpx_markers.jos");
+        Path path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/gpx_markers_combined.jos");
         String expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
         String actual = new String(bytes.get("session.jos"), StandardCharsets.UTF_8).replace("\r", "");
+        assertEquals(expected, actual);
+
+        path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/data_export.gpx");
+        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        actual = new String(bytes.get("layers/01/data.gpx"), StandardCharsets.UTF_8).replace("\r", "");
+        assertEquals(expected, actual);
+
+        //Test writing when the marker layer has no corresponding GPX layer:
+        gpx.setLinkedMarkerLayer(null);
+        markers.fromLayer = null;
+        markers.data.transferLayerPrefs(gpx.data.getLayerPrefs());
+        bytes = testWrite(Arrays.asList(gpx, markers), true);
+
+        path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/gpx_markers.jos");
+        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        actual = new String(bytes.get("session.jos"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
 
         path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/data_export.gpx");
@@ -265,6 +310,7 @@ class SessionWriterTest {
         expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
         actual = new String(bytes.get("layers/02/data.gpx"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
+
     }
 
     /**

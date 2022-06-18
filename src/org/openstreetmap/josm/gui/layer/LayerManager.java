@@ -131,7 +131,7 @@ public class LayerManager {
         LayerRemoveEvent(LayerManager source, Layer removedLayer) {
             super(source);
             this.removedLayer = removedLayer;
-            this.lastLayer = source.getLayers().size() == 1;
+            this.lastLayer = source.getLayers().isEmpty();
         }
 
         /**

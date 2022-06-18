@@ -74,7 +74,7 @@ public final class AddNodeAction extends JosmAction {
             UndoRedoHandler.getInstance().add(new AddCommand(ds, nnew));
             ds.setSelected(nnew);
             MapView mapView = MainApplication.getMap().mapView;
-            if (mapView != null && !mapView.getRealBounds().contains(nnew.getCoor())) {
+            if (mapView != null && !mapView.getRealBounds().contains(nnew)) {
                 AutoScaleAction.zoomTo(Collections.<OsmPrimitive>singleton(nnew));
             }
         });

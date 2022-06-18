@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxDistance;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -1206,7 +1207,7 @@ public final class Functions {
      * @since 12514
      */
     public static boolean at(Environment env, double lat, double lon) {
-        return new LatLon(lat, lon).equalsEpsilon(center(env));
+        return new LatLon(lat, lon).equalsEpsilon(center(env), ILatLon.MAX_SERVER_PRECISION);
     }
 
     /**

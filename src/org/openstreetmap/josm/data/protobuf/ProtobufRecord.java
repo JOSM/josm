@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.protobuf;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -21,11 +22,12 @@ public class ProtobufRecord implements AutoCloseable {
     /**
      * Create a new Protobuf record
      *
+     * @param byteArrayOutputStream A reusable ByteArrayOutputStream to avoid unnecessary allocations
      * @param parser The parser to use to create the record
      * @throws IOException - if an IO error occurs
      */
-    public ProtobufRecord(ProtobufParser parser) throws IOException {
-        Number number = ProtobufParser.convertByteArray(parser.nextVarInt(), ProtobufParser.VAR_INT_BYTE_SIZE);
+    public ProtobufRecord(ByteArrayOutputStream byteArrayOutputStream, ProtobufParser parser) throws IOException {
+        Number number = ProtobufParser.convertByteArray(parser.nextVarInt(byteArrayOutputStream), ProtobufParser.VAR_INT_BYTE_SIZE);
         // I don't foresee having field numbers > {@code Integer#MAX_VALUE >> 3}
         this.field = (int) number.longValue() >> 3;
         // 7 is 111 (so last three bits)
@@ -42,13 +44,13 @@ public class ProtobufRecord implements AutoCloseable {
         this.type = tType;
 
         if (this.type == WireType.VARINT) {
-            this.bytes = parser.nextVarInt();
+            this.bytes = parser.nextVarInt(byteArrayOutputStream);
         } else if (this.type == WireType.SIXTY_FOUR_BIT) {
             this.bytes = parser.nextFixed64();
         } else if (this.type == WireType.THIRTY_TWO_BIT) {
             this.bytes = parser.nextFixed32();
         } else if (this.type == WireType.LENGTH_DELIMITED) {
-            this.bytes = parser.nextLengthDelimited();
+            this.bytes = parser.nextLengthDelimited(byteArrayOutputStream);
         } else {
             this.bytes = EMPTY_BYTES;
         }

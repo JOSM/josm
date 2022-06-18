@@ -166,7 +166,7 @@ class GeoJSONReaderTest {
     private static boolean areEqualNodes(final OsmPrimitive p1, final OsmPrimitive p2) {
         return (p1 instanceof Node)
             && (p2 instanceof Node)
-            && ((Node) p1).getCoor().equalsEpsilon(((Node) p2).getCoor());
+            && ((Node) p1).equalsEpsilon(((Node) p2));
     }
 
     private static boolean areEqualWays(final OsmPrimitive p1, final OsmPrimitive p2) {

@@ -83,8 +83,17 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
                 feedbackDisabled();
                 return;
             }
-            String uploadComment = getComponent().getText();
-            if (UploadDialog.UploadAction.isUploadCommentTooShort(uploadComment)) {
+            final String uploadComment = getComponent().getText();
+            final String rejection = UploadDialog.UploadAction.validateUploadTag(uploadComment, "upload.comment",
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+
+            // Reject the upload if tags are required and are not in the input. If the tags exist or are not
+            // required, then check the length of the input and warn if it's too short (a short msg is not a rejection)
+            uploadRejected = rejection != null;
+
+            if (uploadRejected) {
+                feedbackWarning(tr("Your upload comment is <i>rejected</i>.") + "<br />" + rejection);
+            } else if (UploadDialog.UploadAction.isUploadCommentTooShort(uploadComment)) {
                 feedbackWarning(tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" +
                         "This is technically allowed, but please consider that many users who are<br />" +
                         "watching changes in their area depend on meaningful changeset comments<br />" +
@@ -92,15 +101,8 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
                         "If you spend a minute now to explain your change, you will make life<br />" +
                         "easier for many other mappers.").replace("<br />", " "));
             } else {
-                String rejection = UploadDialog.UploadAction.validateUploadTag(uploadComment, "upload.comment",
-                        Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-                uploadRejected = rejection != null;
-                if (uploadRejected) {
-                    feedbackWarning(tr("Your upload comment is <i>rejected</i>.") + "<br />" + rejection);
-                } else {
-                    feedbackValid(tr("Thank you for providing a changeset comment! " +
-                            "This gives other mappers a better understanding of your intent."));
-                }
+                feedbackValid(tr("Thank you for providing a changeset comment! " +
+                        "This gives other mappers a better understanding of your intent."));
             }
         }
     }
@@ -120,22 +122,24 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
                 feedbackDisabled();
                 return;
             }
-            String uploadSource = getComponent().getText();
-            if (Utils.isStripEmpty(uploadSource)) {
+            final String uploadSource = getComponent().getText();
+            final String rejection = UploadDialog.UploadAction.validateUploadTag(
+                    uploadSource, "upload.source", Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+
+            // Reject the upload only if tags are required and are not in the input. If the tags exist or are not
+            // required, then check the length of the input and warn if it's too short (a short msg is not a rejection)
+            uploadRejected = rejection != null;
+
+            if (uploadRejected) {
+                feedbackWarning(tr("Your changeset source is <i>rejected</i>.") + "<br />" + rejection);
+            } else if (Utils.isStripEmpty(uploadSource)) {
                 feedbackWarning(tr("You did not specify a source for your changes.<br />" +
                         "It is technically allowed, but this information helps<br />" +
                         "other users to understand the origins of the data.<br /><br />" +
                         "If you spend a minute now to explain your change, you will make life<br />" +
                         "easier for many other mappers.").replace("<br />", " "));
             } else {
-                final String rejection = UploadDialog.UploadAction.validateUploadTag(
-                        uploadSource, "upload.source", Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-                uploadRejected = rejection != null;
-                if (uploadRejected) {
-                    feedbackWarning(tr("Your changeset source is <i>rejected</i>.") + "<br />" + rejection);
-                } else {
-                    feedbackValid(tr("Thank you for providing the data source!"));
-                }
+                feedbackValid(tr("Thank you for providing the data source!"));
             }
         }
     }

@@ -34,6 +34,7 @@ import org.w3c.dom.Element;
 public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> {
 
     private Instant metaTime;
+    private boolean canExport = true;
 
     /**
      * Constructs a new {@code MarkerSessionExporter}.
@@ -53,8 +54,12 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
 
     @Override
     public Component getExportPanel() {
+        export.setSelected(true); //true even when not shown to the user as the index should be reserved for the corresponding GPX layer
+        if (layer.fromLayer != null && layer.fromLayer.getData() != null) {
+            canExport = false;
+            return null;
+        }
         final JPanel p = new JPanel(new GridBagLayout());
-        export.setSelected(true);
         final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEADING);
         lbl.setToolTipText(layer.getToolTipText());
         lbl.setLabelFor(export);
@@ -66,11 +71,13 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
 
     @Override
     public boolean requiresZip() {
-        return true;
+        return canExport;
     }
 
     @Override
     public Element export(ExportSupport support) throws IOException {
+        if (!canExport) return null;
+
         Element layerEl = support.createElement("layer");
         layerEl.setAttribute("type", "markers");
         layerEl.setAttribute("version", "0.1");

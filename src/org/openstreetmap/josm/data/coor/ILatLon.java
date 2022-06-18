@@ -1,7 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
+import static org.openstreetmap.josm.tools.Utils.toRadians;
+
 import org.openstreetmap.josm.data.projection.Projecting;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This interface represents a coordinate in LatLon space.
@@ -15,6 +25,11 @@ import org.openstreetmap.josm.data.projection.Projecting;
  * @since 12161
  */
 public interface ILatLon {
+    /**
+     * Minimum difference in location to not be represented as the same position.
+     * The API returns 7 decimals.
+     */
+    double MAX_SERVER_PRECISION = 1e-7;
 
     /**
      * Returns the longitude, i.e., the east-west position in degrees.
@@ -50,5 +65,82 @@ public interface ILatLon {
         } else {
             return projecting.latlon2eastNorth(this);
         }
+    }
+
+    /**
+     * Determines if the other point has almost the same lat/lon values.
+     * @param other other lat/lon
+     * @return <code>true</code> if the other point has almost the same lat/lon
+     * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
+     * @since 18464 (extracted from {@link LatLon})
+     */
+    default boolean equalsEpsilon(ILatLon other) {
+        return equalsEpsilon(other, MAX_SERVER_PRECISION);
+    }
+
+    /**
+     * Determines if the other point has almost the same lat/lon values.
+     * @param other other lat/lon
+     * @param precision The precision to use
+     * @return <code>true</code> if the other point has almost the same lat/lon
+     * values, only differing by no more than 1 / precision.
+     * @since 18464 (extracted from {@link LatLon})
+     */
+    default boolean equalsEpsilon(ILatLon other, double precision) {
+        double p = precision / 2;
+        return Math.abs(lat() - other.lat()) <= p && Math.abs(lon() - other.lon()) <= p;
+    }
+
+    /**
+     * Computes the distance between this lat/lon and another point on the earth.
+     * Uses <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>.
+     * @param other the other point.
+     * @return distance in metres.
+     * @since 18494 (extracted from {@link LatLon})
+     */
+    default double greatCircleDistance(ILatLon other) {
+        double sinHalfLat = sin(toRadians(other.lat() - this.lat()) / 2);
+        double sinHalfLon = sin(toRadians(other.lon() - this.lon()) / 2);
+        double d = 2 * WGS84.a * asin(
+                sqrt(sinHalfLat*sinHalfLat +
+                        cos(toRadians(this.lat()))*cos(toRadians(other.lat()))*sinHalfLon*sinHalfLon));
+        // For points opposite to each other on the sphere,
+        // rounding errors could make the argument of asin greater than 1
+        // (This should almost never happen.)
+        if (Double.isNaN(d)) {
+            Logging.error("NaN in greatCircleDistance: {0} {1}", this, other);
+            d = PI * WGS84.a;
+        }
+        return d;
+    }
+
+    /**
+     * Returns bearing from this point to another.
+     *
+     * Angle starts from north and increases clockwise, PI/2 means east.
+     *
+     * Please note that reverse bearing (from other point to this point) should NOT be
+     * calculated from return value of this method, because great circle path
+     * between the two points have different bearings at each position.
+     *
+     * To get bearing from another point to this point call other.bearing(this)
+     *
+     * @param other the "destination" position
+     * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
+     * @since 18494 (extracted from {@link LatLon}, added in 9796)
+     */
+    default double bearing(ILatLon other) {
+        double lat1 = toRadians(this.lat());
+        double lat2 = toRadians(other.lat());
+        double dlon = toRadians(other.lon() - this.lon());
+        double bearing = atan2(
+                sin(dlon) * cos(lat2),
+                cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)
+        );
+        bearing %= 2 * PI;
+        if (bearing < 0) {
+            bearing += 2 * PI;
+        }
+        return bearing;
     }
 }

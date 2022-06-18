@@ -32,6 +32,7 @@ import javax.json.stream.JsonParsingException;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
@@ -239,7 +240,7 @@ public class GeoJSONWriter {
         private void visitMultiPoints(final Relation r) {
             final JsonArrayBuilder multiPoint = Json.createArrayBuilder();
             r.getMembers().stream().map(RelationMember::getMember).filter(Node.class::isInstance).map(Node.class::cast)
-                    .map(Node::getCoor).map(latLon -> getCoorArray(null, latLon))
+                    .map(latLon -> getCoorArray(null, latLon))
                     .forEach(multiPoint::add);
             geomObj.add("type", "MultiPoint");
             geomObj.add("coordinates", multiPoint);
@@ -254,9 +255,9 @@ public class GeoJSONWriter {
             r.getMembers().stream().map(RelationMember::getMember).filter(Way.class::isInstance).map(Way.class::cast)
                     .map(Way::getNodes).map(p -> {
                 JsonArrayBuilder array = getCoorsArray(p);
-                LatLon ll = p.get(0).getCoor();
+                ILatLon ll = p.get(0);
                 // since first node is not duplicated as last node
-                return ll != null ? array.add(getCoorArray(null, ll)) : array;
+                return ll.isLatLonKnown() ? array.add(getCoorArray(null, ll)) : array;
             }).forEach(multiLine::add);
             geomObj.add("type", "MultiLineString");
             geomObj.add("coordinates", multiLine);
@@ -296,9 +297,9 @@ public class GeoJSONWriter {
                 Stream.concat(outer, inner)
                         .map(p -> {
                             JsonArrayBuilder array = getCoorsArray(p);
-                            LatLon ll = p.get(0).getCoor();
+                            ILatLon ll = p.get(0);
                             // since first node is not duplicated as last node
-                            return ll != null ? array.add(getCoorArray(null, ll)) : array;
+                            return ll.isLatLonKnown() ? array.add(getCoorArray(null, ll)) : array;
                         })
                         .forEach(polygon::add);
                 final JsonArrayBuilder multiPolygon = Json.createArrayBuilder().add(polygon);
@@ -310,16 +311,15 @@ public class GeoJSONWriter {
         private JsonArrayBuilder getCoorsArray(Iterable<Node> nodes) {
             final JsonArrayBuilder builder = Json.createArrayBuilder();
             for (Node n : nodes) {
-                LatLon ll = n.getCoor();
-                if (ll != null) {
-                    builder.add(getCoorArray(null, ll));
+                if (n.isLatLonKnown()) {
+                    builder.add(getCoorArray(null, n));
                 }
             }
             return builder;
         }
     }
 
-    private JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, LatLon c) {
+    private JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, ILatLon c) {
         return getCoorArray(builder, projection.latlon2eastNorth(c));
     }
 

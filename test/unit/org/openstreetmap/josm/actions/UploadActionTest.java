@@ -41,7 +41,7 @@ class UploadActionTest {
     // Only needed for layer cleanup. And user identity cleanup. And ensuring that data isn't accidentally uploaded.
     // Note that the setUp method can be replaced by the @Territories extension, when that is merged.
     @RegisterExtension
-    JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeAPI();
+    static JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeAPI();
 
     @BeforeAll
     static void setUp() {

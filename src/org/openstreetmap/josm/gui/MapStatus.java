@@ -61,6 +61,7 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
@@ -70,7 +71,6 @@ import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -1220,13 +1220,9 @@ public final class MapStatus extends JPanel implements
             OsmPrimitive n1 = it.next();
             OsmPrimitive n2 = it.next();
             // show distance between two selected nodes with coordinates
-            if (n1 instanceof Node && n2 instanceof Node) {
-                LatLon c1 = ((Node) n1).getCoor();
-                LatLon c2 = ((Node) n2).getCoor();
-                if (c1 != null && c2 != null) {
-                    setDist(c1.greatCircleDistance(c2));
-                    return;
-                }
+            if (n1 instanceof ILatLon && n2 instanceof ILatLon && ((ILatLon) n1).isLatLonKnown() && ((ILatLon) n2).isLatLonKnown()) {
+                setDist(((ILatLon) n1).greatCircleDistance((ILatLon) n2));
+                return;
             }
         }
         setDist(new SubclassFilteredCollection<OsmPrimitive, Way>(newSelection, Way.class::isInstance));

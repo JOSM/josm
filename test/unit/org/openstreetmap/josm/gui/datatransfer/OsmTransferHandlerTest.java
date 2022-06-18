@@ -48,14 +48,14 @@ class OsmTransferHandlerTest {
         OsmDataLayer target = new OsmDataLayer(ds2, "target", null);
 
         transferHandler.pasteOn(target, null);
-        assertTrue(n1.getCoor().equalsEpsilon(ds2.getNodes().iterator().next().getCoor()));
+        assertTrue(n1.equalsEpsilon(ds2.getNodes().iterator().next()));
 
         ds2.clear();
         assertTrue(ds2.getNodes().isEmpty());
 
         LatLon pos = new LatLon(55, -5);
         transferHandler.pasteOn(target, ProjectionRegistry.getProjection().latlon2eastNorth(pos));
-        assertTrue(pos.equalsEpsilon(ds2.getNodes().iterator().next().getCoor()));
+        assertTrue(pos.equalsEpsilon(ds2.getNodes().iterator().next()));
     }
 
     /**

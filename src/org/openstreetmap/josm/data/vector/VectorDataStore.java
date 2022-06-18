@@ -13,14 +13,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.josm.data.IQuadBucketType;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Feature;
+import org.openstreetmap.josm.data.imagery.vectortile.mapbox.GeometryTypes;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Layer;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.INode;
@@ -35,6 +38,7 @@ import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A data store for Vector Data sets
@@ -168,12 +172,12 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
             tileBbox = new BBox(upperLeft.getLon(), upperLeft.getLat(), lowerRight.getLon(), lowerRight.getLat());
         }
         final int layerExtent = layer.getExtent();
-        final ICoordinate coords = new Coordinate(
+        final LatLon coords = new LatLon(
                 tileBbox.getMaxLat() - (tileBbox.getMaxLat() - tileBbox.getMinLat()) * y / layerExtent,
                 tileBbox.getMinLon() + (tileBbox.getMaxLon() - tileBbox.getMinLon()) * x / layerExtent
         );
         final Collection<VectorNode> nodes = this.store
-          .searchNodes(new BBox(coords.getLon(), coords.getLat(), VectorDataSet.DUPE_NODE_DISTANCE));
+          .searchNodes(new BBox(coords.lon(), coords.lat(), VectorDataSet.DUPE_NODE_DISTANCE));
         final VectorNode node;
         if (!nodes.isEmpty()) {
             final VectorNode first = nodes.iterator().next();
@@ -208,15 +212,17 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
     private <T extends Tile & VectorTile> List<VectorWay> pathToWay(T tile, Layer layer,
       Collection<VectorPrimitive> featureObjects, Path2D shape) {
         final PathIterator pathIterator = shape.getPathIterator(null);
-        final List<VectorWay> ways = pathIteratorToObjects(tile, layer, featureObjects, pathIterator).stream()
-          .filter(VectorWay.class::isInstance).map(VectorWay.class::cast).collect(toList());
+        final List<VectorWay> ways = new ArrayList<>(
+                Utils.filteredCollection(pathIteratorToObjects(tile, layer, featureObjects, pathIterator), VectorWay.class));
         // These nodes technically do not exist, so we shouldn't show them
-        ways.stream().flatMap(way -> way.getNodes().stream())
-          .filter(prim -> !prim.isTagged() && prim.getReferrers(true).size() == 1 && prim.getId() <= 0)
-          .forEach(prim -> {
-              prim.setDisabled(true);
-              prim.setVisible(false);
-          });
+        for (VectorWay way : ways) {
+            for (VectorNode node : way.getNodes()) {
+                if (!node.hasKeys() && node.getReferrers(true).size() == 1 && node.getId() <= 0) {
+                    node.setDisabled(true);
+                    node.setVisible(false);
+                }
+            }
+        }
         return ways;
     }
 
@@ -279,13 +285,14 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
      * @param <T> The tile type
      */
     public <T extends Tile & VectorTile> void addDataTile(T tile) {
+        // Using a map reduces the cost of addFeatureData from 2,715,158,632 bytes to 235,042,184 bytes (-91.3%)
+        // This was somewhat variant, with some runs being closer to ~560 MB (still -80%).
         for (Layer layer : tile.getLayers()) {
-            for (Feature feature : layer.getFeatures()) {
-                try {
-                    addFeatureData(tile, layer, feature);
-                } catch (IllegalArgumentException e) {
-                    Logging.error("Cannot add vector data for feature {0} of tile {1}: {2}", feature, tile, e.getMessage());
-                    Logging.error(e);
+            Map<GeometryTypes, List<Feature>> grouped = layer.getFeatures().stream().collect(Collectors.groupingBy(Feature::getGeometryType));
+            // Unknown -> Point -> LineString -> Polygon
+            for (GeometryTypes type : GeometryTypes.values()) {
+                if (grouped.containsKey(type)) {
+                    addFeatureData(tile, layer, grouped.get(type));
                 }
             }
         }
@@ -298,10 +305,24 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
                         .findAny().orElse(null)));
     }
 
+    private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Collection<Feature> features) {
+        for (Feature feature : features) {
+            try {
+                addFeatureData(tile, layer, feature);
+            } catch (IllegalArgumentException e) {
+                Logging.error("Cannot add vector data for feature {0} of tile {1}: {2}", feature, tile, e.getMessage());
+                Logging.error(e);
+            }
+        }
+    }
+
     private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Feature feature) {
-        List<VectorPrimitive> featureObjects = new ArrayList<>();
-        List<VectorPrimitive> primaryFeatureObjects = feature.getGeometryObject().getShapes().stream()
-                .map(shape -> shapeToPrimaryFeatureObject(tile, layer, shape, featureObjects)).collect(toList());
+        // This will typically be larger than primaryFeatureObjects, but this at least avoids quite a few ArrayList#grow calls
+        List<VectorPrimitive> featureObjects = new ArrayList<>(feature.getGeometryObject().getShapes().size());
+        List<VectorPrimitive> primaryFeatureObjects = new ArrayList<>(feature.getGeometryObject().getShapes().size());
+        for (Shape shape : feature.getGeometryObject().getShapes()) {
+            primaryFeatureObjects.add(shapeToPrimaryFeatureObject(tile, layer, shape, featureObjects));
+        }
         final VectorPrimitive primitive;
         if (primaryFeatureObjects.size() == 1) {
             primitive = primaryFeatureObjects.get(0);
@@ -310,8 +331,11 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
             }
         } else if (!primaryFeatureObjects.isEmpty()) {
             VectorRelation relation = new VectorRelation(layer.getName());
-            primaryFeatureObjects.stream().map(prim -> new VectorRelationMember("", prim))
-              .forEach(relation::addRelationMember);
+            List<VectorRelationMember> members = new ArrayList<>(primaryFeatureObjects.size());
+            for (VectorPrimitive prim : primaryFeatureObjects) {
+                members.add(new VectorRelationMember("", prim));
+            }
+            relation.setMembers(members);
             primitive = relation;
         } else {
             return;
@@ -325,10 +349,14 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
             primitive.setId(primitive.getIdGenerator().generateUniqueId());
         }
         if (feature.getTags() != null) {
-            feature.getTags().forEach(primitive::put);
+            primitive.putAll(feature.getTags());
         }
-        featureObjects.forEach(this::addPrimitive);
-        primaryFeatureObjects.forEach(this::addPrimitive);
+        for (VectorPrimitive prim : featureObjects) {
+            this.addPrimitive(prim);
+        }
+        for (VectorPrimitive prim : primaryFeatureObjects) {
+            this.addPrimitive(prim);
+        }
         try {
             this.addPrimitive(primitive);
         } catch (JosmRuntimeException e) {

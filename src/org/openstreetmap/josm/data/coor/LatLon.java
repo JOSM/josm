@@ -1,15 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.asin;
-import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
-import static org.openstreetmap.josm.tools.Utils.toRadians;
-
 import java.awt.geom.Area;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -19,7 +10,6 @@ import java.util.Objects;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -45,7 +35,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * Minimum difference in location to not be represented as the same position.
      * The API returns 7 decimals.
      */
-    public static final double MAX_SERVER_PRECISION = 1e-7;
+    public static final double MAX_SERVER_PRECISION = ILatLon.MAX_SERVER_PRECISION;
     /**
      * The inverse of the server precision
      * @see #MAX_SERVER_PRECISION
@@ -185,10 +175,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * @param other other lat/lon
      * @return <code>true</code> if the other point has almost the same lat/lon
      * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
+     * @deprecated since 18464 (use {@link ILatLon#equalsEpsilon(ILatLon)} instead)
      */
+    @Deprecated
     public boolean equalsEpsilon(LatLon other) {
-        double p = MAX_SERVER_PRECISION / 2;
-        return Math.abs(lat()-other.lat()) <= p && Math.abs(lon()-other.lon()) <= p;
+        return ILatLon.super.equalsEpsilon(other);
     }
 
     /**
@@ -227,21 +218,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * Uses <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>.
      * @param other the other point.
      * @return distance in metres.
+     * @deprecated since 18494 (use {@link ILatLon#greatCircleDistance(ILatLon)} instead)
      */
+    @Deprecated
     public double greatCircleDistance(LatLon other) {
-        double sinHalfLat = sin(toRadians(other.lat() - this.lat()) / 2);
-        double sinHalfLon = sin(toRadians(other.lon() - this.lon()) / 2);
-        double d = 2 * WGS84.a * asin(
-                sqrt(sinHalfLat*sinHalfLat +
-                        cos(toRadians(this.lat()))*cos(toRadians(other.lat()))*sinHalfLon*sinHalfLon));
-        // For points opposite to each other on the sphere,
-        // rounding errors could make the argument of asin greater than 1
-        // (This should almost never happen.)
-        if (Double.isNaN(d)) {
-            Logging.error("NaN in greatCircleDistance: {0} {1}", this, other);
-            d = PI * WGS84.a;
-        }
-        return d;
+        return ILatLon.super.greatCircleDistance(other);
     }
 
     /**
@@ -258,20 +239,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * @param other the "destination" position
      * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
      * @since 9796
+     * @deprecated since 18494 (use {@link ILatLon#bearing(ILatLon)} instead)
      */
+    @Deprecated
     public double bearing(LatLon other) {
-        double lat1 = toRadians(this.lat());
-        double lat2 = toRadians(other.lat());
-        double dlon = toRadians(other.lon() - this.lon());
-        double bearing = atan2(
-            sin(dlon) * cos(lat2),
-            cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)
-        );
-        bearing %= 2 * PI;
-        if (bearing < 0) {
-            bearing += 2 * PI;
-        }
-        return bearing;
+        return ILatLon.super.bearing(other);
     }
 
     /**

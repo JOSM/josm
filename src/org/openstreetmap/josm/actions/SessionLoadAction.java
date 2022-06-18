@@ -205,6 +205,7 @@ public class SessionLoadAction extends DiskAccessAction {
                     postLoadTasks = reader.getPostLoadTasks();
                     viewport = reader.getViewport();
                     projectionChoice = reader.getProjectionChoice();
+                    SessionSaveAction.setCurrentSession(file, zip, reader.getLayers());
                 } finally {
                     if (tempFile) {
                         Utils.deleteFile(file);

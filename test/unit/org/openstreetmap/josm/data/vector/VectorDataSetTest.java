@@ -1,10 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.vector;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -13,15 +22,6 @@ import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorCachedT
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorTileSource;
 import org.openstreetmap.josm.gui.layer.imagery.MVTLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A test for {@link VectorDataSet}
@@ -98,7 +98,11 @@ class VectorDataSetTest {
         layer = new MVTLayerMock(info);
     }
 
-    @Test
+    /**
+     * This failed about 1/2 times.
+     * It tests for node deduplication.
+     */
+    @RepeatedTest(10)
     void testNodeDeduplication() {
         final VectorDataSet dataSet = this.layer.getData();
         assertTrue(dataSet.allPrimitives().isEmpty());

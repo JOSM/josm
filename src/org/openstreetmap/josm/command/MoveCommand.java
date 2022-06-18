@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -313,12 +314,12 @@ public class MoveCommand extends Command {
     public double getDistance(Predicate<Node> predicate) {
         return nodes.stream()
                 .filter(predicate)
-                .filter(node -> node.getCoor() != null && node.getEastNorth() != null)
+                .filter(ILatLon::isLatLonKnown /* If the node latlon is known, then the eastnorth cannot be null */)
                 .findFirst()
                 .map(node -> {
                     final Node old = new Node(node);
                     old.setEastNorth(old.getEastNorth().add(-x, -y));
-                    return node.getCoor().greatCircleDistance(old.getCoor());
+                    return node.greatCircleDistance(old);
                 }).orElse(Double.NaN);
     }
 

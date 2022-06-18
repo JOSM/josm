@@ -28,7 +28,6 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -1808,9 +1807,8 @@ public class SearchCompiler {
             if (!osm.isUsable())
                 return false;
             else if (osm instanceof Node) {
-                LatLon coordinate = ((Node) osm).getCoor();
                 Collection<Bounds> allBounds = getBounds(osm);
-                return coordinate != null && allBounds != null && allBounds.stream().anyMatch(bounds -> bounds.contains(coordinate));
+                return ((Node) osm).isLatLonKnown() && allBounds != null && allBounds.stream().anyMatch(bounds -> bounds.contains((Node) osm));
             } else if (osm instanceof Way) {
                 Collection<Node> nodes = ((Way) osm).getNodes();
                 return all ? nodes.stream().allMatch(this) : nodes.stream().anyMatch(this);

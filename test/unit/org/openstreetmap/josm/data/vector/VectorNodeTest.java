@@ -1,6 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.vector;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -14,17 +25,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link VectorNode}
@@ -143,10 +143,12 @@ class VectorNodeTest {
         assertEquals(1, node.getReferrers(true).size());
         assertSame(way, node.getReferrers(true).get(0));
         // No dataset yet
-        assertFalse(node.isReferredByWays(1));
+        assertTrue(node.isReferredByWays(1));
         VectorDataSet dataSet = new VectorDataSet();
-        dataSet.addPrimitive(way);
         dataSet.addPrimitive(node);
+        // Way is not yet in dataset
+        assertFalse(node.isReferredByWays(1));
+        dataSet.addPrimitive(way);
         assertTrue(node.isReferredByWays(1));
         assertFalse(node.isReferredByWays(2));
     }

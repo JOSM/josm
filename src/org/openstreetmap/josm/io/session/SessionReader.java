@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -142,8 +144,8 @@ public class SessionReader {
             // large, to keep it within projection bounds and
             // not too small to avoid rounding errors.
             double dist = 0.01 * proj.getDefaultZoomInPPD();
-            LatLon ll1 = proj.eastNorth2latlon(new EastNorth(centerEN.east() - dist, centerEN.north()));
-            LatLon ll2 = proj.eastNorth2latlon(new EastNorth(centerEN.east() + dist, centerEN.north()));
+            ILatLon ll1 = proj.eastNorth2latlon(new EastNorth(centerEN.east() - dist, centerEN.north()));
+            ILatLon ll2 = proj.eastNorth2latlon(new EastNorth(centerEN.east() + dist, centerEN.north()));
             double meterPerEasting = ll1.greatCircleDistance(ll2) / dist / 2;
             double scale = meterPerPixel / meterPerEasting; // unit: easting per pixel
             return new ViewportData(centerEN, scale);
@@ -250,6 +252,7 @@ public class SessionReader {
         private final String layerName;
         private final int layerIndex;
         private final List<LayerDependency> layerDependencies;
+        private Map<Integer, Entry<Layer, Element>> subLayers;
 
         /**
          * Path of the file inside the zip archive.
@@ -276,6 +279,31 @@ public class SessionReader {
          */
         public void addPostLayersTask(Runnable task) {
             postLoadTasks.add(task);
+        }
+
+        /**
+         * Add sub layers
+         * @param idx index
+         * @param layer sub layer
+         * @param el The XML element of the sub layer.
+         *           Should contain "index" and "name" attributes.
+         *           Can contain "opacity" and "visible" attributes
+         * @since 18466
+         */
+        public void addSubLayer(int idx, Layer layer, Element el) {
+            if (subLayers == null) {
+                subLayers = new HashMap<>();
+            }
+            subLayers.put(idx, new SimpleEntry<>(layer, el));
+        }
+
+        /**
+         * Returns the sub layers
+         * @return the sub layers. Can be null.
+         * @since 18466
+         */
+        public Map<Integer, Entry<Layer, Element>> getSubLayers() {
+            return subLayers;
         }
 
         /**
@@ -506,7 +534,6 @@ public class SessionReader {
         List<Integer> sorted = Utils.topologicalSort(deps);
         final Map<Integer, Layer> layersMap = new TreeMap<>(Collections.reverseOrder());
         final Map<Integer, SessionLayerImporter> importers = new HashMap<>();
-        final Map<Integer, String> names = new HashMap<>();
 
         progressMonitor.setTicksCount(sorted.size());
         LAYER: for (int idx: sorted) {
@@ -519,7 +546,6 @@ public class SessionReader {
                 return;
             }
             String name = e.getAttribute("name");
-            names.put(idx, name);
             if (!e.hasAttribute("type")) {
                 error(tr("missing mandatory attribute ''type'' for element ''layer''"));
                 return;
@@ -595,30 +621,49 @@ public class SessionReader {
                 }
 
                 layersMap.put(idx, layer);
+                setLayerAttributes(layer, e);
+
+                if (support.getSubLayers() != null) {
+                    support.getSubLayers().forEach((Integer markerIndex, Entry<Layer, Element> entry) -> {
+                        Layer subLayer = entry.getKey();
+                        Element subElement = entry.getValue();
+
+                        layersMap.put(markerIndex, subLayer);
+                        setLayerAttributes(subLayer, subElement);
+                    });
+                }
+
             }
             progressMonitor.worked(1);
         }
 
+
         layers = new ArrayList<>();
         for (Entry<Integer, Layer> entry : layersMap.entrySet()) {
             Layer layer = entry.getValue();
-            if (layer == null) {
-                continue;
+            if (layer != null) {
+                layers.add(layer);
             }
-            Element el = elems.get(entry.getKey());
-            if (el.hasAttribute("visible")) {
-                layer.setVisible(Boolean.parseBoolean(el.getAttribute("visible")));
+        }
+    }
+
+    private static void setLayerAttributes(Layer layer, Element e) {
+        if (layer == null)
+            return;
+
+        if (e.hasAttribute("name")) {
+            layer.setName(e.getAttribute("name"));
+        }
+        if (e.hasAttribute("visible")) {
+            layer.setVisible(Boolean.parseBoolean(e.getAttribute("visible")));
+        }
+        if (e.hasAttribute("opacity")) {
+            try {
+                double opacity = Double.parseDouble(e.getAttribute("opacity"));
+                layer.setOpacity(opacity);
+            } catch (NumberFormatException ex) {
+                Logging.warn(ex);
             }
-            if (el.hasAttribute("opacity")) {
-                try {
-                    double opacity = Double.parseDouble(el.getAttribute("opacity"));
-                    layer.setOpacity(opacity);
-                } catch (NumberFormatException ex) {
-                    Logging.warn(ex);
-                }
-            }
-            layer.setName(names.get(entry.getKey()));
-            layers.add(layer);
         }
     }
 

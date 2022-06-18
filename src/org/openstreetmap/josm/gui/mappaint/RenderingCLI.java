@@ -26,6 +26,7 @@ import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -490,7 +491,7 @@ public class RenderingCLI implements CLIModule {
                     double shiftMeter = 10;
                     EastNorth projAnchorShifted = projAnchor.add(shiftMeter / proj.getMetersPerUnit(),
                             shiftMeter / proj.getMetersPerUnit());
-                    LatLon anchorShifted = proj.eastNorth2latlon(projAnchorShifted);
+                    ILatLon anchorShifted = proj.eastNorth2latlon(projAnchorShifted);
                     return projAnchor.distance(projAnchorShifted) / argAnchor.greatCircleDistance(anchorShifted);
                 };
 
@@ -558,7 +559,7 @@ public class RenderingCLI implements CLIModule {
         if (scale == null) {
             if (argScale != null) {
                 double enPerMeter = pb.getMin().distance(pb.getMax())
-                        / bounds.getMin().greatCircleDistance(bounds.getMax());
+                        / bounds.getMin().greatCircleDistance((ILatLon) bounds.getMax());
                 scale = argScale * enPerMeter / PIXEL_PER_METER;
             } else if (argWidthPx != null) {
                 scale = (pb.maxEast - pb.minEast) / argWidthPx;

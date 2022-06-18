@@ -545,7 +545,7 @@ public interface Selector {
 
             } else if (ChildOrParentSelectorType.SUPERSET_OR_EQUAL == type || ChildOrParentSelectorType.NOT_SUPERSET_OR_EQUAL == type) {
 
-                if (e.osm.getDataSet() == null || (e.osm instanceof INode && ((INode) e.osm).getCoor() == null)
+                if (e.osm.getDataSet() == null || (e.osm instanceof INode && !((INode) e.osm).isLatLonKnown())
                         || (!(e.osm instanceof INode) && !isArea(e.osm))) {
                     return ChildOrParentSelectorType.NOT_SUPERSET_OR_EQUAL == type;
                 }

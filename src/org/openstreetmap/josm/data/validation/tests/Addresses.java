@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -361,8 +362,11 @@ public class Addresses extends Test {
      * @return distance of center of bounding boxes in meters
      */
     static double getDistance(OsmPrimitive a, OsmPrimitive b) {
-        LatLon centerA = a.getBBox().getCenter();
-        LatLon centerB = b.getBBox().getCenter();
+        if (a instanceof ILatLon && b instanceof ILatLon) {
+            return ((ILatLon) a).greatCircleDistance((ILatLon) b);
+        }
+        ILatLon centerA = a.getBBox().getCenter();
+        ILatLon centerB = b.getBBox().getCenter();
         return centerA.greatCircleDistance(centerB);
     }
 

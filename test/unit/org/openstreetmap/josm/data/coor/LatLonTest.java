@@ -169,9 +169,9 @@ public class LatLonTest {
      */
     @Test
     void testBearing() {
-        LatLon c = new LatLon(47.000000, 19.000000);
-        LatLon e = new LatLon(47.000000, 19.000001);
-        LatLon n = new LatLon(47.000001, 19.000000);
+        ILatLon c = new LatLon(47.000000, 19.000000);
+        ILatLon e = new LatLon(47.000000, 19.000001);
+        ILatLon n = new LatLon(47.000001, 19.000000);
         assertEquals(0, Math.toDegrees(c.bearing(n)), EPSILON);
         assertEquals(90, Math.toDegrees(c.bearing(e)), EPSILON);
         assertEquals(180, Math.toDegrees(n.bearing(c)), EPSILON);

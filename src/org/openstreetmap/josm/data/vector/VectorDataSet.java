@@ -164,9 +164,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
 
     @Override
     public void clear() {
-        synchronized (this.dataStoreMap) {
-            this.dataStoreMap.clear();
-        }
+        this.dataStoreMap.clear();
     }
 
     @Override
@@ -532,25 +530,23 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
         final int[] nearestZoom = {-1, -1, -1, -1};
         nearestZoom[0] = zoom;
         // Create a new list to avoid concurrent modification issues
-        synchronized (this.dataStoreMap) {
-            final int[] keys = new ArrayList<>(this.dataStoreMap.keySet()).stream().filter(Objects::nonNull)
-              .mapToInt(Integer::intValue).sorted().toArray();
-            final int index;
-            if (this.dataStoreMap.containsKey(zoom)) {
-                index = Arrays.binarySearch(keys, zoom);
-            } else {
-                // (-(insertion point) - 1) = return -> insertion point = -(return + 1)
-                index = -(Arrays.binarySearch(keys, zoom) + 1);
-            }
-            if (index > 0) {
-                nearestZoom[1] = keys[index - 1];
-            }
-            if (index < keys.length - 2) {
-                nearestZoom[2] = keys[index + 1];
-            }
-
-            // TODO cleanup zooms for memory
+        final int[] keys = new ArrayList<>(this.dataStoreMap.keySet()).stream().filter(Objects::nonNull)
+          .mapToInt(Integer::intValue).sorted().toArray();
+        final int index;
+        if (this.dataStoreMap.containsKey(zoom)) {
+            index = Arrays.binarySearch(keys, zoom);
+        } else {
+            // (-(insertion point) - 1) = return -> insertion point = -(return + 1)
+            index = -(Arrays.binarySearch(keys, zoom) + 1);
         }
+        if (index > 0) {
+            nearestZoom[1] = keys[index - 1];
+        }
+        if (index < keys.length - 2) {
+            nearestZoom[2] = keys[index + 1];
+        }
+
+        // TODO cleanup zooms for memory
     }
 
     public int getZoom() {

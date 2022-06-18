@@ -2,10 +2,12 @@
 package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -33,11 +35,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -64,6 +68,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 2025
  */
 public class UploadDialog extends AbstractUploadDialog implements PreferenceChangedListener, PropertyChangeListener {
+    /** A warning color to indicate something is non-default in the changeset tags */
+    private static final Color WARNING_BACKGROUND = new NamedColorProperty(
+            marktr("Changesets: Non-default advanced settings"), new Color(0xF89042)).get();
     /** the unique instance of the upload dialog */
     private static UploadDialog uploadDialog;
 
@@ -89,6 +96,7 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
     private final transient UploadDialogModel model = new UploadDialogModel();
 
     private transient DataSet dataSet;
+    private transient ChangeListener changesetTagListener;
 
     /**
      * Constructs a new {@code UploadDialog}.
@@ -147,6 +155,7 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
         pnlSettings.add(pnlUploadStrategySelectionPanel, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
         pnlSettings.add(pnlTagEditorBorder, GBC.eol().fill(GridBagConstraints.BOTH));
 
+        // if another tab is added, please don't forget to update setChangesetTagsModifiedProgramatically
         tpConfigPanels.add(pnlSettings);
         tpConfigPanels.setTitleAt(1, tr("Settings"));
         tpConfigPanels.setToolTipTextAt(1, tr("Decide how to upload the data and which changeset to use"));
@@ -211,6 +220,10 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
         pnlBasicUploadSettings.getUploadParameterSummaryPanel().setConfigurationParameterRequestListener(
                 () -> tpConfigPanels.setSelectedIndex(2)
         );
+
+        // Set the initial state of the upload button
+        btnUpload.setEnabled(pnlBasicUploadSettings.getUploadTextValidators()
+                .stream().noneMatch(UploadTextComponentValidator::isUploadRejected));
 
         // Enable/disable the upload button if at least an upload validator rejects upload
         pnlBasicUploadSettings.getUploadTextValidators().forEach(v -> v.addChangeListener(e -> btnUpload.setEnabled(
@@ -356,6 +369,31 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
+    }
+
+    /**
+     * This is called by {@link UploadAction} if {@link org.openstreetmap.josm.actions.upload.UploadHook}s change
+     * the changeset tags.
+     */
+    public synchronized void setChangesetTagsModifiedProgramatically() {
+        final Color originalColor = this.tpConfigPanels.getBackgroundAt(1);
+        this.tpConfigPanels.setBackgroundAt(1, WARNING_BACKGROUND);
+        this.tpConfigPanels.setIconAt(1, ImageProvider.get("warning-small"));
+        if (this.changesetTagListener != null) {
+            this.tpConfigPanels.removeChangeListener(this.changesetTagListener);
+        }
+        this.changesetTagListener = event -> {
+            if (this.tpConfigPanels.getSelectedIndex() == 1) {
+                tpConfigPanels.setBackgroundAt(1, originalColor);
+                tpConfigPanels.setIconAt(1, ImageProvider.get("apply"));
+                synchronized (this) {
+                    this.tpConfigPanels.removeChangeListener(this.changesetTagListener);
+                    changesetTagListener = null;
+                }
+            }
+        };
+
+        this.tpConfigPanels.addChangeListener(this.changesetTagListener);
     }
 
     static final class CompactTabbedPane extends JTabbedPane {
@@ -542,14 +580,9 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e.getKey() != null
                 && e.getSource() != getClass()
-                && e.getSource() != BasicUploadSettingsPanel.class) {
-            switch (e.getKey()) {
-                case "osm-server.url":
-                    osmServerUrlChanged(e.getNewValue());
-                    break;
-                default:
-                    return;
-            }
+                && e.getSource() != BasicUploadSettingsPanel.class
+                && "osm-server.url".equals(e.getKey())) {
+            osmServerUrlChanged(e.getNewValue());
         }
     }
 
@@ -610,5 +643,12 @@ public class UploadDialog extends AbstractUploadDialog implements PreferenceChan
     public void clean() {
         setUploadedPrimitives(null);
         dataSet = null;
+        synchronized (this) {
+            if (this.changesetTagListener != null) {
+                this.changesetTagListener.stateChanged(null);
+                this.tpConfigPanels.removeChangeListener(this.changesetTagListener);
+                this.changesetTagListener = null;
+            }
+        }
     }
 }
