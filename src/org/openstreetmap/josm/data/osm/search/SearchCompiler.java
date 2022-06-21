@@ -1289,9 +1289,12 @@ public class SearchCompiler {
             this((int) tokenizer.readNumber(tr("Positive integer expected")), modulo);
         }
 
-        private Nth(int nth, boolean modulo) {
+        private Nth(int nth, boolean modulo) throws SearchParseError {
             this.nth = nth;
             this.modulo = modulo;
+            if (this.modulo && this.nth == 0) {
+                throw new SearchParseError(tr("Non-zero integer expected"));
+            }
         }
 
         @Override

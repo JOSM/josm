@@ -850,4 +850,13 @@ class SearchCompilerTest {
         assertTrue(c.match(OsmUtils.createPrimitive("node foo=bar")));
         assertFalse(c.match(OsmUtils.createPrimitive("node name=bar")));
     }
+
+    /**
+     * Non-regression test for JOSM #22156
+     * x % 0 throws an ArithmeticException
+     */
+    @Test
+    void testNonRegression22156() {
+        assertThrows(SearchParseError.class, () -> SearchCompiler.compile("nth%: 0"));
+    }
 }
