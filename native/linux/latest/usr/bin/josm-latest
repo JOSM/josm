@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 # Simple wrapper script used to start JOSM in Debian
-set -ex
+set -e
 
 # First, the alternative (if known to work) or users preference as defined by $JAVA_HOME. Next, use OpenJDK.
 # Override to a specific one using $JAVACMD
