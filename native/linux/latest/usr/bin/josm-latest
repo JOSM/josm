@@ -1,46 +1,57 @@
-#!/bin/bash
+#!/usr/bin/bash
 # Simple wrapper script used to start JOSM in Debian
 set -e
 
 # First, the alternative (if known to work) or users preference as defined by $JAVA_HOME. Next, use OpenJDK.
 # Override to a specific one using $JAVACMD
-ALTERNATIVE_JDK=$(readlink -n -f /etc/alternatives/java)
+ALTERNATIVE_JDK=$(readlink -n -f /etc/alternatives/java || true)
 
-# Let's get the current architecture -- needed for multiarchified Java
-ARCH=$(dpkg --print-architecture 2> /dev/null || true)
+if [ -v JAVA_HOME ]; then
+    JAVA_CMDS="$JAVA_HOME/bin/java"
+else
+    JAVA_CMDS=""
+fi
 
-JAVA_CMDS="$JAVA_HOME/bin/java"
+dpkg_java() {
+  # Let's get the current architecture -- needed for multiarchified Java
+  ARCH=$(dpkg --print-architecture 2> /dev/null || true)
+  # If OpenJDK is only available headless, do not try it
+	if dpkg --get-selections "openjdk-*-jre" | grep install$ > /dev/null \
+	|| dpkg --get-selections "openjdk-*-jre:$ARCH" | grep install$ > /dev/null ; then
+		# LTS versions in decreased order
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-17-openjdk/bin/java /usr/lib/jvm/java-17-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java"
+		# Released versions in decreased order
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-18-openjdk/bin/java /usr/lib/jvm/java-18-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-16-openjdk/bin/java /usr/lib/jvm/java-16-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-15-openjdk/bin/java /usr/lib/jvm/java-15-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-14-openjdk/bin/java /usr/lib/jvm/java-14-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-13-openjdk/bin/java /usr/lib/jvm/java-13-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-12-openjdk/bin/java /usr/lib/jvm/java-12-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-10-openjdk/bin/java /usr/lib/jvm/java-10-openjdk-$ARCH/bin/java"
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-openjdk/bin/java /usr/lib/jvm/java-9-openjdk-$ARCH/bin/java"
+		# Development version(s)
+		JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-19-openjdk/bin/java /usr/lib/jvm/java-19-openjdk-$ARCH/bin/java"
+	fi
+}
 
-# If OpenJDK is only available headless, do not try it
-if dpkg --get-selections "openjdk-*-jre" | grep install$ > /dev/null \
-|| dpkg --get-selections "openjdk-*-jre:$ARCH" | grep install$ > /dev/null ; then
-	# LTS versions in decreased order
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-17-openjdk/bin/java /usr/lib/jvm/java-17-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java"
-	# Released versions in decreased order
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-16-openjdk/bin/java /usr/lib/jvm/java-16-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-15-openjdk/bin/java /usr/lib/jvm/java-15-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-14-openjdk/bin/java /usr/lib/jvm/java-14-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-13-openjdk/bin/java /usr/lib/jvm/java-13-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-12-openjdk/bin/java /usr/lib/jvm/java-12-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-10-openjdk/bin/java /usr/lib/jvm/java-10-openjdk-$ARCH/bin/java"
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-openjdk/bin/java /usr/lib/jvm/java-9-openjdk-$ARCH/bin/java"
-	# Development version(s)
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-18-openjdk/bin/java /usr/lib/jvm/java-18-openjdk-$ARCH/bin/java"
+if [ -x "$(command -v dpkg)" ]; then
+	dpkg_java
 fi
 # Undetermined version
 JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/default-java/bin/java /usr/bin/java"
+JOSM_VERSION="josm-latest"
 
-if [ -f /etc/default/josm-latest ]; then
-    . /etc/default/josm-latest
+if [ -f "/etc/default/${JOSM_VERSION}" ]; then
+    . "/etc/default/${JOSM_VERSION}"
 fi
 
-JAVA_OPTS="-Djosm.restart=true -Djosm.dir.name=JOSM-latest -Djava.net.useSystemProxies=true $JAVA_OPTS"
+JAVA_OPTS="-Djosm.restart=true -Djosm.dir.name=\"${JOSM_VERSION}\" -Djava.net.useSystemProxies=true $JAVA_OPTS"
 
 if [ -z "${JAVACMD}" ]; then
     for jcmd in $JAVA_CMDS; do
-        if [ "z$ALTERNATIVE_JDK" = "z$(readlink -n -f "$jcmd")" ] && [ -z "${JAVACMD}" ]; then
+        if [ "z$ALTERNATIVE_JDK" = "z$(readlink -n -f "$jcmd")" ] && [ -z "${JAVACMD}" ] && [ -x "$jcmd" ]; then
             JAVACMD="$jcmd"
             break
         fi
@@ -57,18 +68,21 @@ if [ -z "${JAVACMD}" ]; then
 fi
 
 if [ "$JAVACMD" ]; then
-    echo "Using $JAVACMD to execute josm-latest." || true
-    if [[ "${JAVACMD}" =~ 'java-9' ]] || [[ "${JAVACMD}" =~ 'java-10' ]]; then
-        JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
-    elif [[ "${JAVACMD}" =~ 'java-1' ]]; then
-        JAVA_OPTS="--module-path /usr/share/openjfx/lib --add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
+    echo "Using $JAVACMD to execute ${JOSM_VERSION}." || true
+    JAVA_VERSION="$(${JAVACMD} -version 2>&1 | head -n1 | awk '{print $3}' | awk -F'.' '{gsub(/"/, ""); print $1}')"
+    JAVAFX_HOME="${JAVAFX_HOME:-/usr/share/openjfx/lib}"
+    JOSM_PATH="${JOSM_PATH:-/usr/share/${JOSM_VERSION}/${JOSM_VERSION}.jar}"
+    if [[ "${JAVA_VERSION}" -ge 11 ]]; then
+        JAVA_OPTS="--module-path ${JAVAFX_HOME} --add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.base/sun.security.action=ALL-UNNAMED"
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED"
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED"
+    elif [[ "${JAVA_VERSION}" -ge 9 ]]; then
+        JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
     fi
     set +e
     while true; do
-        $JAVACMD $JAVA_OPTS -jar /usr/share/josm-latest/josm-latest.jar "$@"
+        $JAVACMD $JAVA_OPTS -jar "${JOSM_PATH}" "$@"
         if [ "z$?" != "z9" ]; then
             break
         fi
