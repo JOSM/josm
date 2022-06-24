@@ -51,7 +51,7 @@ if [ -f "/etc/default/${JOSM_VERSION}" ]; then
     . "/etc/default/${JOSM_VERSION}"
 fi
 
-JAVA_OPTS="-Djosm.restart=true -Djosm.dir.name=\"${JOSM_VERSION}\" -Djava.net.useSystemProxies=true $JAVA_OPTS"
+JAVA_OPTS="-Djosm.restart=true -Djosm.dir.name=JOSM-latest -Djava.net.useSystemProxies=true $JAVA_OPTS"
 
 if [ -z "${JAVACMD}" ]; then
     for jcmd in $JAVA_CMDS; do
