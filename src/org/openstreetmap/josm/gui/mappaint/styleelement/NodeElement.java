@@ -7,7 +7,6 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -350,8 +349,14 @@ public class NodeElement extends StyleElement {
         }
     }
 
-    private static int max(int... elements) {
-        return IntStream.of(elements).max().orElseThrow(IllegalStateException::new);
+    private static int max(int a, int b, int c, int d) {
+        // Profile before switching to a stream/int[] array
+        // This was 66% give or take for painting nodes in terms of memory allocations
+        // and was ~17% of the CPU allocations. By not using a vararg method call, we avoid
+        // the creation of an array. By avoiding both streams and arrays, the cost for this method is negligible.
+        // This means that this saves about 7% of the CPU cycles during map paint, and about 20%
+        // of the memory allocations during map paint.
+        return Math.max(a, Math.max(b, Math.max(c, d)));
     }
 
     @Override
