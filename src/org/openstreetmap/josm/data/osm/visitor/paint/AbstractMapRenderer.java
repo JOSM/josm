@@ -213,10 +213,23 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param p1 First point of the way segment.
      * @param p2 Second point of the way segment.
      * @return <code>true</code> if segment may be visible.
+     * @see #isSegmentVisible(MapViewPoint, MapViewPoint, MapViewRectangle) for a more efficient version (cache the view)
      * @since 10827
      */
     protected boolean isSegmentVisible(MapViewPoint p1, MapViewPoint p2) {
-        MapViewRectangle view = mapState.getViewArea();
+        return isSegmentVisible(p1, p2, mapState.getViewArea());
+    }
+
+    /**
+     * Checks if segment is visible in display.
+     *
+     * @param p1 First point of the way segment.
+     * @param p2 Second point of the way segment.
+     * @param view The current view to check
+     * @return <code>true</code> if segment may be visible.
+     * @since 18501
+     */
+    protected boolean isSegmentVisible(MapViewPoint p1, MapViewPoint p2, MapViewRectangle view) {
         // not outside in the same direction
         return (p1.getOutsideRectangleFlags(view) & p2.getOutsideRectangleFlags(view)) == 0;
     }
@@ -232,11 +245,15 @@ public abstract class AbstractMapRenderer implements Rendering {
     public void visitVirtual(Path2D path, IWay<?> w) {
         Iterator<? extends INode> it = w.getNodes().iterator();
         MapViewPoint lastP = null;
+        // By moving this out of the for loop (in isSegmentVisible)
+        // MapViewState#getViewArea goes from ~56.5% of memory allocations to ~4.2%
+        // CPU samples also goes down from ~5.1% to ~2.9%
+        MapViewRectangle viewArea = mapState.getViewArea();
         while (it.hasNext()) {
             INode n = it.next();
             if (n.isLatLonKnown()) {
                 MapViewPoint p = mapState.getPointFor(n);
-                if (lastP != null && isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace)) {
+                if (lastP != null && isSegmentVisible(lastP, p, viewArea) && isLargeSegment(lastP, p, virtualNodeSpace)) {
                     double x = (p.getInViewX()+lastP.getInViewX())/2;
                     double y = (p.getInViewY()+lastP.getInViewY())/2;
                     path.moveTo(x-virtualNodeSize, y);
