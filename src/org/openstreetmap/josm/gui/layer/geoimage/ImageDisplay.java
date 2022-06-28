@@ -697,14 +697,12 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         IImageEntry<?> currentOldEntry;
         IImageViewer currentImageViewer;
         BufferedImage currentImage;
-        VisRect currentVisibleRect;
         boolean currentErrorLoading;
 
         synchronized (this) {
             currentImage = this.processedImage;
             currentEntry = this.entry;
             currentOldEntry = this.oldEntry;
-            currentVisibleRect = this.visibleRect;
             currentErrorLoading = this.errorLoading;
         }
 
@@ -716,6 +714,12 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         // Draw the image first, then draw error information
         if (currentImage != null && (currentEntry != null || currentOldEntry != null)) {
             currentImageViewer = this.getIImageViewer(currentEntry);
+            // This must be after the getIImageViewer call, since we may be switching image viewers. This is important,
+            // since an image viewer on switch may change the visible rectangle.
+            VisRect currentVisibleRect;
+            synchronized (this) {
+                currentVisibleRect = this.visibleRect;
+            }
             Rectangle r = new Rectangle(currentVisibleRect);
             Rectangle target = calculateDrawImageRectangle(currentVisibleRect, size);
 
