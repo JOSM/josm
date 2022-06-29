@@ -2391,6 +2391,9 @@
             <key key="leisure" value="slipway" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <reference ref="surface" />
+                <reference ref="fee" />
             </optional>
         </item> <!-- Slipway -->
         <item name="Boatyard" icon="presets/nautical/boatyard.svg" type="node,closedway,multipolygon" preset_name_label="true">
