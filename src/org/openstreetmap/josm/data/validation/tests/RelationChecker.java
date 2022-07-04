@@ -52,8 +52,6 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     public static final int ROLE_UNKNOWN     = 1701;
     /** Empty role found when expecting one of ''{0}'' */
     public static final int ROLE_EMPTY       = 1702;
-    /** Role of relation member does not match template expression ''{0}'' in preset {1} */
-    public static final int WRONG_ROLE       = 1708;
     /** Number of ''{0}'' roles too high ({1}) */
     public static final int HIGH_COUNT       = 1704;
     /** Number of ''{0}'' roles too low ({1}) */
@@ -62,12 +60,14 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     public static final int ROLE_MISSING     = 1706;
     /** Relation type is unknown */
     public static final int RELATION_UNKNOWN = 1707;
-    /** Relation is empty */
-    public static final int RELATION_EMPTY   = 1708;
+    /** Role of relation member does not match template expression ''{0}'' in preset {1} */
+    public static final int WRONG_ROLE       = 1708;
     /** Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in preset {3} */
     public static final int WRONG_TYPE       = 1709;
     /** Relations build circular dependencies */
     public static final int RELATION_LOOP    = 1710;
+    /** Relation is empty */
+    public static final int RELATION_EMPTY   = 1711; // was 1708 up to r18505
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     // see 19312 comment:17
