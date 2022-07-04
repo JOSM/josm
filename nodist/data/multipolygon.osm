@@ -4043,7 +4043,7 @@
   </relation>
   <relation id='-42089' action='modify'>
     <tag k='description' v='Relation is empty' />
-    <tag k='josm_error_codes' v='1708' />
+    <tag k='josm_error_codes' v='1711' />
     <tag k='name' v='06/07 - Empty' />
     <tag k='type' v='multipolygon' />
   </relation>
