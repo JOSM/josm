@@ -140,7 +140,7 @@ public final class I18n {
         languages.put("sv", PluralMode.MODE_NOTONE);
         //languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
-        languages.put("vi", PluralMode.MODE_NONE);
+        //languages.put("vi", PluralMode.MODE_NONE);
         languages.put("zh_CN", PluralMode.MODE_NONE);
         languages.put("zh_TW", PluralMode.MODE_NONE);
     }
