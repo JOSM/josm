@@ -157,7 +157,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      */
     public List<Pair<Node, Node>> getNodePairs(boolean sort) {
         // For a way of size n, there are n - 1 pairs (a -> b, b -> c, c -> d, etc., 4 nodes -> 3 pairs)
-        List<Pair<Node, Node>> chunkSet = new ArrayList<>(this.getNodesCount() - 1);
+        List<Pair<Node, Node>> chunkSet = new ArrayList<>(Math.max(0, this.getNodesCount() - 1));
         if (isIncomplete()) return chunkSet;
         Node lastN = null;
         for (Node n : nodes) {
