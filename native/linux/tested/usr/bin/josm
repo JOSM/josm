@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # Simple wrapper script used to start JOSM in Debian
 set -e
 
