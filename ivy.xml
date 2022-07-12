@@ -28,7 +28,7 @@
         <dependency conf="api->default" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
         <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.9"/>
         <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
-        <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.17.0" transitive="false"/>
+        <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.18.0" transitive="false"/>
         <dependency conf="api->default" org="com.formdev" name="svgSalamander" rev="1.1.3"/>
         <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.27.0"/>
         <dependency conf="api->default" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
@@ -42,9 +42,9 @@
         <dependency conf="sources->sources" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.9"/>
         <dependency conf="sources->sources" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
-        <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.17.0" transitive="false"/>
+        <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.18.0" transitive="false"/>
         <dependency conf="sources->sources" org="com.formdev" name="svgSalamander" rev="1.1.3"/>
-        <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.26.0"/>
+        <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.27.0"/>
         <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
         <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2021.3.21"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
         <!-- commonslang->default -->
@@ -55,10 +55,10 @@
         </dependency>
         <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49.a"/>
         <!-- test->default -->
-        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.6.0"/>
+        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.7.1"/>
         <dependency conf="test->default" org="com.ginsberg" name="junit5-system-exit" rev="1.1.2"/>
-        <dependency conf="test->default" org="com.github.tomakehurst" name="wiremock-jre8" rev="2.33.1"/>
-        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.146"/>
+        <dependency conf="test->default" org="com.github.tomakehurst" name="wiremock-jre8" rev="2.33.2"/>
+        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.149"/>
         <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.8.2"/>
         <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.8.2"/>
         <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.8.2"/>

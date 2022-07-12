@@ -56,6 +56,8 @@
     <exclude name="ConfusingTernary"/>
     <exclude name="ControlStatementBraces"/>
     <exclude name="DefaultPackage"/>
+    <!-- EmptyControlStatement is not configurable, so the behavior of the old excludes of EmptyIfStmt/EmptyWhileStmt (errorprone.xml) while getting new functionality cannot be done -->
+    <exclude name="EmptyControlStatement"/>
     <exclude name="EmptyMethodInAbstractClassShouldBeAbstract"/>
     <exclude name="FieldDeclarationsShouldBeAtStartOfClass"/>
     <exclude name="FieldNamingConventions"/>
@@ -174,8 +176,6 @@
     <exclude name="DataflowAnomalyAnalysis"/>
     <exclude name="DoNotTerminateVM"/>
     <exclude name="DontImportSun"/>
-    <exclude name="EmptyIfStmt"/>
-    <exclude name="EmptyWhileStmt"/>
     <exclude name="ImplicitSwitchFallThrough"/>
     <exclude name="MissingSerialVersionUID"/>
     <exclude name="MissingStaticMethodInNonInstantiatableClass"/>
