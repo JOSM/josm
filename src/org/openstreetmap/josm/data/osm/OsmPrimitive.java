@@ -385,11 +385,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     @Override
-    public boolean isDrawable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
-    }
-
-    @Override
     public void setModified(boolean modified) {
         checkDatasetNotReadOnly();
         boolean locked = writeLock();

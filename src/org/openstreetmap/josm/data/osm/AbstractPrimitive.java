@@ -458,6 +458,11 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         updateFlags(FLAG_HIDDEN_TYPE, isExplicit);
     }
 
+    @Override
+    public boolean isDrawable() {
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
+    }
+
     protected String getFlagsAsString() {
         StringBuilder builder = new StringBuilder();
 
