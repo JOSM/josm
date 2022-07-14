@@ -17692,6 +17692,12 @@
   <node id='-101743' lat='39.61203' lon='117.14137' />
   <node id='-101745' lat='39.65434' lon='116.95083' />
   <node id='-101747' lat='39.69714' lon='116.89075' />
+  <node id='-137690' lat='8.892633' lon='161.58988' />
+  <node id='-137691' lat='3.186785' lon='161.87397' />
+  <node id='-137692' lat='11.01511' lon='153.83475' />
+  <node id='-137693' lat='-0.44964' lon='154.49668' />
+  <node id='-137703' lat='1.920402' lon='148.49862' />
+  <node id='-137704' lat='11.45488' lon='148.42679' />
   <way id='-28848'>
     <nd ref='-11546' />
     <nd ref='-5746' />
@@ -43342,6 +43348,7 @@
     <nd ref='-12180' />
     <nd ref='-12182' />
     <nd ref='-12184' />
+    <nd ref='-137690' />
     <nd ref='-12192' />
     <nd ref='-12178' />
     <tag k='ISO3166-1:alpha2' v='MH' />
@@ -43350,9 +43357,15 @@
   <way id='-29328'>
     <nd ref='-12186' />
     <nd ref='-12188' />
+    <nd ref='-137703' />
+    <nd ref='-137693' />
     <nd ref='-12190' />
+    <nd ref='-137691' />
     <nd ref='-12192' />
+    <nd ref='-137690' />
     <nd ref='-12184' />
+    <nd ref='-137692' />
+    <nd ref='-137704' />
     <nd ref='-12186' />
     <tag k='ISO3166-1:alpha2' v='FM' />
     <tag k='name:en' v='Micronesia, Federated States of' />
@@ -58302,6 +58315,43 @@
     <nd ref='-101731' />
     <tag k='ISO3166-2' v='CN-BJ' />
     <tag k='name:en' v='Beijing' />
+  </way>
+  <way id='-103194'>
+    <nd ref='-12192' />
+    <nd ref='-137690' />
+    <nd ref='-137691' />
+    <nd ref='-12192' />
+    <tag k='ISO3166-2' v='FM-KSA' />
+    <tag k='name:en' v='Kosrae' />
+  </way>
+  <way id='-103200'>
+    <nd ref='-137690' />
+    <nd ref='-12184' />
+    <nd ref='-137692' />
+    <nd ref='-137693' />
+    <nd ref='-12190' />
+    <nd ref='-137691' />
+    <nd ref='-137690' />
+    <tag k='ISO3166-2' v='FM-PNI' />
+    <tag k='name:en' v='Pohnpei' />
+  </way>
+  <way id='-103216'>
+    <nd ref='-137693' />
+    <nd ref='-137703' />
+    <nd ref='-137704' />
+    <nd ref='-137692' />
+    <nd ref='-137693' />
+    <tag k='ISO3166-2' v='FM-TRK' />
+    <tag k='name:en' v='Chuuk' />
+  </way>
+  <way id='-103223'>
+    <nd ref='-137704' />
+    <nd ref='-12186' />
+    <nd ref='-12188' />
+    <nd ref='-137703' />
+    <nd ref='-137704' />
+    <tag k='ISO3166-2' v='FM-YAP' />
+    <tag k='name:en' v='Yap' />
   </way>
   <relation id='-29600'>
     <member type='way' ref='-28916' role='outer' />
