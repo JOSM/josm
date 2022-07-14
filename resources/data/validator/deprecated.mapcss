@@ -2087,6 +2087,39 @@ node[exit_to] {
   group: tr("deprecated tagging");
 }
 
+/* #21630 */
+*[waterway=riverbank][!natural][!water],
+*[waterway=riverbank][natural=water][!water],
+*[waterway=riverbank][!natural][water=river],
+*[waterway=riverbank][natural=water][water=river] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=water + water=river";
+  group: tr("deprecated tagging");
+  fixAdd: "natural=water";
+  fixAdd: "water=river";
+  fixRemove: "waterway";
+  assertMatch: "way waterway=riverbank";
+  assertMatch: "way waterway=riverbank natural=water";
+  assertMatch: "way waterway=riverbank water=river";
+  assertMatch: "way waterway=riverbank natural=water water=river";
+  assertNoMatch: "way waterway=riverbank natural=shingle";
+  assertNoMatch: "way waterway=riverbank water=lake";
+  assertNoMatch: "way waterway=riverbank natural=water water=lake";
+  assertNoMatch: "way waterway=riverbank natural=shingle water=river";
+}
+*[waterway=riverbank][natural][natural!=water],
+*[waterway=riverbank][water][water!=river] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=water + water=river";
+  group: tr("deprecated tagging");
+  assertMatch: "way waterway=riverbank natural=shingle";
+  assertMatch: "way waterway=riverbank water=lake";
+  assertNoMatch: "way waterway=riverbank";
+  assertNoMatch: "way waterway=riverbank natural=water";
+  assertNoMatch: "way waterway=riverbank water=river";
+  assertNoMatch: "way waterway=riverbank natural=water water=river";
+}
+
 node[amenity=bench][capacity][!seats],
 way[amenity=bench][capacity][!seats] {
   throwWarning: tr("{0} is deprecated for {1}", "{1.key}", "{0.tag}");

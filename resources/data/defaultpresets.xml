@@ -2205,7 +2205,7 @@
         <item name="Water" name_context="natural" icon="presets/nautical/water.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=water" />
             <space />
-            <label text="A body of standing water, such as a lake or pond." />
+            <label text="A body of water, such as a lake, pond or river." />
             <space />
             <key key="natural" value="water" />
             <text key="name" text="Name" />
@@ -2225,7 +2225,7 @@
                 <list_entry value="wastewater" />
             </combo>
             <check key="salt" text="Salt Water" disable_off="true" />
-            <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
+            <check key="intermittent" text="Intermittent (does not permanently contain water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
             <text key="ele" text="Elevation (meters)" length="10" />
             <reference ref="wikipedia_wikidata" />
@@ -2239,14 +2239,6 @@
             <key key="natural" value="coastline" />
             <text key="name" text="Name" />
         </item> <!-- Coastline -->
-        <item name="Riverbank" icon="presets/nautical/waterway_riverbank.svg" type="closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:waterway=riverbank" />
-            <space />
-            <key key="waterway" value="riverbank" />
-            <text key="name" text="Name" />
-            <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
-            <check key="tidal" text="In the tidal range" disable_off="true" />
-        </item> <!-- Riverbank -->
         <separator/>
         <item name="Wetland" icon="presets/landuse/wetland.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=wetland" />
