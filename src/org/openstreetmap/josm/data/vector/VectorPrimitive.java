@@ -258,9 +258,4 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
     public String getLayer() {
         return this.layer;
     }
-
-    @Override
-    public boolean isDrawable() {
-        return super.isDrawable() && this.isVisible();
-    }
 }
