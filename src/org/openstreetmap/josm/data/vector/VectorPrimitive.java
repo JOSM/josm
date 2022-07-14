@@ -44,6 +44,8 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
                 ref.clearCachedStyle();
             }
         }
+        updateFlags(FLAG_TAGGED, hasKeys() && keys()
+                .anyMatch(key -> !isUninterestingKey(key)));
     }
 
     @Override
@@ -58,7 +60,7 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
 
     @Override
     public boolean isTagged() {
-        return !this.getInterestingTags().isEmpty();
+        return (flags & FLAG_TAGGED) != 0;
     }
 
     @Override
