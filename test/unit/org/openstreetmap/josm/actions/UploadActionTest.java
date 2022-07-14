@@ -52,6 +52,15 @@ class UploadActionTest {
         Territories.initialize();
     }
 
+    @BeforeAll
+    static void setUp() {
+        // Territories is needed due to test pollution. One of the listeners
+        // that may get registered on SelectionEventManager requires
+        // Territories. Rather unfortunately, we also need the external data to
+        // avoid the NPE.
+        Territories.initialize();
+    }
+
     /**
      * Non-regression test for JOSM #21476.
      */
