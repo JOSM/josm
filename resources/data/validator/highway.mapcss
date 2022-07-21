@@ -103,24 +103,30 @@ way[highway=cycleway][cycleway=lane] {
   assertNoMatch: "way highway=footway";
 }
 
-/* footway, see #10851, #10976, #15439, #19389 */
+/* footway, see #10851, #10976, #15439, #19389, #21235 */
 way[footway=left][/^footway:/],
 way[footway=right][/^footway:/],
 way[footway=both][/^footway:/],
+way[footway=separate][/^footway:/],
 way[footway=no][/^footway:/] {
   throwWarning: tr("{0} is deprecated, use {1} instead. Also check similar tags like {2}", "{0.tag}", "sidewalk", "{1.key}");
   group: tr("deprecated tagging");
   set not_fixable_footway;
   assertMatch: "way footway=both footway:surface=asphalt";
+  assertMatch: "way footway=separate footway:surface=asphalt";
 }
-way[footway=none][/footway:/] {
+way[footway=none][/^footway:/] {
   throwWarning: tr("{0} is deprecated, use {1} instead. Also check similar tags like {2}", "{0.tag}", "sidewalk=no", "{1.key}");
   group: tr("deprecated tagging");
   set not_fixable_footway;
+  assertMatch: "way footway=none footway:surface=asphalt";
+  assertNoMatch: "way footway=no footway:surface=asphalt";
 }
+
 way[footway=left]!.not_fixable_footway,
 way[footway=right]!.not_fixable_footway,
 way[footway=both]!.not_fixable_footway,
+way[footway=separate]!.not_fixable_footway,
 way[footway=no]!.not_fixable_footway {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "sidewalk";
@@ -128,6 +134,7 @@ way[footway=no]!.not_fixable_footway {
   fixChangeKey: "footway => sidewalk";
   set fixable_footway;
 }
+
 way[footway=none]!.not_fixable_footway {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "sidewalk=no";
@@ -135,13 +142,6 @@ way[footway=none]!.not_fixable_footway {
   fixRemove: "footway";
   fixAdd: "sidewalk=no";
   set fixable_footway;
-}
-way[footway][footway!=access_aisle][footway!=crossing][footway!=sidewalk]!.fixable_footway!.not_fixable_footway { /* do not trigger this rule if already one of the 4 previous rules applied */
-  throwWarning: tr("Value of {0} should either be {1}, {2} or {3}. For sidewalks use {4} instead.", "{0.key}", "{1.value}", "{2.value}", "{3.value}", "sidewalk=left|right|both|no");
-  assertNoMatch: "way footway=left";
-  assertNoMatch: "way footway=none";
-  assertNoMatch: "way footway=left footway:left:surface=asphalt";
-  assertMatch: "way footway=bar";
 }
 
 /* #11270, #9297, #15439, #16424, #17022 */
