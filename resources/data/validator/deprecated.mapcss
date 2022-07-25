@@ -2373,4 +2373,12 @@ way[shoulder=none] {
   assertMatch: "node role=stop";
 }
 
+/* #22120 */
+*[school=entrance] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "entrance=yes";
+  suggestAlternative: "entrance=main";
+  group: tr("deprecated tagging");
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
