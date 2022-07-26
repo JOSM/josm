@@ -8,33 +8,27 @@ import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Test {@link MapViewState}
  * @author Michael Zangl
  */
+@BasicPreferences
+@Projection
 class MapViewStateTest {
 
     private static final int WIDTH = 301;
     private static final int HEIGHT = 200;
     private MapViewState state;
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
 
     /**
      * Create the default state.

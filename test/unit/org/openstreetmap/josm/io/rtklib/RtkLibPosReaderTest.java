@@ -12,27 +12,18 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.TimeZoneAnnotation;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link RtkLibPosReader} class.
  */
+@TimeZoneAnnotation
 class RtkLibPosReaderTest {
-    /**
-     * Set the timezone and timeout.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static RtkLibPosReader read(String path) throws IOException, SAXException {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         RtkLibPosReader in = new RtkLibPosReader(Files.newInputStream(Paths.get(path)));

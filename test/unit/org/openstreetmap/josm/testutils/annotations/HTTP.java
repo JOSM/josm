@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 import java.net.URL;
 import java.util.Optional;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -28,6 +27,7 @@ import org.openstreetmap.josm.tools.HttpClient;
 @Retention(RUNTIME)
 @Target(TYPE)
 @ExtendWith(HTTP.HTTPExtension.class)
+@StaticClassCleanup(HttpClient.class)
 public @interface HTTP {
     /**
      * Set the HttpClient type
@@ -42,12 +42,7 @@ public @interface HTTP {
      * @author Taylor Smock
      *
      */
-    class HTTPExtension implements BeforeAllCallback, AfterAllCallback {
-        @Override
-        public void afterAll(ExtensionContext context) throws Exception {
-            AnnotationUtils.resetStaticClass(HttpClient.class);
-        }
-
+    class HTTPExtension implements BeforeAllCallback {
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
             final Class<? extends HttpClient> clientFactory;

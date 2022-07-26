@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * This test tests how fast we are at reading an OSM file.
@@ -26,17 +26,11 @@ import org.openstreetmap.josm.data.osm.DataSet;
  *
  * @author Michael Zangl
  */
-@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
+@BasicPreferences
+@Users
 class OsmReaderPerformanceTest {
     private static final int TIMES = 4;
-
-    /**
-     * Prepare the test.
-     */
-    @BeforeAll
-    public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init(true);
-    }
 
     /**
      * Simulates a plain read of a .osm.bz2 file (from memory)

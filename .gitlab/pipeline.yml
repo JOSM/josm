@@ -1,0 +1,194 @@
+variables:
+  IVY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/ivy"
+  JAVA_VERSION: 8
+  JAVA_DEFAULT_VERSION: 8
+
+
+include:
+  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
+
+cache:
+  key: ${JAVA_VERSION}-${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/
+    - tools/
+
+build-dist:
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  stage: deploy
+  script:
+    - $ANT_HOME/bin/ant -Divy.home="$IVY_CACHE_DIR" dist-optimized-report javadoc taginfo
+  interruptible: true
+  artifacts:
+    public: true
+    paths: ["dist"]
+  rules:
+    - if: $JAVA_VERSION !~ /^(17|18)(-ea)?$/
+      when: always
+
+build-java:
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  stage: build
+  script:
+    - $ANT_HOME/bin/ant -Divy.home="$IVY_CACHE_DIR" clean dist
+  interruptible: true
+  artifacts:
+    paths:
+      - "build"
+      - "dist"
+
+test-java:
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  stage: test
+  script:
+    - ANT="${ANT_HOME}/bin/ant -DnoJavaFX=true -Dtest-it.notRequired=true -Dtest-perf.notRequired=true test-html"
+    - |
+      if [ ! -z "${OSM_USERNAME}" ]; then
+        ANT="${ANT} -Dosm.username=\"$OSM_USERNAME\" -Dosm.password=\"$OSM_PASSWORD\""
+      fi
+    - $ANT -Dtest.headless=true
+    - |
+      if [ $(grep -L ", Failures: 0, Skipped: " test/report/TEST-*.txt | xargs cat | wc -l) -ne 0 ]; then false; fi
+  interruptible: true
+  artifacts:
+    public: true
+    paths:
+      - "test/report/jacoco.xml"
+    reports:
+      junit:
+        - "test/report/TEST-*.xml"
+    when: always
+
+test-java-integration:
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  stage: test
+  script:
+    - ANT="${ANT_HOME}/bin/ant -DnoJavaFX=true test-html"
+    - |
+      if [ ! -z "${OSM_USERNAME}" ]; then
+        ANT="${ANT} -Dosm.username=\"$OSM_USERNAME\" -Dosm.password=\"$OSM_PASSWORD\""
+      fi
+    - $ANT -Dtest.headless=true -Ddefault-junit-excludes='**/*' -Ddefault-junit-IT-includes='**/*IT*' -Ddefault-junit-IT-excludes='**/ImageryPreferenceTestIT*' # ImageryPreferenceTestIT takes > 7 hours. Gitlab limits runs to 1 hour.
+    - |
+      if [ $(grep -L ", Failures: 0, Skipped: " test/report/TEST-*.txt | xargs cat | wc -l) -ne 0 ]; then false; fi
+  interruptible: true
+  artifacts:
+    public: true
+    paths:
+      - "test/report/jacoco.xml"
+    reports:
+      junit:
+        - "test/report/TEST-*.xml"
+    when: always
+
+coverage-java:
+  stage: deploy
+  image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
+  script:
+    - python /opt/cover2cover.py test/report/jacoco.xml $CI_PROJECT_DIR/src/ > test/report/coverage.xml
+  needs:
+    - job: "test-java"
+      optional: true
+  dependencies:
+    - test-java
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: "test/report/coverage.xml"
+
+navigation-java:
+  stage: deploy
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  script:
+    - $ANT_HOME/bin/ant -Dlsif=true compile
+    - curl -fLo coursier https://git.io/coursier-cli
+    - chmod +x coursier
+    - ./coursier launch com.sourcegraph:lsif-java_2.13:0.5.1 -- index-semanticdb build/semanticdb
+  cache: {}
+  artifacts:
+    reports:
+      lsif: dump.lsif
+  rules:
+    - if: $JAVA_VERSION == $JAVA_DEFAULT_VERSION
+      when: always
+
+pmd-java:
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  stage: test
+  script:
+    - $ANT_HOME/bin/ant -Divy.home="$IVY_CACHE_DIR" pmd
+  interruptible: true
+  artifacts:
+    reports:
+      codequality:
+        - codeclimate-josm.json
+  rules:
+    - if: $JAVA_VERSION == $JAVA_DEFAULT_VERSION
+      when: always
+
+checkstyle-java:
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  stage: test
+  script:
+    - $ANT_HOME/bin/ant -Divy.home="$IVY_CACHE_DIR" checkstyle
+    - if [ $(cat checkstyle-josm.xml| grep "<error .*/>" | wc -l) -ne 0 ]; then exit 1; fi
+  interruptible: true
+  artifacts:
+    public: true
+    paths:
+      - "checkstyle-josm.xml"
+    when: on_failure
+  rules:
+    - if: $JAVA_VERSION == $JAVA_DEFAULT_VERSION
+      when: always
+
+spotbugs-java:
+  image: registry.gitlab.com/smocktaylor/josm/openjdk/ant:$JAVA_VERSION
+  stage: test
+  script:
+    - $ANT_HOME/bin/ant -Divy.home="$IVY_CACHE_DIR" spotbugs
+  interruptible: true
+  artifacts:
+    public: true
+    paths:
+      - "spotbugs-josm.xml"
+  rules:
+    - if: $JAVA_VERSION == $JAVA_DEFAULT_VERSION
+      when: always
+
+spotbugs2json:
+  image: python:latest
+  stage: deploy
+  script:
+    - python scripts/spotbugs2json.py
+  interruptible: true
+  needs: ["spotbugs-java"]
+  artifacts:
+    public: true
+    reports:
+      codequality:
+        - "spotbugs-josm.json"
+  rules:
+    - if: $JAVA_VERSION == $JAVA_DEFAULT_VERSION
+      when: always
+
+binary-compatibility:
+  image: registry.gitlab.com/smocktaylor/josm/japi-compliance-checker:latest
+  stage: test
+  script:
+    - apk add curl
+    - LATEST=$(curl https://josm.openstreetmap.de/latest)
+    - mkdir --parent .cache
+    - curl -z .cache/josm-latest.jar --output .cache/josm-latest.jar https://josm.openstreetmap.de/josm-latest.jar
+    - japi-compliance-checker --lib=JOSM .cache/josm-latest.jar --v1=${LATEST} dist/josm-custom.jar --v2=${CI_COMMIT_SHA}
+  interruptible: true
+  needs: ["build-java"]
+  artifacts:
+    public: true
+    when: on_failure
+    paths:
+      - "compat_reports"
+  allow_failure:
+    exit_codes:
+      - 1

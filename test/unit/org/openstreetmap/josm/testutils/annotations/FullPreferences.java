@@ -29,7 +29,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences.BasicPrefer
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@JosmHome
 @BasicPreferences
 @ExtendWith(FullPreferences.UsePreferencesExtension.class)
 public @interface FullPreferences {

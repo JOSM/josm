@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.SelectActionCursor;
@@ -25,7 +24,9 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -33,6 +34,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SelectAction}.
  */
+@Main
+@Projection
 class SelectActionTest {
 
     boolean nodesMerged;
@@ -52,13 +55,6 @@ class SelectActionTest {
             nodesMerged = true;
         }
     }
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     /**
      * Test case: Move a two nodes way near a third node.
@@ -88,61 +84,56 @@ class SelectActionTest {
 
         Config.getPref().put("edit.initial-move-delay", "0");
         MainApplication.getLayerManager().addLayer(layer);
-        try {
-            MapFrame map = MainApplication.getMap();
-            SelectAction action = new SelectActionMock(map, dataSet, layer);
-            nodesMerged = false;
+        MapFrame map = MainApplication.getMap();
+        SelectAction action = new SelectActionMock(map, dataSet, layer);
+        nodesMerged = false;
 
-            action.setEnabled(true);
-            action.putValue("active", true);
+        action.setEnabled(true);
+        action.putValue("active", true);
 
-            MouseEvent event;
-            event = new MouseEvent(map,
-                                   MouseEvent.MOUSE_PRESSED,
-                                   0,
-                                   InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
-                                   100, 0,
-                                   1,
-                                   false, MouseEvent.BUTTON1);
-            action.mousePressed(event);
-            event = new MouseEvent(map,
-                                   MouseEvent.MOUSE_DRAGGED,
-                                   1000,
-                                   InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
-                                   50, 0,
-                                   1,
-                                   false, MouseEvent.BUTTON1);
-            action.mouseDragged(event);
-            event = new MouseEvent(map,
-                                   MouseEvent.MOUSE_RELEASED,
-                                   2000,
-                                   InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
-                                   5, 0,
-                                   1,
-                                   false, MouseEvent.BUTTON1);
-            action.mouseReleased(event);
+        MouseEvent event;
+        event = new MouseEvent(map,
+                               MouseEvent.MOUSE_PRESSED,
+                               0,
+                               InputEvent.BUTTON1_DOWN_MASK | PlatformManager.getPlatform().getMenuShortcutKeyMaskEx(),
+                               100, 0,
+                               1,
+                               false, MouseEvent.BUTTON1);
+        action.mousePressed(event);
+        event = new MouseEvent(map,
+                               MouseEvent.MOUSE_DRAGGED,
+                               1000,
+                               InputEvent.BUTTON1_DOWN_MASK | PlatformManager.getPlatform().getMenuShortcutKeyMaskEx(),
+                               50, 0,
+                               1,
+                               false, MouseEvent.BUTTON1);
+        action.mouseDragged(event);
+        event = new MouseEvent(map,
+                               MouseEvent.MOUSE_RELEASED,
+                               2000,
+                               InputEvent.BUTTON1_DOWN_MASK | PlatformManager.getPlatform().getMenuShortcutKeyMaskEx(),
+                               5, 0,
+                               1,
+                               false, MouseEvent.BUTTON1);
+        action.mouseReleased(event);
 
-            // As result of test, we must find a 2 nodes way, from EN(0, 0) to EN(100, 0)
-            assertTrue(nodesMerged, "Nodes are not merged");
-            assertSame(1, dataSet.getWays().size(), String.format("Expect exactly one way, found %d%n", dataSet.getWays().size()));
-            Way rw = dataSet.getWays().iterator().next();
-            assertFalse(rw.isDeleted(), "Way shouldn't be deleted\n");
-            assertSame(2, rw.getNodesCount(), String.format("Way shouldn't have 2 nodes, %d found%n", w.getNodesCount()));
-            Node r1 = rw.firstNode();
-            Node r2 = rw.lastNode();
-            if (r1.getEastNorth().east() > r2.getEastNorth().east()) {
-                Node tmp = r1;
-                r1 = r2;
-                r2 = tmp;
-            }
-            assertSame(0, Double.compare(r1.getEastNorth().east(), 0),
-                    String.format("East should be 0, found %f%n", r1.getEastNorth().east()));
-            assertSame(0, Double.compare(r2.getEastNorth().east(), 100),
-                    String.format("East should be 100, found %f%n", r2.getEastNorth().east()));
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
+        // As result of test, we must find a 2 nodes way, from EN(0, 0) to EN(100, 0)
+        assertTrue(nodesMerged, "Nodes are not merged");
+        assertSame(1, dataSet.getWays().size(), String.format("Expect exactly one way, found %d%n", dataSet.getWays().size()));
+        Way rw = dataSet.getWays().iterator().next();
+        assertFalse(rw.isDeleted(), "Way shouldn't be deleted\n");
+        assertSame(2, rw.getNodesCount(), String.format("Way shouldn't have 2 nodes, %d found%n", w.getNodesCount()));
+        Node r1 = rw.firstNode();
+        Node r2 = rw.lastNode();
+        if (r1.getEastNorth().east() > r2.getEastNorth().east()) {
+            Node tmp = r1;
+            r1 = r2;
+            r2 = tmp;
         }
+        assertSame(0, Double.compare(r1.getEastNorth().east(), 0),
+                String.format("East should be 0, found %f%n", r1.getEastNorth().east()));
+        assertSame(0, Double.compare(r2.getEastNorth().east(), 100),
+                String.format("East should be 100, found %f%n", r2.getEastNorth().east()));
     }
 
     /**
@@ -161,3 +152,4 @@ class SelectActionTest {
         TestUtils.superficialEnumCodeCoverage(SelectActionCursor.class);
     }
 }
+

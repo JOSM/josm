@@ -15,7 +15,6 @@ import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -33,18 +32,15 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.FakeGraphics;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
 
 /**
  * Test class for {@link MVTLayer}
  */
-@BasicPreferences
+// Needed for setting HTTP factory and the main window/mapview
+@Main
+@org.openstreetmap.josm.testutils.annotations.Projection
 class MVTLayerTest {
-    // Needed for setting HTTP factory and the main window/mapview
-    @RegisterExtension
-    JOSMTestRules josmTestRules = new JOSMTestRules().main().projection();
-
     MVTLayer testLayer;
 
     @BeforeEach

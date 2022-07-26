@@ -16,22 +16,22 @@ import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Some tests for the {@link NavigatableComponent} class.
  * @author Michael Zangl
  *
  */
+@BasicPreferences
+@Projection
 class NavigatableComponentTest {
 
     private static final class NavigatableComponentMock extends NavigatableComponent {
@@ -49,14 +49,6 @@ class NavigatableComponentTest {
     private static final int HEIGHT = 200;
     private static final int WIDTH = 300;
     private NavigatableComponent component;
-
-    /**
-     * We need the projection for coordinate conversions.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
-
     /**
      * Create a new, fresh {@link NavigatableComponent}
      */

@@ -22,6 +22,7 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.date.DateUtilsTest;
 
@@ -30,6 +31,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ExceptionUtil} class.
  */
+@BasicPreferences
+//@OsmApiType(OsmApiType.APIType.FAKE)
 class ExceptionUtilTest {
 
     /**
@@ -37,7 +40,7 @@ class ExceptionUtilTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI();
+    public JOSMTestRules test = new JOSMTestRules().fakeAPI();
 
     private static String baseUrl;
     private static String serverUrl;

@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -42,6 +41,10 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
+import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -51,6 +54,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 1806
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
+@FullPreferences
+@OsmApiType(OsmApiType.APIType.DEV)
+@Projection
+@Users
 class OsmServerBackreferenceReaderTest {
     private static final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
 
@@ -164,8 +171,6 @@ class OsmServerBackreferenceReaderTest {
             return;
         }
         logger.info("initializing ...");
-
-        JOSMFixture.createFunctionalTestFixture().init();
 
         Config.getPref().put("osm-server.auth-method", "basic");
 

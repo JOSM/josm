@@ -12,11 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link OsmChangesetParser} class.
  */
 @BasicPreferences
+@Users
 class OsmChangesetParserTest {
 
     private static final String BEGIN =

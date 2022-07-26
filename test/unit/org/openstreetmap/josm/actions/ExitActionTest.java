@@ -8,19 +8,16 @@ import java.awt.GraphicsEnvironment;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -28,14 +25,8 @@ import mockit.MockUp;
 /**
  * Unit tests for class {@link ExitAction}.
  */
+@Main
 final class ExitActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main();
 
     @BeforeAll
     static void beforeAll() {

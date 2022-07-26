@@ -13,11 +13,13 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 
 /**
  * Unit tests of {@link BasicUploadSettingsPanel} class.
  */
 @BasicPreferences
+@HTTP
 class BasicUploadSettingsPanelTest {
     /**
      * Test of {@link BasicUploadSettingsPanel#BasicUploadSettingsPanel}.

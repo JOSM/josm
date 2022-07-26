@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -13,15 +14,11 @@ import java.util.logging.Level;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.ReflectionUtils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Checks if all classes implementing the {@link TableCellRenderer} interface do
@@ -39,6 +36,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @see <a href="https://josm.openstreetmap.de/ticket/6301">#6301</a>
  */
+@BasicPreferences
 class TableCellRendererTest {
 
     // list of classes that cannot be easily tested and are verified either manually or another unit tests
@@ -46,13 +44,6 @@ class TableCellRendererTest {
         "org.openstreetmap.josm.gui.dialogs.FilterDialog$BooleanRenderer",
         "org.openstreetmap.josm.gui.dialogs.relation.SelectionTableCellRenderer"
     );
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * Unit test of all table cell renderers against null values.
@@ -63,7 +54,7 @@ class TableCellRendererTest {
     @Test
     void testTableCellRenderer() throws ReflectiveOperationException {
         Set<Class<? extends TableCellRenderer>> renderers = TestUtils.getJosmSubtypes(TableCellRenderer.class);
-        Assert.assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken
+        assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken
         JTable tbl = new JTable(2, 2);
         for (Class<? extends TableCellRenderer> klass : renderers) {
             if (Modifier.isAbstract(klass.getModifiers()) || SKIP_TEST.contains(klass.getName())) {

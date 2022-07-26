@@ -15,14 +15,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
+import org.junit.platform.commons.support.ReflectionSupport;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -32,27 +34,37 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.AbstractReader;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.JosmHome;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
+import org.openstreetmap.josm.testutils.annotations.Presets;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.StaticClassCleanup;
+import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Integration tests of {@link PluginHandler} class.
  */
+@Main
+@JosmHome("test/config/unit/pluginHandlerTestIT-josm.home")
+@HTTPS
+@MapStyles
+@Presets
+@Projection
+@StaticClassCleanup(PluginHandler.class)
+@Territories
+@Timeout(value = 10, unit = TimeUnit.MINUTES)
+@Users
 public class PluginHandlerTestIT {
 
     private static final List<String> errorsToIgnore = new ArrayList<>();
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().main().projection().preferences().https()
-            .territories().timeout(10 * 60 * 1000);
 
     /**
      * Setup test
@@ -65,6 +77,22 @@ public class PluginHandlerTestIT {
     }
 
     /**
+     * Clean up after plugin tests. This is only used for specific instances where plugins don't clean up after themselves.
+     * @throws Exception if one of the plugin-specific cleanups fails
+     */
+    @AfterAll
+    public static void afterClass() throws Exception {
+        // SDS does not properly clean up after itself -- it adds something to AbstractReader#postprocessors, which
+        // pollutes other tests.
+        // Technically, we could serialize/deserialize the class instead (the static field is volatile)
+        List<?> postProcessors = (List<?>) ReflectionSupport.tryToReadFieldValue(
+                AbstractReader.class.getDeclaredField("postprocessors"), null).get();
+        if (postProcessors != null) {
+            postProcessors.clear();
+        }
+    }
+
+    /**
      * Test that available plugins rules can be loaded.
      */
     @Test
@@ -73,7 +101,7 @@ public class PluginHandlerTestIT {
 
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
                 .filter(e -> !(Utils.getRootCause(e.getValue()) instanceof HeadlessException))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> Utils.getRootCause(e.getValue())));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Utils.getRootCause(e.getValue())));
 
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
         Map<String, List<String>> invalidManifestEntries = loadedPlugins.stream().filter(pi -> !pi.invalidManifestEntries.isEmpty())
@@ -147,17 +175,17 @@ public class PluginHandlerTestIT {
     private static <T> Map<String, T> filterKnownErrors(Map<String, T> errorMap) {
         return errorMap.entrySet().parallelStream()
                 .filter(entry -> !errorsToIgnore.contains(convertEntryToString(entry)))
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private static void debugPrint(Map<String, ?> invalidManifestEntries) {
         System.out.println(invalidManifestEntries.entrySet()
                 .stream()
-                .map(e -> convertEntryToString(e))
+                .map(PluginHandlerTestIT::convertEntryToString)
                 .collect(Collectors.joining(", ")));
     }
 
-    private static String convertEntryToString(Entry<String, ?> entry) {
+    private static String convertEntryToString(Map.Entry<String, ?> entry) {
         return entry.getKey() + "=\"" + entry.getValue() + "\"";
     }
 

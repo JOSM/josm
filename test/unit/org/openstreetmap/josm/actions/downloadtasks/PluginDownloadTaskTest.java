@@ -12,36 +12,28 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.tools.Utils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link PluginDownloadTask}.
  */
-@BasicWiremock
+@AssumeRevision("Revision: 8000\n")
 @BasicPreferences
+@BasicWiremock
+@HTTP
+@HTTPS
 class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
     protected String pluginPath;
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules testRule = new JOSMTestRules().https().assumeRevision(
-        "Revision: 8000\n"
-    );
-
     @Override
     protected String getRemoteContentType() {
         return "application/java-archive";

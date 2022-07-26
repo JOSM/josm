@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,46 +16,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
+import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test parts of {@link PluginHandler} class with plugins that advertise multiple versions for compatibility.
  */
-public class PluginHandlerMultiVersionTest {
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().main();
-
+@AssumeRevision("7000")
+@BasicWiremock
+@Main
+class PluginHandlerMultiVersionTest {
     /**
      * Plugin server mock.
      */
-    @Rule
-    public WireMockRule pluginServerRule = new WireMockRule(
-        options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot())
-    );
+    @BasicWiremock
+    WireMockServer pluginServerRule;
 
     /**
      * Setup test.
      */
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() throws IOException {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
@@ -71,7 +66,16 @@ public class PluginHandlerMultiVersionTest {
         this.targetBazJarNew = new File(this.pluginDir, "baz_plugin.jar.new");
         this.targetQuxJar = new File(this.pluginDir, "qux_plugin.jar");
         this.targetQuxJarNew = new File(this.pluginDir, "qux_plugin.jar.new");
+        // Clean up the plugin directory
+        if (this.pluginDir.isDirectory()) {
+            FileUtils.cleanDirectory(this.pluginDir);
+        }
         this.pluginDir.mkdirs();
+    }
+
+    @AfterEach
+    void afterEach() {
+
     }
 
     private static final String referencePathQuxJarOld = "plugin/qux_plugin.v345.jar";
@@ -93,9 +97,9 @@ public class PluginHandlerMultiVersionTest {
      * but an additional version is listed which *does* support our version
      * @throws Exception on failure
      */
-    @JOSMTestRules.OverrideAssumeRevision("Revision: 7501\n")
+    @AssumeRevision("Revision: 7501\n")
     @Test
-    public void testUpdatePluginsOneMultiVersion() throws Exception {
+    void testUpdatePluginsOneMultiVersion() throws Exception {
         TestUtils.assumeWorkingJMockit();
 
         final String quxNewerServePath = "/qux/newer.jar";
@@ -146,7 +150,7 @@ public class PluginHandlerMultiVersionTest {
         TestUtils.assertFileContentsEqual(this.referenceBazJarOld, this.targetBazJar);
         TestUtils.assertFileContentsEqual(this.referenceQuxJarNewer, this.targetQuxJar);
 
-        assertEquals(2, WireMock.getAllServeEvents().size());
+        assertEquals(2, this.pluginServerRule.getAllServeEvents().size());
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(quxNewerServePath)));
 
@@ -160,9 +164,9 @@ public class PluginHandlerMultiVersionTest {
      * we already have, which is still listed.
      * @throws Exception on failure
      */
-    @JOSMTestRules.OverrideAssumeRevision("Revision: 7000\n")
+    @AssumeRevision("Revision: 7000\n")
     @Test
-    public void testUpdatePluginsExistingVersionLatestPossible() throws Exception {
+    void testUpdatePluginsExistingVersionLatestPossible() throws Exception {
         TestUtils.assumeWorkingJMockit();
 
         final Map<String, String> attrOverrides = new HashMap<String, String>() {{
@@ -206,7 +210,7 @@ public class PluginHandlerMultiVersionTest {
         TestUtils.assertFileContentsEqual(this.referenceQuxJarOld, this.targetQuxJar);
 
         // only the plugins list should have been downloaded
-        assertEquals(1, WireMock.getAllServeEvents().size());
+        assertEquals(1, this.pluginServerRule.getAllServeEvents().size());
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
 
         assertEquals(7000, Config.getPref().getInt("pluginmanager.version", 111));

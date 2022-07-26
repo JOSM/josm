@@ -30,10 +30,13 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 
+import org.openstreetmap.josm.testutils.annotations.Users;
+
 /**
  * Unit tests of {@link NotesDialog}
  */
 @BasicPreferences
+@Users
 class NotesDialogTest {
     /** Only needed for {@link #testTicket21558} */
     @RegisterExtension

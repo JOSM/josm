@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 /**
  * Tests the {@link SelectionEventManager}
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test;
  * @since 12048
  */
 @BasicPreferences
+@LayerEnvironment
 class SelectionEventManagerTest {
     private final class SelectionListener implements DataSelectionListener {
         private Collection<? extends OsmPrimitive> newSelection;

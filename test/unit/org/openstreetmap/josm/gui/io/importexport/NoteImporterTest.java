@@ -6,23 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link NoteImporter} class.
  */
+@LayerEnvironment
+@Users
 class NoteImporterTest {
-
-    /**
-     * Use the test rules to remove any layers and reset state.
-     */
-    @RegisterExtension
-    public final JOSMTestRules rules = new JOSMTestRules();
-
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12531">Bug #12531</a>.
      */

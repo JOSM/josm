@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.time.Instant;
@@ -31,6 +33,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -53,10 +57,14 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
+import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialAgent;
 import org.openstreetmap.josm.testutils.FakeGraphics;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
@@ -623,10 +631,12 @@ public final class TestUtils {
                     () -> GuiHelper.runInEDTAndWaitAndReturn(
                         () -> ((ThreadPoolExecutor) MainApplication.worker).getQueue().isEmpty()
                     )
-                ).get();
+                ).get(5, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException e) {
                 // inconclusive - retry...
                 workerQueueEmpty = false;
+            } catch (TimeoutException timeoutException) {
+                fail(timeoutException);
             }
         }
     }
@@ -650,7 +660,18 @@ public final class TestUtils {
      * @return {@code true} if {@code osm.username} and {@code osm.password} have been defined on the command line
      */
     public static boolean areCredentialsProvided() {
-        return Utils.getSystemProperty("osm.username") != null && Utils.getSystemProperty("osm.password") != null;
+        final String username = Utils.getSystemProperty("osm.username");
+        final String password = Utils.getSystemProperty("osm.password");
+        if (username != null && password != null) {
+            try {
+                new JosmPreferencesCredentialAgent().store(Authenticator.RequestorType.SERVER,
+                        OsmApi.getOsmApi().getHost(), new PasswordAuthentication(username, password.toCharArray()));
+                return true;
+            } catch (CredentialsAgentException e) {
+                Logging.error("Credentials could not be stored");
+            }
+        }
+        return false;
     }
 
     /**

@@ -12,26 +12,28 @@ import java.util.List;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link CertificateAmendment} class.
  */
+@BasicPreferences
+@HTTP
+@HTTPS
+@Timeout(20)
+@IntegrationTest
 class CertificateAmendmentTestIT {
-
-    /**
-     * Setup rule
-     */
-    @ClassRule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().preferences().timeout(20000);
-
+    @RegisterExtension
+    JOSMTestRules rule = new JOSMTestRules().https();
     private static final List<String> errorsToIgnore = new ArrayList<>();
 
     /**

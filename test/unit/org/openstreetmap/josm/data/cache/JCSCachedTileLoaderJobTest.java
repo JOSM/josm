@@ -38,8 +38,8 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern;
 /**
  * Unit tests for class {@link JCSCachedTileLoaderJob}.
  */
-@BasicWiremock
 @BasicPreferences
+@BasicWiremock
 @Timeout(20)
 class JCSCachedTileLoaderJobTest {
 

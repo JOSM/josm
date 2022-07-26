@@ -21,11 +21,15 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link OsmReader} class.
  */
 @BasicPreferences
+@Main
+@Users
 class OsmJsonReaderTest {
     /**
      * Parse JSON.

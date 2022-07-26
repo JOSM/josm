@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -20,22 +19,17 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link InspectPrimitiveDialog} class.
  */
+@Main
+@MapStyles
+@Projection
 class InspectPrimitiveDialogTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().mapStyles();
-
     /**
      * Setup test
      */
@@ -150,23 +144,20 @@ class InspectPrimitiveDialogTest {
                 "\n";
         // CHECKSTYLE.ON: LineLength
 
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            assertEqualsNewline("", InspectPrimitiveDialog.buildMapPaintText());
-            Node n = new Node(LatLon.ZERO);
-            n.setUser(User.getAnonymous());
-            ds.addPrimitive(n);
-            ds.addSelected(n);
-            String text = InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", "");
-            assertEqualsNewline(baseText, text);
-            n = new Node(LatLon.ZERO);
-            n.setUser(User.getAnonymous());
-            ds.addPrimitive(n);
-            ds.addSelected(n);
-            assertEqualsNewline(baseText + baseText + "The 2 selected objects have identical style caches.\n",
-                    InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        MainApplication.getLayerManager().addLayer(layer);
+        assertEqualsNewline("", InspectPrimitiveDialog.buildMapPaintText());
+        Node n = new Node(LatLon.ZERO);
+        n.setUser(User.getAnonymous());
+        ds.addPrimitive(n);
+        ds.addSelected(n);
+        String text = InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", "");
+        assertEqualsNewline(baseText, text);
+        n = new Node(LatLon.ZERO);
+        n.setUser(User.getAnonymous());
+        ds.addPrimitive(n);
+        ds.addSelected(n);
+        assertEqualsNewline(baseText + baseText + "The 2 selected objects have identical style caches.\n",
+                InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
     }
 }
+

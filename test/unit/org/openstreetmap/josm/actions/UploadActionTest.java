@@ -9,9 +9,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.AddPrimitivesCommand;
 import org.openstreetmap.josm.data.UserIdentityManager;
@@ -22,11 +20,15 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Territories;
 
 import mockit.Invocation;
 import mockit.Mock;
@@ -37,21 +39,13 @@ import mockit.MockUp;
  * @author Taylor Smock
  */
 @BasicPreferences
+@LayerEnvironment
+@Main
+@OsmApiType(OsmApiType.APIType.FAKE)
+@Projection
+@Territories(Territories.Initialize.ALL)
+@Users
 class UploadActionTest {
-    // Only needed for layer cleanup. And user identity cleanup. And ensuring that data isn't accidentally uploaded.
-    // Note that the setUp method can be replaced by the @Territories extension, when that is merged.
-    @RegisterExtension
-    static JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeAPI();
-
-    @BeforeAll
-    static void setUp() {
-        // Territories is needed due to test pollution. One of the listeners
-        // that may get registered on SelectionEventManager requires
-        // Territories. Rather unfortunately, we also need the external data to
-        // avoid the NPE.
-        Territories.initialize();
-    }
-
     /**
      * Non-regression test for JOSM #21476.
      */

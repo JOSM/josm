@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.plugin;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
 import java.io.File;
@@ -19,10 +18,9 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
 import org.awaitility.Awaitility;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -31,43 +29,39 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
+import org.openstreetmap.josm.testutils.annotations.AssertionsInEDT;
+import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.MockUp;
 
 /**
  * Higher level tests of {@link PluginPreference} class.
  */
-public class PluginPreferenceHighLevelTest {
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().assumeRevision(
-        "Revision: 10000\n"
-    ).preferences().main().assertionsInEDT();
-
+@AssumeRevision("Revision: 10000\n")
+@BasicPreferences(true)
+@BasicWiremock
+@Main
+@AssertionsInEDT
+class PluginPreferenceHighLevelTest {
     /**
      * Plugin server mock.
      */
-    @Rule
-    public WireMockRule pluginServerRule = new WireMockRule(
-        options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot())
-    );
+    @BasicWiremock
+    public WireMockServer pluginServerRule;
 
     /**
      * Setup test.
      * @throws ReflectiveOperationException never
      */
-    @Before
+    @BeforeEach
     public void setUp() throws ReflectiveOperationException {
 
         // some other tests actually go ahead and load plugins (notably at time of writing,
@@ -106,7 +100,7 @@ public class PluginPreferenceHighLevelTest {
      * Tear down.
      * @throws ReflectiveOperationException never
      */
-    @After
+    @AfterEach
     public void tearDown() throws ReflectiveOperationException {
         // restore actual PluginHandler#pluginList
         @SuppressWarnings("unchecked")
@@ -135,7 +129,7 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testInstallWithoutUpdate() throws Exception {
+    void testInstallWithoutUpdate() throws Exception {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
@@ -169,7 +163,7 @@ public class PluginPreferenceHighLevelTest {
         Awaitility.await().atMost(2000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -256,7 +250,7 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testDisablePluginWithUpdatesAvailable() throws Exception {
+    void testDisablePluginWithUpdatesAvailable() throws Exception {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew),
@@ -289,7 +283,7 @@ public class PluginPreferenceHighLevelTest {
         Awaitility.await().atMost(2000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -378,7 +372,7 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testUpdateOnlySelectedPlugin() throws Exception {
+    void testUpdateOnlySelectedPlugin() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
@@ -406,7 +400,7 @@ public class PluginPreferenceHighLevelTest {
         TestUtils.syncEDTAndWorkerThreads();
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -485,7 +479,7 @@ public class PluginPreferenceHighLevelTest {
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
         // baz_plugin has not
         this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         // pluginmanager.version has been set to the current version
         // questionably correct
@@ -566,7 +560,7 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testUpdateWithNoAvailableUpdates() throws Exception {
+    void testUpdateWithNoAvailableUpdates() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarOld),
@@ -600,7 +594,7 @@ public class PluginPreferenceHighLevelTest {
         TestUtils.syncEDTAndWorkerThreads();
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -656,7 +650,7 @@ public class PluginPreferenceHighLevelTest {
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         // that should have been the only request to our PluginServer
         assertEquals(1, this.pluginServerRule.getAllServeEvents().size());
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         // pluginmanager.version has been set to the current version
         assertEquals(10000, Config.getPref().getInt("pluginmanager.version", 111));
@@ -705,7 +699,7 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testInstallWithoutRestartRequired() throws Exception {
+    void testInstallWithoutRestartRequired() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final boolean[] loadPluginsCalled = new boolean[] {false};
         new MockUp<PluginHandler>() {
@@ -749,7 +743,7 @@ public class PluginPreferenceHighLevelTest {
         TestUtils.syncEDTAndWorkerThreads();
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -825,9 +819,9 @@ public class PluginPreferenceHighLevelTest {
      * preventing us from using the latest version
      * @throws Exception on failure
      */
-    @JOSMTestRules.OverrideAssumeRevision("Revision: 7000\n")
+    @AssumeRevision("Revision: 7000\n")
     @Test
-    public void testInstallMultiVersion() throws Exception {
+    void testInstallMultiVersion() throws Exception {
         TestUtils.assumeWorkingJMockit();
 
         final String bazOldServePath = "/baz/old.jar";
@@ -870,7 +864,7 @@ public class PluginPreferenceHighLevelTest {
         TestUtils.syncEDTAndWorkerThreads();
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        this.pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),

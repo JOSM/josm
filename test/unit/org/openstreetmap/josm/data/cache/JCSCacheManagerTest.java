@@ -19,8 +19,8 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests for class {@link JCSCacheManager}.
  */
-@Timeout(20)
 @BasicPreferences
+@Timeout(20)
 class JCSCacheManagerTest {
     /**
      * Tests that {@code JCSCacheManager} satisfies utility class criteria.

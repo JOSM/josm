@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
@@ -39,11 +38,11 @@ import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test cases for {@link StyledMapRenderer} and the MapCSS classes.
@@ -51,6 +50,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This test uses the data and reference files stored in the test data directory {@value #TEST_DATA_BASE}
  * @author Michael Zangl
  */
+@BasicPreferences
+@MapStyles
+@Projection
 public class MapCSSRendererTest {
     private static final String TEST_DATA_BASE = "/renderer/";
     /**
@@ -58,13 +60,6 @@ public class MapCSSRendererTest {
      */
     private static final Bounds AREA_DEFAULT = new Bounds(0, 0, 1, 1);
     private static final int IMAGE_SIZE = 256;
-
-    /**
-     * Minimal test rules required
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
     // development flag - set to true in order to update all reference images
     private static final boolean UPDATE_ALL = false;

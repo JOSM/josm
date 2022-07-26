@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit tests of {@link RelationMemberTransferable} class.
  */
+@BasicPreferences
 class RelationMemberTransferableTest {
     /**
      * Test of {@link RelationMemberTransferable#getTransferDataFlavors()} method.

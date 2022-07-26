@@ -15,10 +15,16 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 
 /**
  * Unit tests for class {@link Projection}.
  */
+@BasicPreferences
+@HTTP
+@ProjectionNadGrids
 class ProjectionTest {
 
     private static final Random rand = new SecureRandom();

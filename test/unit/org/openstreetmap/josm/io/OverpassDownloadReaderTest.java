@@ -29,8 +29,8 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 /**
  * Unit tests of {@link OverpassDownloadReader} class.
  */
-@BasicWiremock
 @BasicPreferences
+@BasicWiremock
 @HTTP
 class OverpassDownloadReaderTest {
     /**

@@ -13,12 +13,14 @@ import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.notes.NoteComment.Action;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
 
 /**
  * Unit tests of {@link NoteReader} class.
  */
+@Users
 class NoteReaderTest {
 
     /**

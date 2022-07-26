@@ -6,7 +6,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,7 +16,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -64,6 +62,8 @@ import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.testutils.annotations.MockVersion;
+import org.openstreetmap.josm.testutils.annotations.fake_imagery.ColorSource;
 import org.openstreetmap.josm.testutils.mockers.EDTAssertionMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowlessMapViewStateMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowlessNavigatableComponentMocker;
@@ -332,10 +332,10 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
                 true,
                 true,
                 true,
-                new TileSourceRule.ColorSource(Color.WHITE, "White Tiles", 256),
-                new TileSourceRule.ColorSource(Color.BLACK, "Black Tiles", 256),
-                new TileSourceRule.ColorSource(Color.MAGENTA, "Magenta Tiles", 256),
-                new TileSourceRule.ColorSource(Color.GREEN, "Green Tiles", 256)
+                new ColorSource(Color.WHITE, "White Tiles", 256),
+                new ColorSource(Color.BLACK, "Black Tiles", 256),
+                new ColorSource(Color.MAGENTA, "Magenta Tiles", 256),
+                new ColorSource(Color.GREEN, "Green Tiles", 256)
             )
         );
     }
@@ -401,14 +401,6 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
             Logging.error(e);
         }
         return this;
-    }
-
-    private static class MockVersion extends Version {
-        MockVersion(final String propertiesString) {
-            super.initFromRevisionInfo(
-                new ByteArrayInputStream(propertiesString.getBytes(StandardCharsets.UTF_8))
-            );
-        }
     }
 
     @Override
@@ -629,7 +621,14 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
         }
     }
 
-    private void workaroundJdkBug8159956() {
+    /**
+     * Work around JDK bug 8159956: EXCEPTION_ACCESS_VIOLATION in sun.awt.windows.ThemeReader.getThemeMargins.
+     * Only used on Windows.
+     *
+     * NOTE: This is only visible for {@link org.openstreetmap.josm.testutils.annotations.Main}. Do not use in
+     * external code.
+     */
+    public static void workaroundJdkBug8159956() {
         try {
             if (PlatformManager.isPlatformWindows() && Utils.getJavaVersion() == 8 && GraphicsEnvironment.isHeadless()) {
                 // https://bugs.openjdk.java.net/browse/JDK-8159956

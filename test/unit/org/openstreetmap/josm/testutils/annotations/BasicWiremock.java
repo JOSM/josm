@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -16,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -39,7 +42,10 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.extension.AbstractTransformer;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
 /**
@@ -53,7 +59,11 @@ import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
+// It makes no sense to wiremock when no HTTP calls will be made
+@HTTP
 @ExtendWith(BasicWiremock.WireMockExtension.class)
+@ExtendWith(BasicWiremock.WireMockParameterResolver.class)
+@Inherited
 public @interface BasicWiremock {
     /**
      * Set the path for the data. Default is {@link TestUtils#getTestDataRoot()}.
@@ -70,7 +80,7 @@ public @interface BasicWiremock {
      * </ul>
      * @return The transformers to instantiate
      */
-    Class<? extends ResponseTransformer>[] responseTransformers() default {};
+    Class<? extends AbstractTransformer<?>>[] responseTransformers() default {};
 
     /**
      * Start/stop WireMock automatically, and check for missed calls.
@@ -78,35 +88,47 @@ public @interface BasicWiremock {
      *
      */
     class WireMockExtension
-            implements AfterAllCallback, AfterEachCallback, BeforeAllCallback, BeforeEachCallback, ParameterResolver {
+            implements AfterAllCallback, AfterEachCallback, BeforeAllCallback, BeforeEachCallback {
         /**
          * Get the default wiremock server
          * @param context The context to search
          * @return The wiremock server
          */
-        static WireMockServer getWiremock(ExtensionContext context) {
+        public static WireMockServer getWiremock(ExtensionContext context) {
             ExtensionContext.Namespace namespace = ExtensionContext.Namespace.create(BasicWiremock.class);
             BasicWiremock annotation = AnnotationUtils.findFirstParentAnnotation(context, BasicWiremock.class)
                     .orElseThrow(() -> new IllegalArgumentException("There must be a @BasicWiremock annotation"));
             return context.getStore(namespace).getOrComputeIfAbsent(WireMockServer.class, clazz -> {
-                final List<ResponseTransformer> transformers = new ArrayList<>(annotation.responseTransformers().length);
-                for (Class<? extends ResponseTransformer> responseTransformer : annotation.responseTransformers()) {
+                final List<AbstractTransformer<?>> transformers = new ArrayList<>(annotation.responseTransformers().length);
+                for (Class<? extends AbstractTransformer<?>> responseTransformer : annotation.responseTransformers()) {
+                    boolean success = false;
+                    ReflectiveOperationException reflectiveOperationException = null;
+
                     for (Pair<Class<?>[], Object[]> parameterMapping : Arrays.asList(
-                            new Pair<>(new Class<?>[] {ExtensionContext.class }, new Object[] {context }),
+                            new Pair<>(new Class<?>[] {ExtensionContext.class}, new Object[] {context}),
                             new Pair<>(new Class<?>[0], new Object[0]))) {
                         try {
-                            Constructor<? extends ResponseTransformer> constructor = responseTransformer
-                                    .getConstructor(parameterMapping.a);
+                            Constructor<? extends AbstractTransformer<?>> constructor = responseTransformer.getConstructor(
+                                    parameterMapping.a);
                             transformers.add(constructor.newInstance(parameterMapping.b));
+                            success = true;
                             break;
                         } catch (ReflectiveOperationException e) {
-                            fail(e);
+                            reflectiveOperationException = e;
                         }
                     }
+                    // Special case ResponseTemplateTransformer
+                    if (ResponseTemplateTransformer.class.equals(responseTransformer)) {
+                        transformers.add(new ResponseTemplateTransformer(false));
+                        success = true;
+                    }
+                    if (!success) {
+                        fail(reflectiveOperationException);
+                    }
                 }
-                return new WireMockServer(
-                    options().usingFilesUnderDirectory(Utils.isStripEmpty(annotation.value()) ? TestUtils.getTestDataRoot() :
-                            annotation.value()).extensions(transformers.toArray(new ResponseTransformer[0])).dynamicPort());
+                return new WireMockServer(options().usingFilesUnderDirectory(
+                        Utils.isStripEmpty(annotation.value()) ? TestUtils.getTestDataRoot() :
+                                annotation.value()).extensions(transformers.toArray(new AbstractTransformer<?>[0])).dynamicPort());
             }, WireMockServer.class);
         }
 
@@ -138,7 +160,8 @@ public @interface BasicWiremock {
             List<LoggedRequest> missed = getWiremock(context).findUnmatchedRequests().getRequests();
             missed.forEach(r -> Logging.error(r.getAbsoluteUrl()));
             try {
-                assertTrue(missed.isEmpty(), missed.stream().map(LoggedRequest::getUrl).collect(Collectors.joining("\n\n")));
+                assertTrue(missed.isEmpty(),
+                        missed.stream().map(LoggedRequest::getUrl).collect(Collectors.joining("\n\n")));
             } finally {
                 getWiremock(context).resetRequests();
                 getWiremock(context).resetToDefaultMappings();
@@ -152,22 +175,50 @@ public @interface BasicWiremock {
 
         @Override
         public void beforeAll(ExtensionContext context) throws Exception {
-            getWiremock(context).start();
+            final WireMockServer wireMockServer = getWiremock(context);
+            // Account for multiple extensions being set and calling beforeAll
+            if (!wireMockServer.isRunning()) {
+                wireMockServer.start();
+            }
+            // Store default stubs
+            context.getStore(ExtensionContext.Namespace.create(BasicWiremock.class)).put("stubMappings", wireMockServer.getStubMappings());
+            // Set annotated wiremocks
+            setWireMocks(context);
         }
 
         @Override
         public void beforeEach(ExtensionContext context) throws Exception {
             if (AnnotationUtils.elementIsAnnotated(context.getElement(), BasicWiremock.class) || getWiremock(context) == null) {
                 this.beforeAll(context);
+            } else {
+                setWireMocks(context);
             }
+            // Set default stubs
+            final List<?> defaultStubs = context.getStore(ExtensionContext.Namespace.create(BasicWiremock.class))
+                    .getOrDefault("stubMappings", List.class, Collections.emptyList());
+            final WireMockServer wireMockServer = getWiremock(context);
+            defaultStubs.stream().filter(StubMapping.class::isInstance).map(StubMapping.class::cast).forEach(wireMockServer::addStubMapping);
+        }
+
+        /**
+         * Set wiremock fields
+         * @param context The context to use
+         * @throws IllegalAccessException If the object cannot be accessed
+         */
+        private static void setWireMocks(ExtensionContext context) throws IllegalAccessException {
             if (context.getTestClass().isPresent()) {
-                List<Field> wireMockFields = AnnotationSupport.findAnnotatedFields(context.getRequiredTestClass(), BasicWiremock.class);
+                List<Field> wireMockFields = AnnotationSupport.findAnnotatedFields(context.getRequiredTestClass(),
+                        BasicWiremock.class);
                 for (Field field : wireMockFields) {
-                    if (WireMockServer.class.isAssignableFrom(field.getType())) {
+                    if (field.getType().isAssignableFrom(WireMockServer.class)) {
                         final boolean isAccessible = field.isAccessible();
                         field.setAccessible(true);
                         try {
-                            field.set(context.getTestInstance().orElse(null), getWiremock(context));
+                            if (ReflectionUtils.isStatic(field) && context.getRequiredTestClass().equals(context.getElement().orElse(null))) {
+                                field.set(null, getWiremock(context));
+                            } else if (context.getTestInstance().isPresent()) {
+                                field.set(context.getTestInstance().get(), getWiremock(context));
+                            }
                         } finally {
                             field.setAccessible(isAccessible);
                         }
@@ -176,26 +227,35 @@ public @interface BasicWiremock {
                     }
                 }
             }
-        }
 
+        }
+    }
+
+    /**
+     * A specific resolver for WireMock parameters
+     */
+    class WireMockParameterResolver implements ParameterResolver {
         @Override
         public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
                 throws ParameterResolutionException {
             return parameterContext.getParameter().getAnnotation(BasicWiremock.class) != null
-                    && parameterContext.getParameter().getType() == WireMockServer.class;
+                    && parameterContext.getParameter().getType().isAssignableFrom(WireMockServer.class);
         }
 
         @Override
         public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
                 throws ParameterResolutionException {
-            return getWiremock(extensionContext);
+            return WireMockExtension.getWiremock(extensionContext);
         }
     }
 
     /**
-     * A class specifically to mock OSM API calls
+     * A class specifically to mock OSM API calls.
+     * Note: If using this, the osm-server.url is appended with {@code "/api"}.
      */
     class OsmApiExtension extends WireMockExtension {
+        /** This gives the default mock priority for this extension. Lower == higher priority */
+        public static int MOCK_PRIORITY = 500;
         @Override
         public void afterAll(ExtensionContext context) throws Exception {
             try {
@@ -211,7 +271,7 @@ public @interface BasicWiremock {
                 fail("OsmApiExtension requires @BasicPreferences");
             }
             super.beforeAll(context);
-            Config.getPref().put("osm-server.url", getWiremock(context).baseUrl());
+            Config.getPref().put("osm-server.url", getWiremock(context).url("__files/api"));
             OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         }
     }

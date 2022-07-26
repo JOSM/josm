@@ -2,25 +2,17 @@
 package org.openstreetmap.josm.gui.preferences.display;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 
 /**
  * Unit tests of {@link LanguagePreference} class.
  */
+@FullPreferences
 class LanguagePreferenceTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test of {@link LanguagePreference#LanguagePreference}.
      */
@@ -34,6 +26,10 @@ class LanguagePreferenceTest {
      */
     @Test
     void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new LanguagePreference.Factory(), null);
+        try {
+            PreferencesTestUtils.doTestPreferenceSettingAddGui(new LanguagePreference.Factory(), null);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 }

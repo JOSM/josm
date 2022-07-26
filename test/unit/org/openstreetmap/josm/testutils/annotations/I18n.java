@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.support.AnnotationSupport;
 
 /**
  * Enables the i18n module for this test.
@@ -39,7 +38,7 @@ public @interface I18n {
     class I18nExtension implements AfterEachCallback, BeforeEachCallback {
         @Override
         public void beforeEach(ExtensionContext context) {
-            String language = AnnotationSupport.findAnnotation(context.getElement(), I18n.class).map(I18n::value).orElse("en");
+            String language = AnnotationUtils.findFirstParentAnnotation(context, I18n.class).map(I18n::value).orElse("en");
             org.openstreetmap.josm.tools.I18n.set(language);
         }
 

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -29,24 +28,21 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit test of {@link CreateMultipolygonAction}
  */
+@Main
+@MapStyles
+@Projection
+@Users
 class CreateMultipolygonActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences().mapStyles();
-
     private static Map<String, String> getRefToRoleMap(Relation relation) {
         Map<String, String> refToRole = new TreeMap<>();
         String ref = relation.get("ref");
@@ -124,17 +120,13 @@ class CreateMultipolygonActionTest {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(17767, "upd-mp.osm"), null);
         Layer layer = new OsmDataLayer(ds, null, null);
         MainApplication.getLayerManager().addLayer(layer);
-        try {
-            CreateMultipolygonAction updateAction = new CreateMultipolygonAction(true);
-            CreateMultipolygonAction createAction = new CreateMultipolygonAction(false);
-            assertFalse(updateAction.isEnabled());
-            assertFalse(createAction.isEnabled());
-            ds.setSelected(ds.getPrimitiveById(189944949L, OsmPrimitiveType.WAY));
-            assertFalse(updateAction.isEnabled());
-            assertTrue(createAction.isEnabled());
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        CreateMultipolygonAction updateAction = new CreateMultipolygonAction(true);
+        CreateMultipolygonAction createAction = new CreateMultipolygonAction(false);
+        assertFalse(updateAction.isEnabled());
+        assertFalse(createAction.isEnabled());
+        ds.setSelected(ds.getPrimitiveById(189944949L, OsmPrimitiveType.WAY));
+        assertFalse(updateAction.isEnabled());
+        assertTrue(createAction.isEnabled());
     }
 
     /**
@@ -146,16 +138,11 @@ class CreateMultipolygonActionTest {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(17768, "dupmem.osm"), null);
         Layer layer = new OsmDataLayer(ds, null, null);
         MainApplication.getLayerManager().addLayer(layer);
-        try {
-            Relation old = (Relation) ds.getPrimitiveById(580092, OsmPrimitiveType.RELATION);
-            assertEquals(3, old.getMembersCount());
-            Relation mp = createMultipolygon(ds.getWays(), "type:way", old, true);
-            assertEquals(mp.getPrimitiveId(), old.getPrimitiveId());
-            assertEquals(2, mp.getMembersCount());
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
-
+        Relation old = (Relation) ds.getPrimitiveById(580092, OsmPrimitiveType.RELATION);
+        assertEquals(3, old.getMembersCount());
+        Relation mp = createMultipolygon(ds.getWays(), "type:way", old, true);
+        assertEquals(mp.getPrimitiveId(), old.getPrimitiveId());
+        assertEquals(2, mp.getMembersCount());
     }
 
     /**

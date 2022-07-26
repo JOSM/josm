@@ -13,8 +13,8 @@ import java.util.Collection;
 
 import javax.swing.JList;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -25,22 +25,16 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link DrawAction}.
  */
+@Main
+@Projection
+@Timeout(20)
 class DrawActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().timeout(20000);
-
     /**
      * Non regression test case for bug #12011.
      * Add a new node in the middle of way then undo. The rendering of the node, selected, must not cause any crash in PrimitiveRenderer.
@@ -69,37 +63,33 @@ class DrawActionTest {
         w.setNodes(Arrays.asList(new Node[] {n1, n2}));
         dataSet.addPrimitive(w);
 
-        try {
-            assertTrue(map.selectDrawTool(false));
+        assertTrue(map.selectDrawTool(false));
 
-            map.mapModeDraw.mouseReleased(new MouseEvent(
-                    map,
-                    MouseEvent.MOUSE_RELEASED,
-                    2000,
-                    InputEvent.BUTTON1_DOWN_MASK,
-                    50, 0,
-                    2, false, MouseEvent.BUTTON1));
+        map.mapModeDraw.mouseReleased(new MouseEvent(
+                map,
+                MouseEvent.MOUSE_RELEASED,
+                2000,
+                InputEvent.BUTTON1_DOWN_MASK,
+                50, 0,
+                2, false, MouseEvent.BUTTON1));
 
-            JList<OsmPrimitive> lstPrimitives = new JList<>();
-            PrimitiveRenderer renderer = new PrimitiveRenderer();
+        JList<OsmPrimitive> lstPrimitives = new JList<>();
+        PrimitiveRenderer renderer = new PrimitiveRenderer();
 
-            assertEquals(3, w.getNodesCount());
-            Collection<Node> sel = dataSet.getSelectedNodes();
-            assertEquals(1, sel.size());
+        assertEquals(3, w.getNodesCount());
+        Collection<Node> sel = dataSet.getSelectedNodes();
+        assertEquals(1, sel.size());
 
-            Node n3 = sel.iterator().next();
+        Node n3 = sel.iterator().next();
 
-            assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
+        assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
 
-            UndoRedoHandler.getInstance().undo();
+        UndoRedoHandler.getInstance().undo();
 
-            assertEquals(2, w.getNodesCount());
-            assertTrue(dataSet.getSelectedNodes().isEmpty());
+        assertEquals(2, w.getNodesCount());
+        assertTrue(dataSet.getSelectedNodes().isEmpty());
 
-            assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
     }
 }
+

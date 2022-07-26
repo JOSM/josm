@@ -9,9 +9,11 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+@BasicPreferences
 class WayDataTest {
 
     @Test

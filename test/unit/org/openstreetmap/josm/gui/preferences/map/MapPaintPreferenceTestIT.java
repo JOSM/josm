@@ -8,9 +8,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
@@ -21,26 +22,26 @@ import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction;
-import org.openstreetmap.josm.gui.preferences.AbstractExtendedSourceEntryTestCase;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.gui.preferences.AbstractExtendedSourceEntryTestCase;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
+import org.openstreetmap.josm.testutils.annotations.JosmHome;
+import org.openstreetmap.josm.testutils.annotations.MapStyles;
 import org.openstreetmap.josm.tools.ImageProvider;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Integration tests of {@link MapPaintPreference} class.
  */
+@HTTP
+@HTTPS
+@JosmHome("test/config/unit/mapPaintPreferencesTestIT-josm.home")
+@MapStyles
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
+@IntegrationTest
 class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().timeout(15000*60).parameters();
-
     /**
      * Setup test
      * @throws IOException in case of I/O error

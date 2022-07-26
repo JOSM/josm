@@ -8,19 +8,22 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * Unit tests of {@link DuplicateAction} class.
  */
 // TMS layer needs prefs. Platform for LayerListDialog shortcuts.
 @BasicPreferences
+@LayerEnvironment
+@Users
 class DuplicateActionTest {
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/4539">#4539</a>.
@@ -29,7 +32,7 @@ class DuplicateActionTest {
     @Test
     void testTicket4539() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(4539, "josm_error_#4539.osm.zip")) {
-            OsmDataLayer layer = new OsmDataLayer(OsmReader.parseDataSet(is, null), null, null);
+            OsmDataLayer layer = new OsmDataLayer(OsmReader.parseDataSet(is, null), "DuplicateActionTest#testTicket4539", null);
             OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             assertNull(editLayer);
             try {

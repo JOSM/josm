@@ -1,0 +1,33 @@
+plugin_compatibility_report_$bunch:
+  image: registry.gitlab.com/smocktaylor/josm/japi-compliance-checker:latest
+  stage: test
+  script:
+    - apk add curl
+    - LATEST=$(curl https://josm.openstreetmap.de/latest)
+    - TESTED=$(curl https://josm.openstreetmap.de/tested)
+    - mkdir --parent .cache
+    - PLUGIN_NAME="${PLUGIN##*/}"
+    - curl -Lz .cache/josm-latest.jar --output .cache/josm-latest.jar https://josm.openstreetmap.de/josm-latest.jar
+    - curl -Lz .cache/josm-tested.jar --output .cache/josm-tested.jar https://josm.openstreetmap.de/josm-tested.jar
+    - curl -Lz .cache/$PLUGIN_NAME --output .cache/$PLUGIN_NAME $PLUGIN
+    - japi-compliance-checker --lib=JOSM .cache/josm-tested.jar --v1=${TESTED} .cache/josm-latest.jar --v2=${LATEST} -client .cache/$PLUGIN_NAME
+    - japi-compliance-checker --lib=JOSM .cache/josm-tested.jar --v1=${TESTED} dist/josm-custom.jar --v2=${CI_COMMIT_SHA} -client .cache/$PLUGIN_NAME
+  interruptible: true
+  artifacts:
+    public: true
+    when: on_failure
+    paths:
+      - "compat_reports"
+  allow_failure:
+    exit_codes:
+      - 1
+  cache:
+    key: ${PLUGIN}
+    paths:
+      - .cache/
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: "build-java"
+  parallel:
+    matrix:
+      - PLUGIN: [$PLUGINS]

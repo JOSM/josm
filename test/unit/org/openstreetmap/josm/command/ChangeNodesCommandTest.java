@@ -8,10 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -23,18 +24,20 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link ChangeNodesCommand} class.
  */
-@I18n
 // We need prefs for nodes.
 @BasicPreferences
+@I18n
+@LayerEnvironment
+@Users
 class ChangeNodesCommandTest {
     private CommandTestData testData;
 
@@ -51,7 +54,8 @@ class ChangeNodesCommandTest {
      */
     @Test
     void testPreventEmptyWays() {
-        assertThrows(IllegalArgumentException.class, () -> new ChangeNodesCommand(testData.existingWay, Collections.<Node>emptyList()));
+        final List<Node> emptyNodes = Collections.emptyList();
+        assertThrows(IllegalArgumentException.class, () -> new ChangeNodesCommand(testData.existingWay, emptyNodes));
     }
 
     /**
@@ -94,7 +98,7 @@ class ChangeNodesCommandTest {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
-        new ChangeNodesCommand(testData.existingWay, Arrays.asList(testData.existingNode)).fillModifiedData(modified,
+        new ChangeNodesCommand(testData.existingWay, Collections.singletonList(testData.existingNode)).fillModifiedData(modified,
                 deleted, added);
         assertArrayEquals(new Object[] {testData.existingWay}, modified.toArray());
         assertArrayEquals(new Object[] {}, deleted.toArray());
@@ -113,7 +117,7 @@ class ChangeNodesCommandTest {
         way.put("name", "xy");
         DataSet ds = new DataSet(node, way);
         assertTrue(
-                new ChangeNodesCommand(ds, way, Arrays.asList(node)).getDescriptionText().matches("Change nodes of.*xy.*"));
+                new ChangeNodesCommand(ds, way, Collections.singletonList(node)).getDescriptionText().matches("Change nodes of.*xy.*"));
     }
 
     /**

@@ -13,17 +13,17 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.OsmOAuth;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.UserCancelException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -31,15 +31,10 @@ import mockit.MockUp;
 /**
  * Unit tests of {@link DownloadOpenChangesetsTask} class.
  */
+@OsmApiType(OsmApiType.APIType.DEV)
+@OsmOAuth
+@Users
 class DownloadOpenChangesetsTaskTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().devAPI();
-
     /**
      * OAuth wizard mocker.
      */

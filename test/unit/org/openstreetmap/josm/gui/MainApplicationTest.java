@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
@@ -43,7 +43,15 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.JavaProperty;
+import org.openstreetmap.josm.testutils.annotations.JosmHome;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.OsmApiType;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.StaticClassCleanup;
+import org.openstreetmap.josm.testutils.annotations.Users;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -53,14 +61,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link MainApplication} class.
  */
+@HTTPS
+@Main
+@OsmApiType(OsmApiType.APIType.DEV)
+@Projection
+@Timeout(20)
+@StaticClassCleanup(HttpClient.class)
+@Users
 public class MainApplicationTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().https().devAPI().timeout(20000);
 
     /**
      * Make sure {@link MainApplication#contentPanePrivate} is initialized.
@@ -162,32 +170,28 @@ public class MainApplicationTest {
      * @throws PluginListParseException if an error occurs
      */
     @Test
+    @JavaProperty
+    // Reuse downloads from plugin handler test, if it has already run. Otherwise, pre-cache two plugins.
+    @JosmHome("test/config/unit/pluginHandlerTestIT-josm.home")
+    @StaticClassCleanup(PluginHandler.class)
+    @Timeout(60)
     void testUpdateAndLoadPlugins() throws PluginListParseException {
-        final String old = System.getProperty("josm.plugins");
-        try {
-            System.setProperty("josm.plugins", "buildings_tools,log4j");
-            SplashProgressMonitor monitor = new SplashProgressMonitor("foo", e -> {
-                // Do nothing
-            });
-            Collection<PluginInformation> plugins = MainApplication.updateAndLoadEarlyPlugins(null, monitor);
-            if (plugins.isEmpty()) {
-                PluginHandlerTestIT.downloadPlugins(Arrays.asList(
-                        newPluginInformation("buildings_tools"),
-                        newPluginInformation("log4j")));
-                plugins = MainApplication.updateAndLoadEarlyPlugins(null, monitor);
-            }
-            assertEquals(2, plugins.size());
-            assertNotNull(PluginHandler.getPlugin("log4j"));
-            assertNull(PluginHandler.getPlugin("buildings_tools"));
-            MainApplication.loadLatePlugins(null, monitor, plugins);
-            assertNotNull(PluginHandler.getPlugin("buildings_tools"));
-        } finally {
-            if (old != null) {
-                System.setProperty("josm.plugins", old);
-            } else {
-                System.clearProperty("josm.plugins");
-            }
+        System.setProperty("josm.plugins", "buildings_tools,log4j");
+        SplashProgressMonitor monitor = new SplashProgressMonitor("foo", e -> {
+            // Do nothing
+        });
+        Collection<PluginInformation> plugins = MainApplication.updateAndLoadEarlyPlugins(null, monitor);
+        if (plugins.isEmpty()) {
+            PluginHandlerTestIT.downloadPlugins(Arrays.asList(
+                    newPluginInformation("buildings_tools"),
+                    newPluginInformation("log4j")));
+            plugins = MainApplication.updateAndLoadEarlyPlugins(null, monitor);
         }
+        assertEquals(2, plugins.size());
+        assertNotNull(PluginHandler.getPlugin("log4j"));
+        assertNull(PluginHandler.getPlugin("buildings_tools"));
+        MainApplication.loadLatePlugins(null, monitor, plugins);
+        assertNotNull(PluginHandler.getPlugin("buildings_tools"));
     }
 
     /**

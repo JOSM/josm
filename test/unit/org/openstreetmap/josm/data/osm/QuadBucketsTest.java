@@ -15,29 +15,21 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link QuadBuckets}.
  */
+@BasicPreferences
+@Projection
 class QuadBucketsTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     @SuppressWarnings("unchecked")
     private void removeAllTest(DataSet ds) throws ReflectiveOperationException {
         List<Node> allNodes = new ArrayList<>(ds.getNodes());
@@ -81,9 +73,9 @@ class QuadBucketsTest {
      * Test that all primitives can be removed from the Quad Buckets.
      * @throws Exception never
      */
+    @Projection
     @Test
     void testRemove() throws Exception {
-        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/restriction.osm"))) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             removeAllTest(ds);

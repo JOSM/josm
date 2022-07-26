@@ -1,36 +1,30 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.PerformanceTestUtils;
-import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
-import org.openstreetmap.josm.data.osm.DataSet;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.openstreetmap.josm.PerformanceTestUtils;
+import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
 /**
  * This test tests how fast we are at writing an OSM file.
  * <p>
  * For this, we use the neubrandenburg-file, which is a good real world example of an OSM file.
  */
-@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
+@BasicPreferences
+@Users
 class OsmWriterPerformanceTest {
     private static final int TIMES = 4;
     private DataSet neubrandenburgDataSet;
-
-    /**
-     * Prepare the test.
-     */
-    @BeforeAll
-    public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init(true);
-    }
 
     /**
      * Setup test

@@ -6,24 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import javax.swing.JPanel;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 
 /**
  * Unit tests of {@link Key} class.
  */
 class KeyTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test for {@link Key#addToPanel}.
      */

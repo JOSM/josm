@@ -4,18 +4,16 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-import org.openstreetmap.josm.tools.Http1Client;
-import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 
@@ -23,22 +21,17 @@ import com.github.tomakehurst.wiremock.WireMockServer;
  * Unit test of {@link WikimediaCommonsLoader}
  */
 @BasicPreferences
+@BasicWiremock
+@HTTP
 class WikimediaCommonsLoaderTest {
-
-    @BeforeAll
-    static void beforeAll() {
-        HttpClient.setFactory(Http1Client::new);
-    }
-
     /**
      * Unit test of {@link WikimediaCommonsLoader}
      *
      * @throws Exception if an error occurs
      */
     @Test
-    void test() throws Exception {
-        WireMockServer wireMock = mockHttp();
-        wireMock.start();
+    void test(@BasicWiremock WireMockServer wireMock) throws Exception {
+        mockHttp(wireMock);
 
         WikimediaCommonsLoader loader = new WikimediaCommonsLoader(new Bounds(47., 11., 48., 12.));
         loader.apiUrl = wireMock.url("/w/api.php");
@@ -53,7 +46,7 @@ class WikimediaCommonsLoaderTest {
                 image.getImageUrl());
     }
 
-    private static WireMockServer mockHttp() {
+    private static void mockHttp(WireMockServer wireMock) {
         String xml =
                 "<api batchcomplete=\"\">\n" +
                 "<query>\n" +
@@ -63,10 +56,8 @@ class WikimediaCommonsLoaderTest {
                 "</geosearch>\n" +
                 "</query>\n" +
                 "</api>";
-        final WireMockServer wireMock = new WireMockServer(options().dynamicPort());
         wireMock.stubFor(get(urlEqualTo("/w/api.php?format=xml&action=query&list=geosearch" +
                 "&gsnamespace=6&gslimit=500&gsprop=type%7Cname&gsbbox=48.0%7C11.0%7C47.0%7C12.0"))
                 .willReturn(aResponse().withBody(xml)));
-        return wireMock;
     }
 }

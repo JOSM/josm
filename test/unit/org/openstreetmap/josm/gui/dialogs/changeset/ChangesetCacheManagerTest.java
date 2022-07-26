@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.Remove
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.ShowDetailAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Users;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
@@ -38,6 +39,7 @@ import mockit.MockUp;
  * Unit tests of {@link ChangesetCacheManager} class.
  */
 @BasicPreferences
+@Users
 class ChangesetCacheManagerTest {
     /**
      * Unit test of {@link ChangesetCacheManager#destroyInstance}.

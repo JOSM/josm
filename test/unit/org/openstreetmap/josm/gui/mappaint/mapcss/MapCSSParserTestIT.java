@@ -1,33 +1,33 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link MapCSSParser}.
  */
+@IntegrationTest
+@BasicPreferences
+@HTTP
+@HTTPS
 class MapCSSParserTestIT {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().projection();
 
     /**
      * Checks Kothic stylesheets
      */
-    @Test
-    @Disabled("parsing fails")
-    void testKothicStylesheets() {
-        new MapCSSStyleSource("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/default.mapcss").loadStyleSource();
-        new MapCSSStyleSource("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/mapink.mapcss").loadStyleSource();
+    @ParameterizedTest
+    @ValueSource(strings = {"default.mapcss", "mapink.mapcss"})
+    void testKothicStylesheets(final String styleFile) {
+        final MapCSSStyleSource style = new MapCSSStyleSource("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/" + styleFile);
+        assertDoesNotThrow((Executable) style::loadStyleSource);
     }
 }

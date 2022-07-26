@@ -5,40 +5,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
-import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Users;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 
 /**
  * Unit tests of {@link OsmServerHistoryReader} class.
  */
 @BasicPreferences
-@BasicWiremock
-@HTTP
+@BasicWiremock(responseTransformers = ResponseTemplateTransformer.class)
+@ExtendWith(BasicWiremock.OsmApiExtension.class)
+@Projection
+@Users
 class OsmServerHistoryReaderTest {
-    /**
-     * HTTP mock.
-     */
-    @BasicWiremock
-    WireMockServer wireMockServer;
-
-    /**
-     * Setup tests.
-     */
-    @BeforeEach
-    void setUp() {
-        Config.getPref().put("osm-server.url", wireMockServer.url("/__files/api"));
-    }
-
     /**
      * Tests node history fetching.
      * @throws OsmTransferException if any error occurs

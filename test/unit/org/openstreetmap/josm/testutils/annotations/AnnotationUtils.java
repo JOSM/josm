@@ -4,12 +4,17 @@ package org.openstreetmap.josm.testutils.annotations;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.junit.platform.commons.support.ReflectionSupport;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * Useful methods for annotation extensions
@@ -46,6 +51,8 @@ public final class AnnotationUtils {
      * @throws ReflectiveOperationException If reflection doesn't work, for whatever reason.
      */
     public static void resetStaticClass(Class<?> clazz) throws ReflectiveOperationException {
+        // Assume that all singletons implement a `getInstance` method, which initializes the singleton object if it is null.
+        final Optional<Method> getInstanceMethod = ReflectionSupport.findMethod(clazz, "getInstance");
         for (Field field : clazz.getDeclaredFields()) {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
@@ -55,15 +62,33 @@ public final class AnnotationUtils {
                 continue;
             }
             final boolean isFinal = (field.getModifiers() & Modifier.FINAL) != 0;
-            if (field.get(null) instanceof Collection && isFinal) {
-                // Clear all collections (assume they start empty)
-                try {
-                    ((Collection<?>) field.get(null)).clear();
-                } catch (UnsupportedOperationException e) {
-                    // Probably an unmodifiable collection
-                    System.err.println("Unable to clear " + field);
+            final Object fieldObject = field.get(null);
+            if (isFinal) {
+                if (fieldObject instanceof Collection) {
+                    // Clear all collections (assume they start empty)
+                    try {
+                        ((Collection<?>) fieldObject).clear();
+                    } catch (UnsupportedOperationException e) {
+                        // Probably an unmodifiable collection
+                        Logging.error("Unable to clear {0}", field);
+                    }
+                } else if (fieldObject instanceof Map) {
+                    // Clear all maps (assume they start empty)
+                    try {
+                        ((Map<?, ?>) fieldObject).clear();
+                    } catch (UnsupportedOperationException e) {
+                        // Probably an unmodifiable collection
+                        Logging.error("Unable to clear {0}", field);
+                    }
+                } else if (fieldObject instanceof MultiMap) {
+                    // Clear multimap
+                    ((MultiMap<?, ?>) fieldObject).clear();
                 }
-            } else if (!isFinal) {
+            } else if ("instance".equals(field.getName()) && getInstanceMethod.isPresent()) {
+                // If there is a field with the name "instance", and there is a getInstanceMethod, the presumption
+                // is that the getInstance method will initialize the instance if it is null.
+                field.set(null, null);
+            } else {
                 // Only reset static fields, but not final static fields
                 field.set(null, null);
             }

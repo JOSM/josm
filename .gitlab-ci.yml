@@ -1,0 +1,48 @@
+include:
+  - local: ".gitlab/pipeline.yml"
+
+build:
+  stage: build
+  trigger:
+    include: .gitlab/pipeline.yml
+  parallel:
+    matrix:
+      - JAVA_VERSION: [11, 17, 18-ea]
+      #- ARCHITECTURE: [amd64] # openjdk archs include arm64v8 and windows-amd64. Mac builds would probably have to be separate.
+
+plugin-binary-compatibility-generate-ci:
+  image: ubuntu:latest
+  stage: build
+  script:
+    - apt-get update && apt-get install -y curl
+    - curl -O https://josm.openstreetmap.de/plugin
+    - |
+      function join_by { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
+      bunch=0
+      ORIG_JOBS=(`cat plugin | grep -E "^.*.jar;" | awk -F';' '{print $2}'`)
+      end_point=$(($bunch + ${MAX_CHILD_JOBS}))
+      while : ; do
+        T_JOBS=(${ORIG_JOBS[@]:${bunch}:${MAX_CHILD_JOBS}})
+        JOBS="$(join_by \',\' ${T_JOBS[@]})"
+        sed "s;\$PLUGINS;'$JOBS';g" .gitlab/plugin-checks.yaml | sed "s;\$bunch;$bunch;g" >> plugin-binary-compatibility-config.yml
+        bunch=$end_point
+        end_point=$(($bunch + ${MAX_CHILD_JOBS}))
+        [[ $((${#ORIG_JOBS[@]} - $bunch)) -gt 0 ]] || break
+      done
+
+  artifacts:
+    paths:
+      - plugin-binary-compatibility-config.yml
+  variables:
+    MAX_CHILD_JOBS: 50 # See https://docs.gitlab.com/ee/ci/yaml/README.html#requirements-and-limitations -- max on GitLab.com is 50
+  when: manual
+
+plugin-binary-compatibility:
+  stage: test
+  needs: ["plugin-binary-compatibility-generate-ci", "build-java"]
+  trigger:
+    include:
+      - artifact: plugin-binary-compatibility-config.yml
+        job: plugin-binary-compatibility-generate-ci
+  variables:
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
