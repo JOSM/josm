@@ -449,9 +449,9 @@ class WMTSTileSourceTest {
         assumeFalse(testImagery12168 == null);
         try {
             ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
-            FeatureAdapter.registerApiKeyAdapter(id -> TestUtils.getTestDataRoot());
+            FeatureAdapter.registerApiKeyAdapter(id -> TestUtils.getTestDataRoot().replace('\\', '/'));
             ImageryInfo testImageryWMTS = new ImageryInfo(testImagery12168);
-            testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot(), "{apikey}"));
+            testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot().replace('\\', '/'), "{apikey}"));
             assertTrue(testImageryWMTS.getUrl().contains("{apikey}"), testImageryWMTS.getUrl());
             testImageryWMTS.setId("WMTSTileSourceTest#testApiKeyValid");
             WMTSTileSource ts = assertDoesNotThrow(() -> new WMTSTileSource(testImageryWMTS, ProjectionRegistry.getProjection()));
@@ -469,7 +469,7 @@ class WMTSTileSourceTest {
             ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
             FeatureAdapter.registerApiKeyAdapter(id -> null);
             ImageryInfo testImageryWMTS = new ImageryInfo(testImagery12168);
-            testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot(), "{apikey}"));
+            testImageryWMTS.setUrl(testImageryWMTS.getUrl().replace(TestUtils.getTestDataRoot().replace('\\', '/'), "{apikey}"));
             assertTrue(testImageryWMTS.getUrl().contains("{apikey}"), testImageryWMTS.getUrl());
             testImageryWMTS.setId("WMTSTileSourceTest#testApiKeyInvalid");
             org.openstreetmap.josm.data.projection.Projection projection = Projections.getProjectionByCode("EPSG:4326");
