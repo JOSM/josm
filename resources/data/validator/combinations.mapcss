@@ -5,6 +5,9 @@
 way[surface=~/^(unpaved|compacted|gravel|fine_gravel|pebblestone|ground|earth|dirt|grass|sand|mud|ice|salt|snow|woodchips)$/] { /* without grass_paver as it is controversial */
   set unpaved_surface;
 }
+way[surface=~/^(paved|asphalt|cobblestone|cobblestone:flattened|sett|concrete|concrete:plates|paving_stones|metal|wood|unhewn_cobblestone)$/] {
+  set fully_paved_surface;
+}
 
 /* {0.key} without {1.key} (warning level) */
 way[junction                   ][!highway][junction!=yes][!area:highway],
@@ -326,7 +329,9 @@ node[highway=crossing][crossing=no],
 node[railway=crossing][crossing=no],
 way[junction=yes][highway],
 way[tracktype=grade1][surface].unpaved_surface,
-way[tracktype=grade2][surface][surface=~/^(sand|mud)$/],
+way[tracktype=grade2][surface][surface=~/^(sand|mud|ground|earth|dirt|grass|ice|salt|snow|woodchips)$/],
+way[tracktype=grade4][surface].fully_paved_surface,
+way[tracktype=grade5][surface].fully_paved_surface,
 way[segregated][bicycle=no],
 way[segregated][foot=no],
 way[man_made=pipeline][tunnel=flooded] {
