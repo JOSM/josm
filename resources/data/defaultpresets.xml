@@ -5700,7 +5700,7 @@
             <link wiki="Tag:building=construction" />
             <space />
             <key key="building" value="construction" />
-            <combo key="construction" text="Building type" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse" values_context="building" />
+            <combo key="construction" text="Building type" values="allotment_house,apartments,bakehouse,barn,basilica,boathouse,bungalow,bunker,cabin,carport,cathedral,chapel,church,college,commercial,cowshed,detached,digester,dormitory,farm,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,ger,grandstand,greenhouse,hangar,hospital,hotel,house,hut,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,residential,retail,roof,ruins,school,service,shed,silo,stable,stilt_house,storage_tank,sty,supermarket,synagogue,temple,tent,terrace,toilets,train_station,transformer_tower,transportation,university,warehouse,wayside_shrine" values_context="building" />
             <optional>
                 <reference ref="name_operator" />
                 <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
