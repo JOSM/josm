@@ -178,9 +178,9 @@ public class MainMenu extends JMenuBar {
     /** File / Save As... **/
     public final SaveAsAction saveAs = SaveAsAction.getInstance();
     /** File / Session &gt; Save Session **/
-    public SessionSaveAction sessionSave = SessionSaveAction.getInstance();
+    public final SessionSaveAction sessionSave = SessionSaveAction.getInstance();
     /** File / Session &gt; Save Session As... **/
-    public SessionSaveAsAction sessionSaveAs = new SessionSaveAsAction();
+    public final SessionSaveAsAction sessionSaveAs = new SessionSaveAsAction();
     /** File / Export to GPX... **/
     public final GpxExportAction gpxExport = new GpxExportAction();
     /** File / Download from OSM... **/
