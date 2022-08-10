@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -49,6 +50,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -64,7 +66,7 @@ public class SplitWayAction extends JosmAction {
      * Create a new SplitWayAction.
      */
     public SplitWayAction() {
-        super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
+        super(tr("Split Way"), "mapmode/splitway", tr("Split a way at the selected node."),
                 Shortcut.registerShortcut("tools:splitway", tr("Tools: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.DIRECT), true);
         setHelpId(ht("/Action/SplitWay"));
     }
@@ -146,16 +148,27 @@ public class SplitWayAction extends JosmAction {
 
         // Finally, applicableWays contains only one perfect way
         final Way selectedWay = applicableWays.get(0);
-        final List<List<Node>> wayChunks = SplitWayCommand.buildSplitChunks(selectedWay, selectedNodes);
-        if (wayChunks != null) {
-            final List<OsmPrimitive> sel = new ArrayList<>(ds.getSelectedRelations());
-            sel.addAll(selectedWays);
+        final List<OsmPrimitive> sel = new ArrayList<>(ds.getSelectedRelations());
+        sel.addAll(selectedWays);
+        doSplitWayShowSegmentSelection(selectedWay, selectedNodes, sel);
+    }
 
-            final List<Way> newWays = SplitWayCommand.createNewWaysFromChunks(selectedWay, wayChunks);
+    /**
+     * Perform way splitting after presenting the user with a choice which way segment history should be preserved (in expert mode)
+     * @param splitWay The way to split
+     * @param splitNodes The nodes at which the way should be split
+     * @param selection (Optional) selection which should be updated
+     *
+     * @since xxx
+     */
+    public static void doSplitWayShowSegmentSelection(Way splitWay, List<Node> splitNodes, List<OsmPrimitive> selection) {
+        final List<List<Node>> wayChunks = SplitWayCommand.buildSplitChunks(splitWay, splitNodes);
+        if (wayChunks != null) {
+            final List<Way> newWays = SplitWayCommand.createNewWaysFromChunks(splitWay, wayChunks);
             final Way wayToKeep = SplitWayCommand.Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
-            if (ExpertToggleAction.isExpert() && !selectedWay.isNew()) {
-                final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, selectedNodes, sel);
+            if (ExpertToggleAction.isExpert() && !splitWay.isNew()) {
+                final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(splitWay, newWays, wayToKeep, splitNodes, selection);
                 dialog.toggleEnable("way.split.segment-selection-dialog");
                 if (!dialog.toggleCheckState()) {
                     dialog.setModal(false);
@@ -164,8 +177,48 @@ public class SplitWayAction extends JosmAction {
                 }
             }
             if (wayToKeep != null) {
-                doSplitWay(selectedWay, wayToKeep, newWays, sel);
+                doSplitWay(splitWay, wayToKeep, newWays, selection);
             }
+        }
+    }
+
+    /**
+     * Split a specified {@link Way} at the given nodes
+     * 
+     * Does not attempt to figure out which ways to split based on selection like {@link SplitWayAction}
+     * and instead works on specified ways given in constructor
+     *
+     * @since xxx
+     */
+    public static class SplitWayActionConcrete extends AbstractAction {
+
+        private Way splitWay;
+        private List<Node> splitNodes;
+        private List<OsmPrimitive> selection;
+
+        /** 
+         * Construct an action to split way {@code splitWay} at nodes {@code splitNodes}
+         * @param splitWay The way to split
+         * @param splitNodes The nodes the way should be split at
+         * @param selection (Optional, can be null) Selection which should be updated
+         */
+        public SplitWayActionConcrete(Way splitWay, List<Node> splitNodes, List<OsmPrimitive> selection) {
+            super(tr("Split way {0}", DefaultNameFormatter.getInstance().format(splitWay)),
+                ImageProvider.get(splitWay.getType()));
+            putValue(SHORT_DESCRIPTION, getValue(NAME));
+            this.splitWay = splitWay;
+            this.splitNodes = splitNodes;
+            this.selection = selection;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            doSplitWayShowSegmentSelection(splitWay, splitNodes, selection);
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return !splitWay.getDataSet().isLocked();
         }
     }
 

@@ -54,6 +54,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.ParallelWayAction;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
+import org.openstreetmap.josm.actions.mapmode.SplitMode;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
@@ -180,6 +181,8 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     public final DeleteAction mapModeDelete;
     /** Select Lasso mode */
     public final SelectLassoAction mapModeSelectLasso;
+    /** Split mode */
+    public final SplitMode mapModeSplit;
 
     private final transient Map<Layer, MapMode> lastMapMode = new HashMap<>();
 
@@ -248,15 +251,17 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         mapModeDraw = new DrawAction();
         mapModeZoom = new ZoomAction(this);
         mapModeDelete = new DeleteAction();
+        mapModeSplit = new SplitMode();
 
-        addMapMode(new IconToggleButton(mapModeSelect));
+        addMapMode(new IconToggleButton(mapModeSelect, false));
         addMapMode(new IconToggleButton(mapModeSelectLasso, true));
-        addMapMode(new IconToggleButton(mapModeDraw));
+        addMapMode(new IconToggleButton(mapModeDraw, false));
         addMapMode(new IconToggleButton(mapModeZoom, true));
         addMapMode(new IconToggleButton(mapModeDelete, true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
         addMapMode(new IconToggleButton(new ExtrudeAction(), true));
         addMapMode(new IconToggleButton(new ImproveWayAccuracyAction(), false));
+        addMapMode(new IconToggleButton(mapModeSplit, false));
         toolBarActionsGroup.setSelected(allMapModeButtons.get(0).getModel(), true);
         toolBarActions.setFloatable(false);
 

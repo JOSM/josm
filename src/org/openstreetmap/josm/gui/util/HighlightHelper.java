@@ -108,6 +108,16 @@ public class HighlightHelper {
     }
 
     /**
+     * Returns an (unmodifiable) set of currently highlighted primitives
+     * @return Currently highlighted primitives
+     * 
+     * @since xxx
+     */
+    public Set<OsmPrimitive> getHighlighted() {
+        return Collections.unmodifiableSet(highlightedPrimitives);
+    }
+
+    /**
      * Clear highlighting of all remembered primitives
      */
     public void clear() {
@@ -115,6 +125,16 @@ public class HighlightHelper {
             p.setHighlighted(false);
         }
         highlightedPrimitives.clear();
+    }
+
+    /**
+     * Check whether there are any primitives highlighted
+     * @return true when there are highlighted primitives
+     * 
+     * @since xxx
+     */
+    public boolean anyHighlighted() {
+        return !highlightedPrimitives.isEmpty();
     }
 
     /**
