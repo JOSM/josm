@@ -12,6 +12,9 @@ import java.net.Authenticator.RequestorType;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.NoRouteToHostException;
+import java.net.PortUnreachableException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -768,8 +771,18 @@ public class OsmApi extends OsmConnection {
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
                 }
-            } catch (SocketTimeoutException | ConnectException e) {
-                if (retries-- > 0) {
+            } catch (SocketException | SocketTimeoutException e) {
+                /*
+                 * See #22160. While it is only thrown once in JDK sources, it does have subclasses.
+                 * We check for those first, the explicit non-child exception, and then for the message.
+                 */
+                boolean validException = e instanceof SocketTimeoutException
+                        || e instanceof ConnectException
+                        || e instanceof NoRouteToHostException
+                        || e instanceof PortUnreachableException
+                        || (e.getClass().equals(SocketException.class) &&
+                            "Unexpected end of file from server".equals(e.getMessage()));
+                if (retries-- > 0 && validException) {
                     continue;
                 }
                 throw new OsmTransferException(e);
