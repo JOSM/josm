@@ -4744,8 +4744,12 @@ node[sport=athletics] {
     icon-image: "presets/sport/athletics.svg";
     set icon_z17;
 }
-area[sport=running] {
+area[sport=running]:closed {
     fill-color: sport_running#cfebd8;
+}
+way[sport=running] {
+    width: 2;
+    color: sport_running#cfebd8;
 }
 node[sport=running] {
     icon-image: "presets/sport/running.svg";
