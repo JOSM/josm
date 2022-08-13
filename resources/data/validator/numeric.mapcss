@@ -372,7 +372,10 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "way distance=7 mi";
 }
 
-way[voltage][voltage =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/] {
+way[voltage][voltage =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/],
+way[voltage:primary][voltage:primary =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/],
+way[voltage:secondary][voltage:secondary =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/],
+way[voltage:tertiary][voltage:tertiary =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/] {
   throwWarning: tr("voltage should be in volts with no units/delimiter/spaces");
   assertMatch: "way voltage=medium";
   assertNoMatch: "way voltage=15000";

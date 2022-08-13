@@ -2381,4 +2381,13 @@ way[shoulder=none] {
   group: tr("deprecated tagging");
 }
 
+/* #21836 */
+*[voltage-high],
+*[voltage-low] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "voltage:primary";
+  suggestAlternative: "voltage:secondary";
+  group: tr("deprecated tagging");
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

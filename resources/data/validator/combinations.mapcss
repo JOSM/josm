@@ -10,6 +10,9 @@ way[surface=~/^(paved|asphalt|cobblestone|cobblestone:flattened|sett|concrete|co
 }
 
 /* {0.key} without {1.key} (warning level) */
+node[voltage:primary           ][!transformer],
+node[voltage:secondary         ][!transformer],
+node[voltage:tertiary          ][!transformer],
 way[junction                   ][!highway][junction!=yes][!area:highway],
 way[living_street              ][!highway],
 way[maintenance                ][!highway],
@@ -345,7 +348,8 @@ relation[type=multipolygon][area=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.key} together with {1.key}, #18267, #17630, #17604 */
+/* {0.key} together with {1.key}, #18267, #17630, #17604, #21836 */
+node[transformer][voltage],
 node[marker][cover],
 node[marker][voltage],
 node[marker][pressure],
@@ -1059,4 +1063,10 @@ relation[piste:type=nordic][!piste:grooming]{
   group: tr("missing tag");
   assertMatch:   "relation piste:type=nordic";
   assertNoMatch: "relation piste:type=nordic piste:grooming=classic";
+}
+
+/* #21836 */
+*[voltage:primary][voltage:secondary][transformer=generator][tag("voltage:secondary")<tag("voltage:primary")] {
+  throwWarning: tr("{0} is lower than {1} on {2}.", "{1.key}", "{0.key}", "{2.tag}");
+  group: tr("suspicious tag combination");
 }
