@@ -94,20 +94,12 @@ node[restriction] {
   throwError: tr("{0} on a node. Should be used in a relation", "{0.tag}"); 
 }
 
-/* {0} on a way, should be a node */
-way[voltage:primary],
-way[voltage:secondary],
-way[voltage:tertiary],
-way[line_attachment],
-way[line_management],
+/* {0} on a way, should be a node (0.tag) */
 way[emergency=fire_hydrant],
 way[emergency=defibrillator],
-way[entrance],
-way[door],
 way[railway=subway_entrance],
 way[man_made=survey_point],
 way[power=transformer],
-way[transformer],
 way[power=pole],
 way[power=catenary_mast],
 way[power=connection],
@@ -128,6 +120,18 @@ way[highway=turning_loop],
 way[highway=turning_circle],
 way[highway=motorway_junction] {
   throwWarning: tr("{0} on a way. Should be used on a node.", "{0.tag}"); 
+}
+
+/* {0} on a way, should be a node (0.key) */
+way[voltage:primary],
+way[voltage:secondary],
+way[voltage:tertiary],
+way[transformer],
+way[line_attachment],
+way[line_management],
+way[entrance],
+way[door] {
+  throwWarning: tr("{0} on a way. Should be used on a node.", "{0.key}"); 
 }
 
 /* {0} on a way, should be a relation; #15642, #10252, #14288 */
