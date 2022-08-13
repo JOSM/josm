@@ -4945,6 +4945,10 @@ node[natural=cliff] {
     icon-image: "presets/misc/cliff.svg";
     set icon_z17;
 }
+way[natural=arete] {
+    width: 1;
+    color: arete#e6e6e6;
+}
 way[natural=ridge] {
     width: 1;
     color: natural#002f00;
@@ -5120,6 +5124,7 @@ node[natural=beach],
 node[natural=sand],
 node[natural=land],
 node[natural=bare_rock],
+node[natural=arete],
 node[natural=ridge],
 node[natural=valley] {
     icon-image: "presets/misc/deprecated.svg";
