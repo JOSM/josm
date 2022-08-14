@@ -8603,13 +8603,13 @@
                 <combo key="volcano:type" text="Type" values="stratovolcano,shield,scoria" />
             </optional>
         </item> <!-- Volcano -->
-        <item name="Arete" icon="presets/landmark/arete.svg" type="way" preset_name_label="true">
+        <item name="Arête" icon="presets/landmark/arete.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=arete" />
             <space />
             <key key="natural" value="arete" />
             <reference ref="name_wikipedia_wikidata" />
             <preset_link preset_name="Ridge" text="Similar but different tags:" />
-        </item> <!-- Arete -->
+        </item> <!-- Arête -->
         <item name="Ridge" icon="presets/landmark/ridge.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=ridge" />
             <space />
@@ -8617,7 +8617,7 @@
             <space />
             <key key="natural" value="ridge" />
             <reference ref="name_wikipedia_wikidata" />
-            <preset_link preset_name="Arete" text="Similar but different tags:" />
+            <preset_link preset_name="Arête" text="Similar but different tags:" />
         </item> <!-- Ridge -->
         <item name="Valley" icon="presets/landmark/valley.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=valley" />
