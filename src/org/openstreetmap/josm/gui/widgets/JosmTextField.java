@@ -180,7 +180,7 @@ public class JosmTextField extends JTextField implements Destroyable, ComponentL
      * @since 18221 (signature)
      */
     public String setHint(String hint) {
-        String old = hint;
+        String old = this.hint;
         this.hint = hint;
         return old;
     }
