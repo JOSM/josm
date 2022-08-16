@@ -487,7 +487,7 @@ public class SplitWayCommand extends SequenceCommand {
                         if (isOrderedRelation) {
                             if (way.lastNode() == way.firstNode()) {
                                 // Self-closing way.
-                                direction = Direction.IRRELEVANT;
+                                direction = direction.merge(Direction.IRRELEVANT);
                             } else {
                                 // For ordered relations, looking beyond the nearest neighbour members is not required,
                                 // and can even cause the wrong direction to be guessed (with closed loops).
@@ -497,9 +497,9 @@ public class SplitWayCommand extends SequenceCommand {
                                         missingWays.add(w);
                                     else {
                                         if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
-                                            direction = Direction.FORWARDS;
+                                            direction = direction.merge(Direction.FORWARDS);
                                         } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
-                                            direction = Direction.BACKWARDS;
+                                            direction = direction.merge(Direction.BACKWARDS);
                                         }
                                     }
                                 }
@@ -509,9 +509,9 @@ public class SplitWayCommand extends SequenceCommand {
                                         missingWays.add(w);
                                     else {
                                         if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
-                                            direction = Direction.BACKWARDS;
+                                            direction = direction.merge(Direction.BACKWARDS);
                                         } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
-                                            direction = Direction.FORWARDS;
+                                            direction = direction.merge(Direction.FORWARDS);
                                         }
                                     }
                                 }
@@ -528,18 +528,18 @@ public class SplitWayCommand extends SequenceCommand {
                                 if (ir - k >= 0 && r.getMember(ir - k).isWay()) {
                                     Way w = r.getMember(ir - k).getWay();
                                     if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
-                                        direction = Direction.FORWARDS;
+                                        direction = direction.merge(Direction.FORWARDS);
                                     } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
-                                        direction = Direction.BACKWARDS;
+                                        direction = direction.merge(Direction.BACKWARDS);
                                     }
                                     break;
                                 }
                                 if (ir + k < r.getMembersCount() && r.getMember(ir + k).isWay()) {
                                     Way w = r.getMember(ir + k).getWay();
                                     if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
-                                        direction = Direction.BACKWARDS;
+                                        direction = direction.merge(Direction.BACKWARDS);
                                     } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
-                                        direction = Direction.FORWARDS;
+                                        direction = direction.merge(Direction.FORWARDS);
                                     }
                                     break;
                                 }
@@ -951,7 +951,30 @@ public class SplitWayCommand extends SequenceCommand {
         FORWARDS,
         BACKWARDS,
         UNKNOWN,
-        IRRELEVANT
+        IRRELEVANT;
+
+        /**
+         * Merge directions (this helps avoid overriding {@link #FORWARDS} with {@link #BACKWARDS}).
+         * @param other The other direction to merge. {@link #UNKNOWN} will be overridden.
+         * @return The merged direction
+         */
+        Direction merge(Direction other) {
+            if (this == other) {
+                return this;
+            }
+            if (this == IRRELEVANT || other == IRRELEVANT ||
+                    (this == FORWARDS && other == BACKWARDS) ||
+                    (other == FORWARDS && this == BACKWARDS)) {
+                return IRRELEVANT;
+            }
+            if (this == UNKNOWN) {
+                return other;
+            }
+            if (other == UNKNOWN) {
+                return this;
+            }
+            return UNKNOWN;
+        }
     }
 
     enum WarningType {

@@ -530,11 +530,16 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @since 17981
      */
     public void addPrimitiveRecursive(OsmPrimitive primitive) {
+        Stream<OsmPrimitive> children;
         if (primitive instanceof Way) {
-            ((Way) primitive).getNodes().forEach(n -> addPrimitiveRecursive(n));
+            children = ((Way) primitive).getNodes().stream().map(OsmPrimitive.class::cast);
         } else if (primitive instanceof Relation) {
-            ((Relation) primitive).getMembers().forEach(m -> addPrimitiveRecursive(m.getMember()));
+            children = ((Relation) primitive).getMembers().stream().map(RelationMember::getMember);
+        } else {
+            children = Stream.empty();
         }
+        // Relations may have the same member multiple times.
+        children.filter(p -> !Objects.equals(this, p.getDataSet())).forEach(this::addPrimitiveRecursive);
         addPrimitive(primitive);
     }
 
