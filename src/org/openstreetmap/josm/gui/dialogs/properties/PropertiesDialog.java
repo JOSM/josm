@@ -999,6 +999,25 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     public class MouseClickWatch extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
+            if (e.getSource() == membershipTable && e.getButton() == MouseEvent.BUTTON2) {
+                int row = membershipTable.rowAtPoint(e.getPoint());
+                if (row > -1) {
+                    final Relation relation = (Relation) membershipData.getValueAt(row, 0);
+                    DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
+
+                    if (ds != null) {
+                        if (e.isShiftDown()) {
+                            ds.addSelected(relation);
+                        } else if (e.isControlDown()) {
+                            ds.toggleSelected(relation);
+                        } else {
+                            ds.setSelected(relation);
+                        }
+                    }
+                }
+                return;
+            }
+
             if (e.getClickCount() < 2) {
                 // single click, clear selection in other table not clicked in
                 if (e.getSource() == tagTable) {
