@@ -31,6 +31,7 @@ public class ToggleUploadDiscouragedLayerAction extends AbstractAction implement
      */
     public ToggleUploadDiscouragedLayerAction(OsmDataLayer layer) {
         super(tr("Discourage upload"));
+        putValue(SHORT_DESCRIPTION, tr("Allow/disallow upload of changes made in this layer"));
         new ImageProvider("no_upload").getResource().attachImageIcon(this, true);
         this.layer = layer;
         setEnabled(layer.isUploadable());
