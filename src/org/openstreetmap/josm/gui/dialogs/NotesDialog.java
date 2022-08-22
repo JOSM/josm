@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
@@ -54,6 +55,7 @@ import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -134,6 +136,13 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
                 new SideButton(openInBrowserAction, false),
                 new SideButton(uploadAction, false)));
         updateButtonStates();
+
+        JPopupMenu notesPopupMenu = new JPopupMenu();
+        notesPopupMenu.add(addCommentAction);
+        notesPopupMenu.add(openInBrowserAction);
+        notesPopupMenu.add(closeAction);
+        notesPopupMenu.add(reopenAction);
+        displayList.addMouseListener(new PopupMenuLauncher(notesPopupMenu));
     }
 
     private void updateButtonStates() {
@@ -489,6 +498,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
     class OpenInBrowserAction extends AbstractAction {
         OpenInBrowserAction() {
+            super(tr("Open in browser"));
             putValue(SHORT_DESCRIPTION, tr("Open the note in an external browser"));
             new ImageProvider("help", "internet").getResource().attachImageIcon(this, true);
         }
