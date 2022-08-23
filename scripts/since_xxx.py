@@ -25,7 +25,7 @@ def main():
             continue
         with open(path, 'r') as f:
             filedata = f.read()
-        filedata2 = re.sub("since xxx", lambda _: "since {}".format(get_revision()), filedata)
+        filedata2 = re.sub("since (xxx|XXX)", lambda _: "since {}".format(get_revision()), filedata)
         if filedata != filedata2:
             print("replacing 'since xxx' with 'since {}' in '{}'".format(get_revision(), path))
             with open(path, 'w') as f:
