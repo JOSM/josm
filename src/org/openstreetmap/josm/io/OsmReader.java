@@ -201,6 +201,17 @@ public class OsmReader extends AbstractReader {
         }
     }
 
+    private void parseError() throws XMLStreamException {
+        while (parser.hasNext()) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.CHARACTERS) {
+                throwException(parser.getText());
+            } else {
+                throwException("Unknown error element type");
+            }
+        }
+    }
+
     private void parseRemark() throws XMLStreamException {
         while (parser.hasNext()) {
             int event = parser.next();
@@ -393,6 +404,8 @@ public class OsmReader extends AbstractReader {
         if (printWarning && ("note".equals(element) || "meta".equals(element))) {
             // we know that Overpass API returns those elements
             Logging.debug(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
+        } else if ("error".equals(element)) {
+            parseError();
         } else if (printWarning) {
             Logging.info(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
         }

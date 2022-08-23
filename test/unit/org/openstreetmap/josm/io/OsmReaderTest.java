@@ -4,9 +4,12 @@ package org.openstreetmap.josm.io;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -16,7 +19,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -33,13 +41,12 @@ import org.junit.jupiter.api.Test;
  */
 @BasicPreferences
 class OsmReaderTest {
-    private static Options[][] options() {
-        return new Options[][]{
-                new Options[]{},
-                new Options[]{Options.CONVERT_UNKNOWN_TO_TAGS},
-                new Options[]{Options.SAVE_ORIGINAL_ID},
-                new Options[]{Options.CONVERT_UNKNOWN_TO_TAGS, Options.SAVE_ORIGINAL_ID},
-        };
+    private static Stream<Arguments> options() {
+        return Stream.of(Arguments.of((Object) null),
+                Arguments.of((Object) new Options[0]),
+                Arguments.of((Object) new Options[] {Options.CONVERT_UNKNOWN_TO_TAGS}),
+                Arguments.of((Object) new Options[] {Options.SAVE_ORIGINAL_ID}),
+                Arguments.of((Object) new Options[] {Options.CONVERT_UNKNOWN_TO_TAGS, Options.SAVE_ORIGINAL_ID}));
     }
 
     private static final class PostProcessorStub implements OsmServerReadPostprocessor {
@@ -83,75 +90,71 @@ class OsmReaderTest {
 
     /**
      * Unit test of {@link OsmReader#parseUnknown} - root case.
+     * @param options The options to test
      * @throws Exception if any error occurs
      */
-    @Test
-    void testUnknownRoot() throws Exception {
-        for (Options[] options : options()) {
-            testUnknown("<nonosm/>", options);
-        }
+    @ParameterizedTest
+    @MethodSource("options")
+    void testUnknownRoot(Options... options) throws Exception {
+        testUnknown("<nonosm/>", options);
     }
 
     /**
      * Unit test of {@link OsmReader#parseUnknown} - meta case from Overpass API.
+     * @param options The options to test
      * @throws Exception if any error occurs
      */
-    @Test
-    void testUnknownMeta() throws Exception {
-        for (Options[] options : options()) {
-            testUnknown("<osm version='0.6'><meta osm_base='2017-03-29T19:04:03Z'/></osm>", options);
-        }
+    @ParameterizedTest
+    @MethodSource("options")
+    void testUnknownMeta(Options... options) throws Exception {
+        testUnknown("<osm version='0.6'><meta osm_base='2017-03-29T19:04:03Z'/></osm>", options);
     }
 
     /**
      * Unit test of {@link OsmReader#parseUnknown} - note case from Overpass API.
+     * @param options The options to test
      * @throws Exception if any error occurs
      */
-    @Test
-    void testUnknownNote() throws Exception {
-        for (Options[] options : options()) {
-            testUnknown("<osm version='0.6'><note>The data included in this document is from www.openstreetmap.org.</note></osm>", options);
-        }
+    @ParameterizedTest
+    @MethodSource("options")
+    void testUnknownNote(Options... options) throws Exception {
+        testUnknown("<osm version='0.6'><note>The data included in this document is from www.openstreetmap.org.</note></osm>", options);
     }
 
     /**
      * Unit test of {@link OsmReader#parseUnknown} - other cases.
-     * @throws Exception if any error occurs
+     * @param options The options to test
      */
-    @Test
-    void testUnknownTag() throws Exception {
-        for (Options[] options : options()) {
-            testUnknown("<osm version='0.6'><foo>bar</foo></osm>", options);
-            testUnknown("<osm version='0.6'><foo><bar/></foo></osm>", options);
-        }
+    @ParameterizedTest
+    @MethodSource("options")
+    void testUnknownTag(Options... options) {
+        assertAll(() -> testUnknown("<osm version='0.6'><foo>bar</foo></osm>", options),
+                () -> testUnknown("<osm version='0.6'><foo><bar/></foo></osm>", options));
     }
 
     /**
      * Test valid data.
      * @param osm OSM data without XML prefix
+     * @param options The options to test
      * @return parsed data set
      * @throws Exception if any error occurs
      */
     private static DataSet testValidData(String osm, Options[] options) throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, options);
+            return assertDoesNotThrow(() -> OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, options));
         }
     }
 
     /**
      * Test invalid data.
      * @param osm OSM data without XML prefix
-     * @param expectedError expected error message
-     * @throws Exception if any error occurs
+     * @return The exception
      */
-    private static void testInvalidData(String osm, String expectedError) throws Exception {
+    private static IllegalDataException testInvalidData(String osm) throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
-            fail("should throw exception");
-        } catch (IllegalDataException e) {
-            assertEquals(expectedError, e.getMessage());
+            return assertThrows(IllegalDataException.class, () -> OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE));
         }
     }
 
@@ -161,8 +164,8 @@ class OsmReaderTest {
      */
     @Test
     void testInvalidUid() throws Exception {
-        testInvalidData("<osm version='0.6'><node id='1' uid='nan'/></osm>",
-                "Illegal value for attribute 'uid'. Got 'nan'. (at line 1, column 82). 82 bytes have been read");
+        assertEquals("Illegal value for attribute 'uid'. Got 'nan'. (at line 1, column 82). 82 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1' uid='nan'/></osm>").getMessage());
     }
 
     /**
@@ -171,8 +174,8 @@ class OsmReaderTest {
      */
     @Test
     void testMissingId() throws Exception {
-        testInvalidData("<osm version='0.6'><node/></osm>",
-                "Missing required attribute 'id'. (at line 1, column 65). 64 bytes have been read");
+        assertEquals("Missing required attribute 'id'. (at line 1, column 65). 64 bytes have been read",
+                testInvalidData("<osm version='0.6'><node/></osm>").getMessage());
     }
 
     /**
@@ -181,10 +184,10 @@ class OsmReaderTest {
      */
     @Test
     void testMissingRef() throws Exception {
-        testInvalidData("<osm version='0.6'><way id='1' version='1'><nd/></way></osm>",
-                "Missing mandatory attribute 'ref' on <nd> of way 1. (at line 1, column 87). 88 bytes have been read");
-        testInvalidData("<osm version='0.6'><relation id='1' version='1'><member/></relation></osm>",
-                "Missing attribute 'ref' on member in relation 1. (at line 1, column 96). 101 bytes have been read");
+        assertEquals("Missing mandatory attribute 'ref' on <nd> of way 1. (at line 1, column 87). 88 bytes have been read",
+                testInvalidData("<osm version='0.6'><way id='1' version='1'><nd/></way></osm>").getMessage());
+        assertEquals("Missing attribute 'ref' on member in relation 1. (at line 1, column 96). 101 bytes have been read",
+                testInvalidData("<osm version='0.6'><relation id='1' version='1'><member/></relation></osm>").getMessage());
     }
 
     /**
@@ -193,15 +196,16 @@ class OsmReaderTest {
      */
     @Test
     void testIllegalRef() throws Exception {
-        testInvalidData("<osm version='0.6'><way id='1' version='1'><nd ref='0'/></way></osm>",
-                "Illegal value of attribute 'ref' of element <nd>. Got 0. (at line 1, column 95). 96 bytes have been read");
-        testInvalidData("<osm version='0.6'><way id='1' version='1'><nd ref='nan'/></way></osm>",
-                "Illegal long value for attribute 'ref'. Got 'nan'. (at line 1, column 97). 98 bytes have been read");
+        assertEquals("Illegal value of attribute 'ref' of element <nd>. Got 0. (at line 1, column 95). 96 bytes have been read",
+                testInvalidData("<osm version='0.6'><way id='1' version='1'><nd ref='0'/></way></osm>").getMessage());
+        assertEquals("Illegal long value for attribute 'ref'. Got 'nan'. (at line 1, column 97). 98 bytes have been read",
+                testInvalidData("<osm version='0.6'><way id='1' version='1'><nd ref='nan'/></way></osm>").getMessage());
 
-        testInvalidData("<osm version='0.6'><relation id='1' version='1'><member type='node' ref='0'/></relation></osm>",
-                "Incomplete <member> specification with ref=0 (at line 1, column 116). 121 bytes have been read");
-        testInvalidData("<osm version='0.6'><relation id='1' version='1'><member type='node' ref='nan'/></relation></osm>",
-                "Illegal value for attribute 'ref' on member in relation 1. Got nan (at line 1, column 118). 123 bytes have been read");
+        assertEquals("Incomplete <member> specification with ref=0 (at line 1, column 116). 121 bytes have been read",
+                testInvalidData("<osm version='0.6'><relation id='1' version='1'><member type='node' ref='0'/></relation></osm>").getMessage());
+        assertEquals("Illegal value for attribute 'ref' on member in relation 1. Got nan (at line 1, column 118). 123 bytes have been read",
+                testInvalidData("<osm version='0.6'><relation id='1' version='1'><member type='node' ref='nan'/></relation></osm>")
+                        .getMessage());
     }
 
     /**
@@ -210,8 +214,8 @@ class OsmReaderTest {
      */
     @Test
     void testMissingType() throws Exception {
-        testInvalidData("<osm version='0.6'><relation id='1' version='1'><member ref='1'/></relation></osm>",
-                "Missing attribute 'type' on member 1 in relation 1. (at line 1, column 104). 109 bytes have been read");
+        assertEquals("Missing attribute 'type' on member 1 in relation 1. (at line 1, column 104). 109 bytes have been read",
+                testInvalidData("<osm version='0.6'><relation id='1' version='1'><member ref='1'/></relation></osm>").getMessage());
     }
 
     /**
@@ -220,8 +224,8 @@ class OsmReaderTest {
      */
     @Test
     void testIllegalType() throws Exception {
-        testInvalidData("<osm version='0.6'><relation id='1' version='1'><member type='foo' ref='1'/></relation></osm>",
-                "Illegal value for attribute 'type' on member 1 in relation 1. Got foo. (at line 1, column 115). 120 bytes have been read");
+        assertEquals("Illegal value for attribute 'type' on member 1 in relation 1. Got foo. (at line 1, column 115). 120 bytes have been read",
+                testInvalidData("<osm version='0.6'><relation id='1' version='1'><member type='foo' ref='1'/></relation></osm>").getMessage());
     }
 
     /**
@@ -230,12 +234,12 @@ class OsmReaderTest {
      */
     @Test
     void testMissingKeyValue() throws Exception {
-        testInvalidData("<osm version='0.6'><node id='1' version='1'><tag/></node></osm>",
-                "Missing key or value attribute in tag. (at line 1, column 89). 89 bytes have been read");
-        testInvalidData("<osm version='0.6'><node id='1' version='1'><tag k='foo'/></node></osm>",
-                "Missing key or value attribute in tag. (at line 1, column 97). 97 bytes have been read");
-        testInvalidData("<osm version='0.6'><node id='1' version='1'><tag v='bar'/></node></osm>",
-                "Missing key or value attribute in tag. (at line 1, column 97). 97 bytes have been read");
+        assertEquals("Missing key or value attribute in tag. (at line 1, column 89). 89 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1' version='1'><tag/></node></osm>").getMessage());
+        assertEquals("Missing key or value attribute in tag. (at line 1, column 97). 97 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1' version='1'><tag k='foo'/></node></osm>").getMessage());
+        assertEquals("Missing key or value attribute in tag. (at line 1, column 97). 97 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1' version='1'><tag v='bar'/></node></osm>").getMessage());
     }
 
     /**
@@ -244,10 +248,10 @@ class OsmReaderTest {
      */
     @Test
     void testMissingVersion() throws Exception {
-        testInvalidData("<osm/>",
-                "Missing mandatory attribute 'version'. (at line 1, column 45). 44 bytes have been read");
-        testInvalidData("<osm version='0.6'><node id='1'/></osm>",
-                "Missing attribute 'version' on OSM primitive with ID 1. (at line 1, column 72). 72 bytes have been read");
+        assertEquals("Missing mandatory attribute 'version'. (at line 1, column 45). 44 bytes have been read",
+                testInvalidData("<osm/>").getMessage());
+        assertEquals("Missing attribute 'version' on OSM primitive with ID 1. (at line 1, column 72). 72 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1'/></osm>").getMessage());
     }
 
     /**
@@ -256,8 +260,8 @@ class OsmReaderTest {
      */
     @Test
     void testUnsupportedVersion() throws Exception {
-        testInvalidData("<osm version='0.1'/>",
-                "Unsupported version: 0.1 (at line 1, column 59). 58 bytes have been read");
+        assertEquals("Unsupported version: 0.1 (at line 1, column 59). 58 bytes have been read",
+                testInvalidData("<osm version='0.1'/>").getMessage());
     }
 
     /**
@@ -266,8 +270,9 @@ class OsmReaderTest {
      */
     @Test
     void testIllegalVersion() throws Exception {
-        testInvalidData("<osm version='0.6'><node id='1' version='nan'/></osm>",
-                "Illegal value for attribute 'version' on OSM primitive with ID 1. Got nan. (at line 1, column 86). 86 bytes have been read");
+        assertEquals("Illegal value for attribute 'version' on OSM primitive with ID 1. " +
+                        "Got nan. (at line 1, column 86). 86 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1' version='nan'/></osm>").getMessage());
     }
 
     /**
@@ -276,22 +281,22 @@ class OsmReaderTest {
      */
     @Test
     void testIllegalChangeset() throws Exception {
-        testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='nan'/></osm>",
-                "Illegal value for attribute 'changeset'. Got nan. (at line 1, column 100). 100 bytes have been read");
-        testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='-1'/></osm>",
-                "Illegal value for attribute 'changeset'. Got -1. (at line 1, column 99). 99 bytes have been read");
+        assertEquals("Illegal value for attribute 'changeset'. Got nan. (at line 1, column 100). 100 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='nan'/></osm>").getMessage());
+        assertEquals("Illegal value for attribute 'changeset'. Got -1. (at line 1, column 99). 99 bytes have been read",
+                testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='-1'/></osm>").getMessage());
     }
 
     /**
      * Test GDPR-compliant changeset.
+     * @param options The options to test
      * @throws Exception if any error occurs
      */
-    @Test
-    void testGdprChangeset() throws Exception {
+    @ParameterizedTest
+    @MethodSource("options")
+    void testGdprChangeset(Options... options) throws Exception {
         String gdprChangeset = "<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>";
-        for (Options[] options : options()) {
-            testValidData(gdprChangeset, options);
-        }
+        testValidData(gdprChangeset, options);
     }
 
     /**
@@ -300,18 +305,18 @@ class OsmReaderTest {
      */
     @Test
     void testInvalidBounds() throws Exception {
-        testInvalidData("<osm version='0.6'><bounds/></osm>",
-                "Missing mandatory attributes on element 'bounds'. " +
-                "Got minlon='null',minlat='null',maxlon='null',maxlat='null', origin='null'. (at line 1, column 67). 72 bytes have been read");
-        testInvalidData("<osm version='0.6'><bounds minlon='0'/></osm>",
-                "Missing mandatory attributes on element 'bounds'. " +
-                "Got minlon='0',minlat='null',maxlon='null',maxlat='null', origin='null'. (at line 1, column 78). 83 bytes have been read");
-        testInvalidData("<osm version='0.6'><bounds minlon='0' minlat='0'/></osm>",
-                "Missing mandatory attributes on element 'bounds'. " +
-                "Got minlon='0',minlat='0',maxlon='null',maxlat='null', origin='null'. (at line 1, column 89). 94 bytes have been read");
-        testInvalidData("<osm version='0.6'><bounds minlon='0' minlat='0' maxlon='1'/></osm>",
-                "Missing mandatory attributes on element 'bounds'. " +
-                "Got minlon='0',minlat='0',maxlon='1',maxlat='null', origin='null'. (at line 1, column 100). 105 bytes have been read");
+        assertEquals("Missing mandatory attributes on element 'bounds'. " +
+                "Got minlon='null',minlat='null',maxlon='null',maxlat='null', origin='null'. (at line 1, column 67). 72 bytes have been read",
+                testInvalidData("<osm version='0.6'><bounds/></osm>").getMessage());
+        assertEquals("Missing mandatory attributes on element 'bounds'. " +
+                "Got minlon='0',minlat='null',maxlon='null',maxlat='null', origin='null'. (at line 1, column 78). 83 bytes have been read",
+                testInvalidData("<osm version='0.6'><bounds minlon='0'/></osm>").getMessage());
+        assertEquals("Missing mandatory attributes on element 'bounds'. " +
+                "Got minlon='0',minlat='0',maxlon='null',maxlat='null', origin='null'. (at line 1, column 89). 94 bytes have been read",
+                testInvalidData("<osm version='0.6'><bounds minlon='0' minlat='0'/></osm>").getMessage());
+        assertEquals("Missing mandatory attributes on element 'bounds'. " +
+                "Got minlon='0',minlat='0',maxlon='1',maxlat='null', origin='null'. (at line 1, column 100). 105 bytes have been read",
+                testInvalidData("<osm version='0.6'><bounds minlon='0' minlat='0' maxlon='1'/></osm>").getMessage());
     }
 
     /**
@@ -366,42 +371,69 @@ class OsmReaderTest {
 
     /**
      * Test reading remark from Overpass API.
+     * @param options The options to test
      * @throws Exception if any error occurs
      */
-    @Test
-    void testRemark() throws Exception {
+    @ParameterizedTest
+    @MethodSource("options")
+    void testRemark(Options... options) throws Exception {
         String query = "<osm version=\"0.6\" generator=\"Overpass API 0.7.55.4 3079d8ea\">\r\n" +
                 "<note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>\r\n" +
                 "<meta osm_base=\"2018-08-30T12:46:02Z\" areas=\"2018-08-30T12:40:02Z\"/>\r\n" +
                 "<remark>runtime error: Query ran out of memory in \"query\" at line 5.</remark>\r\n" +
                 "</osm>";
-        for (Options[] options : options()) {
-            DataSet ds = testValidData(query, options);
-            assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
-        }
+        DataSet ds = testValidData(query, options);
+        assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
     }
 
     /**
      * Test reading a file with unknown attributes in osm primitives
+     * @param options The options to test
      * @throws Exception if any error occurs
      */
-    @Test
-    void testUnknownAttributeTags() throws Exception {
+    @ParameterizedTest
+    @MethodSource("options")
+    void testUnknownAttributeTags(Options... options) throws Exception {
         String testData = "<osm version=\"0.6\" generator=\"fake generator\">"
                 + "<node id='1' version='1' visible='true' changeset='82' randomkey='randomvalue'></node>" + "</osm>";
-        for (Options[] options : options()) {
-            DataSet ds = testValidData(testData, options);
-            Node firstNode = ds.getNodes().iterator().next();
-            if (Arrays.asList(options).contains(Options.CONVERT_UNKNOWN_TO_TAGS)) {
-                assertEquals("randomvalue", firstNode.get("randomkey"));
-            } else {
-                assertNull(firstNode.get("randomkey"));
-            }
-            if (Arrays.asList(options).contains(Options.SAVE_ORIGINAL_ID)) {
-                assertEquals("1", firstNode.get("current_id"));
-            } else {
-                assertNull(firstNode.get("current_id"));
-            }
+        DataSet ds = testValidData(testData, options);
+        Node firstNode = ds.getNodes().iterator().next();
+        if (options != null && Arrays.asList(options).contains(Options.CONVERT_UNKNOWN_TO_TAGS)) {
+            assertEquals("randomvalue", firstNode.get("randomkey"));
+        } else {
+            assertNull(firstNode.get("randomkey"));
         }
+        if (options != null && Arrays.asList(options).contains(Options.SAVE_ORIGINAL_ID)) {
+            assertEquals("1", firstNode.get("current_id"));
+        } else {
+            assertNull(firstNode.get("current_id"));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "<osm version=\"0.6\"><error>Mismatch in tags key and value size</error></osm>",
+            "<osm version=\"0.6\"><node id=\"1\" visible=\"true\" version=\"1\"><error>Mismatch in tags key and value size</error></node></osm>",
+            "<osm version=\"0.6\"><way id=\"1\" visible=\"true\" version=\"1\"><error>Mismatch in tags key and value size</error></way></osm>",
+            "<osm version=\"0.6\"><way id=\"1\" visible=\"true\" version=\"1\"><error>Mismatch in tags key and value size</error></way></osm>",
+            "<osm version=\"0.6\"><relation id=\"1\" visible=\"true\" version=\"1\"><error>Mismatch in tags key and value size</error>" +
+                    "</relation></osm>"
+    })
+    void testErrorMessage(String testData) throws Exception {
+        IllegalDataException illegalDataException = testInvalidData(testData);
+        assertTrue(illegalDataException.getMessage().contains("Mismatch in tags key and value size"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "<osm version=\"0.6\"><error></error></osm>",
+            "<osm version=\"0.6\"><node id=\"1\" visible=\"true\" version=\"1\"><error/></node></osm>",
+            "<osm version=\"0.6\"><way id=\"1\" visible=\"true\" version=\"1\"><error></error></way></osm>",
+            "<osm version=\"0.6\"><way id=\"1\" visible=\"true\" version=\"1\"><error></error></way></osm>",
+            "<osm version=\"0.6\"><relation id=\"1\" visible=\"true\" version=\"1\"><error/></relation></osm>"
+    })
+    void testErrorNoMessage(String testData) throws Exception {
+        IllegalDataException illegalDataException = testInvalidData(testData);
+        assertTrue(illegalDataException.getMessage().contains("Unknown error element type"));
     }
 }
