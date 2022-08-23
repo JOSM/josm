@@ -105,6 +105,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             "wetland",
             //
             ":LocationCode",
+            "description",
             "note",
             "?building",
             "?building:part",
