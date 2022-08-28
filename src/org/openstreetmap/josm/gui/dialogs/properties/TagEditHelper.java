@@ -244,6 +244,18 @@ public class TagEditHelper {
     }
 
     /**
+     * Finds the keys for given rows of tag editor.
+     * @param viewRows index of rows
+     * @return keys of tags
+     * @since xxx
+     */
+    public final List<String> getDataKeys(int[] viewRows) {
+        return Arrays.stream(viewRows).boxed()
+            .map(r -> tagData.getValueAt(tagTable.convertRowIndexToModel(r), 0).toString())
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Determines if the given tag key is already used (by all selected primitives, not just some of them)
      * @param key the key to check
      * @return {@code true} if the key is used by all selected primitives (key not unset for at least one primitive)

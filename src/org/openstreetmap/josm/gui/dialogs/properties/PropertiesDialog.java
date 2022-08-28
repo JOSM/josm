@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.properties;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -22,11 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -41,6 +44,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -63,6 +67,7 @@ import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
@@ -90,6 +95,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
+import org.openstreetmap.josm.gui.dialogs.FilterTableModel;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationPopupMenus;
@@ -211,6 +217,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             tagTable, editHelper::getDataKey, OsmDataManager.getInstance()::getInProgressISelection).registerShortcut(); /* NO-SHORTCUT */
     private final SearchAction searchActionSame = new SearchAction(true);
     private final SearchAction searchActionAny = new SearchAction(false);
+    private final FilterAction filterActionHide = new FilterAction(true);
+    private final FilterAction filterActionShowOnly = new FilterAction(false);
     private final AddAction addAction = new AddAction();
     private final EditAction editAction = new EditAction();
     private final DeleteAction deleteAction = new DeleteAction();
@@ -465,6 +473,10 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagMenu.addSeparator();
         tagMenu.add(searchActionAny);
         tagMenu.add(searchActionSame);
+        tagMenu.add(filterActionHide);
+        tagMenu.addPopupMenuListener(filterActionHide);
+        tagMenu.add(filterActionShowOnly);
+        tagMenu.addPopupMenuListener(filterActionShowOnly);
         tagMenu.addSeparator();
         tagMenu.add(helpTagAction);
         tagMenu.add(tagHistoryAction);
@@ -1347,36 +1359,135 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
     }
 
+    class FilterAction extends AbstractAction implements PopupMenuListener {
+
+        private final boolean hideMatching;
+
+        FilterAction(boolean hideMatching) {
+            setName(hideMatching, 0);
+            putValue(SHORT_DESCRIPTION, hideMatching ? tr("Add a filter that hides objects with the selected tags") :
+                                                       tr("Add a filter that shows only objects with the selected tags"));
+            new ImageProvider("dialogs/filter").getResource().attachImageIcon(this, true);
+            this.hideMatching = hideMatching;
+        }
+
+        private void setName(boolean hideMatching, long n) {
+            if (hideMatching) {
+                putValue(NAME, trn("Hide objects with selected tag", "Hide objects with selected tags", n));
+            } else {
+                putValue(NAME, trn("Show only objects with selected tag", "Show only objects with selected tags", n));
+            }
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Filter newFilter = createFilterForSelectedTags();
+            if (newFilter == null)
+                return;
+
+            FilterTableModel filterModel = MainApplication.getMap().filterDialog.getFilterModel();
+
+            OptionalInt existingFilterIndex = IntStream.range(0, filterModel.getRowCount())
+                .filter(i -> {
+                    Filter f = filterModel.getValue(i);
+                    return f.equals(newFilter) && f.inverted == !hideMatching;
+                }).findFirst();
+
+            if (existingFilterIndex.isPresent()) {
+                Logging.debug("Enabling existing equivalent filter: {0}", existingFilterIndex);
+                filterModel.setValueAt(true, existingFilterIndex.getAsInt(), FilterTableModel.COL_ENABLED);
+            } else {
+                newFilter.inverted = !hideMatching;
+                Logging.debug("Adding new filter {0}", newFilter);
+                filterModel.addFilter(newFilter);
+            }
+        }
+
+        private Filter createFilterForSelectedTags() {
+            List<String> keys = editHelper.getDataKeys(tagTable.getSelectedRows());
+            Collection<? extends IPrimitive> sel = OsmDataManager.getInstance().getInProgressISelection();
+
+            return createFilterForKeys(keys, sel);
+        }
+
+        @Override
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+            setName(hideMatching, tagTable.getSelectedRows().length);
+        }
+
+        @Override
+        public void popupMenuCanceled(PopupMenuEvent e) {
+            // Do nothing
+        }
+
+        @Override
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            // Do nothing
+        }
+    }
+
     static SearchSetting createSearchSetting(String key, Collection<? extends IPrimitive> sel, boolean sameType) {
-        String sep = "";
-        StringBuilder s = new StringBuilder();
-        Set<String> consideredTokens = new TreeSet<>();
-        for (IPrimitive p : sel) {
-            String val = p.get(key);
-            if (val == null || (!sameType && consideredTokens.contains(val))) {
-                continue;
+        return createSearchSetting(Collections.singletonList(key), sel, sameType);
+    }
+
+    static SearchSetting createSearchSetting(Collection<String> keys, Collection<? extends IPrimitive> sel, boolean sameType) {
+        StringBuilder complete = new StringBuilder();
+        String keySep = "";
+        for (String key : keys) {
+            StringBuilder keyString = new StringBuilder();
+            Set<String> consideredTokens = new TreeSet<>();
+            String valueSep = "";
+            int valueCount = 0;
+
+            for (IPrimitive p : sel) {
+                String val = p.get(key);
+                if (val == null || (!sameType && consideredTokens.contains(val))) {
+                    continue;
+                }
+                String t = "";
+                if (!sameType) {
+                    t = "";
+                } else if (p instanceof Node) {
+                    t = "type:node ";
+                } else if (p instanceof Way) {
+                    t = "type:way ";
+                } else if (p instanceof Relation) {
+                    t = "type:relation ";
+                }
+                String token = new StringBuilder(t).append(val).toString();
+                if (consideredTokens.add(token)) {
+                    keyString.append(valueSep).append('(').append(t).append(SearchCompiler.buildSearchStringForTag(key, val)).append(')');
+                    valueSep = " OR ";
+                    valueCount++;
+                }
             }
-            String t = "";
-            if (!sameType) {
-                t = "";
-            } else if (p instanceof Node) {
-                t = "type:node ";
-            } else if (p instanceof Way) {
-                t = "type:way ";
-            } else if (p instanceof Relation) {
-                t = "type:relation ";
-            }
-            String token = new StringBuilder(t).append(val).toString();
-            if (consideredTokens.add(token)) {
-                s.append(sep).append('(').append(t).append(SearchCompiler.buildSearchStringForTag(key, val)).append(')');
-                sep = " OR ";
+
+            if (keys.size() > 1) {
+                complete.append(keySep);
+                keySep = " AND ";
+
+                if (valueCount > 1) {
+                    complete.append('(').append(keyString).append(')');
+                } else {
+                    complete.append(keyString);
+                }
+            } else {
+                complete.append(keyString);
             }
         }
 
         final SearchSetting ss = new SearchSetting();
-        ss.text = s.toString();
+        ss.text = complete.toString();
         ss.caseSensitive = true;
         return ss;
+    }
+
+    static Filter createFilterForKeys(List<String> keys, Collection<? extends IPrimitive> prims) {
+        if (prims == null || prims.isEmpty())
+            return null;
+
+        final SearchSetting ss = createSearchSetting(keys, prims, false);
+        return new Filter(ss);
     }
 
     /**
