@@ -2386,4 +2386,17 @@ way[shoulder=none] {
   group: tr("deprecated tagging");
 }
 
+/* #22335 */
+*[toilet][!toilets] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "toilets";
+  group: tr("deprecated tagging");
+  fixChangeKey: "toilet => toilets";
+}
+*[toilet][toilets] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "toilets";
+  group: tr("deprecated tagging");
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
