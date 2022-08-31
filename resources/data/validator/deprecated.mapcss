@@ -321,7 +321,7 @@ way[class] {
   throwWarning: tr("{0} is unspecific. Instead use the key fixme with the information what exactly should be fixed in the value of fixme.", "{0.tag}");
 }
 
-/* #10107, #10108, #10929, #13391 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
+/* #10107, #10108, #10929, #13391, #22336 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
 *[type=broad_leaved],
 *[type=broad_leafed] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -354,18 +354,14 @@ way[class] {
   fixRemove: "{0.key}";
   fixAdd: "leaf_cycle=evergreen";
 }
+*[wood=deciduous],
 *[type=deciduous],
 *[type=deciduos] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "leaf_cycle=deciduous";
   group: tr("deprecated tagging");
-  fixRemove: "type";
+  fixRemove: "{0.key}";
   fixAdd: "leaf_cycle=deciduous";
-}
-*[wood=deciduous] {
-  throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "leaf_type + leaf_cycle";
-  group: tr("deprecated tagging");
 }
 node[type=palm],
 way[type=palm] {
