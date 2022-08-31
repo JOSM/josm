@@ -19,6 +19,11 @@
   assertNoMatch: "way highway=motorway access=no motor_vehicle=yes";
 }
 
+/* #22338  */
+way:closed[boundary][area?],
+way:closed[indoor  ][area?][!highway][indoor!=no],
+way:closed[office  ][area?],
+way:closed[place   ][area?][!highway],
 way:closed[amenity ][area?][!highway],
 way:closed[building][area?],
 way:closed[landuse ][area?][!highway],
