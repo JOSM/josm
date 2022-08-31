@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -175,10 +176,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int index = filterModel.getSelectionModel().getMinSelectionIndex();
-            if (index >= 0) {
-                filterModel.removeFilter(index);
-            }
+            // Remove in reverse order to preserve index validity
+            int[] selected = filterModel.getSelectedIndices();
+            Arrays.stream(selected).boxed()
+                .sorted(Collections.reverseOrder())
+                .forEachOrdered(filterModel::removeFilter);
         }
     }
 
@@ -189,10 +191,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int index = userTable.convertRowIndexToModel(userTable.getSelectionModel().getMinSelectionIndex());
-            if (index >= 0 && filterModel.moveUp(index)) {
-                filterModel.getSelectionModel().setSelectionInterval(index-1, index-1);
-            }
+            filterModel.moveUp();
         }
 
         @Override
@@ -208,10 +207,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int index = userTable.convertRowIndexToModel(userTable.getSelectionModel().getMinSelectionIndex());
-            if (index >= 0 && filterModel.moveDown(index)) {
-                filterModel.getSelectionModel().setSelectionInterval(index+1, index+1);
-            }
+            filterModel.moveDown();
         }
 
         @Override
