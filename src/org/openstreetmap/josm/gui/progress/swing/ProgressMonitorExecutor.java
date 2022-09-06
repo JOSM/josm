@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Executor that displays the progress monitor to the user.
@@ -58,6 +59,7 @@ public class ProgressMonitorExecutor extends ThreadPoolExecutor {
         }
         if (t != null) {
             Logging.error("Thread {0} raised {1}", Thread.currentThread().getName(), t);
+            BugReport.addSuppressedException(t);
         }
     }
 }

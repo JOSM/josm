@@ -4,8 +4,13 @@ package org.openstreetmap.josm.tools.bugreport;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
+
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * This class contains utility methods to create and handle a bug report.
@@ -39,6 +44,10 @@ import java.util.function.Predicate;
  */
 public final class BugReport implements Serializable {
     private static final long serialVersionUID = 1L;
+    /** The maximum suppressed exceptions to keep to report */
+    private static final byte MAXIMUM_SUPPRESSED_EXCEPTIONS = 4;
+    /** The list of suppressed exceptions, Pair&lt;time reported, exception&gt; */
+    private static final Deque<Pair<Instant, Throwable>> SUPPRESSED_EXCEPTIONS = new ArrayDeque<>(MAXIMUM_SUPPRESSED_EXCEPTIONS);
 
     private boolean includeStatusReport = true;
     private boolean includeData = true;
@@ -53,6 +62,26 @@ public final class BugReport implements Serializable {
     public BugReport(ReportedException e) {
         this.exception = e;
         includeAllStackTraces = e.mayHaveConcurrentSource();
+    }
+
+    /**
+     * Add a suppressed exception. Mostly useful for when a chain of exceptions causes an actual bug report.
+     * This should only be used when an exception is raised in {@link org.openstreetmap.josm.gui.util.GuiHelper}
+     * or {@link org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor} at this time.
+     * {@link org.openstreetmap.josm.tools.Logging} may call this in the future, when logging a throwable.
+     * @param t The throwable raised. If {@code null}, we add a new {@code NullPointerException} instead.
+     * @since 18549
+     */
+    public static void addSuppressedException(Throwable t) {
+        SUPPRESSED_EXCEPTIONS.add(new Pair<>(Instant.now(), t != null ? t : new NullPointerException()));
+        // Ensure we don't call pop in more than MAXIMUM_SUPPRESSED_EXCEPTIONS threads. This guard is
+        // here just in case someone doesn't read the javadocs.
+        synchronized (SUPPRESSED_EXCEPTIONS) {
+            // Ensure we aren't keeping exceptions forever
+            while (SUPPRESSED_EXCEPTIONS.size() > MAXIMUM_SUPPRESSED_EXCEPTIONS) {
+                SUPPRESSED_EXCEPTIONS.pop();
+            }
+        }
     }
 
     /**
@@ -134,6 +163,17 @@ public final class BugReport implements Serializable {
         exception.printReportStackTo(out);
         if (isIncludeAllStackTraces()) {
             exception.printReportThreadsTo(out);
+        }
+        synchronized (SUPPRESSED_EXCEPTIONS) {
+            if (!SUPPRESSED_EXCEPTIONS.isEmpty()) {
+                out.println("=== ADDITIONAL EXCEPTIONS ===");
+                // Avoid multiple bug reports from reading from the deque at the same time.
+                while (SUPPRESSED_EXCEPTIONS.peek() != null) {
+                    Pair<Instant, Throwable> currentException = SUPPRESSED_EXCEPTIONS.pop();
+                    out.println("==== Exception at " + currentException.a.toEpochMilli() + " ====");
+                    currentException.b.printStackTrace(out);
+                }
+            }
         }
         return stringWriter.toString().replaceAll("\r", "");
     }

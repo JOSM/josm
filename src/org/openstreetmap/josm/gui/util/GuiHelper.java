@@ -211,6 +211,7 @@ public final class GuiHelper {
      */
     static void handleEDTException(Throwable t) {
         Logging.logWithStackTrace(Logging.LEVEL_ERROR, t, "Exception raised in EDT");
+        BugReport.addSuppressedException(t);
     }
 
     /**
