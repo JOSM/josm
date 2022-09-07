@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
+import mockit.internal.state.SavePoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -728,12 +729,15 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
 
         @Override
         public void evaluate() throws Throwable {
+            // Needed since JMockit doesn't clean up JUnit4 vintage tests. We really shouldn't have to touch JMockit internal classes. :(
+            SavePoint savePoint = new SavePoint();
             before();
             try {
                 base.evaluate();
             } finally {
                 if (!junit5) {
                     after();
+                    savePoint.rollback();
                 }
             }
         }
