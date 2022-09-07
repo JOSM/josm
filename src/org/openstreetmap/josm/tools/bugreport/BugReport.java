@@ -73,10 +73,10 @@ public final class BugReport implements Serializable {
      * @since 18549
      */
     public static void addSuppressedException(Throwable t) {
-        SUPPRESSED_EXCEPTIONS.add(new Pair<>(Instant.now(), t != null ? t : new NullPointerException()));
         // Ensure we don't call pop in more than MAXIMUM_SUPPRESSED_EXCEPTIONS threads. This guard is
         // here just in case someone doesn't read the javadocs.
         synchronized (SUPPRESSED_EXCEPTIONS) {
+            SUPPRESSED_EXCEPTIONS.add(new Pair<>(Instant.now(), t != null ? t : new NullPointerException()));
             // Ensure we aren't keeping exceptions forever
             while (SUPPRESSED_EXCEPTIONS.size() > MAXIMUM_SUPPRESSED_EXCEPTIONS) {
                 SUPPRESSED_EXCEPTIONS.pop();
