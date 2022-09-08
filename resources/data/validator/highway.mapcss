@@ -207,3 +207,11 @@ relation[highway =~ /^((motorway|trunk|primary|secondary|tertiary)(_link)?|resid
   assertNoMatch: "way highway=service area=yes";
   assertNoMatch: "way highway=trunk";
 }
+
+/* #21396 comment 39 */
+*[surface=~/^paving_stones:(\d+)$/] {
+  throwWarning: tr("{0} with trailing number", "paving_stones");
+  group: tr("questionable value (ending with a number)");
+  suggestAlternative: "paving_stones:length";
+  suggestAlternative: "paving_stones:width";
+}

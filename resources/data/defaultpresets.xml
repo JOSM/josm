@@ -6,7 +6,7 @@
 
     <!-- Item chunks -->
     <chunk id="surface">
-        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,concrete:plates,concrete:lanes,paving_stones,sett,cobblestone,unhewn_cobblestone,grass_paver,compacted,fine_gravel,gravel,pebblestone,ground,mud,sand,grass,wood,metal" />
+        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,concrete:plates,concrete:lanes,paving_stones,sett,cobblestone,unhewn_cobblestone,grass_paver,compacted,fine_gravel,gravel,pebblestone,ground,mud,rock,sand,grass,wood,metal" />
     </chunk>
     <chunk id="surface_smoothness">
         <reference ref="surface" />
@@ -52,6 +52,9 @@
         <reference ref="highway_yesno" />
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
     </chunk>
+    <chunk id="lit_common_no_times">
+        <combo key="lit" text="Lit" values="yes,no,24/7,automatic,limited,disused"/>
+    </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width">
         <checkgroup columns="4">
             <check key="bridge" text="Bridge" disable_off="true" />
@@ -59,8 +62,8 @@
             <check key="embankment" text="Embankment" disable_off="true" />
             <check key="cutting" text="Cutting" disable_off="true" />
             <check key="oneway" text="Oneway" />
-            <check key="lit" text="Lit" />
         </checkgroup>
+        <reference ref="lit_common_no_times"/>
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
         <text key="width" text="Width (meters)" />
     </chunk>
@@ -131,7 +134,7 @@
         <text key="height" text="Height (meters)" length="7" />
         <combo key="animated" text="Animated" values="yes,winding_posters,screen,trivision_blades,revolving,digital_messages,digital_prices,no" values_sort="false" />
         <check key="luminous" text="Luminous" />
-        <check key="lit" text="Lit" />
+        <reference ref="lit_common_no_times"/>
     </chunk>
     <chunk id="min_age">
         <text key="min_age" text="Minimum age" />
@@ -346,7 +349,7 @@
         <combo key="denomination" text="Denomination" values="catholic,greek_catholic,old_catholic,orthodox,roman_catholic" default="catholic" values_searchable="true" />
     </chunk>
     <chunk id="other_religions"> <!-- religions which don't have an own preset -->
-        <combo key="religion" text="Religion" values="bahai,caodaism,confucian,jain,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" match="keyvalue!" values_searchable="true" />
+        <combo key="religion" text="Religion" values="bahai,caodaism,confucian,jain,none,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" match="keyvalue!" values_searchable="true" />
     </chunk>
     <chunk id="christian_denominations"> <!-- christian denominations -->
         <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,evangelical,greek_catholic,greek_orthodox,iglesia_ni_cristo,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,spiritist,united,united_methodist" values_searchable="true" />
@@ -675,9 +678,9 @@
                 <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
+                <reference ref="lit_common_no_times"/>
                 <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -697,9 +700,9 @@
                 <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
+                <reference ref="lit_common_no_times"/>
                 <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -721,10 +724,10 @@
                 <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                     <check key="motorroad" text="Motorroad" default="on" />
                 </checkgroup>
+                <reference ref="lit_common_no_times"/>
                 <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -745,10 +748,10 @@
                 <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                     <check key="motorroad" text="Motorroad" default="on" />
                 </checkgroup>
+                <reference ref="lit_common_no_times"/>
                 <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -885,8 +888,8 @@
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" />
                     <check key="oneway:bicycle" text="Oneway for bicycle" />
-                    <check key="lit" text="Lit" />
                 </checkgroup>
+                <reference ref="lit_common_no_times"/>
                 <text key="width" text="Width (meters)" />
                 <combo key="bus_bay" text="Bus bay" values="both,left,right" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
@@ -915,8 +918,8 @@
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" />
                     <check key="oneway:bicycle" text="Oneway for bicycle" />
-                    <check key="lit" text="Lit" />
                 </checkgroup>
+                <reference ref="lit_common_no_times"/>
                 <text key="width" text="Width (meters)" />
                 <combo key="bus_bay" text="Bus bay" values="both,left,right" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
@@ -952,7 +955,7 @@
                 <reference ref="surface_smoothness" />
                 <check key="area" text="Area" />
                 <reference ref="highway_yesno_incline" />
-                <check key="lit" text="Lit" />
+                <reference ref="lit_common_no_times"/>
                 <text key="width" text="Width (meters)" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -978,7 +981,7 @@
             <optional>
                 <reference ref="surface_smoothness" />
                 <check key="oneway" text="Oneway" />
-                <check key="lit" text="Lit" />
+                <reference ref="lit_common_no_times"/>
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Parking Aisle -->
@@ -990,7 +993,7 @@
             <optional>
                 <reference ref="surface" />
                 <text key="width" text="Width (meters)" />
-                <check key="lit" text="Lit" />
+                <reference ref="lit_common_no_times"/>
             </optional>
         </item> <!-- Escape -->
         <item name="Raceway" icon="presets/sport/raceway.svg" type="way,closedway" preset_name_label="true">
@@ -1837,6 +1840,7 @@
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
             <reference ref="check_access_motor" />
+            <check key="locked" text="Usually locked"/>
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Gate -->
         <item name="Lift Gate" icon="presets/barrier/lift_gate.svg" type="node" preset_name_label="true">
@@ -1850,6 +1854,7 @@
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
             <reference ref="check_access_motor" />
+            <check key="locked" text="Usually locked"/>
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Lift Gate -->
         <item name="Swing Gate" icon="presets/barrier/swing_gate.svg" type="node" preset_name_label="true">
@@ -1863,6 +1868,7 @@
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
             <reference ref="check_access_motor" />
+            <check key="locked" text="Usually locked"/>
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Swing Gate -->
         <item name="Hampshire Gate" type="node" preset_name_label="true">
@@ -1875,6 +1881,7 @@
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
             <reference ref="check_access_motor" />
+            <check key="locked" text="Usually locked"/>
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Hampshire Gate -->
         <item name="Bump Gate" type="node" preset_name_label="true">
@@ -1887,6 +1894,7 @@
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
             <reference ref="check_access_motor" />
+            <check key="locked" text="Usually locked"/>
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Bump Gate -->
         <item name="Kissing Gate" icon="presets/barrier/kissing_gate.svg" type="node" preset_name_label="true">
@@ -1899,6 +1907,7 @@
             <space />
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
+            <check key="locked" text="Usually locked"/>
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Kissing Gate -->
         <item name="Height Restrictor" icon="presets/barrier/height_restrictor.svg" type="node" preset_name_label="true">
@@ -1921,6 +1930,7 @@
             <reference ref="highway_access_vehicle" />
             <reference ref="check_access_nomotor" />
             <reference ref="check_access_motor" />
+            <check key="locked" text="Usually locked"/>
             <preset_link preset_name="Access Restrictions" />
         </item> <!-- Chain -->
         <item name="Stile" icon="presets/barrier/stile.svg" type="node" preset_name_label="true">
@@ -3943,7 +3953,7 @@
             <space />
             <key key="leisure" value="dog_park" />
             <reference ref="name_oh_wheelchair" />
-            <check key="lit" text="Lit" />
+            <reference ref="lit_common_no_times"/>
         </item> <!-- Dog Park -->
         <item name="Amusement/Theme Park" icon="presets/leisure/theme_park.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:tourism=theme_park" />
@@ -5665,7 +5675,7 @@
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,pavilion,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <reference ref="name_operator" />
                 <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -5700,7 +5710,7 @@
             <link wiki="Tag:building=construction" />
             <space />
             <key key="building" value="construction" />
-            <combo key="construction" text="Building type" values="allotment_house,apartments,bakehouse,barn,basilica,boathouse,bungalow,bunker,cabin,carport,cathedral,chapel,church,college,commercial,cowshed,detached,digester,dormitory,farm,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,ger,grandstand,greenhouse,hangar,hospital,hotel,house,hut,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,public,residential,retail,roof,ruins,school,service,shed,silo,stable,stilt_house,storage_tank,sty,supermarket,synagogue,temple,tent,terrace,toilets,train_station,transformer_tower,transportation,university,warehouse,wayside_shrine" values_context="building" />
+            <combo key="construction" text="Building type" values="allotment_house,apartments,bakehouse,barn,basilica,boathouse,bungalow,bunker,cabin,carport,cathedral,chapel,church,college,commercial,cowshed,detached,digester,dormitory,farm,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,ger,grandstand,greenhouse,hangar,hospital,hotel,house,hut,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,parking,pavilion,public,residential,retail,roof,ruins,school,service,shed,silo,stable,stilt_house,storage_tank,sty,supermarket,synagogue,temple,tent,terrace,toilets,train_station,transformer_tower,transportation,university,warehouse,wayside_shrine" values_context="building" />
             <optional>
                 <reference ref="name_operator" />
                 <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -5716,6 +5726,7 @@
                 <list_entry value="yes" icon="presets/misc/entrance_yes.svg" />
                 <list_entry value="main" icon="presets/misc/entrance_main.svg" />
                 <list_entry value="service" icon="presets/misc/entrance_service.svg" />
+                <list_entry value="shop" icon="presets/misc/entrance_yes.svg" />
                 <list_entry value="exit" icon="presets/misc/entrance_exit.svg" />
                 <list_entry value="emergency" icon="presets/misc/entrance_emergency.svg" />
                 <list_entry value="staircase" icon="presets/misc/entrance_yes.svg" />
@@ -5752,6 +5763,9 @@
             <space />
             <key key="man_made" value="works" />
             <text key="name" text="Name" />
+            <optional>
+                <combo key="product" text="Product" values="bakery_products,beer,bricks,dairy,electronics,food,furniture,machinery,meat,oil,packaging,rice,steel,sugar"/>
+            </optional>
         </item> <!-- Works -->
         <item name="Chimney" icon="presets/landmark/chimney.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=chimney" />
@@ -7977,7 +7991,7 @@
         <link wiki="Tag:amenity=vending_machine" />
         <space />
         <key key="amenity" value="vending_machine" />
-        <multiselect key="vending" text="Vending products" values="admission_tickets;animal_feed;bicycle_tube;cigarettes;coffee;condoms;drinks;elongated_coin;excrement_bags;food;milk;newspapers;parking_tickets;parcel_pickup;parcel_mail_in;public_transport_tickets;SIM_cards;stamps;sweets;telephone_vouchers;toys;water" values_searchable="true" />
+        <multiselect key="vending" text="Vending products" values="admission_tickets;animal_feed;bicycle_tube;cigarettes;coffee;condoms;drinks;elongated_coin;excrement_bags;food;fuel;milk;newspapers;parking_tickets;parcel_pickup;parcel_mail_in;public_transport_tickets;SIM_cards;stamps;sweets;telephone_vouchers;toys;water" values_searchable="true" />
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
         <preset_link preset_name="Payment Methods" />

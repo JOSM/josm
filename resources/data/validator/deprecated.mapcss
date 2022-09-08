@@ -2399,4 +2399,11 @@ way[shoulder=none] {
   group: tr("deprecated tagging");
 }
 
+/* Replaced by type=connectivity */
+*[type="turnlanes:turns"] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "type=connectivity";
+  group: tr("deprecated tagging");
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
