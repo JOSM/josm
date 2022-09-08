@@ -175,10 +175,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int index = filterModel.getSelectionModel().getMinSelectionIndex();
-            if (index >= 0) {
-                filterModel.removeFilter(index);
-            }
+            filterModel.removeFilters(filterModel.getSelectedIndices());
         }
     }
 
@@ -189,10 +186,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int index = userTable.convertRowIndexToModel(userTable.getSelectionModel().getMinSelectionIndex());
-            if (index >= 0 && filterModel.moveUp(index)) {
-                filterModel.getSelectionModel().setSelectionInterval(index-1, index-1);
-            }
+            filterModel.moveUp();
         }
 
         @Override
@@ -208,10 +202,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int index = userTable.convertRowIndexToModel(userTable.getSelectionModel().getMinSelectionIndex());
-            if (index >= 0 && filterModel.moveDown(index)) {
-                filterModel.getSelectionModel().setSelectionInterval(index+1, index+1);
-            }
+            filterModel.moveDown();
         }
 
         @Override

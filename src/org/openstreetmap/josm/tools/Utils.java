@@ -81,6 +81,7 @@ public final class Utils {
     private static final long MILLIS_OF_MINUTE = TimeUnit.MINUTES.toMillis(1);
     private static final long MILLIS_OF_HOUR = TimeUnit.HOURS.toMillis(1);
     private static final long MILLIS_OF_DAY = TimeUnit.DAYS.toMillis(1);
+    private static final int[][] EMPTY_INT_INT_ARRAY = new int[0][];
 
     /**
      * A list of all characters allowed in URLs
@@ -1339,6 +1340,38 @@ public final class Utils {
         }
 
         return Math.sqrt(standardDeviation / values.length);
+    }
+
+    /**
+     * Group a list of integers, mostly useful to avoid calling many selection change events
+     * for a logical interval.
+     * <br>
+     * Example: {@code groupIntegers(1, 2, 3, 5, 6, 7, 8, 9)} becomes {@code [[1, 3], [5, 9]]}
+     * @param integers The integers to group
+     * @return The integers grouped into logical blocks, [lower, higher] (inclusive)
+     * @since 18556
+     */
+    public static int[][] groupIntegers(int... integers) {
+        if (integers.length == 0) {
+            return EMPTY_INT_INT_ARRAY;
+        }
+        List<int[]> groups = new ArrayList<>();
+        int[] current = {Integer.MIN_VALUE, Integer.MIN_VALUE};
+        groups.add(current);
+        for (int row : integers) {
+            if (current[0] == Integer.MIN_VALUE) {
+                current[0] = row;
+                current[1] = row;
+                continue;
+            }
+            if (current[1] == row - 1) {
+                current[1] = row;
+            } else {
+                current = new int[] {row, row};
+                groups.add(current);
+            }
+        }
+        return groups.toArray(EMPTY_INT_INT_ARRAY);
     }
 
     /**

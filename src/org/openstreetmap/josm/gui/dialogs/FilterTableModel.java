@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Graphics2D;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.util.SortableTableModel;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The model that is used for the table in the {@link FilterDialog}.
@@ -133,9 +135,24 @@ public class FilterTableModel extends AbstractTableModel implements SortableTabl
     /**
      * Adds a new filter to the filter list.
      * @param filter The new filter
+     * @see #addFilters(Filter...) for bulk addition
      */
     public void addFilter(Filter filter) {
         if (model.addFilter(filter)) {
+            savePrefs();
+            updateFilters();
+            int size = model.getFiltersCount();
+            fireTableRowsInserted(size - 1, size - 1);
+        }
+    }
+
+    /**
+     * Adds a new filter to the filter list.
+     * @param filters The new filter
+     * @since 18556
+     */
+    public void addFilters(Filter... filters) {
+        if (model.addFilters(filters)) {
             savePrefs();
             updateFilters();
             int size = model.getFiltersCount();
@@ -165,12 +182,31 @@ public class FilterTableModel extends AbstractTableModel implements SortableTabl
     /**
      * Removes the filter that is displayed in the given row
      * @param rowIndex The index of the filter to remove
+     * @see #removeFilters(int...)
      */
     public void removeFilter(int rowIndex) {
-        if (model.removeFilter(rowIndex) != null) {
+        this.removeFilters(rowIndex);
+    }
+
+    /**
+     * Removes the filters that is displayed in the given rows
+     * @param rowIndexes The indexes of the filters to remove
+     * @since 18556
+     */
+    public void removeFilters(int... rowIndexes) {
+        // Ensure that the indexes are sorted so we can go through
+        // them in reverse
+        Arrays.sort(rowIndexes);
+        boolean modified = !model.removeFilters(rowIndexes).isEmpty();
+        if (modified) {
             savePrefs();
             updateFilters();
-            fireTableRowsDeleted(rowIndex, rowIndex);
+            int[][] groupedRows = Utils.groupIntegers(rowIndexes);
+            // Reverse to avoid having to deal with offsets in client code
+            for (int i = groupedRows.length - 1; i >= 0; i--) {
+                int[] rows = groupedRows[i];
+                fireTableRowsDeleted(rows[0], rows[1]);
+            }
         }
     }
 

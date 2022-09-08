@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -233,6 +234,18 @@ public class FilterModel implements SortableModel<Filter> {
     }
 
     /**
+     * Adds new filters to the filter list.
+     * @param newFilters The new filters
+     * @return true (as specified by {@link Collection#add})
+     * @since 18556
+     */
+    public boolean addFilters(Filter... newFilters) {
+        boolean filtersChanged = filters.addAll(Arrays.asList(newFilters));
+        updateFilterMatcher();
+        return filtersChanged;
+    }
+
+    /**
      * Moves the filters in the given rows by a number of positions.
      * @param delta negative or positive increment
      * @param rowIndexes The filter rows
@@ -269,9 +282,29 @@ public class FilterModel implements SortableModel<Filter> {
      * Removes the filter that is displayed in the given row
      * @param rowIndex The index of the filter to remove
      * @return the filter previously at the specified position
+     * @see #removeFilters(int...) for bulk removal
      */
     public Filter removeFilter(int rowIndex) {
         Filter result = filters.remove(rowIndex);
+        updateFilterMatcher();
+        return result;
+    }
+
+    /**
+     * Removes the filters that are displayed in the given rows
+     * @param rowIndexes The indexes of the filters to remove
+     * @return the filters previously at the specified positions
+     * @since 18556
+     */
+    public Collection<Filter> removeFilters(int... rowIndexes) {
+        // Ensure that the indexes are sorted so we can go through them in reverse
+        Arrays.sort(rowIndexes);
+        List<Filter> result = new ArrayList<>(rowIndexes.length);
+        for (int i = rowIndexes.length - 1; i >= 0; i--) {
+            result.add(filters.remove(i));
+        }
+        // Reverse the list so that users can iterate through the filters in the order that they were in the model.
+        Collections.reverse(result);
         updateFilterMatcher();
         return result;
     }

@@ -307,7 +307,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         int offset = 0;
         final ListSelectionModel selectionModel = getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        for (int[] row : groupRows(selectedRows)) {
+        for (int[] row : Utils.groupIntegers(selectedRows)) {
             if (members.size() > row[0] - offset) {
                 // Remove (inclusive)
                 members.subList(row[0] - offset, row[1] - offset + 1).clear();
@@ -317,34 +317,6 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         }
         selectionModel.setValueIsAdjusting(false);
         fireTableDataChanged();
-    }
-
-    /**
-     * Group rows for use in changing selection intervals, to avoid many small calls on large selections
-     * @param rows The rows to group
-     * @return A list of grouped rows, [lower, higher] (inclusive)
-     */
-    private static List<int[]> groupRows(int... rows) {
-        if (rows.length == 0) {
-            return Collections.emptyList();
-        }
-        List<int[]> groups = new ArrayList<>();
-        int[] current = {Integer.MIN_VALUE, Integer.MIN_VALUE};
-        groups.add(current);
-        for (int row : rows) {
-            if (current[0] == Integer.MIN_VALUE) {
-                current[0] = row;
-                current[1] = row;
-                continue;
-            }
-            if (current[1] == row - 1) {
-                current[1] = row;
-            } else {
-                current = new int[] {row, row};
-                groups.add(current);
-            }
-        }
-        return Collections.unmodifiableList(groups);
     }
 
     /**
@@ -488,7 +460,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
             model.clearSelection();
             final int tIdx = idx;
             // Avoiding many addSelectionInterval calls is critical for performance.
-            for (int[] row : groupRows(IntStream.of(originalSelection).map(i -> i < index ? i : i + tIdx - index).toArray())) {
+            for (int[] row : Utils.groupIntegers(IntStream.of(originalSelection).map(i -> i < index ? i : i + tIdx - index).toArray())) {
                 model.addSelectionInterval(row[0], row[1]);
             }
             model.setValueIsAdjusting(false);
