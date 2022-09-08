@@ -34,7 +34,7 @@ class InspectPrimitiveDialogTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().mapStyles();
+    static JOSMTestRules test = new JOSMTestRules().main().projection().mapStyles();
 
     /**
      * Setup test
@@ -94,6 +94,8 @@ class InspectPrimitiveDialogTest {
                 "  Center of bounding box: 47.2686046, 11.3909648\n" +
                 "  Centroid: 47.2686049, 11.3909649\n" +
                 "  Length: 193.3 m\n" +
+                "  Average segment length: 48.3 m\n" +
+                "  Standard deviation: 27.5 m\n" +
                 "  5 Nodes: \n" +
                 "    2\n" +
                 "    3\n" +

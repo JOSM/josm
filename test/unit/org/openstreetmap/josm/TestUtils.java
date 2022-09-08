@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -600,7 +601,11 @@ public final class TestUtils {
      * @param actual the value to check against <code>expected</code>
      */
     public static void assertEqualsNewline(String expected, String actual) {
-        assertEquals(expected, actual.replace(System.lineSeparator(), "\n"));
+        String[] actualArray = actual.split(System.lineSeparator(), -1);
+        String[] expectedArray = expected.split("\n", -1);
+        assertAll(() -> assertEquals(expectedArray.length, actualArray.length, "Different number of newlines"),
+                () -> assertArrayEquals(expectedArray, actualArray),
+                () -> assertEquals(expected, actual.replace(System.lineSeparator(), "\n")));
     }
 
     /**
