@@ -486,7 +486,7 @@ public final class Utils {
      * @return MD5 hash of data, string of length 32 with characters in range [0-9a-f]
      */
     public static String md5Hex(String data) {
-        MessageDigest md = null;
+        MessageDigest md;
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
@@ -1304,6 +1304,44 @@ public final class Utils {
     }
 
     /**
+     * Calculates the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of population.
+     * @param values an array of values
+     * @return standard deviation of the given array, or -1.0 if the array has less than two values
+     * @see #getStandardDeviation(double[], double)
+     * @since 18553
+     */
+    public static double getStandardDeviation(double[] values) {
+        return getStandardDeviation(values, Double.NaN);
+    }
+
+    /**
+     * Calculates the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of population with the given
+     * mean value.
+     * @param values an array of values
+     * @param mean precalculated average value of the array
+     * @return standard deviation of the given array, or -1.0 if the array has less than two values
+     * @see #getStandardDeviation(double[])
+     * @since 18553
+     */
+    public static double getStandardDeviation(double[] values, double mean) {
+        if (values.length < 2) {
+            return -1.0;
+        }
+
+        double standardDeviation = 0;
+
+        if (Double.isNaN(mean)) {
+            mean = Arrays.stream(values).average().orElse(0);
+        }
+
+        for (double length : values) {
+            standardDeviation += Math.pow(length - mean, 2);
+        }
+
+        return Math.sqrt(standardDeviation / values.length);
+    }
+
+    /**
      * A ForkJoinWorkerThread that will always inherit caller permissions,
      * unlike JDK's InnocuousForkJoinWorkerThread, used if a security manager exists.
      */
@@ -1704,7 +1742,7 @@ public final class Utils {
      */
     public static Date getJavaExpirationDate() {
         try {
-            Object value = null;
+            Object value;
             Class<?> c = Class.forName("com.sun.deploy.config.BuiltInProperties");
             try {
                 value = c.getDeclaredField("JRE_EXPIRATION_DATE").get(null);

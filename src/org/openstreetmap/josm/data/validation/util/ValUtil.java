@@ -10,8 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -44,12 +46,14 @@ public final class ValUtil {
         Point2D cell;
         double griddetail = OsmValidator.getGridDetail();
 
+        final EastNorth en1 = n1.getEastNorth();
+        final EastNorth en2 = n2.getEastNorth();
         // First, round coordinates
         // CHECKSTYLE.OFF: SingleSpaceSeparator
-        long x0 = Math.round(n1.getEastNorth().east()  * griddetail);
-        long y0 = Math.round(n1.getEastNorth().north() * griddetail);
-        long x1 = Math.round(n2.getEastNorth().east()  * griddetail);
-        long y1 = Math.round(n2.getEastNorth().north() * griddetail);
+        long x0 = Math.round(en1.east()  * griddetail);
+        long y0 = Math.round(en1.north() * griddetail);
+        long x1 = Math.round(en2.east()  * griddetail);
+        long y1 = Math.round(en2.north() * griddetail);
         // CHECKSTYLE.ON: SingleSpaceSeparator
 
         // Start of the way
@@ -66,10 +70,10 @@ public final class ValUtil {
 
         // Then floor coordinates, in case the way is in the border of the cell.
         // CHECKSTYLE.OFF: SingleSpaceSeparator
-        x0 = (long) Math.floor(n1.getEastNorth().east()  * griddetail);
-        y0 = (long) Math.floor(n1.getEastNorth().north() * griddetail);
-        x1 = (long) Math.floor(n2.getEastNorth().east()  * griddetail);
-        y1 = (long) Math.floor(n2.getEastNorth().north() * griddetail);
+        x0 = (long) Math.floor(en1.east()  * griddetail);
+        y0 = (long) Math.floor(en1.north() * griddetail);
+        x1 = (long) Math.floor(en2.east()  * griddetail);
+        y1 = (long) Math.floor(en2.north() * griddetail);
         // CHECKSTYLE.ON: SingleSpaceSeparator
 
         // Start of the way
@@ -99,9 +103,25 @@ public final class ValUtil {
      * @throws IllegalArgumentException if n1 or n2 is {@code null} or without coordinates
      */
     public static List<Point2D> getSegmentCells(Node n1, Node n2, double gridDetail) {
+        return getSegmentCells((ILatLon) n1, n2, gridDetail);
+    }
+
+    /**
+     * Returns the coordinates of all cells in a grid that a line between 2 nodes intersects with.
+     *
+     * @param n1 The first latlon.
+     * @param n2 The second latlon.
+     * @param gridDetail The detail of the grid. Bigger values give smaller
+     * cells, but a bigger number of them.
+     * @return A list with the coordinates of all cells
+     * @throws IllegalArgumentException if n1 or n2 is {@code null} or without coordinates
+     * @since 18553
+     */
+    public static List<Point2D> getSegmentCells(ILatLon n1, ILatLon n2, double gridDetail) {
         CheckParameterUtil.ensureParameterNotNull(n1, "n1");
         CheckParameterUtil.ensureParameterNotNull(n1, "n2");
-        return getSegmentCells(n1.getEastNorth(), n2.getEastNorth(), gridDetail);
+        return getSegmentCells(n1.getEastNorth(ProjectionRegistry.getProjection()), n2.getEastNorth(ProjectionRegistry.getProjection()),
+                gridDetail);
     }
 
     /**

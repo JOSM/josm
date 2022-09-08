@@ -127,7 +127,7 @@ class UtilsTest {
      */
     @Test
     void testPositionListString() {
-        assertEquals("1", Utils.getPositionListString(Arrays.asList(1)));
+        assertEquals("1", Utils.getPositionListString(Collections.singletonList(1)));
         assertEquals("1-2", Utils.getPositionListString(Arrays.asList(1, 2)));
         assertEquals("1-3", Utils.getPositionListString(Arrays.asList(1, 2, 3)));
         assertEquals("1-3", Utils.getPositionListString(Arrays.asList(3, 1, 2)));
@@ -250,7 +250,7 @@ class UtilsTest {
      */
     @Test
     void testJoinAsHtmlUnorderedList() {
-        List<? extends Object> items = Arrays.asList("1", Integer.valueOf(2));
+        List<?> items = Arrays.asList("1", 2);
         assertEquals("<ul><li>1</li><li>2</li></ul>", Utils.joinAsHtmlUnorderedList(items));
         assertEquals("<ul></ul>", Utils.joinAsHtmlUnorderedList(Collections.emptyList()));
     }
@@ -530,5 +530,18 @@ class UtilsTest {
     void testExecOutput() throws Exception {
         final String output = Utils.execOutput(Arrays.asList("echo", "Hello", "World"));
         assertEquals("Hello World", output);
+    }
+
+    /**
+     * Test of {@link Utils#getStandardDeviation(double[])} and {@link Utils#getStandardDeviation(double[], double)}
+     */
+    @Test
+    void testGetStandardDeviation() {
+        assertEquals(0.0, Utils.getStandardDeviation(new double[]{1, 1, 1, 1}));
+        assertEquals(0.0, Utils.getStandardDeviation(new double[]{1, 1, 1, 1}, 1.0));
+        assertEquals(0.5, Utils.getStandardDeviation(new double[]{1, 1, 2, 2}));
+
+        assertEquals(-1.0, Utils.getStandardDeviation(new double[]{}));
+        assertEquals(-1.0, Utils.getStandardDeviation(new double[]{0}));
     }
 }

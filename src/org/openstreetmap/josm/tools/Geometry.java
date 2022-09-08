@@ -287,13 +287,16 @@ public final class Geometry {
      * @param p3 the coordinates of the start point of the second specified line segment
      * @param p4 the coordinates of the end point of the second specified line segment
      * @return EastNorth null if no intersection was found, the EastNorth coordinates of the intersection otherwise
+     * @see #getSegmentSegmentIntersection(ILatLon, ILatLon, ILatLon, ILatLon)
      */
     public static EastNorth getSegmentSegmentIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
-
-        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + " invalid");
-        CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + " invalid");
-        CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + " invalid");
-        CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + " invalid");
+        // see the ILatLon version for an explanation why the checks are in the if statement
+        if (!(p1.isValid() && p2.isValid() && p3.isValid() && p4.isValid())) {
+            CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + " invalid");
+            CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + " invalid");
+            CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + " invalid");
+            CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + " invalid");
+        }
 
         double x1 = p1.getX();
         double y1 = p1.getY();
@@ -303,6 +306,63 @@ public final class Geometry {
         double y3 = p3.getY();
         double x4 = p4.getX();
         double y4 = p4.getY();
+        double[] en = getSegmentSegmentIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
+        if (en != null && en.length == 2) {
+            return new EastNorth(en[0], en[1]);
+        }
+        return null;
+    }
+
+    /**
+     * Finds the intersection of two line segments.
+     * @param p1 the coordinates of the start point of the first specified line segment
+     * @param p2 the coordinates of the end point of the first specified line segment
+     * @param p3 the coordinates of the start point of the second specified line segment
+     * @param p4 the coordinates of the end point of the second specified line segment
+     * @return LatLon null if no intersection was found, the LatLon coordinates of the intersection otherwise
+     * @see #getSegmentSegmentIntersection(EastNorth, EastNorth, EastNorth, EastNorth)
+     * @since 18553
+     */
+    public static ILatLon getSegmentSegmentIntersection(ILatLon p1, ILatLon p2, ILatLon p3, ILatLon p4) {
+        // Avoid lambda creation if at all possible -- this pretty much removes all memory allocations
+        // from this method (11.4 GB to 0) when testing #20716 with Mesa County, CO (overpass download).
+        // There was also a 2/3 decrease in CPU samples for the method.
+        if (!(p1.isLatLonKnown() && p2.isLatLonKnown() && p3.isLatLonKnown() && p4.isLatLonKnown())) {
+            CheckParameterUtil.ensureThat(p1.isLatLonKnown(), () -> p1 + " invalid");
+            CheckParameterUtil.ensureThat(p2.isLatLonKnown(), () -> p2 + " invalid");
+            CheckParameterUtil.ensureThat(p3.isLatLonKnown(), () -> p3 + " invalid");
+            CheckParameterUtil.ensureThat(p4.isLatLonKnown(), () -> p4 + " invalid");
+        }
+
+        double x1 = p1.lon();
+        double y1 = p1.lat();
+        double x2 = p2.lon();
+        double y2 = p2.lat();
+        double x3 = p3.lon();
+        double y3 = p3.lat();
+        double x4 = p4.lon();
+        double y4 = p4.lat();
+        double[] en = getSegmentSegmentIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
+        if (en != null && en.length == 2) {
+            return new LatLon(en[1], en[0]);
+        }
+        return null;
+    }
+
+    /**
+     * Get the segment segment intersection of two line segments
+     * @param x1 The x coordinate of the first point (first segment)
+     * @param y1 The y coordinate of the first point (first segment)
+     * @param x2 The x coordinate of the second point (first segment)
+     * @param y2 The y coordinate of the second point (first segment)
+     * @param x3 The x coordinate of the third point (second segment)
+     * @param y3 The y coordinate of the third point (second segment)
+     * @param x4 The x coordinate of the fourth point (second segment)
+     * @param y4 The y coordinate of the fourth point (second segment)
+     * @return {@code null} if no intersection was found, otherwise [x, y]
+     */
+    private static double[] getSegmentSegmentIntersection(double x1, double y1, double x2, double y2, double x3, double y3,
+            double x4, double y4) {
 
         //TODO: do this locally.
         //TODO: remove this check after careful testing
@@ -333,7 +393,7 @@ public final class Geometry {
             if (u > -1e-8 && u < 1+1e-8 && v > -1e-8 && v < 1+1e-8) {
                 if (u < 0) u = 0;
                 if (u > 1) u = 1.0;
-                return new EastNorth(x1+a1*u, y1+a2*u);
+                return new double[] {x1+a1*u, y1+a2*u};
             } else {
                 return null;
             }

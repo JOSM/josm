@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -353,13 +354,11 @@ public abstract class CrossingWays extends Test {
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
             final WaySegment es1 = new WaySegment(w, i);
-            final EastNorth en1 = es1.getFirstNode().getEastNorth();
-            final EastNorth en2 = es1.getSecondNode().getEastNorth();
-            if (en1 == null || en2 == null) {
+            if (!es1.getFirstNode().isLatLonKnown() || !es1.getSecondNode().isLatLonKnown()) {
                 Logging.warn("Crossing ways test skipped " + es1);
                 continue;
             }
-            for (List<WaySegment> segments : getSegments(cellSegments, en1, en2)) {
+            for (List<WaySegment> segments : getSegments(cellSegments, es1.getFirstNode(), es1.getSecondNode())) {
                 for (WaySegment es2 : segments) {
                     List<Way> prims;
                     List<WaySegment> highlight;
@@ -409,6 +408,21 @@ public abstract class CrossingWays extends Test {
      * @return A list with all the cells the segment crosses
      */
     public static List<List<WaySegment>> getSegments(Map<Point2D, List<WaySegment>> cellSegments, EastNorth n1, EastNorth n2) {
+        return ValUtil.getSegmentCells(n1, n2, OsmValidator.getGridDetail()).stream()
+                .map(cell -> cellSegments.computeIfAbsent(cell, k -> new ArrayList<>()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all the cells this segment crosses.  Each cell contains the list
+     * of segments already processed
+     * @param cellSegments map with already collected way segments
+     * @param n1 The first EastNorth
+     * @param n2 The second EastNorth
+     * @return A list with all the cells the segment crosses
+     * @since 18553
+     */
+    public static List<List<WaySegment>> getSegments(Map<Point2D, List<WaySegment>> cellSegments, ILatLon n1, ILatLon n2) {
         return ValUtil.getSegmentCells(n1, n2, OsmValidator.getGridDetail()).stream()
                 .map(cell -> cellSegments.computeIfAbsent(cell, k -> new ArrayList<>()))
                 .collect(Collectors.toList());

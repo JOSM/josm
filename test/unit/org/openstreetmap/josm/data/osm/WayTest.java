@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -48,9 +49,9 @@ class WayTest {
         ds.addPrimitive(n4);
         Way way = new Way(1);
         assertFalse(way.getBBox().isValid());
-        way.setNodes(Arrays.asList(n1));
+        way.setNodes(Collections.singletonList(n1));
         assertFalse(way.getBBox().isValid());
-        way.setNodes(Arrays.asList(n2));
+        way.setNodes(Collections.singletonList(n2));
         assertTrue(way.getBBox().isValid());
         way.setNodes(Arrays.asList(n1, n2));
         assertTrue(way.getBBox().isValid());
@@ -115,7 +116,7 @@ class WayTest {
         way.removeNodes(new HashSet<>(Arrays.asList(n3, n4)));
         assertEquals(Arrays.asList(n1, n2, n1), way.getNodes());
         way.setNodes(Arrays.asList(n1, n2, n3, n4, n1));
-        way.removeNodes(new HashSet<>(Arrays.asList(n1)));
+        way.removeNodes(new HashSet<>(Collections.singletonList(n1)));
         assertEquals(Arrays.asList(n2, n3, n4, n2), way.getNodes());
     }
 
@@ -133,5 +134,29 @@ class WayTest {
     @Test
     void testLoadIAE() {
         assertThrows(IllegalArgumentException.class, () -> new Way().load(new NodeData()));
+    }
+
+    @Test
+    void getLongestSegmentLength() {
+        DataSet ds = new DataSet();
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        Node n4 = new Node(4);
+        n1.setCoor(new LatLon(0.01, 0.01));
+        n2.setCoor(new LatLon(0.02, 0.02));
+        n3.setCoor(new LatLon(0.03, 0.03));
+        n4.setCoor(new LatLon(0.05, 0.05));
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(n3);
+        ds.addPrimitive(n4);
+        Way way = new Way(1);
+        ds.addPrimitive(way);
+
+        assertEquals(0.0, way.getLongestSegmentLength());
+        way.setNodes(Arrays.asList(n1, n2, n2, n3, n4));
+
+        assertEquals(3148.5902810874577, way.getLongestSegmentLength());
     }
 }
