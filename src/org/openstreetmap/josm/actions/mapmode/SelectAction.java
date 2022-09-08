@@ -42,6 +42,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -130,6 +132,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             return c;
         }
     }
+
+    /** Whether nodes should be merged with other primitives by default when they are being dragged */
+    private static final CachingProperty<Boolean> MERGE_BY_DEFAULT
+            = new BooleanProperty("edit.move.merge-by-default", false).cached();
 
     private boolean lassoMode;
     private boolean repeatedKeySwitchLassoOption;
@@ -319,7 +325,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             if (dragInProgress()) {
                 // only consider merge if ctrl is pressed and there are nodes in
                 // the selection that could be merged
-                if (!platformMenuShortcutKeyMask || getLayerManager().getEditDataSet().getSelectedNodes().isEmpty()) {
+                if (!isMergeRequested() || getLayerManager().getEditDataSet().getSelectedNodes().isEmpty()) {
                     c = "move";
                     break;
                 }
@@ -496,6 +502,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         if (mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime > mouseDownTime)
             return;
 
+        updateKeyModifiers(e);
+
         cancelDrawMode = true;
         if (mode == Mode.SELECT) {
             // Unregisters selectionManager if ctrl has been pressed after mouse click on Mac OS X in order to move the map
@@ -519,7 +527,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         if (mode == Mode.MOVE) {
             // If ctrl is pressed we are in merge mode. Look for a nearby node,
             // highlight it and adjust the cursor accordingly.
-            final boolean canMerge = platformMenuShortcutKeyMask && !getLayerManager().getEditDataSet().getSelectedNodes().isEmpty();
+            final boolean canMerge = isMergeRequested() && !getLayerManager().getEditDataSet().getSelectedNodes().isEmpty();
             final OsmPrimitive p = canMerge ? findNodeToMergeTo(e.getPoint()) : null;
             boolean needsRepaint = removeHighlighting();
             if (p != null) {
@@ -891,7 +899,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         } else {
             // if small number of elements were moved,
             updateKeyModifiers(e);
-            if (platformMenuShortcutKeyMask) mergePrims(e.getPoint());
+            if (isMergeRequested()) mergePrims(e.getPoint());
         }
     }
 
@@ -938,6 +946,14 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         return elementsToTest.stream()
                 .flatMap(n -> n.referrers(Way.class))
                 .anyMatch(Way::isDisabledAndHidden);
+    }
+
+    /**
+     * Check if dragged node should be merged when moving it over another primitive
+     * @return true if merge is requested
+     */
+    private boolean isMergeRequested() {
+        return MERGE_BY_DEFAULT.get() ^ platformMenuShortcutKeyMask;
     }
 
     /**
