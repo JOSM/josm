@@ -8005,7 +8005,7 @@
             <check key="payment:notes" text="Notes" text_context="payment" match="keyvalue" />
         </checkgroup>
         <space />
-        <combo key="payment:debit_cards" text="Debit cards" values="no" match="keyvalue" />
+        <combo key="payment:debit_cards" text="Debit cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
             <check key="payment:bankaxess" text="BankAxess" match="keyvalue" />
             <check key="payment:bancomat" text="Bancomat" match="keyvalue" />
@@ -8017,7 +8017,7 @@
             <check key="payment:visa_electron" text="Visa Electron" match="keyvalue" />
         </checkgroup>
         <space />
-        <combo key="payment:credit_cards" text="Credit cards" values="no" match="keyvalue" />
+        <combo key="payment:credit_cards" text="Credit cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
             <check key="payment:american_express" text="American Express" match="keyvalue" />
             <check key="payment:diners_club" text="Diners Club" match="keyvalue" />
@@ -8029,7 +8029,7 @@
         <space />
         <check key="payment:contactless" text="Contactless payment" match="keyvalue" />
         <space />
-        <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="no" match="keyvalue" />
+        <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
             <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" />
             <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" />
@@ -8039,7 +8039,7 @@
             <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" />
         </checkgroup>
         <space />
-        <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="no" match="keyvalue" />
+        <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
             <check key="payment:bitcoin" text="Bitcoin" match="keyvalue" />
             <check key="payment:dogecoin" text="Dogecoin" match="keyvalue" />
