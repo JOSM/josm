@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapMover;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
+import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -91,6 +92,8 @@ public class LafPreference implements SubPreferenceSetting {
     private final JCheckBox showCoor = new JCheckBox(tr("Show node coordinates in selection lists"));
     private final JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
     private final JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
+    private final JCheckBox previewPropsOnHover = new JCheckBox(tr("Preview object properties on mouse hover"));
+    private final JCheckBox previewPrioritizeSelection = new JCheckBox(tr("Prefer showing information for selected objects"));
     private final JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
     private final JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
     private final JCheckBox dialogGeometry = new JCheckBox(tr("Remember dialog geometries"));
@@ -174,6 +177,16 @@ public class LafPreference implements SubPreferenceSetting {
         panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
         panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
 
+        previewPropsOnHover.setToolTipText(
+                tr("Show tags and relation memberships of objects in the properties dialog when hovering over them with the mouse pointer"));
+        previewPropsOnHover.setSelected(PropertiesDialog.PROP_PREVIEW_ON_HOVER.get());
+        panel.add(previewPropsOnHover, GBC.eop().insets(20, 0, 0, 0));
+
+        previewPrioritizeSelection.setToolTipText(
+            tr("Always show information for selected objects when something is selected instead of the hovered object"));
+        previewPrioritizeSelection.setSelected(PropertiesDialog.PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.get());
+        panel.add(previewPrioritizeSelection, GBC.eop().insets(40, 0, 0, 0));
+
         dynamicButtons.setToolTipText(tr("Display buttons in right side menus only when mouse is inside the element"));
         dynamicButtons.setSelected(ToggleDialog.PROP_DYNAMIC_BUTTONS.get());
         panel.add(dynamicButtons, GBC.eop().insets(20, 0, 0, 0));
@@ -238,6 +251,8 @@ public class LafPreference implements SubPreferenceSetting {
         Config.getPref().putBoolean("osm-primitives.showcoor", showCoor.isSelected());
         Config.getPref().putBoolean("osm-primitives.localize-name", showLocalizedName.isSelected());
         MapFrame.MODELESS.put(modeless.isSelected());
+        PropertiesDialog.PROP_PREVIEW_ON_HOVER.put(previewPropsOnHover.isSelected());
+        PropertiesDialog.PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.put(previewPrioritizeSelection.isSelected());
         Config.getPref().putBoolean(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         Config.getPref().putBoolean(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
         WindowGeometry.GUI_GEOMETRY_ENABLED.put(dialogGeometry.isSelected());
