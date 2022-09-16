@@ -68,7 +68,6 @@ import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -635,7 +634,18 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
         Collection<? extends IPrimitive> newSel = OsmDataManager.getInstance().getInProgressISelection();
-        int newSelSize = newSel.size();
+
+        updateUi(newSel);
+    }
+
+    private void autoresizeTagTable() {
+        if (PROP_AUTORESIZE_TAGS_TABLE.get()) {
+            // resize table's columns to fit content
+            TableHelper.computeColumnsWidth(tagTable);
+        }
+    }
+
+    private void updateUi(Collection<? extends IPrimitive> primitives) {
         IRelation<?> selectedRelation = null;
         String selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
         if (selectedTag == null && tagTable.getSelectedRowCount() == 1) {
@@ -645,6 +655,33 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             selectedRelation = (IRelation<?>) membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
         }
 
+        updateTagTableData(primitives);
+        updateMembershipTableData(primitives);
+
+        updateMembershipTableVisibility();
+        updateActionsEnabledState();
+        updateTagTableVisibility(primitives);
+
+        setupTaginfoNationalActions(primitives);
+        autoresizeTagTable();
+
+        int selectedIndex;
+        if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {
+            tagTable.changeSelection(selectedIndex, 0, false, false);
+        } else if (selectedRelation != null && (selectedIndex = findViewRow(membershipTable, membershipData, selectedRelation)) != -1) {
+            membershipTable.changeSelection(selectedIndex, 0, false, false);
+        } else if (tagData.getRowCount() > 0) {
+            tagTable.changeSelection(0, 0, false, false);
+        } else if (membershipData.getRowCount() > 0) {
+            membershipTable.changeSelection(0, 0, false, false);
+        }
+
+        updateTitle(primitives);
+    }
+
+    private void updateTagTableData(Collection<? extends IPrimitive> primitives) {
+        int newSelSize = primitives.size();
+
         // re-load tag data
         tagData.setRowCount(0);
 
@@ -653,7 +690,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         final Map<String, String> tags = new HashMap<>();
         valueCount.clear();
         Set<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
-        for (IPrimitive osm : newSel) {
+        for (IPrimitive osm : primitives) {
             types.add(TaggingPresetType.forPrimitive(osm));
             osm.visitKeys((p, key, value) -> {
                 if (displayDiscardableKeys || !AbstractPrimitive.getDiscardableKeys().contains(key)) {
@@ -679,14 +716,18 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                     ? e.getValue().keySet().iterator().next() : tr("<different>"));
         }
 
+        presets.updatePresets(types, tags, presetHandler);
+    }
+
+    private void updateMembershipTableData(Collection<? extends IPrimitive> primitives) {
         membershipData.setRowCount(0);
 
         Map<IRelation<?>, MemberInfo> roles = new HashMap<>();
-        for (IPrimitive primitive: newSel) {
-            for (IPrimitive ref: primitive.getReferrers(true)) {
+        for (IPrimitive primitive : primitives) {
+            for (IPrimitive ref : primitive.getReferrers(true)) {
                 if (ref instanceof IRelation && !ref.isIncomplete() && !ref.isDeleted()) {
                     IRelation<?> r = (IRelation<?>) ref;
-                    MemberInfo mi = roles.computeIfAbsent(r, ignore -> new MemberInfo(newSel));
+                    MemberInfo mi = roles.computeIfAbsent(r, ignore -> new MemberInfo(primitives));
                     int i = 1;
                     for (IRelationMember<?> m : r.getMembers()) {
                         if (m.getMember() == primitive) {
@@ -707,40 +748,32 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         for (IRelation<?> r: sortedRelations) {
             membershipData.addRow(new Object[]{r, roles.get(r)});
         }
+    }
 
-        presets.updatePresets(types, tags, presetHandler);
-
+    private void updateMembershipTableVisibility() {
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);
+    }
 
-        OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
-        boolean isReadOnly = ds != null && ds.isLocked();
-        boolean hasSelection = !newSel.isEmpty();
+    private void updateTagTableVisibility(Collection<? extends IPrimitive> primitives) {
+        boolean hasSelection = !primitives.isEmpty();
         boolean hasTags = hasSelection && tagData.getRowCount() > 0;
-        boolean hasMemberships = hasSelection && membershipData.getRowCount() > 0;
-        addAction.setEnabled(!isReadOnly && hasSelection);
-        editAction.setEnabled(!isReadOnly && (hasTags || hasMemberships));
-        deleteAction.setEnabled(!isReadOnly && (hasTags || hasMemberships));
+
         tagTable.setVisible(hasTags);
         tagTable.getTableHeader().setVisible(hasTags);
         tagTableFilter.setVisible(hasTags);
         selectSth.setVisible(!hasSelection);
         pluginHook.setVisible(hasSelection);
+    }
 
-        setupTaginfoNationalActions(newSel);
-        autoresizeTagTable();
+    private void updateActionsEnabledState() {
+        addAction.updateEnabledState();
+        editAction.updateEnabledState();
+        deleteAction.updateEnabledState();
+    }
 
-        int selectedIndex;
-        if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {
-            tagTable.changeSelection(selectedIndex, 0, false, false);
-        } else if (selectedRelation != null && (selectedIndex = findViewRow(membershipTable, membershipData, selectedRelation)) != -1) {
-            membershipTable.changeSelection(selectedIndex, 0, false, false);
-        } else if (hasTags) {
-            tagTable.changeSelection(0, 0, false, false);
-        } else if (hasMemberships) {
-            membershipTable.changeSelection(0, 0, false, false);
-        }
-
+    private void updateTitle(Collection<? extends IPrimitive> primitives) {
+        int newSelSize = primitives.size();
         if (tagData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
             if (newSelSize > 1) {
                 setTitle(tr("Objects: {2} / Tags: {0} / Memberships: {1}",
@@ -751,13 +784,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             }
         } else {
             setTitle(tr("Tags/Memberships"));
-        }
-    }
-
-    private void autoresizeTagTable() {
-        if (PROP_AUTORESIZE_TAGS_TABLE.get()) {
-            // resize table's columns to fit content
-            TableHelper.computeColumnsWidth(tagTable);
         }
     }
 
@@ -1250,6 +1276,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             } finally {
                 isPerforming.set(false);
             }
+        }
+
+        @Override
+        protected final void updateEnabledState() {
+            DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
+            setEnabled(ds != null && !ds.isLocked() &&
+                    !Utils.isEmpty(OsmDataManager.getInstance().getInProgressSelection()));
         }
     }
 
