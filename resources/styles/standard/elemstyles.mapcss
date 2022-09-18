@@ -4016,7 +4016,7 @@ area[landuse=orchard] {
     fill-color: green#b1e0c2;
 }
 area[landuse=quarry] {
-    fill-color: quarry#888888;
+    fill-color: quarry#a6945b;
 }
 area[landuse=landfill] {
     fill-color: landfill#663300;
@@ -4075,7 +4075,7 @@ area[landuse=greenfield] {
     fill-color: greenfield#b1ec5c;
 }
 area[landuse=railway] {
-    fill-color: railland#888888;
+    fill-color: railland#80654e;
 }
 area[landuse=construction] {
     fill-color: construction#ffff00;
