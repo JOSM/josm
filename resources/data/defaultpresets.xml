@@ -269,7 +269,7 @@
         <combo key="fee" text="Fee" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_no_i18n="true" values_sort="false" />
     </chunk>
     <chunk id="parking_name_ref">
-        <combo key="parking" text="Type of parking" values="carports,garage_boxes,lane,multi-storey,rooftop,sheds,street_side,surface,underground" values_context="parking" />
+        <combo key="parking" text="Type of parking" values="carports,garage_boxes,lane,layby,multi-storey,rooftop,sheds,street_side,surface,underground" values_context="parking" />
         <text key="name" text="Name" />
         <text key="ref" text="Reference number" />
     </chunk>
