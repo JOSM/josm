@@ -601,7 +601,7 @@ public final class TestUtils {
      * @param actual the value to check against <code>expected</code>
      */
     public static void assertEqualsNewline(String expected, String actual) {
-        String[] actualArray = actual.split(System.lineSeparator(), -1);
+        String[] actualArray = actual.replace(System.lineSeparator(), "\n").split("\n", -1);
         String[] expectedArray = expected.split("\n", -1);
         assertAll(() -> assertEquals(expectedArray.length, actualArray.length, "Different number of newlines"),
                 () -> assertArrayEquals(expectedArray, actualArray),
