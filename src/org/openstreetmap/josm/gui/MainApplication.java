@@ -856,6 +856,11 @@ public class MainApplication {
         if (contentPane instanceof JComponent) {
             contentPanePrivate = (JComponent) contentPane;
         }
+        // This should never happen, but it does. See #22183.
+        // Hopefully this code block will be temporary until we figure out what is actually going on.
+        if (!GraphicsEnvironment.isHeadless() && contentPanePrivate == null) {
+            throw new JosmRuntimeException("MainFrame contentPane is " + (contentPane == null ? "null" : contentPane.getClass().getName()));
+        }
         mainPanel = mainFrame.getPanel();
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
