@@ -2401,4 +2401,13 @@ way[shoulder=none] {
   group: tr("deprecated tagging");
 }
 
+/* temporary URLs, can be exteded to other websites and other keys e.g. "url" or "website", #22397 */
+*[image][image=~/^https:\/\/westnordost.de\/p\//] {
+  throwWarning: tr("{0} with a temporary URL which may be outdated very soon", "{0.key}");
+  fixRemove: "{0.key}";
+  assertMatch: "node image=https://westnordost.de/p/17484.jpg";
+  assertNoMatch: "node image=https://web.archive.org/web/20220623215400/https://westnordost.de/p/97331.jpg";
+  assertNoMatch: "node image=https://commons.wikimedia.org/wiki/File:2015-05-13_Basteibr%C3%BCcke-.jpg";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
