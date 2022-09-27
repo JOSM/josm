@@ -5,11 +5,13 @@ import javax.swing.Action;
 
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTable;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 
@@ -75,8 +77,13 @@ public interface IRelationEditorActionAccess {
     default IRelation<?> getChangedRelation() {
         final Relation newRelation;
         final Relation oldRelation = getEditor().getRelation();
-        if (oldRelation != null && oldRelation.getDataSet() != null && oldRelation.getDataSet().isLocked()) {
+        boolean isUploadInProgress = MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)
+                .stream().anyMatch(OsmDataLayer::isUploadInProgress);
+        if (isUploadInProgress || oldRelation != null && oldRelation.getDataSet() != null && oldRelation.getDataSet().isLocked()) {
             // If the dataset is locked, then we cannot change the relation. See JOSM #22024.
+            // We should also avoid changing the relation if there is an upload in progress. See JOSM #22268/#22398.
+            // There appears to be a race condition where a dataset might not be locked in the check, then is locked while using the
+            // copy relation constructor.
             // This is due to the `setMembers` -> `addReferrer` call chain requires that the dataset is not read only.
             return oldRelation;
         } else if (oldRelation != null) {
