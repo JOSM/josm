@@ -549,6 +549,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         List<String> supportedMimeTypes = new ArrayList<>(Arrays.asList(ImageIO.getReaderMIMETypes()));
         supportedMimeTypes.add("image/jpgpng");         // used by ESRI
         supportedMimeTypes.add("image/png8");           // used by geoserver
+        supportedMimeTypes.add("image/png; mode=8bit"); // used by MapServer
         if (supportedMimeTypes.contains("image/jpeg")) {
             supportedMimeTypes.add("image/jpg"); // sometimes misspelled by Arcgis
         }
@@ -606,10 +607,14 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
         if (layer.format == null) {
             // no format found - it's mandatory parameter - can't use this layer
-            Logging.warn(tr("Can''t use layer {0} because no supported formats where found. Layer is available in formats: {1}",
+            Logging.warn(tr("Can''t use layer {0} because no supported formats were found. Layer is available in formats: {1}",
                     layer.getUserTitle(),
                     String.join(", ", unsupportedFormats)));
             return null;
+        }
+        // Java has issues if spaces are not URL encoded. Ensure that we URL encode the spaces.
+        if (layer.format.contains(" ")) {
+            layer.format = layer.format.replace(" ", "&20");
         }
         return layer;
     }
