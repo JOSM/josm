@@ -614,7 +614,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
         // Java has issues if spaces are not URL encoded. Ensure that we URL encode the spaces.
         if (layer.format.contains(" ")) {
-            layer.format = layer.format.replace(" ", "&20");
+            layer.format = layer.format.replace(" ", "%20");
         }
         return layer;
     }

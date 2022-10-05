@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,17 +11,27 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
@@ -35,11 +46,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
-
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 
 /**
  * Unit tests for class {@link WMTSTileSource}.
@@ -400,7 +407,7 @@ class WMTSTileSourceTest {
                 "</imagery>"
                 )));
 
-        Config.getPref().putList("imagery.layers.sites", Arrays.asList(tileServer.url("//maps")));
+        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("//maps")));
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
 
         assertEquals(1, ImageryLayerInfo.instance.getDefaultLayers().size());
@@ -482,5 +489,22 @@ class WMTSTileSourceTest {
         } finally {
             FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"image/jpgpng", "image/png8", "image/png; mode=8bit", "image/jpeg", "image/jpg"})
+    void testSupportedMimeTypesUrlEncode(String mimeType, @TempDir File temporaryDirectory)
+            throws IOException, WMTSGetCapabilitiesException, ReflectiveOperationException {
+        final String data = FileUtils.readFileToString(new File(TestUtils.getTestDataRoot() +
+                "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml"), StandardCharsets.UTF_8)
+                .replace("image/jpgpng", mimeType);
+        File file = new File(temporaryDirectory, "testSupportedMimeTypes.xml");
+        FileUtils.writeStringToFile(file, data, StandardCharsets.UTF_8);
+        WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(file.toURI().toURL().toExternalForm(), Collections.emptyMap());
+        assertEquals(2, capabilities.getLayers().size());
+        Field format = WMTSTileSource.Layer.class.getDeclaredField("format");
+        ReflectionUtils.setObjectsAccessible(format);
+        assertAll(capabilities.getLayers().stream().map(layer -> assertDoesNotThrow(() -> format.get(layer)))
+                        .map(layer -> () -> assertEquals(mimeType.replace(" ", "%20"), layer)));
     }
 }
