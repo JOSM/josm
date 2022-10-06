@@ -514,7 +514,8 @@ public class MainApplication {
      * @since 12636 (specialized version of {@link Lifecycle#exitJosm})
      */
     public static boolean exitJosm(boolean exit, int exitCode, SaveLayersDialog.Reason reason) {
-        final boolean proceed = Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
+        final boolean proceed = layerManager.getLayers().isEmpty() ||
+                Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
                 SaveLayersDialog.saveUnsavedModifications(layerManager.getLayers(),
                         reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
         if (proceed) {
