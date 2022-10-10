@@ -301,7 +301,7 @@ public class FilterModel implements SortableModel<Filter> {
         Arrays.sort(rowIndexes);
         List<Filter> result = new ArrayList<>(rowIndexes.length);
         for (int i = rowIndexes.length - 1; i >= 0; i--) {
-            result.add(filters.remove(i));
+            result.add(filters.remove(rowIndexes[i]));
         }
         // Reverse the list so that users can iterate through the filters in the order that they were in the model.
         Collections.reverse(result);
