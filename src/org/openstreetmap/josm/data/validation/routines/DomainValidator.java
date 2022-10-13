@@ -441,7 +441,6 @@ public final class DomainValidator extends AbstractValidator {
         "broker", // broker DOTBROKER REGISTRY LTD
         "brother", // brother Brother Industries, Ltd.
         "brussels", // brussels DNS.be vzw
-        "bugatti", // bugatti Bugatti International SA
         "build", // build Plan Bee LLC
         "builders", // builders Atomic Madison, LLC
         "business", // business Spring Cross, LLC
@@ -456,7 +455,6 @@ public final class DomainValidator extends AbstractValidator {
         "cam", // cam AC Webconnecting Holding B.V.
         "camera", // camera Atomic Maple, LLC
         "camp", // camp Delta Dynamite, LLC
-        "cancerresearch", // cancerresearch Australian Cancer Research Foundation
         "canon", // canon Canon Inc.
         "capetown", // capetown ZA Central Registry NPC trading as ZA Central Registry
         "capital", // capital Delta Mill, LLC
