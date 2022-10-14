@@ -1,22 +1,134 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1024" height="1376" viewBox="-305 -516 610 820">
-<title>Wikimedia Commons Logo</title>
-<defs>
-	<clipPath id="c"><circle r="298"/></clipPath>
-</defs>
-<circle r="100" fill="#900"/>
-<g fill="#069">
-	<g id="arrow" clip-path="url(#c)">
-		<path d="m-11 180v118h22v-118"/>
-		<path d="m-43 185l43-75 43 75"/>
-	</g>
-	<g id="arrows3">
-		<use xlink:href="#arrow" transform="rotate(45)"/>
-		<use xlink:href="#arrow" transform="rotate(90)"/>
-		<use xlink:href="#arrow" transform="rotate(135)"/>
-	</g>
-	<use xlink:href="#arrows3" transform="scale(-1 1)"/>
-	<path id="blue_path" transform="rotate(-45)" stroke="#069" stroke-width="84" fill="none" d="M 0,-256 A 256 256 0 1 0 256,0 C 256,-100 155,-150 250,-275"/>
-	<path id="arrow_top" d="m-23-515s-36 135-80 185 116-62 170-5-90-180-90-180z"/>
-</g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="12"
+   height="16.000002"
+   viewBox="0 0 12 16.000002"
+   id="svg29"
+   sodipodi:docname="wikimedia_commons2.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview31"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="32"
+     inkscape:cx="4.640625"
+     inkscape:cy="8.609375"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g27">
+    <inkscape:grid
+       type="xygrid"
+       id="grid850" />
+  </sodipodi:namedview>
+  <title
+     id="title2">Wikimedia Commons Logo</title>
+  <defs
+     id="defs7">
+    <clipPath
+       id="c">
+      <circle
+         r="298"
+         id="circle4"
+         cx="0"
+         cy="0" />
+    </clipPath>
+  </defs>
+  <ellipse
+     fill="#990000"
+     id="circle9"
+     cx="5.9994855"
+     cy="10.135287"
+     style="stroke-width:0.0196799"
+     rx="1.9679534"
+     ry="1.9680204" />
+  <g
+     fill="#006699"
+     id="g27"
+     transform="matrix(0.01967953,0,0,0.0196802,5.9995,10.135303)">
+    <g
+       id="arrow"
+       clip-path="url(#c)">
+      <path
+         d="M -11,180 V 298 H 11 V 180"
+         id="path11" />
+      <path
+         d="M -43,185 0,110 43,185"
+         id="path13" />
+    </g>
+    <g
+       id="arrows3">
+      <use
+         xlink:href="#arrow"
+         transform="rotate(45)"
+         id="use16"
+         x="0"
+         y="0"
+         width="100%"
+         height="100%" />
+      <use
+         xlink:href="#arrow"
+         transform="rotate(90)"
+         id="use18"
+         x="0"
+         y="0"
+         width="100%"
+         height="100%" />
+      <use
+         xlink:href="#arrow"
+         transform="rotate(135)"
+         id="use20"
+         x="0"
+         y="0"
+         width="100%"
+         height="100%" />
+    </g>
+    <use
+       xlink:href="#arrows3"
+       transform="scale(-1,1)"
+       id="use23"
+       x="0"
+       y="0"
+       width="100%"
+       height="100%" />
+    <path
+       id="blue_path"
+       transform="rotate(-45)"
+       stroke="#006699"
+       stroke-width="84"
+       fill="none"
+       d="M 0,-256 A 256,256 0 1 0 256,0 c 0,-100 -101,-150 -6,-275" />
+    <path
+       id="arrow_top"
+       d="m -23,-515 c 0,0 -36,135 -80,185 -44,50 116,-62 170,-5 54,57 -90,-180 -90,-180 z" />
+  </g>
+  <metadata
+     id="metadata848">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Wikimedia Commons Logo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
 </svg>
