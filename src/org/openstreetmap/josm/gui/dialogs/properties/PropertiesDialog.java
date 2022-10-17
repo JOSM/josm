@@ -148,7 +148,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class PropertiesDialog extends ToggleDialog
 implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListener, 
         DataSetListenerAdapter.Listener, TaggingPresetListener, PrimitiveHoverListener {
-    private final BooleanProperty PROP_DISPLAY_DISCARDABLE_KEYS = new BooleanProperty("display.discardable-keys", false);
+    private static final BooleanProperty PROP_DISPLAY_DISCARDABLE_KEYS = new BooleanProperty("display.discardable-keys", false);
 
     /**
      * hook for roadsigns plugin to display a small button in the upper right corner of this dialog
@@ -581,8 +581,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         OsmDataLayer layer = MainApplication.getLayerManager().getActiveDataLayer();
         if (!layer.isLocked()) {
             List<RelationMember> members = ((MemberInfo) membershipData.getValueAt(row, 1)).role.stream()
-                    .filter(rm -> rm instanceof RelationMember)
-                    .map(rm -> (RelationMember) rm)
+                    .filter(RelationMember.class::isInstance)
+                    .map(RelationMember.class::cast)
                     .collect(Collectors.toList());
             RelationEditor.getEditor(layer, relation, members).setVisible(true);
         }
@@ -609,7 +609,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListenerForEdt(this);
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
-        if (PROP_PREVIEW_ON_HOVER.get())
+        if (Boolean.TRUE.equals(PROP_PREVIEW_ON_HOVER.get()))
             MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
         for (JosmAction action : josmActions) {
             MainApplication.registerActionShortcut(action);
@@ -678,7 +678,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
     @Override
     public void primitiveHovered(PrimitiveHoverEvent e) {
         Collection<? extends IPrimitive> selection = OsmDataManager.getInstance().getInProgressISelection();
-        if (PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.get() && !selection.isEmpty())
+        if (Boolean.TRUE.equals(PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.get()) && !selection.isEmpty())
             return;
 
         if (e.getHoveredPrimitive() != null) {
@@ -689,7 +689,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
     }
 
     private void autoresizeTagTable() {
-        if (PROP_AUTORESIZE_TAGS_TABLE.get()) {
+        if (Boolean.TRUE.equals(PROP_AUTORESIZE_TAGS_TABLE.get())) {
             // resize table's columns to fit content
             TableHelper.computeColumnsWidth(tagTable);
         }
@@ -852,10 +852,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         super.preferenceChanged(e);
-        if (PROP_DISPLAY_DISCARDABLE_KEYS.getKey().equals(e.getKey())) {
-            if (MainApplication.getLayerManager().getActiveData() != null) {
-                updateSelection();
-            }
+        if (PROP_DISPLAY_DISCARDABLE_KEYS.getKey().equals(e.getKey()) && MainApplication.getLayerManager().getActiveData() != null) {
+            updateSelection();
         }
     }
 
