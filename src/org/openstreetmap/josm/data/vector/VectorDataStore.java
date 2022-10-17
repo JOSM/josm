@@ -77,12 +77,12 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
             // Check that all primitives can be merged
             if (mergedRelation.getMemberPrimitivesList().stream().allMatch(IWay.class::isInstance)) {
                 // This pretty much does the "right" thing
-                this.mergeWays(mergedRelation);
+                mergeWays(mergedRelation);
             } else if (!(primitive instanceof IWay)) {
                 // Can't merge, ever (one of the childs is a node/relation)
                 mergedRelation.remove(JOSM_MERGE_TYPE_KEY);
             }
-        } else if (mergedRelation != null && primitive instanceof IRelation) {
+        } else if (mergedRelation != null && primitive instanceof VectorRelation) {
             // Just add to the relation
             ((VectorRelation) primitive).getMembers().forEach(mergedRelation::addRelationMember);
         } else if (alreadyAdded instanceof VectorWay && primitive instanceof VectorWay) {
@@ -98,7 +98,7 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
         }
     }
 
-    private VectorPrimitive mergeWays(VectorRelation relation) {
+    private static VectorPrimitive mergeWays(VectorRelation relation) {
         List<VectorRelationMember> members = RelationSorter.sortMembersByConnectivity(relation.getMembers());
         Collection<VectorWay> relationWayList = members.stream().map(VectorRelationMember::getMember)
           .filter(VectorWay.class::isInstance)
@@ -267,9 +267,18 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
     private <T extends Tile & VectorTile> VectorRelation areaToRelation(T tile, Layer layer,
       Collection<VectorPrimitive> featureObjects, Area area) {
         VectorRelation vectorRelation = new VectorRelation(layer.getName());
-        for (VectorPrimitive member : pathIteratorToObjects(tile, layer, featureObjects, area.getPathIterator(null))) {
+        PathIterator pathIterator = area.getPathIterator(null);
+        int windingRule = pathIterator.getWindingRule();
+        for (VectorPrimitive member : pathIteratorToObjects(tile, layer, featureObjects, pathIterator)) {
             final String role;
             if (member instanceof VectorWay && ((VectorWay) member).isClosed()) {
+                // Area messes up the winding. See #22404.
+                if (windingRule == PathIterator.WIND_NON_ZERO) {
+                    VectorWay vectorWay = (VectorWay) member;
+                    List<VectorNode> nodes = new ArrayList<>(vectorWay.getNodes());
+                    Collections.reverse(nodes);
+                    vectorWay.setNodes(nodes);
+                }
                 role = Geometry.isClockwise(((VectorWay) member).getNodes()) ? "outer" : "inner";
             } else {
                 role = "";
@@ -374,8 +383,13 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
         } else if (shape instanceof Path2D) {
             primitive = pathToWay(tile, layer, featureObjects, (Path2D) shape).stream().findFirst().orElse(null);
         } else if (shape instanceof Area) {
-            primitive = areaToRelation(tile, layer, featureObjects, (Area) shape);
-            primitive.put(RELATION_TYPE, MULTIPOLYGON_TYPE);
+            VectorRelation vectorRelation = areaToRelation(tile, layer, featureObjects, (Area) shape);
+            if (vectorRelation.getMembersCount() != 1) {
+                primitive = vectorRelation;
+                primitive.put(RELATION_TYPE, MULTIPOLYGON_TYPE);
+            } else {
+                primitive = vectorRelation.getMember(0).getMember();
+            }
         } else {
             // We shouldn't hit this, but just in case
             throw new UnsupportedOperationException(Objects.toString(shape));

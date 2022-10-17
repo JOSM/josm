@@ -61,9 +61,10 @@ class LayersTest {
     @Test
     void testFill() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
+        JsonObject emptyFill = Json.createObjectBuilder()
           .add("type", Layers.Type.FILL.name())
-          .add("id", "Empty Fill").build()));
+          .add("id", "Empty Fill").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptyFill));
 
         // Test an empty fill layer
         Layers emptyFillLayer = new Layers(Json.createObjectBuilder()
@@ -117,9 +118,10 @@ class LayersTest {
     @Test
     void testLine() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
-          .add("type", Layers.Type.LINE.name())
-          .add("id", "Empty Line").build()));
+        JsonObject emptyLine = Json.createObjectBuilder()
+          .add("type", Layers.Type.RASTER.name())
+          .add("id", "Empty Raster").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptyLine));
 
         JsonObject allLayoutProperties = Json.createObjectBuilder()
           .add("line-cap", "round") // linecap:round;
@@ -172,9 +174,10 @@ class LayersTest {
     @Test
     void testSymbol() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
-          .add("type", Layers.Type.SYMBOL.name())
-          .add("id", "Empty Symbol").build()));
+        JsonObject emptySymbol = Json.createObjectBuilder()
+          .add("type", Layers.Type.RASTER.name())
+          .add("id", "Empty Raster").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptySymbol));
 
         JsonObject allPaintProperties = Json.createObjectBuilder()
           .add("icon-color", "#fff000") // also requires sdf icons
@@ -305,9 +308,10 @@ class LayersTest {
     @Test
     void testRaster() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
+        JsonObject emptyRaster = Json.createObjectBuilder()
           .add("type", Layers.Type.RASTER.name())
-          .add("id", "Empty Raster").build()));
+          .add("id", "Empty Raster").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptyRaster));
 
         JsonObject allPaintProperties = Json.createObjectBuilder()
           .add("raster-brightness-max", 0.5)
@@ -348,9 +352,10 @@ class LayersTest {
     @Test
     void testCircle() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
+        JsonObject emptyCircle = Json.createObjectBuilder()
           .add("type", Layers.Type.CIRCLE.name())
-          .add("id", "Empty Circle").build()));
+          .add("id", "Empty Circle").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptyCircle));
 
         JsonObject allPaintProperties = Json.createObjectBuilder()
           .add("circle-blur", 1)
@@ -399,9 +404,10 @@ class LayersTest {
     @Test
     void testFillExtrusion() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
+        JsonObject emptyFillExtrusion = Json.createObjectBuilder()
           .add("type", Layers.Type.FILL_EXTRUSION.name())
-          .add("id", "Empty Fill Extrusion").build()));
+          .add("id", "Empty Fill Extrusion").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptyFillExtrusion));
 
         JsonObject allPaintProperties = Json.createObjectBuilder()
           .add("fill-extrusion-base", 1)
@@ -438,9 +444,10 @@ class LayersTest {
     @Test
     void testHeatmap() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
+        JsonObject emptyHeatmap = Json.createObjectBuilder()
           .add("type", Layers.Type.HEATMAP.name())
-          .add("id", "Empty Heatmap").build()));
+          .add("id", "Empty Heatmap").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptyHeatmap));
 
         JsonObject allPaintProperties = Json.createObjectBuilder()
           .add("heatmap-color", "#fff000") // This will probably be a gradient of some type
@@ -475,9 +482,10 @@ class LayersTest {
     @Test
     void testHillshade() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
+        JsonObject emptyHillshade = Json.createObjectBuilder()
           .add("type", Layers.Type.HILLSHADE.name())
-          .add("id", "Empty Hillshade").build()));
+          .add("id", "Empty Hillshade").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptyHillshade));
 
         JsonObject allPaintProperties = Json.createObjectBuilder()
           .add("hillshade-accent-color", "#fff000")
@@ -515,9 +523,10 @@ class LayersTest {
     @Test
     void testSky() {
         // Test a layer without a source (should fail)
-        assertThrows(NullPointerException.class, () -> new Layers(Json.createObjectBuilder()
+        JsonObject emptySky = Json.createObjectBuilder()
           .add("type", Layers.Type.SKY.name())
-          .add("id", "Empty Sky").build()));
+          .add("id", "Empty Sky").build();
+        assertThrows(NullPointerException.class, () -> new Layers(emptySky));
 
         JsonObject allPaintProperties = Json.createObjectBuilder()
           .add("sky-atmosphere-color", "red")
@@ -579,11 +588,11 @@ class LayersTest {
         Layers maxZoomLayer = new Layers(Json.createObjectBuilder(baseInformation)
           .add("maxzoom", 24)
           .build());
-        assertEquals(MessageFormat.format(baseString, "|z-24"), maxZoomLayer.toString());
+        assertEquals(MessageFormat.format(baseString, "|z-23"), maxZoomLayer.toString());
 
         Layers minMaxZoomLayer = new Layers(Json.createObjectBuilder(baseInformation)
           .add("minzoom", 1)
-          .add("maxzoom", 2)
+          .add("maxzoom", 3)
           .build());
         assertEquals(MessageFormat.format(baseString, "|z1-2"), minMaxZoomLayer.toString());
 
@@ -592,6 +601,10 @@ class LayersTest {
           .add("maxzoom", 2)
           .build());
         assertEquals(MessageFormat.format(baseString, "|z2"), sameMinMaxZoomLayer.toString());
+        Layers zeroMaxZoom = new Layers(Json.createObjectBuilder(baseInformation)
+                .add("maxzoom", 0)
+                .build());
+        assertEquals(MessageFormat.format(baseString, "|z-0"), zeroMaxZoom.toString());
     }
 
     @Test

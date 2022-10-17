@@ -86,11 +86,13 @@ class VectorWayTest {
 
         assertFalse(way.isClosed());
         assertEquals(OsmPrimitiveType.WAY, way.getType());
+        assertEquals(OsmPrimitiveType.WAY, way.getDisplayType());
         List<VectorNode> nodes = new ArrayList<>(way.getNodes());
         nodes.add(nodes.get(0));
         way.setNodes(nodes);
         assertTrue(way.isClosed());
-        assertEquals(OsmPrimitiveType.CLOSEDWAY, way.getType());
+        assertEquals(OsmPrimitiveType.WAY, way.getType());
+        assertEquals(OsmPrimitiveType.CLOSEDWAY, way.getDisplayType());
     }
 
     @Test

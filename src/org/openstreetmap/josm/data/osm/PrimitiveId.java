@@ -16,7 +16,9 @@ public interface PrimitiveId {
     long getUniqueId();
 
     /**
-     * Gets the type of object represented by this object.
+     * Gets the type of object represented by this object. Note that this should
+     * return the base primitive type ({@link OsmPrimitiveType#NODE},
+     * {@link OsmPrimitiveType#WAY}, and {@link OsmPrimitiveType#RELATION}).
      *
      * @return the object type
      * @see Node

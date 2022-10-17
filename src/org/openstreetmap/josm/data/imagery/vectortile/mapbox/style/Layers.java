@@ -75,7 +75,7 @@ public class Layers {
     private final int minZoom;
 
     /** Default paint properties for this layer */
-    private final String paint;
+    private final String paintProperties;
 
     /** A source description to be used with this layer. Required for everything <i>but</i> {@link Type#BACKGROUND} */
     private final String source;
@@ -105,8 +105,14 @@ public class Layers {
         } else {
             this.filter = Expression.EMPTY_EXPRESSION;
         }
-        this.maxZoom = layerInfo.getInt("maxzoom", Integer.MAX_VALUE);
+        // minZoom <= showable zooms < maxZoom. This should be fractional, but our mapcss implementations expects ints.
         this.minZoom = layerInfo.getInt("minzoom", Integer.MIN_VALUE);
+        int tMaxZoom = layerInfo.getInt("maxzoom", Integer.MAX_VALUE);
+        if (tMaxZoom == Integer.MAX_VALUE) {
+            this.maxZoom = Integer.MAX_VALUE;
+        } else {
+            this.maxZoom = Math.max(this.minZoom, Math.max(0, tMaxZoom - 1));
+        }
         // There is a metadata field (I don't *think* I need it?)
         // source is only optional with {@link Type#BACKGROUND}.
         if (this.type == Type.BACKGROUND) {
@@ -122,32 +128,32 @@ public class Layers {
                 switch (type) {
                 case FILL:
                     // area
-                    this.paint = parsePaintFill(paintObject);
+                    this.paintProperties = parsePaintFill(paintObject);
                     break;
                 case LINE:
                     // way
-                    this.paint = parsePaintLine(layoutObject, paintObject);
+                    this.paintProperties = parsePaintLine(layoutObject, paintObject);
                     break;
                 case CIRCLE:
                     // point
-                    this.paint = parsePaintCircle(paintObject);
+                    this.paintProperties = parsePaintCircle(paintObject);
                     break;
                 case SYMBOL:
                     // point
-                    this.paint = parsePaintSymbol(layoutObject, paintObject);
+                    this.paintProperties = parsePaintSymbol(layoutObject, paintObject);
                     break;
                 case BACKGROUND:
                     // canvas only
-                    this.paint = parsePaintBackground(paintObject);
+                    this.paintProperties = parsePaintBackground(paintObject);
                     break;
                 default:
-                    this.paint = EMPTY_STRING;
+                    this.paintProperties = EMPTY_STRING;
                 }
             } else {
-                this.paint = EMPTY_STRING;
+                this.paintProperties = EMPTY_STRING;
             }
         } else {
-            this.paint = EMPTY_STRING;
+            this.paintProperties = EMPTY_STRING;
         }
         this.sourceLayer = layerInfo.getString("source-layer", null);
     }
@@ -453,11 +459,11 @@ public class Layers {
      */
     @Override
     public String toString() {
-        if (this.filter.toString().isEmpty() && this.paint.isEmpty()) {
+        if (this.filter.toString().isEmpty() && this.paintProperties.isEmpty()) {
             return EMPTY_STRING;
         } else if (this.type == Type.BACKGROUND) {
             // AFAIK, paint has no zoom levels, and doesn't accept a layer
-            return "canvas{" + this.paint + "}";
+            return "canvas{" + this.paintProperties + "}";
         }
 
         final String zoomSelector;
@@ -472,7 +478,7 @@ public class Layers {
         } else {
             zoomSelector = EMPTY_STRING;
         }
-        final String commonData = zoomSelector + this.filter.toString() + "::" + this.id + "{" + this.paint + "}";
+        final String commonData = zoomSelector + this.filter.toString() + "::" + this.id + "{" + this.paintProperties + "}";
 
         if (this.type == Type.CIRCLE || this.type == Type.SYMBOL) {
             return "node" + commonData;
@@ -512,7 +518,7 @@ public class Layers {
               && Objects.equals(this.sourceLayer, o.sourceLayer)
               && Objects.equals(this.source, o.source)
               && Objects.equals(this.filter, o.filter)
-              && Objects.equals(this.paint, o.paint);
+              && Objects.equals(this.paintProperties, o.paintProperties);
         }
         return false;
     }
@@ -520,6 +526,6 @@ public class Layers {
     @Override
     public int hashCode() {
         return Objects.hash(this.type, this.minZoom, this.maxZoom, this.id, this.styleId, this.sourceLayer, this.source,
-          this.filter, this.paint);
+          this.filter, this.paintProperties);
     }
 }

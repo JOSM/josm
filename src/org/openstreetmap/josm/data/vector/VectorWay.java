@@ -130,6 +130,11 @@ public class VectorWay extends VectorPrimitive implements IWay<VectorNode> {
 
     @Override
     public OsmPrimitiveType getType() {
+        return OsmPrimitiveType.WAY;
+    }
+
+    @Override
+    public OsmPrimitiveType getDisplayType() {
         return this.isClosed() ? OsmPrimitiveType.CLOSEDWAY : OsmPrimitiveType.WAY;
     }
 }
