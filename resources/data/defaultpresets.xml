@@ -392,7 +392,7 @@
         <combo key="circuits" text="Amount of circuits" values="1,2,3,4" />
     </chunk>
     <chunk id="power_loc">
-        <combo key="location" text="Location" values="outdoor,indoor,underground,platform,roof" values_context="power" />
+        <combo key="location" text="Location" values="outdoor,indoor,underground,platform,roof,surface" values_context="power" />
     </chunk>
     <chunk id="power_line_extra">
         <reference ref="cables_circuits" />
@@ -726,6 +726,7 @@
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="toll" text="Toll" />
                     <check key="motorroad" text="Motorroad" default="on" />
+                    <check key="dual_carriageway" text="Divided highway" />
                 </checkgroup>
                 <reference ref="lit_common_no_times"/>
                 <reference ref="placement_shoulder" />
@@ -770,6 +771,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <checkgroup columns="4">
                     <check key="motorroad" text="Motorroad" />
+                    <check key="dual_carriageway" text="Divided highway" disable_off="true" />
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
@@ -803,7 +805,8 @@
                 <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
-                <checkgroup columns="2">
+                <checkgroup columns="3">
+                    <check key="dual_carriageway" text="Divided highway" disable_off="true" />
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
@@ -835,7 +838,8 @@
                 <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
-                <checkgroup columns="2">
+                <checkgroup columns="3">
+                    <check key="dual_carriageway" text="Divided highway" disable_off="true" />
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
@@ -866,7 +870,8 @@
                 <check key="noref" text="Street has no reference" disable_off="true" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
-                <checkgroup columns="3">
+                <checkgroup columns="4">
+                    <check key="dual_carriageway" text="Divided highway" disable_off="true" />
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                     <check key="passing_places" text="Passing Places" />
@@ -893,7 +898,8 @@
                 <text key="width" text="Width (meters)" />
                 <combo key="bus_bay" text="Bus bay" values="both,left,right" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
-                <checkgroup columns="2">
+                <checkgroup columns="3">
+                    <check key="dual_carriageway" text="Divided highway" disable_off="true" />
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
@@ -1011,6 +1017,7 @@
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
+                <check key="dual_carriageway" text="Divided highway" disable_off="true" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Road (Unknown Type) -->
@@ -2181,7 +2188,7 @@
             <key key="man_made" value="pipeline" />
             <key key="substance" value="water" />
             <key key="usage" value="penstock" />
-            <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="pipeline" />
+            <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
             <optional>
                 <reference ref="name_operator" />
                 <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
@@ -5675,7 +5682,7 @@
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,pavilion,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,pavilion,parking,public,retail,roof,ruins,school,service,shed,silo,sports_centre,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <reference ref="name_operator" />
                 <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -5819,7 +5826,7 @@
                 <space />
                 <reference ref="name_ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
-                <combo key="location" text="Location" values="outdoor,indoor,underground,underwater" values_context="pump" />
+                <combo key="location" text="Location" values="outdoor,indoor,surface,underground,underwater" values_context="pump" />
             </optional>
             <preset_link preset_name="Windpump" text="Similar but different tags:" />
             <preset_link preset_name="Water Well" text="Similar but different tags:" />
@@ -6176,7 +6183,7 @@
             <key key="man_made" value="pipeline" />
             <reference ref="name_ref_operator" />
             <reference ref="substance" />
-            <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="pipeline" />
+            <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
             <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
             <text key="pressure" text="Pressure (bar)" />
             <text key="flow_rate" text="Flow rate with unit of measure" />
@@ -6209,7 +6216,7 @@
                 <reference ref="ref_operator" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
                 <reference ref="color" />
-                <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="pipeline" />
+                <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
             </optional>
         </item> <!-- Marker -->
         <item name="Manhole" icon="presets/misc/manhole.svg" type="node" preset_name_label="true">
@@ -6906,7 +6913,7 @@
             <reference ref="ref_operator" />
             <optional>
                 <reference ref="cables_circuits" />
-                <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="power cable" />
+                <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="power cable" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
