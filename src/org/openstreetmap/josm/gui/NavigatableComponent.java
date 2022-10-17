@@ -8,6 +8,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -40,6 +43,7 @@ import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -52,6 +56,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.gui.PrimitiveHoverListener.PrimitiveHoverEvent;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.Scale;
@@ -63,6 +68,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * A component that can be navigated by a {@link MapMover}. Used as map view and for the
@@ -149,6 +155,57 @@ public class NavigatableComponent extends JComponent implements Helpful {
         });
     }
 
+    private final CopyOnWriteArrayList<PrimitiveHoverListener> primitiveHoverListeners = new CopyOnWriteArrayList<>();
+    private IPrimitive previousHoveredPrimitive;
+    private final PrimitiveHoverMouseListener primitiveHoverMouseListenerHelper = new PrimitiveHoverMouseListener();
+
+    /**
+     * Removes a primitive hover listener
+     *
+     * @param listener the listener. Ignored if null or already absent.
+     * @since 18574
+     */
+    public void removePrimitiveHoverListener(PrimitiveHoverListener listener) {
+        primitiveHoverListeners.remove(listener);
+    }
+
+    /**
+     * Adds a primitive hover listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     * @since 18574
+     */
+    public void addPrimitiveHoverListener(PrimitiveHoverListener listener) {
+        if (listener != null) {
+            primitiveHoverListeners.addIfAbsent(listener);
+        }
+    }
+
+    /**
+     * Send a {@link PrimitiveHoverEvent} to registered {@link PrimitiveHoverListener}s
+     * @param e primitive hover event information
+     * @since 18574
+     */
+    protected void firePrimitiveHovered(PrimitiveHoverEvent e) {
+        GuiHelper.runInEDT(() -> {
+            for (PrimitiveHoverListener l : primitiveHoverListeners) {
+                try {
+                    l.primitiveHovered(e);
+                } catch (RuntimeException ex) {
+                    Logging.logWithStackTrace(Logging.LEVEL_ERROR, "Error in primitive hover listener", ex);
+                    BugReportExceptionHandler.handleException(ex);
+                }
+            }
+        });
+    }
+
+    private void updateHoveredPrimitive(IPrimitive hovered, MouseEvent e) {
+        if (!Objects.equals(hovered, previousHoveredPrimitive)) {
+            firePrimitiveHovered(new PrimitiveHoverEvent(hovered, previousHoveredPrimitive, e));
+            previousHoveredPrimitive = hovered;
+        }
+    }
+
     // The only events that may move/resize this map view are window movements or changes to the map view size.
     // We can clean this up more by only recalculating the state on repaint.
     private final transient HierarchyListener hierarchyListener = e -> {
@@ -198,6 +255,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         updateLocationState();
         addHierarchyListener(hierarchyListener);
         addComponentListener(componentListener);
+        addPrimitiveHoverMouseListeners();
         super.addNotify();
     }
 
@@ -205,7 +263,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void removeNotify() {
         removeHierarchyListener(hierarchyListener);
         removeComponentListener(componentListener);
+        removePrimitiveHoverMouseListeners();
         super.removeNotify();
+    }
+
+    private void addPrimitiveHoverMouseListeners() {
+        addMouseMotionListener(primitiveHoverMouseListenerHelper);
+        addMouseListener(primitiveHoverMouseListenerHelper);
+    }
+
+    private void removePrimitiveHoverMouseListeners() {
+        removeMouseMotionListener(primitiveHoverMouseListenerHelper);
+        removeMouseListener(primitiveHoverMouseListenerHelper);
     }
 
     /**
@@ -1714,5 +1783,22 @@ public class NavigatableComponent extends JComponent implements Helpful {
             world.maxNorth-world.minNorth,
             world.maxEast-world.minEast
         )/512;
+    }
+
+    /**
+     * Listener for mouse movement events. Used to detect when primitives are being hovered over with the mouse pointer
+     * so that registered {@link PrimitiveHoverListener}s can be notified.
+     */
+    private class PrimitiveHoverMouseListener extends MouseAdapter {
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            OsmPrimitive hovered = getNearestNodeOrWay(e.getPoint(), isSelectablePredicate, true);
+            updateHoveredPrimitive(hovered, e);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            updateHoveredPrimitive(null, e);
+        }
     }
 }

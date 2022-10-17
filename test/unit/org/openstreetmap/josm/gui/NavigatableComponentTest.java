@@ -3,11 +3,16 @@ package org.openstreetmap.josm.gui;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JPanel;
 
@@ -21,7 +26,10 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -44,11 +52,16 @@ class NavigatableComponentTest {
         protected boolean isVisibleOnScreen() {
             return true;
         }
+
+        @Override
+        public void processMouseMotionEvent(MouseEvent mouseEvent) {
+            super.processMouseMotionEvent(mouseEvent);
+        }
     }
 
     private static final int HEIGHT = 200;
     private static final int WIDTH = 300;
-    private NavigatableComponent component;
+    private NavigatableComponentMock component;
 
     /**
      * We need the projection for coordinate conversions.
@@ -65,11 +78,7 @@ class NavigatableComponentTest {
         component = new NavigatableComponentMock();
         component.setBounds(new Rectangle(WIDTH, HEIGHT));
         // wait for the event to be propagated.
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> { /* Do nothing */ });
         component.setVisible(true);
         JPanel parent = new JPanel();
         parent.add(component);
@@ -206,6 +215,51 @@ class NavigatableComponentTest {
 
         assertThat(bounds.getMin(), CustomMatchers.is(component.getLatLon(0, HEIGHT)));
         assertThat(bounds.getMax(), CustomMatchers.is(component.getLatLon(WIDTH, 0)));
+    }
+
+    @Test
+    void testHoverListeners() {
+        AtomicReference<PrimitiveHoverListener.PrimitiveHoverEvent> hoverEvent = new AtomicReference<>();
+        PrimitiveHoverListener testListener = hoverEvent::set;
+        assertNull(hoverEvent.get());
+        component.addNotify();
+        component.addPrimitiveHoverListener(testListener);
+        DataSet ds = new DataSet();
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "testHoverListeners", null));
+        LatLon center = component.getRealBounds().getCenter();
+        Node node1 = new Node(center);
+        ds.addPrimitive(node1);
+        double x = component.getBounds().getCenterX();
+        double y = component.getBounds().getCenterY();
+        // Check hover over primitive
+        MouseEvent node1Event = new MouseEvent(component, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(),
+                0, (int) x, (int) y, 0, false, MouseEvent.NOBUTTON);
+        component.processMouseMotionEvent(node1Event);
+        GuiHelper.runInEDTAndWait(() -> { /* Sync */ });
+        PrimitiveHoverListener.PrimitiveHoverEvent event = hoverEvent.getAndSet(null);
+        assertNotNull(event);
+        assertSame(node1, event.getHoveredPrimitive());
+        assertNull(event.getPreviousPrimitive());
+        assertSame(node1Event, event.getMouseEvent());
+        // Check moving to the (same) primitive. No new mouse motion event should be called.
+        component.processMouseMotionEvent(node1Event);
+        GuiHelper.runInEDTAndWait(() -> { /* Sync */ });
+        event = hoverEvent.getAndSet(null);
+        assertNull(event);
+        // Check moving off primitive. A new mouse motion event should be called with the previous primitive and null.
+        MouseEvent noNodeEvent =
+                new MouseEvent(component, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 0, 0, 0, false, MouseEvent.NOBUTTON);
+        component.processMouseMotionEvent(noNodeEvent);
+        GuiHelper.runInEDTAndWait(() -> { /* Sync */ });
+        event = hoverEvent.getAndSet(null);
+        assertNotNull(event);
+        assertSame(node1, event.getPreviousPrimitive());
+        assertNull(event.getHoveredPrimitive());
+        assertSame(noNodeEvent, event.getMouseEvent());
+        // Check moving to area with no primitive with no previous hover primitive
+        component.processMouseMotionEvent(
+                new MouseEvent(component, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 1, 1, 0, false, MouseEvent.NOBUTTON));
+        assertNull(hoverEvent.get());
     }
 
     /**

@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,7 +70,6 @@ import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -83,11 +84,15 @@ import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
+import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeEvent;
+import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
+import org.openstreetmap.josm.gui.PrimitiveHoverListener;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
@@ -96,6 +101,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationPopupMenus;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
@@ -140,7 +146,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class PropertiesDialog extends ToggleDialog
-implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener, TaggingPresetListener {
+implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListener, 
+        DataSetListenerAdapter.Listener, TaggingPresetListener, PrimitiveHoverListener {
     private final BooleanProperty PROP_DISPLAY_DISCARDABLE_KEYS = new BooleanProperty("display.discardable-keys", false);
 
     /**
@@ -248,6 +255,20 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private static final BooleanProperty PROP_AUTORESIZE_TAGS_TABLE = new BooleanProperty("propertiesdialog.autoresizeTagsTable", false);
 
     /**
+     * Show tags and relation memberships of objects in the properties dialog when hovering over them with the mouse pointer
+     * @since 18574
+     */
+    public static final BooleanProperty PROP_PREVIEW_ON_HOVER = new BooleanProperty("propertiesdialog.preview-on-hover", true);
+    private final HoverPreviewPropListener hoverPreviewPropListener = new HoverPreviewPropListener();
+
+    /**
+     * Always show information for selected objects when something is selected instead of the hovered object
+     * @since 18574
+     */
+    public static final CachingProperty<Boolean> PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION = 
+        new BooleanProperty("propertiesdialog.preview-on-hover.always-show-selected", true).cached();
+
+    /**
      * Create a new PropertiesDialog
      */
     public PropertiesDialog() {
@@ -304,6 +325,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         editHelper.loadTagsIfNeeded();
 
         TaggingPresets.addListener(this);
+
+        PROP_PREVIEW_ON_HOVER.addListener(hoverPreviewPropListener);
     }
 
     @Override
@@ -586,6 +609,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListenerForEdt(this);
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
+        if (PROP_PREVIEW_ON_HOVER.get())
+            MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
         for (JosmAction action : josmActions) {
             MainApplication.registerActionShortcut(action);
         }
@@ -597,6 +622,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
+        MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
         for (JosmAction action : josmActions) {
             MainApplication.unregisterActionShortcut(action);
         }
@@ -617,6 +643,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         membershipTable.removeMouseListener(popupMenuLauncher);
         super.destroy();
         TaggingPresets.removeListener(this);
+        PROP_PREVIEW_ON_HOVER.removeListener(hoverPreviewPropListener);
         Container parent = pluginHook.getParent();
         if (parent != null) {
             parent.remove(pluginHook);
@@ -635,7 +662,45 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
         Collection<? extends IPrimitive> newSel = OsmDataManager.getInstance().getInProgressISelection();
-        int newSelSize = newSel.size();
+
+        // Temporarily disable listening to primitive mouse hover events while we have a selection as that takes priority
+        if (PROP_PREVIEW_ON_HOVER.get() && PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.get()) {
+            if (newSel.isEmpty()) {
+                MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
+            } else {
+                MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
+            }
+        }
+
+        updateUi(newSel);
+    }
+
+    @Override
+    public void primitiveHovered(PrimitiveHoverEvent e) {
+        Collection<? extends IPrimitive> selection = OsmDataManager.getInstance().getInProgressISelection();
+        if (PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.get() && !selection.isEmpty())
+            return;
+
+        if (e.getHoveredPrimitive() != null) {
+            updateUi(e.getHoveredPrimitive());
+        } else {
+            updateUi(selection);
+        }
+    }
+
+    private void autoresizeTagTable() {
+        if (PROP_AUTORESIZE_TAGS_TABLE.get()) {
+            // resize table's columns to fit content
+            TableHelper.computeColumnsWidth(tagTable);
+        }
+    }
+
+    private void updateUi(IPrimitive primitive) {
+        updateUi(primitive == null ? Collections.emptyList() :
+                                     Collections.singletonList(primitive));
+    }
+
+    private void updateUi(Collection<? extends IPrimitive> primitives) {
         IRelation<?> selectedRelation = null;
         String selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
         if (selectedTag == null && tagTable.getSelectedRowCount() == 1) {
@@ -645,6 +710,33 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             selectedRelation = (IRelation<?>) membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
         }
 
+        updateTagTableData(primitives);
+        updateMembershipTableData(primitives);
+
+        updateMembershipTableVisibility();
+        updateActionsEnabledState();
+        updateTagTableVisibility(primitives);
+
+        setupTaginfoNationalActions(primitives);
+        autoresizeTagTable();
+
+        int selectedIndex;
+        if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {
+            tagTable.changeSelection(selectedIndex, 0, false, false);
+        } else if (selectedRelation != null && (selectedIndex = findViewRow(membershipTable, membershipData, selectedRelation)) != -1) {
+            membershipTable.changeSelection(selectedIndex, 0, false, false);
+        } else if (tagData.getRowCount() > 0) {
+            tagTable.changeSelection(0, 0, false, false);
+        } else if (membershipData.getRowCount() > 0) {
+            membershipTable.changeSelection(0, 0, false, false);
+        }
+
+        updateTitle(primitives);
+    }
+
+    private void updateTagTableData(Collection<? extends IPrimitive> primitives) {
+        int newSelSize = primitives.size();
+
         // re-load tag data
         tagData.setRowCount(0);
 
@@ -653,7 +745,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         final Map<String, String> tags = new HashMap<>();
         valueCount.clear();
         Set<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
-        for (IPrimitive osm : newSel) {
+        for (IPrimitive osm : primitives) {
             types.add(TaggingPresetType.forPrimitive(osm));
             osm.visitKeys((p, key, value) -> {
                 if (displayDiscardableKeys || !AbstractPrimitive.getDiscardableKeys().contains(key)) {
@@ -679,14 +771,18 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                     ? e.getValue().keySet().iterator().next() : tr("<different>"));
         }
 
+        presets.updatePresets(types, tags, presetHandler);
+    }
+
+    private void updateMembershipTableData(Collection<? extends IPrimitive> primitives) {
         membershipData.setRowCount(0);
 
         Map<IRelation<?>, MemberInfo> roles = new HashMap<>();
-        for (IPrimitive primitive: newSel) {
-            for (IPrimitive ref: primitive.getReferrers(true)) {
+        for (IPrimitive primitive : primitives) {
+            for (IPrimitive ref : primitive.getReferrers(true)) {
                 if (ref instanceof IRelation && !ref.isIncomplete() && !ref.isDeleted()) {
                     IRelation<?> r = (IRelation<?>) ref;
-                    MemberInfo mi = roles.computeIfAbsent(r, ignore -> new MemberInfo(newSel));
+                    MemberInfo mi = roles.computeIfAbsent(r, ignore -> new MemberInfo(primitives));
                     int i = 1;
                     for (IRelationMember<?> m : r.getMembers()) {
                         if (m.getMember() == primitive) {
@@ -707,40 +803,32 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         for (IRelation<?> r: sortedRelations) {
             membershipData.addRow(new Object[]{r, roles.get(r)});
         }
+    }
 
-        presets.updatePresets(types, tags, presetHandler);
-
+    private void updateMembershipTableVisibility() {
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);
+    }
 
-        OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
-        boolean isReadOnly = ds != null && ds.isLocked();
-        boolean hasSelection = !newSel.isEmpty();
+    private void updateTagTableVisibility(Collection<? extends IPrimitive> primitives) {
+        boolean hasSelection = !primitives.isEmpty();
         boolean hasTags = hasSelection && tagData.getRowCount() > 0;
-        boolean hasMemberships = hasSelection && membershipData.getRowCount() > 0;
-        addAction.setEnabled(!isReadOnly && hasSelection);
-        editAction.setEnabled(!isReadOnly && (hasTags || hasMemberships));
-        deleteAction.setEnabled(!isReadOnly && (hasTags || hasMemberships));
+
         tagTable.setVisible(hasTags);
         tagTable.getTableHeader().setVisible(hasTags);
         tagTableFilter.setVisible(hasTags);
         selectSth.setVisible(!hasSelection);
         pluginHook.setVisible(hasSelection);
+    }
 
-        setupTaginfoNationalActions(newSel);
-        autoresizeTagTable();
+    private void updateActionsEnabledState() {
+        addAction.updateEnabledState();
+        editAction.updateEnabledState();
+        deleteAction.updateEnabledState();
+    }
 
-        int selectedIndex;
-        if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {
-            tagTable.changeSelection(selectedIndex, 0, false, false);
-        } else if (selectedRelation != null && (selectedIndex = findViewRow(membershipTable, membershipData, selectedRelation)) != -1) {
-            membershipTable.changeSelection(selectedIndex, 0, false, false);
-        } else if (hasTags) {
-            tagTable.changeSelection(0, 0, false, false);
-        } else if (hasMemberships) {
-            membershipTable.changeSelection(0, 0, false, false);
-        }
-
+    private void updateTitle(Collection<? extends IPrimitive> primitives) {
+        int newSelSize = primitives.size();
         if (tagData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
             if (newSelSize > 1) {
                 setTitle(tr("Objects: {2} / Tags: {0} / Memberships: {1}",
@@ -751,13 +839,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             }
         } else {
             setTitle(tr("Tags/Memberships"));
-        }
-    }
-
-    private void autoresizeTagTable() {
-        if (PROP_AUTORESIZE_TAGS_TABLE.get()) {
-            // resize table's columns to fit content
-            TableHelper.computeColumnsWidth(tagTable);
         }
     }
 
@@ -803,6 +884,38 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
         // it is time to save history of tags
         updateSelection();
+
+        // Listen for active layer visibility change to enable/disable hover preview
+        // Remove previous listener first (order matters if we are somehow getting a layer change event 
+        // switching from one layer to the same layer)
+        Layer prevLayer = e.getPreviousDataLayer();
+        if (prevLayer != null) {
+            prevLayer.removePropertyChangeListener(this);
+        }
+
+        Layer newLayer = e.getSource().getActiveDataLayer();
+        if (newLayer != null) {
+            newLayer.addPropertyChangeListener(this);
+            if (newLayer.isVisible()) {
+                MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
+            } else {
+                MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
+            }
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        if (Layer.VISIBLE_PROP.equals(e.getPropertyName())) {
+            boolean isVisible = (boolean) e.getNewValue();
+
+            // Disable hover preview when primitives are invisible
+            if (isVisible) {
+                MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
+            } else {
+                MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
+            }
+        }
     }
 
     @Override
@@ -1251,6 +1364,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                 isPerforming.set(false);
             }
         }
+
+        @Override
+        protected final void updateEnabledState() {
+            DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
+            setEnabled(ds != null && !ds.isLocked() &&
+                    !Utils.isEmpty(OsmDataManager.getInstance().getInProgressSelection()));
+        }
     }
 
     /**
@@ -1402,6 +1522,17 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         @Override
         public void sorterChanged(RowSorterEvent e) {
             removeHiddenSelection();
+        }
+    }
+
+    private class HoverPreviewPropListener implements ValueChangeListener<Boolean> {
+        @Override
+        public void valueChanged(ValueChangeEvent<? extends Boolean> e) {
+            if (e.getProperty().get() && isDialogShowing()) {
+                MainApplication.getMap().mapView.addPrimitiveHoverListener(PropertiesDialog.this);
+            } else if (!e.getProperty().get()) {
+                MainApplication.getMap().mapView.removePrimitiveHoverListener(PropertiesDialog.this);
+            }
         }
     }
 }
