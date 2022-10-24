@@ -188,6 +188,8 @@ public class PlatformHookUnixoid implements PlatformHook {
             return getPackageDetails("openjdk-10-jre", "java-10-openjdk");
         } else if (home.contains("java-11-openjdk")) {
             return getPackageDetails("openjdk-11-jre", "java-11-openjdk");
+        } else if (home.contains("java-17-openjdk")) {
+            return getPackageDetails("openjdk-17-jre", "java-17-openjdk");
         } else if (home.contains("java-openjdk")) {
             return getPackageDetails("java-openjdk");
         } else if (home.contains("icedtea")) {

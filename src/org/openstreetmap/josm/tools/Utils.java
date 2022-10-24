@@ -1805,9 +1805,15 @@ public final class Utils {
                             "java.baseline.version.url",
                             Config.getUrls().getJOSMWebsite() + "/remote/oracle-java-update-baseline.version")))
                     .connect().fetchContent().split("\n", -1);
-            if (getJavaVersion() <= 8) {
+            if (getJavaVersion() <= 11 && isRunningWebStart()) { // OpenWebStart currently only has Java 11
                 for (String version : versions) {
-                    if (version.startsWith("1.8")) {
+                    if (version.startsWith("11")) {
+                        return version;
+                    }
+                }
+            } else if (getJavaVersion() <= 17) {
+                for (String version : versions) {
+                    if (version.startsWith("17")) { // Use current Java LTS
                         return version;
                     }
                 }

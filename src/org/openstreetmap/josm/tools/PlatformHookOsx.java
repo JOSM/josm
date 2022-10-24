@@ -94,6 +94,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Logging.warn("Failed to register with macOS: " + ex);
         }
+        warnSoonToBeUnsupportedJava(javaCallback);
         checkExpiredJava(javaCallback);
         checkWebStartMigration(webStartCallback);
     }

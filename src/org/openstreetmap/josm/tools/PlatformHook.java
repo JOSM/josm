@@ -300,10 +300,64 @@ public interface PlatformHook {
             // #17831 WebStart may be launched with an expired JRE but then launching JOSM with up-to-date JRE
             if (latestVersion == null || !latestVersion.equalsIgnoreCase(currentVersion)) {
                 callback.askUpdateJava(latestVersion != null ? latestVersion : "latest",
-                        Config.getPref().get("java.update.url", "https://www.java.com/download"),
+                        Config.getPref().get("java.update.url", getJavaUrl()),
                         DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
             }
         }
+    }
+
+    /**
+     * Checks if we will soon not be supporting the running version of Java
+     * @param callback Java expiration callback
+     * @since 18580
+     */
+    default void warnSoonToBeUnsupportedJava(JavaExpirationCallback callback) {
+        // Java 11 is our next minimum version, and OpenWebStart should be replacing Oracle WebStart
+        // We'd go to 17, but some Linux distributions (Debian) default to Java 11.
+        // And OpenWebStart currently doesn't have Java 17 JREs.
+        if (Utils.getJavaVersion() < 11 && !Utils.isRunningWebStart()) {
+            String latestVersion = Utils.getJavaLatestVersion();
+            String currentVersion = Utils.getSystemProperty("java.version");
+            // #17831 WebStart may be launched with an expired JRE but then launching JOSM with up-to-date JRE
+            if (latestVersion == null || !latestVersion.equalsIgnoreCase(currentVersion)) {
+                callback.askUpdateJava(latestVersion != null ? latestVersion : "latest",
+                        Config.getPref().get("java.update.url", getJavaUrl()),
+                        null, Utils.getJavaVersion() < 17);
+            }
+        }
+    }
+
+    /**
+     * Get the Java download URL (really shouldn't be used outside of JOSM startup checks)
+     * @return The download URL to use.
+     * @since 18580
+     */
+    default String getJavaUrl() {
+        StringBuilder defaultDownloadUrl = new StringBuilder("https://www.azul.com/downloads/?version=java-17-lts&package=jre-fx");
+        if (PlatformManager.isPlatformWindows()) {
+            defaultDownloadUrl.append("&os=windows");
+        } else if (PlatformManager.isPlatformOsx()) {
+            defaultDownloadUrl.append("&os=macos");
+        } // else probably `linux`, but they should be using a package manager.
+        // For available architectures, see
+        // https://github.com/openjdk/jdk/blob/master/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java#L53
+        String osArch = System.getProperty("os.arch");
+        if (osArch != null) {
+            // See https://learn.microsoft.com/en-us/windows/win32/winprog64/wow64-implementation-details#environment-variables
+            // for PROCESSOR_ARCHITEW6432
+            if ("x86_64".equals(osArch) || "amd64".equals(osArch)
+                    || "AMD64".equalsIgnoreCase(System.getenv("PROCESSOR_ARCHITEW6432"))) {
+                defaultDownloadUrl.append("&architecture=x86-64-bit");
+            } else if ("aarch64".equals(osArch)) {
+                defaultDownloadUrl.append("&architecture=arm-64-bit");
+            } else if ("x86".equals(osArch)) {
+                // Honestly, just about everyone should be on x86_64 at this point. But just in case someone
+                // is running JOSM on a 10-year-old computer. They'd probably be better off running a RPi.
+                defaultDownloadUrl.append("&architecture=x86-32-bit");
+            } // else user will have to figure it out themselves.
+        }
+        defaultDownloadUrl.append("#download-openjdk"); // Scrolls to download section
+        return defaultDownloadUrl.toString();
     }
 
     /**
