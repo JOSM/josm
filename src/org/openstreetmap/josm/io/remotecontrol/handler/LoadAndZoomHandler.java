@@ -9,12 +9,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -164,9 +166,20 @@ public class LoadAndZoomHandler extends RequestHandler {
                                 future.get(OSM_DOWNLOAD_TIMEOUT.get(), TimeUnit.SECONDS);
                                 if (osmTask.isFailed()) {
                                     Object error = osmTask.getErrorObjects().get(0);
-                                    throw error instanceof OsmApiException
-                                        ? (OsmApiException) error
-                                        : new OsmTransferException(String.join(", ", osmTask.getErrorMessages()));
+                                    if (error instanceof OsmApiException) {
+                                        throw (OsmApiException) error;
+                                    }
+                                    List<Throwable> exceptions = osmTask.getErrorObjects().stream()
+                                                    .filter(Throwable.class::isInstance).map(Throwable.class::cast)
+                                                    .collect(Collectors.toList());
+                                    OsmTransferException osmTransferException =
+                                            new OsmTransferException(String.join(", ", osmTask.getErrorMessages()));
+                                    if (!exceptions.isEmpty()) {
+                                        osmTransferException.initCause(exceptions.get(0));
+                                        exceptions.remove(0);
+                                        exceptions.forEach(osmTransferException::addSuppressed);
+                                    }
+                                    throw osmTransferException;
                                 }
                             } catch (InterruptedException | ExecutionException | TimeoutException |
                                     OsmTransferException | RuntimeException ex) { // NOPMD
