@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
@@ -187,7 +188,7 @@ public class MapboxVectorStyle {
         ) {
             spriteObject = spriteJsonReader.read().asJsonObject();
             spritePngImage = ImageIO.read(spritePngBufferedReader);
-        } catch (IOException e) {
+        } catch (IOException | JsonException e) {
             Logging.error(e);
             return false;
         }
