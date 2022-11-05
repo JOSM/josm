@@ -894,7 +894,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         Layer newLayer = e.getSource().getActiveDataLayer();
         if (newLayer != null) {
             newLayer.addPropertyChangeListener(this);
-            if (newLayer.isVisible()) {
+            if (newLayer.isVisible() && Boolean.TRUE.equals(PROP_PREVIEW_ON_HOVER.get())) {
                 MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
             } else {
                 MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
@@ -908,7 +908,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
             boolean isVisible = (boolean) e.getNewValue();
 
             // Disable hover preview when primitives are invisible
-            if (isVisible) {
+            if (isVisible && Boolean.TRUE.equals(PROP_PREVIEW_ON_HOVER.get())) {
                 MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
             } else {
                 MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
