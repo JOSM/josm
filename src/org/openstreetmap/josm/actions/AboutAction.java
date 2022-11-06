@@ -115,6 +115,7 @@ public final class AboutAction extends JosmAction {
         JPanel logos = new JPanel(new FlowLayout());
         logos.add(createImageLink("OpenStreetMap", /* ICON(dialogs/about/) */ "openstreetmap",
                 "https://www.openstreetmap.org/user/josmeditor/diary"));
+        logos.add(createImageLink("Mastodon", /* ICON(dialogs/about/) */ "mastodon", "https://en.osm.town/@josmeditor"));
         logos.add(createImageLink("Twitter", /* ICON(dialogs/about/) */ "twitter-square", "https://twitter.com/josmeditor"));
         logos.add(createImageLink("Facebook", /* ICON(dialogs/about/) */ "facebook-square", "https://www.facebook.com/josmeditor"));
         logos.add(createImageLink("GitHub", /* ICON(dialogs/about/) */ "github-square", "https://github.com/JOSM"));
