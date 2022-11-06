@@ -79,7 +79,7 @@ public interface IRelationEditorActionAccess {
         final Relation oldRelation = getEditor().getRelation();
         boolean isUploadInProgress = MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)
                 .stream().anyMatch(OsmDataLayer::isUploadInProgress);
-        if (isUploadInProgress || oldRelation != null && oldRelation.getDataSet() != null && oldRelation.getDataSet().isLocked()) {
+        if (isUploadInProgress || (oldRelation != null && oldRelation.getDataSet() != null && oldRelation.getDataSet().isLocked())) {
             // If the dataset is locked, then we cannot change the relation. See JOSM #22024.
             // We should also avoid changing the relation if there is an upload in progress. See JOSM #22268/#22398.
             // There appears to be a race condition where a dataset might not be locked in the check, then is locked while using the
