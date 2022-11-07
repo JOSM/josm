@@ -16,7 +16,7 @@
          xmlns:unless="ant:unless"
 >
     <target name="init-ivy" description="Initialize dependency management system Apache Ivy">
-        <property name="ivy.version" value="2.5.0"/>
+        <property name="ivy.version" value="2.5.1"/>
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="lib.dir"   location="${base.dir}/lib"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
