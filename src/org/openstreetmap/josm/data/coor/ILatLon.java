@@ -143,4 +143,42 @@ public interface ILatLon {
         }
         return bearing;
     }
+
+    /**
+     * Does a linear interpolation between two ILatLon instances.
+     * @param ll2 The other ILatLon instance.
+     * @param proportion The proportion the other instance influences the result.
+     * @return The new {@link ILatLon} position.
+     * @since 18589
+     */
+    default ILatLon interpolate(ILatLon ll2, double proportion) {
+        // this is an alternate form of this.lat() + proportion * (ll2.lat() - this.lat()) that is slightly faster
+        return new LatLon((1 - proportion) * this.lat() + proportion * ll2.lat(),
+                (1 - proportion) * this.lon() + proportion * ll2.lon());
+    }
+
+    /**
+     * Returns the square of euclidean distance from this {@code Coordinate} to a specified coordinate.
+     *
+     * @param lon the X coordinate of the specified point to be measured against this {@code Coordinate}
+     * @param lat the Y coordinate of the specified point to be measured against this {@code Coordinate}
+     * @return the square of the euclidean distance from this {@code Coordinate} to a specified coordinate
+     * @since 18589
+     */
+    default double distanceSq(final double lon, final double lat) {
+        final double dx = this.lon() - lon;
+        final double dy = this.lat() - lat;
+        return dx * dx + dy * dy;
+    }
+
+    /**
+     * Returns the euclidean distance from this {@code ILatLon} to a specified {@code ILatLon}.
+     *
+     * @param other the specified coordinate to be measured against this {@code ILatLon}
+     * @return the euclidean distance from this {@code ILatLon} to a specified {@code ILatLon}
+     * @since 18589
+     */
+    default double distanceSq(final ILatLon other) {
+        return this.distanceSq(other.lon(), other.lat());
+    }
 }

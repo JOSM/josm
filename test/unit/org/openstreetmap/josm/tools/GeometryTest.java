@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Assert;
@@ -163,6 +164,75 @@ class GeometryTest {
         assertEquals(162.66381817961337, angle, 1e-5);
     }
 
+    static Stream<Arguments> testCentroid() {
+        // The expected values use the BigDecimal calculations
+        return Stream.of(
+            Arguments.of(new LatLon(54.10310051693397, 12.094459783282147),
+                new LatLon[]{
+                    new LatLon(54.1031207, 12.094513),
+                    new LatLon(54.1030973, 12.0945423),
+                    new LatLon(54.1031188, 12.0944413),
+                    new LatLon(54.1030578, 12.0945178),
+                    new LatLon(54.1030658, 12.0944275),
+                    new LatLon(54.1030826, 12.0945434),
+                    new LatLon(54.1031079, 12.0944243),
+                    new LatLon(54.1030515, 12.094495),
+                    new LatLon(54.103094, 12.0944157),
+                    new LatLon(54.1031257, 12.0944893),
+                    new LatLon(54.1030687, 12.0945348),
+                    new LatLon(54.1031251, 12.0944641),
+                    new LatLon(54.1030792, 12.0944168),
+                    new LatLon(54.1030508, 12.0944698),
+                    new LatLon(54.1030559, 12.0944461),
+                    new LatLon(54.1031107, 12.0945316)
+                }),
+            Arguments.of(new LatLon(54.10309639216633, 12.09463150330365),
+                new LatLon[]{new LatLon(54.1031205, 12.094653),
+                    new LatLon(54.1030621, 12.0946675),
+                    new LatLon(54.1030866, 12.0946874),
+                    new LatLon(54.1030732, 12.0946816),
+                    new LatLon(54.1030766, 12.0945701),
+                    new LatLon(54.1031148, 12.0945865),
+                    new LatLon(54.1031122, 12.0946719),
+                    new LatLon(54.1030551, 12.0946473),
+                    new LatLon(54.1031037, 12.0945724),
+                    new LatLon(54.1031003, 12.094684),
+                    new LatLon(54.1030647, 12.0945821),
+                    new LatLon(54.1031219, 12.0946068),
+                    new LatLon(54.1031239, 12.0946301),
+                    new LatLon(54.1030903, 12.0945667),
+                    new LatLon(54.1030564, 12.0946011),
+                    new LatLon(54.1030531, 12.0946239)
+                }),
+                Arguments.of(new LatLon(54.103185854296896, 12.09457804609505),
+                    new LatLon[] {
+                        new LatLon(54.1031981, 12.0945501),
+                        new LatLon(54.1031782, 12.0945501),
+                        new LatLon(54.1031726, 12.0946082),
+                        new LatLon(54.1031955, 12.0946015)
+                    }),
+                Arguments.of(new LatLon(54.103180913681705, 12.094425831813119),
+                    new LatLon[] {
+                        new LatLon(54.1032057, 12.0943903),
+                        new LatLon(54.1031517, 12.0944053),
+                        new LatLon(54.1031877, 12.0943743),
+                        new LatLon(54.1031697, 12.0943743),
+                        new LatLon(54.1031517, 12.0944353),
+                        new LatLon(54.1031697, 12.0944663),
+                        new LatLon(54.1031877, 12.0944663),
+                        new LatLon(54.1032057, 12.0944363)
+                    })
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testCentroid(LatLon expected, LatLon... coordinates) {
+        LatLon actual = ProjectionRegistry.getProjection()
+                .eastNorth2latlon(Geometry.getCentroid(Stream.of(coordinates).map(Node::new).collect(Collectors.toList())));
+        assertTrue(expected.equalsEpsilon((ILatLon) actual), "Expected " + expected + " but got " + actual);
+    }
+
     /**
      * Test of {@link Geometry#getCentroidEN} method.
      */
@@ -171,7 +241,7 @@ class GeometryTest {
         EastNorth en1 = new EastNorth(100, 200);
         EastNorth en2 = new EastNorth(150, 400);
         EastNorth en3 = new EastNorth(200, 200);
-        assertEquals(en1, Geometry.getCentroidEN(Arrays.asList(en1)));
+        assertEquals(en1, Geometry.getCentroidEN(Collections.singletonList(en1)));
         assertEquals(new EastNorth(125, 300), Geometry.getCentroidEN(Arrays.asList(en1, en2)));
         assertEquals(new EastNorth(150, 266d + 2d/3d), Geometry.getCentroidEN(Arrays.asList(en1, en2, en3)));
     }
