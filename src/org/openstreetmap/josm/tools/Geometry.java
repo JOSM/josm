@@ -503,39 +503,6 @@ public final class Geometry {
     }
 
     /**
-     * Get the closest point to a segment
-     * @param p1 Point 1 of the segment
-     * @param p2 Point 2 of the segment
-     * @param point The point to use to get the closest point on the segment
-     * @param segmentOnly {@code true} if the point <i>must</i> be on the segment
-     * @return The closest point on the segment if {@code segmentOnly = true}, otherwise the closest point on the infinite line.
-     */
-    private static ILatLon closestPointTo(ILatLon p1, ILatLon p2, ILatLon point, boolean segmentOnly) {
-        CheckParameterUtil.ensureParameterNotNull(p1, "p1");
-        CheckParameterUtil.ensureParameterNotNull(p2, "p2");
-        CheckParameterUtil.ensureParameterNotNull(point, "point");
-
-        double ldx = p2.lon() - p1.lon();
-        double ldy = p2.lat() - p1.lat();
-
-        //segment zero length
-        if (ldx == 0 && ldy == 0)
-            return p1;
-
-        double pdx = point.lon() - p1.lon();
-        double pdy = point.lat() - p1.lat();
-
-        double offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
-
-        if (segmentOnly && offset <= 0)
-            return p1;
-        else if (segmentOnly && offset >= 1)
-            return p2;
-        else
-            return p1.interpolate(p2, offset);
-    }
-
-    /**
      * Calculates closest point to a line segment.
      * @param segmentP1 First point determining line segment
      * @param segmentP2 Second point determining line segment
@@ -1533,12 +1500,13 @@ public final class Geometry {
             return Double.NaN;
 
         double smallest = Double.MAX_VALUE;
+        EastNorth en0 = node.getEastNorth();
         // go through the nodes as if they were paired
         Iterator<Node> iter = way.getNodes().iterator();
-        Node en1 = iter.next();
+        EastNorth en1 = iter.next().getEastNorth();
         while (iter.hasNext()) {
-            Node en2 = iter.next();
-            double distance = getSegmentNodeDistSq(en1, en2, node);
+            EastNorth en2 = iter.next().getEastNorth();
+            double distance = getSegmentNodeDistSq(en1, en2, en0);
             if (distance < smallest)
                 smallest = distance;
             en1 = en2;
@@ -1591,8 +1559,8 @@ public final class Geometry {
             return Double.NaN;
         double rValue = Double.MAX_VALUE;
         Iterator<Node> iter1 = w1.getNodes().iterator();
-        Node w1N1 = iter1.next();
         List<Node> w2Nodes = w2.getNodes();
+        Node w1N1 = iter1.next();
         while (iter1.hasNext()) {
             Node w1N2 = iter1.next();
             Iterator<Node> iter2 = w2Nodes.iterator();
@@ -1637,13 +1605,17 @@ public final class Geometry {
         if (!ws1Node1.isLatLonKnown() || !ws1Node2.isLatLonKnown() || !ws2Node1.isLatLonKnown() || !ws2Node2.isLatLonKnown()) {
             return Double.NaN;
         }
-        if (getSegmentSegmentIntersection(ws1Node1, ws1Node2, ws2Node1, ws2Node2) != null)
+        EastNorth enWs1Node1 = ws1Node1.getEastNorth();
+        EastNorth enWs1Node2 = ws1Node2.getEastNorth();
+        EastNorth enWs2Node1 = ws2Node1.getEastNorth();
+        EastNorth enWs2Node2 = ws2Node2.getEastNorth();
+        if (getSegmentSegmentIntersection(enWs1Node1, enWs1Node2, enWs2Node1, enWs2Node2) != null)
             return 0;
 
-        double dist1sq = getSegmentNodeDistSq(ws1Node1, ws1Node2, ws2Node1);
-        double dist2sq = getSegmentNodeDistSq(ws1Node1, ws1Node2, ws2Node2);
-        double dist3sq = getSegmentNodeDistSq(ws2Node1, ws2Node2, ws1Node1);
-        double dist4sq = getSegmentNodeDistSq(ws2Node1, ws2Node2, ws1Node2);
+        double dist1sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node1);
+        double dist2sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node2);
+        double dist3sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node1);
+        double dist4sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node2);
         double smallest = Math.min(Math.min(dist1sq, dist2sq), Math.min(dist3sq, dist4sq));
         return smallest != Double.MAX_VALUE ? Math.sqrt(smallest) : Double.NaN;
     }
@@ -1678,8 +1650,8 @@ public final class Geometry {
      * @param p the point
      * @return the square of the euclidean distance from p to the closest point on the segment
      */
-    private static double getSegmentNodeDistSq(ILatLon s1, ILatLon s2, ILatLon p) {
-        ILatLon c1 = closestPointTo(s1, s2, p, true);
-        return c1.distanceSq(p.lon(), p.lat());
+    private static double getSegmentNodeDistSq(EastNorth s1, EastNorth s2, EastNorth p) {
+        EastNorth c1 = closestPointTo(s1, s2, p, true);
+        return c1.distanceSq(p);
     }
 }

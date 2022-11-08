@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Assert;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,8 +40,6 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Unit tests of {@link Geometry} class.
  */
@@ -50,7 +49,7 @@ class GeometryTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
+    static JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
     /**
      * Test of {@link Geometry#getLineLineIntersection} method.
@@ -64,6 +63,7 @@ class GeometryTest {
 
         EastNorth intersectionPoint = Geometry.getLineLineIntersection(p1, p2, p3, p4);
 
+        assertNotNull(intersectionPoint);
         EastNorth d1 = p3.subtract(intersectionPoint);
         EastNorth d2 = p1.subtract(p2);
         Double crossProduct = d1.east()*d2.north() - d1.north()*d2.east();
@@ -71,17 +71,13 @@ class GeometryTest {
         Double len1 = d1.length();
         Double len2 = d2.length();
 
-        Double angle1 = Geometry.getCornerAngle(p1, p2, intersectionPoint);
-        Double angle2 = Geometry.getCornerAngle(p3, p4, intersectionPoint);
-        Assert.assertTrue("intersection point not on line, angle: " + angle1,
-                Math.abs(angle1) < 1e-10);
-        Assert.assertTrue("intersection point not on line, angle: " + angle2,
-                Math.abs(angle1) < 1e-10);
+        double angle1 = Geometry.getCornerAngle(p1, p2, intersectionPoint);
+        double angle2 = Geometry.getCornerAngle(p3, p4, intersectionPoint);
+        assertTrue(Math.abs(angle1) < 1e-10, "intersection point not on line, angle: " + angle1);
+        assertTrue(Math.abs(angle1) < 1e-10, "intersection point not on line, angle: " + angle2);
 
-        Assert.assertTrue("cross product != 1 : " + Math.abs(crossProduct/len1/len2),
-                Math.abs(Math.abs(crossProduct/len1/len2) - 1) < 1e-10);
-        Assert.assertTrue("scalar product != 0 : " + scalarProduct/len1/len2,
-                Math.abs(scalarProduct/len1/len2) < 1e-10);
+        assertTrue(Math.abs(Math.abs(crossProduct/len1/len2) - 1) < 1e-10, "cross product != 1 : " + Math.abs(crossProduct/len1/len2));
+        assertTrue(Math.abs(scalarProduct/len1/len2) < 1e-10, "scalar product != 0 : " + scalarProduct/len1/len2);
     }
 
     /**
@@ -95,8 +91,8 @@ class GeometryTest {
             DataSet ds = OsmReader.parseDataSet(in, null);
             Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
                     SearchCompiler.compile("landuse=forest")).iterator().next();
-            Assert.assertEquals(5760015.7353515625, Geometry.closedWayArea(closedWay), 1e-3);
-            Assert.assertEquals(5760015.7353515625, Geometry.computeArea(closedWay), 1e-3);
+            assertEquals(5760015.7353515625, Geometry.closedWayArea(closedWay), 1e-3);
+            assertEquals(5760015.7353515625, Geometry.computeArea(closedWay), 1e-3);
         }
     }
 
@@ -110,8 +106,8 @@ class GeometryTest {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final Relation r = ds.getRelations().iterator().next();
-            Assert.assertEquals(4401735.20703125, Geometry.multipolygonArea(r), 1e-3);
-            Assert.assertEquals(4401735.20703125, Geometry.computeArea(r), 1e-3);
+            assertEquals(4401735.20703125, Geometry.multipolygonArea(r), 1e-3);
+            assertEquals(4401735.20703125, Geometry.computeArea(r), 1e-3);
         }
     }
 
@@ -127,8 +123,8 @@ class GeometryTest {
             Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
                     SearchCompiler.compile("landuse=forest")).iterator().next();
             Geometry.AreaAndPerimeter areaAndPerimeter = Geometry.getAreaAndPerimeter(closedWay.getNodes());
-            Assert.assertEquals(12495000., areaAndPerimeter.getArea(), 1e-3);
-            Assert.assertEquals(15093.201209424187, areaAndPerimeter.getPerimeter(), 1e-3);
+            assertEquals(12495000., areaAndPerimeter.getArea(), 1e-3);
+            assertEquals(15093.201209424187, areaAndPerimeter.getPerimeter(), 1e-3);
         }
     }
 
@@ -373,13 +369,13 @@ class GeometryTest {
         mp2.addMember(new RelationMember("inner", inner));
         mp2.put("type", "multipolygon");
         assertFalse(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp2, null));
-        assertFalse(Geometry.filterInsideMultipolygon(Arrays.asList(w1), mp2).contains(w1));
+        assertFalse(Geometry.filterInsideMultipolygon(Collections.singletonList(w1), mp2).contains(w1));
 
         node4.setCoor(new LatLon(1.006, 0.99));
         // now w1 is inside
         assertTrue(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp2, null));
-        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1), mp2).contains(w1));
-        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(mp1), mp2).contains(mp1));
+        assertTrue(Geometry.filterInsideMultipolygon(Collections.singletonList(w1), mp2).contains(w1));
+        assertTrue(Geometry.filterInsideMultipolygon(Collections.singletonList(mp1), mp2).contains(mp1));
         assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2).contains(w1));
         assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2).contains(mp1));
     }
@@ -493,8 +489,8 @@ class GeometryTest {
         Way way1 = TestUtils.newWay("", node1, node2, node3, node4);
 
         Way closestSegment = Geometry.getClosestWaySegment(way1, new Node(new LatLon(0, 0.5))).toWay();
-        Assert.assertTrue(closestSegment.containsNode(node1));
-        Assert.assertTrue(closestSegment.containsNode(node2));
+        assertTrue(closestSegment.containsNode(node1));
+        assertTrue(closestSegment.containsNode(node2));
     }
 
     /**
