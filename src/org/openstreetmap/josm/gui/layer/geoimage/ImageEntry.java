@@ -153,10 +153,10 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
 
     @Override
     public void selectImage(ImageViewerDialog imageViewerDialog, IImageEntry<?> entry) {
-        IImageEntry.super.selectImage(imageViewerDialog, entry);
         if (entry instanceof ImageEntry) {
             this.dataSet.setSelectedImage((ImageEntry) entry);
         }
+        imageViewerDialog.displayImages(this.dataSet.getLayer(), Collections.singletonList(entry));
     }
 
     @Override
@@ -211,7 +211,7 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
         return getFile().toURI().toURL();
     }
 
-    private ImageReadParam withSubsampling(ImageReader reader, Dimension target) {
+    private static ImageReadParam withSubsampling(ImageReader reader, Dimension target) {
         try {
             ImageReadParam param = reader.getDefaultReadParam();
             Dimension source = new Dimension(reader.getWidth(0), reader.getHeight(0));

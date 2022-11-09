@@ -171,6 +171,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         this.gpxData = gpxData;
         this.useThumbs = useThumbs;
         this.data.addImageDataUpdateListener(this);
+        this.data.setLayer(this);
     }
 
     private final class ImageMouseListener extends MouseAdapter {
@@ -231,6 +232,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                     }
                 } else {
                     data.setSelectedImage(img);
+                    ImageViewerDialog.getInstance().displayImages(GeoImageLayer.this, Collections.singletonList(img));
                 }
             }
         }
@@ -521,9 +523,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      * Show current photo on map and in image viewer.
      */
     public void showCurrentPhoto() {
-        if (data.getSelectedImage() != null) {
-            clearOtherCurrentPhotos();
-        }
         updateBufferAndRepaint();
     }
 
@@ -625,18 +624,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             return data.getImages().get(idx);
         } else {
             return null;
-        }
-    }
-
-    /**
-     * Clears the currentPhoto of the other GeoImageLayer's. Otherwise there could be multiple selected photos.
-     */
-    private void clearOtherCurrentPhotos() {
-        for (GeoImageLayer layer:
-                 MainApplication.getLayerManager().getLayersOfType(GeoImageLayer.class)) {
-            if (layer != this) {
-                layer.getImageData().clearSelectedImage();
-            }
         }
     }
 

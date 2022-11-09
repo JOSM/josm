@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.tools.ListenerList;
 
@@ -41,6 +42,7 @@ public class ImageData implements Data {
 
     private final ListenerList<ImageDataUpdateListener> listeners = ListenerList.create();
     private final QuadBuckets<ImageEntry> geoImages = new QuadBuckets<>();
+    private Layer layer;
 
     /**
      * Construct a new image container without images
@@ -326,7 +328,7 @@ public class ImageData implements Data {
     }
 
     /**
-     * Remove the image from the list and optionnally trigger update listener
+     * Remove the image from the list and optionally trigger update listener
      * @param img the {@link ImageEntry} to remove
      * @param fireUpdateEvent if {@code true}, notifies listeners of image update
      * @since 18049
@@ -373,6 +375,24 @@ public class ImageData implements Data {
     private void afterImageUpdated(ImageEntry img) {
         img.flagNewGpsData();
         notifyImageUpdate();
+    }
+
+    /**
+     * Set the layer for use with {@link org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog#displayImages(Layer, List)}
+     * @param layer The layer to use for organization
+     * @since 18591
+     */
+    public void setLayer(Layer layer) {
+        this.layer = layer;
+    }
+
+    /**
+     * Get the layer that this data is associated with. May be {@code null}.
+     * @return The layer this data is associated with.
+     * @since 18591
+     */
+    public Layer getLayer() {
+        return this.layer;
     }
 
     /**
