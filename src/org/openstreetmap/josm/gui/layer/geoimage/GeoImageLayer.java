@@ -691,12 +691,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             }
         };
         MainApplication.getLayerManager().addActiveLayerChangeListener(activeLayerChangeListener);
-
-        MapFrame map = MainApplication.getMap();
-        if (map.getToggleDialog(ImageViewerDialog.class) == null) {
-            ImageViewerDialog.createInstance();
-            map.addToggleDialog(ImageViewerDialog.getInstance());
-        }
     }
 
     @Override

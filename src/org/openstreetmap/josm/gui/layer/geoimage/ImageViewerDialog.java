@@ -48,6 +48,7 @@ import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
 import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
@@ -112,8 +113,14 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      * @return the unique instance
      */
     public static ImageViewerDialog getInstance() {
-        if (dialog == null)
-            throw new AssertionError("a new instance needs to be created first");
+        MapFrame map = MainApplication.getMap();
+        synchronized (ImageViewerDialog.class) {
+            if (dialog == null)
+                createInstance();
+            if (map != null && map.getToggleDialog(ImageViewerDialog.class) == null) {
+                map.addToggleDialog(dialog);
+            }
+        }
         return dialog;
     }
 
@@ -240,6 +247,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             // We need to do multiple calls to avoid ConcurrentModificationExceptions
             invalidLayers.forEach(this.tabbedEntries::remove);
             addButtonsForImageLayers();
+            this.layers.invalidate();
         }
         this.revalidate();
     }
@@ -903,6 +911,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             }
             removedData.removeImageDataUpdateListener(this);
         }
+        // Unfortunately, there will be no way to remove the default null layer. This will be fixed as plugins update.
+        this.tabbedEntries.remove(e.getRemovedLayer());
     }
 
     @Override

@@ -1,30 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Objects;
+
 import javax.imageio.IIOParam;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
 
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
-import org.openstreetmap.josm.tools.ExifReader;
-import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -193,53 +184,10 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
      */
     @Override
     public BufferedImage read(Dimension target) throws IOException {
-        URL imageUrl = getImageUrl();
-        Logging.info(tr("Loading {0}", imageUrl));
-        BufferedImage image = ImageProvider.read(imageUrl, false, false,
-                r -> target == null ? r.getDefaultReadParam() : withSubsampling(r, target));
-        if (image == null) {
-            Logging.warn("Unable to load {0}", imageUrl);
-            return null;
-        }
-        Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
-                imageUrl, image.getWidth(), image.getHeight(), image.getWidth() * image.getHeight() * 4 / 1024 / 1024,
-                ExifReader.orientationSwitchesDimensions(getExifOrientation()));
-        return applyExifRotation(image);
+        return IImageEntry.super.read(target);
     }
 
     protected URL getImageUrl() throws MalformedURLException {
         return getFile().toURI().toURL();
-    }
-
-    private static ImageReadParam withSubsampling(ImageReader reader, Dimension target) {
-        try {
-            ImageReadParam param = reader.getDefaultReadParam();
-            Dimension source = new Dimension(reader.getWidth(0), reader.getHeight(0));
-            if (source.getWidth() > target.getWidth() || source.getHeight() > target.getHeight()) {
-                int subsampling = (int) Math.floor(Math.max(
-                        source.getWidth() / target.getWidth(),
-                        source.getHeight() / target.getHeight()));
-                param.setSourceSubsampling(subsampling, subsampling, 0, 0);
-            }
-            return param;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    private BufferedImage applyExifRotation(BufferedImage img) {
-        Integer exifOrientation = getExifOrientation();
-        if (!ExifReader.orientationNeedsCorrection(exifOrientation)) {
-            return img;
-        }
-        boolean switchesDimensions = ExifReader.orientationSwitchesDimensions(exifOrientation);
-        int width = switchesDimensions ? img.getHeight() : img.getWidth();
-        int height = switchesDimensions ? img.getWidth() : img.getHeight();
-        BufferedImage rotated = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        AffineTransform transform = ExifReader.getRestoreOrientationTransform(exifOrientation, img.getWidth(), img.getHeight());
-        Graphics2D g = rotated.createGraphics();
-        g.drawImage(img, transform, null);
-        g.dispose();
-        return rotated;
     }
 }

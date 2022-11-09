@@ -1,30 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.net.URL;
-import java.util.Collections;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
+import java.awt.event.ActionEvent;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.function.Supplier;
+
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
-import javax.swing.JViewport;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog;
+import org.openstreetmap.josm.gui.layer.geoimage.RemoteEntry;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Marker representing an image. Uses a special icon, and when clicked,
@@ -42,48 +38,86 @@ public class ImageMarker extends ButtonMarker {
         this.imageUrl = imageUrl;
     }
 
-    @Override public void actionPerformed(ActionEvent ev) {
-        final JPanel p = new JPanel(new BorderLayout());
-        final JScrollPane scroll = new JScrollPane(new JLabel(loadScaledImage(imageUrl, 580)));
-        final JViewport vp = scroll.getViewport();
-        p.add(scroll, BorderLayout.CENTER);
-
-        final JToggleButton scale = new JToggleButton(ImageProvider.get("misc", "rectangle"));
-
-        JPanel p2 = new JPanel();
-        p2.add(scale);
-        p.add(p2, BorderLayout.SOUTH);
-        scale.addActionListener(ev1 -> {
-            p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            if (scale.getModel().isSelected()) {
-                ((JLabel) vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
-            } else {
-                ((JLabel) vp.getView()).setIcon(new ImageIcon(imageUrl));
-            }
-            p.setCursor(Cursor.getDefaultCursor());
-        });
-        scale.setSelected(true);
-        JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
-        if (!GraphicsEnvironment.isHeadless()) {
-            JDialog dlg = pane.createDialog(MainApplication.getMainFrame(), imageUrl.toString());
-            dlg.setModal(false);
-            dlg.toFront();
-            dlg.setVisible(true);
-        }
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        ImageViewerDialog.getInstance().displayImages(this.parentLayer, Collections.singletonList(getRemoteEntry()));
     }
 
-    private static Icon loadScaledImage(URL u, int maxSize) {
-        Image img = new ImageIcon(u).getImage();
-        int w = img.getWidth(null);
-        int h = img.getHeight(null);
-        if (w > h) {
-            h = (int) Math.round(maxSize*((double) h/w));
-            w = maxSize;
-        } else {
-            w = (int) Math.round(maxSize*((double) w/h));
-            h = maxSize;
+    private RemoteEntry getRemoteEntry() {
+        try {
+            final RemoteEntry remoteEntry = new RemoteEntry(this.parentLayer, imageUrl.toURI(), getFirstImage(), getPreviousImage(),
+                    getNextImage(), getLastImage());
+            // First, extract EXIF data
+            remoteEntry.extractExif();
+            // Then, apply information from this point. This may overwrite details from
+            // the exif, but that will (hopefully) be OK.
+            if (Double.isFinite(this.time)) {
+                remoteEntry.setGpsTime(Instant.ofEpochMilli((long) (this.time * 1000)));
+            }
+            if (this.isLatLonKnown()) {
+                remoteEntry.setPos(this);
+            }
+            if (!Utils.isBlank(this.getText())) {
+                remoteEntry.setDisplayName(this.getText());
+            }
+            return remoteEntry;
+        } catch (URISyntaxException e) {
+            Logging.trace(e);
+            new Notification(tr("Malformed URI: ", this.imageUrl.toExternalForm())).setIcon(JOptionPane.WARNING_MESSAGE).show();
         }
-        return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+        return null;
+    }
+
+    private Supplier<RemoteEntry> getFirstImage() {
+        for (Marker marker : this.parentLayer.data) {
+            if (marker instanceof ImageMarker) {
+                if (marker == this) {
+                    break;
+                }
+                ImageMarker imageMarker = (ImageMarker) marker;
+                return imageMarker::getRemoteEntry;
+            }
+        }
+        return () -> null;
+    }
+
+    private Supplier<RemoteEntry> getPreviousImage() {
+        int index = this.parentLayer.data.indexOf(this);
+        for (int i = index - 1; i >= 0; i--) {
+            Marker marker = this.parentLayer.data.get(i);
+            if (marker instanceof ImageMarker) {
+                ImageMarker imageMarker = (ImageMarker) marker;
+                return imageMarker::getRemoteEntry;
+            }
+        }
+        return () -> null;
+    }
+
+    private Supplier<RemoteEntry> getNextImage() {
+        int index = this.parentLayer.data.indexOf(this);
+        for (int i = index + 1; i < this.parentLayer.data.size(); i++) {
+            Marker marker = this.parentLayer.data.get(i);
+            if (marker instanceof ImageMarker) {
+                ImageMarker imageMarker = (ImageMarker) marker;
+                return imageMarker::getRemoteEntry;
+            }
+        }
+        return () -> null;
+    }
+
+    private Supplier<RemoteEntry> getLastImage() {
+        int index = this.parentLayer.data.indexOf(this);
+        for (int i = this.parentLayer.data.size() - 1; i >= index; i--) {
+            Marker marker = this.parentLayer.data.get(i);
+            if (marker instanceof ImageMarker) {
+                if (marker == this) {
+                    break;
+                }
+                ImageMarker imageMarker = (ImageMarker) marker;
+                return imageMarker::getRemoteEntry;
+            }
+        }
+        return () -> null;
     }
 
     @Override

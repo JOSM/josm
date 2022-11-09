@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery.street_level;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,7 +14,12 @@ import java.util.List;
 import javax.imageio.IIOParam;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.gui.layer.geoimage.ImageMetadata;
+import org.openstreetmap.josm.gui.layer.geoimage.ImageUtils;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog;
+import org.openstreetmap.josm.tools.ExifReader;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * An interface for image entries that will be shown in {@link org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay}
@@ -137,7 +144,24 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @return the read image, or {@code null}
      * @throws IOException if any I/O error occurs
      */
-    BufferedImage read(Dimension target) throws IOException;
+    default BufferedImage read(Dimension target) throws IOException {
+        URI imageUrl = getImageURI();
+        Logging.info(tr("Loading {0}", imageUrl));
+        BufferedImage image = ImageProvider.read(imageUrl.toURL(), false, false,
+                r -> target == null ? r.getDefaultReadParam() : ImageUtils.withSubsampling(r, target));
+        if (image == null) {
+            Logging.warn("Unable to load {0}", imageUrl);
+            return null;
+        }
+        if (this instanceof ImageMetadata) {
+            ImageMetadata data = (ImageMetadata) this;
+            Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
+                    imageUrl, image.getWidth(), image.getHeight(), image.getWidth() * image.getHeight() * 4 / 1024 / 1024,
+                    ExifReader.orientationSwitchesDimensions(data.getExifOrientation()));
+            return ImageUtils.applyExifRotation(image, data.getExifOrientation());
+        }
+        return image;
+    }
 
     /**
      * Sets the width of this ImageEntry.
