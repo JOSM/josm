@@ -106,7 +106,7 @@ public class ImageMarker extends ButtonMarker {
     }
 
     private Supplier<RemoteEntry> getLastImage() {
-        int index = this.parentLayer.data.indexOf(this);
+        int index = Math.max(0, this.parentLayer.data.indexOf(this));
         for (int i = this.parentLayer.data.size() - 1; i >= index; i--) {
             Marker marker = this.parentLayer.data.get(i);
             if (marker instanceof ImageMarker) {
