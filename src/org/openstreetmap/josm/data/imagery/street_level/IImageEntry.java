@@ -187,7 +187,11 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @since 18427
      */
     default URI getImageURI() {
-        return this.getFile().toURI();
+        File file = this.getFile();
+        if (file != null) {
+            return file.toURI();
+        }
+        return null;
     }
 
     /**
