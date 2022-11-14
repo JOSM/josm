@@ -6703,11 +6703,12 @@
             <link wiki="Tag:power=transformer" />
             <space />
             <key key="power" value="transformer" />
-            <combo key="transformer" text="Type of transformer" values="auto,auxiliary,converter,distribution,generator,phase_angle_regulator,traction,yes" match="key" values_context="power" />
+            <combo key="transformer" text="Type of transformer" values="auxiliary,converter,distribution,generator,main,phase_angle_regulator,yes" match="key" values_context="power" />
             <reference ref="power_loc" />
             <reference ref="transformer_voltage_frequency" />
             <reference ref="ref_operator" />
             <reference ref="optional_transformer_rating_phases_devices_windings" />
+            <check text="Auto-transformer (windings type)" key="windings:auto" disable_off="true" />
         </item> <!-- Power Transformer -->
         <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:power=switchgear" />
@@ -9029,7 +9030,7 @@
             <space />
             <key key="landuse" value="residential" />
             <reference ref="optional_name" />
-            <combo key="residential" text="Type" values="apartments,rural,urban" values_context="landuse type" />
+            <combo key="residential" text="Type" values="apartments,halting_site,rural,single_family,trailer_park,urban" values_context="landuse type" />
         </item> <!-- Residential Area -->
         <item name="Education" icon="presets/education/education.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=education" />
