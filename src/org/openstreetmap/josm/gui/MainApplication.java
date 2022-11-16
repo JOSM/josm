@@ -1122,6 +1122,11 @@ public class MainApplication {
         });
     }
 
+    /**
+     * Set up the UI manager
+     */
+    // We want to catch all exceptions here to reset LaF to defaults and report it.
+    @SuppressWarnings("squid:S2221")
     static void setupUIManager() {
         String defaultlaf = PlatformManager.getPlatform().getDefaultStyle();
         String laf = LafPreference.LAF.get();
@@ -1148,6 +1153,11 @@ public class MainApplication {
                     Logging.info("Look and Feel not supported: " + laf);
                     LafPreference.LAF.put(defaultlaf);
                     Logging.trace(ex);
+                } catch (Exception ex) {
+                    // We do not want to silently exit if there is an exception.
+                    // Put the default laf in place so that the user can use JOSM.
+                    LafPreference.LAF.put(defaultlaf);
+                    BugReportExceptionHandler.handleException(ex);
                 }
             } else {
                 Logging.info("Look and Feel not found: " + laf);
@@ -1159,6 +1169,11 @@ public class MainApplication {
             Logging.trace(e);
         } catch (InstantiationException | IllegalAccessException e) {
             Logging.error(e);
+        } catch (Exception e) {
+            // We do not want to silently exit if there is an exception.
+            // Put the default laf in place.
+            LafPreference.LAF.put(defaultlaf);
+            BugReportExceptionHandler.handleException(e);
         }
 
         UIManager.put("OptionPane.okIcon", ImageProvider.getIfAvailable("ok"));

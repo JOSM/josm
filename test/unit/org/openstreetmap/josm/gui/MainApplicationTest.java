@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,19 +15,26 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.Attributes;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -37,6 +45,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.preferences.display.LafPreference;
+import org.openstreetmap.josm.plugins.PluginClassLoader;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -49,6 +59,7 @@ import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.tools.bugreport.BugReportQueue;
 
 /**
  * Unit tests of {@link MainApplication} class.
@@ -195,10 +206,33 @@ public class MainApplicationTest {
      */
     @Test
     void testSetupUIManager() {
+        TestUtils.assumeWorkingJMockit();
         assumeFalse(PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR")));
-        MainApplication.setupUIManager();
+        assertDoesNotThrow(MainApplication::setupUIManager);
         assertEquals(Config.getPref().get("laf", PlatformManager.getPlatform().getDefaultStyle()),
                 UIManager.getLookAndFeel().getClass().getCanonicalName());
+        try {
+            LafPreference.LAF.put(BadLaf.class.getName());
+            new PluginHandlerMock();
+            AtomicReference<Throwable> exceptionAtomicReference = new AtomicReference<>();
+            BugReportQueue.getInstance().setBugReportHandler((e, index) -> {
+                exceptionAtomicReference.set(e.getCause());
+                return BugReportQueue.SuppressionMode.NONE;
+            });
+            assertDoesNotThrow(MainApplication::setupUIManager);
+
+            assertNotNull(exceptionAtomicReference.get());
+            assertTrue(exceptionAtomicReference.get() instanceof UnsupportedOperationException);
+            // The LAF only resets on restart, so don't bother checking that it switched back in UIManager
+            assertEquals(LafPreference.LAF.getDefaultValue(), LafPreference.LAF.get());
+        } finally {
+            BugReportQueue.getInstance().setBugReportHandler(BugReportQueue.FALLBACK_BUGREPORT_HANDLER);
+            // Make certain we reset the LAF
+            LafPreference.LAF.remove();
+            assertDoesNotThrow(MainApplication::setupUIManager);
+            assertEquals(Config.getPref().get("laf", PlatformManager.getPlatform().getDefaultStyle()),
+                    UIManager.getLookAndFeel().getClass().getCanonicalName());
+        }
     }
 
     private static PluginInformation newPluginInformation(String plugin) throws PluginListParseException {
@@ -315,5 +349,25 @@ public class MainApplicationTest {
     @Test
     void testEnumDownloadParamType() {
         TestUtils.superficialEnumCodeCoverage(DownloadParamType.class);
+    }
+
+    /**
+     * This class exists to test a failure in non-default UI loading
+     */
+    public static class BadLaf extends MetalLookAndFeel {
+        @Override
+        public UIDefaults getDefaults() {
+            throw new UnsupportedOperationException("Test failure loading");
+        }
+    }
+
+    /**
+     * A mock class for returning a fake plugin class loader for {@link #testSetupUIManager()}
+     */
+    public static class PluginHandlerMock extends MockUp<PluginHandler> {
+        @Mock
+        public static Collection<PluginClassLoader> getPluginClassLoaders() {
+            return Collections.singleton(new PluginClassLoader(new URL[0], BadLaf.class.getClassLoader(), Collections.emptyList()));
+        }
     }
 }
