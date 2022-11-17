@@ -608,7 +608,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentEntry != null) {
+            if (currentEntry != null && currentEntry.getImageURI() != null) {
                 try {
                     PlatformManager.getPlatform().openUrl(currentEntry.getImageURI().toURL().toExternalForm());
                 } catch (IOException ex) {

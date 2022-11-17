@@ -146,6 +146,9 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      */
     default BufferedImage read(Dimension target) throws IOException {
         URI imageUrl = getImageURI();
+        if (imageUrl == null) {
+            return null;
+        }
         Logging.info(tr("Loading {0}", imageUrl));
         BufferedImage image = ImageProvider.read(imageUrl.toURL(), false, false,
                 r -> target == null ? r.getDefaultReadParam() : ImageUtils.withSubsampling(r, target));
