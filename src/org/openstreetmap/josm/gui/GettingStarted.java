@@ -61,6 +61,10 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             + ".icon {font-size: 0; }\n"
             + "</style>\n";
 
+    /**
+     * A subclass of {@link JosmEditorPane} which replaces links with something clickable (uses {@link OpenBrowser})
+     * @since 623
+     */
     public static class LinkGeneral extends JosmEditorPane implements HyperlinkListener {
 
         /**
@@ -143,7 +147,8 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         lg.getInputMap(JComponent.WHEN_FOCUSED).put(DownloadPrimitiveAction.SHORTCUT.getKeyStroke(), "none");
         lg.getInputMap(JComponent.WHEN_FOCUSED).put(MenuItemSearchDialog.Action.SHORTCUT.getKeyStroke(), "none");
         lg.getInputMap(JComponent.WHEN_FOCUSED).put(HistoryInfoAction.SHORTCUT.getKeyStroke(), "none");
-        lg.setTransferHandler(null);
+        // Don't use the text handler drag and drop behavior. See #13196/#20528.
+        lg.setDropTarget(null);
 
         JScrollPane scroller = new JScrollPane(lg);
         scroller.setViewportBorder(new EmptyBorder(10, 100, 10, 100));
