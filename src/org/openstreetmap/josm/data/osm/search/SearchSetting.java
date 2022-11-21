@@ -86,7 +86,7 @@ public class SearchSetting {
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, mode, caseSensitive, regexSearch, mapCSSSearch, allElements);
+        return Objects.hash(text, mode != null ? mode.getCode() : null, caseSensitive, regexSearch, mapCSSSearch, allElements);
     }
 
     /**
