@@ -151,6 +151,12 @@ public abstract class SourceEditor extends JPanel {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         this.availableSourcesModel = new AvailableSourcesModel();
         this.tblAvailableSources = new ScrollHackTable(availableSourcesModel);
+        // This add/remove listener code is needed to fix #20849. Java fires table listeners in the reverse order
+        // in which they were added, and we need the model to have been updated before we call the adjustColumnWidth code.
+        // So we remove the JTable and re-add it as a listener after we add the column width adjustment
+        availableSourcesModel.addTableModelListener(e -> TableHelper.adjustColumnWidth(tblAvailableSources, 0, 800));
+        availableSourcesModel.removeTableModelListener(this.tblAvailableSources);
+        availableSourcesModel.addTableModelListener(this.tblAvailableSources);
         this.tblAvailableSources.setAutoCreateRowSorter(true);
         this.tblAvailableSources.setSelectionModel(selectionModel);
         final FancySourceEntryTableCellRenderer availableSourcesEntryRenderer = new FancySourceEntryTableCellRenderer();
@@ -190,7 +196,6 @@ public abstract class SourceEditor extends JPanel {
         });
         // Force Swing to show horizontal scrollbars for the JTable
         // Yes, this is a little ugly, but should work
-        availableSourcesModel.addTableModelListener(e -> TableHelper.adjustColumnWidth(tblAvailableSources, 0, 800));
         activeSourcesModel.addTableModelListener(e -> TableHelper.adjustColumnWidth(tblActiveSources, canEnable ? 1 : 0, 800));
         activeSourcesModel.setActiveSources(getInitialSourcesList());
 
