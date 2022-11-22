@@ -35,6 +35,8 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import mockit.Mock;
 import mockit.MockUp;
+import org.awaitility.Awaitility;
+import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -221,6 +223,10 @@ public class MainApplicationTest {
             });
             assertDoesNotThrow(MainApplication::setupUIManager);
 
+            /* We cannot sync on the worker or EDT threads since the bug report handler makes a new thread */
+            Awaitility.await().atMost(Durations.ONE_HUNDRED_MILLISECONDS)
+                    .pollDelay(Durations.ONE_MILLISECOND)
+                    .until(() -> !BugReportQueue.getInstance().exceptionHandlingInProgress());
             assertNotNull(exceptionAtomicReference.get());
             assertTrue(exceptionAtomicReference.get() instanceof UnsupportedOperationException);
             // The LAF only resets on restart, so don't bother checking that it switched back in UIManager
