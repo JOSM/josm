@@ -12,6 +12,9 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.openstreetmap.josm.data.imagery.street_level.Projections;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -24,6 +27,7 @@ import org.openstreetmap.josm.gui.util.imagery.Vector3D;
  * @since 18246
  */
 public class Equirectangular extends ComponentAdapter implements IImageViewer {
+    @Nullable
     private volatile CameraPlane cameraPlane;
     private volatile BufferedImage offscreenImage;
 
@@ -37,7 +41,8 @@ public class Equirectangular extends ComponentAdapter implements IImageViewer {
         final CameraPlane currentCameraPlane;
         final BufferedImage currentOffscreenImage;
         synchronized (this) {
-            currentCameraPlane = this.cameraPlane;
+            final CameraPlane currentPlane = this.cameraPlane;
+            currentCameraPlane = currentPlane != null ? currentPlane : this.updateCameraPlane(target.width, target.height);
             currentOffscreenImage = this.offscreenImage;
         }
         currentCameraPlane.mapping(image, currentOffscreenImage, visibleRect);
@@ -56,7 +61,11 @@ public class Equirectangular extends ComponentAdapter implements IImageViewer {
 
     @Override
     public Vector3D getRotation() {
-        return this.cameraPlane.getRotation();
+        final CameraPlane currentPlane = this.cameraPlane;
+        if (currentPlane != null) {
+            return currentPlane.getRotation();
+        }
+        return IImageViewer.super.getRotation();
     }
 
     @Override
@@ -64,27 +73,7 @@ public class Equirectangular extends ComponentAdapter implements IImageViewer {
         final Component imgDisplay = e.getComponent();
         if (e.getComponent().getWidth() > 0
                 && e.getComponent().getHeight() > 0) {
-            // FIXME: Do something so that the types of the images are the same between the offscreenImage and
-            // the image entry
-            final CameraPlane currentCameraPlane;
-            synchronized (this) {
-                currentCameraPlane = this.cameraPlane;
-            }
-            final BufferedImage temporaryOffscreenImage = new BufferedImage(imgDisplay.getWidth(), imgDisplay.getHeight(),
-                    BufferedImage.TYPE_4BYTE_ABGR);
-
-            Vector3D currentRotation = null;
-            if (currentCameraPlane != null) {
-                currentRotation = currentCameraPlane.getRotation();
-            }
-            final CameraPlane temporaryCameraPlane = new CameraPlane(imgDisplay.getWidth(), imgDisplay.getHeight());
-            if (currentRotation != null) {
-                temporaryCameraPlane.setRotation(currentRotation);
-            }
-            synchronized (this) {
-                this.cameraPlane = temporaryCameraPlane;
-                this.offscreenImage = temporaryOffscreenImage;
-            }
+            updateCameraPlane(imgDisplay.getWidth(), imgDisplay.getHeight());
             if (imgDisplay instanceof ImageDisplay) {
                 ((ImageDisplay) imgDisplay).updateVisibleRectangle();
             }
@@ -92,10 +81,42 @@ public class Equirectangular extends ComponentAdapter implements IImageViewer {
         }
     }
 
+    /**
+     * Update the current camera plane
+     * @param width The width to use
+     * @param height The height to use
+     */
+    @Nonnull
+    private CameraPlane updateCameraPlane(int width, int height) {
+        // FIXME: Do something so that the types of the images are the same between the offscreenImage and
+        // the image entry
+        final CameraPlane currentCameraPlane;
+        synchronized (this) {
+            currentCameraPlane = this.cameraPlane;
+        }
+        final BufferedImage temporaryOffscreenImage = new BufferedImage(width, height,
+                BufferedImage.TYPE_4BYTE_ABGR);
+
+        Vector3D currentRotation = null;
+        if (currentCameraPlane != null) {
+            currentRotation = currentCameraPlane.getRotation();
+        }
+        final CameraPlane temporaryCameraPlane = new CameraPlane(width, height);
+        if (currentRotation != null) {
+            temporaryCameraPlane.setRotation(currentRotation);
+        }
+        synchronized (this) {
+            this.cameraPlane = temporaryCameraPlane;
+            this.offscreenImage = temporaryOffscreenImage;
+        }
+        return temporaryCameraPlane;
+    }
+
     @Override
     public void mouseDragged(final Point from, final Point to, ImageDisplay.VisRect currentVisibleRect) {
-        if (from != null && to != null) {
-            this.cameraPlane.setRotationFromDelta(from, to);
+        final CameraPlane currentPlane = this.cameraPlane;
+        if (from != null && to != null && currentPlane != null) {
+            currentPlane.setRotationFromDelta(from, to);
         }
     }
 
