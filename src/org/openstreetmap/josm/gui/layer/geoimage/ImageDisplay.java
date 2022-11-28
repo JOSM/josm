@@ -635,7 +635,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      */
     public Future<?> setImage(IImageEntry<?> entry) {
         LoadImageRunnable runnable = setImage0(entry);
-        return runnable != null ? MainApplication.worker.submit(runnable) : null;
+        return runnable != null && !MainApplication.worker.isShutdown() ? MainApplication.worker.submit(runnable) : null;
     }
 
     protected LoadImageRunnable setImage0(IImageEntry<?> entry) {

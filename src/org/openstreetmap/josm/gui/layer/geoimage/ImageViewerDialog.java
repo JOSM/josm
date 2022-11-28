@@ -907,7 +907,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         if (e.getRemovedLayer() instanceof GeoImageLayer && this.currentEntry instanceof ImageEntry) {
             ImageData removedData = ((GeoImageLayer) e.getRemovedLayer()).getImageData();
             if (removedData == ((ImageEntry) this.currentEntry).getDataSet()) {
-                displayImages(null);
+                displayImages(e.getRemovedLayer(), null);
             }
             removedData.removeImageDataUpdateListener(this);
         }
