@@ -61,23 +61,22 @@ public class ChangesetDataSet {
      * @throws IllegalArgumentException if cmt is null
      * @throws IllegalArgumentException if the same primitive was already stored with a higher or equal version
      */
-    public void put(HistoryOsmPrimitive primitive, ChangesetModificationType cmt) {
+    public void put(final HistoryOsmPrimitive primitive, ChangesetModificationType cmt) {
         CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         CheckParameterUtil.ensureParameterNotNull(cmt, "cmt");
         DefaultChangesetDataSetEntry csEntry = new DefaultChangesetDataSetEntry(cmt, primitive);
-        Object val = entryMap.get(primitive.getPrimitiveId());
+        final PrimitiveId pid = primitive.getPrimitiveId();
         ChangesetDataSetEntry[] entries;
-        if (val == null) {
-            entryMap.put(primitive.getPrimitiveId(), csEntry);
+        Object val = entryMap.computeIfAbsent(pid, k -> csEntry);
+        if (val == csEntry)
             return;
-        }
         if (val instanceof ChangesetDataSetEntry) {
             entries = new ChangesetDataSetEntry[2];
             entries[0] = (ChangesetDataSetEntry) val;
             if (primitive.getVersion() <= entries[0].getPrimitive().getVersion()) {
                 throw new IllegalArgumentException(
                         tr("Changeset {0}: Unexpected order of versions for {1}: v{2} is not higher than v{3}",
-                                String.valueOf(primitive.getChangesetId()), primitive.getPrimitiveId(),
+                                String.valueOf(primitive.getChangesetId()), pid,
                                 primitive.getVersion(), entries[0].getPrimitive().getVersion()));
             }
         } else {
@@ -85,11 +84,11 @@ public class ChangesetDataSet {
         }
         if (entries[1] != null) {
             Logging.info("Changeset {0}: Change of {1} v{2} is replaced by version v{3}",
-                    String.valueOf(primitive.getChangesetId()), primitive.getPrimitiveId(),
+                    String.valueOf(primitive.getChangesetId()), pid,
                     entries[1].getPrimitive().getVersion(), primitive.getVersion());
         }
         entries[1] = csEntry;
-        entryMap.put(primitive.getPrimitiveId(), entries);
+        entryMap.put(pid, entries);
     }
 
     /**
