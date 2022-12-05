@@ -313,7 +313,6 @@ public final class DomainValidator extends AbstractValidator {
         "accountants", // accountants Knob Town, LLC
         "aco", // aco ACO Severin Ahlmann GmbH &amp; Co. KG
         "actor", // actor United TLD Holdco Ltd.
-        "adac", // adac Allgemeiner Deutscher Automobil-Club e.V. (ADAC)
         "ads", // ads Charleston Road Registry Inc.
         "adult", // adult ICM Registry AD LLC
         "aeg", // aeg Aktiebolaget Electrolux
