@@ -1,19 +1,29 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.datatransfer;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.actions.CopyAction;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -70,5 +80,42 @@ class OsmTransferHandlerTest {
         transferHandler.pasteTags(Collections.singleton(n));
 
         assertEquals("ok", n.get("test"));
+    }
+
+    static Stream<Arguments> testNonRegression21324() {
+        return Stream.of(
+                Arguments.of((Runnable) () -> ClipboardUtils.copyString("test=ok\rsomething=else\nnew=line")),
+                Arguments.of((Runnable) () -> {
+                    Node nData = new Node();
+                    nData.put("test", "ok");
+                    nData.put("something", "else");
+                    nData.put("new", "line");
+                    ClipboardUtils.copy(new PrimitiveTransferable(
+                            PrimitiveTransferData.getDataWithReferences(Collections.singletonList(nData)), null));
+                })
+        );
+    }
+
+    /**
+     * Non-regression test for #21324: Command stack says "pasting 1 tag to [number] objects" regardless of how many tags are pasted
+     */
+    @ParameterizedTest
+    @MethodSource
+    void testNonRegression21324(Runnable clipboardCopy) {
+        clipboardCopy.run();
+        Node n = new Node(LatLon.ZERO);
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(n), "testNonRegression21324", null));
+
+        transferHandler.pasteTags(Collections.singleton(n));
+        Command command = UndoRedoHandler.getInstance().getLastCommand();
+
+        assertAll(() -> assertEquals("ok", n.get("test")),
+                () -> assertEquals("else", n.get("something")),
+                () -> assertEquals("line", n.get("new")),
+                () -> assertEquals(1, UndoRedoHandler.getInstance().getUndoCommands().size()),
+                () -> assertTrue((command instanceof SequenceCommand
+                        && command.getChildren().stream().allMatch(ChangePropertyCommand.class::isInstance))
+                || command instanceof ChangePropertyCommand),
+                () -> assertEquals("Sequence: Pasting 3 tags to 1 object", command.getDescriptionText()));
     }
 }

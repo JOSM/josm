@@ -61,7 +61,12 @@ public abstract class AbstractTagPaster extends AbstractOsmDataPaster {
      */
     protected static void commitCommands(Collection<? extends OsmPrimitive> selection, List<Command> commands) {
         if (!commands.isEmpty()) {
-            String title1 = trn("Pasting {0} tag", "Pasting {0} tags", commands.size(), commands.size());
+            final int changedTags = commands.stream()
+                    .filter(ChangePropertyCommand.class::isInstance)
+                    .map(ChangePropertyCommand.class::cast)
+                    .mapToInt(p -> p.getTags().size())
+                    .sum();
+            String title1 = trn("Pasting {0} tag", "Pasting {0} tags", changedTags, changedTags);
             String title2 = trn("to {0} object", "to {0} objects", selection.size(), selection.size());
             @I18n.QuirkyPluralString
             final String title = title1 + ' ' + title2;
