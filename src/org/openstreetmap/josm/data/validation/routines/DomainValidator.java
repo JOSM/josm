@@ -1423,7 +1423,6 @@ public final class DomainValidator extends AbstractValidator {
         "xn--io0a7i", // 网络 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
         "xn--j1aef", // ком VeriSign Sarl
         "xn--jlq480n2rg", // 亚马逊 Amazon Registry Services, Inc.
-        "xn--jlq61u9w7b", // 诺基亚 Nokia Corporation
         "xn--jvr189m", // 食品 Amazon Registry Services, Inc.
         "xn--kcrx77d1x4a", // 飞利浦 Koninklijke Philips N.V.
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
