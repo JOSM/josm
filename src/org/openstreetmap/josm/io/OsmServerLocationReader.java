@@ -55,7 +55,7 @@ public class OsmServerLocationReader extends OsmServerReader {
     }
 
     protected final <T> T doParse(Parser<T> parser, final ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask(tr("Contacting Server...", 10));
+        progressMonitor.beginTask(tr("Contacting Server..."), 10);
         try { // NOPMD
             return parser.parse();
         } catch (OsmTransferException e) {
