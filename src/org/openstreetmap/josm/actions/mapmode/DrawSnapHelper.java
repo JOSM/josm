@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState;
@@ -439,7 +440,7 @@ class DrawSnapHelper {
         double de = p.east()-e0;
         double dn = p.north()-n0;
         double l = de*pe+dn*pn;
-        double delta = MainApplication.getMap().mapView.getDist100Pixel()/20;
+        double delta = MainApplication.getMap().mapView.getDist100Pixel() / (20 * ProjectionRegistry.getProjection().getMetersPerUnit());
         if (!absoluteFix && l < delta) {
             active = false;
             return p;
