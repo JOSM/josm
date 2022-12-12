@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -47,7 +48,9 @@ import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
@@ -62,8 +65,10 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.imagery.Vector3D;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -71,13 +76,15 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 99
  */
 public class GeoImageLayer extends AbstractModifiableLayer implements
-        JumpToMarkerLayer, NavigatableComponent.ZoomChangeListener, ImageDataUpdateListener {
+        JumpToMarkerLayer, NavigatableComponent.ZoomChangeListener, ImageDataUpdateListener,
+        IGeoImageLayer {
 
     private static final List<Action> menuAdditions = new LinkedList<>();
 
     private static volatile List<MapMode> supportedMapModes;
 
     private final ImageData data;
+    private final ListenerList<IGeoImageLayer.ImageChangeListener> imageChangeListeners = ListenerList.create();
     GpxData gpxData;
     GpxLayer gpxFauxLayer;
     GpxData gpxFauxData;
@@ -86,6 +93,19 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     private final Icon icon = ImageProvider.get("dialogs/geoimage/photo-marker");
     private final Icon selectedIcon = ImageProvider.get("dialogs/geoimage/photo-marker-selected");
+    private final Icon selectedIconNotImageViewer = generateSelectedIconNotImageViewer(this.selectedIcon);
+
+    private static Icon generateSelectedIconNotImageViewer(Icon selectedIcon) {
+        Color color = new NamedColorProperty("geoimage.selected.not.image.viewer", new Color(50, 0, 0)).get();
+        BufferedImage bi = new BufferedImage(selectedIcon.getIconWidth(), selectedIcon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = bi.createGraphics();
+        selectedIcon.paintIcon(null, g2d, 0, 0);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.5f));
+        g2d.setColor(color);
+        g2d.fillRect(0, 0, selectedIcon.getIconWidth(), selectedIcon.getIconHeight());
+        g2d.dispose();
+        return new ImageIcon(bi);
+    }
 
     boolean useThumbs;
     private final ExecutorService thumbsLoaderExecutor =
@@ -172,6 +192,14 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         this.useThumbs = useThumbs;
         this.data.addImageDataUpdateListener(this);
         this.data.setLayer(this);
+        synchronized (ImageViewerDialog.class) {
+            if (!ImageViewerDialog.hasInstance()) {
+                GuiHelper.runInEDTAndWait(ImageViewerDialog::createInstance);
+            }
+        }
+        if (getInvalidGeoImages().size() == data.size()) {
+            ImageViewerDialog.getInstance().displayImages(Collections.singletonList(this.data.getFirstImage()));
+        }
     }
 
     private final class ImageMouseListener extends MouseAdapter {
@@ -232,8 +260,9 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                     }
                 } else {
                     data.setSelectedImage(img);
-                    ImageViewerDialog.getInstance().displayImages(GeoImageLayer.this, Collections.singletonList(img));
+                    ImageViewerDialog.getInstance().displayImages(Collections.singletonList(img));
                 }
+                GeoImageLayer.this.invalidate(); // Needed to update which image is being shown in the image viewer in the mapview
             }
         }
     }
@@ -248,8 +277,42 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     @Override
+    public void clearSelection() {
+        this.getImageData().clearSelectedImage();
+    }
+
+    @Override
+    public boolean containsImage(IImageEntry<?> imageEntry) {
+        if (imageEntry instanceof ImageEntry) {
+            return this.data.getImages().contains(imageEntry);
+        }
+        return false;
+    }
+
+    @Override
     public Icon getIcon() {
         return ImageProvider.get("dialogs/geoimage", ImageProvider.ImageSizes.LAYER);
+    }
+
+    @Override
+    public List<ImageEntry> getSelection() {
+        return this.getImageData().getSelectedImages();
+    }
+
+    @Override
+    public List<IImageEntry<?>> getInvalidGeoImages() {
+        return this.getImageData().getImages().stream().filter(entry -> entry.getPos() == null || entry.getExifCoor() == null
+              || !entry.getExifCoor().isValid() || !entry.getPos().isValid()).collect(toList());
+    }
+
+    @Override
+    public void addImageChangeListener(ImageChangeListener listener) {
+        this.imageChangeListeners.addListener(listener);
+    }
+
+    @Override
+    public void removeImageChangeListener(ImageChangeListener listener) {
+        this.imageChangeListeners.removeListener(listener);
     }
 
     /**
@@ -451,6 +514,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             }
         }
 
+        final IImageEntry<?> currentImage = ImageViewerDialog.getCurrentImage();
         for (ImageEntry e: data.getSelectedImages()) {
             if (e != null && e.getPos() != null) {
                 Point p = mv.getPoint(e.getPos());
@@ -465,8 +529,12 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 if (useThumbs && e.hasThumbnail()) {
                     g.setColor(new Color(128, 0, 0, 122));
                     g.fillRect(p.x - imgDim.width / 2, p.y - imgDim.height / 2, imgDim.width, imgDim.height);
-                } else {
+                } else if (e.equals(currentImage)) {
                     selectedIcon.paintIcon(mv, g,
+                            p.x - imgDim.width / 2,
+                            p.y - imgDim.height / 2);
+                } else {
+                    selectedIconNotImageViewer.paintIcon(mv, g,
                             p.x - imgDim.width / 2,
                             p.y - imgDim.height / 2);
                 }
@@ -884,6 +952,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     @Override
     public void selectedImageChanged(ImageData data) {
         showCurrentPhoto();
+        this.imageChangeListeners.fireEvent(e -> e.imageChanged(this, null, data.getSelectedImages()));
     }
 
     @Override

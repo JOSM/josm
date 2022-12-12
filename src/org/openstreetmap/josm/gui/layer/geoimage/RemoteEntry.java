@@ -19,7 +19,6 @@ import java.util.function.Supplier;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.data.imagery.street_level.Projections;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 
@@ -33,7 +32,6 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
     private final Supplier<RemoteEntry> nextImage;
     private final Supplier<RemoteEntry> previousImage;
     private final Supplier<RemoteEntry> lastImage;
-    private final Layer layer;
     private int width;
     private int height;
     private ILatLon pos;
@@ -54,14 +52,13 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
 
     /**
      * Create a new remote entry
-     * @param layer The originating layer, used for tabs in the image viewer
      * @param uri The URI to use
      * @param firstImage first image supplier
      * @param nextImage next image supplier
      * @param lastImage last image supplier
      * @param previousImage previous image supplier
      */
-    public RemoteEntry(Layer layer, URI uri, Supplier<RemoteEntry> firstImage, Supplier<RemoteEntry> previousImage,
+    public RemoteEntry(URI uri, Supplier<RemoteEntry> firstImage, Supplier<RemoteEntry> previousImage,
                        Supplier<RemoteEntry> nextImage, Supplier<RemoteEntry> lastImage) {
         Objects.requireNonNull(uri);
         Objects.requireNonNull(firstImage);
@@ -73,7 +70,6 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
         this.previousImage = previousImage;
         this.nextImage = nextImage;
         this.lastImage = lastImage;
-        this.layer = layer;
     }
 
     @Override
@@ -319,7 +315,7 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
 
     @Override
     public void selectImage(ImageViewerDialog imageViewerDialog, IImageEntry<?> entry) {
-        imageViewerDialog.displayImages(this.layer, Collections.singletonList(entry));
+        imageViewerDialog.displayImages(Collections.singletonList(entry));
     }
 
     @Override

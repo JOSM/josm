@@ -19,10 +19,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.swing.AbstractAction;
@@ -41,6 +44,9 @@ import org.openstreetmap.josm.data.gpx.GpxExtension;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.IGpxLayerPrefs;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
+import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
@@ -55,12 +61,15 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.geoimage.IGeoImageLayer;
+import org.openstreetmap.josm.gui.layer.geoimage.RemoteEntry;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertFromMarkerLayerAction;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -75,7 +84,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * The data is read only.
  */
-public class MarkerLayer extends Layer implements JumpToMarkerLayer {
+public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLayer {
 
     /**
      * A list of markers.
@@ -88,6 +97,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     private Color color, realcolor;
     final int markerSize = new IntegerProperty("draw.rawgps.markers.size", 4).get();
     final BasicStroke markerStroke = new StrokeProperty("draw.rawgps.markers.stroke", "1").get();
+
+    private final ListenerList<IGeoImageLayer.ImageChangeListener> imageChangeListenerListenerList = ListenerList.create();
 
     /**
      * The default color that is used for drawing markers.
@@ -401,6 +412,14 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         MainApplication.getMap().mapView.zoomTo(currentMarker);
     }
 
+    /**
+     * Set the current marker
+     * @param newMarker The marker to set
+     */
+    void setCurrentMarker(Marker newMarker) {
+        this.currentMarker = newMarker;
+    }
+
     public static void playAudio() {
         playAdjacentMarker(null, true);
     }
@@ -493,6 +512,68 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     private void setPrivateColors(Color color) {
         this.color = color;
         this.realcolor = Optional.ofNullable(color).orElse(DEFAULT_COLOR_PROPERTY.get());
+    }
+
+    @Override
+    public void clearSelection() {
+        this.currentMarker = null;
+    }
+
+    @Override
+    public List<? extends IImageEntry<?>> getSelection() {
+        if (this.currentMarker instanceof ImageMarker) {
+            return Collections.singletonList(((ImageMarker) this.currentMarker).getRemoteEntry());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean containsImage(IImageEntry<?> imageEntry) {
+        if (imageEntry instanceof RemoteEntry) {
+            RemoteEntry entry = (RemoteEntry) imageEntry;
+            if (entry.getPos() != null && entry.getPos().isLatLonKnown()) {
+                List<Marker> markers = this.data.search(new BBox(entry.getPos()));
+                return checkIfListContainsEntry(markers, entry);
+            } else if (entry.getExifCoor() != null && entry.getExifCoor().isLatLonKnown()) {
+                List<Marker> markers = this.data.search(new BBox(entry.getExifCoor()));
+                return checkIfListContainsEntry(markers, entry);
+            } else {
+                return checkIfListContainsEntry(this.data, entry);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a list contains an entry
+     * @param markerList The list to look through
+     * @param imageEntry The image entry to check
+     * @return {@code true} if the entry is in the list
+     */
+    private static boolean checkIfListContainsEntry(List<Marker> markerList, RemoteEntry imageEntry) {
+        for (Marker marker : markerList) {
+            if (marker instanceof ImageMarker) {
+                ImageMarker imageMarker = (ImageMarker) marker;
+                try {
+                    if (Objects.equals(imageMarker.imageUrl.toURI(), imageEntry.getImageURI())) {
+                        return true;
+                    }
+                } catch (URISyntaxException e) {
+                    Logging.trace(e);
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void addImageChangeListener(ImageChangeListener listener) {
+        this.imageChangeListenerListenerList.addListener(listener);
+    }
+
+    @Override
+    public void removeImageChangeListener(ImageChangeListener listener) {
+        this.imageChangeListenerListenerList.removeListener(listener);
     }
 
     private final class MarkerMouseAdapter extends MouseAdapter {
@@ -627,9 +708,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
      * the data of a MarkerLayer
      * @since 18287
      */
-    public class MarkerData extends ArrayList<Marker> implements IGpxLayerPrefs {
+    public class MarkerData extends QuadBuckets<Marker> implements List<Marker>, IGpxLayerPrefs {
 
         private Map<String, String> ownLayerPrefs;
+        private final List<Marker> markerList = new ArrayList<>();
 
         @Override
         public Map<String, String> getLayerPrefs() {
@@ -657,6 +739,77 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             if (fromLayer != null && fromLayer.data != null) {
                 fromLayer.data.setModified(value);
             }
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends Marker> c) {
+            c.forEach(this::add);
+            return this.markerList.addAll(index, c);
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends Marker> objects) {
+            return this.markerList.addAll(objects) && super.addAll(objects);
+        }
+
+        @Override
+        public Marker get(int index) {
+            return this.markerList.get(index);
+        }
+
+        @Override
+        public Marker set(int index, Marker element) {
+            Marker original = this.markerList.set(index, element);
+            this.remove(original);
+            return original;
+        }
+
+        @Override
+        public void add(int index, Marker element) {
+            this.add(element);
+            this.markerList.add(index, element);
+        }
+
+        @Override
+        public Marker remove(int index) {
+            Marker toRemove = this.markerList.remove(index);
+            this.remove(toRemove);
+            return toRemove;
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            return this.markerList.indexOf(o);
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            return this.markerList.lastIndexOf(o);
+        }
+
+        @Override
+        public ListIterator<Marker> listIterator() {
+            return this.markerList.listIterator();
+        }
+
+        @Override
+        public ListIterator<Marker> listIterator(int index) {
+            return this.markerList.listIterator(index);
+        }
+
+        @Override
+        public List<Marker> subList(int fromIndex, int toIndex) {
+            return this.markerList.subList(fromIndex, toIndex);
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> objects) {
+            return this.markerList.retainAll(objects) && super.retainAll(objects);
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return this.markerList.contains(o) && super.contains(o);
         }
     }
 }

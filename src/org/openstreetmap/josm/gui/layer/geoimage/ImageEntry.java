@@ -147,7 +147,7 @@ public class ImageEntry extends GpxImageEntry implements IImageEntry<ImageEntry>
         if (entry instanceof ImageEntry) {
             this.dataSet.setSelectedImage((ImageEntry) entry);
         }
-        imageViewerDialog.displayImages(this.dataSet.getLayer(), Collections.singletonList(entry));
+        imageViewerDialog.displayImages(Collections.singletonList(entry));
     }
 
     @Override

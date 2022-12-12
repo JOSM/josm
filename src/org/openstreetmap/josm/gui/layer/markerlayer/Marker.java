@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
+import org.openstreetmap.josm.data.IQuadBucketType;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -75,7 +77,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  *
  * @author Frederik Ramm
  */
-public class Marker implements TemplateEngineDataProvider, ILatLon, Destroyable {
+public class Marker implements TemplateEngineDataProvider, ILatLon, Destroyable, IQuadBucketType {
 
     /**
      * Plugins can add their Marker creation stuff at the bottom or top of this list
@@ -446,5 +448,10 @@ public class Marker implements TemplateEngineDataProvider, ILatLon, Destroyable 
 
     private String getPreferenceKey() {
         return "draw.rawgps." + getTextTemplateKey();
+    }
+
+    @Override
+    public BBox getBBox() {
+        return new BBox(this);
     }
 }

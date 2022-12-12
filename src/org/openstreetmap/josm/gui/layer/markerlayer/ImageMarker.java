@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.markerlayer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Instant;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog;
 import org.openstreetmap.josm.gui.layer.geoimage.RemoteEntry;
@@ -40,12 +42,13 @@ public class ImageMarker extends ButtonMarker {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        ImageViewerDialog.getInstance().displayImages(this.parentLayer, Collections.singletonList(getRemoteEntry()));
+        this.parentLayer.setCurrentMarker(this);
+        ImageViewerDialog.getInstance().displayImages(Collections.singletonList(getRemoteEntry()));
     }
 
-    private RemoteEntry getRemoteEntry() {
+    RemoteEntry getRemoteEntry() {
         try {
-            final RemoteEntry remoteEntry = new RemoteEntry(this.parentLayer, imageUrl.toURI(), getFirstImage(), getPreviousImage(),
+            final RemoteEntry remoteEntry = new MarkerRemoteEntry(imageUrl.toURI(), getFirstImage(), getPreviousImage(),
                     getNextImage(), getLastImage());
             // First, extract EXIF data
             remoteEntry.extractExif();
@@ -127,5 +130,27 @@ public class ImageMarker extends ButtonMarker {
         link.type = "image";
         wpt.put(GpxConstants.META_LINKS, Collections.singleton(link));
         return wpt;
+    }
+
+    private class MarkerRemoteEntry extends RemoteEntry {
+        /**
+         * Create a new remote entry
+         *
+         * @param uri           The URI to use
+         * @param firstImage    first image supplier
+         * @param previousImage previous image supplier
+         * @param nextImage     next image supplier
+         * @param lastImage     last image supplier
+         */
+        MarkerRemoteEntry(URI uri, Supplier<RemoteEntry> firstImage, Supplier<RemoteEntry> previousImage,
+                                 Supplier<RemoteEntry> nextImage, Supplier<RemoteEntry> lastImage) {
+            super(uri, firstImage, previousImage, nextImage, lastImage);
+        }
+
+        @Override
+        public void selectImage(ImageViewerDialog imageViewerDialog, IImageEntry<?> entry) {
+            ImageMarker.this.parentLayer.setCurrentMarker(ImageMarker.this);
+            super.selectImage(imageViewerDialog, entry);
+        }
     }
 }
