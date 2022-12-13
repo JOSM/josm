@@ -149,6 +149,9 @@ public final class AlignInCircleAction extends JosmAction {
      * <p>
      * Case 3: Only nodes are selected
      * --&gt; Align these nodes, all are fix
+     * <p>
+     * Case 4: Circularize selected ways
+     * --&gt; Circularize each way of the selection.
      * @param ds data set in which the command operates
      * @return the resulting command to execute to perform action, or null if nothing was changed
      * @throws InvalidSelection if selection cannot be used
@@ -226,6 +229,43 @@ public final class AlignInCircleAction extends JosmAction {
             }
             fixNodes.addAll(onWay);
             nodes = collectNodesAnticlockwise(ways);
+        } else if (!ways.isEmpty() && selectedNodes.isEmpty()) {
+            List<Command> rcmds = new LinkedList<>();
+            for (Way w : ways) {
+                if (!w.isDeleted() && w.isArea()) {
+                    List<Node> wnodes = w.getNodes();
+                    wnodes.remove(wnodes.size() - 1);
+                    if (validateGeometry(wnodes)) {
+                        center = Geometry.getCenter(wnodes);
+                    }
+                    if (center == null) {
+                        continue;
+                    }
+                    boolean skipThisWay = false;
+                    radius = 0;
+                    for (Node n : wnodes) {
+                        if (!n.isLatLonKnown()) {
+                            skipThisWay = true;
+                            break;
+                        } else {
+                            radius += center.distance(n.getEastNorth());
+                        }
+                    }
+                    if (skipThisWay) {
+                        continue;
+                    } else {
+                        radius /= wnodes.size();
+                    }
+                    Command c = moveNodesCommand(wnodes, Collections.emptySet(), center, radius);
+                    if (c != null) {
+                        rcmds.add(c);
+                    }
+                }
+            }
+            if (rcmds.isEmpty()) {
+                throw new InvalidSelection();
+            }
+            return new SequenceCommand(tr("Align each Way in Circle"), rcmds);
         } else {
             throw new InvalidSelection();
         }
@@ -258,7 +298,23 @@ public final class AlignInCircleAction extends JosmAction {
             }
             radius = radius / nodes.size();
         }
+        return moveNodesCommand(nodes, fixNodes, center, radius);
+    }
 
+    /**
+     * Move each node of the list of nodes to be arranged in a circle.
+     * @param nodes The list of nodes to be moved.
+     * @param fixNodes The list of nodes that must not be moved.
+     * @param center A center of the circle formed by the nodes.
+     * @param radius A radius of the circle formed by the nodes.
+     * @return the command that arranges the nodes in a circle.
+     * @since 18615
+     */
+    public static Command moveNodesCommand(
+            List<Node> nodes,
+            Set<Node> fixNodes,
+            EastNorth center,
+            double radius) {
         List<Command> cmds = new LinkedList<>();
 
         // Move each node to that distance from the center.

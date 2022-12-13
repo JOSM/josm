@@ -1,12 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -17,10 +21,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.AlignInCircleAction.InvalidSelection;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.opentest4j.AssertionFailedError;
@@ -179,6 +186,77 @@ final class AlignInCircleActionTest {
             } catch (Exception e) {
                 throw new AssertionFailedError("test failed: sel=" + selVal, e);
             }
+        }
+    }
+
+    /**
+     * Test case: Circularize a batch of (two) buildings.
+     * @throws IOException if the test file could not be read
+     * @throws IllegalDataException if the test file has been corrupted
+     */
+    @Test
+    void testMultipleWaysSelected() throws IOException, IllegalDataException {
+        final DataSet before;
+        try (InputStream fis = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleBuildingsBefore.osm"))) {
+            before = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+        }
+
+        Way firstBefore = null;
+        Way secondBefore = null;
+
+        for (Way w : before.getWays()) {
+            if ("first".equals(w.get("test"))) {
+                firstBefore = w;
+            } else if ("second".equals(w.get("test"))) {
+                secondBefore = w;
+            } else {
+                fail("There should only be \"first\" or \"second\" values in the key \"test\"");
+            }
+        }
+
+        assertNotNull(firstBefore);
+        assertNotNull(secondBefore);
+
+        before.clearSelection();
+        before.addSelected(firstBefore);
+        before.addSelected(secondBefore);
+
+        Command c = assertDoesNotThrow(() -> AlignInCircleAction.buildCommand(before));
+        c.executeCommand();
+
+        final DataSet after;
+        try (InputStream fis = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleBuildingsAfter.osm"))) {
+            after = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+        }
+        Way firstAfter = null;
+        Way secondAfter = null;
+
+        for (Way w : after.getWays()) {
+            if ("first".equals(w.get("test"))) {
+                firstAfter = w;
+            } else if ("second".equals(w.get("test"))) {
+                secondAfter = w;
+            } else {
+                fail("There should only be \"first\" or \"second\" values in the key \"test\"");
+            }
+        }
+
+        assertNotNull(firstAfter);
+        assertEquals(firstAfter.getNodesCount(), firstBefore.getNodesCount());
+        for (int i = 0; i < firstAfter.getNodesCount(); i++) {
+            Node bn = firstBefore.getNode(i);
+            Node an = firstAfter.getNode(i);
+            assertEquals(bn.lat(), an.lat(), ILatLon.MAX_SERVER_PRECISION);
+            assertEquals(bn.lon(), an.lon(), ILatLon.MAX_SERVER_PRECISION);
+        }
+
+        assertNotNull(secondAfter);
+        assertEquals(secondAfter.getNodesCount(), secondBefore.getNodesCount());
+        for (int i = 0; i < secondAfter.getNodesCount(); i++) {
+            Node bn = secondBefore.getNode(i);
+            Node an = secondAfter.getNode(i);
+            assertEquals(bn.lat(), an.lat(), ILatLon.MAX_SERVER_PRECISION);
+            assertEquals(bn.lon(), an.lon(), ILatLon.MAX_SERVER_PRECISION);
         }
     }
 }
