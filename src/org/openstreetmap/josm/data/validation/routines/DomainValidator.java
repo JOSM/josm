@@ -888,7 +888,6 @@ public final class DomainValidator extends AbstractValidator {
         "loans", // loans June Woods, LLC
         "locker", // locker Dish DBS Corporation
         "locus", // locus Locus Analytics LLC
-        "loft", // loft Annco, Inc.
         "lol", // lol Uniregistry, Corp.
         "london", // london Dot London Domains Limited
         "lotte", // lotte Lotte Holdings Co., Ltd.
@@ -1159,7 +1158,6 @@ public final class DomainValidator extends AbstractValidator {
         "select", // select iSelect Ltd
         "sener", // sener Sener Ingeniería y Sistemas, S.A.
         "services", // services Fox Castle, LLC
-        "ses", // ses SES
         "seven", // seven Seven West Media Ltd
         "sew", // sew SEW-EURODRIVE GmbH &amp; Co KG
         "sex", // sex ICM Registry SX LLC
