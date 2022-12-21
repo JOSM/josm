@@ -623,13 +623,14 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
             return;
         }
         // Defensive copy of keys
-        String[] newKeys = keys;
+        final String[] tKeys = this.keys; // Used to avoid highly unlikely NPE (from a race) during clone operation.
+        String[] newKeys = tKeys == null ? null : tKeys.clone();
         Map<String, String> originalKeys = getKeys();
         List<Map.Entry<String, String>> tagsToAdd = new ArrayList<>(tags.size());
         for (Map.Entry<String, String> tag : tags.entrySet()) {
             if (!Utils.isBlank(tag.getKey())) {
                 int keyIndex = indexOfKey(newKeys, tag.getKey());
-                // Realistically, we will not hit the newKeys == null branch. If it is null, keyIndex is always < 1
+                // Realistically, we will not hit the newKeys == null branch. If it is null, keyIndex is always < 0
                 if (keyIndex < 0 || newKeys == null) {
                     tagsToAdd.add(tag);
                 } else {
