@@ -91,7 +91,11 @@ public class SharpAngles extends Test {
     }
 
     private void checkAngle(Node node1, Node node2, Node node3, int i, Way way, boolean last) {
-        if (node1 == null || node2 == null || node3 == null) return;
+        if (node1 == null || !node1.isLatLonKnown()
+            || node2 == null || !node2.isLatLonKnown()
+            || node3 == null || !node3.isLatLonKnown()) {
+            return;
+        }
         EastNorth n1 = node1.getEastNorth();
         EastNorth n2 = node2.getEastNorth();
         EastNorth n3 = node3.getEastNorth();
