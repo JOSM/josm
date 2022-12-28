@@ -198,7 +198,12 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             }
         }
         if (getInvalidGeoImages().size() == data.size()) {
-            ImageViewerDialog.getInstance().displayImages(Collections.singletonList(this.data.getFirstImage()));
+            this.data.setSelectedImage(this.data.getFirstImage());
+            // We do have to wrap the EDT call in a worker call, since layers may be created in the EDT.
+            // And the layer must be added to the layer list in order for the dialog to work properly.
+            MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
+                ImageViewerDialog.getInstance().displayImages(this.getSelection());
+            }));
         }
     }
 
@@ -301,8 +306,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     @Override
     public List<IImageEntry<?>> getInvalidGeoImages() {
-        return this.getImageData().getImages().stream().filter(entry -> entry.getPos() == null || entry.getExifCoor() == null
-              || !entry.getExifCoor().isValid() || !entry.getPos().isValid()).collect(toList());
+        return this.getImageData().getImages().stream().filter(entry -> entry.getPos() == null || !entry.getPos().isValid()).collect(toList());
     }
 
     @Override
