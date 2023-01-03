@@ -330,4 +330,42 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
     public void setDisplayName(String text) {
         this.title = text;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.uri, this.width, this.height, this.pos,
+                this.exifOrientation, this.elevation, this.speed, this.exifImgDir,
+                this.exifCoor, this.exifTime, this.exifGpsTime, this.gpsTime,
+                this.iptcObjectName, this.iptcCaption, this.iptcHeadline, this.iptcKeywords,
+                this.projection, this.title);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            return true;
+        }
+        if (obj != null && obj.getClass() == this.getClass()) {
+            RemoteEntry other = this.getClass().cast(obj);
+            return Objects.equals(this.uri, other.uri)
+                    && this.height == other.height
+                    && this.width == other.width
+                    && Objects.equals(this.elevation, other.elevation)
+                    && Objects.equals(this.exifCoor, other.exifCoor)
+                    && Objects.equals(this.exifGpsTime, other.exifGpsTime)
+                    && Objects.equals(this.exifImgDir, other.exifImgDir)
+                    && Objects.equals(this.exifOrientation, other.exifOrientation)
+                    && Objects.equals(this.exifTime, other.exifTime)
+                    && Objects.equals(this.gpsTime, other.gpsTime)
+                    && Objects.equals(this.iptcCaption, other.iptcCaption)
+                    && Objects.equals(this.iptcHeadline, other.iptcHeadline)
+                    && Objects.equals(this.iptcKeywords, other.iptcKeywords)
+                    && Objects.equals(this.iptcObjectName, other.iptcObjectName)
+                    && Objects.equals(this.pos, other.pos)
+                    && Objects.equals(this.projection, other.projection)
+                    && Objects.equals(this.speed, other.speed)
+                    && Objects.equals(this.title, other.title);
+        }
+        return false;
+    }
 }
