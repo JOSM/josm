@@ -289,7 +289,8 @@ way[usage=penstock][waterway!=pressurised] {
   group: tr("missing tag");
 }
 
-/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530, #21736, #22076 */
+/* {0.tag} together with {1.key}, see #22576, #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530, #21736, #22076 */
+*[amenity=marketplace][highway],
 *[power=plant][/^generator:/],
 *[power=generator][/^plant:/],
 *[power=plant][voltage],
