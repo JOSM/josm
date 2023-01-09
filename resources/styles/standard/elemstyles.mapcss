@@ -3204,6 +3204,7 @@ node[amenity=fountain] {
     set icon_z17;
 }
 area[amenity=animal_boarding],
+area[amenity=animal_breeding],
 area[amenity=place_of_worship],
 area[amenity=monastery],
 area[amenity=grave_yard],
@@ -3221,6 +3222,10 @@ area[amenity=driving_school] {
 }
 node[amenity=animal_boarding] {
     icon-image: "presets/accommodation/animal_boarding.svg";
+    set icon_z17;
+}
+node[amenity=animal_breeding] {
+    icon-image: "presets/misc/animal_breeding.svg";
     set icon_z17;
 }
 node[amenity=place_of_worship] {
