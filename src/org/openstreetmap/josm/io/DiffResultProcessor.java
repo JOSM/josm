@@ -130,7 +130,7 @@ public class DiffResultProcessor {
             ds.beginUpdate();
         }
         try {
-            monitor.beginTask("Postprocessing uploaded data ...");
+            monitor.beginTask(tr("Postprocessing uploaded data..."));
             monitor.setTicksCount(primitives.size());
             monitor.setTicks(0);
             for (OsmPrimitive p : primitives) {
