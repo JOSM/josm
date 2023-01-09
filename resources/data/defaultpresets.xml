@@ -25,7 +25,6 @@
         <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,acrylic,grass,sand,tartan,ground" />
     </chunk>
     <chunk id="riding_surface">
-        <combo key="leisure" text="Type" values="horse_riding,pitch,sports_centre,stadium,track" values_context="riding" />
         <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
     </chunk>
     <chunk id="highway_base">
@@ -4051,14 +4050,16 @@
             <reference ref="POI_access" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Sauna -->
-        <item name="Horse Riding" icon="presets/leisure/horse_riding.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Horse Riding Center" icon="presets/leisure/horse_riding.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=horse_riding" />
             <space />
             <key key="leisure" value="horse_riding" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="fee" />
             <reference ref="link_contact_address_payment" />
-        </item> <!-- Horse Riding -->
+            <preset_link preset_name="Equestrian Sport" text="Similar but different tags:" />
+            <preset_link preset_name="Horse Racing" text="Similar but different tags:" />
+        </item> <!-- Horse Riding Center -->
         <item name="Club" icon="presets/leisure/club.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:club" />
             <space />
@@ -5363,19 +5364,35 @@
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="racing" />
             <reference ref="sport_surface" />
         </item> <!-- Dog Racing -->
-        <item name="Equestrian" icon="presets/sport/equestrian.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Equestrian Sport" icon="presets/sport/equestrian.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=equestrian" />
             <space />
             <key key="sport" value="equestrian" />
             <text key="name" text="Name" />
+            <combo key="leisure" text="Type" default="pitch" values_context="riding" values_sort="false">
+                <list_entry value="pitch" display_value="Horse Riding Arena" icon="presets/sport/pitch.svg" />
+                <list_entry value="horse_riding" display_value="Horse Riding Center" icon="presets/leisure/horse_riding.svg" />
+                <list_entry value="sports_centre" display_value="Sports Centre" icon="presets/sport/sports_centre.svg" />
+                <list_entry value="stadium" display_value="Stadium" icon="presets/sport/stadium.svg" />
+                <list_entry value="track" display_value="Racetrack" icon="presets/sport/track.svg" />
+            </combo>        
             <reference ref="riding_surface" />
-        </item> <!-- Equestrian -->
+            <preset_link preset_name="Horse Riding Center" text="Similar but different tags:" />
+            <preset_link preset_name="Horse Racing" text="Similar but different tags:" />
+        </item> <!-- Equestrian Sport -->
         <item name="Horse Racing" icon="presets/sport/riding.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=horse_racing" />
             <space />
             <key key="sport" value="horse_racing" />
             <text key="name" text="Name" />
+            <combo key="leisure" text="Type" values_context="riding" values_sort="false">
+                <list_entry value="sports_centre" display_value="Sports Centre" icon="presets/sport/sports_centre.svg" />
+                <list_entry value="stadium" display_value="Stadium" icon="presets/sport/stadium.svg" />
+                <list_entry value="track" display_value="Racetrack" icon="presets/sport/track.svg" />
+            </combo>        
             <reference ref="riding_surface" />
+            <preset_link preset_name="Equestrian Sport" text="Similar but different tags:" />
+            <preset_link preset_name="Horse Riding Center" text="Similar but different tags:" />
         </item> <!-- Horse Racing -->
         <item name="Gymnastics" icon="presets/sport/gymnastics.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=gymnastics" />
