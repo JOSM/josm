@@ -30,9 +30,11 @@ import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.LayerDetails;
+import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.Layer;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AlignImageryPanel;
@@ -279,7 +281,9 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     public static ImageryInfo getWMSLayerInfo(ImageryInfo info, Function<WMSImagery, LayerSelection> choice)
             throws IOException, WMSGetCapabilitiesException {
         CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT == info.getImageryType(), "wms_endpoint imagery type expected");
-        final WMSImagery wms = new WMSImagery(info.getUrl(), info.getCustomHttpHeaders());
+        // We need to get the URL with {apikey} replaced. See #22642.
+        final TemplatedWMSTileSource tileSource = new TemplatedWMSTileSource(info, ProjectionRegistry.getProjection());
+        final WMSImagery wms = new WMSImagery(tileSource.getBaseUrl(), info.getCustomHttpHeaders());
         LayerSelection selection = choice.apply(wms);
         if (selection == null) {
             return null;
