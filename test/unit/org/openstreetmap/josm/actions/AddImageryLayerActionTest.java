@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -34,7 +35,7 @@ final class AddImageryLayerActionTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().fakeAPI();
+    public JOSMTestRules test = new JOSMTestRules().fakeAPI().projection();
 
     /**
      * HTTP mock.
@@ -71,24 +72,31 @@ final class AddImageryLayerActionTest {
      */
     @Test
     void testActionPerformedEnabledWms() {
-        wireMockServer.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1"))
+        wireMockServer.stubFor(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
                         .withBodyFile("imagery/wms-capabilities.xml")));
-        wireMockServer.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities"))
+        wireMockServer.stubFor(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities"))
                 .willReturn(aResponse()
                         .withStatus(404)));
-        wireMockServer.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"))
+        wireMockServer.stubFor(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"))
                 .willReturn(aResponse()
                         .withStatus(404)));
 
-        new AddImageryLayerAction(new ImageryInfo("localhost", wireMockServer.url("/wms?"),
-                "wms_endpoint", null, null)).actionPerformed(null);
-        List<WMSLayer> wmsLayers = MainApplication.getLayerManager().getLayersOfType(WMSLayer.class);
-        assertEquals(1, wmsLayers.size());
+        try {
+            FeatureAdapter.registerApiKeyAdapter(id -> "random_key");
+            final ImageryInfo imageryInfo = new ImageryInfo("localhost", wireMockServer.url("/wms?apikey={apikey}"),
+                    "wms_endpoint", null, null);
+            imageryInfo.setId("testActionPerformedEnabledWms");
+            new AddImageryLayerAction(imageryInfo).actionPerformed(null);
+            List<WMSLayer> wmsLayers = MainApplication.getLayerManager().getLayersOfType(WMSLayer.class);
+            assertEquals(1, wmsLayers.size());
 
-        MainApplication.getLayerManager().removeLayer(wmsLayers.get(0));
+            MainApplication.getLayerManager().removeLayer(wmsLayers.get(0));
+        } finally {
+            FeatureAdapter.registerApiKeyAdapter(new FeatureAdapter.DefaultApiKeyAdapter());
+        }
     }
 
     /**
