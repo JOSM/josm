@@ -267,6 +267,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
      */
     public static final CachingProperty<Boolean> PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION = 
         new BooleanProperty("propertiesdialog.preview-on-hover.always-show-selected", true).cached();
+    private final HoverPreviewPreferSelectionPropListener hoverPreviewPrioritizeSelectionPropListener = 
+        new HoverPreviewPreferSelectionPropListener();
 
     /**
      * Create a new PropertiesDialog
@@ -327,6 +329,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         TaggingPresets.addListener(this);
 
         PROP_PREVIEW_ON_HOVER.addListener(hoverPreviewPropListener);
+        PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.addListener(hoverPreviewPrioritizeSelectionPropListener);
     }
 
     @Override
@@ -644,6 +647,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         super.destroy();
         TaggingPresets.removeListener(this);
         PROP_PREVIEW_ON_HOVER.removeListener(hoverPreviewPropListener);
+        PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.removeListener(hoverPreviewPrioritizeSelectionPropListener);
         Container parent = pluginHook.getParent();
         if (parent != null) {
             parent.remove(pluginHook);
@@ -664,10 +668,10 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         Collection<? extends IPrimitive> newSel = OsmDataManager.getInstance().getInProgressISelection();
 
         // Temporarily disable listening to primitive mouse hover events while we have a selection as that takes priority
-        if (PROP_PREVIEW_ON_HOVER.get() && PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.get()) {
+        if (Boolean.TRUE.equals(PROP_PREVIEW_ON_HOVER.get())) {
             if (newSel.isEmpty()) {
                 MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
-            } else {
+            } else if (Boolean.TRUE.equals(PROP_PREVIEW_ON_HOVER_PRIORITIZE_SELECTION.get())) {
                 MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
             }
         }
@@ -1526,10 +1530,25 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
     private class HoverPreviewPropListener implements ValueChangeListener<Boolean> {
         @Override
         public void valueChanged(ValueChangeEvent<? extends Boolean> e) {
-            if (e.getProperty().get() && isDialogShowing()) {
+            if (Boolean.TRUE.equals(e.getProperty().get()) && isDialogShowing()) {
                 MainApplication.getMap().mapView.addPrimitiveHoverListener(PropertiesDialog.this);
-            } else if (!e.getProperty().get()) {
+            } else if (Boolean.FALSE.equals(e.getProperty().get())) {
                 MainApplication.getMap().mapView.removePrimitiveHoverListener(PropertiesDialog.this);
+            }
+        }
+    }
+
+    /*
+     * Ensure HoverListener is re-added when selection priority is disabled while something is selected.
+     * Otherwise user would need to change selection to see the preference change take effect.
+     */
+    private class HoverPreviewPreferSelectionPropListener implements ValueChangeListener<Boolean> {
+        @Override
+        public void valueChanged(ValueChangeEvent<? extends Boolean> e) {
+            if (Boolean.FALSE.equals(e.getProperty().get()) &&
+                Boolean.TRUE.equals(PROP_PREVIEW_ON_HOVER.get()) &&
+                isDialogShowing()) {
+                MainApplication.getMap().mapView.addPrimitiveHoverListener(PropertiesDialog.this);
             }
         }
     }
