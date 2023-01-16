@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.markerlayer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -66,7 +67,11 @@ public class ImageMarker extends ButtonMarker {
             return remoteEntry;
         } catch (URISyntaxException e) {
             Logging.trace(e);
-            new Notification(tr("Malformed URI: ", this.imageUrl.toExternalForm())).setIcon(JOptionPane.WARNING_MESSAGE).show();
+            new Notification(tr("Malformed URI: {0}", this.imageUrl.toExternalForm())).setIcon(JOptionPane.WARNING_MESSAGE).show();
+        } catch (UncheckedIOException e) {
+            Logging.trace(e);
+            new Notification(tr("IO Exception: {0}\n{1}", this.imageUrl.toExternalForm(), e.getCause().getMessage()))
+                    .setIcon(JOptionPane.WARNING_MESSAGE).show();
         }
         return null;
     }

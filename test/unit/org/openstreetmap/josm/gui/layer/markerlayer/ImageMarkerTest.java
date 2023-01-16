@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
@@ -38,5 +39,18 @@ class ImageMarkerTest {
         assertEquals("", marker.getText());
         WayPoint wpt = marker.convertToWayPoint();
         assertEquals(LatLon.ZERO, wpt.getCoor());
+    }
+
+    /**
+     * Non-regression test for #22638: NoSuchFileException causes a crash
+     */
+    @Test
+    void testTicket22638() throws MalformedURLException {
+        ImageMarker marker = new ImageMarker(
+                LatLon.ZERO,
+                new File(TestUtils.getRegressionDataFile(12255, "no_such.jpg")).toURI().toURL(),
+                new MarkerLayer(new GpxData(), null, null, null),
+                1d, 2d);
+        assertDoesNotThrow(() -> marker.actionPerformed(null));
     }
 }
