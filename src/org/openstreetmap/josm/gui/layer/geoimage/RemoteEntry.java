@@ -333,7 +333,7 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.uri, this.width, this.height, this.pos,
+        return Objects.hash(this.uri, this.pos,
                 this.exifOrientation, this.elevation, this.speed, this.exifImgDir,
                 this.exifCoor, this.exifTime, this.exifGpsTime, this.gpsTime,
                 this.iptcObjectName, this.iptcCaption, this.iptcHeadline, this.iptcKeywords,
@@ -348,8 +348,6 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
         if (obj != null && obj.getClass() == this.getClass()) {
             RemoteEntry other = this.getClass().cast(obj);
             return Objects.equals(this.uri, other.uri)
-                    && this.height == other.height
-                    && this.width == other.width
                     && Objects.equals(this.elevation, other.elevation)
                     && Objects.equals(this.exifCoor, other.exifCoor)
                     && Objects.equals(this.exifGpsTime, other.exifGpsTime)

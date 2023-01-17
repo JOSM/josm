@@ -19,7 +19,8 @@ class RemoteEntryTest {
         RemoteEntry remoteEntryB = new RemoteEntry(URI.create("https://somewhere.com/image.png?hash=b"),
                 () -> null, () -> null, () -> null, () -> null);
         EqualsVerifier.simple().forClass(RemoteEntry.class).usingGetClass()
-                .withIgnoredFields("firstImage", "lastImage", "nextImage", "previousImage")
+                .withIgnoredFields("firstImage", "lastImage", "nextImage", "previousImage" /* These suppliers don't have good == semantics */,
+                        "width", "height" /* Width and height can be corrected later, although it is originally from exif, see #22626 */)
                 .withNonnullFields("uri")
                 .withPrefabValues(RemoteEntry.class, remoteEntryA, remoteEntryB)
                 .withGenericPrefabValues(Supplier.class,
