@@ -151,10 +151,11 @@ public final class OsmValidator {
         ApiCapabilitiesTest.class, // 3400 .. 3499
         LongSegment.class, // 3500 .. 3599
         PublicTransportRouteTest.class, // 3600 .. 3699
-        RightAngleBuildingTest.class, // 3700 .. 3799
+        // 3700 .. 3799 is automatically removed since it clashed with pt_assistant.
         SharpAngles.class, // 3800 .. 3899
         ConnectivityRelations.class, // 3900 .. 3999
         DirectionNodes.class, // 4000-4099
+        RightAngleBuildingTest.class, // 4100 .. 4199
     };
 
     /**

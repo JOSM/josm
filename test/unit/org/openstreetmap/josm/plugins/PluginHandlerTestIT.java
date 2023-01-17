@@ -187,7 +187,7 @@ public class PluginHandlerTestIT {
                 org.openstreetmap.josm.data.validation.Test.class::isAssignableFrom, s -> true)) {
             if (org.openstreetmap.josm.data.validation.Test.class.isAssignableFrom(clazz)
             && !Objects.equals(org.openstreetmap.josm.data.validation.Test.class, clazz)) {
-                // clazz.getName().hashCode() is how the base error codes are calculated since xxx
+                // clazz.getName().hashCode() is how the base error codes are calculated since r18636
                 // We want to avoid cases where the hashcode is too close, so we want to
                 // ensure that there is at least 1m available codes after the hashCode.
                 // This is needed since some plugins pick some really large number, and count up from there.

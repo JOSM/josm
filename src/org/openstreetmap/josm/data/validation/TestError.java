@@ -489,7 +489,7 @@ public class TestError implements Comparable<TestError> {
     /**
      * Get the unique code for this test. Used for ignore lists.
      * @return The unique code (generated with {@code tester.getClass().getName().hashCode() + code}).
-     * @since xxx
+     * @since 18636
      */
     public int getUniqueCode() {
         return this.uniqueCode;

@@ -43,7 +43,7 @@ public class RightAngleBuildingTest extends Test {
         List<Pair<Double, Node>> angles = w.getAngles();
         for (Pair<Double, Node> pair: angles) {
             if (checkAngle(pair.a)) {
-                TestError.Builder builder = TestError.builder(this, Severity.OTHER, 3701)
+                TestError.Builder builder = TestError.builder(this, Severity.OTHER, 4101)
                                                      .message(tr("Building with an almost square angle"))
                                                      .primitives(w)
                                                      .highlight(pair.b);
