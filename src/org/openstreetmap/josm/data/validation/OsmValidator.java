@@ -112,6 +112,7 @@ public final class OsmValidator {
     @SuppressWarnings("unchecked")
     private static final Class<Test>[] CORE_TEST_CLASSES = new Class[] {// NOPMD
         /* FIXME - unique error numbers for tests aren't properly unique - ignoring will not work as expected */
+        /* Error codes are class.getName().hashCode() + "_" + oldCode. There should almost never be a collision. */
         DuplicateNode.class, // ID    1 ..   99
         OverlappingWays.class, // ID  101 ..  199
         UntaggedNode.class, // ID  201 ..  299
@@ -217,14 +218,13 @@ public final class OsmValidator {
 
     private static void loadIgnoredErrors() {
         ignoredErrors.clear();
-        if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
+        if (Boolean.TRUE.equals(ValidatorPrefHelper.PREF_USE_IGNORE.get())) {
             Config.getPref().getListOfMaps(ValidatorPrefHelper.PREF_IGNORELIST).forEach(ignoredErrors::putAll);
             Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
             try {
                 if (path.toFile().exists()) {
                     try {
-                        TreeSet<String> treeSet = new TreeSet<>();
-                        treeSet.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
+                        TreeSet<String> treeSet = new TreeSet<>(Files.readAllLines(path, StandardCharsets.UTF_8));
                         treeSet.forEach(ignore -> ignoredErrors.putIfAbsent(ignore, ""));
                         removeLegacyEntries(true);
 
@@ -246,28 +246,36 @@ public final class OsmValidator {
 
     private static void removeLegacyEntries(boolean force) {
         // see #19053:
+        boolean wasChanged = removeLegacyEntry(force, true, "3000");
+        // see #18230 (pt_assistant, RightAngleBuildingTest)
+        wasChanged |= removeLegacyEntry(force, false, "3701");
+
+        if (wasChanged) {
+            saveIgnoredErrors();
+        }
+    }
+
+    private static boolean removeLegacyEntry(boolean force, boolean keep, String prefix) {
         boolean wasChanged = false;
         if (force) {
             Iterator<Entry<String, String>> iter = ignoredErrors.entrySet().iterator();
             while (iter.hasNext()) {
                 Entry<String, String> entry = iter.next();
-                if (entry.getKey().startsWith("3000_")) {
+                if (entry.getKey().startsWith(prefix + "_")) {
                     Logging.warn(tr("Cannot handle ignore list entry {0}", entry));
                     iter.remove();
                     wasChanged = true;
                 }
             }
         }
-        String legacyEntry = ignoredErrors.remove("3000");
-        if (legacyEntry != null) {
+        String legacyEntry = ignoredErrors.remove(prefix);
+        if (keep && legacyEntry != null) {
             if (!legacyEntry.isEmpty()) {
-                addIgnoredError("3000_" + legacyEntry, legacyEntry);
+                addIgnoredError(prefix + "_" + legacyEntry, legacyEntry);
             }
             wasChanged = true;
         }
-        if (wasChanged) {
-            saveIgnoredErrors();
-        }
+        return wasChanged;
     }
 
     /**
@@ -502,6 +510,7 @@ public final class OsmValidator {
         List<Map<String, String>> list = new ArrayList<>();
         cleanupIgnoredErrors();
         ignoredErrors.remove("3000"); // see #19053
+        ignoredErrors.remove("3701"); // see #18230
         list.add(ignoredErrors);
         int i = 0;
         while (i < list.size()) {
@@ -607,7 +616,7 @@ public final class OsmValidator {
     }
 
     /**
-     * Initialize grid details based on current projection system. Values based on
+     * Initialize grid details based on the current projection system. Values based on
      * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&amp;error
      * until most bugs were discovered while keeping the processing time reasonable)
      */
@@ -636,7 +645,7 @@ public final class OsmValidator {
     private static boolean testsInitialized;
 
     /**
-     * Initializes all tests if this operations hasn't been performed already.
+     * Initializes all tests if this operation hasn't been performed already.
      */
     public static synchronized void initializeTests() {
         if (!testsInitialized) {

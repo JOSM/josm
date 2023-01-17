@@ -4,12 +4,14 @@ package org.openstreetmap.josm.data.validation;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -33,6 +35,12 @@ import org.openstreetmap.josm.tools.I18n;
  * @since 3669
  */
 public class TestError implements Comparable<TestError> {
+    /**
+     * Used to switch users over to new ignore system, UNIQUE_CODE_MESSAGE_STATE
+     * 1_704_067_200L -> 2024-01-01
+     * We can probably remove this and the supporting code in 2025.
+     */
+    private static boolean switchOver = Instant.now().isAfter(Instant.ofEpochMilli(1_704_067_200L));
     /** is this error on the ignore list */
     private boolean ignored;
     /** Severity */
@@ -50,6 +58,8 @@ public class TestError implements Comparable<TestError> {
     private final Test tester;
     /** Internal code used by testers to classify errors */
     private final int code;
+    /** Internal code used by testers to classify errors. Used for moving between JOSM versions. */
+    private final int uniqueCode;
     /** If this error is selected */
     private boolean selected;
     /** Supplying a command to fix the error */
@@ -63,6 +73,7 @@ public class TestError implements Comparable<TestError> {
         private final Test tester;
         private final Severity severity;
         private final int code;
+        private final int uniqueCode;
         private String message;
         private String description;
         private String descriptionEn;
@@ -74,6 +85,7 @@ public class TestError implements Comparable<TestError> {
             this.tester = tester;
             this.severity = severity;
             this.code = code;
+            this.uniqueCode = this.tester != null ? this.tester.getClass().getName().hashCode() : code;
         }
 
         /**
@@ -234,6 +246,14 @@ public class TestError implements Comparable<TestError> {
     }
 
     /**
+     * Update error codes on read and save. Used for tests.
+     * @param updateErrorCodes {@code true} to update error codes. See {@link #switchOver} for default.
+     */
+    static void setUpdateErrorCodes(boolean updateErrorCodes) {
+        switchOver = updateErrorCodes;
+    }
+
+    /**
      * Starts building a new {@code TestError}
      * @param tester The tester
      * @param severity The severity of this error
@@ -254,6 +274,7 @@ public class TestError implements Comparable<TestError> {
         this.primitives = builder.primitives;
         this.highlighted = builder.highlighted;
         this.code = builder.code;
+        this.uniqueCode = builder.uniqueCode;
         this.fixingCommand = builder.fixingCommand;
     }
 
@@ -306,6 +327,15 @@ public class TestError implements Comparable<TestError> {
      * @return the ignore state for this error or null if any primitive is new
      */
     public String getIgnoreState() {
+        return getIgnoreState(false);
+    }
+
+    /**
+     * Get the ignore state
+     * @param useOriginal if {@code true}, use the original code to get the ignore state
+     * @return The ignore state ({@link #getIgnoreGroup} + ignored object list)
+     */
+    private String getIgnoreState(boolean useOriginal) {
         Collection<String> strings = new TreeSet<>();
         for (OsmPrimitive o : primitives) {
             // ignore data not yet uploaded
@@ -321,7 +351,7 @@ public class TestError implements Comparable<TestError> {
             }
             strings.add(type + '_' + o.getId());
         }
-        return strings.stream().map(o -> ':' + o).collect(Collectors.joining("", getIgnoreSubGroup(), ""));
+        return strings.stream().map(o -> ':' + o).collect(Collectors.joining("", getIgnoreSubGroup(useOriginal), ""));
     }
 
     /**
@@ -335,12 +365,42 @@ public class TestError implements Comparable<TestError> {
     }
 
     private boolean calcIgnored() {
+        // Begin code removal section (backwards compatibility)
+        if (OsmValidator.hasIgnoredError(getIgnoreGroup(true))) {
+            updateIgnoreList(getIgnoreGroup(true), getIgnoreGroup(false));
+            return true;
+        }
+        if (OsmValidator.hasIgnoredError(getIgnoreSubGroup(true))) {
+            updateIgnoreList(getIgnoreSubGroup(true), getIgnoreSubGroup(false));
+            return true;
+        }
+        String oldState = getIgnoreState(true);
+        String state = getIgnoreState(false);
+        if (oldState != null && OsmValidator.hasIgnoredError(oldState)) {
+            updateIgnoreList(oldState, state);
+            return true;
+        }
+        // End code removal section
         if (OsmValidator.hasIgnoredError(getIgnoreGroup()))
             return true;
         if (OsmValidator.hasIgnoredError(getIgnoreSubGroup()))
             return true;
-        String state = getIgnoreState();
         return state != null && OsmValidator.hasIgnoredError(state);
+    }
+
+    /**
+     * Convert old keys to new keys. Only takes effect when {@link #switchOver} is true
+     * @param oldKey The key to replace
+     * @param newKey The new key
+     */
+    private static void updateIgnoreList(String oldKey, String newKey) {
+        if (switchOver) {
+            Map<String, String> errors = OsmValidator.getIgnoredErrors();
+            if (errors.containsKey(oldKey)) {
+                String value = errors.remove(oldKey);
+                errors.put(newKey, value);
+            }
+        }
     }
 
     /**
@@ -348,11 +408,20 @@ public class TestError implements Comparable<TestError> {
      * @return The ignore sub group
      */
     public String getIgnoreSubGroup() {
+        return getIgnoreSubGroup(false);
+    }
+
+    /**
+     * Get the subgroup for the error
+     * @param useOriginal if {@code true}, use the original code instead of the new unique codes.
+     * @return The ignore subgroup
+     */
+    private String getIgnoreSubGroup(boolean useOriginal) {
         if (code == 3000) {
             // see #19053
             return "3000_" + (description == null ? message : description);
         }
-        String ignorestring = getIgnoreGroup();
+        String ignorestring = getIgnoreGroup(useOriginal);
         if (descriptionEn != null) {
             ignorestring += '_' + descriptionEn;
         }
@@ -365,11 +434,24 @@ public class TestError implements Comparable<TestError> {
      * @see TestError#getIgnoreSubGroup()
      */
     public String getIgnoreGroup() {
+        return getIgnoreGroup(false);
+    }
+
+    /**
+     * Get the ignore group
+     * @param useOriginal if {@code true}, use the original code instead of a unique code + original code.
+     *                    Used for reading and understanding old ignore groups.
+     * @return The ignore group.
+     */
+    private String getIgnoreGroup(boolean useOriginal) {
         if (code == 3000) {
             // see #19053
             return "3000_" + getMessage();
         }
-        return Integer.toString(code);
+        if (useOriginal) {
+            return Integer.toString(this.code);
+        }
+        return this.uniqueCode + "_" + this.code;
     }
 
     /**
@@ -402,6 +484,15 @@ public class TestError implements Comparable<TestError> {
      */
     public int getCode() {
         return code;
+    }
+
+    /**
+     * Get the unique code for this test. Used for ignore lists.
+     * @return The unique code (generated with {@code tester.getClass().getName().hashCode() + code}).
+     * @since xxx
+     */
+    public int getUniqueCode() {
+        return this.uniqueCode;
     }
 
     /**
@@ -546,7 +637,8 @@ public class TestError implements Comparable<TestError> {
      * @return true if two errors are similar
      */
     public boolean isSimilar(TestError other) {
-        return getCode() == other.getCode()
+        return getUniqueCode() == other.getUniqueCode()
+                && getCode() == other.getCode()
                 && getMessage().equals(other.getMessage())
                 && getPrimitives().size() == other.getPrimitives().size()
                 && getPrimitives().containsAll(other.getPrimitives())
@@ -570,7 +662,8 @@ public class TestError implements Comparable<TestError> {
 
     @Override
     public String toString() {
-        return "TestError [tester=" + tester + ", code=" + code + ", message=" + message + ']';
+        return "TestError [tester=" + tester + ", unique code=" + this.uniqueCode +
+                ", code=" + code + ", message=" + message + ']';
     }
 
 }

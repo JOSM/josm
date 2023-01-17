@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.GraphicsEnvironment;
@@ -16,13 +17,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -73,7 +78,7 @@ public class PluginHandlerTestIT {
 
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
                 .filter(e -> !(Utils.getRootCause(e.getValue()) instanceof HeadlessException))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> Utils.getRootCause(e.getValue())));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Utils.getRootCause(e.getValue())));
 
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
         Map<String, List<String>> invalidManifestEntries = loadedPlugins.stream().filter(pi -> !pi.invalidManifestEntries.isEmpty())
@@ -92,6 +97,8 @@ public class PluginHandlerTestIT {
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
 
+        Map<String, String> testCodeHashCollisions = checkForHashCollisions();
+
         Map<String, Throwable> noRestartExceptions = new HashMap<>();
         testCompletelyRestartlessPlugins(loadedPlugins, noRestartExceptions);
 
@@ -99,20 +106,24 @@ public class PluginHandlerTestIT {
         debugPrint(loadingExceptions);
         debugPrint(layerExceptions);
         debugPrint(noRestartExceptions);
+        debugPrint(testCodeHashCollisions);
 
         invalidManifestEntries = filterKnownErrors(invalidManifestEntries);
         loadingExceptions = filterKnownErrors(loadingExceptions);
         layerExceptions = filterKnownErrors(layerExceptions);
         noRestartExceptions = filterKnownErrors(noRestartExceptions);
+        testCodeHashCollisions = filterKnownErrors(testCodeHashCollisions);
 
         String msg = errMsg("invalidManifestEntries", invalidManifestEntries) + '\n' +
                 errMsg("loadingExceptions", loadingExceptions) + '\n' +
                 errMsg("layerExceptions", layerExceptions) + '\n' +
-                errMsg("noRestartExceptions", noRestartExceptions);
+                errMsg("noRestartExceptions", noRestartExceptions) + '\n' +
+                errMsg("testCodeHashCollisions", testCodeHashCollisions);
         assertTrue(invalidManifestEntries.isEmpty()
                 && loadingExceptions.isEmpty()
                 && layerExceptions.isEmpty()
-                && noRestartExceptions.isEmpty(), msg);
+                && noRestartExceptions.isEmpty()
+                && testCodeHashCollisions.isEmpty(), msg);
     }
 
     private static String errMsg(String type, Map<String, ?> map) {
@@ -121,6 +132,20 @@ public class PluginHandlerTestIT {
 
     private static void testCompletelyRestartlessPlugins(List<PluginInformation> loadedPlugins,
             Map<String, Throwable> noRestartExceptions) {
+        final List<LogRecord> records = new ArrayList<>();
+        Handler tempHandler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                records.add(record);
+            }
+
+            @Override
+            public void flush() { /* Do nothing */ }
+
+            @Override
+            public void close() throws SecurityException { /* Do nothing */ }
+        };
+        Logging.getLogger().addHandler(tempHandler);
         try {
             List<PluginInformation> restartable = loadedPlugins.parallelStream()
                     .filter(info -> PluginHandler.getPlugin(info.name) instanceof Destroyable)
@@ -141,7 +166,39 @@ public class PluginHandlerTestIT {
             Throwable root = Utils.getRootCause(t);
             root.printStackTrace();
             noRestartExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
+            records.removeIf(record -> Objects.equals(Utils.getRootCause(record.getThrown()), root));
+        } catch (AssertionError assertionError) {
+            noRestartExceptions.put("Plugin load/unload failed", assertionError);
+        } finally {
+            Logging.getLogger().removeHandler(tempHandler);
+            for (LogRecord record : records) {
+                if (record.getThrown() != null) {
+                    Throwable root = Utils.getRootCause(record.getThrown());
+                    root.printStackTrace();
+                    noRestartExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
+                }
+            }
         }
+    }
+
+    private static Map<String, String> checkForHashCollisions() {
+        Map<Integer, List<String>> codes = new HashMap<>();
+        for (Class<?> clazz : ReflectionUtils.findAllClassesInPackage("org.openstreetmap",
+                org.openstreetmap.josm.data.validation.Test.class::isAssignableFrom, s -> true)) {
+            if (org.openstreetmap.josm.data.validation.Test.class.isAssignableFrom(clazz)
+            && !Objects.equals(org.openstreetmap.josm.data.validation.Test.class, clazz)) {
+                // clazz.getName().hashCode() is how the base error codes are calculated since xxx
+                // We want to avoid cases where the hashcode is too close, so we want to
+                // ensure that there is at least 1m available codes after the hashCode.
+                // This is needed since some plugins pick some really large number, and count up from there.
+                int hashCeil = (int) Math.ceil(clazz.getName().hashCode() / 1_000_000d);
+                int hashFloor = (int) Math.floor(clazz.getName().hashCode() / 1_000_000d);
+                codes.computeIfAbsent(hashCeil, k -> new ArrayList<>()).add(clazz.getName());
+                codes.computeIfAbsent(hashFloor, k -> new ArrayList<>()).add(clazz.getName());
+            }
+        }
+        return codes.entrySet().stream().filter(entry -> entry.getValue().size() > 1).collect(
+                Collectors.toMap(entry -> entry.getKey().toString(), entry -> String.join(", ", entry.getValue())));
     }
 
     private static <T> Map<String, T> filterKnownErrors(Map<String, T> errorMap) {
@@ -153,7 +210,7 @@ public class PluginHandlerTestIT {
     private static void debugPrint(Map<String, ?> invalidManifestEntries) {
         System.out.println(invalidManifestEntries.entrySet()
                 .stream()
-                .map(e -> convertEntryToString(e))
+                .map(PluginHandlerTestIT::convertEntryToString)
                 .collect(Collectors.joining(", ")));
     }
 
@@ -241,6 +298,7 @@ public class PluginHandlerTestIT {
         for (PluginInformation p : plugins) {
             try {
                 ClassLoader cl = PluginHandler.getPluginClassLoader(p.getName());
+                assertNotNull(cl);
                 String pluginPackage = cl.loadClass(p.className).getPackage().getName();
                 for (StackTraceElement e : root.getStackTrace()) {
                     try {

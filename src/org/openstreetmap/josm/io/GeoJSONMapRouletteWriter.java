@@ -45,7 +45,7 @@ public class GeoJSONMapRouletteWriter extends GeoJSONWriter {
         final JsonObjectBuilder propertiesBuilder = Json.createObjectBuilder();
         propertiesBuilder.add("message", testError.getMessage());
         Optional.ofNullable(testError.getDescription()).ifPresent(description -> propertiesBuilder.add("description", description));
-        propertiesBuilder.add("code", testError.getCode());
+        propertiesBuilder.add("code", testError.getUniqueCode());
         propertiesBuilder.add("fixable", testError.isFixable());
         propertiesBuilder.add("severity", testError.getSeverity().toString());
         propertiesBuilder.add("severityInteger", testError.getSeverity().getLevel());
