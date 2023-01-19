@@ -5143,7 +5143,7 @@
             <space />
             <key key="amenity" value="animal_breeding" />
             <reference ref="name_operator" />
-            <multiselect key="animal_breeding" text="Animals bred" values="alpaca;bird;cat;chicken;cow;dog;donkey;fish;goat:sheep;horse;pig;poultry;rabbit" values_context="animal_breeding" />
+            <multiselect key="animal_breeding" text="Animals bred" values="alpaca;bird;cat;chicken;cow;dog;donkey;fish;goat;sheep;horse;pig;poultry;rabbit" values_context="animal_breeding" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Animal breeding -->
