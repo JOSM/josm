@@ -3642,16 +3642,6 @@
                 <check key="permanent_camping" text="Permanent camping only" />
             </checkgroup>
         </item> <!-- Camp pitch -->
-        <separator/>
-        <item name="Animal boarding" icon="presets/accommodation/animal_boarding.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=animal_boarding" />
-            <space />
-            <key key="amenity" value="animal_boarding" />
-            <text key="name" text="Name" />
-            <multiselect key="animal_boarding" text="Type" values="bird;cat;dog;duck;horse;mammal;wildlife" values_searchable="true" rows="7" />
-            <reference ref="oh_wheelchair" />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Animal boarding -->
     </group> <!-- Accommodation -->
     <group name="Food+Drinks" icon="presets/food/restaurant.svg">
         <item name="Restaurant" icon="presets/food/restaurant.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4554,6 +4544,51 @@
             <reference ref="link_contact_address" />
         </item> <!-- Language school -->
     </group> <!-- Education -->
+    <group name="Animal" icon="presets/health/animal_shelter.svg">   
+        <item name="Animal boarding" icon="presets/accommodation/animal_boarding.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=animal_boarding" />
+            <space />
+            <key key="amenity" value="animal_boarding" />
+            <text key="name" text="Name" />
+            <multiselect key="animal_boarding" text="Type" values="bird;cat;dog;duck;horse;mammal;wildlife" values_searchable="true" rows="7" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Animal boarding -->
+        <item name="Animal breeding" icon="presets/misc/animal_breeding.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=animal_breeding" />
+            <space />
+            <key key="amenity" value="animal_breeding" />
+            <reference ref="name_operator" />
+            <multiselect key="animal_breeding" text="Animals bred" values="alpaca;bird;cat;chicken;cow;dog;donkey;fish;goat;sheep;horse;pig;poultry;rabbit" values_context="animal_breeding" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Animal breeding -->
+        <item name="Veterinary" icon="presets/health/veterinary.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=veterinary" />
+            <space />
+            <key key="amenity" value="veterinary" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Veterinary -->
+        <item name="Animal shelter" icon="presets/health/animal_shelter.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=animal_shelter" />
+            <space />
+            <key key="amenity" value="animal_shelter" />
+            <text key="name" text="Name" />
+            <multiselect key="animal_shelter" text="Type" values="bird;cat;dog;duck;horse;mammal;wildlife" values_searchable="true" rows="7" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Animal shelter -->
+        <item name="Animal watering place" icon="presets/misc/watering_place.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:amenity=watering_place" />
+            <space />
+            <key key="amenity" value="watering_place" />
+            <optional>
+                <text key="name" text="Name" />
+                <text key="description" text="Description" />
+            </optional>
+        </item> <!-- Animal watering place -->
+    </group> <!-- Animal -->
     <group name="Health" icon="presets/health/pharmacy.svg">
         <item name="Hospital" icon="presets/health/hospital.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=hospital" />
@@ -4623,23 +4658,6 @@
             <label text="(Use number as shown on plate.)" />
             <space />
         </item> <!-- Emergency Access Point -->
-        <separator/>
-        <item name="Veterinary" icon="presets/health/veterinary.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=veterinary" />
-            <space />
-            <key key="amenity" value="veterinary" />
-            <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Veterinary -->
-        <item name="Animal shelter" icon="presets/health/animal_shelter.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=animal_shelter" />
-            <space />
-            <key key="amenity" value="animal_shelter" />
-            <text key="name" text="Name" />
-            <multiselect key="animal_shelter" text="Type" values="bird;cat;dog;duck;horse;mammal;wildlife" values_searchable="true" rows="7" />
-            <reference ref="oh_wheelchair" />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Animal shelter -->
     </group> <!-- Health -->
     <group name="Emergency" icon="presets/emergency/ambulance_station.svg">
         <item name="Ambulance Station" icon="presets/emergency/ambulance_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5095,15 +5113,6 @@
                 <text key="description" text="Description" />
             </optional>
         </item> <!-- Water Point -->
-        <item name="Animal watering place" icon="presets/misc/watering_place.svg" type="node,closedway" preset_name_label="true">
-            <link wiki="Tag:amenity=watering_place" />
-            <space />
-            <key key="amenity" value="watering_place" />
-            <optional>
-                <text key="name" text="Name" />
-                <text key="description" text="Description" />
-            </optional>
-        </item> <!-- Animal watering place -->
         <item name="Compressed Air" icon="presets/vehicle/compressed_air.svg" type="node" preset_name_label="true">
             <link wiki="Tag:amenity=compressed_air" />
             <space />
@@ -5137,16 +5146,6 @@
                 <reference ref="common_advertising" />
             </optional>
         </item> <!-- Poster box -->
-        <separator/>
-        <item name="Animal breeding" icon="presets/misc/animal_breeding.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=animal_breeding" />
-            <space />
-            <key key="amenity" value="animal_breeding" />
-            <reference ref="name_operator" />
-            <multiselect key="animal_breeding" text="Animals bred" values="alpaca;bird;cat;chicken;cow;dog;donkey;fish;goat;sheep;horse;pig;poultry;rabbit" values_context="animal_breeding" />
-            <reference ref="oh_wheelchair" />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Animal breeding -->
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
   <group name="Sports" icon="presets/sport/soccer.svg">
