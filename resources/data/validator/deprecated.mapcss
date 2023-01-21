@@ -513,6 +513,19 @@ way[sidewalk=yes] {
   throwWarning: tr("Unusual key {0}, maybe {1} or {2} is meant", "{0.key}", "level", "building:levels");
 }
 
+/* #22481 */
+*[building:level][!building:levels] {
+  throwWarning: tr("{0} is deprecated", "{1.key}");
+  suggestAlternative: "building:levels";
+  group: tr("deprecated tagging");
+  fixChangeKey: "building:level => building:levels";
+}
+*[building:level][building:levels] {
+  throwWarning: tr("{0} is deprecated", "{1.key}");
+  suggestAlternative: "building:levels";
+  group: tr("deprecated tagging");
+}
+
 /* #10691 */
 *[protected_class] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
