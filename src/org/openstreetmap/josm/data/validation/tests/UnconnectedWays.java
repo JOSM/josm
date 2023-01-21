@@ -178,7 +178,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            return p.hasKey("landuse") || p.hasTagDifferent("natural", "tree_row", "cliff");
+            return p.hasKey("landuse") || p.hasTagDifferent("natural", "arete", "cliff", "ridge", "tree_row");
         }
     }
 
