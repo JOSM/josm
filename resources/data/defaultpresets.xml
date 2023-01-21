@@ -1565,6 +1565,7 @@
             <optional>
                 <text key="alt_name" text="Second Name" alternative_autocomplete_keys="name" />
                 <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
+                <combo key="colour:back" text="Color of background (HTML name or hexadecimal code)" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" values_context="color" />
             </optional>
         </item> <!-- City Limit -->
         <item name="Speed Limit Sign" icon="presets/vehicle/restriction/maxspeed.svg" type="node" preset_name_label="true">
