@@ -2053,8 +2053,8 @@ way[highway][construction=yes][highway!=construction] {
   group: tr("deprecated tagging");
 }
 
-/* #18659 */
-*[car][amenity=charging_station] {
+/* #18659, #20539 */
+*[car] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "motorcar";
   group: tr("deprecated tagging");
