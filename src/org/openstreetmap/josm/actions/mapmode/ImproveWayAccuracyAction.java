@@ -74,53 +74,53 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ImproveWayAccuracyAction extends MapMode implements DataSelectionListener, DataSetListener, ModifierExListener {
 
-    private static final String CROSSHAIR = /* ICON(cursor/)*/ "crosshair";
+    protected static final String CROSSHAIR = /* ICON(cursor/)*/ "crosshair";
 
-    enum State {
+    protected enum State {
         SELECTING, IMPROVING
     }
 
-    private State state;
+    protected State state;
 
-    private MapView mv;
+    protected MapView mv;
 
-    private static final long serialVersionUID = 42L;
+    protected static final long serialVersionUID = 42L;
 
-    private transient Way targetWay;
-    private transient Node candidateNode;
-    private transient WaySegment candidateSegment;
+    protected transient Way targetWay;
+    protected transient Node candidateNode;
+    protected transient WaySegment candidateSegment;
 
-    private Point mousePos;
-    private boolean dragging;
+    protected Point mousePos;
+    protected boolean dragging;
 
-    private final Cursor cursorSelect = ImageProvider.getCursor(/* ICON(cursor/)*/ "normal", /* ICON(cursor/modifier/)*/ "mode");
-    private final Cursor cursorSelectHover = ImageProvider.getCursor(/* ICON(cursor/)*/ "hand", /* ICON(cursor/modifier/)*/ "mode");
-    private final Cursor cursorImprove = ImageProvider.getCursor(CROSSHAIR, null);
-    private final Cursor cursorImproveAdd = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "addnode");
-    private final Cursor cursorImproveDelete = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "delete_node");
-    private final Cursor cursorImproveAddLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "add_node_lock");
-    private final Cursor cursorImproveLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "lock");
+    protected final Cursor cursorSelect = ImageProvider.getCursor(/* ICON(cursor/)*/ "normal", /* ICON(cursor/modifier/)*/ "mode");
+    protected final Cursor cursorSelectHover = ImageProvider.getCursor(/* ICON(cursor/)*/ "hand", /* ICON(cursor/modifier/)*/ "mode");
+    protected final Cursor cursorImprove = ImageProvider.getCursor(CROSSHAIR, null);
+    protected final Cursor cursorImproveAdd = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "addnode");
+    protected final Cursor cursorImproveDelete = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "delete_node");
+    protected final Cursor cursorImproveAddLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "add_node_lock");
+    protected final Cursor cursorImproveLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "lock");
 
-    private Color guideColor;
+    protected Color guideColor;
 
-    private static final CachingProperty<BasicStroke> SELECT_TARGET_WAY_STROKE
+    protected static final CachingProperty<BasicStroke> SELECT_TARGET_WAY_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.select-target", "2").cached();
-    private static final CachingProperty<BasicStroke> MOVE_NODE_STROKE
+    protected static final CachingProperty<BasicStroke> MOVE_NODE_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.move-node", "1 6").cached();
-    private static final CachingProperty<BasicStroke> MOVE_NODE_INTERSECTING_STROKE
+    protected static final CachingProperty<BasicStroke> MOVE_NODE_INTERSECTING_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.move-node-intersecting", "1 2 6").cached();
-    private static final CachingProperty<BasicStroke> ADD_NODE_STROKE
+    protected static final CachingProperty<BasicStroke> ADD_NODE_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.add-node", "1").cached();
-    private static final CachingProperty<BasicStroke> DELETE_NODE_STROKE
+    protected static final CachingProperty<BasicStroke> DELETE_NODE_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.delete-node", "1").cached();
-    private static final CachingProperty<Integer> DOT_SIZE
+    protected static final CachingProperty<Integer> DOT_SIZE
             = new IntegerProperty("improvewayaccuracy.dot-size", 6).cached();
 
-    private boolean selectionChangedBlocked;
+    protected boolean selectionChangedBlocked;
 
     protected String oldModeHelpText;
 
-    private final transient AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
+    protected final transient AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             ImproveWayAccuracyAction.this.paint(g, mv, bbox);
@@ -139,6 +139,10 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 KeyEvent.VK_W, Shortcut.DIRECT), Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         readPreferences();
+    }
+
+    protected ImproveWayAccuracyAction(String name, String iconName, String tooltip, Shortcut shortcut, Cursor cursor) {
+        super(name, iconName, tooltip, shortcut, cursor);
     }
 
     // -------------------------------------------------------------------------
@@ -540,7 +544,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
     /**
      * Sets new cursor depending on state, mouse position
      */
-    private void updateCursor() {
+    protected void updateCursor() {
         if (!isEnabled()) {
             mv.setNewCursor(null, this);
             return;
@@ -640,7 +644,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
      * state if a single way or node is selected. Extracts a way by a node in
      * the second case.
      */
-    private void updateStateByCurrentSelection() {
+    protected void updateStateByCurrentSelection() {
         final List<Node> nodeList = new ArrayList<>();
         final List<Way> wayList = new ArrayList<>();
         final DataSet ds = getLayerManager().getEditDataSet();
