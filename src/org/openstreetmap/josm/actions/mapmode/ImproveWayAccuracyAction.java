@@ -414,8 +414,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             return;
         }
 
-        mousePos = e.getPoint();
-
+        updateMousePosition(e);
         updateKeyModifiers(e);
         updateCursorDependentObjectsIfNeeded();
         updateCursor();
@@ -432,7 +431,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
 
         DataSet ds = getLayerManager().getEditDataSet();
         updateKeyModifiers(e);
-        mousePos = e.getPoint();
+        updateMousePosition(e);
 
         if (state == State.SELECTING) {
             if (targetWay != null) {
@@ -547,6 +546,15 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
     // -------------------------------------------------------------------------
     // Custom methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Sets mouse position based on mouse event;
+     * this method allows extending classes to override position
+     */
+    protected void updateMousePosition(MouseEvent e) {
+        mousePos = e.getPoint();
+    }
+
     /**
      * Sets new cursor depending on state, mouse position
      */
