@@ -93,6 +93,9 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
     protected Point mousePos;
     protected boolean dragging;
 
+    protected Node endpoint1 = null;
+    protected Node endpoint2 = null;
+
     protected final Cursor cursorSelect = ImageProvider.getCursor(/* ICON(cursor/)*/ "normal", /* ICON(cursor/modifier/)*/ "mode");
     protected final Cursor cursorSelectHover = ImageProvider.getCursor(/* ICON(cursor/)*/ "hand", /* ICON(cursor/modifier/)*/ "mode");
     protected final Cursor cursorImprove = ImageProvider.getCursor(CROSSHAIR, null);
@@ -271,74 +274,32 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             // Drawing preview lines and highlighting the node
             // that is going to be moved.
             // Non-native highlighting is used here as well.
-
-            // Finding endpoints
-            Node p1 = null;
-            Node p2 = null;
-            if (ctrl && candidateSegment != null) {
-                g.setStroke(ADD_NODE_STROKE.get());
-                try {
-                    p1 = candidateSegment.getFirstNode();
-                    p2 = candidateSegment.getSecondNode();
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    Logging.error(e);
-                }
-            } else if (!alt && !ctrl && candidateNode != null) {
-                g.setStroke(MOVE_NODE_STROKE.get());
-                List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
-                for (Pair<Node, Node> wpp : wpps) {
-                    if (wpp.a == candidateNode) {
-                        p1 = wpp.b;
-                    }
-                    if (wpp.b == candidateNode) {
-                        p2 = wpp.a;
-                    }
-                    if (p1 != null && p2 != null) {
-                        break;
-                    }
-                }
-            } else if (alt && !ctrl && candidateNode != null) {
-                g.setStroke(DELETE_NODE_STROKE.get());
-                List<Node> nodes = targetWay.getNodes();
-                int index = nodes.indexOf(candidateNode);
-
-                // Only draw line if node is not first and/or last
-                if (index > 0 && index < (nodes.size() - 1)) {
-                    p1 = nodes.get(index - 1);
-                    p2 = nodes.get(index + 1);
-                } else if (targetWay.isClosed()) {
-                    p1 = targetWay.getNode(1);
-                    p2 = targetWay.getNode(nodes.size() - 2);
-                }
-                // TODO: indicate what part that will be deleted? (for end nodes)
-            }
-
+            findEndpoints(g);
 
             // Drawing preview lines
             MapViewPath b = new MapViewPath(mv);
             if (alt && !ctrl) {
                 // In delete mode
-                if (p1 != null && p2 != null) {
-                    b.moveTo(p1);
-                    b.lineTo(p2);
+                if (endpoint1 != null && endpoint2 != null) {
+                    b.moveTo(endpoint1);
+                    b.lineTo(endpoint2);
                 }
             } else {
                 // In add or move mode
-                if (p1 != null) {
+                if (endpoint1 != null) {
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p1);
+                    b.lineTo(endpoint1);
                 }
-                if (p2 != null) {
+                if (endpoint2 != null) {
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p2);
+                    b.lineTo(endpoint2);
                 }
             }
             g.draw(b.computeClippedLine(g.getStroke()));
 
             // Highlighting candidateNode
             if (candidateNode != null) {
-                p1 = candidateNode;
-                g.fill(new MapViewPath(mv).shapeAround(p1, SymbolShape.SQUARE, DOT_SIZE.get()));
+                g.fill(new MapViewPath(mv).shapeAround(candidateNode, SymbolShape.SQUARE, DOT_SIZE.get()));
             }
 
             if (!alt && !ctrl && candidateNode != null) {
@@ -348,6 +309,48 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 g.draw(b.computeClippedLine(g.getStroke()));
             }
 
+        }
+    }
+
+    protected void findEndpoints(Graphics2D g) {
+        endpoint1 = null;
+        endpoint2 = null;
+        if (ctrl && candidateSegment != null) {
+            g.setStroke(ADD_NODE_STROKE.get());
+            try {
+                endpoint1 = candidateSegment.getFirstNode();
+                endpoint2 = candidateSegment.getSecondNode();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Logging.error(e);
+            }
+        } else if (!alt && !ctrl && candidateNode != null) {
+            g.setStroke(MOVE_NODE_STROKE.get());
+            List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
+            for (Pair<Node, Node> wpp : wpps) {
+                if (wpp.a == candidateNode) {
+                    endpoint1 = wpp.b;
+                }
+                if (wpp.b == candidateNode) {
+                    endpoint2 = wpp.a;
+                }
+                if (endpoint1 != null && endpoint2 != null) {
+                    break;
+                }
+            }
+        } else if (alt && !ctrl && candidateNode != null) {
+            g.setStroke(DELETE_NODE_STROKE.get());
+            List<Node> nodes = targetWay.getNodes();
+            int index = nodes.indexOf(candidateNode);
+
+            // Only draw line if node is not first and/or last
+            if (index > 0 && index < (nodes.size() - 1)) {
+                endpoint1 = nodes.get(index - 1);
+                endpoint2 = nodes.get(index + 1);
+            } else if (targetWay.isClosed()) {
+                endpoint1 = targetWay.getNode(1);
+                endpoint2 = targetWay.getNode(nodes.size() - 2);
+            }
+            // TODO: indicate what part that will be deleted? (for end nodes)
         }
     }
 
