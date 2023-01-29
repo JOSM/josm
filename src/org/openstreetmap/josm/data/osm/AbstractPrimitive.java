@@ -856,7 +856,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
                     Arrays.asList(
                             "created_by",
                             "converted_by",
-                            "current_id",
+                            "current_id", /* prevent export of this JOSM internal information, see OsmReader */
                             "geobase:datasetName",
                             "geobase:uuid",
                             "KSJ2:ADS",
