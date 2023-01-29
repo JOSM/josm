@@ -274,41 +274,10 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             // Drawing preview lines and highlighting the node
             // that is going to be moved.
             // Non-native highlighting is used here as well.
-            findEndpoints(g);
-
-            // Drawing preview lines
             MapViewPath b = new MapViewPath(mv);
-            if (alt && !ctrl) {
-                // In delete mode
-                if (endpoint1 != null && endpoint2 != null) {
-                    b.moveTo(endpoint1);
-                    b.lineTo(endpoint2);
-                }
-            } else {
-                // In add or move mode
-                if (endpoint1 != null) {
-                    b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(endpoint1);
-                }
-                if (endpoint2 != null) {
-                    b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(endpoint2);
-                }
-            }
-            g.draw(b.computeClippedLine(g.getStroke()));
-
-            // Highlighting candidateNode
-            if (candidateNode != null) {
-                g.fill(new MapViewPath(mv).shapeAround(candidateNode, SymbolShape.SQUARE, DOT_SIZE.get()));
-            }
-
-            if (!alt && !ctrl && candidateNode != null) {
-                b.reset();
-                drawIntersectingWayHelperLines(mv, b);
-                g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
-                g.draw(b.computeClippedLine(g.getStroke()));
-            }
-
+            findEndpoints(g);
+            drawPreviewLines(g, b);
+            highlightCandidateNode(g, mv, b);
         }
     }
 
@@ -351,6 +320,40 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 endpoint2 = targetWay.getNode(nodes.size() - 2);
             }
             // TODO: indicate what part that will be deleted? (for end nodes)
+        }
+    }
+
+    protected void drawPreviewLines(Graphics2D g, MapViewPath b) {
+        if (alt && !ctrl) {
+            // In delete mode
+            if (endpoint1 != null && endpoint2 != null) {
+                b.moveTo(endpoint1);
+                b.lineTo(endpoint2);
+            }
+        } else {
+            // In add or move mode
+            if (endpoint1 != null) {
+                b.moveTo(mousePos.x, mousePos.y);
+                b.lineTo(endpoint1);
+            }
+            if (endpoint2 != null) {
+                b.moveTo(mousePos.x, mousePos.y);
+                b.lineTo(endpoint2);
+            }
+        }
+        g.draw(b.computeClippedLine(g.getStroke()));
+    }
+
+    protected void highlightCandidateNode(Graphics2D g, MapView mv, MapViewPath b) {
+        if (candidateNode != null) {
+            g.fill(new MapViewPath(mv).shapeAround(candidateNode, SymbolShape.SQUARE, DOT_SIZE.get()));
+        }
+
+        if (!alt && !ctrl && candidateNode != null) {
+            b.reset();
+            drawIntersectingWayHelperLines(mv, b);
+            g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
+            g.draw(b.computeClippedLine(g.getStroke()));
         }
     }
 
