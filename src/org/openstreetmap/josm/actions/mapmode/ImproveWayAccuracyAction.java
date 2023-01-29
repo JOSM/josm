@@ -351,13 +351,13 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
 
         if (!alt && !ctrl && candidateNode != null) {
             b.reset();
-            drawIntersectingWayHelperLines(mv, b);
+            drawIntersectingWayHelperLines(b);
             g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
             g.draw(b.computeClippedLine(g.getStroke()));
         }
     }
 
-    protected void drawIntersectingWayHelperLines(MapView mv, MapViewPath b) {
+    protected void drawIntersectingWayHelperLines(MapViewPath b) {
         for (final OsmPrimitive referrer : candidateNode.getReferrers()) {
             if (!(referrer instanceof Way) || targetWay.equals(referrer)) {
                 continue;
