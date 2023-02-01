@@ -216,6 +216,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("parent_osm_id", Factory.ofEnv(Functions::parent_osm_id));
         FACTORY_MAP.put("parent_tag", Factory.ofEnv(String.class, Functions::parent_tag));
         FACTORY_MAP.put("parent_tags", Factory.ofEnv(String.class, Functions::parent_tags));
+        FACTORY_MAP.put("parent_way_angle", Factory.ofEnv(Functions::parent_way_angle));
         FACTORY_MAP.put("plus", Factory.ofNumberVarArgs(0.0, DoubleUnaryOperator.identity(), Functions::plus));
         FACTORY_MAP.put("print", Factory.of(Object.class, Functions::print));
         FACTORY_MAP.put("println", Factory.of(Object.class, Functions::println));
