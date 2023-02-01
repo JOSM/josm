@@ -32,11 +32,27 @@ public interface RotationAngle {
                 return 0;
             }
             final Way w = ways.iterator().next();
+            Double angle = getRotationAngleForNodeOnWay(n, w);
+            return angle != null ? angle : 0;
+        }
+
+        /**
+         * Calculates the rotation angle of a node in a way based on the preceding way segment.
+         * If the node is the first node in the given way, the angle of the following way segment is used instead.
+         * @param n the node to get the rotation angle for
+         * @param w the way containing the node
+         * @return the rotation angle in radians or null if the way does not contain the node
+         * @since xxx
+         */
+        public static Double getRotationAngleForNodeOnWay(Node n, Way w) {
             final int idx = w.getNodes().indexOf(n);
+            if (idx == -1) {
+                return null;
+            }
             if (idx == 0) {
-                return -Geometry.getSegmentAngle(n.getEastNorth(), w.getNode(idx + 1).getEastNorth());
+                return -(Geometry.getSegmentAngle(n.getEastNorth(), w.getNode(idx + 1).getEastNorth()) - Math.PI/2);
             } else {
-                return -Geometry.getSegmentAngle(w.getNode(idx - 1).getEastNorth(), n.getEastNorth());
+                return -(Geometry.getSegmentAngle(w.getNode(idx - 1).getEastNorth(), n.getEastNorth()) - Math.PI/2);
             }
         }
 
@@ -106,7 +122,7 @@ public interface RotationAngle {
     /**
      * Calculates the rotation angle depending on the primitive to be displayed.
      * @param p primitive
-     * @return rotation angle
+     * @return rotation angle in radians, clockwise starting from up/north
      * @since 13623 (signature)
      */
     double getRotationAngle(IPrimitive p);
