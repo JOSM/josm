@@ -129,8 +129,9 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
             if (cms != null && cms.values_no_i18n) {
                 cachedDisplayValue = Utils.firstNonNull(value, " ");
             } else {
+                final String context = cms == null ? null : cms.values_context;
                 cachedDisplayValue = Utils.firstNonNull(
-                    locale_display_value, tr(display_value), trc(cms == null ? null : cms.values_context, value), " ");
+                    locale_display_value, trc(context, display_value), trc(context, value), " ");
             }
         }
         return cachedDisplayValue;
