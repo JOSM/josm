@@ -466,7 +466,7 @@ public final class OsmValidator {
                 }
                 if (tr("Ignore list").equals(description))
                     description = "";
-                if (!key.matches("^[0-9]+(_.*|$)")) {
+                if (!key.matches("^-?[0-9]+(_.*|$)")) {
                     description = key;
                     key = "";
                 }
@@ -479,7 +479,7 @@ public final class OsmValidator {
                 } else if (item.matches("^([rwn])_.*")) {
                     // single element
                     entry = key + ":" + item;
-                } else if (item.matches("^[0-9]+(_.*|)$")) {
+                } else if (item.matches("^-?[0-9]+(_.*|)$")) {
                     // no element ids
                     entry = item;
                 }
