@@ -10,8 +10,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import javax.swing.JOptionPane;
@@ -213,7 +213,7 @@ public class OsmConnection {
         if (!remoteControlIsRunning) {
             RemoteControl.start();
         }
-        AtomicBoolean done = new AtomicBoolean();
+        CountDownLatch done = new CountDownLatch(1);
         Consumer<IOAuthToken> consumer = authToken -> {
                     if (!remoteControlIsRunning) {
                         RemoteControl.stop();
@@ -222,10 +222,7 @@ public class OsmConnection {
                     OAuthAccessTokenHolder.getInstance().setAccessToken(null);
                     OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), authToken);
                     OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
-                    synchronized (done) {
-                        done.set(true);
-                        done.notifyAll();
-                    }
+                    done.countDown();
                 };
         new OAuth20Authorization().authorize(oAuth20Parameters,
                 consumer, OsmScopes.read_gpx, OsmScopes.write_gpx,
@@ -234,9 +231,11 @@ public class OsmConnection {
         synchronized (done) {
             // Only wait at most 5 minutes
             int counter = 0;
-            while (!done.get() && counter < 5) {
+            while (done.getCount() >= 0 && counter < 5) {
                 try {
-                    done.wait(TimeUnit.MINUTES.toMillis(1));
+                    if (done.await(1, TimeUnit.MINUTES)) {
+                        break;
+                    }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     Logging.trace(e);

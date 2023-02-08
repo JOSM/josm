@@ -99,7 +99,7 @@ public class OAuthParameters implements IOAuthParameters {
         final String clientSecret;
         final String redirectUri;
         final String baseUrl;
-        if (apiUrl != null && !Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
+        if (apiUrl != null && !Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl) && !"http://invalid".equals(apiUrl)) {
             clientId = "";
             clientSecret = "";
             baseUrl = apiUrl;
