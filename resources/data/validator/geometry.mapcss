@@ -70,7 +70,6 @@ node[natural=water],
 node[natural=mud],
 node[natural=beach],
 node[natural=sand],
-node[natural=wood],
 node[natural=bare_rock],
 node[natural=glacier],
 node[leisure=park][natural!=tree], /* For nodes with both tags another warning is created in combinations.mapcss */
