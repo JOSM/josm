@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
 
-import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -68,8 +67,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
     public static synchronized UserIdentityManager getInstance() {
         if (instance == null) {
             instance = new UserIdentityManager();
-            if (OsmApi.isUsingOAuth() && OAuthAccessTokenHolder.getInstance().containsAccessToken() &&
-                    !NetworkManager.isOffline(OnlineResource.OSM_API)) {
+            if (OsmApi.isUsingOAuthAndOAuthSetUp(OsmApi.getOsmApi()) && !NetworkManager.isOffline(OnlineResource.OSM_API)) {
                 try {
                     instance.initFromOAuth();
                 } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
@@ -305,7 +303,12 @@ public final class UserIdentityManager implements PreferenceChangedListener {
             accessTokenSecretChanged = true;
             break;
         default: // Do nothing
+            if (evt.getKey() != null && evt.getKey().equals("oauth.access-token.parameters.OAuth20." + OsmApi.getOsmApi().getHost())) {
+                accessTokenKeyChanged = true;
+                accessTokenSecretChanged = true;
+            }
         }
+        // oauth.access-token.parameters.OAuth20.api.openstreetmap.org
 
         if (accessTokenKeyChanged && accessTokenSecretChanged) {
             accessTokenKeyChanged = false;

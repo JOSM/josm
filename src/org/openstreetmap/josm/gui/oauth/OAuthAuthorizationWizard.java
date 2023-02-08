@@ -255,7 +255,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      * @return the current OAuth parameters.
      */
     public OAuthParameters getOAuthParameters() {
-        return getCurrentAuthorisationUI().getOAuthParameters();
+        return (OAuthParameters) getCurrentAuthorisationUI().getOAuthParameters();
     }
 
     /**

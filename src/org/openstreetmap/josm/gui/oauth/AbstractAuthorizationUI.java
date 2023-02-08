@@ -3,8 +3,10 @@ package org.openstreetmap.josm.gui.oauth;
 
 import java.util.Objects;
 
+import org.openstreetmap.josm.data.oauth.IOAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -20,7 +22,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
     public static final String ACCESS_TOKEN_PROP = AbstractAuthorizationUI.class.getName() + ".accessToken";
 
     private String apiUrl;
-    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
+    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel(OAuthVersion.OAuth10a);
     private transient OAuthToken accessToken;
 
     /**
@@ -79,7 +81,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      *
      * @return the current set of advanced OAuth parameters in this UI
      */
-    public OAuthParameters getOAuthParameters() {
+    public IOAuthParameters getOAuthParameters() {
         return pnlAdvancedProperties.getAdvancedParameters();
     }
 

@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -17,7 +18,6 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 public abstract class OsmServerReader extends OsmConnection {
-    private final OsmApi api = OsmApi.getOsmApi();
+    private final OsmApi api;
     private boolean doAuthenticate;
     protected boolean gpxParsedProperly;
     protected String contentType;
@@ -47,13 +47,17 @@ public abstract class OsmServerReader extends OsmConnection {
      * Constructs a new {@code OsmServerReader}.
      */
     protected OsmServerReader() {
-        try {
-            doAuthenticate = OsmApi.isUsingOAuth()
-                    && CredentialsManager.getInstance().lookupOAuthAccessToken() != null
-                    && OsmApi.USE_OAUTH_FOR_ALL_REQUESTS.get();
-        } catch (CredentialsAgentException e) {
-            Logging.warn(e);
-        }
+        this(OsmApi.getOsmApi());
+    }
+
+    /**
+     * Constructs a new {@code OsmServerReader}.
+     * @param osmApi The API to use for this call
+     * @since 18650
+     */
+    protected OsmServerReader(OsmApi osmApi) {
+        this.api = osmApi;
+        this.doAuthenticate = OsmApi.isUsingOAuthAndOAuthSetUp(osmApi) && OsmApi.USE_OAUTH_FOR_ALL_REQUESTS.get();
     }
 
     /**
@@ -184,7 +188,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     .setRequestBody(requestBody);
             activeConnection = client;
             adaptRequest(client);
-            if (doAuthenticate) {
+            if (doAuthenticate && Objects.equals(this.api.getHost(), client.getURL().getHost())) {
                 addAuth(client);
             }
             if (cancel)

@@ -5,6 +5,9 @@ import java.awt.Component;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 
+import javax.annotation.Nullable;
+
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 
 /**
@@ -65,12 +68,35 @@ public interface CredentialsAgent {
     OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException;
 
     /**
+     * Lookup the current OAuth Access Token to access the specified server. Replies null, if no
+     * Access Token is currently managed by this CredentialAgent.
+     *
+     * @param host The host to get OAuth credentials for
+     * @return the current OAuth Access Token to access the specified server.
+     * @throws CredentialsAgentException if something goes wrong
+     * @since 18650
+     */
+    @Nullable
+    IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException;
+
+    /**
      * Stores the OAuth Access Token <code>accessToken</code>.
      *
      * @param accessToken the access Token. null, to remove the Access Token.
      * @throws CredentialsAgentException if something goes wrong
      */
     void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException;
+
+    /**
+     * Stores the OAuth Access Token <code>accessToken</code>.
+     *
+     * @param host The host the access token is for
+     * @param accessToken the access Token. null, to remove the Access Token. This will remove all IOAuthTokens <i>not</i> managed by
+     *                    {@link #storeOAuthAccessToken(OAuthToken)}.
+     * @throws CredentialsAgentException if something goes wrong
+     * @since 18650
+     */
+    void storeOAuthAccessToken(String host, IOAuthToken accessToken) throws CredentialsAgentException;
 
     /**
      * Purges the internal credentials cache for the given requestor type.

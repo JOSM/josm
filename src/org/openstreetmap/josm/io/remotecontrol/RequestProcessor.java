@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.AuthorizationHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.FeaturesHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
@@ -171,6 +172,7 @@ public class RequestProcessor extends Thread {
             addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
             addRequestHandlerClass(FeaturesHandler.command, FeaturesHandler.class, true);
             addRequestHandlerClass(OpenApiHandler.command, OpenApiHandler.class, true);
+            addRequestHandlerClass(AuthorizationHandler.command, AuthorizationHandler.class, true);
         }
     }
 

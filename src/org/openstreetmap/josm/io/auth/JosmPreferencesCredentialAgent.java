@@ -6,15 +6,24 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.json.JsonException;
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuth20Exception;
+import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
+import org.openstreetmap.josm.data.oauth.OAuth20Token;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the default credentials agent in JOSM. It keeps username and password for both
@@ -68,14 +77,14 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         case SERVER:
             if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
                 Config.getPref().put("osm-server.username", credentials.getUserName());
-                if (credentials.getPassword() == null) {
+                if (credentials.getPassword().length == 0) { // PasswordAuthentication#getPassword cannot be null
                     Config.getPref().put("osm-server.password", null);
                 } else {
                     Config.getPref().put("osm-server.password", String.valueOf(credentials.getPassword()));
                 }
             } else if (host != null) {
                 Config.getPref().put("server.username."+host, credentials.getUserName());
-                if (credentials.getPassword() == null) {
+                if (credentials.getPassword().length == 0) {
                     Config.getPref().put("server.password."+host, null);
                 } else {
                     Config.getPref().put("server.password."+host, String.valueOf(credentials.getPassword()));
@@ -84,7 +93,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             break;
         case PROXY:
             Config.getPref().put(DefaultProxySelector.PROXY_USER, credentials.getUserName());
-            if (credentials.getPassword() == null) {
+            if (credentials.getPassword().length == 0) {
                 Config.getPref().put(DefaultProxySelector.PROXY_PASS, null);
             } else {
                 Config.getPref().put(DefaultProxySelector.PROXY_PASS, String.valueOf(credentials.getPassword()));
@@ -109,6 +118,30 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         return new OAuthToken(accessTokenKey, accessTokenSecret);
     }
 
+    @Override
+    public IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException {
+        Set<String> keySet = new HashSet<>(Config.getPref().getKeySet());
+        keySet.addAll(Config.getPref().getSensitive()); // Just in case we decide to not return sensitive keys in getKeySet
+        for (OAuthVersion oauthType : OAuthVersion.values()) {
+            final String hostKey = "oauth.access-token.object." + oauthType + "." + host;
+            final String parametersKey = "oauth.access-token.parameters." + oauthType + "." + host;
+            if (!keySet.contains(hostKey) || !keySet.contains(parametersKey)) {
+                continue; // Avoid adding empty temporary entries to preferences
+            }
+            String token = Config.getPref().get(hostKey, null);
+            String parameters = Config.getPref().get(parametersKey, null);
+            if (!Utils.isBlank(token) && !Utils.isBlank(parameters) && OAuthVersion.OAuth20 == oauthType) {
+                try {
+                    OAuth20Parameters oAuth20Parameters = new OAuth20Parameters(parameters);
+                    return new OAuth20Token(oAuth20Parameters, token);
+                } catch (OAuth20Exception | JsonException e) {
+                    throw new CredentialsAgentException(e);
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Stores the OAuth Access Token <code>accessToken</code>.
      *
@@ -123,6 +156,33 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         } else {
             Config.getPref().put("oauth.access-token.key", accessToken.getKey());
             Config.getPref().put("oauth.access-token.secret", accessToken.getSecret());
+        }
+    }
+
+    @Override
+    public void storeOAuthAccessToken(String host, IOAuthToken accessToken) throws CredentialsAgentException {
+        Objects.requireNonNull(host, "host");
+        if (accessToken == null) {
+            Set<String> keySet = new HashSet<>(Config.getPref().getKeySet());
+            keySet.addAll(Config.getPref().getSensitive()); // Just in case we decide to not return sensitive keys in getKeySet
+            // Assume we want to remove all access tokens
+            for (OAuthVersion oauthType : OAuthVersion.values()) {
+                final String hostKey = "oauth.access-token.parameters." + oauthType + "." + host;
+                final String parametersKey = "oauth.access-token.parameters." + oauthType + "." + host;
+                if (keySet.contains(hostKey)) {
+                    Config.getPref().removeSensitive(hostKey);
+                }
+                if (keySet.contains(parametersKey)) {
+                    Config.getPref().removeSensitive(parametersKey);
+                }
+            }
+        } else {
+            final String hostKey = "oauth.access-token.object." + accessToken.getOAuthType() + "." + host;
+            final String parametersKey = "oauth.access-token.parameters." + accessToken.getOAuthType() + "." + host;
+            Config.getPref().put(hostKey, accessToken.toPreferencesString());
+            Config.getPref().put(parametersKey, accessToken.getParameters().toPreferencesString());
+            Config.getPref().addSensitive(this, hostKey);
+            Config.getPref().addSensitive(this, parametersKey);
         }
     }
 

@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -143,8 +144,13 @@ public final class MessageNotifier {
             CredentialsManager credManager = CredentialsManager.getInstance();
             try {
                 if (JosmPreferencesCredentialAgent.class.equals(credManager.getCredentialsAgentClass())) {
-                    if (OsmApi.isUsingOAuth()) {
+                    if (OsmApi.isUsingOAuth(OAuthVersion.OAuth10a)) {
                         return credManager.lookupOAuthAccessToken() != null;
+                    } else if (OsmApi.isUsingOAuth(OAuthVersion.OAuth20) || OsmApi.isUsingOAuth(OAuthVersion.OAuth21)) {
+                        return credManager.lookupOAuthAccessToken(OsmApi.getOsmApi().getHost()) != null;
+                    } else if (OsmApi.isUsingOAuth()) {
+                        // Ensure we do not forget to update this section
+                        throw new IllegalStateException("Unknown oauth version: " + OsmApi.getAuthMethod());
                     } else {
                         String username = Config.getPref().get("osm-server.username", null);
                         String password = Config.getPref().get("osm-server.password", null);

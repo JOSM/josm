@@ -3,8 +3,16 @@ package org.openstreetmap.josm.data.oauth;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.net.URI;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -30,6 +38,8 @@ public class OAuthAccessTokenHolder {
     private boolean saveToPreferences;
     private String accessTokenKey;
     private String accessTokenSecret;
+
+    private final Map<String, Map<OAuthVersion, IOAuthToken>> tokenMap = new HashMap<>();
 
     /**
      * Replies true if current access token should be saved to the preferences file.
@@ -103,6 +113,30 @@ public class OAuthAccessTokenHolder {
     }
 
     /**
+     * Replies the access token.
+     * @param api The api the token is for
+     * @param version The OAuth version the token is for
+     * @return the access token, can be {@code null}
+     * @since 18650
+     */
+    public IOAuthToken getAccessToken(String api, OAuthVersion version) {
+        api = URI.create(api).getHost();
+        if (this.tokenMap.containsKey(api)) {
+            Map<OAuthVersion, IOAuthToken> map = this.tokenMap.get(api);
+            return map.get(version);
+        }
+        try {
+            IOAuthToken token = CredentialsManager.getInstance().lookupOAuthAccessToken(api);
+            // We *do* want to set the API token to null, if it doesn't exist. Just to avoid unnecessary lookups.
+            this.setAccessToken(api, token);
+            return token;
+        } catch (CredentialsAgentException exception) {
+            Logging.trace(exception);
+        }
+        return null;
+    }
+
+    /**
      * Sets the access token hold by this holder.
      *
      * @param accessTokenKey the access token key
@@ -125,6 +159,26 @@ public class OAuthAccessTokenHolder {
         } else {
             this.accessTokenKey = token.getKey();
             this.accessTokenSecret = token.getSecret();
+        }
+    }
+
+    /**
+     * Sets the access token hold by this holder.
+     *
+     * @param api The api the token is for
+     * @param token the access token. Can be null to clear the content in this holder.
+     * @since 18650
+     */
+    public void setAccessToken(String api, IOAuthToken token) {
+        Objects.requireNonNull(api, "api url");
+        // Sometimes the api might be sent as the host
+        api = Optional.ofNullable(URI.create(api).getHost()).orElse(api);
+        if (token == null) {
+            if (this.tokenMap.containsKey(api)) {
+                this.tokenMap.get(api).clear();
+            }
+        } else {
+            this.tokenMap.computeIfAbsent(api, key -> new EnumMap<>(OAuthVersion.class)).put(token.getOAuthType(), token);
         }
     }
 
@@ -175,8 +229,24 @@ public class OAuthAccessTokenHolder {
         try {
             if (!saveToPreferences) {
                 cm.storeOAuthAccessToken(null);
+                for (String host : this.tokenMap.keySet()) {
+                    cm.storeOAuthAccessToken(host, null);
+                }
             } else {
-                cm.storeOAuthAccessToken(new OAuthToken(accessTokenKey, accessTokenSecret));
+                if (this.accessTokenKey != null && this.accessTokenSecret != null) {
+                    cm.storeOAuthAccessToken(new OAuthToken(accessTokenKey, accessTokenSecret));
+                }
+                for (Map.Entry<String, Map<OAuthVersion, IOAuthToken>> entry : this.tokenMap.entrySet()) {
+                    if (entry.getValue().isEmpty()) {
+                        cm.storeOAuthAccessToken(entry.getKey(), null);
+                        continue;
+                    }
+                    for (OAuthVersion version : OAuthVersion.values()) {
+                        if (entry.getValue().containsKey(version)) {
+                            cm.storeOAuthAccessToken(entry.getKey(), entry.getValue().get(version));
+                        }
+                    }
+                }
             }
         } catch (CredentialsAgentException e) {
             Logging.error(e);

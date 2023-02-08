@@ -7,6 +7,7 @@ import java.net.PasswordAuthentication;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -161,8 +162,18 @@ public class CredentialsManager implements CredentialsAgent {
     }
 
     @Override
+    public IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException {
+        return delegate.lookupOAuthAccessToken(host);
+    }
+
+    @Override
     public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException {
         delegate.storeOAuthAccessToken(accessToken);
+    }
+
+    @Override
+    public void storeOAuthAccessToken(String host, IOAuthToken accessToken) throws CredentialsAgentException {
+        delegate.storeOAuthAccessToken(host, accessToken);
     }
 
     @Override

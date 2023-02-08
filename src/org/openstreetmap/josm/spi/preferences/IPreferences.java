@@ -1,10 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.spi.preferences;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.openstreetmap.josm.io.auth.CredentialsAgent;
 
 /**
  * Interface for preference handling.
@@ -239,4 +242,27 @@ public interface IPreferences {
      * @return the set of all keys
      */
     Set<String> getKeySet();
+
+    /**
+     * Add sensitive keys
+     * @param caller The calling agent
+     * @param key The key that may contain sensitive information
+     * @since 18650
+     */
+    void addSensitive(CredentialsAgent caller, String key);
+
+    /**
+     * Get sensitive keys
+     * @return The sensitive keys
+     * @since 18650
+     */
+    Collection<String> getSensitive();
+
+    /**
+     * Remove sensitive keys. This removes the key from the sensitive list <i>and</i>
+     * removes the stored preference value.
+     * @param key The key to remove
+     * @since 18650
+     */
+    void removeSensitive(String key);
 }

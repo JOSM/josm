@@ -13,11 +13,13 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
@@ -65,6 +67,14 @@ class DownloadOpenChangesetsTaskTest {
             // UserCancelException in showDialog
             invocation.proceed(serverUrl);
         }
+    }
+
+    /**
+     * These tests were written with {@link org.openstreetmap.josm.data.oauth.OAuthVersion#OAuth10a} as the default auth method.
+     */
+    @BeforeEach
+    void setup() {
+        Config.getPref().put("osm-server.auth-method", "oauth");
     }
 
     /**

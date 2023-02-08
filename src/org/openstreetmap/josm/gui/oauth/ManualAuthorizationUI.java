@@ -25,6 +25,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.widgets.DefaultTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -232,7 +233,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
             TestAccessTokenTask task = new TestAccessTokenTask(
                     ManualAuthorizationUI.this,
                     getApiUrl(),
-                    getAdvancedPropertiesPanel().getAdvancedParameters(),
+                    (OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters(),
                     getAccessToken()
             );
             executor.execute(task);

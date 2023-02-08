@@ -23,28 +23,35 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuth20Authorization;
+import org.openstreetmap.josm.data.oauth.OAuth20Token;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
+import org.openstreetmap.josm.data.oauth.osm.OsmScopes;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
 import org.openstreetmap.josm.gui.oauth.AuthorizationProcedure;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 
 /**
- * The preferences panel for the OAuth preferences. This just a summary panel
+ * The preferences panel for the OAuth 1.0a preferences. This just a summary panel
  * showing the current Access Token Key and Access Token Secret, if the
  * user already has an Access Token.
- *
+ * <br>
  * For initial authorisation see {@link OAuthAuthorizationWizard}.
  * @since 2745
  */
@@ -53,17 +60,30 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     private final JCheckBox cbShowAdvancedParameters = new JCheckBox(tr("Display Advanced OAuth Parameters"));
     private final JCheckBox cbSaveToPreferences = new JCheckBox(tr("Save to preferences"));
     private final JPanel pnlAuthorisationMessage = new JPanel(new BorderLayout());
-    private final NotYetAuthorisedPanel pnlNotYetAuthorised = new NotYetAuthorisedPanel();
-    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
-    private final AlreadyAuthorisedPanel pnlAlreadyAuthorised = new AlreadyAuthorisedPanel();
+    private final NotYetAuthorisedPanel pnlNotYetAuthorised;
+    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
+    private final AlreadyAuthorisedPanel pnlAlreadyAuthorised;
+    private final OAuthVersion oAuthVersion;
     private String apiUrl;
 
     /**
-     * Create the panel
+     * Create the panel. Uses {@link OAuthVersion#OAuth10a}.
      */
     public OAuthAuthenticationPreferencesPanel() {
+        this(OAuthVersion.OAuth10a);
+    }
+
+    /**
+     * Create the panel.
+     * @param oAuthVersion The OAuth version to use
+     */
+    public OAuthAuthenticationPreferencesPanel(OAuthVersion oAuthVersion) {
+        this.oAuthVersion = oAuthVersion;
+        // These must come after we set the oauth version
+        this.pnlNotYetAuthorised = new NotYetAuthorisedPanel();
+        this.pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel(this.oAuthVersion);
+        this.pnlAlreadyAuthorised = new AlreadyAuthorisedPanel();
         build();
-        refreshView();
     }
 
     /**
@@ -117,7 +137,9 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
     protected void refreshView() {
         pnlAuthorisationMessage.removeAll();
-        if (OAuthAccessTokenHolder.getInstance().containsAccessToken()) {
+        if ((this.oAuthVersion == OAuthVersion.OAuth10a &&
+                OAuthAccessTokenHolder.getInstance().containsAccessToken())
+        || OAuthAccessTokenHolder.getInstance().getAccessToken(this.apiUrl, this.oAuthVersion) != null) {
             pnlAuthorisationMessage.add(pnlAlreadyAuthorised, BorderLayout.CENTER);
             pnlAlreadyAuthorised.refreshView();
             pnlAlreadyAuthorised.revalidate();
@@ -180,11 +202,15 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
             // Action for authorising now
-            add(new JButton(new AuthoriseNowAction(AuthorizationProcedure.FULLY_AUTOMATIC)), GBC.eol());
+            if (oAuthVersion == OAuthVersion.OAuth10a) {
+                add(new JButton(new AuthoriseNowAction(AuthorizationProcedure.FULLY_AUTOMATIC)), GBC.eol());
+            }
             add(new JButton(new AuthoriseNowAction(AuthorizationProcedure.SEMI_AUTOMATIC)), GBC.eol());
-            JButton authManually = new JButton(new AuthoriseNowAction(AuthorizationProcedure.MANUALLY));
-            add(authManually, GBC.eol());
-            ExpertToggleAction.addVisibilitySwitcher(authManually);
+            if (oAuthVersion == OAuthVersion.OAuth10a) {
+                JButton authManually = new JButton(new AuthoriseNowAction(AuthorizationProcedure.MANUALLY));
+                add(authManually, GBC.eol());
+                ExpertToggleAction.addVisibilitySwitcher(authManually);
+            }
 
             // filler - grab remaining space
             add(new JPanel(), GBC.std().fill(GBC.BOTH));
@@ -253,8 +279,12 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             // -- action buttons
             JPanel btns = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            btns.add(new JButton(new RenewAuthorisationAction(AuthorizationProcedure.FULLY_AUTOMATIC)));
-            btns.add(new JButton(new TestAuthorisationAction()));
+            if (oAuthVersion == OAuthVersion.OAuth10a) {
+                // these want the OAuth 1.0 token information
+                btns.add(new JButton(new RenewAuthorisationAction(AuthorizationProcedure.FULLY_AUTOMATIC)));
+                btns.add(new JButton(new TestAuthorisationAction()));
+            }
+            btns.add(new JButton(new RemoveAuthorisationAction()));
             gc.gridy = 4;
             gc.gridx = 0;
             gc.gridwidth = 2;
@@ -277,10 +307,24 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         }
 
         protected final void refreshView() {
-            String v = OAuthAccessTokenHolder.getInstance().getAccessTokenKey();
-            tfAccessTokenKey.setText(v == null ? "" : v);
-            v = OAuthAccessTokenHolder.getInstance().getAccessTokenSecret();
-            tfAccessTokenSecret.setText(v == null ? "" : v);
+            switch (oAuthVersion) {
+                case OAuth10a:
+                    String v = OAuthAccessTokenHolder.getInstance().getAccessTokenKey();
+                    tfAccessTokenKey.setText(v == null ? "" : v);
+                    v = OAuthAccessTokenHolder.getInstance().getAccessTokenSecret();
+                    tfAccessTokenSecret.setText(v == null ? "" : v);
+                    tfAccessTokenSecret.setVisible(true);
+                    break;
+                case OAuth20:
+                case OAuth21:
+                    String token = "";
+                    if (apiUrl != null) {
+                        OAuth20Token bearerToken = (OAuth20Token) OAuthAccessTokenHolder.getInstance().getAccessToken(apiUrl, oAuthVersion);
+                        token = bearerToken == null ? "" : bearerToken.getBearerToken();
+                    }
+                    tfAccessTokenKey.setText(token == null ? "" : token);
+                    tfAccessTokenSecret.setVisible(false);
+            }
             cbSaveToPreferences.setSelected(OAuthAccessTokenHolder.getInstance().isSaveToPreferences());
         }
     }
@@ -295,25 +339,68 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             this.procedure = procedure;
             putValue(NAME, tr("{0} ({1})", tr("Authorize now"), procedure.getText()));
             putValue(SHORT_DESCRIPTION, procedure.getDescription());
-            if (procedure == AuthorizationProcedure.FULLY_AUTOMATIC) {
+            if (procedure == AuthorizationProcedure.FULLY_AUTOMATIC
+            || OAuthAuthenticationPreferencesPanel.this.oAuthVersion != OAuthVersion.OAuth10a) {
                 new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
             }
         }
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
-                    OAuthAuthenticationPreferencesPanel.this,
-                    procedure,
-                    apiUrl,
-                    MainApplication.worker);
-            try {
-                wizard.showDialog();
-            } catch (UserCancelException ignore) {
-                Logging.trace(ignore);
-                return;
+            if (OAuthAuthenticationPreferencesPanel.this.oAuthVersion == OAuthVersion.OAuth10a) {
+                OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
+                        OAuthAuthenticationPreferencesPanel.this,
+                        procedure,
+                        apiUrl,
+                        MainApplication.worker);
+                try {
+                    wizard.showDialog();
+                } catch (UserCancelException ignore) {
+                    Logging.trace(ignore);
+                    return;
+                }
+                pnlAdvancedProperties.setAdvancedParameters(wizard.getOAuthParameters());
+                refreshView();
+            } else {
+                final boolean remoteControlIsRunning = Boolean.TRUE.equals(RemoteControl.PROP_REMOTECONTROL_ENABLED.get());
+                // TODO: Ask user if they want to start remote control?
+                if (!remoteControlIsRunning) {
+                    RemoteControl.start();
+                }
+                new OAuth20Authorization().authorize(OAuthParameters.createDefault(OsmApi.getOsmApi().getServerUrl(), oAuthVersion), token -> {
+                    if (!remoteControlIsRunning) {
+                        RemoteControl.stop();
+                    }
+                    // Clean up old token/password
+                    OAuthAccessTokenHolder.getInstance().setAccessToken(null);
+                    OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), token);
+                    OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
+                    GuiHelper.runInEDT(OAuthAuthenticationPreferencesPanel.this::refreshView);
+                }, OsmScopes.read_gpx, OsmScopes.write_gpx,
+                        OsmScopes.read_prefs, OsmScopes.write_prefs,
+                        OsmScopes.write_api, OsmScopes.write_notes);
             }
-            pnlAdvancedProperties.setAdvancedParameters(wizard.getOAuthParameters());
+        }
+    }
+
+    /**
+     * Remove the OAuth authorization token
+     */
+    private class RemoveAuthorisationAction extends AbstractAction {
+        RemoveAuthorisationAction() {
+            putValue(NAME, tr("Remove token"));
+            putValue(SHORT_DESCRIPTION, tr("Remove token from JOSM. This does not revoke the token."));
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (oAuthVersion == OAuthVersion.OAuth10a) {
+                OAuthAccessTokenHolder.getInstance().setAccessToken(null);
+            } else {
+                OAuthAccessTokenHolder.getInstance().setAccessToken(apiUrl, (IOAuthToken) null);
+            }
+            OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
             refreshView();
         }
     }

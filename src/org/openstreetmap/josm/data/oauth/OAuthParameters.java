@@ -1,11 +1,25 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
+
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 import oauth.signpost.OAuthConsumer;
@@ -15,7 +29,7 @@ import oauth.signpost.OAuthProvider;
  * This class manages an immutable set of OAuth parameters.
  * @since 2747
  */
-public class OAuthParameters {
+public class OAuthParameters implements IOAuthParameters {
 
     /**
      * The default JOSM OAuth consumer key (created by user josmeditor).
@@ -46,13 +60,108 @@ public class OAuthParameters {
      * @since 5422
      */
     public static OAuthParameters createDefault(String apiUrl) {
-        final String consumerKey;
-        final String consumerSecret;
-        final String serverUrl;
+        return (OAuthParameters) createDefault(apiUrl, OAuthVersion.OAuth10a);
+    }
 
+    /**
+     * Replies a set of default parameters for a consumer accessing an OSM server
+     * at the given API url. URL parameters are only set if the URL equals {@link IUrls#getDefaultOsmApiUrl}
+     * or references the domain "dev.openstreetmap.org", otherwise they may be <code>null</code>.
+     *
+     * @param apiUrl The API URL for which the OAuth default parameters are created. If null or empty, the default OSM API url is used.
+     * @param oAuthVersion The OAuth version to create default parameters for
+     * @return a set of default parameters for the given {@code apiUrl}
+     * @since 18650
+     */
+    public static IOAuthParameters createDefault(String apiUrl, OAuthVersion oAuthVersion) {
         if (!Utils.isValidUrl(apiUrl)) {
             apiUrl = null;
         }
+
+        switch (oAuthVersion) {
+            case OAuth10a:
+                return getDefaultOAuth10Parameters(apiUrl);
+            case OAuth20:
+            case OAuth21: // For now, OAuth 2.1 (draft) is just OAuth 2.0 with mandatory extensions, which we implement.
+                return getDefaultOAuth20Parameters(apiUrl);
+            default:
+                throw new IllegalArgumentException("Unknown OAuth version: " + oAuthVersion);
+        }
+    }
+
+    /**
+     * Get the default OAuth 2.0 parameters
+     * @param apiUrl The API url
+     * @return The default parameters
+     */
+    private static OAuth20Parameters getDefaultOAuth20Parameters(String apiUrl) {
+        final String clientId;
+        final String clientSecret;
+        final String redirectUri;
+        final String baseUrl;
+        if (apiUrl != null && !Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
+            clientId = "";
+            clientSecret = "";
+            baseUrl = apiUrl;
+            HttpClient client = null;
+            redirectUri = "";
+            // Check if the server is RFC 8414 compliant
+            try {
+                client = HttpClient.create(new URL(apiUrl + (apiUrl.endsWith("/") ? "" : "/") + ".well-known/oauth-authorization-server"));
+                HttpClient.Response response = client.connect();
+                if (response.getResponseCode() == 200) {
+                    try (BufferedReader reader = response.getContentReader();
+                         JsonReader jsonReader = Json.createReader(reader)) {
+                        JsonStructure structure = jsonReader.read();
+                        if (structure.getValueType() == JsonValue.ValueType.OBJECT) {
+                            return parseAuthorizationServerMetadataResponse(clientId, clientSecret, apiUrl,
+                                    redirectUri, structure.asJsonObject());
+                        }
+                    }
+                }
+            } catch (IOException | OAuthException e) {
+                Logging.trace(e);
+            } finally {
+                if (client != null) client.disconnect();
+            }
+        } else {
+            clientId = "edPII614Lm0_0zEpc_QzEltA9BUll93-Y-ugRQUoHMI";
+            // We don't actually use the client secret in our authorization flow.
+            clientSecret = null;
+            baseUrl = "https://www.openstreetmap.org/oauth2";
+            redirectUri = "http://127.0.0.1:8111/oauth_authorization";
+            apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        }
+        return new OAuth20Parameters(clientId, clientSecret, baseUrl, apiUrl, redirectUri);
+    }
+
+    /**
+     * Parse the response from <a href="https://www.rfc-editor.org/rfc/rfc8414.html">RFC 8414</a>
+     * (OAuth 2.0 Authorization Server Metadata)
+     * @return The parameters for the server metadata
+     */
+    private static OAuth20Parameters parseAuthorizationServerMetadataResponse(String clientId, String clientSecret,
+                                                                              String apiUrl, String redirectUri,
+                                                                              JsonObject serverMetadata)
+            throws OAuthException {
+        final String authorizationEndpoint = serverMetadata.getString("authorization_endpoint", null);
+        final String tokenEndpoint = serverMetadata.getString("token_endpoint", null);
+        // This may also have additional documentation like what the endpoints allow (e.g. scopes, algorithms, etc.)
+        if (authorizationEndpoint == null || tokenEndpoint == null) {
+            throw new OAuth20Exception("Either token endpoint or authorization endpoints are missing");
+        }
+        return new OAuth20Parameters(clientId, clientSecret, tokenEndpoint, authorizationEndpoint, apiUrl, redirectUri);
+    }
+
+    /**
+     * Get the default OAuth 1.0a parameters
+     * @param apiUrl The api url
+     * @return The default parameters
+     */
+    private static OAuthParameters getDefaultOAuth10Parameters(String apiUrl) {
+        final String consumerKey;
+        final String consumerSecret;
+        final String serverUrl;
 
         if (apiUrl != null && !Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
             consumerKey = ""; // a custom consumer key is required
@@ -81,20 +190,49 @@ public class OAuthParameters {
      * @return the parameters
      */
     public static OAuthParameters createFromApiUrl(String apiUrl) {
-        OAuthParameters parameters = createDefault(apiUrl);
-        return new OAuthParameters(
-                Config.getPref().get("oauth.settings.consumer-key", parameters.getConsumerKey()),
-                Config.getPref().get("oauth.settings.consumer-secret", parameters.getConsumerSecret()),
-                Config.getPref().get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()),
-                Config.getPref().get("oauth.settings.access-token-url", parameters.getAccessTokenUrl()),
-                Config.getPref().get("oauth.settings.authorise-url", parameters.getAuthoriseUrl()),
-                Config.getPref().get("oauth.settings.osm-login-url", parameters.getOsmLoginUrl()),
-                Config.getPref().get("oauth.settings.osm-logout-url", parameters.getOsmLogoutUrl()));
+        return (OAuthParameters) createFromApiUrl(apiUrl, OAuthVersion.OAuth10a);
+    }
+
+    /**
+     * Replies a set of parameters as defined in the preferences.
+     *
+     * @param oAuthVersion The OAuth version to use.
+     * @param apiUrl the API URL. Must not be {@code null}.
+     * @return the parameters
+     * @since 18650
+     */
+    public static IOAuthParameters createFromApiUrl(String apiUrl, OAuthVersion oAuthVersion) {
+        IOAuthParameters parameters = createDefault(apiUrl, oAuthVersion);
+        switch (oAuthVersion) {
+            case OAuth10a:
+                OAuthParameters oauth10aParameters = (OAuthParameters) parameters;
+                return new OAuthParameters(
+                    Config.getPref().get("oauth.settings.consumer-key", oauth10aParameters.getConsumerKey()),
+                    Config.getPref().get("oauth.settings.consumer-secret", oauth10aParameters.getConsumerSecret()),
+                    Config.getPref().get("oauth.settings.request-token-url", oauth10aParameters.getRequestTokenUrl()),
+                    Config.getPref().get("oauth.settings.access-token-url", oauth10aParameters.getAccessTokenUrl()),
+                    Config.getPref().get("oauth.settings.authorise-url", oauth10aParameters.getAuthoriseUrl()),
+                    Config.getPref().get("oauth.settings.osm-login-url", oauth10aParameters.getOsmLoginUrl()),
+                    Config.getPref().get("oauth.settings.osm-logout-url", oauth10aParameters.getOsmLogoutUrl()));
+            case OAuth20:
+            case OAuth21: // Right now, OAuth 2.1 will work with our OAuth 2.0 implementation
+                OAuth20Parameters oAuth20Parameters = (OAuth20Parameters) parameters;
+                try {
+                    IOAuthToken storedToken = CredentialsManager.getInstance().lookupOAuthAccessToken(apiUrl);
+                    return storedToken != null ? storedToken.getParameters() : oAuth20Parameters;
+                } catch (CredentialsAgentException e) {
+                    Logging.trace(e);
+                }
+                return oAuth20Parameters;
+            default:
+                throw new IllegalArgumentException("Unknown OAuth version: " + oAuthVersion);
+        }
     }
 
     /**
      * Remembers the current values in the preferences.
      */
+    @Override
     public void rememberPreferences() {
         Config.getPref().put("oauth.settings.consumer-key", getConsumerKey());
         Config.getPref().put("oauth.settings.consumer-secret", getConsumerSecret());
@@ -182,8 +320,29 @@ public class OAuthParameters {
      * Gets the access token URL.
      * @return The access token URL
      */
+    @Override
     public String getAccessTokenUrl() {
         return accessTokenUrl;
+    }
+
+    @Override
+    public String getAuthorizationUrl() {
+        return this.authoriseUrl;
+    }
+
+    @Override
+    public OAuthVersion getOAuthVersion() {
+        return OAuthVersion.OAuth10a;
+    }
+
+    @Override
+    public String getClientId() {
+        return this.consumerKey;
+    }
+
+    @Override
+    public String getClientSecret() {
+        return this.consumerSecret;
     }
 
     /**
@@ -191,7 +350,7 @@ public class OAuthParameters {
      * @return The authorise URL
      */
     public String getAuthoriseUrl() {
-        return authoriseUrl;
+        return this.getAuthorizationUrl();
     }
 
     /**

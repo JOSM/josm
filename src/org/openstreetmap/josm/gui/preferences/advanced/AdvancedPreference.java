@@ -235,8 +235,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         Map<String, Setting<?>> loaded;
         Map<String, Setting<?>> orig = Preferences.main().getAllSettings();
         Map<String, Setting<?>> defaults = tmpPrefs.getAllDefaults();
-        orig.remove("osm-server.password");
-        defaults.remove("osm-server.password");
+        Preferences.main().getSensitive().forEach(orig::remove);
+        tmpPrefs.getSensitive().forEach(defaults::remove);
         if (tmpPrefs != Preferences.main()) {
             loaded = tmpPrefs.getAllSettings();
             // plugins preference keys may be changed directly later, after plugins are downloaded

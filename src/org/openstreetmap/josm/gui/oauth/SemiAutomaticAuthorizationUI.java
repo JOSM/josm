@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -78,7 +79,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     protected void transitionToRetrieveAccessToken() {
         OsmOAuthAuthorizationClient client = new OsmOAuthAuthorizationClient(
-                getAdvancedPropertiesPanel().getAdvancedParameters()
+                (OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters()
         );
         String authoriseUrl = client.getAuthoriseUrl(requestToken);
         OpenBrowser.displayUrl(authoriseUrl);
@@ -183,7 +184,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     + "Please click on <strong>{0}</strong> to retrieve an OAuth Request Token from "
                     + "''{1}''.</html>",
                     tr("Retrieve Request Token"),
-                    getAdvancedPropertiesPanel().getAdvancedParameters().getRequestTokenUrl()
+                    ((OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters()).getRequestTokenUrl()
             ));
             pnl.add(h, gc);
 
@@ -390,7 +391,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         public void actionPerformed(ActionEvent evt) {
             final RetrieveRequestTokenTask task = new RetrieveRequestTokenTask(
                     SemiAutomaticAuthorizationUI.this,
-                    getAdvancedPropertiesPanel().getAdvancedParameters()
+                    (OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters()
             );
             executor.execute(task);
             Runnable r = () -> {
@@ -418,7 +419,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         public void actionPerformed(ActionEvent evt) {
             final RetrieveAccessTokenTask task = new RetrieveAccessTokenTask(
                     SemiAutomaticAuthorizationUI.this,
-                    getAdvancedPropertiesPanel().getAdvancedParameters(),
+                    (OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters(),
                     requestToken
             );
             executor.execute(task);
@@ -450,7 +451,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             TestAccessTokenTask task = new TestAccessTokenTask(
                     SemiAutomaticAuthorizationUI.this,
                     getApiUrl(),
-                    getAdvancedPropertiesPanel().getAdvancedParameters(),
+                    (OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters(),
                     getAccessToken()
             );
             executor.execute(task);

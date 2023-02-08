@@ -1,13 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.spi.preferences;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.io.DefaultProxySelector;
+import org.openstreetmap.josm.io.auth.CredentialsAgent;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -16,6 +24,11 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 12847
  */
 public abstract class AbstractPreferences implements IPreferences {
+    /** The preference key for sensitive keys */
+    private static final String KEY_SENSITIVE_KEYS = "sensitive.keys";
+
+    /** A set of sensitive keys that should not be seen/distributed outside of specific callers (like a {@link CredentialsAgent}) */
+    private static final Set<String> SENSITIVE_KEYS = new HashSet<>();
 
     @Override
     public synchronized String get(final String key, final String def) {
@@ -174,5 +187,44 @@ public abstract class AbstractPreferences implements IPreferences {
                 .filter(entry -> entry.getKey().startsWith(prefix) && entry.getValue() instanceof ListSetting)
                 .map(Entry::getKey)
                 .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public void addSensitive(CredentialsAgent caller, String key) {
+        if (SENSITIVE_KEYS.isEmpty()) {
+            populateSensitiveKeys();
+        }
+        if (CredentialsManager.getInstance().getCredentialsAgentClass().equals(caller.getClass())) {
+            SENSITIVE_KEYS.add(key);
+            putList("sensitive.keys", SENSITIVE_KEYS.stream().sorted().collect(Collectors.toList()));
+        }
+    }
+
+    @Override
+    public Collection<String> getSensitive() {
+        if (SENSITIVE_KEYS.isEmpty()) {
+            populateSensitiveKeys();
+        }
+        return Collections.unmodifiableSet(SENSITIVE_KEYS);
+    }
+
+    @Override
+    public void removeSensitive(String key) {
+        if (KEY_SENSITIVE_KEYS.equals(key)) {
+            throw new IllegalArgumentException(KEY_SENSITIVE_KEYS + " cannot be removed from the sensitive key list.");
+        }
+        // Reset the key first -- avoid race conditions where a sensitive value might be visible if we start restricting access in the future.
+        put(key, null);
+        SENSITIVE_KEYS.remove(key);
+        putList(KEY_SENSITIVE_KEYS, SENSITIVE_KEYS.stream().sorted().collect(Collectors.toList()));
+    }
+
+    /**
+     * Populate the sensitive key set from preferences
+     */
+    private void populateSensitiveKeys() {
+        SENSITIVE_KEYS.addAll(getList(KEY_SENSITIVE_KEYS, Arrays.asList("sensitive.keys", "osm-server.username", "osm-server.password",
+                DefaultProxySelector.PROXY_USER, DefaultProxySelector.PROXY_PASS,
+                "oauth.access-token.key", "oauth.access-token.secret")));
     }
 }
