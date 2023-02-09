@@ -237,11 +237,16 @@ way[power=cable                ][!voltage],
   assertNoMatch: "way power=generator generator:output:electricity=yes voltage=1";
 }
 
-/* {0.key} without {1.key} or {2.tag} */
+/* {0.key} without {1.key} or {2.tag}, #22547 */
 way[bridge:structure           ][!bridge][man_made!=bridge],
 *[segregated                   ][!highway][railway!=crossing] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
   group: tr("missing tag");
+}
+way[tunnel=culvert][man_made!=tunnel][!waterway] {
+  throwWarning: tr("{0} without {1} or {2}", "{0.tag}", "{1.tag}", "{2.key}");
+  group: tr("suspicious tag combination");
+  set TunnelCulvertWithoutWaterway;
 }
 
 /* {0.tag} without {1.tag} (info level) see #11600 #11393 #11850 */
@@ -488,7 +493,7 @@ way[highway=footway][cycleway=lane] {
 way[oneway ][!highway][!area:highway][!railway][!aerialway][attraction!=summer_toboggan][aeroway!~/^(runway|taxiway)$/][leisure!=track][waterway !~ /^(canal|fairway|lock|river|tidal_channel)$/],
 node[lanes ][!barrier][!ford][highway!=mini_roundabout][!junction][leisure!~/^(bowling_alley|slipway|swimming_pool|track)$/][!traffic_calming]!.only_one_tag,
 way[lanes  ][!barrier][!ford][!highway ][!area:highway][!junction][leisure!~/^(bowling_alley|slipway|swimming_pool|track)$/][!traffic_calming]!.only_one_tag,
-*[tunnel   ][!highway][!area:highway][!railway][!waterway][!piste:type][type!=tunnel][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel][power!=cable],
+*[tunnel   ][!highway][!area:highway][!railway][!waterway][!piste:type][type!=tunnel][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel][power!=cable]!.TunnelCulvertWithoutWaterway,
 *[bridge   ][!highway][!area:highway][!railway][!waterway][!piste:type][type!=bridge][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
 *[psv      ][!highway][!area:highway][!railway][!waterway][barrier !~ /^(bollard|bump_gate|bus_trap|cattle_grid|chain|coupure|entrance|gate|height_restrictor|jersey_barrier|kerb|lift_gate|rope|sally_port|sliding_beam|sliding_gate|spikes|swing_gate|toll_booth|yes)$/][amenity !~ /^parking.*/],
 *[width    ][!highway][!area:highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone][leisure!=track],
