@@ -315,6 +315,8 @@ public final class UserIdentityManager implements PreferenceChangedListener {
             accessTokenSecretChanged = false;
             if (OsmApi.isUsingOAuthAndOAuthSetUp(OsmApi.getOsmApi())) {
                 getInstance().initFromOAuth();
+            } else if (OsmApi.isUsingOAuth()) {
+                setAnonymous();
             }
         }
     }
