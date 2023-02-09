@@ -22,7 +22,7 @@ public final class TextUtils {
     }
 
     /**
-     * Remove privacy related parts form output URL
+     * Remove privacy related parts from output URL
      * @param url Unmodified URL
      * @return Stripped URL (privacy related issues removed)
      * @since 18652
