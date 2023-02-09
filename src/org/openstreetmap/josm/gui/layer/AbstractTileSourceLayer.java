@@ -129,6 +129,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManager;
 import org.openstreetmap.josm.tools.MemoryManager.MemoryHandle;
 import org.openstreetmap.josm.tools.MemoryManager.NotEnoughMemoryException;
+import org.openstreetmap.josm.tools.TextUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -431,7 +432,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 Rectangle2D displaySize = layer.coordinateConverter.getRectangleForTile(tile);
                 String url = "";
                 try {
-                    url = tile.getUrl();
+                    url = TextUtils.stripUrl(tile.getUrl());
                 } catch (IOException e) {
                     // silence exceptions
                     Logging.trace(e);

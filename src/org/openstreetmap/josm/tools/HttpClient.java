@@ -33,6 +33,7 @@ import org.openstreetmap.josm.io.ProgressInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.TextUtils;
 
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
@@ -125,15 +126,6 @@ public abstract class HttpClient {
     }
 
     /**
-     * Removed privacy related parts form output URL
-     * @param url Unmodified URL
-     * @return Stripped URL (privacy related issues removed)
-     */
-    private String stripUrl(URL url) {
-        return url.toString().replaceAll("(token|key|connectId)=[^&]+", "$1=...stripped...");
-    }
-
-    /**
      * Opens the HTTP connection.
      * @param progressMonitor progress monitor
      * @return HTTP response
@@ -157,7 +149,7 @@ public abstract class HttpClient {
                 cr = performConnection();
                 final boolean hasReason = !Utils.isEmpty(reasonForRequest);
                 logRequest("{0} {1}{2} -> {3} {4} ({5}{6})",
-                        getRequestMethod(), stripUrl(getURL()), hasReason ? (" (" + reasonForRequest + ')') : "",
+                        getRequestMethod(), TextUtils.stripUrl(getURL().toString()), hasReason ? (" (" + reasonForRequest + ')') : "",
                         cr.getResponseVersion(), cr.getResponseCode(),
                         stopwatch,
                         cr.getContentLengthLong() > 0
@@ -175,7 +167,7 @@ public abstract class HttpClient {
                     DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());
                 }
             } catch (IOException | RuntimeException e) {
-                logRequest("{0} {1} -> !!! ({2})", requestMethod, stripUrl(url), stopwatch);
+                logRequest("{0} {1} -> !!! ({2})", requestMethod, TextUtils.stripUrl(url.toString()), stopwatch);
                 Logging.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 NetworkManager.addNetworkError(url, Utils.getRootCause(e));

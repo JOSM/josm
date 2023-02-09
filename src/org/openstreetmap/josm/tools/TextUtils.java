@@ -20,4 +20,15 @@ public final class TextUtils {
     public static String wrapLongUrl(String url) {
         return url.replace("/", "/\u200b").replace("&", "&\u200b");
     }
+
+    /**
+     * Remove privacy related parts form output URL
+     * @param url Unmodified URL
+     * @return Stripped URL (privacy related issues removed)
+     * @since 18652
+     */
+    public static String stripUrl(String url) {
+        return url.replaceAll("(token|key|connectId)=[^&]+", "$1=...stripped...");
+    }
+
 }
