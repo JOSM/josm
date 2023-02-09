@@ -33,7 +33,6 @@ import org.openstreetmap.josm.io.ProgressInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.TextUtils;
 
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.

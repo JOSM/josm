@@ -3,12 +3,14 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map.Entry;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonException;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
@@ -178,10 +180,21 @@ public class OsmJsonReader extends AbstractReader {
 
     @Override
     protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
-        return doParseDataSet(source, progressMonitor, ir -> {
-            setParser(Json.createParser(ir));
-            parse();
-        });
+        try {
+            return doParseDataSet(source, progressMonitor, ir -> {
+                setParser(Json.createParser(ir));
+                parse();
+            });
+        } catch (JsonException exception) {
+            if (exception.getCause() instanceof IOException) {
+                IllegalDataException ide = new IllegalDataException(exception.getCause());
+                // PMD 7 should be able to figure out that this is not an issue. See https://github.com/pmd/pmd/issues/2134 .
+                ide.addSuppressed(exception);
+                throw ide; // NOPMD
+            } else {
+                throw exception;
+            }
+        }
     }
 
     /**
