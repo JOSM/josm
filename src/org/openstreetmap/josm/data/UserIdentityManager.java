@@ -313,7 +313,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
         if (accessTokenKeyChanged && accessTokenSecretChanged) {
             accessTokenKeyChanged = false;
             accessTokenSecretChanged = false;
-            if (OsmApi.isUsingOAuth()) {
+            if (OsmApi.isUsingOAuthAndOAuthSetUp(OsmApi.getOsmApi())) {
                 getInstance().initFromOAuth();
             }
         }
