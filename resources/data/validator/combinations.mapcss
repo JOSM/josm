@@ -237,12 +237,13 @@ way[power=cable                ][!voltage],
   assertNoMatch: "way power=generator generator:output:electricity=yes voltage=1";
 }
 
-/* {0.key} without {1.key} or {2.tag}, #22547 */
+/* {0.key} without {1.key} or {2.tag} */
 way[bridge:structure           ][!bridge][man_made!=bridge],
 *[segregated                   ][!highway][railway!=crossing] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
   group: tr("missing tag");
 }
+/* {0.key} without {1.key} or {2.tag}, #22547 */
 way[tunnel=culvert][man_made!=tunnel][!waterway] {
   throwWarning: tr("{0} without {1} or {2}", "{0.tag}", "{1.tag}", "{2.key}");
   group: tr("suspicious tag combination");
