@@ -295,7 +295,7 @@ way[usage=penstock][waterway!=pressurised] {
   group: tr("missing tag");
 }
 
-/* {0.tag} together with {1.key}, see #22576, #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530, #21736, #22076 */
+/* {0.tag} together with {1.key}, see #22576, #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888, #20530, #21736, #22076, #21778 */
 *[amenity=marketplace][highway],
 *[power=plant][/^generator:/],
 *[power=generator][/^plant:/],
@@ -310,14 +310,17 @@ node[transformer=distribution][voltage][power=pole],
 *[nohousenumber?][addr:housenumber],
 *[actuator][handle][actuator !~ /(^|;)manual(;|$)/],
 *[mechanical_driver][handle][mechanical_driver !~ /(^|;)manual(;|$)/],
-way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/],
-way[oneway=yes][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/],
-way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/],
-way[oneway=-1 ][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/] {
+way[oneway?  ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/][!/^oneway:(.+:)?conditional$/],
+way[oneway?  ][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/][!/^oneway:(.+:)?conditional$/],
+way[oneway=-1][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/][!/^oneway:(.+:)?conditional$/],
+way[oneway=-1][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][/^oneway:(bicycle|bus|mofa|moped|psv)$/!~/^no$/][!/^oneway:(.+:)?conditional$/] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
   group: tr("suspicious tag combination");
   assertMatch: "way power=plant generator:source=wind";
   assertMatch: "way power=generator plant:source=combustion";
+  assertMatch: "way oneway=yes bicycle:backward=destination";
+  assertNoMatch: "way oneway=yes bicycle:backward=destination oneway:bicycle=no";
+  assertNoMatch: "way oneway=yes bicycle:backward:conditional=\"yes @ (Mo-Fr)\" oneway:bicycle:conditional=\"no @ (Mo-Fr)\"";
 }
 
 /* {0.tag} together with {1.tag} (info level), see #9696 */
