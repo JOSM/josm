@@ -92,6 +92,7 @@ public class OAuth20Authorization implements IOAuthAuthorization {
                         + "&code=" + code
                         + (this.codeVerifier != null ? "&code_verifier=" + this.codeVerifier : "")
                 ).getBytes(StandardCharsets.UTF_8));
+                tradeCodeForToken.setHeader("Content-Type", "application/x-www-form-urlencoded");
                 try {
                     tradeCodeForToken.connect();
                     HttpClient.Response response = tradeCodeForToken.getResponse();

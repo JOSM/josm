@@ -179,9 +179,13 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
                 pnlBasicAuthPreferences.revalidate();
             } else if (rbOAuth.isSelected()) {
                 pnlAuthenticationParameters.add(pnlOAuthPreferences, BorderLayout.CENTER);
+                pnlOAuthPreferences.saveToPreferences();
+                pnlOAuthPreferences.initFromPreferences();
                 pnlOAuthPreferences.revalidate();
             } else if (rbOAuth20.isSelected()) {
                 pnlAuthenticationParameters.add(pnlOAuth20Preferences, BorderLayout.CENTER);
+                pnlOAuth20Preferences.saveToPreferences();
+                pnlOAuth20Preferences.initFromPreferences();
                 pnlOAuth20Preferences.revalidate();
             }
             repaint();
