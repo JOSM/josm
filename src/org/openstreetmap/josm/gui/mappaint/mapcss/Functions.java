@@ -41,6 +41,7 @@ import org.openstreetmap.josm.tools.RotationAngle;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.RotationAngle.WayDirectionRotationAngle;
 
 /**
  * List of functions that can be used in MapCSS expressions.
@@ -475,6 +476,24 @@ public final class Functions {
             return Collections.emptyList();
         }
         return Collections.singletonList(env.parent.get(key));
+    }
+
+    /**
+     * Get the rotation angle of the preceding parent way segment at the node location.
+     * If there is no preceding parent way segment, the following way segment is used instead.
+     * Requires a parent way object matched via
+     * <a href="https://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation#LinkSelector">child selector</a>.
+     * 
+     * @param env the environment
+     * @return the rotation angle of the parent way segment at the node in radians,
+     * otherwise null if there is no matching parent way or the object is not a node
+     * @since 18664
+     */
+    public static Double parent_way_angle(final Environment env) {
+        if (env.osm instanceof Node && env.parent instanceof Way) {
+            return WayDirectionRotationAngle.getRotationAngleForNodeOnWay((Node) env.osm, (Way) env.parent);
+        }
+        return null;
     }
 
     /**

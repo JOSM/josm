@@ -2,38 +2,35 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.osm.OsmPrimitiveType.NODE;
 
 import java.util.Collections;
+import java.util.Objects;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link Functions}.
  */
+@BasicPreferences
+@Projection
 class FunctionsTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static class EnvBuilder {
         private final OsmPrimitive osm;
 
@@ -107,6 +104,27 @@ class FunctionsTest {
     }
 
     /**
+     * Test for {@link Functions#parent_way_angle(Environment)}
+     */
+    @Test
+    void testParentWayAngle() {
+        assertNull(Functions.parent_way_angle(new EnvBuilder(NODE).build()));
+        final Environment environment = new EnvBuilder(NODE).build();
+        ((Node) environment.osm).setCoor(LatLon.ZERO);
+        final Way parent = TestUtils.newWay("", new Node(new LatLon(-.1, 0)), (Node) environment.osm, new Node(new LatLon(.1, 0)));
+        environment.parent = parent;
+        Double actual = Functions.parent_way_angle(environment);
+        assertNotNull(actual);
+        assertEquals(Math.toRadians(0), actual, 1e-9);
+        // Reverse node order
+        Objects.requireNonNull(parent.firstNode()).setCoor(LatLon.NORTH_POLE);
+        Objects.requireNonNull(parent.lastNode()).setCoor(LatLon.SOUTH_POLE);
+        actual = Functions.parent_way_angle(environment);
+        assertNotNull(actual);
+        assertEquals(Math.toRadians(180), actual, 1e-9);
+    }
+
+    /**
      * Unit test of {@code Functions#to_xxx}
      */
     @Test
@@ -162,5 +180,4 @@ class FunctionsTest {
         assertEquals("#000000", Functions.JOSM_pref(null, key, "#000000"));
         Config.getPref().put(colorKey, null);
     }
-
 }
