@@ -10,6 +10,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -214,13 +215,13 @@ public class OsmConnection {
             RemoteControl.start();
         }
         CountDownLatch done = new CountDownLatch(1);
-        Consumer<IOAuthToken> consumer = authToken -> {
+        Consumer<Optional<IOAuthToken>> consumer = authToken -> {
                     if (!remoteControlIsRunning) {
                         RemoteControl.stop();
                     }
                     // Clean up old token/password
                     OAuthAccessTokenHolder.getInstance().setAccessToken(null);
-                    OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), authToken);
+                    OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), authToken.orElse(null));
                     OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
                     done.countDown();
                 };
@@ -228,22 +229,20 @@ public class OsmConnection {
                 consumer, OsmScopes.read_gpx, OsmScopes.write_gpx,
                 OsmScopes.read_prefs, OsmScopes.write_prefs,
                 OsmScopes.write_api, OsmScopes.write_notes);
-        synchronized (done) {
-            // Only wait at most 5 minutes
-            int counter = 0;
-            while (done.getCount() >= 0 && counter < 5) {
-                try {
-                    if (done.await(1, TimeUnit.MINUTES)) {
-                        break;
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    Logging.trace(e);
-                    consumer.accept(null);
-                    throw new MissingOAuthAccessTokenException(e);
+        // Only wait at most 5 minutes
+        int counter = 0;
+        while (done.getCount() >= 0 && counter < 5) {
+            try {
+                if (done.await(1, TimeUnit.MINUTES)) {
+                    break;
                 }
-                counter++;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Logging.trace(e);
+                consumer.accept(null);
+                throw new MissingOAuthAccessTokenException(e);
             }
+            counter++;
         }
     }
 

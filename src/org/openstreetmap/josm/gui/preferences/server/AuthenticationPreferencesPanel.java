@@ -117,16 +117,20 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
      */
     public final void initFromPreferences() {
         final String authMethod = OsmApi.getAuthMethod();
-        if ("basic".equals(authMethod)) {
-            rbBasicAuthentication.setSelected(true);
-        } else if ("oauth".equals(authMethod)) {
-            rbOAuth.setSelected(true);
-        } else if ("oauth20".equals(authMethod)) {
-            rbOAuth20.setSelected(true);
-        } else {
-            Logging.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.",
-                    "osm-server.auth-method", authMethod));
-            rbBasicAuthentication.setSelected(true);
+        switch (authMethod) {
+            case "basic":
+                rbBasicAuthentication.setSelected(true);
+                break;
+            case "oauth":
+                rbOAuth.setSelected(true);
+                break;
+            case "oauth20":
+                rbOAuth20.setSelected(true);
+                break;
+            default:
+                Logging.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.",
+                        "osm-server.auth-method", authMethod));
+                rbBasicAuthentication.setSelected(true);
         }
         pnlBasicAuthPreferences.initFromPreferences();
         pnlOAuthPreferences.initFromPreferences();

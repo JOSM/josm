@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -44,7 +45,7 @@ public class OAuth20Authorization implements IOAuthAuthorization {
     }
 
     @Override
-    public void authorize(IOAuthParameters parameters, Consumer<IOAuthToken> consumer, Enum<?>... scopes) {
+    public void authorize(IOAuthParameters parameters, Consumer<Optional<IOAuthToken>> consumer, Enum<?>... scopes) {
         final String state = UUID.randomUUID().toString();
         final String codeVerifier = UUID.randomUUID().toString(); // Cryptographically random string (ASCII)
         final String s256CodeChallenge = getPKCES256CodeChallenge(codeVerifier);
@@ -61,10 +62,10 @@ public class OAuth20Authorization implements IOAuthAuthorization {
 
         private final String state;
         private final IOAuthParameters parameters;
-        private final Consumer<IOAuthToken> consumer;
+        private final Consumer<Optional<IOAuthToken>> consumer;
         private final String codeVerifier;
 
-        OAuth20AuthorizationHandler(String state, String codeVerifier, IOAuthParameters parameters, Consumer<IOAuthToken> consumer) {
+        OAuth20AuthorizationHandler(String state, String codeVerifier, IOAuthParameters parameters, Consumer<Optional<IOAuthToken>> consumer) {
             this.state = state;
             this.parameters = parameters;
             this.consumer = consumer;
@@ -97,9 +98,9 @@ public class OAuth20Authorization implements IOAuthAuthorization {
                     tradeCodeForToken.connect();
                     HttpClient.Response response = tradeCodeForToken.getResponse();
                     OAuth20Token oAuth20Token = new OAuth20Token(parameters, response.getContentReader());
-                    consumer.accept(oAuth20Token);
+                    consumer.accept(Optional.of(oAuth20Token));
                 } catch (IOException | OAuth20Exception e) {
-                    consumer.accept(null);
+                    consumer.accept(Optional.empty());
                     throw new JosmRuntimeException(e);
                 } finally {
                     tradeCodeForToken.disconnect();

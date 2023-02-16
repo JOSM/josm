@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.RotationAngle.WayDirectionRotationAngle;
  *
  * @since 15245 (extracted from {@link ExpressionFactory})
  */
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings({"UnusedDeclaration", "squid:S100"})
 public final class Functions {
 
     private Functions() {
@@ -312,7 +312,7 @@ public final class Functions {
      * @param ignored The environment (ignored)
      * @param args arguments. First one is used as separator
      * @return assembled string
-     * @see String#join
+     * @see String#join(CharSequence, CharSequence...)
      */
     @NullableArguments
     public static String join(Environment ignored, String... args) {
@@ -324,7 +324,7 @@ public final class Functions {
      * @param separator the separator
      * @param values collection of objects
      * @return assembled string
-     * @see String#join
+     * @see String#join(CharSequence, Iterable)
      */
     public static String join_list(final String separator, final List<String> values) {
         return String.join(separator, values);
@@ -738,6 +738,7 @@ public final class Functions {
      * @return {@code true} if objects are equal, {@code false} otherwise
      * @see Object#equals(Object)
      */
+    @SuppressWarnings("squid:S1221")
     public static boolean equal(Object a, Object b) {
         if (a.getClass() == b.getClass()) return a.equals(b);
         if (a.equals(Cascade.convertTo(b, a.getClass()))) return true;
@@ -774,7 +775,7 @@ public final class Functions {
     }
 
     /**
-     * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} string for key {@code key},
+     * Obtains the JOSM key {@link org.openstreetmap.josm.data.Preferences} string for key {@code key},
      * and defaults to {@code def} if that is null.
      *
      * If the default value can be {@linkplain Cascade#convertTo converted} to a {@link Color},

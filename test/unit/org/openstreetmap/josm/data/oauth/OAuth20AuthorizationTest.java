@@ -2,13 +2,14 @@
 package org.openstreetmap.josm.data.oauth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -165,7 +166,7 @@ class OAuth20AuthorizationTest {
     @Test
     void testAuthorize(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
         final OAuth20Authorization authorization = new OAuth20Authorization();
-        final AtomicReference<IOAuthToken> consumer = new AtomicReference<>();
+        final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
         OAuth20Parameters parameters = (OAuth20Parameters) OAuthParameters.createDefault(OsmApi.getOsmApi().getBaseUrl(), OAuthVersion.OAuth20);
         RemoteControl.start();
         authorization.authorize(new OAuth20Parameters(parameters.getClientId(), parameters.getClientSecret(),
@@ -180,8 +181,9 @@ class OAuth20AuthorizationTest {
             client.disconnect();
         }
         assertNotNull(consumer.get());
-        assertEquals(OAuthVersion.OAuth20, consumer.get().getOAuthType());
-        OAuth20Token token = (OAuth20Token) consumer.get();
+        assertTrue(consumer.get().isPresent());
+        assertEquals(OAuthVersion.OAuth20, consumer.get().get().getOAuthType());
+        OAuth20Token token = (OAuth20Token) consumer.get().get();
         assertEquals("test_access_token", token.getBearerToken());
     }
 
@@ -189,7 +191,7 @@ class OAuth20AuthorizationTest {
     void testAuthorizeBadState(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
         oauthServer.stateToReturn = "Bad_State";
         final OAuth20Authorization authorization = new OAuth20Authorization();
-        final AtomicReference<IOAuthToken> consumer = new AtomicReference<>();
+        final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
         OAuth20Parameters parameters = (OAuth20Parameters) OAuthParameters.createDefault(OsmApi.getOsmApi().getBaseUrl(), OAuthVersion.OAuth20);
         RemoteControl.start();
         authorization.authorize(new OAuth20Parameters(parameters.getClientId(), parameters.getClientSecret(),
@@ -205,6 +207,6 @@ class OAuth20AuthorizationTest {
         } finally {
             client.disconnect();
         }
-        assertNull(consumer.get());
+        assertFalse(consumer.get().isPresent());
     }
 }

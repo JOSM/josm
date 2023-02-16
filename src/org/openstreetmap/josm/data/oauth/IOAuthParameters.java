@@ -90,5 +90,8 @@ public interface IOAuthParameters {
         return null;
     }
 
+    /**
+     * Store the preferences for these parameters
+     */
     void rememberPreferences();
 }
