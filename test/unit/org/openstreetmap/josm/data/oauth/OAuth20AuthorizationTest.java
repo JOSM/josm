@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.data.oauth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -207,6 +207,6 @@ class OAuth20AuthorizationTest {
         } finally {
             client.disconnect();
         }
-        assertFalse(consumer.get().isPresent());
+        assertNull(consumer.get(), "The OAuth consumer should not be called since the state does not match");
     }
 }
