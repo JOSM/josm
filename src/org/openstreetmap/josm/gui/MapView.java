@@ -236,6 +236,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private Rectangle lastClipBounds = new Rectangle();
     private transient MapMover mapMover;
 
+    private List<? extends JComponent> mapNavigationComponents;
+
     /**
      * The listener that listens to invalidations of all layers.
      */
@@ -293,7 +295,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         setFocusTraversalKeysEnabled(!Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent());
 
-        for (JComponent c : getMapNavigationComponents(this)) {
+        mapNavigationComponents = getMapNavigationComponents(this);
+        for (JComponent c : mapNavigationComponents) {
             add(c);
         }
         if (AutoFilterManager.PROP_AUTO_FILTER_ENABLED.get()) {
@@ -910,5 +913,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     public final MapMover getMapMover() {
         return mapMover;
+    }
+
+    public void setMapNavigationComponentVisibility(boolean visible) {
+        for (JComponent c : mapNavigationComponents) {
+            c.setVisible(visible);
+        }
     }
 }
