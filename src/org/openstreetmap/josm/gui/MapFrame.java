@@ -226,7 +226,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
          */
         splitPane.setDividerSize(5);
         splitPane.setBorder(null);
-        splitPane.setUI(new NoBorderSplitPaneUI());
 
         // JSplitPane supports F6, F8, Home and End shortcuts by default, but we need them for Audio and Image Mapping actions
         InputMap splitInputMap = splitPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -567,24 +566,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
          */
         if (statusLine != null && Config.getPref().getBoolean("statusline.visible", true)) {
             panel.add(statusLine, BorderLayout.SOUTH);
-        }
-    }
-
-    static final class NoBorderSplitPaneUI extends BasicSplitPaneUI {
-        static final class NoBorderBasicSplitPaneDivider extends BasicSplitPaneDivider {
-            NoBorderBasicSplitPaneDivider(BasicSplitPaneUI ui) {
-                super(ui);
-            }
-
-            @Override
-            public void setBorder(Border b) {
-                // Do nothing
-            }
-        }
-
-        @Override
-        public BasicSplitPaneDivider createDefaultDivider() {
-            return new NoBorderBasicSplitPaneDivider(this);
         }
     }
 
