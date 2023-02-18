@@ -1,14 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -237,6 +230,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private transient MapMover mapMover;
 
     private List<? extends JComponent> mapNavigationComponents;
+    private final Stroke worldBorderStroke = new BasicStroke(1.0f);
 
     /**
      * The listener that listens to invalidations of all layers.
@@ -661,6 +655,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private void drawWorldBorders(Graphics2D tempG) {
         tempG.setColor(Color.WHITE);
+        tempG.setStroke(worldBorderStroke);
         Bounds b = getProjection().getWorldBoundsLatLon();
 
         int w = getWidth();
