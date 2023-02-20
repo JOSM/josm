@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Handler;
 import java.util.regex.Matcher;
@@ -135,7 +136,8 @@ class BugReportTest {
                             return null;
                         })),
                 Arguments.of("GuiHelper::runInEDTAndWait", (Consumer<Runnable>) GuiHelper::runInEDTAndWait),
-                Arguments.of("MainApplication.worker", (Consumer<Runnable>) MainApplication.worker::execute)
+                Arguments.of("MainApplication.worker", (Consumer<Runnable>) runnable ->
+                        assertDoesNotThrow(() -> MainApplication.worker.submit(runnable).get(1, TimeUnit.SECONDS)))
         );
     }
 
