@@ -136,8 +136,10 @@ class BugReportTest {
                             return null;
                         })),
                 Arguments.of("GuiHelper::runInEDTAndWait", (Consumer<Runnable>) GuiHelper::runInEDTAndWait),
-                Arguments.of("MainApplication.worker", (Consumer<Runnable>) runnable ->
-                        assertDoesNotThrow(() -> MainApplication.worker.submit(runnable).get(1, TimeUnit.SECONDS)))
+                Arguments.of("MainApplication.worker", (Consumer<Runnable>) runnable -> {
+                    MainApplication.worker.execute(runnable);
+                    assertDoesNotThrow(() -> MainApplication.worker.submit(() -> { /* Sync thread */}).get(1, TimeUnit.SECONDS));
+                })
         );
     }
 
@@ -153,8 +155,6 @@ class BugReportTest {
             // pass. MainApplication.worker can continue throwing the NPE;
             Logging.trace(e);
         }
-        // Ensure that the threads are synced
-        assertDoesNotThrow(() -> worker.accept(() -> { /* sync */ }));
         // Now throw an exception
         BugReport bugReport = new BugReport(BugReport.intercept(new IOException("testSuppressedExceptions")));
         String report = bugReport.getReportText(workerName);
