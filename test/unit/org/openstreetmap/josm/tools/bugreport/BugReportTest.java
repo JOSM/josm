@@ -138,7 +138,7 @@ class BugReportTest {
                 Arguments.of("GuiHelper::runInEDTAndWait", (Consumer<Runnable>) GuiHelper::runInEDTAndWait),
                 Arguments.of("MainApplication.worker", (Consumer<Runnable>) runnable -> {
                     MainApplication.worker.execute(runnable);
-                    assertDoesNotThrow(() -> MainApplication.worker.submit(() -> { /* Sync thread */}).get(1, TimeUnit.SECONDS));
+                    assertDoesNotThrow(() -> MainApplication.worker.submit(() -> { /* Sync thread */ }).get(1, TimeUnit.SECONDS));
                 })
         );
     }

@@ -1,8 +1,6 @@
 name: Java CI Build
 env:
   junit_platform_version: '1.7.2'
-  # ANT_HOME is also our ant version
-  ANT_HOME: 'apache-ant-1.10.12'
   JAVAFX_VERSION: '17.0.2'
 on:
   push:
@@ -26,7 +24,7 @@ jobs:
       josm_release_tag: ${{ steps.create_revision.outputs.josm_release_tag }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 256
 
@@ -37,17 +35,17 @@ jobs:
           josm_revision="$(git log -1 --grep 'git-svn-id: https://josm.openstreetmap.de/svn/trunk@' --pretty=format:%B | tail -1 | sed -n 's%git-svn-id: https://josm.openstreetmap.de/svn/trunk@\([0-9]*\) [-0-9a-f]*%\1%p')"
           if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
             echo "josm_prerelease=false" >> $GITHUB_ENV
-            echo "::set-output name=josm_prerelease::false"
+            echo "josm_prerelease=false" >> $GITHUB_OUTPUT
             josm_release_tag=$josm_revision-tested
           else
             echo "josm_prerelease=true" >> $GITHUB_ENV
-            echo "::set-output name=josm_prerelease::true"
+            echo "josm_prerelease=true" >> $GITHUB_OUTPUT
             josm_release_tag=$josm_revision
           fi
           echo "josm_revision=$josm_revision" >> $GITHUB_ENV
-          echo "::set-output name=josm_revision::$josm_revision"
+          echo "josm_revision=$josm_revision" >> $GITHUB_OUTPUT
           echo "josm_release_tag=$josm_release_tag" >> $GITHUB_ENV
-          echo "::set-output name=josm_release_tag::$josm_release_tag"
+          echo "josm_release_tag=$josm_release_tag" >> $GITHUB_OUTPUT
 
       - name: Create release
         id: create_release
@@ -76,12 +74,12 @@ jobs:
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 256
 
       - name: Cache
-        uses: actions/cache@v2.0.0
+        uses: actions/cache@v3
         with:
           path: |
             ~/.ivy2/cache/
@@ -89,20 +87,13 @@ jobs:
           key: ${{ runner.os }}-ivy2-${{ hashFiles('build.xml', 'ivy.xml', 'tools/ivy.xml') }}
 
       - name: Setup Java ${{ matrix.java }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
 
-      - name: Install Ant ${{ env.ANT_HOME }}
-        run: |
-          if [ ! -f tools/${{ env.ANT_HOME }}-bin.tar.gz ]; then
-            curl -o tools/${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          fi
-          tar zxf tools/${{ env.ANT_HOME }}-bin.tar.gz
-
-      - name: Ant diagnostics
-        run: ${{ env.ANT_HOME }}/bin/ant -diagnostics
+      - name: Install Ant
+        uses: JOSM/JOSMPluginAction/actions/setup-ant@v1
 
       - name: Optimise images
         if: ${{ runner.os == 'macos' && always() }}
@@ -125,9 +116,9 @@ jobs:
           export SIGN_KEYSTORE=certificate.p12
           echo "$SIGN_CERT" | base64 --decode > $SIGN_KEYSTORE
           if [ "${{ needs.createrelease.outputs.josm_prerelease }}" == "true" ]; then
-            ANT="${{ env.ANT_HOME }}/bin/ant"
+            ANT="ant"
           else
-            ANT="${{ env.ANT_HOME }}/bin/ant -Dreleasebuild=true"
+            ANT="ant -Dreleasebuild=true"
           fi
           $ANT dist
           rm $SIGN_KEYSTORE

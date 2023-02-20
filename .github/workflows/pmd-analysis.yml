@@ -14,12 +14,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
           fetch-depth: 256
 
     - name: Cache
-      uses: actions/cache@v2.0.0
+      uses: actions/cache@v3
       with:
         path: |
           ~/.ivy2/cache/
@@ -31,10 +31,11 @@ jobs:
         ant pmd
 
     - name: Upload report
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: pmd-josm.xml
 
-    - uses: jwgmeligmeyling/pmd-github-action@master
+    - uses: JOSM/JOSMPluginAction/actions/pmd@v1
       with:
-        path: '**/pmd-josm.xml'
+        src: 'src'
+        file: "pmd-josm.xml"

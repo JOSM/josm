@@ -21,12 +21,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
           fetch-depth: 256
 
     - name: Cache
-      uses: actions/cache@v2.0.0
+      uses: actions/cache@v3
       with:
         path: |
           ~/.ivy2/cache/
@@ -34,7 +34,7 @@ jobs:
         key: ${{ runner.os }}-ivy2-${{ hashFiles('build.xml', 'ivy.xml', 'tools/ivy.xml') }}
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
 
@@ -43,4 +43,4 @@ jobs:
         ant compile extract-libraries epsg
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2
