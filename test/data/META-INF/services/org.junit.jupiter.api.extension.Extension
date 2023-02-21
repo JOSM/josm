@@ -1,1 +1,2 @@
+org.openstreetmap.josm.testutils.annotations.HTTP$HTTPExtension
 org.openstreetmap.josm.testutils.annotations.LayerManager$LayerManagerExtension
