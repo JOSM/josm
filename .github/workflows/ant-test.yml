@@ -1,8 +1,6 @@
 name: Java CI Test
 env:
   junit_platform_version: '1.7.2'
-  # ANT_HOME is also our ant version
-  ANT_HOME: 'apache-ant-1.10.12'
 on:
   - push
   - pull_request
@@ -26,12 +24,12 @@ jobs:
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 256
 
       - name: Cache
-        uses: actions/cache@v2.0.0
+        uses: actions/cache@v3
         with:
           path: |
             ~/.ivy2/cache/
@@ -39,24 +37,17 @@ jobs:
           key: ${{ runner.os }}-ivy2-${{ hashFiles('build.xml', 'ivy.xml', 'tools/ivy.xml') }}
 
       - name: Setup Java ${{ matrix.java }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
 
-      - name: Install Ant ${{ env.ANT_HOME }}
-        run: |
-          if [ ! -f tools/${{ env.ANT_HOME }}-bin.tar.gz ]; then
-            curl -o tools/${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          fi
-          tar zxf tools/${{ env.ANT_HOME }}-bin.tar.gz
-
-      - name: Ant diagnostics
-        run: ${{ env.ANT_HOME }}/bin/ant -diagnostics
+      - name: Install Ant
+        uses: JOSM/JOSMPluginAction/actions/setup-ant@v1
 
       - name: Test with Ant
         run: |
-          ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
+          ANT="ant -DnoJavaFX=true test-unit-hardfail"
           $ANT -Dtest.headless=true
 
       - name: Dump errors if failed
@@ -65,7 +56,7 @@ jobs:
 
       - name: Upload Ant reports
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }}
           path: |
@@ -81,18 +72,18 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: artifacts
 
       - name: Publish Test Report with action-junit-report
         if: ${{ always() }}
-        uses: mikepenz/action-junit-report@v2
+        uses: mikepenz/action-junit-report@v3
         with:
           report_paths: 'artifacts/**/*.xml'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish Test Report with publish-unit-test-result-action
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: 'artifacts/**/*.xml'

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -15,5 +16,5 @@ public interface IOAuthAuthorization {
      * @param consumer The callback for the generated token
      * @param scopes The scopes to ask for
      */
-    void authorize(IOAuthParameters parameters, Consumer<IOAuthToken> consumer, Enum<?>... scopes);
+    void authorize(IOAuthParameters parameters, Consumer<Optional<IOAuthToken>> consumer, Enum<?>... scopes);
 }

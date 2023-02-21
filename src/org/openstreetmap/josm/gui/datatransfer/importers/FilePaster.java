@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.datatransfer.importers;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.Options;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This transfer support allows us to import a file that is dropped / copied on to the map.
@@ -31,11 +33,21 @@ public final class FilePaster extends AbstractOsmDataPaster {
     @Override
     public boolean importData(TransferSupport support, OsmDataLayer layer, EastNorth pasteAt)
             throws UnsupportedFlavorException, IOException {
-        @SuppressWarnings("unchecked")
-        List<File> files = (List<File>) support.getTransferable().getTransferData(df);
-        OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(files, null);
-        task.setOptions(Options.RECORD_HISTORY);
-        MainApplication.worker.submit(task);
-        return true;
+        final Object data = support.getTransferable().getTransferData(df);
+        if (data instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<File> files = (List<File>) data;
+            OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(files, null);
+            task.setOptions(Options.RECORD_HISTORY);
+            MainApplication.worker.submit(task);
+            return true;
+        }
+        // We should never hit this code -- Coverity thinks that it is possible for this to be called with a
+        // StringSelection transferable, which is not currently possible with our code. It *could* be done from
+        // a plugin though.
+        if (data instanceof Closeable) {
+            Utils.close((Closeable) data);
+        }
+        throw new UnsupportedFlavorException(df);
     }
 }

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class allows the user to transfer layers using drag+drop.
@@ -31,6 +33,8 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 10605
  */
 public class LayerListTransferHandler extends TransferHandler {
+    private static final long serialVersionUID = -5924044609120394316L;
+
     @Override
     public int getSourceActions(JComponent c) {
         if (c instanceof JTable) {
@@ -47,7 +51,7 @@ public class LayerListTransferHandler extends TransferHandler {
     }
 
     private static boolean onlyDataLayersSelected(LayerListModel tableModel) {
-        return tableModel.getSelectedLayers().stream().allMatch(l -> l instanceof OsmDataLayer);
+        return tableModel.getSelectedLayers().stream().allMatch(OsmDataLayer.class::isInstance);
     }
 
     @Override
@@ -78,8 +82,20 @@ public class LayerListTransferHandler extends TransferHandler {
         try {
             LayerListModel tableModel = (LayerListModel) ((JTable) support.getComponent()).getModel();
 
-            LayerTransferable.Data layers = (LayerTransferable.Data) support.getTransferable()
+            final Object data = support.getTransferable()
                     .getTransferData(LayerTransferable.LAYER_DATA);
+            final LayerTransferable.Data layers;
+            if (data instanceof LayerTransferable.Data) {
+                layers = (LayerTransferable.Data) data;
+            } else if (data instanceof Closeable) {
+                // We should never hit this code -- Coverity thinks that it is possible for this to be called with a
+                // StringSelection transferable, which is not currently possible with our code. It *could* be done from
+                // a plugin though.
+                Utils.close((Closeable) data);
+                throw new UnsupportedFlavorException(LayerTransferable.LAYER_DATA);
+            } else {
+                throw new UnsupportedFlavorException(LayerTransferable.LAYER_DATA);
+            }
 
             int dropLocation;
             if (support.isDrop()) {

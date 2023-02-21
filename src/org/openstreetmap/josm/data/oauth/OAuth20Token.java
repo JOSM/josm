@@ -19,6 +19,7 @@ import javax.json.JsonValue;
 
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Token holder for OAuth 2.0
@@ -80,7 +81,8 @@ public final class OAuth20Token implements IOAuthToken {
 
     @Override
     public void sign(HttpClient client) throws OAuthException {
-        if (!this.oauthParameters.getApiUrl().contains(client.getURL().getHost())) {
+        if (!Utils.isBlank(this.oauthParameters.getApiUrl())
+                && !this.oauthParameters.getApiUrl().contains(client.getURL().getHost())) {
             String host = URI.create(this.oauthParameters.getAccessTokenUrl()).getHost();
             throw new IllegalArgumentException("Cannot sign URL with token for different host: Expected " + host
                 + " but got " + client.getURL().getHost());

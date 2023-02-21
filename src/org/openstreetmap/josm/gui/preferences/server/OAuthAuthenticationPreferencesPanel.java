@@ -371,9 +371,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
                     if (!remoteControlIsRunning) {
                         RemoteControl.stop();
                     }
-                    // Clean up old token/password
-                    OAuthAccessTokenHolder.getInstance().setAccessToken(null);
-                    OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), token);
+                    OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), token.orElse(null));
                     OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
                     GuiHelper.runInEDT(OAuthAuthenticationPreferencesPanel.this::refreshView);
                 }, OsmScopes.read_gpx, OsmScopes.write_gpx,

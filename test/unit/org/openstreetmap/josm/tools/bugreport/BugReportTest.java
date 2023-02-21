@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Handler;
 import java.util.regex.Matcher;
@@ -135,7 +136,10 @@ class BugReportTest {
                             return null;
                         })),
                 Arguments.of("GuiHelper::runInEDTAndWait", (Consumer<Runnable>) GuiHelper::runInEDTAndWait),
-                Arguments.of("MainApplication.worker", (Consumer<Runnable>) MainApplication.worker::execute)
+                Arguments.of("MainApplication.worker", (Consumer<Runnable>) runnable -> {
+                    MainApplication.worker.execute(runnable);
+                    assertDoesNotThrow(() -> MainApplication.worker.submit(() -> { /* Sync thread */ }).get(1, TimeUnit.SECONDS));
+                })
         );
     }
 
@@ -151,8 +155,6 @@ class BugReportTest {
             // pass. MainApplication.worker can continue throwing the NPE;
             Logging.trace(e);
         }
-        // Ensure that the threads are synced
-        assertDoesNotThrow(() -> worker.accept(() -> { /* sync */ }));
         // Now throw an exception
         BugReport bugReport = new BugReport(BugReport.intercept(new IOException("testSuppressedExceptions")));
         String report = bugReport.getReportText(workerName);
