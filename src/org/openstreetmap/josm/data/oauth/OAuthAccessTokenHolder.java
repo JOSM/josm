@@ -120,8 +120,9 @@ public class OAuthAccessTokenHolder {
      * @since 18650
      */
     public IOAuthToken getAccessToken(String api, OAuthVersion version) {
-        api = URI.create(api).getHost();
-        if (this.tokenMap.containsKey(api)) {
+        // Sometimes the api might be sent as the host
+        api = Optional.ofNullable(URI.create(api).getHost()).orElse(api);
+        if (this.tokenMap.containsKey(api) && this.tokenMap.get(api).containsKey(version)) {
             Map<OAuthVersion, IOAuthToken> map = this.tokenMap.get(api);
             return map.get(version);
         }
@@ -235,6 +236,8 @@ public class OAuthAccessTokenHolder {
             } else {
                 if (this.accessTokenKey != null && this.accessTokenSecret != null) {
                     cm.storeOAuthAccessToken(new OAuthToken(accessTokenKey, accessTokenSecret));
+                } else {
+                    cm.storeOAuthAccessToken(null);
                 }
                 for (Map.Entry<String, Map<OAuthVersion, IOAuthToken>> entry : this.tokenMap.entrySet()) {
                     if (entry.getValue().isEmpty()) {
