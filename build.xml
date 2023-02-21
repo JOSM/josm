@@ -414,6 +414,9 @@ Build-Date: ${build.tstamp}
                     <cp-elements/>
                 </classpath>
             </javac>
+            <copy todir="${test.dir}/build/@{testfamily}/META-INF">
+              <fileset dir="${test.dir}/data/META-INF"/>
+            </copy>
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,compile,extract-libraries,epsg,copy-resources" description="Compile all tests">
