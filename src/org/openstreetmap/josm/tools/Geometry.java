@@ -938,7 +938,7 @@ public final class Geometry {
      * @see Geometry#getCenter
      */
     public static EastNorth getCentroid(List<? extends INode> nodes) {
-        return getCentroidEN(nodes.stream().map(INode::getEastNorth).collect(Collectors.toList()));
+        return getCentroidEN(nodes.stream().filter(INode::isLatLonKnown).map(INode::getEastNorth).collect(Collectors.toList()));
     }
 
     /**
@@ -954,6 +954,8 @@ public final class Geometry {
             return nodes.get(0);
         } else if (size == 2) {
             return nodes.get(0).getCenter(nodes.get(1));
+        } else if (size == 0) {
+            return null;
         }
 
         BigDecimal area = BigDecimal.ZERO;

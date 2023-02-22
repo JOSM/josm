@@ -130,7 +130,12 @@ public class PowerLines extends Test {
     private void addWaterWaySegments(Way w) {
         for (int i = 0; i < w.getNodesCount() - 1; i++) {
             final WaySegment es1 = new WaySegment(w, i);
-            CrossingWays.getSegments(this.cellSegmentsWater, es1.getFirstNode(), es1.getSecondNode()).forEach(list -> list.add(es1));
+            final Node first = es1.getFirstNode();
+            final Node second = es1.getSecondNode();
+
+            if (first.isLatLonKnown() && second.isLatLonKnown()) {
+                CrossingWays.getSegments(this.cellSegmentsWater, first, second).forEach(list -> list.add(es1));
+            }
         }
     }
 

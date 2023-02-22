@@ -1,10 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
@@ -17,9 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,19 +38,14 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link Geometry} class.
  */
+@BasicPreferences
+@org.openstreetmap.josm.testutils.annotations.Projection
 class GeometryTest {
-    /**
-     * Primitives need preferences and projection.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static JOSMTestRules test = new JOSMTestRules().preferences().projection();
-
     /**
      * Test of {@link Geometry#getLineLineIntersection} method.
      */
@@ -576,5 +571,19 @@ class GeometryTest {
         assertEquals(offsetInMeters, original.greatCircleDistance(actual), 0.000_000_1);
         // The docs indicate that this should not be highly precise.
         assertEquals(angle, Math.toDegrees(original.bearing(actual)), 0.000_001);
+    }
+
+    /**
+     * A non-regression test for an issue found during the investigation of #22684 (see comment:3 by GerdP)
+     */
+    @Test
+    void testNonRegression22684() {
+        final EastNorth centroid1 = assertDoesNotThrow(() -> Geometry.getCentroid(Collections.singletonList(new Node())));
+        assertNull(centroid1);
+        final EastNorth centroid2 = assertDoesNotThrow(() -> Geometry.getCentroid(Arrays.asList(new Node(LatLon.ZERO), new Node())));
+        assertTrue(new EastNorth(0, 0).equalsEpsilon(centroid2, 1e-9));
+        final EastNorth centroid3 = assertDoesNotThrow(
+                () -> Geometry.getCentroid(Arrays.asList(new Node(LatLon.ZERO), new Node(), new Node(LatLon.ZERO))));
+        assertTrue(new EastNorth(0, 0).equalsEpsilon(centroid3, 1e-9));
     }
 }
