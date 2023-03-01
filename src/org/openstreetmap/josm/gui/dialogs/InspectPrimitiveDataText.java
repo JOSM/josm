@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.AbstractCoordinateFormat;
@@ -172,8 +173,15 @@ public class InspectPrimitiveDataText {
             addCoordinates((INode) o);
         } else if (o instanceof IWay) {
             addBbox(o);
-            add(tr("Centroid: "), toStringCSV(false,
-                    ProjectionRegistry.getProjection().eastNorth2latlon(Geometry.getCentroid(((IWay<?>) o).getNodes()))));
+            final EastNorth centroid = Geometry.getCentroid(((IWay<?>) o).getNodes());
+            final String centroidMessage;
+            if (centroid == null) {
+                centroidMessage = tr("unknown");
+            } else {
+                centroidMessage = toStringCSV(false,
+                        ProjectionRegistry.getProjection().eastNorth2latlon(centroid));
+            }
+            add(tr("Centroid: "), centroidMessage);
             if (o instanceof Way) {
                 double length = ((Way) o).getLength();
                 String lenText = SystemOfMeasurement.getSystemOfMeasurement().getDistText(length);
