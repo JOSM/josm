@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -25,6 +26,7 @@ public class DrawBoundariesOfDownloadedDataAction extends PreferenceToggleAction
                 tr("Enable/disable hatched background rendering of areas outside of the downloaded areas."),
                 DrawingPreference.SOURCE_BOUNDS_PROP
         );
+        setHelpId(ht("/MapView#Downloadedarea"));
     }
 
     @Override

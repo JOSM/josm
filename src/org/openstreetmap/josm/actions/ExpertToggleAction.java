@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -113,9 +114,9 @@ public class ExpertToggleAction extends ToggleAction {
                 new ImageProvider("expert").setOptional(true),
               tr("Enable/disable expert mode"),
               null,
-              false /* register toolbar */, null, false
+              false /* register toolbar */, "expertmode", false
         );
-        setToolbarId("expertmode");
+        setHelpId(ht("/ExpertMode"));
         if (MainApplication.getToolbar() != null) {
             MainApplication.getToolbar().register(this);
         }

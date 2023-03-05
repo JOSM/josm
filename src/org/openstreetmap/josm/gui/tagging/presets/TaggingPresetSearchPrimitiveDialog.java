@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -34,9 +35,8 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
         public Action() {
             super(tr("Search for objects by preset..."), "dialogs/search", tr("Search for objects by their presets."),
                     Shortcut.registerShortcut("preset:search-objects", tr("Presets: {0}", tr("Search for objects by preset...")),
-                    KeyEvent.VK_F3, Shortcut.SHIFT), false);
-            putValue("toolbar", "presets/search-objects");
-            MainApplication.getToolbar().register(this);
+                    KeyEvent.VK_F3, Shortcut.SHIFT), true, "presets/search-objects", true);
+            setHelpId(ht("/Action/TaggingPresetSearchPrimitive"));
         }
 
         @Override
