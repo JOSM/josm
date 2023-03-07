@@ -572,6 +572,30 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 if (imageEntry.isRemoveSupported()) {
                     imageEntry.remove();
                 }
+                selectNextImageAfterDeletion(imageEntry);
+            }
+        }
+
+        /**
+         * Select the logical next entry after deleting the currently viewed image
+         * @param oldEntry The image entry that was just deleted
+         */
+        private void selectNextImageAfterDeletion(IImageEntry<?> oldEntry) {
+            final IImageEntry<?> currentImageEntry = ImageViewerDialog.this.currentEntry;
+            // This is mostly just in case something changes the displayed entry (aka avoid race condition) or an image provider
+            // sets the next image itself.
+            if (Objects.equals(currentImageEntry, oldEntry)) {
+                final IImageEntry<?> nextImage;
+                if (oldEntry instanceof ImageEntry) {
+                    nextImage = ((ImageEntry) oldEntry).getDataSet().getSelectedImage();
+                } else if (oldEntry.getNextImage() != null) {
+                    nextImage = oldEntry.getNextImage();
+                } else if (oldEntry.getPreviousImage() != null) {
+                    nextImage = oldEntry.getPreviousImage();
+                } else {
+                    nextImage = null;
+                }
+                ImageViewerDialog.getInstance().displayImages(nextImage == null ? null : Collections.singletonList(nextImage));
             }
         }
     }
@@ -587,9 +611,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentEntry != null) {
-                List<IImageEntry<?>> toDelete = currentEntry instanceof ImageEntry ?
-                        new ArrayList<>(((ImageEntry) currentEntry).getDataSet().getSelectedImages())
-                        : Collections.singletonList(currentEntry);
+                IImageEntry<?> oldEntry = ImageViewerDialog.this.currentEntry;
+                List<IImageEntry<?>> toDelete = oldEntry instanceof ImageEntry ?
+                        new ArrayList<>(((ImageEntry) oldEntry).getDataSet().getSelectedImages())
+                        : Collections.singletonList(oldEntry);
                 int size = toDelete.size();
 
                 int result = new ExtendedDialog(
@@ -630,6 +655,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         data.notifyImageUpdate();
                         data.updateSelectedImage();
                     });
+                    ImageViewerDialog.this.imageRemoveAction.selectNextImageAfterDeletion(oldEntry);
                 }
             }
         }
