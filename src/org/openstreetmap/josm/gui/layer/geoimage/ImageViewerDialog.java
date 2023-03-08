@@ -144,6 +144,12 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      * Destroy the current dialog
      */
     private static void destroyInstance() {
+        MapFrame map = MainApplication.getMap();
+        synchronized (ImageViewerDialog.class) {
+            if (dialog != null && map != null && map.getToggleDialog(ImageViewerDialog.class) != null) {
+                map.removeToggleDialog(dialog);
+            }
+        }
         dialog = null;
     }
 

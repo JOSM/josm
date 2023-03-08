@@ -20,6 +20,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
@@ -43,10 +44,16 @@ class ImageViewerDialogTest {
     Path tempDirectory;
 
     private ImageViewerDialog dialog;
+
     @BeforeEach
     void setup() {
         this.dialog = ImageViewerDialog.getInstance();
         this.dialog.displayImages(null);
+    }
+
+    @AfterEach
+    void tearDown() {
+        this.dialog.destroy();
     }
 
     /**

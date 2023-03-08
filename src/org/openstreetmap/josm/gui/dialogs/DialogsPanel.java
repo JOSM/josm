@@ -107,6 +107,32 @@ public class DialogsPanel extends JPanel implements Destroyable {
         }
     }
 
+    /**
+     * Remove a {@link ToggleDialog} from the list of known dialogs and trigger reconstruct.
+     * @param toggleDialog The dialog to remove
+     * @since 18686
+     */
+    public void remove(ToggleDialog toggleDialog) {
+        remove(toggleDialog, true);
+    }
+
+    /**
+     * Remove a {@link ToggleDialog} from the list of known dialogs.
+     * @param toggleDialog The dialog to remove
+     * @param doReconstruct <code>true</code> if reconstruction should be triggered.
+     * @since 18686
+     */
+    public void remove(ToggleDialog toggleDialog, boolean doReconstruct) {
+        toggleDialog.setDialogsPanel(null);
+        final JPanel oldPanel = panels.get(allDialogs.indexOf(toggleDialog));
+        allDialogs.remove(toggleDialog);
+        panels.remove(oldPanel);
+        mSpltPane.remove(oldPanel);
+        if (doReconstruct && !allDialogs.isEmpty()) {
+            reconstruct(Action.ELEMENT_SHRINKS, toggleDialog);
+        }
+    }
+
     static final class MinSizePanel extends JPanel {
         @Override
         public Dimension getMinimumSize() {
@@ -325,7 +351,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
 
     @Override
     public void destroy() {
-        for (ToggleDialog t : allDialogs) {
+        for (ToggleDialog t : new ArrayList<>(allDialogs)) {
             try {
                 t.destroy();
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {

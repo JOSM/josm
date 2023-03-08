@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URL;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
@@ -28,6 +29,13 @@ class WikimediaCommonsLoaderTest {
     @BeforeAll
     static void beforeAll() {
         HttpClient.setFactory(Http1Client::new);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (ImageViewerDialog.hasInstance()) {
+            ImageViewerDialog.getInstance().destroy();
+        }
     }
 
     /**
