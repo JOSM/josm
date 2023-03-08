@@ -900,7 +900,6 @@ public final class DomainValidator extends AbstractValidator {
         "lundbeck", // lundbeck H. Lundbeck A/S
         "luxe", // luxe Top Level Domain Holdings Limited
         "luxury", // luxury Luxury Partners LLC
-        "macys", // macys Macys, Inc.
         "madrid", // madrid Comunidad de Madrid
         "maif", // maif Mutuelle Assurance Instituteur France (MAIF)
         "maison", // maison Victor Frostbite, LLC
