@@ -4977,6 +4977,9 @@ area[natural=shingle] {
 area[natural=scrub] {
     fill-color: scrub#007000;
 }
+area[natural=shrubbery] {
+    fill-color: shrubbery#399a4e;
+}
 area[natural=fell] {
     fill-color: natural#002f00;
 }
@@ -5122,6 +5125,7 @@ node[natural=glacier],
 node[natural=scree],
 node[natural=shingle],
 node[natural=scrub],
+node[natural=shrubbery],
 node[natural=fell],
 node[natural=heath],
 node[natural=tree_row],

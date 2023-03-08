@@ -8770,6 +8770,7 @@
                 <text key="name" text="Name" />
                 <text key="start_date" text="Start date" />
             </optional>
+            <preset_link preset_name="Shrubbery" text="Similar but different tags:" />
         </item> <!-- Shrub -->
         <item name="Tree" icon="presets/landmark/trees.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=tree" />
@@ -8808,6 +8809,27 @@
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Tree Row -->
+        <item name="Shrubbery" icon="presets/landmark/shrubbery.svg" type="closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:natural=shrubbery" />
+            <space />
+            <label text="An area of shrubbery that is actively maintained or pruned by humans." />
+            <space />
+            <key key="natural" value="shrubbery" />
+            <optional>
+                <combo key="shrubbery:density" text="Effective density" values_searchable="true" values_sort="false">
+                    <list_entry value="sparse" icon="presets/landmark/shrubbery/shrubbery_density_sparse.svg" short_description="Sparsely planted shrubbery. Generally speaking able-bodied persons could walk through them (although this is usually not desirable)." />
+                    <list_entry value="medium" icon="presets/landmark/shrubbery/shrubbery_density_medium.svg" short_description="Shrubbery with a medium density. Able-bodied persons might be able to barge through it, but it takes some effort and might result in scratches or soiled clothing." />
+                    <list_entry value="dense" icon="presets/landmark/shrubbery/shrubbery_density_dense.svg" short_description="Densely planted shrubbery. Effectively impassible without damaging the shrubbery (which at this point often acts as a hedge) and getting your clothes torn." />
+                </combo>
+                <text key="height" text="(Average) height" length="7" />
+                <text key="shrubbery:shape" text="Shape (useful for hedges etc.)" />
+                <space />
+                <reference ref="genus_species_taxon"/>
+                <space />
+                <reference ref="leaf"/>
+            </optional>
+            <preset_link preset_name="Shrub" text="Similar but different tags:" />
+        </item> <!-- Shrubbery -->
         <separator />
         <item name="Wood" icon="presets/landmark/forest.svg" type="closedway,multipolygon" name_context="natural" preset_name_label="true">
             <link wiki="Tag:natural=wood" />
