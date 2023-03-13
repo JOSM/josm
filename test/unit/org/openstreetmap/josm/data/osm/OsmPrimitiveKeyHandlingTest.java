@@ -66,8 +66,8 @@ class OsmPrimitiveKeyHandlingTest {
         Node n = new Node();
         n.put("key.1", "value.1");
         n.put("key.2", "value.2");
-        assertTrue(n.get("key.1").equals("value.1"));
-        assertTrue(n.get("key.2").equals("value.2"));
+        assertEquals("value.1", n.get("key.1"));
+        assertEquals("value.2", n.get("key.2"));
         testKeysSize(n, 2);
         assertTrue(n.hasKeys());
         assertTrue(n.hasKey("key.1"));

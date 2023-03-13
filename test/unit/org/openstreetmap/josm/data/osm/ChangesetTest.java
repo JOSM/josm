@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.openstreetmap.josm.data.osm.Changeset.MAX_CHANGESET_TAG_LENGTH;
 
 import java.time.Duration;
@@ -15,7 +16,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
@@ -47,7 +47,7 @@ class ChangesetTest {
         // Cannot add null map => IllegalArgumentException
         try {
             cs.setKeys(null);
-            Assert.fail("Should have thrown an IllegalArgumentException as we gave a null argument.");
+            fail("Should have thrown an IllegalArgumentException as we gave a null argument.");
         } catch (IllegalArgumentException e) {
             Logging.trace(e);
             // Was expected
@@ -62,7 +62,7 @@ class ChangesetTest {
         keys.put("empty", null);
         keys.put("test", "test");
         cs.setKeys(keys);
-        Assert.assertEquals("Both valid keys should have been put in the ChangeSet.", 2, cs.getKeys().size());
+        assertEquals(2, cs.getKeys().size(), "Both valid keys should have been put in the ChangeSet.");
 
         // Add a map with too long values => IllegalArgumentException
         keys = new HashMap<>();
@@ -70,7 +70,7 @@ class ChangesetTest {
         keys.put("test", IntStream.range(0, MAX_CHANGESET_TAG_LENGTH + 1).mapToObj(i -> "x").collect(Collectors.joining()));
         try {
             cs.setKeys(keys);
-            Assert.fail("Should have thrown an IllegalArgumentException as we gave a too long value.");
+            fail("Should have thrown an IllegalArgumentException as we gave a too long value.");
         } catch (IllegalArgumentException e) {
             Logging.trace(e);
             // Was expected

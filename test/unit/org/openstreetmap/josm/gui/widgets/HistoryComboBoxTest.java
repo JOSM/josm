@@ -20,7 +20,7 @@ import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 @FullPreferences
 class HistoryComboBoxTest {
     static Stream<Arguments> testNonRegression21203() {
-        return Stream.of(Arguments.of("Hello world"), Arguments.of(new AutoCompletionItem("Hello world2")), Arguments.of(new Double(42)));
+        return Stream.of(Arguments.of("Hello world"), Arguments.of(new AutoCompletionItem("Hello world2")), Arguments.of(42.0));
     }
 
     /**
@@ -58,7 +58,7 @@ class HistoryComboBoxTest {
         historyComboBox.getEditor().setItem(testItem);
         historyComboBox.addCurrentItemToHistory();
 
-        // add a new item
+        // Add a new item
         historyComboBox.getEditor().setItem(new AutoCompletionItem("testNonRegression21215_2"));
         historyComboBox.addCurrentItemToHistory();
 

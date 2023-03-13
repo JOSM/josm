@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -72,12 +73,12 @@ public class ConvertToDataLayerActionTest {
         testFromTrack("tracks.gpx", "tracks-ele-time.osm");
 
         Config.getPref().put("gpx.convert-tags", "list");
-        Config.getPref().putList("gpx.convert-tags.list.yes", Arrays.asList("ele"));
-        Config.getPref().putList("gpx.convert-tags.list.no", Arrays.asList("time"));
+        Config.getPref().putList("gpx.convert-tags.list.yes", Collections.singletonList("ele"));
+        Config.getPref().putList("gpx.convert-tags.list.no", Collections.singletonList("time"));
         testFromTrack("tracks.gpx", "tracks-ele.osm");
 
-        Config.getPref().putList("gpx.convert-tags.list.yes", Arrays.asList("time"));
-        Config.getPref().putList("gpx.convert-tags.list.no", Arrays.asList("ele"));
+        Config.getPref().putList("gpx.convert-tags.list.yes", Collections.singletonList("time"));
+        Config.getPref().putList("gpx.convert-tags.list.no", Collections.singletonList("ele"));
         testFromTrack("tracks.gpx", "tracks-time.osm");
 
         //Extension tests:
@@ -140,14 +141,14 @@ public class ConvertToDataLayerActionTest {
         assertEquals(nodesExpected, nodes, "Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!");
 
         List<String> ways = osm.getWays().stream()
-                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream()
-                        .sorted(Comparator.comparing(Map.Entry::getKey)).collect(Collectors.toList()).toString())
+                .map(w -> w.getNodes().size() + ":" + w.getKeys().entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey()).collect(Collectors.toList()))
                 .sorted()
                 .collect(Collectors.toList());
 
         List<String> waysExpected = osmExpected.getWays().stream()
-                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream()
-                        .sorted(Comparator.comparing(Map.Entry::getKey)).collect(Collectors.toList()).toString())
+                .map(w -> w.getNodes().size() + ":" + w.getKeys().entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey()).collect(Collectors.toList()))
                 .sorted()
                 .collect(Collectors.toList());
 

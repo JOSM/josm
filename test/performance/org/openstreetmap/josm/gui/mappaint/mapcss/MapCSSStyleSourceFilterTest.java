@@ -17,7 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.MultiCascade;
  * Tests how fast {@link MapCSSStyleSource} finds the right style candidates for one object.
  * @author Michael Zangl
  */
-@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
 class MapCSSStyleSourceFilterTest {
 
     private static final int TEST_RULE_COUNT = 10000;
@@ -70,7 +70,7 @@ class MapCSSStyleSourceFilterTest {
         }
 
         private void addRule(String selector) {
-            sb.append(selector + " {}\n");
+            sb.append(selector).append(" {}\n");
         }
 
         public String getCss() {

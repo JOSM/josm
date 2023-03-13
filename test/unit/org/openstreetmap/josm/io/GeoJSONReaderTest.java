@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -220,8 +221,7 @@ class GeoJSONReaderTest {
                     new GeoJSONReader().doParseDataSet(in, null).getPrimitives(it -> true));
             assertEquals(1, primitives.size());
             OsmPrimitive primitive = primitives.get(0);
-            assertTrue(primitive instanceof Node);
-            Node n = (Node) primitive;
+            Node n = assertInstanceOf(Node.class, primitive);
             assertNull(n.get("addr:building"));
             assertEquals("06883", n.get("addr:postcode"));
             assertEquals("22;26", n.get("addr:housenumber"));

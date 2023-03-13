@@ -52,7 +52,7 @@ class HistoryLoadTaskTest {
     }
 
     /**
-     * Unit test of {@link HistoryLoadTask#loadHistory}
+     * Unit test of {@link HistoryLoadTask#loadHistory(OsmServerHistoryReader, ProgressMonitor)}
      * @throws OsmTransferException if an error occurs
      */
     @Test

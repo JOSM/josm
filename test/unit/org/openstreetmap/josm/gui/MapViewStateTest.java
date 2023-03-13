@@ -64,7 +64,7 @@ class MapViewStateTest {
      */
     @Test
     void testGetCenter() {
-        doTestGetCenter(s -> s.getCenter(), t -> t / 2d);
+        doTestGetCenter(MapViewState::getCenter, t -> t / 2d);
     }
 
     private static void assertHasViewCoords(double x, double y, MapViewPoint center) {

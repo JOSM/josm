@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -79,10 +79,10 @@ class MapCSSParserTest {
     @Test
     void testClassCondition() throws Exception {
         List<Condition> conditions = getParser("way[name=X].highway:closed").selector().getConditions();
-        assertTrue(conditions.get(0) instanceof SimpleKeyValueCondition);
+        assertInstanceOf(SimpleKeyValueCondition.class, conditions.get(0));
         assertTrue(conditions.get(0).applies(getEnvironment("name", "X")));
-        assertTrue(conditions.get(1) instanceof ClassCondition);
-        assertTrue(conditions.get(2) instanceof PseudoClassCondition);
+        assertInstanceOf(ClassCondition.class, conditions.get(1));
+        assertInstanceOf(PseudoClassCondition.class, conditions.get(2));
         assertFalse(conditions.get(2).applies(getEnvironment("name", "X")));
     }
 
@@ -105,7 +105,7 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testClassMatching() throws Exception {
+    void testClassMatching() {
         MapCSSStyleSource css = new MapCSSStyleSource(
                 "way[highway=footway] { set .path; color: #FF6644; width: 2; }\n" +
                 "way[highway=path]    { set path; color: brown; width: 2; }\n" +
@@ -146,9 +146,9 @@ class MapCSSParserTest {
     @Test
     void testEqualCondition() throws Exception {
         Condition condition = getParser("[surface=paved]").condition(PRIMITIVE);
-        assertTrue(condition instanceof SimpleKeyValueCondition);
-        assertEquals("surface", ((SimpleKeyValueCondition) condition).k);
-        assertEquals("paved", ((SimpleKeyValueCondition) condition).v);
+        SimpleKeyValueCondition simpleKeyValueCondition = assertInstanceOf(SimpleKeyValueCondition.class, condition);
+        assertEquals("surface", simpleKeyValueCondition.k);
+        assertEquals("paved", simpleKeyValueCondition.v);
         assertTrue(condition.applies(getEnvironment("surface", "paved")));
         assertFalse(condition.applies(getEnvironment("surface", "unpaved")));
     }
@@ -314,16 +314,16 @@ class MapCSSParserTest {
 
     private void tagRegex(Way way, String parserString, Boolean[] expected) throws Exception {
         Selector selector = getParser(parserString).selector();
-        Assert.assertEquals(expected[0], selector.matches(new Environment(way)));
+        assertEquals(expected[0], selector.matches(new Environment(way)));
         way.put("old_ref", null);
-        Assert.assertEquals(expected[1], selector.matches(new Environment(way)));
+        assertEquals(expected[1], selector.matches(new Environment(way)));
         way.put("no_match_tag", "false");
-        Assert.assertEquals(expected[2], selector.matches(new Environment(way)));
+        assertEquals(expected[2], selector.matches(new Environment(way)));
         way.put("old_ref", "A22");
-        Assert.assertEquals(expected[3], selector.matches(new Environment(way)));
+        assertEquals(expected[3], selector.matches(new Environment(way)));
         way.put("old_ref", null);
         way.put("OLD_REF", "A23");
-        Assert.assertEquals(expected[4], selector.matches(new Environment(way)));
+        assertEquals(expected[4], selector.matches(new Environment(way)));
     }
 
     @Test
@@ -367,7 +367,7 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testTicket8568() throws Exception {
+    void testTicket8568() {
         MapCSSStyleSource sheet = new MapCSSStyleSource(
                 "way { width: 5; }\n" +
                 "way[keyA], way[keyB] { width: eval(prop(width)+10); }");
@@ -384,7 +384,7 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testTicket8071() throws Exception {
+    void testTicket8071() {
         MapCSSStyleSource sheet = new MapCSSStyleSource(
                 "*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }");
         sheet.loadStyleSource();
@@ -420,7 +420,7 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testColorParsing() throws Exception {
+    void testColorParsing() {
         assertEquals(new Color(0x12, 0x34, 0x56, 0x78), ColorHelper.html2color("#12345678"));
     }
 
@@ -458,7 +458,7 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testParentTags() throws Exception {
+    void testParentTags() {
         DataSet ds = new DataSet();
         Node n = new Node(new LatLon(1, 2));
         n.put("foo", "bar");
@@ -485,8 +485,8 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testSort() throws Exception {
-        assertEquals(Arrays.asList(new String[] {"alpha", "beta"}), Functions.sort(null, "beta", "alpha"));
+    void testSort() {
+        assertEquals(Arrays.asList("alpha", "beta"), Functions.sort(null, "beta", "alpha"));
         Way way1 = TestUtils.newWay("highway=residential name=Alpha alt_name=Beta ref=\"A9;A8\"", new Node(new LatLon(0.001, 0.001)),
                 new Node(new LatLon(0.002, 0.002)));
 
@@ -507,15 +507,15 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testUniqueValues() throws Exception {
-        assertEquals(Arrays.asList(new String[] {"alpha", "beta"}),
+    void testUniqueValues() {
+        assertEquals(Arrays.asList("alpha", "beta"),
                 Functions.uniq(null, "alpha", "alpha", "alpha", "beta"));
-        assertEquals(Arrays.asList(new String[] {"one", "two", "three"}),
-                Functions.uniq_list(Arrays.asList(new String[] {"one", "one", "two", "two", "two", "three"})));
+        assertEquals(Arrays.asList("one", "two", "three"),
+                Functions.uniq_list(Arrays.asList("one", "one", "two", "two", "two", "three")));
     }
 
     @Test
-    void testCountRoles() throws Exception {
+    void testCountRoles() {
         DataSet ds = new DataSet();
         Way way1 = TestUtils.newWay("highway=residential name=1",
                 new Node(new LatLon(0, 0)), new Node((new LatLon(0.001, 0.001))));
@@ -595,7 +595,7 @@ class MapCSSParserTest {
     }
 
     @Test
-    void testInvalidBaseSelector() throws Exception {
+    void testInvalidBaseSelector() {
         MapCSSStyleSource css = new MapCSSStyleSource("invalid_base[key=value] {}");
         css.loadStyleSource();
         assertFalse(css.getErrors().isEmpty());
@@ -623,14 +623,14 @@ class MapCSSParserTest {
         assertEquals(-6.0, mc.getCascade(null).get("sub"));
         assertEquals(24.0, mc.getCascade(null).get("div"));
         assertEquals(-13.0, mc.getCascade(null).get("neg"));
-        assertEquals(true, mc.getCascade(null).get("not"));
+        assertEquals(Boolean.TRUE, mc.getCascade(null).get("not"));
         assertNull(mc.getCascade(null).get("null0"));
         assertNull(mc.getCascade(null).get("null1"));
         assertEquals(8.0, mc.getCascade(null).get("null2"));
     }
 
     @Test
-    void testMinMaxFunctions() throws Exception {
+    void testMinMaxFunctions() {
         MapCSSStyleSource sheet = new MapCSSStyleSource("* {" +
                 "min_value: min(tag(x), tag(y), tag(z)); " +
                 "max_value: max(tag(x), tag(y), tag(z)); " +
@@ -699,7 +699,8 @@ class MapCSSParserTest {
      */
     @Test
     void testZoomIAE() {
-        assertThrows(IllegalArgumentException.class, () -> getParser("|z16-15").zoom());
+        final MapCSSParser parser = getParser("|z16-15");
+        assertThrows(IllegalArgumentException.class, parser::zoom);
     }
 
     /**

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
@@ -11,7 +12,6 @@ import java.util.List;
 
 import javax.net.ssl.SSLHandshakeException;
 
-import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -110,7 +110,7 @@ class CertificateAmendmentTestIT {
         String error = "Expected error: " + url;
         assumeFalse(errorsToIgnore.contains(error));
         if (!shouldWork) {
-            Assert.fail(error);
+            fail(error);
         }
     }
 }

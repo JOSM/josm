@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -37,7 +37,7 @@ class NodeDataTest {
         data.setVersion(14);
         data.setChangesetId(314159);
         final NodeData readData = serializeUnserialize(data);
-        Assert.assertEquals(data.toString(), readData.toString());
+        assertEquals(data.toString(), readData.toString());
     }
 
     /**

@@ -3,9 +3,9 @@ package org.openstreetmap.josm.gui.preferences.plugin;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
 import java.io.File;

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -114,7 +115,7 @@ class AddPrimitivesCommandTest {
         NodeData data2 = createTestNode(7);
 
         AddPrimitivesCommand command1 = new AddPrimitivesCommand(testData, ds);
-        AddPrimitivesCommand command2 = new AddPrimitivesCommand(Arrays.<PrimitiveData>asList(data2), ds);
+        AddPrimitivesCommand command2 = new AddPrimitivesCommand(Collections.singletonList(data2), ds);
 
         assertEquals("Added 3 objects", command1.getDescriptionText());
         assertEquals("Added 1 object", command2.getDescriptionText());
@@ -341,8 +342,7 @@ class AddPrimitivesCommandTest {
         WayData way = new WayData(2);
         way.put("test", "test");
         way.setNodeIds(Arrays.asList(node1.getId(), node2.getId()));
-        List<PrimitiveData> testData = Arrays.<PrimitiveData>asList(node1, node2, way);
-        return testData;
+        return Arrays.asList(node1, node2, way);
     }
 
     private NodeData createTestNode(int id) {

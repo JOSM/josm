@@ -60,12 +60,13 @@
         <dependency conf="test->default" org="com.ginsberg" name="junit5-system-exit" rev="1.1.2"/>
         <dependency conf="test->default" org="com.github.tomakehurst" name="wiremock-jre8" rev="2.35.0"/>
         <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.154"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.9.1"/>
-        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.9.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.9.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.9.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.9.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.9.1"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.9.2"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.9.2"/>
+        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.9.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.9.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.9.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.9.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.9.2"/>
         <dependency conf="test->default" org="net.trajano.commons" name="commons-testing" rev="2.1.0"/>
         <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.12.3"/>
         <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.12.0"/>

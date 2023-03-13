@@ -160,7 +160,7 @@ class ProjectionRegressionTest {
 
         for (String code : Projections.getAllProjectionCodes()) {
             if (!dataCodes.contains(code)) {
-                 fail.append("Did not find projection "+code+" in test data!\n");
+                 fail.append("Did not find projection ").append(code).append(" in test data!\n");
              }
         }
 
@@ -168,7 +168,7 @@ class ProjectionRegressionTest {
         for (TestData data : allData) {
             Projection proj = Projections.getProjectionByCode(data.code);
             if (proj == null) {
-                fail.append("Projection "+data.code+" from test data was not found!\n");
+                fail.append("Projection ").append(data.code).append(" from test data was not found!\n");
                 continue;
             }
             EastNorth en = proj.latlon2eastNorth(data.ll);
@@ -177,20 +177,20 @@ class ProjectionRegressionTest {
                 String error = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
                         "        expected: eastnorth(%s,%s),%n" +
                         "        but got:  eastnorth(%s,%s)!%n",
-                        proj.toString(), data.code, data.ll.lat(), data.ll.lon(), data.en.east(), data.en.north(), en.east(), en.north());
+                        proj, data.code, data.ll.lat(), data.ll.lon(), data.en.east(), data.en.north(), en.east(), en.north());
                 fail.append(error);
             }
             if (!(java9 ? equalsJava9(ll2, data.ll2) : ll2.equals(data.ll2))) {
                 String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
                         "        expected: latlon(%s,%s),%n" +
                         "        but got:  latlon(%s,%s)!%n",
-                        proj.toString(), data.code, data.en.east(), data.en.north(), data.ll2.lat(), data.ll2.lon(), ll2.lat(), ll2.lon());
+                        proj, data.code, data.en.east(), data.en.north(), data.ll2.lat(), data.ll2.lon(), ll2.lat(), ll2.lon());
                 fail.append(error);
             }
         }
 
         if (fail.length() > 0) {
-            System.err.println(fail.toString());
+            System.err.println(fail);
             throw new AssertionError(fail.toString());
         }
     }

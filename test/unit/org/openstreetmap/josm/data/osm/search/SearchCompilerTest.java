@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -429,10 +428,9 @@ class SearchCompilerTest {
 
     /**
      * Compiles "foo type bar" and tests the parse error message
-     * @throws SearchParseError always
      */
     @Test
-    void testFooTypeBar() throws SearchParseError {
+    void testFooTypeBar() {
         Exception e = assertThrows(SearchParseError.class, () -> SearchCompiler.compile("foo type bar"));
         assertEquals("<html>Expecting <code>:</code> after <i>type</i></html>", e.getMessage());
     }
@@ -753,7 +751,7 @@ class SearchCompilerTest {
     void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         Set<Class<? extends Match>> matchers = TestUtils.getJosmSubtypes(Match.class);
-        Assert.assertTrue(matchers.size() >= 10); // if it finds less than 10 classes, something is broken
+        assertTrue(matchers.size() >= 10); // if it finds less than 10 classes, something is broken
         for (Class<?> c : matchers) {
             Logging.debug(c.toString());
             EqualsVerifier.forClass(c).usingGetClass()

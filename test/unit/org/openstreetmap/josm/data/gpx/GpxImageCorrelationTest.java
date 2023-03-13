@@ -115,7 +115,7 @@ class GpxImageCorrelationTest {
     @Test
     void testMatchGpxTrack1() {
         assertEquals(7, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
-        assertEquals(null, ib.getPos());
+        assertNull(ib.getPos());
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), i0.getPos()); // start of track
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos()); // exact match
         assertEquals(new CachedLatLon(47.197319911792874, 8.792139580473304), i3.getPos()); // exact match
@@ -132,22 +132,22 @@ class GpxImageCorrelationTest {
                 && i4.hasNewGpsData() && i5.hasNewGpsData() && i6.hasNewGpsData());
         // First waypoint has no speed in matchGpxTrack(). Speed is calculated
         // and not taken from GPX track.
-        assertEquals(null, ib.getSpeed());
-        assertEquals(null, i0.getSpeed());
-        assertEquals(Double.valueOf(11.675317966018756), i1.getSpeed(), 0.000001);
-        assertEquals(Double.valueOf(24.992418392716967), i2.getSpeed(), 0.000001);
-        assertEquals(Double.valueOf(27.307968754679223), i3.getSpeed(), 0.000001);
-        assertEquals(null, ib.getElevation());
-        assertEquals(null, i0.getElevation());
-        assertEquals(Double.valueOf(489.29), i1.getElevation(), 0.000001);
-        assertEquals(Double.valueOf((490.40 + 489.75) / 2), i2.getElevation(), 0.000001);
-        assertEquals(Double.valueOf(486.368333333), i3.getElevation(), 0.000001);
+        assertNull(ib.getSpeed());
+        assertNull(i0.getSpeed());
+        assertEquals(11.675317966018756, i1.getSpeed(), 0.000001);
+        assertEquals(24.992418392716967, i2.getSpeed(), 0.000001);
+        assertEquals(27.307968754679223, i3.getSpeed(), 0.000001);
+        assertNull(ib.getElevation());
+        assertNull(i0.getElevation());
+        assertEquals(489.29, i1.getElevation(), 0.000001);
+        assertEquals((490.40 + 489.75) / 2, i2.getElevation(), 0.000001);
+        assertEquals(486.368333333, i3.getElevation(), 0.000001);
         // interpolated elevation between trackpoints with interpolated timestamps
-        assertEquals(Double.valueOf(475.393978719), i4.getElevation(), 0.000001);
-        assertEquals(null, i5.getElevation());
-        assertEquals(null, i6.getElevation());
+        assertEquals(475.393978719, i4.getElevation(), 0.000001);
+        assertNull(i5.getElevation());
+        assertNull(i6.getElevation());
 
-        assertEquals(null, ib.getGpsInstant());
+        assertNull(ib.getGpsInstant());
         assertEquals(DateUtils.parseInstant("2016:01:03 11:59:54"), i0.getGpsInstant()); // original time is kept
         assertEquals(DateUtils.parseInstant("2016:01:03 12:04:01"), i1.getGpsInstant());
         assertEquals(DateUtils.parseInstant("2016:01:03 12:04:57"), i2.getGpsInstant());
@@ -167,15 +167,15 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.int", false);
 
         assertEquals(4, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
-        assertEquals(null, ib.getPos());
-        assertEquals(null, i0.getPos());
+        assertNull(ib.getPos());
+        assertNull(i0.getPos());
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos());
         assertEquals(new CachedLatLon((47.197131179273129 + 47.197186248376966) / 2,
                 (8.792974585667253 + 8.792809881269932) / 2), i2.getPos());
         assertEquals(new CachedLatLon(47.197319911792874, 8.792139580473304), i3.getPos());
         assertEquals(new CachedLatLon(47.197568312311816, 8.790292849679897), i4.getPos());
-        assertEquals(null, i5.getPos());
-        assertEquals(null, i6.getPos());
+        assertNull(i5.getPos());
+        assertNull(i6.getPos());
     }
 
     /**
@@ -195,7 +195,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.int", false);
 
         assertEquals(6, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
-        assertEquals(null, ib.getPos());
+        assertNull(ib.getPos());
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), i0.getPos());
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos());
         assertEquals(new CachedLatLon((47.197131179273129 + 47.197186248376966) / 2,
@@ -203,7 +203,7 @@ class GpxImageCorrelationTest {
         assertEquals(new CachedLatLon(47.197319911792874, 8.792139580473304), i3.getPos());
         assertEquals(new CachedLatLon(47.197568312311816, 8.790292849679897), i4.getPos());
         assertEquals(new CachedLatLon(47.19819249585271, 8.78536943346262), i5.getPos());
-        assertEquals(null, i6.getPos());
+        assertNull(i6.getPos());
         assertEquals(new CachedLatLon(1, 2), i7.getPos());
     }
 
@@ -227,8 +227,8 @@ class GpxImageCorrelationTest {
         assertEquals(new CachedLatLon(47.198845306804905, 8.783144918860685), i5.getPos()); // interpolated between tracks
         assertEquals(new CachedLatLon(47.19985828931693, 8.77969308585768), i6.getPos()); // different values than in tests #1 and #3!
 
-        assertEquals(Double.valueOf(447.894014085), i5.getElevation(), 0.000001);
-        assertEquals(Double.valueOf(437.395070423), i6.getElevation(), 0.000001);
+        assertEquals(447.894014085, i5.getElevation(), 0.000001);
+        assertEquals(437.395070423, i6.getElevation(), 0.000001);
 
         assertEquals(new CachedLatLon(47.20126815140247, 8.77192972227931), i7.getPos());
     }
@@ -264,8 +264,8 @@ class GpxImageCorrelationTest {
         assertEquals(new CachedLatLon(47.198845306804905, 8.783144918860685), i5.getPos());
         assertEquals(new CachedLatLon(47.19985828931693, 8.77969308585768), i6.getPos());
 
-        assertEquals(Double.valueOf(447.894014085), i5.getElevation(), 0.000001);
-        assertEquals(Double.valueOf(437.395070423), i6.getElevation(), 0.000001);
+        assertEquals(447.894014085, i5.getElevation(), 0.000001);
+        assertEquals(437.395070423, i6.getElevation(), 0.000001);
 
         assertEquals(new CachedLatLon(47.20126815140247, 8.77192972227931), i7.getPos());
     }

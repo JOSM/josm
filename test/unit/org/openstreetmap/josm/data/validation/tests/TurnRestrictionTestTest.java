@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -29,7 +30,7 @@ class TurnRestrictionTestTest {
     @Test
     void testTurnrestrictionFile() throws Exception {
         ValidatorTestUtils.testSampleFile("nodist/data/restriction.osm",
-                ds -> ds.getRelations(),
+                DataSet::getRelations,
                 name -> name.startsWith("E"), TURNRESTRICTION_TEST, RELATION_TEST);
     }
 }

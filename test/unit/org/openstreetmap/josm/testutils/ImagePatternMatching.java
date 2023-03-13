@@ -37,7 +37,7 @@ public final class ImagePatternMatching {
             // using "#" as the default "unmapped" character as it can be used in regexes without escaping
             .orElse(i -> paletteMap.getOrDefault(i, "#"));
         pattern = Optional.ofNullable(pattern)
-            .orElseGet(() -> patternCache.computeIfAbsent(patternString, k -> Pattern.compile(k)));
+            .orElseGet(() -> patternCache.computeIfAbsent(patternString, Pattern::compile));
 
         int[] columnOrRow = isColumn
             ? image.getRGB(columnOrRowIndex, 0, 1, image.getHeight(), null, 0, 1)
@@ -47,7 +47,7 @@ public final class ImagePatternMatching {
         Matcher result = pattern.matcher(stringRepr);
 
         if (assertMatch && !result.matches()) {
-            System.err.println(String.format("Full strip failing to match pattern %s: %s", pattern, stringRepr));
+            System.err.printf("Full strip failing to match pattern %s: %s%n", pattern, stringRepr);
             fail(String.format(
                 "%s %d failed to match pattern %s",
                 isColumn ? "Column" : "Row",

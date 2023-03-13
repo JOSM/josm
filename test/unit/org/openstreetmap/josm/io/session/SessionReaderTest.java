@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io.session;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,8 +76,7 @@ class SessionReaderTest {
         for (String file : new String[]{"osm.jos", "osm.joz"}) {
             List<Layer> layers = testRead(file);
             assertEquals(layers.size(), 1);
-            assertTrue(layers.get(0) instanceof OsmDataLayer);
-            OsmDataLayer osm = (OsmDataLayer) layers.get(0);
+            OsmDataLayer osm = assertInstanceOf(OsmDataLayer.class, layers.get(0));
             assertEquals(osm.getName(), "OSM layer name");
         }
     }
@@ -91,8 +91,7 @@ class SessionReaderTest {
         for (String file : new String[]{"gpx.jos", "gpx.joz", "nmea.jos"}) {
             List<Layer> layers = testRead(file);
             assertEquals(layers.size(), 1);
-            assertTrue(layers.get(0) instanceof GpxLayer);
-            GpxLayer gpx = (GpxLayer) layers.get(0);
+            GpxLayer gpx = assertInstanceOf(GpxLayer.class, layers.get(0));
             assertEquals(gpx.getName(), "GPX layer name");
         }
     }
@@ -134,7 +133,7 @@ class SessionReaderTest {
     void testReadImage() throws IOException, IllegalDataException {
         final List<Layer> layers = testRead("bing.jos");
         assertEquals(layers.size(), 1);
-        assertTrue(layers.get(0) instanceof ImageryLayer);
+        assertInstanceOf(ImageryLayer.class, layers.get(0));
         final AbstractTileSourceLayer<?> image = (AbstractTileSourceLayer<?>) layers.get(0);
         assertEquals("Bing aerial imagery", image.getName());
         EastNorth displacement = image.getDisplaySettings().getDisplacement();
@@ -156,8 +155,7 @@ class SessionReaderTest {
         }
         final List<Layer> layers = testRead("notes.joz");
         assertEquals(layers.size(), 1);
-        assertTrue(layers.get(0) instanceof NoteLayer);
-        final NoteLayer layer = (NoteLayer) layers.get(0);
+        final NoteLayer layer = assertInstanceOf(NoteLayer.class, layers.get(0));
         assertEquals("Notes", layer.getName());
         assertEquals(174, layer.getNoteData().getNotes().size());
     }

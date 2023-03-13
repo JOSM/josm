@@ -239,7 +239,12 @@ class HttpClientTest {
     @Test
     void testTooMuchRedirects() throws IOException {
         mockRedirects(false, 3);
-        assertThrows(IOException.class, () -> HttpClient.create(url("/relative-redirect/3")).setMaxRedirects(2).connect(progress));
+        final HttpClient client = HttpClient.create(url("/relative-redirect/3")).setMaxRedirects(2);
+        try {
+            assertThrows(IOException.class, () -> client.connect(progress));
+        } finally {
+            client.disconnect();
+        }
     }
 
     /**
@@ -369,7 +374,12 @@ class HttpClientTest {
     @Test
     void testTakesTooLong() throws IOException {
         mockDelay(1);
-        assertThrows(IOException.class, () -> HttpClient.create(url("/delay/1")).setReadTimeout(500).connect(progress));
+        final HttpClient client = HttpClient.create(url("/delay/1")).setReadTimeout(500);
+        try {
+            assertThrows(IOException.class, () -> client.connect(progress));
+        } finally {
+            client.disconnect();
+        }
     }
 
     /**
@@ -386,7 +396,7 @@ class HttpClientTest {
     }
 
     /**
-     * Test of {@link Response#uncompress} method with Gzip compression.
+     * Test of {@link Response#uncompress(boolean)} method with Gzip compression.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -406,7 +416,7 @@ class HttpClientTest {
     }
 
     /**
-     * Test of {@link Response#uncompress} method with Bzip compression.
+     * Test of {@link Response#uncompress(boolean)} method with Bzip compression.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -426,7 +436,7 @@ class HttpClientTest {
     }
 
     /**
-     * Test of {@link Response#uncompress} method with Bzip compression.
+     * Test of {@link Response#uncompress(boolean)} method with Bzip compression.
      * @throws IOException if any I/O error occurs
      */
     @Test

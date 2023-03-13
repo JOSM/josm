@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.datatransfer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -66,7 +67,7 @@ class PrimitiveTransferableTest {
         assertEquals("node 1", pt.getTransferData(DataFlavor.stringFlavor));
         Collection<PrimitiveData> td = ((PrimitiveTransferData) pt.getTransferData(PrimitiveTransferData.DATA_FLAVOR)).getAll();
         assertEquals(1, td.size());
-        assertTrue(td.iterator().next() instanceof NodeData);
+        assertInstanceOf(NodeData.class, td.iterator().next());
 
 
         data = PrimitiveTransferData.getData(Arrays.asList(new Node(1), new Node(2)));

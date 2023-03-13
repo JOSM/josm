@@ -30,7 +30,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Abstract superclass of {@code StyledMapRendererPerformanceTest} and {@code WireframeMapRendererPerformanceTest}.
  */
-@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
 abstract class AbstractMapRendererPerformanceTestParent {
 
     private static final int IMG_WIDTH = 1400;
@@ -78,7 +78,7 @@ abstract class AbstractMapRendererPerformanceTestParent {
         dsCity = PerformanceTestUtils.getNeubrandenburgDataSet();
         try (InputStream fisR = Files.newInputStream(Paths.get("nodist/data/restriction.osm"));
              InputStream fisM = Files.newInputStream(Paths.get("nodist/data/multipolygon.osm"));
-             InputStream fisO = Compression.getUncompressedFileInputStream(new File("nodist/data/overpass-download.osm.bz2"));) {
+             InputStream fisO = Compression.getUncompressedFileInputStream(new File("nodist/data/overpass-download.osm.bz2"))) {
             dsRestriction = OsmReader.parseDataSet(fisR, NullProgressMonitor.INSTANCE);
             dsMultipolygon = OsmReader.parseDataSet(fisM, NullProgressMonitor.INSTANCE);
             dsOverpass = OsmReader.parseDataSet(fisO, NullProgressMonitor.INSTANCE);
@@ -124,10 +124,10 @@ abstract class AbstractMapRendererPerformanceTestParent {
         test(850, dsMultipolygon, new Bounds(-90, -180, 90, 180));
     }
 
-    @Test
     /**
      * Complex polygon (Lake Ontario) with small download area.
      */
+    @Test
     void testOverpassDownload() throws Exception {
         test(20, dsOverpass, new Bounds(43.4510496, -76.536684, 43.4643202, -76.4954853));
     }

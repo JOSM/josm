@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -31,7 +32,7 @@ class ConnectivityRelationsTest {
     public JOSMTestRules rule = new JOSMTestRules();
 
     @BeforeEach
-    public void setUpCheck() throws Exception {
+    public void setUpCheck() {
         check = new ConnectivityRelations();
     }
 
@@ -51,11 +52,11 @@ class ConnectivityRelationsTest {
         Relation relation = createDefaultTestRelation();
         check.visit(relation);
 
-        Assert.assertEquals(0, check.getErrors().size());
+        assertEquals(0, check.getErrors().size());
 
         relation.remove(CONNECTIVITY);
         check.visit(relation);
-        Assert.assertEquals(1, check.getErrors().size());
+        assertEquals(1, check.getErrors().size());
     }
 
     /**
@@ -67,47 +68,46 @@ class ConnectivityRelationsTest {
         check.visit(relation);
         int expectedFailures = 0;
 
-        Assert.assertEquals(expectedFailures, check.getErrors().size());
+        assertEquals(expectedFailures, check.getErrors().size());
 
         relation.put(CONNECTIVITY, "45000:1");
         check.visit(relation);
-        Assert.assertEquals(++expectedFailures, check.getErrors().size());
+        assertEquals(++expectedFailures, check.getErrors().size());
 
         relation.put(CONNECTIVITY, "1:45000");
         check.visit(relation);
-        Assert.assertEquals(++expectedFailures, check.getErrors().size());
+        assertEquals(++expectedFailures, check.getErrors().size());
 
         relation.put(CONNECTIVITY, "1:1,2");
         check.visit(relation);
-        Assert.assertEquals(expectedFailures, check.getErrors().size());
+        assertEquals(expectedFailures, check.getErrors().size());
 
         relation.put(CONNECTIVITY, "1:1,(2)");
         check.visit(relation);
-        Assert.assertEquals(expectedFailures, check.getErrors().size());
+        assertEquals(expectedFailures, check.getErrors().size());
 
         relation.put(CONNECTIVITY, "1:1,(20000)");
         check.visit(relation);
-        Assert.assertEquals(++expectedFailures, check.getErrors().size());
+        assertEquals(++expectedFailures, check.getErrors().size());
     }
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/201821">Bug #20182</a>.
-     * @throws Exception if an error occurs
      */
     @Test
-    void testTicket20182() throws Exception {
+    void testTicket20182() {
         Relation relation = createDefaultTestRelation();
         check.visit(relation);
         int expectedFailures = 0;
 
-        Assert.assertEquals(expectedFailures, check.getErrors().size());
+        assertEquals(expectedFailures, check.getErrors().size());
 
         relation.put(CONNECTIVITY, "left_turn");
         check.visit(relation);
-        Assert.assertEquals(++expectedFailures, check.getErrors().size());
+        assertEquals(++expectedFailures, check.getErrors().size());
 
         relation.put(CONNECTIVITY, "1");
         check.visit(relation);
-        Assert.assertEquals(++expectedFailures, check.getErrors().size());
+        assertEquals(++expectedFailures, check.getErrors().size());
     }
 }

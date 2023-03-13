@@ -1,9 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.openstreetmap.josm.data.Bounds;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -15,10 +16,8 @@ class OsmUrlToBoundsTest {
      */
     @Test
     void testPositionToBounds() {
-        Assert.assertEquals(new Bounds(51.7167359, 8.7573485, 51.720724, 8.7659315),
-                OsmUrlToBounds.positionToBounds(51.71873, 8.76164, 17));
-        Assert.assertEquals(new Bounds(40.8609329, -75.7523458, 40.8633671, -75.7480542),
-                OsmUrlToBounds.positionToBounds(40.86215, -75.75020, 18));
+        assertEquals(new Bounds(51.7167359, 8.7573485, 51.720724, 8.7659315), OsmUrlToBounds.positionToBounds(51.71873, 8.76164, 17));
+        assertEquals(new Bounds(40.8609329, -75.7523458, 40.8633671, -75.7480542), OsmUrlToBounds.positionToBounds(40.86215, -75.75020, 18));
     }
 
     /**
@@ -88,7 +87,7 @@ class OsmUrlToBoundsTest {
                 // Ignore. check if bounds is null after
                 Logging.trace(e);
             }
-            Assert.assertEquals(item.url, item.bounds, bounds);
+            assertEquals(item.bounds, bounds, item.url);
         }
     }
 
@@ -97,8 +96,8 @@ class OsmUrlToBoundsTest {
      */
     @Test
     void testGetZoom() {
-        Assert.assertEquals(4, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(0, 0, 4)));
-        Assert.assertEquals(10, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(5, 5, 10)));
-        Assert.assertEquals(18, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(40, 20, 18)));
+        assertEquals(4, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(0, 0, 4)));
+        assertEquals(10, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(5, 5, 10)));
+        assertEquals(18, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(40, 20, 18)));
     }
 }

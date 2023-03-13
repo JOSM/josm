@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -128,10 +129,10 @@ class MapCSSTagCheckerTest {
                 "fixAdd: \"highway=construction\";\n" +
                 "}")).parseChecks.get(0);
         final Command command = check.fixPrimitive(p);
-        assertTrue(command instanceof SequenceCommand);
+        assertInstanceOf(SequenceCommand.class, command);
         final Iterator<PseudoCommand> it = command.getChildren().iterator();
-        assertTrue(it.next() instanceof ChangePropertyKeyCommand);
-        assertTrue(it.next() instanceof ChangePropertyCommand);
+        assertInstanceOf(ChangePropertyKeyCommand.class, it.next());
+        assertInstanceOf(ChangePropertyCommand.class, it.next());
     }
 
     /**

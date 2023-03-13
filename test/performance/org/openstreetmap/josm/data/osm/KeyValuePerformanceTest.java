@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -28,7 +28,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This test measures the performance of {@link OsmPrimitive#get(String)} and related.
  * @author Michael Zangl
  */
-@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
 class KeyValuePerformanceTest {
     private static final int PUT_RUNS = 10000;
     private static final int GET_RUNS = 100000;
@@ -95,7 +95,7 @@ class KeyValuePerformanceTest {
 
         timer = PerformanceTestUtils.startTimer("str1.equals(str2) = fails (without intern)");
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
-            assertFalse(str1.equals(str2));
+            assertNotEquals(str1, str2);
         }
         timer.done();
 
@@ -115,7 +115,7 @@ class KeyValuePerformanceTest {
     /**
      * Generate an array of test strings.
      */
-    @Before
+    @BeforeEach
     public void generateTestStrings() {
         testStrings.clear();
         random = new SecureRandom();

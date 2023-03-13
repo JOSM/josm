@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.nmea;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -69,8 +70,8 @@ class NmeaReaderTest {
         assertEquals("16", wayPoints.get(0).get(GpxConstants.PT_SAT));
         assertEquals("3d", wayPoints.get(0).get(GpxConstants.PT_FIX));
         assertEquals("0.7", wayPoints.get(0).get(GpxConstants.PT_HDOP).toString().trim());
-        assertEquals(null, wayPoints.get(0).get(GpxConstants.PT_VDOP));
-        assertEquals(null, wayPoints.get(0).get(GpxConstants.PT_PDOP));
+        assertNull(wayPoints.get(0).get(GpxConstants.PT_VDOP));
+        assertNull(wayPoints.get(0).get(GpxConstants.PT_PDOP));
     }
 
     private static void compareWithReference(int ticket, String filename, int numCoor) throws IOException, SAXException {

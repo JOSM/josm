@@ -1,12 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Collections;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,7 +95,7 @@ class AsynchronousUploadPrimitivesTaskTest {
             ));
         Optional<AsynchronousUploadPrimitivesTask> task = AsynchronousUploadPrimitivesTask.
                 createAsynchronousUploadTask(strategy, layer, toUpload, changeset);
-        Assert.assertNotNull(uploadPrimitivesTask);
-        Assert.assertFalse(task.isPresent());
+        assertNotNull(uploadPrimitivesTask);
+        assertFalse(task.isPresent());
     }
 }

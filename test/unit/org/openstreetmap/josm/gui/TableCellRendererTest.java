@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -13,7 +14,6 @@ import java.util.logging.Level;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -63,7 +63,7 @@ class TableCellRendererTest {
     @Test
     void testTableCellRenderer() throws ReflectiveOperationException {
         Set<Class<? extends TableCellRenderer>> renderers = TestUtils.getJosmSubtypes(TableCellRenderer.class);
-        Assert.assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken
+        assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken
         JTable tbl = new JTable(2, 2);
         for (Class<? extends TableCellRenderer> klass : renderers) {
             if (Modifier.isAbstract(klass.getModifiers()) || SKIP_TEST.contains(klass.getName())) {

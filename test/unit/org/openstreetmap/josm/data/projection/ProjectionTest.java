@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.projection;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -9,7 +10,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -39,18 +39,18 @@ class ProjectionTest {
         testProjection(Projections.getProjectionByCode("EPSG:3301")); // Lambert EST
 
         for (int i = 0; i <= 3; ++i) {
-            testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(27561+i))); // Lambert 4 Zones France
+            testProjection(Projections.getProjectionByCode("EPSG:"+ (27561 + i))); // Lambert 4 Zones France
         }
 
         for (int i = 0; i <= 4; ++i) {
-            testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(2176+i))); // PUWG Poland
+            testProjection(Projections.getProjectionByCode("EPSG:"+ (2176 + i))); // PUWG Poland
         }
 
         testProjection(Projections.getProjectionByCode("EPSG:21781")); // Swiss grid
 
         for (int i = 0; i <= 60; ++i) {
-            testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(32601+i))); // UTM North
-            testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(32701+i))); // UTM South
+            testProjection(Projections.getProjectionByCode("EPSG:"+ (32601 + i))); // UTM North
+            testProjection(Projections.getProjectionByCode("EPSG:"+ (32701 + i))); // UTM South
         }
 
         for (String c : Arrays.asList("2969", "2970", "2972", "2973")) {
@@ -58,19 +58,18 @@ class ProjectionTest {
         }
 
         for (int i = 0; i <= 8; ++i) {
-            testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(3942+i))); // Lambert CC9 Zones France
+            testProjection(Projections.getProjectionByCode("EPSG:"+ (3942 + i))); // Lambert CC9 Zones France
         }
 
         for (int i = 0; i <= 17; ++i) {
-            testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(102421+i))); // WGS_1984_ARC_System Zones
+            testProjection(Projections.getProjectionByCode("EPSG:"+ (102421 + i))); // WGS_1984_ARC_System Zones
         }
 
         testProjection(Projections.getProjectionByCode("EPSG:102016")); // North Pole
         testProjection(Projections.getProjectionByCode("EPSG:102019")); // South Pole
 
         if (error) {
-            System.err.println(text);
-            Assert.fail();
+            fail(text);
         }
     }
 
@@ -79,7 +78,7 @@ class ProjectionTest {
             double maxErrLat = 0, maxErrLon = 0;
             Bounds b = p.getWorldBoundsLatLon();
 
-            text += String.format("*** %s %s%n", p.toString(), p.toCode());
+            text += String.format("*** %s %s%n", p, p.toCode());
             for (int num = 0; num < 1000; ++num) {
 
                 LatLon ll0 = random(b);
@@ -147,8 +146,7 @@ class ProjectionTest {
         testProj("eqc", 1e-5, "");
 
         if (error2) {
-            System.err.println(text2);
-            Assert.fail();
+            fail(text2);
         }
         assertTrue(projIds.isEmpty(), "missing test: "+projIds);
     }

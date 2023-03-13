@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -27,6 +28,6 @@ class DirectionNodesTest {
     @Test
     void testDirectionsNodesTestFile() throws Exception {
         final DirectionNodes test = new DirectionNodes();
-        ValidatorTestUtils.testSampleFile("nodist/data/direction-nodes.osm", ds -> ds.getNodes(), null, test);
+        ValidatorTestUtils.testSampleFile("nodist/data/direction-nodes.osm", DataSet::getNodes, null, test);
     }
 }

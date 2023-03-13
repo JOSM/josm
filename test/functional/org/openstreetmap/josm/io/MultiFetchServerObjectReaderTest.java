@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link MultiFetchServerObjectReader}.
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
-@Timeout(value = 60, unit = TimeUnit.SECONDS)
+@Timeout(value = 1, unit = TimeUnit.MINUTES)
 class MultiFetchServerObjectReaderTest {
     private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 
@@ -190,7 +191,7 @@ class MultiFetchServerObjectReaderTest {
 
         try (
             PrintWriter pw = new PrintWriter(
-                    new OutputStreamWriter(new FileOutputStream(dataSetCacheOutputFile), StandardCharsets.UTF_8)
+                    new OutputStreamWriter(Files.newOutputStream(dataSetCacheOutputFile.toPath()), StandardCharsets.UTF_8)
         )) {
             logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
             try (OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion())) {

@@ -130,7 +130,7 @@ public class SessionWriterTest {
                 ((MarkerSessionExporter) s).setMetaTime(Instant.parse("2021-10-16T18:27:12.351Z"));
             }
         }
-        SessionWriter sw = new SessionWriter(layers, -1, exporters, new MultiMap<Layer, Layer>(), zip);
+        SessionWriter sw = new SessionWriter(layers, -1, exporters, new MultiMap<>(), zip);
         File file = new File(System.getProperty("java.io.tmpdir"), getClass().getName()+(zip ? ".joz" : ".jos"));
         try {
             sw.write(file);
@@ -213,7 +213,7 @@ public class SessionWriterTest {
      * @since 18466
      */
     public static NoteLayer createNoteLayer() {
-        return new NoteLayer(Arrays.asList(new Note(LatLon.ZERO)), "layer name");
+        return new NoteLayer(Collections.singletonList(new Note(LatLon.ZERO)), "layer name");
     }
 
     /**
@@ -222,7 +222,7 @@ public class SessionWriterTest {
      */
     @Test
     void testWriteEmptyJos() throws IOException {
-        testWrite(Collections.<Layer>emptyList(), false);
+        testWrite(Collections.emptyList(), false);
     }
 
     /**
@@ -231,7 +231,7 @@ public class SessionWriterTest {
      */
     @Test
     void testWriteEmptyJoz() throws IOException {
-        testWrite(Collections.<Layer>emptyList(), true);
+        testWrite(Collections.emptyList(), true);
     }
 
     /**
@@ -240,7 +240,7 @@ public class SessionWriterTest {
      */
     @Test
     void testWriteOsmJos() throws IOException {
-        testWrite(Collections.<Layer>singletonList(createOsmLayer()), false);
+        testWrite(Collections.singletonList(createOsmLayer()), false);
     }
 
     /**
@@ -249,7 +249,7 @@ public class SessionWriterTest {
      */
     @Test
     void testWriteOsmJoz() throws IOException {
-        testWrite(Collections.<Layer>singletonList(createOsmLayer()), true);
+        testWrite(Collections.singletonList(createOsmLayer()), true);
     }
 
     /**
@@ -258,7 +258,7 @@ public class SessionWriterTest {
      */
     @Test
     void testWriteGpxJos() throws IOException {
-        testWrite(Collections.<Layer>singletonList(createGpxLayer()), false);
+        testWrite(Collections.singletonList(createGpxLayer()), false);
     }
 
     /**
@@ -267,7 +267,7 @@ public class SessionWriterTest {
      */
     @Test
     void testWriteGpxJoz() throws IOException {
-        testWrite(Collections.<Layer>singletonList(createGpxLayer()), true);
+        testWrite(Collections.singletonList(createGpxLayer()), true);
     }
 
     /**

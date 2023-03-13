@@ -1,13 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -30,6 +31,6 @@ class WayDataTest {
                 readData = in.readObject();
             }
         }
-        Assert.assertEquals(data.toString(), readData.toString());
+        assertEquals(data.toString(), readData.toString());
     }
 }

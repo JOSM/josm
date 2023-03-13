@@ -2,11 +2,12 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -26,6 +27,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.awaitility.Awaitility;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,8 +50,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.ImagePatternMatching;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link MinimapDialog} class.
@@ -94,19 +94,19 @@ public class MinimapDialogTest {
         JPopupMenu menu = this.sourceButton.getPopupMenu();
         boolean found = false;
         for (Component c: menu.getComponents()) {
-            if (JPopupMenu.Separator.class.isInstance(c)) {
+            if (c instanceof JPopupMenu.Separator) {
                 break;
             } else {
                 boolean equalText = ((JMenuItem) c).getText().equals(label);
                 boolean isSelected = ((JMenuItem) c).isSelected();
                 assertEquals(equalText, isSelected);
                 if (equalText) {
-                    assertFalse("Second selected source found", found);
+                    assertFalse(found, "Second selected source found");
                     found = true;
                 }
             }
         }
-        assertTrue("Selected source not found in menu", found);
+        assertTrue(found, "Selected source not found in menu");
     }
 
     protected void clickSourceMenuItemByLabel(final String label) {
@@ -114,7 +114,7 @@ public class MinimapDialogTest {
             GuiHelper.runInEDTAndWaitWithException(() -> {
                 JPopupMenu menu = this.sourceButton.getPopupMenu();
                 for (Component c: menu.getComponents()) {
-                    if (JPopupMenu.Separator.class.isInstance(c)) {
+                    if (c instanceof JPopupMenu.Separator) {
                         // sources should all come before any separators
                         break;
                     } else if (Objects.equals(((JMenuItem) c).getText(), label)) {
@@ -123,7 +123,7 @@ public class MinimapDialogTest {
                     }
                     // else continue...
                 }
-                fail();
+                fail("Expected JMenuItem with text " + label + " not found");
             });
         } catch (Throwable e) {
             throw new RuntimeException(String.format("Failed to find menu item with label %s: %s", label, e), e);
@@ -195,10 +195,9 @@ public class MinimapDialogTest {
 
     /**
      * Tests to switch imagery source.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testSourceSwitching() throws Exception {
+    public void testSourceSwitching() {
         // relevant prefs starting out empty, should choose the first source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -242,10 +241,9 @@ public class MinimapDialogTest {
 
     /**
      * Tests that the apparently-selected TileSource survives the tile sources being refreshed.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testRefreshSourcesRetainsSelection() throws Exception {
+    public void testRefreshSourcesRetainsSelection() {
         // relevant prefs starting out empty, should choose the first source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -280,10 +278,9 @@ public class MinimapDialogTest {
     /**
      * Tests that the currently selected source being removed from ImageryLayerInfo will remain present and
      * selected in the source menu even after the tile sources have been refreshed.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testRemovedSourceStillSelected() throws Exception {
+    public void testRemovedSourceStillSelected() {
         // relevant prefs starting out empty, should choose the first source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -313,10 +310,9 @@ public class MinimapDialogTest {
 
     /**
      * Tests the tile source list includes sources only present in the LayerManager
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testTileSourcesFromCurrentLayers() throws Exception {
+    public void testTileSourcesFromCurrentLayers() {
         // relevant prefs starting out empty, should choose the first (ImageryLayerInfo) source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -447,10 +443,9 @@ public class MinimapDialogTest {
 
     /**
      * Tests minimap obeys a saved "mapstyle" preference on startup.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testSourcePrefObeyed() throws Exception {
+    public void testSourcePrefObeyed() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
 
         this.setUpMiniMap();
@@ -474,10 +469,9 @@ public class MinimapDialogTest {
 
     /**
      * Tests minimap handles an unrecognized "mapstyle" preference on startup
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testSourcePrefInvalid() throws Exception {
+    public void testSourcePrefInvalid() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Hooloovoo Tiles");
 
         this.setUpMiniMap();
@@ -496,10 +490,9 @@ public class MinimapDialogTest {
 
     /**
      * test viewport marker rectangle matches the mapView's aspect ratio
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testViewportAspectRatio() throws Exception {
+    public void testViewportAspectRatio() {
         // Add a test layer to the layer manager to get the MapFrame & MapView
         MainApplication.getLayerManager().addLayer(new TestLayer());
 
@@ -545,9 +538,9 @@ public class MinimapDialogTest {
         // (within a tolerance for numerical error) the number of pixels on the left of the viewport marker
         // should equal the number on the right
         assertTrue(
-            "Viewport marker not horizontally centered",
-            Math.abs(rowMatcher.group(1).length() - rowMatcher.group(3).length()) < 4
-        );
+                Math.abs(rowMatcher.group(1).length() - rowMatcher.group(3).length()) < 4,
+                "Viewport marker not horizontally centered"
+                );
 
         Matcher colMatcher = ImagePatternMatching.columnMatch(
             paintedSlippyMap,
@@ -560,15 +553,15 @@ public class MinimapDialogTest {
         // (within a tolerance for numerical error) the number of pixels on the top of the viewport marker
         // should equal the number on the bottom
         assertTrue(
-            "Viewport marker not vertically centered",
-            Math.abs(colMatcher.group(1).length() - colMatcher.group(3).length()) < 4
-        );
+                Math.abs(colMatcher.group(1).length() - colMatcher.group(3).length()) < 4,
+                "Viewport marker not vertically centered"
+                );
 
         // (within a tolerance for numerical error) the viewport marker should be square
         assertTrue(
-            "Viewport marker not square",
-            Math.abs(colMatcher.group(2).length() - rowMatcher.group(2).length()) < 4
-        );
+                Math.abs(colMatcher.group(2).length() - rowMatcher.group(2).length()) < 4,
+                "Viewport marker not square"
+                );
 
         // now change the mapView size
         GuiHelper.runInEDTAndWaitWithException(() -> {
@@ -590,9 +583,9 @@ public class MinimapDialogTest {
             true
         );
         assertTrue(
-            "Viewport marker not horizontally centered",
-            Math.abs(rowMatcher.group(1).length() - rowMatcher.group(3).length()) < 4
-        );
+                Math.abs(rowMatcher.group(1).length() - rowMatcher.group(3).length()) < 4,
+                "Viewport marker not horizontally centered"
+                );
 
         colMatcher = ImagePatternMatching.columnMatch(
             paintedSlippyMap,
@@ -602,9 +595,9 @@ public class MinimapDialogTest {
             true
         );
         assertTrue(
-            "Viewport marker not vertically centered",
-            Math.abs(colMatcher.group(1).length() - colMatcher.group(3).length()) < 4
-        );
+                Math.abs(colMatcher.group(1).length() - colMatcher.group(3).length()) < 4,
+                "Viewport marker not vertically centered"
+                );
 
         try {
             javax.imageio.ImageIO.write(paintedSlippyMap, "png", new java.io.File("failed.png"));
@@ -613,22 +606,21 @@ public class MinimapDialogTest {
         }
 
         assertTrue(
-            "Viewport marker not 2:1 aspect ratio",
-            Math.abs(colMatcher.group(2).length() - (rowMatcher.group(2).length()*2.0)) < 5
-        );
+                Math.abs(colMatcher.group(2).length() - (rowMatcher.group(2).length()*2.0)) < 5,
+                "Viewport marker not 2:1 aspect ratio"
+                );
     }
 
     protected JCheckBoxMenuItem getShowDownloadedAreaMenuItem() {
         JPopupMenu menu = this.sourceButton.getPopupMenu();
         boolean afterSeparator = false;
         for (Component c: menu.getComponents()) {
-            if (JPopupMenu.Separator.class.isInstance(c)) {
-                assertFalse("More than one separator before target item", afterSeparator);
+            if (c instanceof JPopupMenu.Separator) {
+                assertFalse(afterSeparator, "More than one separator before target item");
                 afterSeparator = true;
             } else if (((JMenuItem) c).getText().equals(tr("Show downloaded area"))) {
-                assertTrue("Separator not found before target item", afterSeparator);
-                assertTrue("Target item doesn't appear to be a JCheckBoxMenuItem", JCheckBoxMenuItem.class.isInstance(c));
-                return (JCheckBoxMenuItem) c;
+                assertTrue(afterSeparator, "Separator not found before target item");
+                return assertInstanceOf(JCheckBoxMenuItem.class, c, "Target item doesn't appear to be a JCheckBoxMenuItem");
             }
         }
         fail("'Show downloaded area' menu item not found");
@@ -637,10 +629,9 @@ public class MinimapDialogTest {
 
     /**
      * test downloaded area is shown shaded
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testShowDownloadedArea() throws Exception {
+    public void testShowDownloadedArea() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
         Config.getPref().putBoolean("slippy_map_chooser.show_downloaded_area", false);
 
@@ -796,10 +787,9 @@ public class MinimapDialogTest {
 
     /**
      * test display of downloaded area follows active layer switching
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testShowDownloadedAreaLayerSwitching() throws Exception {
+    public void testShowDownloadedAreaLayerSwitching() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
         Config.getPref().putBoolean("slippy_map_chooser.show_downloaded_area", true);
 

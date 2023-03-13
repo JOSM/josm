@@ -145,7 +145,7 @@ public class ImageryPreferenceTestIT {
     }
 
     private static boolean isIgnoredSubstring(String substring) {
-        return errorsToIgnore.parallelStream().anyMatch(x -> substring.contains(x));
+        return errorsToIgnore.parallelStream().anyMatch(substring::contains);
     }
 
     private static boolean addError(Map<String, Map<ImageryInfo, List<String>>> map, ImageryInfo info, String errorMsg) {
@@ -341,7 +341,7 @@ public class ImageryPreferenceTestIT {
                 checkTileUrls(info, tileSources, center, Utils.clamp(DEFAULT_ZOOM, info.getMinZoom() + 1, info.getMaxZoom()));
             }
         } catch (IOException | RuntimeException | WMSGetCapabilitiesException e) {
-            addError(info, info.getUrl() + ERROR_SEP + e.toString());
+            addError(info, info.getUrl() + ERROR_SEP + e);
         }
 
         for (ImageryInfo mirror : info.getMirrors()) {
@@ -393,7 +393,7 @@ public class ImageryPreferenceTestIT {
             try {
                 return new WMTSTileSource(info, proj);
             } catch (IOException | WMTSGetCapabilitiesException e) {
-                addError(info, info.getUrl() + ERROR_SEP + e.toString());
+                addError(info, info.getUrl() + ERROR_SEP + e);
                 return null;
             }
         }).filter(Objects::nonNull).collect(toList());

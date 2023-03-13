@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +35,7 @@ class OsmUtilsTest {
     @Test
     void testCreatePrimitive() {
         final OsmPrimitive p = OsmUtils.createPrimitive("way name=Foo railway=rail");
-        assertTrue(p instanceof Way);
+        assertInstanceOf(Way.class, p);
         assertEquals(2, p.getKeys().size());
         assertEquals("Foo", p.get("name"));
         assertEquals("rail", p.get("railway"));

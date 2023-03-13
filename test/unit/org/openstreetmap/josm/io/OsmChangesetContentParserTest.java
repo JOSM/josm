@@ -3,14 +3,16 @@ package org.openstreetmap.josm.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationType;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -20,26 +22,13 @@ import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.XmlParsingException;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link OsmChangesetContentParser}.
  */
 @BasicPreferences
 class OsmChangesetContentParserTest {
-    private static void shouldFail(Runnable r) {
-        try {
-            r.run();
-            fail("should throw exception");
-        } catch (IllegalArgumentException e) {
-            Logging.trace(e);
-        }
-    }
-
     /**
      * Test various constructor invocations
      */
@@ -50,13 +39,9 @@ class OsmChangesetContentParserTest {
         // should be OK
         new OsmChangesetContentParser(new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
 
-        shouldFail(() -> {
-            new OsmChangesetContentParser((String) null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new OsmChangesetContentParser((String) null));
 
-        shouldFail(() -> {
-            new OsmChangesetContentParser((InputStream) null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new OsmChangesetContentParser((InputStream) null));
     }
 
     /**

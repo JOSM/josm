@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
@@ -44,6 +44,6 @@ class RestorePropertyActionTest {
         new DataSet(n);
         UndoRedoHandler.getInstance().clean();
         new RestorePropertyAction(k -> key, v -> val, () -> n, selModel).actionPerformed(null);
-        assertTrue(UndoRedoHandler.getInstance().getLastCommand() instanceof ChangePropertyCommand);
+        assertInstanceOf(ChangePropertyCommand.class, UndoRedoHandler.getInstance().getLastCommand());
     }
 }

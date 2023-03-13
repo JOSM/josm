@@ -57,7 +57,7 @@ class ClipboardUtilsTest {
         }
 
         @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             throw new UnsupportedFlavorException(flavor);
         }
     }
@@ -83,7 +83,7 @@ class ClipboardUtilsTest {
         assertEquals("xxx\nx", ClipboardUtils.getClipboardStringContent());
 
         ClipboardUtils.copy(new SupportNothingTransferable());
-        assertEquals(null, ClipboardUtils.getClipboardStringContent());
+        assertNull(ClipboardUtils.getClipboardStringContent());
     }
 
     /**

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -61,21 +60,21 @@ class RelationTest {
 
         BBox bbox = new BBox(w1);
         bbox.add(n3.getBBox());
-        Assert.assertEquals(bbox, r1.getBBox());
-        Assert.assertEquals(bbox, r2.getBBox());
+        assertEquals(bbox, r1.getBBox());
+        assertEquals(bbox, r2.getBBox());
 
         n3.setCoor(new LatLon(40, 40));
         bbox.add(n3.getBBox());
-        Assert.assertEquals(bbox, r1.getBBox());
-        Assert.assertEquals(bbox, r2.getBBox());
+        assertEquals(bbox, r1.getBBox());
+        assertEquals(bbox, r2.getBBox());
 
         r1.removeMembersFor(r2);
-        Assert.assertEquals(w1.getBBox(), r1.getBBox());
-        Assert.assertEquals(bbox, r2.getBBox());
+        assertEquals(w1.getBBox(), r1.getBBox());
+        assertEquals(bbox, r2.getBBox());
 
         w1.addNode(n3);
-        Assert.assertEquals(w1.getBBox(), r1.getBBox());
-        Assert.assertEquals(w1.getBBox(), r2.getBBox());
+        assertEquals(w1.getBBox(), r1.getBBox());
+        assertEquals(w1.getBBox(), r2.getBBox());
 
         // create incomplete node and add it to the relation, this must not change the bbox
         BBox oldBBox = r2.getBBox();
@@ -84,7 +83,7 @@ class RelationTest {
         ds.addPrimitive(n4);
         r2.addMember(new RelationMember("", n4));
 
-        Assert.assertEquals(oldBBox, r2.getBBox());
+        assertEquals(oldBBox, r2.getBBox());
     }
 
     @Test
@@ -98,7 +97,7 @@ class RelationTest {
         r1.getBBox();
         r1.addMember(new RelationMember("", w1));
 
-        Assert.assertEquals(new BBox(w1), r1.getBBox());
+        assertEquals(new BBox(w1), r1.getBBox());
 
         DataSet ds = new DataSet();
         ds.addPrimitive(n1);
@@ -106,23 +105,22 @@ class RelationTest {
         ds.addPrimitive(w1);
         ds.addPrimitive(r1);
 
-        Assert.assertEquals(new BBox(w1), r1.getBBox());
+        assertEquals(new BBox(w1), r1.getBBox());
 
         ds.removePrimitive(r1);
 
         n1.setCoor(new LatLon(30, 40));
-        Assert.assertEquals(new BBox(w1), r1.getBBox());
+        assertEquals(new BBox(w1), r1.getBBox());
 
         ds.addPrimitive(r1);
-        Assert.assertEquals(new BBox(w1), r1.getBBox());
+        assertEquals(new BBox(w1), r1.getBBox());
     }
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12467">Bug #12467</a>.
-     * @throws Exception if any error occurs
      */
     @Test
-    void testTicket12467() throws Exception {
+    void testTicket12467() {
         Relation r = new Relation();
         r.put("type", "boundary");
         assertTrue(r.isBoundary());
@@ -145,7 +143,9 @@ class RelationTest {
      */
     @Test
     void testCloneFromIAE() {
-        assertThrows(IllegalArgumentException.class, () -> new Relation().cloneFrom(new Node()));
+        final Relation relation = new Relation();
+        final Node node = new Node();
+        assertThrows(IllegalArgumentException.class, () -> relation.cloneFrom(node));
     }
 
     /**
@@ -153,6 +153,8 @@ class RelationTest {
      */
     @Test
     void testLoadIAE() {
-        assertThrows(IllegalArgumentException.class, () -> new Relation().load(new NodeData()));
+        final Relation relation = new Relation();
+        final NodeData nodeData = new NodeData();
+        assertThrows(IllegalArgumentException.class, () -> relation.load(nodeData));
     }
 }

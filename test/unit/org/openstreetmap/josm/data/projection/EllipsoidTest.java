@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.security.SecureRandom;
 import java.util.Random;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -36,8 +37,7 @@ class EllipsoidTest {
                 if (!(Math.abs(lat - ll.lat()) < EPSILON && Math.abs(lon - ll.lon()) < EPSILON)) {
                     String error = String.format("point: %s iterations: %s current: %s errorLat: %s errorLon %s",
                             new LatLon(lat, lon), i, ll, Math.abs(lat - ll.lat()), Math.abs(lon - ll.lon()));
-                    System.err.println(error);
-                    Assert.fail();
+                    fail(error);
                 }
             }
 

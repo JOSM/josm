@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -30,8 +30,7 @@ class OsmPrimitiveTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     private void compareReferrers(OsmPrimitive actual, OsmPrimitive... expected) {
-        Assert.assertEquals(new HashSet<>(Arrays.asList(expected)),
-                new HashSet<>(actual.getReferrers()));
+        assertEquals(new HashSet<>(Arrays.asList(expected)), new HashSet<>(actual.getReferrers()));
     }
 
     private final DataSet dataSet = new DataSet();
@@ -148,13 +147,13 @@ class OsmPrimitiveTest {
         dataSet.addPrimitive(w1);
         new Way(w1);
 
-        Assert.assertEquals(n.getReferrers().size(), 1);
-        Assert.assertEquals(n.getReferrers().get(0), w1);
+        assertEquals(n.getReferrers().size(), 1);
+        assertEquals(n.getReferrers().get(0), w1);
     }
 
     @Test
     void testCheckMustBeInDatasate() {
         Node n = new Node();
-        assertThrows(DataIntegrityProblemException.class, () -> n.getReferrers());
+        assertThrows(DataIntegrityProblemException.class, n::getReferrers);
     }
 }

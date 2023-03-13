@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +27,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
  *
  * @author Michael Zangl
  */
-@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
 class OsmReaderPerformanceTest {
     private static final int TIMES = 4;
 
@@ -72,7 +73,7 @@ class OsmReaderPerformanceTest {
 
     private InputStream loadFile(boolean decompressBeforeRead) throws IOException {
         File file = new File(PerformanceTestUtils.DATA_FILE);
-        try (InputStream is = decompressBeforeRead ? Compression.getUncompressedFileInputStream(file) : new FileInputStream(file)) {
+        try (InputStream is = decompressBeforeRead ? Compression.getUncompressedFileInputStream(file) : Files.newInputStream(file.toPath())) {
             ByteArrayOutputStream temporary = new ByteArrayOutputStream();
             byte[] readBuffer = new byte[4096];
             int readBytes = 0;

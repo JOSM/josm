@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Arrays;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -24,7 +26,7 @@ class WaySegmentTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     @Test
-    void testForNodePair() throws Exception {
+    void testForNodePair() {
         final DataSet ds = new DataSet();
         final Node n1 = new Node(LatLon.ZERO);
         final Node n2 = new Node(new LatLon(1, 0));
@@ -41,15 +43,11 @@ class WaySegmentTest {
         w.addNode(n1);
         w.addNode(n4);
         w.addNode(n1);
-        Assert.assertEquals(WaySegment.forNodePair(w, n1, n2).getLowerIndex(), 0);
-        Assert.assertEquals(WaySegment.forNodePair(w, n1, n3).getLowerIndex(), 2);
-        Assert.assertEquals(WaySegment.forNodePair(w, n1, n4).getLowerIndex(), 4);
-        Assert.assertEquals(WaySegment.forNodePair(w, n4, n1).getLowerIndex(), 5);
-        try {
-            Assert.assertEquals(WaySegment.forNodePair(w, n3, n4).getLowerIndex(), 5);
-            throw new IllegalStateException("Expecting IllegalArgumentException");
-        } catch (IllegalArgumentException expected) {
-            System.out.println("Expected exception: " + expected.getMessage());
-        }
+        assertEquals(WaySegment.forNodePair(w, n1, n2).getLowerIndex(), 0);
+        assertEquals(WaySegment.forNodePair(w, n1, n3).getLowerIndex(), 2);
+        assertEquals(WaySegment.forNodePair(w, n1, n4).getLowerIndex(), 4);
+        assertEquals(WaySegment.forNodePair(w, n4, n1).getLowerIndex(), 5);
+        IllegalArgumentException iae = assertThrows(IllegalArgumentException.class, () -> WaySegment.forNodePair(w, n3, n4));
+        assertEquals("Node pair is not part of way!", iae.getMessage());
     }
 }

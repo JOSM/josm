@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -61,8 +61,8 @@ public class TaggingPresetsTest {
         final JMenu presetsMenu = menu.presetsMenu;
         assertAll(() -> assertSame(menu.presetSearchAction, presetsMenu.getItem(0).getAction()),
                 () -> assertSame(menu.presetSearchPrimitiveAction, presetsMenu.getItem(1).getAction()),
-                () -> assertTrue(presetsMenu.getItem(2).getAction() instanceof PreferencesAction),
-                () -> assertTrue(presetsMenu.getMenuComponent(3) instanceof JSeparator));
+                () -> assertInstanceOf(PreferencesAction.class, presetsMenu.getItem(2).getAction()),
+                () -> assertInstanceOf(JSeparator.class, presetsMenu.getMenuComponent(3)));
     }
 
     /**

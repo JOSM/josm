@@ -6,6 +6,7 @@ import static org.CustomMatchers.isEmpty;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -257,8 +258,7 @@ class OpeningHourTestTest {
 
     private static void assertFixEquals(String value, TestError error) {
         assertNotNull(error.getFix(), "fix is not null");
-        assertTrue(error.getFix() instanceof ChangePropertyCommand, "fix is ChangePropertyCommand");
-        final ChangePropertyCommand command = (ChangePropertyCommand) error.getFix();
+        final ChangePropertyCommand command = assertInstanceOf(ChangePropertyCommand.class, error.getFix(), "fix is ChangePropertyCommand");
         assertEquals(1, command.getTags().size());
         assertEquals(value, command.getTags().values().iterator().next());
     }

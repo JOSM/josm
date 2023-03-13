@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -110,8 +111,7 @@ class CopyActionTest {
 
         Object copied = ClipboardUtils.getClipboard().getContents(null).getTransferData(PrimitiveTransferData.DATA_FLAVOR);
         assertNotNull(copied);
-        assertTrue(copied instanceof PrimitiveTransferData);
-        PrimitiveTransferData ptd = (PrimitiveTransferData) copied;
+        PrimitiveTransferData ptd = assertInstanceOf(PrimitiveTransferData.class, copied);
         Object[] direct = ptd.getDirectlyAdded().toArray();
         assertEquals(1, direct.length);
         Object[] referenced = ptd.getReferenced().toArray();

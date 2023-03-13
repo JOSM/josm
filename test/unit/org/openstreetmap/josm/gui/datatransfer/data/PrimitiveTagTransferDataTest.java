@@ -3,11 +3,13 @@ package org.openstreetmap.josm.gui.datatransfer.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -16,8 +18,6 @@ import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * Test {@link PrimitiveTagTransferData}
@@ -108,6 +108,6 @@ class PrimitiveTagTransferDataTest {
         Map<OsmPrimitiveType, Integer> stats = data.getStatistics();
         assertEquals(2, (int) stats.get(OsmPrimitiveType.NODE));
         assertEquals(1, (int) stats.get(OsmPrimitiveType.WAY));
-        assertEquals(null, stats.get(OsmPrimitiveType.RELATION));
+        assertNull(stats.get(OsmPrimitiveType.RELATION));
     }
 }

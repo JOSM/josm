@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -198,7 +199,7 @@ class JoinAreasActionTest {
         for (String test : tests.keySet()) {
             Collection<OsmPrimitive> primitives = tests.get(test);
             for (OsmPrimitive osm : primitives) {
-                assertTrue(osm instanceof Way, test + "; expected way, but got: " + osm);
+                assertInstanceOf(Way.class, osm, test + "; expected way, but got: " + osm);
             }
             new JoinAreasAction(false).join((Collection) primitives);
             Collection<OsmPrimitive> joinedCol = dsToJoin.getPrimitives(osm -> !osm.isDeleted() && Objects.equals(osm.get("test"), test));

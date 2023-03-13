@@ -100,11 +100,11 @@ class NavigatableComponentTest {
     void testPoint2DEastNorth() {
         assertThat(component.getPoint2D((EastNorth) null), CustomMatchers.is(new Point2D.Double()));
         Point2D shouldBeCenter = component.getPoint2D(component.getCenter());
-        assertThat(shouldBeCenter, CustomMatchers.is(new Point2D.Double(WIDTH / 2, HEIGHT / 2)));
+        assertThat(shouldBeCenter, CustomMatchers.is(new Point2D.Double(WIDTH / 2.0, HEIGHT / 2.0)));
 
         EastNorth testPoint = component.getCenter().add(300 * component.getScale(), 200 * component.getScale());
         Point2D testPointConverted = component.getPoint2D(testPoint);
-        assertThat(testPointConverted, CustomMatchers.is(new Point2D.Double(WIDTH / 2 + 300, HEIGHT / 2 - 200)));
+        assertThat(testPointConverted, CustomMatchers.is(new Point2D.Double(WIDTH / 2.0 + 300, HEIGHT / 2.0 - 200)));
     }
 
     /**

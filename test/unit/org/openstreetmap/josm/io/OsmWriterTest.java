@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -47,7 +46,7 @@ class OsmWriterTest {
             ids.add(n);
         }
 
-        Collections.sort(ids, OsmWriter.byIdComparator);
+        ids.sort(OsmWriter.byIdComparator);
 
         final long[] longIds = ids.stream().mapToLong(NodeData::getUniqueId).toArray();
         assertArrayEquals(new long[] {

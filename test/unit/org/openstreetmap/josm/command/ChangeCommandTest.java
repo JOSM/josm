@@ -68,7 +68,7 @@ class ChangeCommandTest {
         new ChangeCommand(testData.existingNode, newNode).executeCommand();
 
         assertEquals("new", testData.existingNode.get("new"));
-        assertEquals(null, testData.existingNode.get("existing"));
+        assertNull(testData.existingNode.get("existing"));
         assertEquals(LatLon.NORTH_POLE, testData.existingNode.getCoor());
 
         Way newWay = new Way(10);
@@ -88,7 +88,8 @@ class ChangeCommandTest {
         Node newNode = new Node(1);
         newNode.setCoor(LatLon.NORTH_POLE);
 
-        assertThrows(DataIntegrityProblemException.class, () -> new ChangeCommand(testData.existingNode, newNode).executeCommand());
+        final ChangeCommand changeCommand = new ChangeCommand(testData.existingNode, newNode);
+        assertThrows(DataIntegrityProblemException.class, changeCommand::executeCommand);
     }
 
     /**

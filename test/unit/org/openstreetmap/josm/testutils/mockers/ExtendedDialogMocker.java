@@ -87,8 +87,7 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
     }
 
     protected String getString(final ExtendedDialog instance) {
-        return Optional.ofNullable(this.simpleStringContentMemo.get(instance))
-            .orElseGet(() -> instance.toString());
+        return Optional.ofNullable(this.simpleStringContentMemo.get(instance)).orElseGet(instance::toString);
     }
 
     protected int getMockResult(final ExtendedDialog instance) {
@@ -184,7 +183,7 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
 
     @Mock
     private void setVisible(final Invocation invocation, final boolean value) throws Throwable {
-        if (value == true) {
+        if (value) {
             try {
                 final ExtendedDialog instance = invocation.getInvokedInstance();
                 this.act(instance);

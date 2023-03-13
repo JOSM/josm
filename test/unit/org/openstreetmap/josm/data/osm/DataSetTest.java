@@ -3,14 +3,15 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -42,17 +43,11 @@ class DataSetTest {
     void testSearchRelations() {
         final DataSet ds = new DataSet();
         // null bbox => empty list
-        Assert.assertTrue(
-            "Empty data set should produce an empty list.",
-            ds.searchRelations(null).isEmpty()
-        );
+        assertTrue(ds.searchRelations(null).isEmpty(), "Empty data set should produce an empty list.");
 
         // empty data set, any bbox => empty list
         BBox bbox = new BBox(new LatLon(-180, -90), new LatLon(180, 90));
-        Assert.assertTrue(
-            "Empty data set should produce an empty list.",
-            ds.searchRelations(bbox).isEmpty()
-        );
+        assertTrue(ds.searchRelations(bbox).isEmpty(), "Empty data set should produce an empty list.");
 
         // data set with elements in the given bbox => these elements
         Node node = new Node(LatLon.ZERO);
@@ -63,8 +58,8 @@ class DataSetTest {
         ds.addPrimitive(r);
         bbox = new BBox(new LatLon(-1.0, -1.0), new LatLon(1.0, 1.0));
         List<Relation> result = ds.searchRelations(bbox);
-        Assert.assertEquals("We should have found only one item.", 1, result.size());
-        Assert.assertTrue("The item found is relation r.", result.contains(r));
+        assertEquals(1, result.size(), "We should have found only one item.");
+        assertTrue(result.contains(r), "The item found is relation r.");
     }
 
     /**
@@ -74,11 +69,11 @@ class DataSetTest {
     void testSearchPrimitives() {
         final DataSet ds = new DataSet();
         // null bbox => empty list
-        Assert.assertTrue("Empty data set should produce an empty list.", ds.searchPrimitives(null).isEmpty());
+        assertTrue(ds.searchPrimitives(null).isEmpty(), "Empty data set should produce an empty list.");
 
         // empty data set, any bbox => empty list
         BBox bbox = new BBox(new LatLon(-180, -90), new LatLon(180, 90));
-        Assert.assertTrue("Empty data set should produce an empty list.", ds.searchPrimitives(bbox).isEmpty());
+        assertTrue(ds.searchPrimitives(bbox).isEmpty(), "Empty data set should produce an empty list.");
         // data set with elements in the given bbox => these elements
         Node node = new Node(LatLon.ZERO);
         Node node2 = new Node(new LatLon(-0.01, -0.01));
@@ -91,7 +86,7 @@ class DataSetTest {
         ds.addPrimitive(r);
         bbox = new BBox(new LatLon(-1.0, -1.0), new LatLon(1.0, 1.0));
         List<OsmPrimitive> result = ds.searchPrimitives(bbox);
-        Assert.assertEquals("We should have found four items.", 4, result.size());
+        assertEquals(4, result.size(), "We should have found four items.");
     }
 
     /**
@@ -198,13 +193,13 @@ class DataSetTest {
         ds.addPrimitive(n2);
         ds.addPrimitive(n3);
 
-        assertEquals(Arrays.asList(), new ArrayList<>(ds.getSelected()));
+        assertEquals(Collections.emptyList(), new ArrayList<>(ds.getSelected()));
 
         ds.setSelected(n1.getPrimitiveId(), n2.getPrimitiveId());
         assertEquals(Arrays.asList(n1, n2), new ArrayList<>(ds.getSelected()));
 
         ds.clearSelection();
-        assertEquals(Arrays.asList(), new ArrayList<>(ds.getSelected()));
+        assertEquals(Collections.emptyList(), new ArrayList<>(ds.getSelected()));
 
         ds.addSelected(n3.getPrimitiveId());
         ds.addSelected(n1.getPrimitiveId(), n2.getPrimitiveId());
@@ -310,12 +305,7 @@ class DataSetTest {
      */
     @Test
     void testAddDataSourceListener() {
-        DataSourceListener addListener = new DataSourceListener() {
-            @Override
-            public void dataSourceChange(DataSourceChangeEvent event) {
-                assertTrue(event instanceof DataSourceAddedEvent);
-            }
-        };
+        DataSourceListener addListener = event -> assertInstanceOf(DataSourceAddedEvent.class, event);
 
         DataSet ds = new DataSet();
         ds.addDataSourceListener(addListener);
@@ -328,12 +318,7 @@ class DataSetTest {
      */
     @Test
     void testRemoveDataSourceListener() {
-        DataSourceListener removeListener = new DataSourceListener() {
-            @Override
-            public void dataSourceChange(DataSourceChangeEvent event) {
-                assertTrue(event instanceof DataSourceRemovedEvent);
-            }
-        };
+        DataSourceListener removeListener = event -> assertInstanceOf(DataSourceRemovedEvent.class, event);
 
         DataSet ds = new DataSet();
         ds.addDataSource(new DataSource(new Bounds(0, 0, 0.1, 0.1), "fake source"));
@@ -355,7 +340,7 @@ class DataSetTest {
         w.setNodes(Arrays.asList(n1, n2));
         ds.addPrimitive(w);
         Relation r = new Relation();
-        r.setMembers(Arrays.asList(new RelationMember(null, w)));
+        r.setMembers(Collections.singletonList(new RelationMember(null, w)));
         ds.addPrimitive(r);
         ds.lock();
 

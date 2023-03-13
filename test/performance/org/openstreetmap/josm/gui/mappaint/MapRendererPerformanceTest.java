@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -20,7 +22,6 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -124,9 +125,9 @@ public class MapRendererPerformanceTest {
         filterStyle = MapPaintStyles.addStyle(se);
         List<StyleSource> sources = MapPaintStyles.getStyles().getStyleSources();
         filterStyleIdx = sources.indexOf(filterStyle);
-        Assert.assertEquals(2, filterStyleIdx);
+        assertEquals(2, filterStyleIdx);
 
-        Assert.assertEquals(Feature.values().length, filterStyle.settings.size());
+        assertEquals(Feature.values().length, filterStyle.settings.size());
         for (StyleSetting set : filterStyle.settings) {
             BooleanStyleSetting bset = (BooleanStyleSetting) set;
             String prefKey = bset.getKey();
@@ -138,7 +139,7 @@ public class MapRendererPerformanceTest {
                     break;
                 }
             }
-            Assert.assertTrue(prefKey, found);
+            assertTrue(found, prefKey);
         }
 
         MapCSSStyleSource defaultStyle = null;
@@ -150,7 +151,7 @@ public class MapRendererPerformanceTest {
                 break;
             }
         }
-        Assert.assertNotNull(defaultStyle);
+        assertNotNull(defaultStyle);
 
         for (StyleSetting set : defaultStyle.settings) {
             if (set instanceof BooleanStyleSetting) {
@@ -160,7 +161,7 @@ public class MapRendererPerformanceTest {
                 }
             }
         }
-        Assert.assertNotNull(hideIconsSetting);
+        assertNotNull(hideIconsSetting);
         hideIconsSetting.setValue(false);
         MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
 
@@ -208,7 +209,7 @@ public class MapRendererPerformanceTest {
             nc.zoomTo(ProjectionRegistry.getProjection().latlon2eastNorth(center), scale);
             if (checkScale) {
                 int lvl = Selector.GeneralSelector.scale2level(nc.getDist100Pixel());
-                Assert.assertEquals(17, lvl);
+                assertEquals(17, lvl);
             }
 
             if (bounds == null) {
@@ -359,7 +360,7 @@ public class MapRendererPerformanceTest {
         }
 
         public void dumpTimes() {
-            System.out.print(String.format("gen. %4d, sort %4d, draw %4d%n", getGenerateTime(), getSortTime(), getDrawTime()));
+            System.out.printf("gen. %4d, sort %4d, draw %4d%n", getGenerateTime(), getSortTime(), getDrawTime());
         }
 
         public void dumpElementCount() {

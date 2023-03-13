@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -53,10 +54,10 @@ class ConditionTest {
         assertTrue(op.applies(genEnv(node3)));
         assertFalse(op.applies(genEnv(node4)));
 
-        assertTrue(op instanceof SimpleKeyValueCondition);
+        TagCondition tc = assertInstanceOf(SimpleKeyValueCondition.class, op);
         assertEquals("[k1=v1]", op.toString());
-        assertEquals("k1", ((TagCondition) op).asTag(null).getKey());
-        assertEquals("v1", ((TagCondition) op).asTag(null).getValue());
+        assertEquals("k1", tc.asTag(null).getKey());
+        assertEquals("v1", tc.asTag(null).getValue());
     }
 
     /**

@@ -79,9 +79,8 @@ public class PluginServer {
             if (srcJar != null) {
                 try {
                     jarFile = new JarFile(srcJar, false);
-                    jarFile.getManifest().getMainAttributes().entrySet().forEach(
-                        entry -> attrs.put(entry.getKey().toString(), entry.getValue().toString())
-                    );
+                    jarFile.getManifest().getMainAttributes()
+                            .forEach((key, value) -> attrs.put(key.toString(), value.toString()));
                 } catch (IOException e) {
                     Logging.warn(
                         "Failed to open {0} as a jar file. Using empty initial manifest. Error was: {1}",

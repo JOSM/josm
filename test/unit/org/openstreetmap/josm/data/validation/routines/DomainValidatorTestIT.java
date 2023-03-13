@@ -34,11 +34,11 @@ import java.net.HttpURLConnection;
 import java.net.IDN;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -101,7 +101,7 @@ class DomainValidatorTestIT {
         // if the txt file contains entries not found in the html file, try again in a day or two
         download(htmlFile, "http://www.iana.org/domains/root/db", timestamp);
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(txtFile), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(txtFile.toPath()), StandardCharsets.UTF_8))) {
             String line;
             final String header;
             line = br.readLine(); // header
@@ -185,9 +185,7 @@ class DomainValidatorTestIT {
         if (header != null) {
             Logging.warn("        // Taken from " + header);
         }
-        Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, String> me = it.next();
+        for (Map.Entry<String, String> me : map.entrySet()) {
             Logging.warn("        \"" + me.getKey() + "\", // " + me.getValue());
         }
         Logging.warn(System.lineSeparator() + "Done");
@@ -201,7 +199,7 @@ class DomainValidatorTestIT {
         final Pattern type = Pattern.compile("\\s+<td>([^<]+)</td>");
         final Pattern comment = Pattern.compile("\\s+<td>([^<]+)</td>");
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8))) {
             String line;
             while ((line = br.readLine()) != null) {
                 Matcher m = domain.matcher(line);
@@ -300,7 +298,7 @@ class DomainValidatorTestIT {
         try {
             File rootCheck = new File(System.getProperty("java.io.tmpdir"), "tld_" + domain + ".html");
             download(rootCheck, tldurl, 0L);
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(rootCheck), StandardCharsets.UTF_8));
+            in = new BufferedReader(new InputStreamReader(Files.newInputStream(rootCheck.toPath()), StandardCharsets.UTF_8));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 if (inputLine.contains("This domain is not present in the root zone at this time.")) {

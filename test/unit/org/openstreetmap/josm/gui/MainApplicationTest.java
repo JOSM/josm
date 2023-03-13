@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -124,12 +125,7 @@ public class MainApplicationTest {
         PrintStream old = System.out;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             System.setOut(new PrintStream(baos));
-            Thread t = new Thread() {
-                @Override
-                public void run() {
-                    MainApplication.main(new String[] {arg});
-                }
-            };
+            Thread t = new Thread(() -> MainApplication.main(new String[] {arg}));
             t.start();
             t.join();
             System.out.flush();
@@ -228,7 +224,7 @@ public class MainApplicationTest {
                     .pollDelay(Durations.ONE_MILLISECOND)
                     .until(() -> !BugReportQueue.getInstance().exceptionHandlingInProgress());
             assertNotNull(exceptionAtomicReference.get());
-            assertTrue(exceptionAtomicReference.get() instanceof UnsupportedOperationException);
+            assertInstanceOf(UnsupportedOperationException.class, exceptionAtomicReference.get());
             // The LAF only resets on restart, so don't bother checking that it switched back in UIManager
             assertEquals(LafPreference.LAF.getDefaultValue(), LafPreference.LAF.get());
         } finally {
@@ -252,15 +248,14 @@ public class MainApplicationTest {
     @Test
     void testPostConstructorProcessCmdLineEmpty() {
         // Check the method accepts no arguments
-        MainApplication.postConstructorProcessCmdLine(new ProgramArguments(new String[0]));
+        MainApplication.postConstructorProcessCmdLine(new ProgramArguments());
     }
 
     private static void doTestPostConstructorProcessCmdLine(String download, String downloadGps, boolean gpx) {
         assertNull(MainApplication.getLayerManager().getEditDataSet());
-        for (Future<?> f : MainApplication.postConstructorProcessCmdLine(new ProgramArguments(new String[]{
-                "--download=" + download,
+        for (Future<?> f : MainApplication.postConstructorProcessCmdLine(new ProgramArguments("--download=" + download,
                 "--downloadgps=" + downloadGps,
-                "--selection=type: node"}))) {
+                "--selection=type: node"))) {
             try {
                 f.get();
             } catch (InterruptedException | ExecutionException e) {
@@ -313,10 +308,9 @@ public class MainApplicationTest {
 
     /**
      * Unit test of {@link MainApplication#postConstructorProcessCmdLine} - nominal case with file names.
-     * @throws MalformedURLException if an error occurs
      */
     @Test
-    void testPostConstructorProcessCmdLineFilename() throws MalformedURLException {
+    void testPostConstructorProcessCmdLineFilename() {
         doTestPostConstructorProcessCmdLine(
                 Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toFile().getAbsolutePath(),
                 Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toFile().getAbsolutePath(), false);

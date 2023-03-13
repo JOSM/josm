@@ -16,9 +16,9 @@
  */
 package org.openstreetmap.josm.data.validation.routines;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -171,12 +171,12 @@ class EmailValidatorTest {
             System.out.println("Cannot run Unicode IDN tests");
             return; // Cannot run the test
         }
-        assertTrue("xn--d1abbgf6aiiy.xn--p1ai should validate", validator.isValid("someone@xn--d1abbgf6aiiy.xn--p1ai"));
-        assertTrue("президент.рф should validate", validator.isValid("someone@президент.рф"));
-        assertTrue("www.b\u00fccher.ch should validate", validator.isValid("someone@www.b\u00fccher.ch"));
-        assertFalse("www.\uFFFD.ch FFFD should fail", validator.isValid("someone@www.\uFFFD.ch"));
-        assertTrue("www.b\u00fccher.ch should validate", validator.isValid("someone@www.b\u00fccher.ch"));
-        assertFalse("www.\uFFFD.ch FFFD should fail", validator.isValid("someone@www.\uFFFD.ch"));
+        assertTrue(validator.isValid("someone@xn--d1abbgf6aiiy.xn--p1ai"), "xn--d1abbgf6aiiy.xn--p1ai should validate");
+        assertTrue(validator.isValid("someone@президент.рф"), "президент.рф should validate");
+        assertTrue(validator.isValid("someone@www.b\u00fccher.ch"), "www.b\u00fccher.ch should validate");
+        assertFalse(validator.isValid("someone@www.\uFFFD.ch"), "www.\uFFFD.ch FFFD should fail");
+        assertTrue(validator.isValid("someone@www.b\u00fccher.ch"), "www.b\u00fccher.ch should validate");
+        assertFalse(validator.isValid("someone@www.\uFFFD.ch"), "www.\uFFFD.ch FFFD should fail");
     }
 
     /**
@@ -216,9 +216,9 @@ class EmailValidatorTest {
     @Test
     void testEmailWithControlChars() {
         for (char c = 0; c < 32; c++) {
-            assertFalse("Test control char " + ((int) c), validator.isValid("foo" + c + "bar@domain.com"));
+            assertFalse(validator.isValid("foo" + c + "bar@domain.com"), "Test control char " + ((int) c));
         }
-        assertFalse("Test control char 127", validator.isValid("foo" + ((char) 127) + "bar@domain.com"));
+        assertFalse(validator.isValid("foo" + ((char) 127) + "bar@domain.com"), "Test control char 127");
     }
 
     /**
@@ -233,23 +233,11 @@ class EmailValidatorTest {
        assertEquals(validator, noLocal);
 
        // Depends on the validator
-       assertTrue(
-             "@localhost.localdomain should be accepted but wasn't",
-             allowLocal.isValid("joe@localhost.localdomain")
-       );
-       assertTrue(
-             "@localhost should be accepted but wasn't",
-             allowLocal.isValid("joe@localhost")
-       );
+       assertTrue(allowLocal.isValid("joe@localhost.localdomain"), "@localhost.localdomain should be accepted but wasn't");
+       assertTrue(allowLocal.isValid("joe@localhost"), "@localhost should be accepted but wasn't");
 
-       assertFalse(
-             "@localhost.localdomain should be accepted but wasn't",
-             noLocal.isValid("joe@localhost.localdomain")
-       );
-       assertFalse(
-             "@localhost should be accepted but wasn't",
-             noLocal.isValid("joe@localhost")
-       );
+       assertFalse(noLocal.isValid("joe@localhost.localdomain"), "@localhost.localdomain should be accepted but wasn't");
+       assertFalse(noLocal.isValid("joe@localhost"), "@localhost should be accepted but wasn't");
     }
 
     /**
@@ -258,18 +246,9 @@ class EmailValidatorTest {
      */
     @Test
     void testEmailWithSlashes() {
-       assertTrue(
-             "/ and ! valid in username",
-             validator.isValid("joe!/blow@apache.org")
-       );
-       assertFalse(
-             "/ not valid in domain",
-             validator.isValid("joe@ap/ache.org")
-       );
-       assertFalse(
-             "! not valid in domain",
-             validator.isValid("joe@apac!he.org")
-       );
+       assertTrue(validator.isValid("joe!/blow@apache.org"), "/ and ! valid in username");
+       assertFalse(validator.isValid("joe@ap/ache.org"), "/ not valid in domain");
+       assertFalse(validator.isValid("joe@apac!he.org"), "! not valid in domain");
     }
 
     /**
@@ -495,9 +474,9 @@ class EmailValidatorTest {
         for (ResultPair resultPair : testEmailFromPerl) {
             String item = resultPair.item;
             if (resultPair.valid) {
-                assertTrue("Should be OK: " + item, validator.isValid(item));
+                assertTrue(validator.isValid(item), "Should be OK: " + item);
             } else {
-                assertFalse("Should fail: " + item, validator.isValid(item));
+                assertFalse(validator.isValid(item), "Should fail: " + item);
             }
         }
     }

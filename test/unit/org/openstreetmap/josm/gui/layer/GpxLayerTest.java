@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,10 +88,9 @@ public class GpxLayerTest {
 
     /**
      * Unit test of {@link GpxLayer#GpxLayer}.
-     * @throws Exception if any error occurs
      */
     @Test
-    void testGpxLayer() throws Exception {
+    void testGpxLayer() {
         GpxLayer layer = new GpxLayer(new GpxData(), "foo", false);
         GpxTrack trk = new GpxTrack(new ArrayList<IGpxTrackSegment>(), new HashMap<>());
         trk.getExtensions().add("gpxd", "color", "#FF0000");
@@ -210,7 +210,7 @@ public class GpxLayerTest {
     @Test
     void testGetTimespanForTrack() throws Exception {
         assertEquals("", GpxLayer.getTimespanForTrack(
-                new GpxTrack(new ArrayList<Collection<WayPoint>>(), new HashMap<String, Object>())));
+                new GpxTrack(new ArrayList<Collection<WayPoint>>(), new HashMap<>())));
 
         assertEquals("2016-01-03 11:59:58 \u2013 12:00:00 (2.0 s)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
 
@@ -237,7 +237,9 @@ public class GpxLayerTest {
      */
     @Test
     void testMergeFromIAE() {
-        assertThrows(IllegalArgumentException.class, () -> new GpxLayer(new GpxData()).mergeFrom(new OsmDataLayer(new DataSet(), "", null)));
+        final GpxLayer gpxLayer = new GpxLayer(new GpxData());
+        final OsmDataLayer osmDataLayer = new OsmDataLayer(new DataSet(), "testMergeFromIAE", null);
+        assertThrows(IllegalArgumentException.class, () -> gpxLayer.mergeFrom(osmDataLayer));
     }
 
     /**
@@ -296,15 +298,13 @@ public class GpxLayerTest {
         assertNull(layer.getChangesetSourceTag());
         assertNull(layer.getAssociatedFile());
         Object infoComponent = layer.getInfoComponent();
-        assertTrue(infoComponent instanceof JScrollPane);
-        Component view = ((JScrollPane) infoComponent).getViewport().getView();
-        assertTrue(view instanceof HtmlPanel);
-        String text = ((HtmlPanel) view).getEditorPane().getText().trim();
+        Component view = assertInstanceOf(JScrollPane.class, infoComponent).getViewport().getView();
+        String text = assertInstanceOf(HtmlPanel.class, view).getEditorPane().getText().trim();
         assertTrue(text.startsWith("<html>"), text);
         assertTrue(text.endsWith("</html>"), text);
         assertEquals("<html><br></html>", layer.getToolTipText());
-        assertDoesNotThrow(() -> layer.jumpToNextMarker());
-        assertDoesNotThrow(() -> layer.jumpToPreviousMarker());
+        assertDoesNotThrow(layer::jumpToNextMarker);
+        assertDoesNotThrow(layer::jumpToPreviousMarker);
         assertDoesNotThrow(() -> layer.visitBoundingBox(new BoundingXYVisitor()));
         assertDoesNotThrow(() -> layer.filterTracksByDate(null, null, false));
         assertDoesNotThrow(() -> layer.projectionChanged(new CustomProjection(), new CustomProjection()));

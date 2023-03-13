@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
@@ -132,7 +133,7 @@ class ProjectionRefTest {
                 if (line.startsWith("<")) {
                     Matcher m = projPattern.matcher(line);
                     if (!m.matches()) {
-                        Assert.fail("unable to parse line: " + line);
+                        fail("unable to parse line: " + line);
                     }
                     String code = m.group(1);
                     String def = m.group(2).trim();
@@ -382,13 +383,13 @@ class ProjectionRefTest {
         Collection<RefEntry> refs = readData();
         refs.stream().map(ref -> ref.code).forEach(allCodes::remove);
         if (!allCodes.isEmpty()) {
-            Assert.fail("no reference data for following projections: "+allCodes);
+            fail("no reference data for following projections: "+allCodes);
         }
 
         refs.parallelStream().forEach(ref -> {
             String def0 = Projections.getInit(ref.code);
             if (def0 == null) {
-                Assert.fail("unknown code: "+ref.code);
+                fail("unknown code: "+ref.code);
             }
             if (!ref.def.equals(def0)) {
                 failures.add("definitions for ".concat(ref.code).concat(" do not match\n"));
@@ -410,7 +411,7 @@ class ProjectionRefTest {
                         String errorEN = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
                                 "        expected: eastnorth(%s,%s),%n" +
                                 "        but got:  eastnorth(%s,%s)!%n",
-                                proj.toString(), proj.toCode(), ll.lat(), ll.lon(), enRef.east(), enRef.north(), en.east(), en.north());
+                                proj, proj.toCode(), ll.lat(), ll.lon(), enRef.east(), enRef.north(), en.east(), en.north());
                         failures.add(errorEN);
                         failingProjs.computeIfAbsent(proj.proj.getProj4Id(), x -> new TreeSet<>()).add(ref.code);
                     }
@@ -418,7 +419,7 @@ class ProjectionRefTest {
             }
         });
         if (!failures.isEmpty()) {
-            System.err.println(failures.toString());
+            System.err.println(failures);
             throw new AssertionError("Failing:\n" +
                     failingProjs.keySet().size() + " projections: " + failingProjs.keySet() + "\n" +
                     failingProjs.values().stream().mapToInt(Set::size).sum() + " definitions: " + failingProjs);

@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation.sort;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -11,7 +15,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -101,7 +104,7 @@ class WayConnectionTypeCalculatorTest {
     @Test
     void testEmpty() {
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(new ArrayList<>()));
-        Assert.assertEquals("[]", actual);
+        assertEquals("[]", actual);
     }
 
     // This cluster of tests checks the rendering before and after
@@ -112,28 +115,28 @@ class WayConnectionTypeCalculatorTest {
     void testGeneric() {
         Relation relation = getRelation("generic");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
-        Assert.assertEquals("[NONE, NONE, FORWARD, FORWARD, NONE, NONE, NONE, I, I]", actual);
+        assertEquals("[NONE, NONE, FORWARD, FORWARD, NONE, NONE, NONE, I, I]", actual);
         actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
-        Assert.assertEquals("[FORWARD, FORWARD, FORWARD, FORWARD, BACKWARD, BACKWARD, NONE, I, I]", actual);
+        assertEquals("[FORWARD, FORWARD, FORWARD, FORWARD, BACKWARD, BACKWARD, NONE, I, I]", actual);
     }
 
     @Test
     void testAssociatedStreet() {
         Relation relation = getRelation("associatedStreet");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
-        Assert.assertEquals("[NONE, I, I, I, NONE, I]", actual);
+        assertEquals("[NONE, I, I, I, NONE, I]", actual);
         actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
-        Assert.assertEquals("[FORWARD, FORWARD, I, I, I, I]", actual);
+        assertEquals("[FORWARD, FORWARD, I, I, I, I]", actual);
     }
 
     @Test
     void testLoop() {
         Relation relation = getRelation("loop");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
-        Assert.assertEquals("[FPH FORWARD, FP FORWARD, NONE, FPH FORWARD, NONE, FPH FORWARD, NONE]", actual);
+        assertEquals("[FPH FORWARD, FP FORWARD, NONE, FPH FORWARD, NONE, FPH FORWARD, NONE]", actual);
         //TODO Sorting doesn't work well in this case
         actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
-        Assert.assertEquals("[BACKWARD, BACKWARD, BACKWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD]", actual);
+        assertEquals("[BACKWARD, BACKWARD, BACKWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD]", actual);
     }
 
     // The following cluster of tests checks various configurations
@@ -146,7 +149,7 @@ class WayConnectionTypeCalculatorTest {
         Relation relation = getRelation("three-loops-ends-loop");
         // Check the first way before sorting, otherwise the sorter
         // might pick a different loop starting point than expected below
-        Assert.assertEquals("t5w1", relation.getMembers().get(0).getMember().get("name"));
+        assertEquals("t5w1", relation.getMembers().get(0).getMember().get("name"));
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         String expected = "[" +
             "L FORWARD, LFPH FORWARD, LFP FORWARD, LFP FORWARD, LBP BACKWARD, LBP BACKWARD, LBPT BACKWARD, " +
@@ -154,7 +157,7 @@ class WayConnectionTypeCalculatorTest {
             "LFPH FORWARD, LFP FORWARD, LFP FORWARD, LBP BACKWARD, LBP BACKWARD, LBPT BACKWARD, " +
             "L FORWARD, L FORWARD" +
         "]";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -162,7 +165,7 @@ class WayConnectionTypeCalculatorTest {
         Relation relation = getRelation("three-loops-ends-way");
         // Check the first way before sorting, otherwise the sorter
         // might sort in reverse compared to what is expected below
-        Assert.assertEquals("t5w1", relation.getMembers().get(0).getMember().get("name"));
+        assertEquals("t5w1", relation.getMembers().get(0).getMember().get("name"));
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         String expected = "[" +
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
@@ -170,7 +173,7 @@ class WayConnectionTypeCalculatorTest {
             "FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
             "FORWARD" +
         "]";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -182,7 +185,7 @@ class WayConnectionTypeCalculatorTest {
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
             "FPH FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, BPT BACKWARD" +
         "]";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -194,7 +197,7 @@ class WayConnectionTypeCalculatorTest {
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
             "FPH FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD" +
         "]";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -207,7 +210,7 @@ class WayConnectionTypeCalculatorTest {
             "FP FORWARD, FP FORWARD, BP BACKWARD, BPT BACKWARD, " +
             "FPH FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD" +
         "]";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -220,7 +223,7 @@ class WayConnectionTypeCalculatorTest {
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
             "BACKWARD, FPH FORWARD, FP FORWARD, FP FORWARD" +
         "]";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -228,12 +231,12 @@ class WayConnectionTypeCalculatorTest {
         Relation relation = getRelation("parallel-oneway");
         // TODO: This is not always sorted properly, only when the right
         // way is already at the top, so check that
-        Assert.assertEquals("t6w1a", relation.getMembers().get(0).getMember().get("name"));
+        assertEquals("t6w1a", relation.getMembers().get(0).getMember().get("name"));
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         String expected = "[" +
             "FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BP BACKWARD" +
         "]";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     private void reverseWay(Way way) {
@@ -255,18 +258,18 @@ class WayConnectionTypeCalculatorTest {
         // Check with only one wrong oneway
         List<WayConnectionType> returned = wayConnectionTypeCalculator.updateLinks(relation.getMembers());
         for (int i = 0; i < 4; i++) {
-            Assert.assertTrue(returned.get(i).onewayFollowsPrevious);
-            Assert.assertTrue(returned.get(i).onewayFollowsNext);
+            assertTrue(returned.get(i).onewayFollowsPrevious);
+            assertTrue(returned.get(i).onewayFollowsNext);
         }
 
-        Assert.assertTrue(returned.get(4).onewayFollowsPrevious);
-        Assert.assertFalse(returned.get(4).onewayFollowsNext);
+        assertTrue(returned.get(4).onewayFollowsPrevious);
+        assertFalse(returned.get(4).onewayFollowsNext);
 
-        Assert.assertFalse(returned.get(5).onewayFollowsPrevious);
-        Assert.assertFalse(returned.get(5).onewayFollowsNext);
+        assertFalse(returned.get(5).onewayFollowsPrevious);
+        assertFalse(returned.get(5).onewayFollowsNext);
 
-        Assert.assertFalse(returned.get(6).onewayFollowsPrevious);
-        Assert.assertTrue(returned.get(6).onewayFollowsNext);
+        assertFalse(returned.get(6).onewayFollowsPrevious);
+        assertTrue(returned.get(6).onewayFollowsNext);
 
         // Reverse the last oneway
         OsmPrimitive way7 = relation.getMemberPrimitivesList().get(6);
@@ -275,18 +278,18 @@ class WayConnectionTypeCalculatorTest {
             reverseWay(way);
             returned = wayConnectionTypeCalculator.updateLinks(relation.getMembers());
             for (int i = 0; i < 4; i++) {
-                Assert.assertTrue(returned.get(i).onewayFollowsPrevious);
-                Assert.assertTrue(returned.get(i).onewayFollowsNext);
+                assertTrue(returned.get(i).onewayFollowsPrevious);
+                assertTrue(returned.get(i).onewayFollowsNext);
             }
 
-            Assert.assertTrue(returned.get(4).onewayFollowsPrevious);
-            Assert.assertFalse(returned.get(4).onewayFollowsNext);
+            assertTrue(returned.get(4).onewayFollowsPrevious);
+            assertFalse(returned.get(4).onewayFollowsNext);
 
-            Assert.assertFalse(returned.get(5).onewayFollowsPrevious);
-            Assert.assertTrue(returned.get(5).onewayFollowsNext);
+            assertFalse(returned.get(5).onewayFollowsPrevious);
+            assertTrue(returned.get(5).onewayFollowsNext);
 
-            Assert.assertTrue(returned.get(6).onewayFollowsPrevious);
-            Assert.assertTrue(returned.get(6).onewayFollowsNext);
+            assertTrue(returned.get(6).onewayFollowsPrevious);
+            assertTrue(returned.get(6).onewayFollowsNext);
             reverseWay(way);
         }
 
@@ -297,8 +300,8 @@ class WayConnectionTypeCalculatorTest {
             reverseWay(way);
             returned = wayConnectionTypeCalculator.updateLinks(relation.getMembers());
             for (int i = 0; i < 7; i++) {
-                Assert.assertTrue(returned.get(i).onewayFollowsPrevious);
-                Assert.assertTrue(returned.get(i).onewayFollowsNext);
+                assertTrue(returned.get(i).onewayFollowsPrevious);
+                assertTrue(returned.get(i).onewayFollowsNext);
             }
         }
 
@@ -308,8 +311,8 @@ class WayConnectionTypeCalculatorTest {
         }
         returned = wayConnectionTypeCalculator.updateLinks(relation.getMembers());
         for (int i = 0; i < 7; i++) {
-            Assert.assertTrue(returned.get(i).onewayFollowsPrevious);
-            Assert.assertTrue(returned.get(i).onewayFollowsNext);
+            assertTrue(returned.get(i).onewayFollowsPrevious);
+            assertTrue(returned.get(i).onewayFollowsNext);
         }
     }
 
@@ -325,16 +328,16 @@ class WayConnectionTypeCalculatorTest {
         osm.remove("oneway");
         List<WayConnectionType> returned = wayConnectionTypeCalculator.updateLinks(relation.getMembers());
         for (WayConnectionType type : returned) {
-            Assert.assertTrue(type.onewayFollowsNext);
-            Assert.assertTrue(type.onewayFollowsPrevious);
+            assertTrue(type.onewayFollowsNext);
+            assertTrue(type.onewayFollowsPrevious);
         }
 
         // Check with a oneway=-1 tag without reversing the way
         osm.put("oneway", "-1");
         returned = wayConnectionTypeCalculator.updateLinks(relation.getMembers());
         for (WayConnectionType type : returned) {
-            Assert.assertTrue(type.onewayFollowsNext);
-            Assert.assertTrue(type.onewayFollowsPrevious);
+            assertTrue(type.onewayFollowsNext);
+            assertTrue(type.onewayFollowsPrevious);
         }
 
         // Check with oneways that converge onto a two-way
@@ -345,10 +348,10 @@ class WayConnectionTypeCalculatorTest {
         returned = wayConnectionTypeCalculator.updateLinks(relation.getMembers());
         for (int i = 0; i < returned.size() - 1; i++) {
             WayConnectionType type = returned.get(i);
-            Assert.assertTrue(type.onewayFollowsNext);
-            Assert.assertTrue(type.onewayFollowsPrevious);
+            assertTrue(type.onewayFollowsNext);
+            assertTrue(type.onewayFollowsPrevious);
         }
-        Assert.assertTrue(returned.get(6).onewayFollowsNext);
-        Assert.assertFalse(returned.get(6).onewayFollowsPrevious);
+        assertTrue(returned.get(6).onewayFollowsNext);
+        assertFalse(returned.get(6).onewayFollowsPrevious);
     }
 }

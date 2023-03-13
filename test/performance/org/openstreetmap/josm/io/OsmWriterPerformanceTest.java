@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * For this, we use the neubrandenburg-file, which is a good real world example of an OSM file.
  */
-@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
 class OsmWriterPerformanceTest {
     private static final int TIMES = 4;
     private DataSet neubrandenburgDataSet;

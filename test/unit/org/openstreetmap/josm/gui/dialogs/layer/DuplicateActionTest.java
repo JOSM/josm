@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.layer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -36,7 +36,7 @@ class DuplicateActionTest {
                 new DuplicateAction(layer, null).actionPerformed(null);
                 editLayer = MainApplication.getLayerManager().getEditLayer();
                 assertNotNull(editLayer);
-                assertFalse(layer.equals(editLayer));
+                assertNotEquals(layer, editLayer);
                 assertEquals(layer.data.getNodes().size(), editLayer.data.getNodes().size());
                 assertEquals(layer.data.getWays().size(), editLayer.data.getWays().size());
                 assertEquals(layer.data.getRelations().size(), editLayer.data.getRelations().size());

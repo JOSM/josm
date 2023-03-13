@@ -665,8 +665,8 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
         MainApplication.getLayerManager().resetState();
         try {
             eventManager.resetState();
-        } catch (IllegalArgumentException ignored) {
-            Logging.trace(ignored);
+        } catch (IllegalArgumentException e) {
+            Logging.trace(e);
         }
     }
 

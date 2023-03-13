@@ -64,7 +64,7 @@ public class MemoryManagerTest {
         MemoryManager manager = MemoryManager.getInstance();
         MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, Object::new);
         testMemory.free();
-        assertThrows(IllegalStateException.class, () -> testMemory.get());
+        assertThrows(IllegalStateException.class, testMemory::get);
     }
 
     /**
@@ -76,15 +76,14 @@ public class MemoryManagerTest {
         MemoryManager manager = MemoryManager.getInstance();
         MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, Object::new);
         testMemory.free();
-        assertThrows(IllegalStateException.class, () -> testMemory.free());
+        assertThrows(IllegalStateException.class, testMemory::free);
     }
 
     /**
      * Test that too big allocations fail
-     * @throws NotEnoughMemoryException always
      */
     @Test
-    void testAllocationFails() throws NotEnoughMemoryException {
+    void testAllocationFails() {
         MemoryManager manager = MemoryManager.getInstance();
         long available = manager.getAvailableMemory();
 
@@ -96,10 +95,9 @@ public class MemoryManagerTest {
 
     /**
      * Test that allocations with null object fail
-     * @throws NotEnoughMemoryException never
      */
     @Test
-    void testSupplierFails() throws NotEnoughMemoryException {
+    void testSupplierFails() {
         MemoryManager manager = MemoryManager.getInstance();
 
         assertThrows(IllegalArgumentException.class, () -> manager.allocateMemory("test", 1, () -> null));
@@ -118,10 +116,9 @@ public class MemoryManagerTest {
 
     /**
      * Test {@link MemoryManager#isAvailable(long)} for negative number
-     * @throws NotEnoughMemoryException never
      */
     @Test
-    void testIsAvailableFails() throws NotEnoughMemoryException {
+    void testIsAvailableFails() {
         MemoryManager manager = MemoryManager.getInstance();
 
         assertThrows(IllegalArgumentException.class, () -> manager.isAvailable(-10));
@@ -153,7 +150,7 @@ public class MemoryManagerTest {
         MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, Object::new);
 
         assertFalse(manager.resetState().isEmpty());
-        assertThrows(IllegalStateException.class, () -> testMemory.get());
+        assertThrows(IllegalStateException.class, testMemory::get);
     }
 
     /**

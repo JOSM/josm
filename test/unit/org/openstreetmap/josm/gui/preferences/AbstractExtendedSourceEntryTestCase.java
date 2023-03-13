@@ -22,7 +22,7 @@ public abstract class AbstractExtendedSourceEntryTestCase {
 
     protected static final List<String> errorsToIgnore = new ArrayList<>();
 
-    protected static List<Object[]> getTestParameters(Collection<ExtendedSourceEntry> entries) throws Exception {
+    protected static List<Object[]> getTestParameters(Collection<ExtendedSourceEntry> entries) {
         return entries.stream().map(x -> new Object[] {x.getDisplayName(), cleanUrl(x.url), x}).collect(Collectors.toList());
     }
 
@@ -44,7 +44,7 @@ public abstract class AbstractExtendedSourceEntryTestCase {
 
     protected final void handleException(ExtendedSourceEntry source, Throwable e, Set<String> errors, List<String> ignoredErrors) {
         e.printStackTrace();
-        String s = source.url + " => " + e.toString();
+        String s = source.url + " => " + e;
         if (isIgnoredSubstring(source, s)) {
             ignoredErrors.add(s);
         } else {

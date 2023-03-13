@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.TestUtils.getPrivateField;
 
 import java.io.InputStream;
@@ -10,11 +13,11 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -62,19 +65,17 @@ class QuadBucketsTest {
         for (OsmPrimitive o: allRelations) {
             ds.removePrimitive(o);
         }
-        Assert.assertTrue(nodes.isEmpty());
-        Assert.assertTrue(ways.isEmpty());
-        Assert.assertTrue(relations.isEmpty());
+        assertTrue(nodes.isEmpty());
+        assertTrue(ways.isEmpty());
+        assertTrue(relations.isEmpty());
     }
 
     private void checkIterator(Iterable<? extends OsmPrimitive> col, int expectedCount) {
         int count = 0;
-        Iterator<? extends OsmPrimitive> it = col.iterator();
-        while (it.hasNext()) {
+        for (OsmPrimitive ignored : col) {
             count++;
-            it.next();
         }
-        Assert.assertEquals(expectedCount, count);
+        assertEquals(expectedCount, count);
     }
 
     /**
@@ -121,72 +122,72 @@ class QuadBucketsTest {
         Node n1 = new Node(1);
         Node n2 = new Node(2); n2.setCoor(new LatLon(10, 20));
         Node n3 = new Node(3); n2.setCoor(new LatLon(20, 30));
-        w2.setNodes(Arrays.asList(n1));
+        w2.setNodes(Collections.singletonList(n1));
         w3.setNodes(Arrays.asList(n1, n2, n3));
 
         qbNodes.add(n1);
         qbNodes.add(n2);
-        Assert.assertEquals(2, qbNodes.size());
-        Assert.assertTrue(qbNodes.contains(n1));
-        Assert.assertTrue(qbNodes.contains(n2));
-        Assert.assertFalse(qbNodes.contains(n3));
+        assertEquals(2, qbNodes.size());
+        assertTrue(qbNodes.contains(n1));
+        assertTrue(qbNodes.contains(n2));
+        assertFalse(qbNodes.contains(n3));
         qbNodes.remove(n1);
-        Assert.assertEquals(1, qbNodes.size());
-        Assert.assertFalse(qbNodes.contains(n1));
-        Assert.assertTrue(qbNodes.contains(n2));
+        assertEquals(1, qbNodes.size());
+        assertFalse(qbNodes.contains(n1));
+        assertTrue(qbNodes.contains(n2));
         qbNodes.remove(n2);
-        Assert.assertEquals(0, qbNodes.size());
-        Assert.assertFalse(qbNodes.contains(n1));
-        Assert.assertFalse(qbNodes.contains(n2));
+        assertEquals(0, qbNodes.size());
+        assertFalse(qbNodes.contains(n1));
+        assertFalse(qbNodes.contains(n2));
 
         qbNodes.addAll(Arrays.asList(n1, n2, n3));
         qbNodes.removeAll(Arrays.asList(n1, n3));
-        Assert.assertEquals(1, qbNodes.size());
-        Assert.assertTrue(qbNodes.contains(n2));
+        assertEquals(1, qbNodes.size());
+        assertTrue(qbNodes.contains(n2));
 
         qbWays.add(w1);
         qbWays.add(w2);
         qbWays.add(w3);
-        Assert.assertEquals(3, qbWays.size());
-        Assert.assertTrue(qbWays.contains(w1));
-        Assert.assertTrue(qbWays.contains(w2));
-        Assert.assertTrue(qbWays.contains(w3));
+        assertEquals(3, qbWays.size());
+        assertTrue(qbWays.contains(w1));
+        assertTrue(qbWays.contains(w2));
+        assertTrue(qbWays.contains(w3));
         qbWays.remove(w1);
-        Assert.assertEquals(2, qbWays.size());
-        Assert.assertFalse(qbWays.contains(w1));
-        Assert.assertTrue(qbWays.contains(w2));
-        Assert.assertTrue(qbWays.contains(w3));
+        assertEquals(2, qbWays.size());
+        assertFalse(qbWays.contains(w1));
+        assertTrue(qbWays.contains(w2));
+        assertTrue(qbWays.contains(w3));
         qbWays.remove(w2);
-        Assert.assertEquals(1, qbWays.size());
-        Assert.assertFalse(qbWays.contains(w1));
-        Assert.assertFalse(qbWays.contains(w2));
-        Assert.assertTrue(qbWays.contains(w3));
+        assertEquals(1, qbWays.size());
+        assertFalse(qbWays.contains(w1));
+        assertFalse(qbWays.contains(w2));
+        assertTrue(qbWays.contains(w3));
         qbWays.remove(w3);
-        Assert.assertEquals(0, qbWays.size());
-        Assert.assertFalse(qbWays.contains(w1));
-        Assert.assertFalse(qbWays.contains(w2));
-        Assert.assertFalse(qbWays.contains(w3));
+        assertEquals(0, qbWays.size());
+        assertFalse(qbWays.contains(w1));
+        assertFalse(qbWays.contains(w2));
+        assertFalse(qbWays.contains(w3));
 
         qbWays.clear();
-        Assert.assertEquals(0, qbWays.size());
+        assertEquals(0, qbWays.size());
         List<Way> allWays = new ArrayList<>(Arrays.asList(w1, w2, w3));
         qbWays.addAll(allWays);
-        Assert.assertEquals(3, qbWays.size());
+        assertEquals(3, qbWays.size());
         int count = 0;
         for (Way w : qbWays) {
-            Assert.assertTrue(allWays.contains(w));
+            assertTrue(allWays.contains(w));
             count++;
         }
-        Assert.assertEquals(3, count);
+        assertEquals(3, count);
         // test remove with iterator
         Iterator<Way> iter = qbWays.iterator();
         while (iter.hasNext()) {
             iter.next();
             iter.remove();
             count--;
-            Assert.assertEquals(count, qbWays.size());
+            assertEquals(count, qbWays.size());
         }
-        Assert.assertEquals(0, qbWays.size());
+        assertEquals(0, qbWays.size());
 
     }
 
@@ -220,8 +221,8 @@ class QuadBucketsTest {
             w.setNodes(nodes);
             ds.addPrimitive(w);
         }
-        Assert.assertEquals(NUM_COMPLETE_WAYS, ds.getWays().size());
-        Assert.assertEquals(NUM_COMPLETE_WAYS * NUM_NODES_PER_WAY, ds.getNodes().size());
+        assertEquals(NUM_COMPLETE_WAYS, ds.getWays().size());
+        assertEquals(NUM_COMPLETE_WAYS * NUM_NODES_PER_WAY, ds.getNodes().size());
 
         // add some incomplete nodes
         for (int i = 0; i < NUM_INCOMPLETE_NODES; i++) {
@@ -229,7 +230,7 @@ class QuadBucketsTest {
             n.setIncomplete(true);
             ds.addPrimitive(n);
         }
-        Assert.assertEquals(NUM_COMPLETE_WAYS * NUM_NODES_PER_WAY + NUM_INCOMPLETE_NODES, ds.getNodes().size());
+        assertEquals(NUM_COMPLETE_WAYS * NUM_NODES_PER_WAY + NUM_INCOMPLETE_NODES, ds.getNodes().size());
         // add some incomplete ways
         List<Way> incompleteWays = new ArrayList<>();
         for (int i = 0; i < NUM_INCOMPLETE_WAYS; i++) {
@@ -238,27 +239,27 @@ class QuadBucketsTest {
             w.setIncomplete(true);
             ds.addPrimitive(w);
         }
-        Assert.assertEquals(NUM_COMPLETE_WAYS + NUM_INCOMPLETE_WAYS, ds.getWays().size());
+        assertEquals(NUM_COMPLETE_WAYS + NUM_INCOMPLETE_WAYS, ds.getWays().size());
 
         BBox planet = new BBox(-180, -90, 180, 90);
         // incomplete ways should not be found with search
-        Assert.assertEquals(NUM_COMPLETE_WAYS, ds.searchWays(planet).size());
+        assertEquals(NUM_COMPLETE_WAYS, ds.searchWays(planet).size());
         // incomplete ways are only retrieved via iterator or object reference
         for (Way w : incompleteWays) {
-            Assert.assertTrue(ds.getWays().contains(w));
+            assertTrue(ds.getWays().contains(w));
         }
 
         QuadBuckets<Way> qb = new QuadBuckets<>();
         qb.addAll(ds.getWays());
         int count = qb.size();
-        Assert.assertEquals(count, ds.getWays().size());
+        assertEquals(count, ds.getWays().size());
         Iterator<Way> iter = qb.iterator();
         while (iter.hasNext()) {
             iter.next();
             iter.remove();
             count--;
-            Assert.assertEquals(count, qb.size());
+            assertEquals(count, qb.size());
         }
-        Assert.assertEquals(0, qb.size());
+        assertEquals(0, qb.size());
     }
 }

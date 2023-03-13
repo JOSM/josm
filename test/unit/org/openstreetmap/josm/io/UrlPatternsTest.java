@@ -36,6 +36,6 @@ class UrlPatternsTest {
     @Test
     void testUrlPatterns() {
         assertTrue(patterns.stream().flatMap(c -> Arrays.stream(c.getEnumConstants())).map(t -> ((UrlPattern) t).pattern())
-                .map(Pattern::compile).count() > 0);
+                .map(Pattern::compile).findAny().isPresent());
     }
 }

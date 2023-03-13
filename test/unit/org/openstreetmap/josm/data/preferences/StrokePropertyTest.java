@@ -3,13 +3,13 @@ package org.openstreetmap.josm.data.preferences;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.awt.BasicStroke;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * Test {@link StrokeProperty}
@@ -29,13 +29,13 @@ class StrokePropertyTest {
         BasicStroke bs = property.get();
         assertWide(bs);
         assertEquals(11, bs.getLineWidth(), 1e-10);
-        assertEquals(null, bs.getDashArray());
+        assertNull(bs.getDashArray());
 
         Config.getPref().put("x", ".5");
         bs = property.get();
         assertThin(bs);
         assertEquals(.5, bs.getLineWidth(), 1e-10);
-        assertEquals(null, bs.getDashArray());
+        assertNull(bs.getDashArray());
 
         Config.getPref().put("x", "2 1");
         bs = property.get();
@@ -53,14 +53,14 @@ class StrokePropertyTest {
         bs = property.get();
         assertThin(bs);
         assertEquals(1, bs.getLineWidth(), 1e-10);
-        assertEquals(null, bs.getDashArray());
+        assertNull(bs.getDashArray());
 
         // ignore dashes
         Config.getPref().put("x", "11 0 0 0.0001");
         bs = property.get();
         assertWide(bs);
         assertEquals(11, bs.getLineWidth(), 1e-10);
-        assertEquals(null, bs.getDashArray());
+        assertNull(bs.getDashArray());
     }
 
     /**
@@ -73,7 +73,7 @@ class StrokePropertyTest {
 
         assertWide(bs);
         assertEquals(12, bs.getLineWidth(), 1e-10);
-        assertEquals(null, bs.getDashArray());
+        assertNull(bs.getDashArray());
 
         property.put(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[] {0.1f, 1, 10}, 0));
         bs = property.get();

@@ -1000,7 +1000,7 @@ class DataSetMergerTest {
 
         //-- merge it
         DataSetMerger visitor = new DataSetMerger(my, their);
-        assertThrows(DataIntegrityProblemException.class, () -> visitor.merge());
+        assertThrows(DataIntegrityProblemException.class, visitor::merge);
     }
 
     /**

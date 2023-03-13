@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 
@@ -45,7 +45,7 @@ class MapCSSWithExtendedTextDirectivesTest {
 
         TextLabel te = TextLabel.create(env, Color.WHITE, false /* no default annotate */);
         assertNotNull(te.labelCompositionStrategy);
-        assertTrue(te.labelCompositionStrategy instanceof DeriveLabelFromNameTagsCompositionStrategy);
+        assertInstanceOf(DeriveLabelFromNameTagsCompositionStrategy.class, te.labelCompositionStrategy);
     }
 
     /**
@@ -62,7 +62,7 @@ class MapCSSWithExtendedTextDirectivesTest {
 
         TextLabel te = TextLabel.create(env, Color.WHITE, false /* no default annotate */);
         assertNotNull(te.labelCompositionStrategy);
-        assertTrue(te.labelCompositionStrategy instanceof TagLookupCompositionStrategy);
+        assertInstanceOf(TagLookupCompositionStrategy.class, te.labelCompositionStrategy);
         assertEquals("my_name", ((TagLookupCompositionStrategy) te.labelCompositionStrategy).getDefaultLabelTag());
     }
 
