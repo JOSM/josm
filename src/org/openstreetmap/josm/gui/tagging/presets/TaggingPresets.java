@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,12 +88,14 @@ public final class TaggingPresets {
         }
 
         readFromPreferences();
+        final List<TaggingPreset> activeLayerChangeListeners = new ArrayList<>(taggingPresets.size());
         for (TaggingPreset tp: taggingPresets) {
             if (!(tp instanceof TaggingPresetSeparator)) {
                 MainApplication.getToolbar().register(tp);
-                MainApplication.getLayerManager().addActiveLayerChangeListener(tp);
+                activeLayerChangeListeners.add(tp);
             }
         }
+        MainApplication.getLayerManager().addActiveLayerChangeListeners(activeLayerChangeListeners);
         if (taggingPresets.isEmpty()) {
             presetsMenu.setVisible(false);
         } else {

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -60,6 +61,8 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     private static final int CLASSIFICATION_NAME_MATCH = 300;
     private static final int CLASSIFICATION_GROUP_MATCH = 200;
     private static final int CLASSIFICATION_TAGS_MATCH = 100;
+
+    private static final Pattern PATTERN_PUNCTUATION = Pattern.compile("\\p{Punct}", Pattern.UNICODE_CHARACTER_CLASS);
 
     private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
     private static final BooleanProperty ONLY_APPLICABLE = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
@@ -135,7 +138,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         }
 
         private static String simplifyString(String s) {
-            return Utils.deAccent(s).toLowerCase(Locale.ENGLISH).replaceAll("\\p{Punct}", "");
+            return PATTERN_PUNCTUATION.matcher(Utils.deAccent(s).toLowerCase(Locale.ENGLISH)).replaceAll("");
         }
 
         private static int isMatching(Collection<String> values, String... searchString) {
