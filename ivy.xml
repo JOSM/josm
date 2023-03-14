@@ -20,6 +20,14 @@
     </configurations>
     <dependencies>
         <!-- api->default -->
+        <dependency conf="api->default" org="com.twelvemonkeys.common" name="common-lang" rev="3.9.4"/>
+        <dependency conf="api->default" org="com.twelvemonkeys.common" name="common-io" rev="3.9.4"/>
+        <dependency conf="api->default" org="com.twelvemonkeys.common" name="common-image" rev="3.9.4"/>
+        <dependency conf="api->default" org="com.twelvemonkeys.imageio" name="imageio-core" rev="3.9.4"/>
+        <dependency conf="api->default" org="com.twelvemonkeys.imageio" name="imageio-metadata" rev="3.9.4"/>
+        <dependency conf="api->default" org="com.twelvemonkeys.imageio" name="imageio-jpeg" rev="3.9.4"/>
+        <dependency conf="api->default" org="com.twelvemonkeys.imageio" name="imageio-tiff" rev="3.9.4"/>
+        <dependency conf="api->default" org="com.twelvemonkeys.imageio" name="imageio-webp" rev="3.9.4"/>
         <dependency conf="api->default" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.16"/>
         <dependency conf="api->default" org="javax.json" name="javax.json-api" rev="1.1.4"/>
         <dependency conf="api->default" org="org.glassfish" name="javax.json" rev="1.1.4"/>
