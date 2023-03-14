@@ -88,6 +88,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompEvent;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompListener;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JosmListCellRenderer;
@@ -537,7 +538,7 @@ public class TagEditHelper {
 
             List<AutoCompletionItem> valueList = autocomplete.getTagValues(getAutocompletionKeys(key), usedValuesAwareComparator);
 
-            final String selection = m.size() != 1 ? tr("<different>") : m.entrySet().iterator().next().getKey();
+            final String selection = m.size() != 1 ? KeyedItem.DIFFERENT_I18N : m.entrySet().iterator().next().getKey();
 
             values = new AutoCompComboBox<>();
             values.getModel().setComparator(Comparator.naturalOrder());
@@ -585,7 +586,7 @@ public class TagEditHelper {
                 newkey = key;
                 value = null; // delete the key instead
             }
-            if (key.equals(newkey) && tr("<different>").equals(value))
+            if (key.equals(newkey) && KeyedItem.DIFFERENT_I18N.equals(value))
                 return;
             if (key.equals(newkey) || value == null) {
                 UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel, newkey, value));
@@ -605,7 +606,7 @@ public class TagEditHelper {
                 }
                 Collection<Command> commands = new ArrayList<>();
                 commands.add(new ChangePropertyCommand(sel, key, null));
-                if (value.equals(tr("<different>"))) {
+                if (value.equals(KeyedItem.DIFFERENT_I18N)) {
                     String newKey = newkey;
                     sel.stream()
                             .filter(osm -> osm.hasKey(key))

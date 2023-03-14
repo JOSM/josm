@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -41,7 +42,7 @@ final class RelationRoleEditor {
                 formatter.formatAsHtmlUnorderedList(Utils.transform(members, RelationMember::getMember), 5),
                 formatter.formatAsHtmlUnorderedList(relation)),
                 oldRole);
-        if (newRole == null || oldRole.equals(newRole) || tr("<different>").equals(newRole)) {
+        if (newRole == null || oldRole.equals(newRole) || KeyedItem.DIFFERENT_I18N.equals(newRole)) {
             return;
         }
         final List<RelationMember> newMembers = relation.getMembers();

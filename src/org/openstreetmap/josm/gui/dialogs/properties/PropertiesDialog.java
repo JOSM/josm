@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.properties;
 
+import static org.openstreetmap.josm.actions.search.SearchAction.searchStateless;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -108,6 +109,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetListener;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.util.AbstractTag2LinkPopupListener;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
@@ -354,8 +356,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         tagRowSorter.setComparator(0, AlphanumComparator.getInstance());
         tagRowSorter.setComparator(1, (o1, o2) -> {
             if (o1 instanceof Map && o2 instanceof Map) {
-                final String v1 = ((Map) o1).size() == 1 ? (String) ((Map) o1).keySet().iterator().next() : tr("<different>");
-                final String v2 = ((Map) o2).size() == 1 ? (String) ((Map) o2).keySet().iterator().next() : tr("<different>");
+                final String v1 = ((Map) o1).size() == 1 ? (String) ((Map) o1).keySet().iterator().next() : KeyedItem.DIFFERENT_I18N;
+                final String v2 = ((Map) o2).size() == 1 ? (String) ((Map) o2).keySet().iterator().next() : KeyedItem.DIFFERENT_I18N;
                 return AlphanumComparator.getInstance().compare(v1, v2);
             } else {
                 return AlphanumComparator.getInstance().compare(String.valueOf(o1), String.valueOf(o2));
@@ -772,7 +774,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
             }
             tagData.addRow(new Object[]{e.getKey(), e.getValue()});
             tags.put(e.getKey(), e.getValue().size() == 1
-                    ? e.getValue().keySet().iterator().next() : tr("<different>"));
+                    ? e.getValue().keySet().iterator().next() : KeyedItem.DIFFERENT_I18N);
         }
 
         presets.updatePresets(types, tags, presetHandler);
@@ -1199,7 +1201,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
                     if (roleString == null) {
                         roleString = r.getRole();
                     } else if (!roleString.equals(r.getRole())) {
-                        roleString = tr("<different>");
+                        roleString = KeyedItem.DIFFERENT_I18N;
                         break;
                     }
                 }
@@ -1209,10 +1211,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
 
         @Override
         public String toString() {
-            return "MemberInfo{" +
-                    "roles='" + roleString + '\'' +
-                    ", positions='" + positionString + '\'' +
-                    '}';
+            return String.format("MemberInfo{roles='%s', positions='%s'}", roleString, positionString);
         }
     }
 
@@ -1465,7 +1464,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
             if (sel.isEmpty())
                 return;
             final SearchSetting ss = createSearchSetting(key, sel, sameType);
-            org.openstreetmap.josm.actions.search.SearchAction.searchStateless(ss);
+            searchStateless(ss);
         }
     }
 
@@ -1488,7 +1487,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
             } else if (p instanceof Relation) {
                 t = "type:relation ";
             }
-            String token = new StringBuilder(t).append(val).toString();
+            String token = t + val;
             if (consideredTokens.add(token)) {
                 s.append(sep).append('(').append(t).append(SearchCompiler.buildSearchStringForTag(key, val)).append(')');
                 sep = " OR ";
@@ -1509,8 +1508,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         void removeHiddenSelection() {
             try {
                 tagRowSorter.convertRowIndexToModel(tagTable.getSelectedRow());
-            } catch (IndexOutOfBoundsException ignore) {
-                Logging.trace(ignore);
+            } catch (IndexOutOfBoundsException e) {
+                Logging.trace(e);
                 Logging.trace("Clearing tagTable selection");
                 tagTable.clearSelection();
             }

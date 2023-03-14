@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.ac;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.StyleConstants;
+
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 
 /**
  * A {@link DocumentFilter} to limit the text length in the editor.
@@ -15,12 +15,11 @@ import javax.swing.text.StyleConstants;
 public class MaxLengthDocumentFilter extends DocumentFilter {
     /** the document will not accept text longer than this. -1 to disable */
     private int maxLength = -1;
-    private static final String DIFFERENT = tr("<different>");
 
     /**
      * Sets the maximum text length.
      *
-     * @param length the maximum no. of charactes allowed in this document. -1 to disable
+     * @param length the maximum no. of characters allowed in this document. -1 to disable
      */
     public void setMaxLength(int length) {
         maxLength = length;
@@ -44,7 +43,7 @@ public class MaxLengthDocumentFilter extends DocumentFilter {
 
     private boolean mustInsertOrReplace(FilterBypass fb, int length, String string, AttributeSet attr) {
         int newLen = fb.getDocument().getLength() - length + ((string == null) ? 0 : string.length());
-        return (maxLength == -1 || newLen <= maxLength || DIFFERENT.equals(string) ||
+        return (maxLength == -1 || newLen <= maxLength || KeyedItem.DIFFERENT_I18N.equals(string) ||
                 // allow longer text while composing characters or it will be hard to compose
                 // the last characters before the limit
                 ((attr != null) && attr.isDefined(StyleConstants.ComposedTextAttribute)));
