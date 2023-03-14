@@ -1087,7 +1087,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     @Override
     public void onPostLoadFromFile() {
         setRequiresSaveToFile(false);
-        setRequiresUploadToServer(isModified());
+        setRequiresUploadToServer(getDataSet().requiresUploadToServer());
         invalidate();
     }
 
@@ -1096,19 +1096,19 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      */
     public void onPostDownloadFromServer() {
         setRequiresSaveToFile(true);
-        setRequiresUploadToServer(isModified());
+        setRequiresUploadToServer(getDataSet().requiresUploadToServer());
         invalidate();
     }
 
     @Override
     public void onPostSaveToFile() {
         setRequiresSaveToFile(false);
-        setRequiresUploadToServer(isModified());
+        setRequiresUploadToServer(getDataSet().requiresUploadToServer());
     }
 
     @Override
     public void onPostUploadToServer() {
-        setRequiresUploadToServer(isModified());
+        setRequiresUploadToServer(getDataSet().requiresUploadToServer());
         // keep requiresSaveToDisk unchanged
     }
 
