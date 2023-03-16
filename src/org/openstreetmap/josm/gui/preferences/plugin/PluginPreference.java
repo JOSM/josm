@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -431,9 +432,35 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                     alertNothingToUpdate();
                     return;
                 }
+                int toUpdateSize;
+                boolean refreshRequired = false;
+                do {
+                    toUpdateSize = toUpdate.size();
+                    Set<PluginInformation> enabledPlugins = new HashSet<>(PluginHandler.getPlugins());
+                    enabledPlugins.addAll(toUpdate);
+                    Set<PluginInformation> toAdd = new HashSet<>();
+                    for (PluginInformation pi : toUpdate) {
+                        if (!PluginHandler.checkRequiredPluginsPreconditions(null, enabledPlugins, pi, false)) {
+                            // Time to find the missing plugins...
+                            toAdd.addAll(pi.getRequiredPlugins().stream().filter(plugin -> PluginHandler.getPlugin(plugin) == null)
+                                    .map(plugin -> model.getPluginInformation(plugin))
+                                    .collect(Collectors.toSet()));
+                        }
+                    }
+                    toAdd.forEach(plugin -> model.setPluginSelected(plugin.name, true));
+                    refreshRequired |= !toAdd.isEmpty(); // We need to force refresh the checkboxes if we are adding new plugins
+                    toAdd.removeIf(plugin -> !plugin.isUpdateRequired()); // Avoid downloading plugins that already exist
+                    toUpdate.addAll(toAdd);
+                } while (toUpdateSize != toUpdate.size());
+
                 pluginDownloadTask.setPluginsToDownload(toUpdate);
                 MainApplication.worker.submit(pluginDownloadTask);
                 MainApplication.worker.submit(pluginDownloadContinuation);
+                if (refreshRequired) {
+                    // Needed since we need to recreate the checkboxes to show the enabled dependent plugins that were not previously enabled
+                    pnlPluginPreferences.resetDisplayedComponents();
+                }
+                GuiHelper.runInEDT(pnlPluginPreferences::refreshView);
             };
 
             MainApplication.worker.submit(pluginInfoDownloadTask);

@@ -6,12 +6,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Locale;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Enables the i18n module for this test.
@@ -40,13 +42,18 @@ public @interface I18n {
         @Override
         public void beforeEach(ExtensionContext context) {
             String language = AnnotationSupport.findAnnotation(context.getElement(), I18n.class).map(I18n::value).orElse("en");
-            org.openstreetmap.josm.tools.I18n.set(language);
+            if (!Locale.getDefault().equals(LanguageInfo.getLocale(language, false))) {
+                org.openstreetmap.josm.tools.I18n.set(language);
+            }
         }
 
         @Override
         public void afterEach(ExtensionContext context) {
-            org.openstreetmap.josm.tools.I18n.set("en");
-            org.openstreetmap.josm.tools.I18n.set(org.openstreetmap.josm.tools.I18n.getOriginalLocale().getLanguage());
+            if (!Locale.ENGLISH.equals(Locale.getDefault())) {
+                org.openstreetmap.josm.tools.I18n.set("en");
+                org.openstreetmap.josm.tools.I18n.set(org.openstreetmap.josm.tools.I18n.getOriginalLocale().getLanguage());
+                Locale.setDefault(Locale.ENGLISH);
+            }
         }
     }
 }

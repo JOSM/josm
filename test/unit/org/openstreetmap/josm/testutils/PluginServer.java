@@ -15,17 +15,14 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.tools.Logging;
-
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.tools.Logging;
 
 public class PluginServer {
     public static class RemotePlugin {
@@ -137,11 +134,11 @@ public class PluginServer {
             return String.format("/%h/%s.jar", this.hashCode(), pluginName != null ? pluginName : Integer.toHexString(this.hashCode()));
         }
 
-        public String getPluginURL(WireMockServer wireMockServer) {
+        public String getPluginURL(WireMockRuntimeInfo wireMock) {
             if (this.pluginURL != null) {
                 return this.pluginURL;
-            } else if (wireMockServer != null && this.getJarPathBeneathFilesDir() != null) {
-                return wireMockServer.url(this.getPluginURLPath());
+            } else if (wireMock != null && this.getJarPathBeneathFilesDir() != null) {
+                return wireMock.getHttpBaseUrl() + this.getPluginURLPath();
             }
             return "http://example.com" + this.getPluginURLPath();
         }
@@ -155,11 +152,11 @@ public class PluginServer {
             return Integer.toHexString(this.hashCode());
         }
 
-        public String getRemotePluginsListSection(WireMockServer wireMockServer) {
+        public String getRemotePluginsListSection(WireMockRuntimeInfo wireMock) {
             return String.format(
                 "%s.jar;%s\n%s",
                 this.getName(),
-                this.getPluginURL(wireMockServer),
+                this.getPluginURL(wireMock),
                 this.getRemotePluginsListManifestSection()
             );
         }
@@ -191,13 +188,14 @@ public class PluginServer {
         this.pluginList = Arrays.asList(remotePlugins);
     }
 
-    public void applyToWireMockServer(WireMockServer wireMockServer) {
+    public void applyToWireMockServer(WireMockRuntimeInfo wireMock) {
+        final WireMock wireMockServer = wireMock.getWireMock();
         // first add the plugins list
-        wireMockServer.stubFor(
+        wireMockServer.register(
             WireMock.get(WireMock.urlEqualTo("/plugins")).willReturn(
                 WireMock.aResponse().withStatus(200).withHeader("Content-Type", "text/plain").withBody(
                     this.pluginList.stream().map(
-                        remotePlugin -> remotePlugin.getRemotePluginsListSection(wireMockServer)
+                        remotePlugin -> remotePlugin.getRemotePluginsListSection(wireMock)
                     ).collect(Collectors.joining())
                 )
             )
@@ -209,7 +207,7 @@ public class PluginServer {
             final ResponseDefinitionBuilder responseDefinitionBuilder = remotePlugin.getResponseDefinitionBuilder();
 
             if (mappingBuilder != null && responseDefinitionBuilder != null) {
-                wireMockServer.stubFor(
+                wireMockServer.register(
                     remotePlugin.getMappingBuilder().willReturn(remotePlugin.getResponseDefinitionBuilder())
                 );
             }
@@ -227,9 +225,9 @@ public class PluginServer {
         return new PluginServerRule(ruleOptions, failOnUnmatchedRequests);
     }
 
-    public class PluginServerRule extends WireMockRule {
+    public class PluginServerRule extends WireMockExtension {
         public PluginServerRule(Options ruleOptions, boolean failOnUnmatchedRequests) {
-            super(ruleOptions, failOnUnmatchedRequests);
+            super(extensionOptions().options(ruleOptions).failOnUnmatchedRequests(failOnUnmatchedRequests));
         }
 
         public PluginServer getPluginServer() {
@@ -237,14 +235,8 @@ public class PluginServer {
         }
 
         @Override
-        public Statement apply(Statement base, Description description) {
-            return super.apply(new Statement() {
-                @Override
-                public void evaluate() throws Throwable {
-                    PluginServer.this.applyToWireMockServer(PluginServerRule.this);
-                    base.evaluate();
-                }
-            }, description);
+        protected void onBeforeEach(WireMockRuntimeInfo wireMockRuntimeInfo) {
+            PluginServer.this.applyToWireMockServer(wireMockRuntimeInfo);
         }
     }
 }

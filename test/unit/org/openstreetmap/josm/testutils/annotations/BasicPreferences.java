@@ -3,9 +3,11 @@ package org.openstreetmap.josm.testutils.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Map;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -14,10 +16,13 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.platform.commons.support.AnnotationSupport;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
@@ -31,6 +36,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@Inherited
 @ExtendWith(BasicPreferences.BasicPreferencesExtension.class)
 public @interface BasicPreferences {
 
@@ -46,7 +52,7 @@ public @interface BasicPreferences {
 
         @Override
         public void afterEach(ExtensionContext context) throws Exception {
-            if (context.getElement().isPresent() && context.getElement().get().isAnnotationPresent(BasicPreferences.class)) {
+            if (AnnotationSupport.isAnnotated(context.getElement(), BasicPreferences.class)) {
                 this.afterAll(context);
             }
         }
@@ -56,7 +62,11 @@ public @interface BasicPreferences {
             Preferences pref = Preferences.main();
             // Disable saving on put, just to avoid overwriting pref files
             pref.enableSaveOnPut(false);
-            pref.resetToDefault();
+            pref.resetToInitialState();
+            pref.enableSaveOnPut(false);
+            @SuppressWarnings("unchecked")
+            final Map<String, Setting<?>> defaultsMap = (Map<String, Setting<?>>) TestUtils.getPrivateField(pref, "defaultsMap");
+            defaultsMap.clear();
             Config.setPreferencesInstance(pref);
             Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
             Config.setUrlsProvider(JosmUrls.getInstance());
@@ -69,7 +79,7 @@ public @interface BasicPreferences {
 
         @Override
         public void beforeEach(ExtensionContext context) throws Exception {
-            if (AnnotationUtils.elementIsAnnotated(context.getElement(), BasicPreferences.class) || Config.getPref() == null) {
+            if (AnnotationSupport.isAnnotated(context.getElement(), BasicPreferences.class) || Config.getPref() == null) {
                 this.beforeAll(context);
             }
         }

@@ -29,11 +29,13 @@ import javax.swing.JPopupMenu;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.awaitility.Awaitility;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -62,6 +64,12 @@ public class MinimapDialogTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeImagery();
+
+    @Before
+    public void beforeAll() {
+        // Needed since testShowDownloadedAreaLayerSwitching expects the measurement to be imperial
+        SystemOfMeasurement.setSystemOfMeasurement(SystemOfMeasurement.IMPERIAL);
+    }
 
     /**
      * Unit test of {@link MinimapDialog} class.

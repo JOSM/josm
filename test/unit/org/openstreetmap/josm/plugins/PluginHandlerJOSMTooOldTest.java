@@ -17,53 +17,54 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
+import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test parts of {@link PluginHandler} class when the reported JOSM version is too old for the plugin.
  */
-public class PluginHandlerJOSMTooOldTest {
+@AssumeRevision("Revision: 6000\n")
+@FullPreferences
+class PluginHandlerJOSMTooOldTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().main().assumeRevision(
-        "Revision: 6000\n"
-    );
+    static JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * Plugin server mock.
      */
-    @Rule
-    public WireMockRule pluginServerRule = new WireMockRule(
+    @RegisterExtension
+    static WireMockExtension pluginServerRule = WireMockExtension.newInstance().options(
         options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot())
-    );
+    ).build();
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-                Collections.singletonList(this.pluginServerRule.url("/plugins"))
+                Collections.singletonList(pluginServerRule.url("/plugins"))
         );
 
         this.referenceDummyJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31701.jar");
@@ -114,13 +115,13 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    public void testUpdatePluginsDownloadBoth() throws IOException {
+    void testUpdatePluginsDownloadBoth(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Arrays.asList("dummy_plugin", "baz_plugin"));
 
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
@@ -161,9 +162,9 @@ public class PluginHandlerJOSMTooOldTest {
         TestUtils.assertFileContentsEqual(this.referenceDummyJarNew, this.targetDummyJar);
         TestUtils.assertFileContentsEqual(this.referenceBazJarNew, this.targetBazJar);
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
 
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 6000);
         // not mocking the time so just check it's not its original value
@@ -176,13 +177,13 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    public void testUpdatePluginsSkipOne() throws IOException {
+    void testUpdatePluginsSkipOne(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Arrays.asList("dummy_plugin", "baz_plugin"));
 
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
@@ -231,9 +232,9 @@ public class PluginHandlerJOSMTooOldTest {
         TestUtils.assertFileContentsEqual(this.referenceDummyJarOld, this.targetDummyJar);
         TestUtils.assertFileContentsEqual(this.referenceBazJarNew, this.targetBazJar);
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
 
         // shouldn't have been updated
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 999);
@@ -248,13 +249,13 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    public void testUpdatePluginsUnexpectedlyJOSMTooOld() throws IOException {
+    void testUpdatePluginsUnexpectedlyJOSMTooOld(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew, Collections.singletonMap("Plugin-Mainversion", "5500"))
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Collections.singletonList("baz_plugin"));
 
         // setting up blank ExtendedDialogMocker which would raise an exception if any attempt to show
@@ -282,9 +283,9 @@ public class PluginHandlerJOSMTooOldTest {
         // questionably correct
         TestUtils.assertFileContentsEqual(this.referenceBazJarNew, this.targetBazJar);
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         // questionably correct
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
 
         // should have been updated
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 6000);
@@ -302,17 +303,17 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    @JOSMTestRules.OverrideAssumeRevision("Revision: 7200\n")
-    public void testUpdatePluginsMultiVersionInsufficient() throws IOException {
+    @AssumeRevision("Revision: 7200\n")
+    void testUpdatePluginsMultiVersionInsufficient(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
         TestUtils.assumeWorkingJMockit();
 
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(this.referenceQuxJarNewer, Collections.singletonMap(
-                "7499_Plugin-Url", "346;" + this.pluginServerRule.url("/dont/bother.jar")
+                "7499_Plugin-Url", "346;" + pluginServerRule.url("/dont/bother.jar")
             ))
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
         new ExtendedDialogMocker(Collections.singletonMap(u202f("JOSM version 7\u202F500 required for plugin qux_plugin."), "Download Plugin"));
@@ -342,10 +343,10 @@ public class PluginHandlerJOSMTooOldTest {
         // questionably correct
         TestUtils.assertFileContentsEqual(this.referenceQuxJarNewer, this.targetQuxJar);
 
-        assertEquals(2, WireMock.getAllServeEvents().size());
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        assertEquals(2, pluginServerRule.getAllServeEvents().size());
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         // questionably correct
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/qux_plugin.v432.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/qux_plugin.v432.jar")));
 
         assertEquals(7200, Config.getPref().getInt("pluginmanager.version", 111));
         // not mocking the time so just check it's not its original value

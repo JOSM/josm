@@ -15,8 +15,8 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
@@ -39,9 +39,9 @@ public @interface JosmHome {
      * Create a JOSM home directory. Prefer using {@link JosmHome}.
      * @author Taylor Smock
      */
-    class JosmHomeExtension implements BeforeAllCallback, AfterAllCallback {
+    class JosmHomeExtension implements BeforeEachCallback, AfterEachCallback {
         @Override
-        public void afterAll(ExtensionContext context) throws Exception {
+        public void afterEach(ExtensionContext context) throws Exception {
             Path tempDir = context.getStore(Namespace.create(JosmHome.class)).get("home", Path.class);
             Files.walkFileTree(tempDir, new SimpleFileVisitor<Path>() {
                 @Override
@@ -56,10 +56,11 @@ public @interface JosmHome {
                     return FileVisitResult.CONTINUE;
                 }
             });
+            System.clearProperty("josm.home");
         }
 
         @Override
-        public void beforeAll(ExtensionContext context) throws Exception {
+        public void beforeEach(ExtensionContext context) throws Exception {
             Path tempDir = Files.createTempDirectory(UUID.randomUUID().toString());
             context.getStore(Namespace.create(JosmHome.class)).put("home", tempDir);
             File home = tempDir.toFile();

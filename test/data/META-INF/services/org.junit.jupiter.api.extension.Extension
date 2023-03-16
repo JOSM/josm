@@ -1,2 +1,8 @@
+# These are the default extensions to run (all tests with JOSMTestRules would have done these by default)
+org.openstreetmap.josm.testutils.annotations.BasicPreferences$BasicPreferencesExtension
 org.openstreetmap.josm.testutils.annotations.HTTP$HTTPExtension
+org.openstreetmap.josm.testutils.annotations.I18n$I18nExtension
+org.openstreetmap.josm.testutils.annotations.JosmDefaults$DefaultsExtension
 org.openstreetmap.josm.testutils.annotations.LayerManager$LayerManagerExtension
+org.openstreetmap.josm.testutils.annotations.Logging$LoggingExtension
+org.openstreetmap.josm.testutils.annotations.Timezone$TimezoneExtension

@@ -18,11 +18,15 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import mockit.MockUp;
 import org.awaitility.Awaitility;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -31,43 +35,35 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
+import org.openstreetmap.josm.testutils.annotations.AssertionsInEDT;
+import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import mockit.MockUp;
 
 /**
  * Higher level tests of {@link PluginPreference} class.
  */
-public class PluginPreferenceHighLevelTest {
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().assumeRevision(
-        "Revision: 10000\n"
-    ).preferences().main().assertionsInEDT();
-
+@AssumeRevision("Revision: 10000\n")
+@AssertionsInEDT
+@FullPreferences
+@Main
+class PluginPreferenceHighLevelTest {
     /**
      * Plugin server mock.
      */
-    @Rule
-    public WireMockRule pluginServerRule = new WireMockRule(
-        options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot())
-    );
+    @RegisterExtension
+    static WireMockExtension pluginServerRule = WireMockExtension.newInstance()
+            .options(options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot()))
+            .build();
 
     /**
      * Setup test.
      * @throws ReflectiveOperationException never
      */
-    @Before
+    @BeforeEach
     public void setUp() throws ReflectiveOperationException {
 
         // some other tests actually go ahead and load plugins (notably at time of writing,
@@ -87,7 +83,7 @@ public class PluginPreferenceHighLevelTest {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-            Collections.singletonList(this.pluginServerRule.url("/plugins"))
+            Collections.singletonList(pluginServerRule.url("/plugins"))
         );
 
         this.referenceDummyJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31701.jar");
@@ -106,7 +102,7 @@ public class PluginPreferenceHighLevelTest {
      * Tear down.
      * @throws ReflectiveOperationException never
      */
-    @After
+    @AfterEach
     public void tearDown() throws ReflectiveOperationException {
         // restore actual PluginHandler#pluginList
         @SuppressWarnings("unchecked")
@@ -135,13 +131,13 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testInstallWithoutUpdate() throws Exception {
+    void testInstallWithoutUpdate(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "2"), "irrelevant_plugin")
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Collections.singletonList("dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
@@ -168,8 +164,8 @@ public class PluginPreferenceHighLevelTest {
 
         Awaitility.await().atMost(2000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -182,37 +178,24 @@ public class PluginPreferenceHighLevelTest {
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
-            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Collections.singletonList("dummy_plugin"),
-            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("(null)", "31701", "(null)"),
-            model.getAvailablePlugins().stream().map(
-                (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("6", "31772", "2"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
+                model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Collections.singletonList("dummy_plugin"),
+                model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("(null)", "31701", "(null)"), model.getAvailablePlugins().stream().map(
+            (pi) -> pi.localversion == null ? "(null)" : pi.localversion
+        ).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("6", "31772", "2"),
+                model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList()));
 
         // now we're going to choose to install baz_plugin
         model.setPluginSelected("baz_plugin", true);
 
-        assertEquals(
-            Collections.singletonList("baz_plugin"),
-            model.getNewlyActivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("baz_plugin"),
+                model.getNewlyActivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
-        assertEquals(
-            Collections.singletonList("baz_plugin"),
-            model.getPluginsScheduledForUpdateOrDownload().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("baz_plugin"),
+                model.getPluginsScheduledForUpdateOrDownload().stream().map(PluginInformation::getName).collect(Collectors.toList()));
 
         tabbedPane.savePreferences();
 
@@ -232,10 +215,10 @@ public class PluginPreferenceHighLevelTest {
         assertFalse(targetDummyJarNew.exists());
         assertFalse(targetBazJarNew.exists());
 
-        // the advertized version of dummy_plugin shouldn't have been fetched
-        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        // the advertised version of dummy_plugin shouldn't have been fetched
+        pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
         // but the advertized version of baz_plugin *should* have
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v6.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v6.jar")));
 
         // pluginmanager.version has been set to the current version
         // questionably correct
@@ -245,10 +228,8 @@ public class PluginPreferenceHighLevelTest {
         assertEquals("999", Config.getPref().get("pluginmanager.lastupdate", "111"));
 
         // baz_plugin should have been added to the plugins list
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"),
+                Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList()));
     }
 
     /**
@@ -256,13 +237,13 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testDisablePluginWithUpdatesAvailable() throws Exception {
+    void testDisablePluginWithUpdatesAvailable(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew),
             new PluginServer.RemotePlugin(null, null, "irrelevant_plugin")
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
@@ -288,8 +269,8 @@ public class PluginPreferenceHighLevelTest {
 
         Awaitility.await().atMost(2000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -302,35 +283,23 @@ public class PluginPreferenceHighLevelTest {
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
-            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("6", "31701", "(null)"),
-            model.getAvailablePlugins().stream().map(
-                (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("7", "31772", "(null)"),
-            model.getAvailablePlugins().stream().map(
-                (pi) -> pi.version == null ? "(null)" : pi.version
-            ).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
+                model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"),
+                model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("6", "31701", "(null)"), model.getAvailablePlugins().stream().map(
+            (pi) -> pi.localversion == null ? "(null)" : pi.localversion
+        ).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("7", "31772", "(null)"), model.getAvailablePlugins().stream().map(
+            (pi) -> pi.version == null ? "(null)" : pi.version
+        ).collect(Collectors.toList()));
 
         // now we're going to choose to disable baz_plugin
         model.setPluginSelected("baz_plugin", false);
 
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
-        assertEquals(
-            Collections.singletonList("baz_plugin"),
-            model.getNewlyDeactivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("baz_plugin"),
+                model.getNewlyDeactivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
         // questionably correct
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
 
@@ -353,8 +322,8 @@ public class PluginPreferenceHighLevelTest {
         assertFalse(targetBazJarNew.exists());
 
         // neither of the new jars have been fetched
-        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
-        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v6.jar")));
+        pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v6.jar")));
 
         // pluginmanager.version has been set to the current version
         // questionably correct
@@ -364,10 +333,8 @@ public class PluginPreferenceHighLevelTest {
         assertEquals("999", Config.getPref().get("pluginmanager.lastupdate", "111"));
 
         // baz_plugin should have been removed from the installed plugins list
-        assertEquals(
-            Collections.singletonList("dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("dummy_plugin"),
+                Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList()));
     }
 
     /**
@@ -378,13 +345,13 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testUpdateOnlySelectedPlugin() throws Exception {
+    void testUpdateOnlySelectedPlugin(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
@@ -405,8 +372,8 @@ public class PluginPreferenceHighLevelTest {
 
         TestUtils.syncEDTAndWorkerThreads();
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -419,33 +386,21 @@ public class PluginPreferenceHighLevelTest {
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("6", "31701"),
-            model.getAvailablePlugins().stream().map(
-                (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("7", "31772"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"),
+                model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"),
+                model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("6", "31701"), model.getAvailablePlugins().stream().map(
+            (pi) -> pi.localversion == null ? "(null)" : pi.localversion
+        ).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("7", "31772"), model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList()));
 
         // now we're going to choose not to update baz_plugin
         model.setPluginSelected("baz_plugin", false);
 
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
-        assertEquals(
-            Collections.singletonList("baz_plugin"),
-            model.getNewlyDeactivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("baz_plugin"), model.getNewlyDeactivatedPlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
         // questionably correct
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
 
@@ -480,12 +435,12 @@ public class PluginPreferenceHighLevelTest {
 
         // the plugin list was rechecked
         // questionably necessary
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         // dummy_plugin has been fetched
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
         // baz_plugin has not
-        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
-        WireMock.resetAllRequests();
+        pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
+        pluginServerRule.resetRequests();
 
         // pluginmanager.version has been set to the current version
         // questionably correct
@@ -495,17 +450,13 @@ public class PluginPreferenceHighLevelTest {
         assertEquals("999", Config.getPref().get("pluginmanager.lastupdate", "111"));
 
         // plugins list shouldn't have been altered, we haven't hit save yet
-        assertEquals(
-                Arrays.asList("baz_plugin", "dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"),
+                Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList()));
 
         // the model's selection state should be largely as before
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
-        assertEquals(
-            Collections.singletonList("baz_plugin"),
-            model.getNewlyDeactivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("baz_plugin"), model.getNewlyDeactivatedPlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
 
         // but now we re-select baz_plugin so that it isn't removed/disabled
@@ -515,10 +466,8 @@ public class PluginPreferenceHighLevelTest {
         // questionably correct
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
-        assertEquals(
-            Collections.singletonList("baz_plugin"),
-            model.getPluginsScheduledForUpdateOrDownload().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("baz_plugin"), model.getPluginsScheduledForUpdateOrDownload().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
 
         // prepare jopsMocker to handle this message
         jopsMocker.getMockResultMap().put(
@@ -551,10 +500,10 @@ public class PluginPreferenceHighLevelTest {
         assertFalse(targetBazJarNew.exists());
 
         // dummy_plugin was not fetched
-        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
         // baz_plugin however was fetched
         // questionably correct
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
 
         assertEquals(10000, Config.getPref().getInt("pluginmanager.version", 111));
         // questionably correct
@@ -566,14 +515,14 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testUpdateWithNoAvailableUpdates() throws Exception {
+    void testUpdateWithNoAvailableUpdates(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarOld),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "123"), "irrelevant_plugin")
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
@@ -599,8 +548,8 @@ public class PluginPreferenceHighLevelTest {
 
         TestUtils.syncEDTAndWorkerThreads();
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -612,24 +561,15 @@ public class PluginPreferenceHighLevelTest {
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
-            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("6", "31701", "(null)"),
-            model.getAvailablePlugins().stream().map(
-                (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("6", "31701", "123"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"), model.getAvailablePlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"), model.getSelectedPlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("6", "31701", "(null)"), model.getAvailablePlugins().stream().map(
+            (pi) -> pi.localversion == null ? "(null)" : pi.localversion
+        ).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("6", "31701", "123"), model.getAvailablePlugins()
+                .stream().map((pi) -> pi.version).collect(Collectors.toList()));
 
         GuiHelper.runInEDTAndWait(
             () -> ((javax.swing.JButton) TestUtils.getComponentByName(tabbedPane, "updatePluginsButton")).doClick()
@@ -653,10 +593,10 @@ public class PluginPreferenceHighLevelTest {
 
         // the plugin list was rechecked
         // questionably necessary
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         // that should have been the only request to our PluginServer
-        assertEquals(1, this.pluginServerRule.getAllServeEvents().size());
-        WireMock.resetAllRequests();
+        assertEquals(1, pluginServerRule.getAllServeEvents().size());
+        pluginServerRule.resetRequests();
 
         // pluginmanager.version has been set to the current version
         assertEquals(10000, Config.getPref().getInt("pluginmanager.version", 111));
@@ -665,10 +605,8 @@ public class PluginPreferenceHighLevelTest {
         assertEquals("999", Config.getPref().get("pluginmanager.lastupdate", "111"));
 
         // plugins list shouldn't have been altered
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"), Config.getPref().getList("plugins", null)
+                .stream().sorted().collect(Collectors.toList()));
 
         // the model's selection state should be largely as before
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
@@ -691,7 +629,7 @@ public class PluginPreferenceHighLevelTest {
         assertFalse(targetBazJarNew.exists());
 
         // none of PluginServer's URLs should have been touched
-        assertEquals(0, this.pluginServerRule.getAllServeEvents().size());
+        assertEquals(0, pluginServerRule.getAllServeEvents().size());
 
         // pluginmanager.version has been set to the current version
         assertEquals(10000, Config.getPref().getInt("pluginmanager.version", 111));
@@ -705,7 +643,7 @@ public class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    public void testInstallWithoutRestartRequired() throws Exception {
+    void testInstallWithoutRestartRequired(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         TestUtils.assumeWorkingJMockit();
         final boolean[] loadPluginsCalled = new boolean[] {false};
         new MockUp<PluginHandler>() {
@@ -726,7 +664,7 @@ public class PluginPreferenceHighLevelTest {
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         Config.getPref().putList("plugins", Collections.emptyList());
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
@@ -748,8 +686,8 @@ public class PluginPreferenceHighLevelTest {
 
         TestUtils.syncEDTAndWorkerThreads();
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -761,30 +699,20 @@ public class PluginPreferenceHighLevelTest {
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"), model.getAvailablePlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
         assertTrue(model.getSelectedPlugins().isEmpty());
-        assertEquals(
-            Arrays.asList("(null)", "(null)"),
-            model.getAvailablePlugins().stream().map(
-                (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("7", "31772"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("(null)", "(null)"), model.getAvailablePlugins().stream().map(
+            (pi) -> pi.localversion == null ? "(null)" : pi.localversion
+        ).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("7", "31772"), model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList()));
 
         // now we select dummy_plugin
         model.setPluginSelected("dummy_plugin", true);
 
         // model should now reflect this
-        assertEquals(
-            Collections.singletonList("dummy_plugin"),
-            model.getNewlyActivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("dummy_plugin"), model.getNewlyActivatedPlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
 
         tabbedPane.savePreferences();
@@ -803,7 +731,7 @@ public class PluginPreferenceHighLevelTest {
         assertFalse(targetBazJarNew.exists());
 
         // dummy_plugin was fetched
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
 
         // the dummy_plugin jar has been installed
         TestUtils.assertFileContentsEqual(this.referenceDummyJarNew, this.targetDummyJar);
@@ -825,21 +753,21 @@ public class PluginPreferenceHighLevelTest {
      * preventing us from using the latest version
      * @throws Exception on failure
      */
-    @JOSMTestRules.OverrideAssumeRevision("Revision: 7000\n")
+    @AssumeRevision("Revision: 7000\n")
     @Test
-    public void testInstallMultiVersion() throws Exception {
+    void testInstallMultiVersion(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         TestUtils.assumeWorkingJMockit();
 
         final String bazOldServePath = "/baz/old.jar";
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew, Collections.singletonMap(
-                "6800_Plugin-Url", "6;" + this.pluginServerRule.url(bazOldServePath)
+                "6800_Plugin-Url", "6;" + pluginServerRule.url(bazOldServePath)
             ))
         );
-        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         // need to actually serve this older jar from somewhere
-        this.pluginServerRule.stubFor(
+        pluginServerRule.stubFor(
             WireMock.get(WireMock.urlEqualTo(bazOldServePath)).willReturn(
                 WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/java-archive").withBodyFile(
                     "plugin/baz_plugin.v6.jar"
@@ -869,8 +797,8 @@ public class PluginPreferenceHighLevelTest {
 
         TestUtils.syncEDTAndWorkerThreads();
 
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        WireMock.resetAllRequests();
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        pluginServerRule.resetRequests();
 
         final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
             tabbedPane.getPluginPreference(),
@@ -882,30 +810,20 @@ public class PluginPreferenceHighLevelTest {
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
-        assertEquals(
-            Arrays.asList("baz_plugin", "dummy_plugin"),
-            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("baz_plugin", "dummy_plugin"), model.getAvailablePlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
         assertTrue(model.getSelectedPlugins().isEmpty());
-        assertEquals(
-            Arrays.asList("(null)", "(null)"),
-            model.getAvailablePlugins().stream().map(
-                (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(Collectors.toList())
-        );
-        assertEquals(
-            Arrays.asList("6", "31772"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
-        );
+        assertEquals(Arrays.asList("(null)", "(null)"), model.getAvailablePlugins().stream().map(
+            (pi) -> pi.localversion == null ? "(null)" : pi.localversion
+        ).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("6", "31772"), model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList()));
 
         // now we select dummy_plugin
         model.setPluginSelected("baz_plugin", true);
 
         // model should now reflect this
-        assertEquals(
-            Collections.singletonList("baz_plugin"),
-            model.getNewlyActivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
-        );
+        assertEquals(Collections.singletonList("baz_plugin"), model.getNewlyActivatedPlugins().stream()
+                .map(PluginInformation::getName).collect(Collectors.toList()));
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
 
         tabbedPane.savePreferences();
@@ -924,7 +842,7 @@ public class PluginPreferenceHighLevelTest {
         assertFalse(targetBazJarNew.exists());
 
         // dummy_plugin was fetched
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(bazOldServePath)));
+        pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(bazOldServePath)));
 
         // the "old" baz_plugin jar has been installed
         TestUtils.assertFileContentsEqual(this.referenceBazJarOld, this.targetBazJar);
