@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.awt.Color;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * List of named CSS colors as per CSS Color Module Level 3.
@@ -11,7 +11,7 @@ import java.util.Map;
  * @see <a href="https://drafts.csswg.org/css-color-3/">CSS Color Module Level 3</a>
  */
 public final class CSSColors {
-    private static final Map<String, Color> CSS_COLORS = new HashMap<>();
+    private static final Map<String, Color> CSS_COLORS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     static {
         for (Object[] pair : new Object[][] {
             {"aliceblue", 0xf0f8ff},
