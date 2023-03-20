@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Read OSM data from an OSM PBF file
- * @since xxx
+ * @since 18695
  */
 public final class OsmPbfReader extends AbstractReader {
     private static final long[] EMPTY_LONG = new long[0];

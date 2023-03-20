@@ -52,7 +52,7 @@ public class CommandInteger {
     /**
      * Add a parameter
      * @param parameterInteger The parameter to add (converted to {@code short}).
-     * @since xxx
+     * @since 18695
      */
     public void addParameter(long parameterInteger) {
         this.parameters[added++] = (short) parameterInteger;

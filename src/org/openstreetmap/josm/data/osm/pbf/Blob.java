@@ -15,7 +15,7 @@ import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStre
 
 /**
  * A "Blob" of data from an OSM PBF file. It, in turn, contains additional data in PBF format, which may be compressed.
- * @since xxx
+ * @since 18695
  */
 public final class Blob {
     public enum CompressionType {

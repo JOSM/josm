@@ -9,7 +9,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 /**
  * The header block contains data on required features, optional features, the bbox of the data, the source, the osmosis replication timestamp,
  * the osmosis replication sequence number, and the osmosis replication base url
- * @since xxx
+ * @since 18695
  */
 public final class HeaderBlock {
     private final BBox bbox;

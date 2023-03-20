@@ -14,7 +14,7 @@ import org.openstreetmap.josm.io.OsmPbfReader;
 
 /**
  * File importer that reads *.osm.pbf data files.
- * @since xxx
+ * @since 18695
  */
 public class OsmPbfImporter extends OsmImporter {
     /**

@@ -275,7 +275,7 @@ public abstract class AbstractReader {
 
     /**
      * An interface for reading binary data
-     * @since xxx
+     * @since 18695
      */
     @FunctionalInterface
     protected interface BinaryParserWorker {

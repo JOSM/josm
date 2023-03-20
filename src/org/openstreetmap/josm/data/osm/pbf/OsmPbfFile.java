@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * A class used to determine whether or not a file may be an OSM PBF file
- * @since xxx
+ * @since 18695
  */
 public final class OsmPbfFile {
     /**
