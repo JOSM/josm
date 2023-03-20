@@ -27,11 +27,12 @@ public class ProtobufRecord implements AutoCloseable {
      * @throws IOException - if an IO error occurs
      */
     public ProtobufRecord(ByteArrayOutputStream byteArrayOutputStream, ProtobufParser parser) throws IOException {
-        Number number = ProtobufParser.convertByteArray(parser.nextVarInt(byteArrayOutputStream), ProtobufParser.VAR_INT_BYTE_SIZE);
+        final byte[] varInt = parser.nextVarInt(byteArrayOutputStream);
+        long number = ProtobufParser.convertByteArray(varInt, ProtobufParser.VAR_INT_BYTE_SIZE, 0, varInt.length);
         // I don't foresee having field numbers > {@code Integer#MAX_VALUE >> 3}
-        this.field = (int) number.longValue() >> 3;
+        this.field = (int) number >> 3;
         // 7 is 111 (so last three bits)
-        byte wireType = (byte) (number.longValue() & 7);
+        byte wireType = (byte) (number & 7);
         // By not using a stream, we reduce the number of allocations (for getting the WireType) from 257 MB to 40 MB.
         // (The remaining 40 MB is from WireType#values). By using the cached getAllValues(), we drop the 40 MB.
         WireType tType = WireType.UNKNOWN;

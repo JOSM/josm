@@ -182,7 +182,7 @@ public class OsmJsonReader extends AbstractReader {
     @Override
     protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         try {
-            return doParseDataSet(source, progressMonitor, ir -> {
+            return doParseDataSet(source, progressMonitor, (ParserWorker) ir -> {
                 setParser(Json.createParser(ir));
                 parse();
             });

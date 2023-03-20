@@ -273,6 +273,21 @@ public abstract class AbstractReader {
 
     protected abstract DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException;
 
+    /**
+     * An interface for reading binary data
+     * @since xxx
+     */
+    @FunctionalInterface
+    protected interface BinaryParserWorker {
+        /**
+         * Effectively parses the file, depending on the binary format (PBF, etc.)
+         * @param ir input stream reader
+         * @throws IllegalDataException in case of invalid data
+         * @throws IOException in case of I/O error
+         */
+        void accept(InputStream ir) throws IllegalDataException, IOException;
+    }
+
     @FunctionalInterface
     protected interface ParserWorker {
         /**
@@ -284,7 +299,17 @@ public abstract class AbstractReader {
         void accept(InputStreamReader ir) throws IllegalDataException, IOException;
     }
 
+    protected final DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor, BinaryParserWorker parserWorker)
+            throws IllegalDataException {
+        return this.doParseDataSet(source, progressMonitor, (Object) parserWorker);
+    }
+
     protected final DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor, ParserWorker parserWorker)
+            throws IllegalDataException {
+        return this.doParseDataSet(source, progressMonitor, (Object) parserWorker);
+    }
+
+    private DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor, Object parserWorker)
             throws IllegalDataException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
@@ -296,8 +321,14 @@ public abstract class AbstractReader {
             progressMonitor.beginTask(tr("Prepare OSM data..."), 4); // read, prepare, post-process, render
             progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
 
-            try (InputStreamReader ir = UTFInputStreamReader.create(source)) {
-                parserWorker.accept(ir);
+            if (parserWorker instanceof ParserWorker) {
+                try (InputStreamReader ir = UTFInputStreamReader.create(source)) {
+                    ((ParserWorker) parserWorker).accept(ir);
+                }
+            } else if (parserWorker instanceof BinaryParserWorker) {
+                ((BinaryParserWorker) parserWorker).accept(source);
+            } else {
+                throw new IllegalArgumentException("Unknown parser worker type: " + parserWorker.getClass());
             }
             progressMonitor.worked(1);
 

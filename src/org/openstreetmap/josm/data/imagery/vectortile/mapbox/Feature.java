@@ -27,7 +27,7 @@ public class Feature {
     private static final byte GEOMETRY_FIELD = 4;
     /**
      * The number format instance to use (using a static instance gets rid of quite o few allocations)
-     * Doing this reduced the allocations of {@link #parseTagValue(String, Layer, Number, List)} from 22.79% of parent to
+     * Doing this reduced the allocations of {@link #parseTagValue(String, Layer, int, List)} from 22.79% of parent to
      * 12.2% of parent.
      */
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.ROOT);
@@ -74,25 +74,25 @@ public class Feature {
                 try (ProtobufRecord next = new ProtobufRecord(byteArrayOutputStream, parser)) {
                     if (next.getField() == TAG_FIELD) {
                         // This is packed in v1 and v2
-                        ProtobufPacked packed = new ProtobufPacked(byteArrayOutputStream, next.getBytes());
+                        ProtobufPacked packed = new ProtobufPacked(next.getBytes());
                         if (tagList == null) {
                             tagList = new ArrayList<>(packed.getArray().length);
                         } else {
                             tagList.ensureCapacity(tagList.size() + packed.getArray().length);
                         }
-                        for (Number number : packed.getArray()) {
-                            key = parseTagValue(key, layer, number, tagList);
+                        for (long number : packed.getArray()) {
+                            key = parseTagValue(key, layer, (int) number, tagList);
                         }
                     } else if (next.getField() == GEOMETRY_FIELD) {
                         // This is packed in v1 and v2
-                        ProtobufPacked packed = new ProtobufPacked(byteArrayOutputStream, next.getBytes());
+                        ProtobufPacked packed = new ProtobufPacked(next.getBytes());
                         CommandInteger currentCommand = null;
-                        for (Number number : packed.getArray()) {
+                        for (long number : packed.getArray()) {
                             if (currentCommand != null && currentCommand.hasAllExpectedParameters()) {
                                 currentCommand = null;
                             }
                             if (currentCommand == null) {
-                                currentCommand = new CommandInteger(number.intValue());
+                                currentCommand = new CommandInteger(Math.toIntExact(number));
                                 this.geometry.add(currentCommand);
                             } else {
                                 currentCommand.addParameter(ProtobufParser.decodeZigZag(number));
@@ -127,12 +127,12 @@ public class Feature {
      * @param tagList The list to add the new value to
      * @return The new key (if {@code null}, then a value was parsed and added to tags)
      */
-    private static String parseTagValue(String key, Layer layer, Number number, List<String> tagList) {
+    private static String parseTagValue(String key, Layer layer, int number, List<String> tagList) {
         if (key == null) {
-            key = layer.getKey(number.intValue());
+            key = layer.getKey(number);
         } else {
             tagList.add(key);
-            Object value = layer.getValue(number.intValue());
+            Object value = layer.getValue(number);
             if (value instanceof Double || value instanceof Float) {
                 // reset grouping if the instance is a singleton
 

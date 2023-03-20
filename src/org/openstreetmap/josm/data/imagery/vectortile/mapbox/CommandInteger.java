@@ -50,6 +50,15 @@ public class CommandInteger {
     }
 
     /**
+     * Add a parameter
+     * @param parameterInteger The parameter to add (converted to {@code short}).
+     * @since xxx
+     */
+    public void addParameter(long parameterInteger) {
+        this.parameters[added++] = (short) parameterInteger;
+    }
+
+    /**
      * Get the operations for the command
      * @return The operations
      */

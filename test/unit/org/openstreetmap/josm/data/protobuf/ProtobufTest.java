@@ -42,13 +42,13 @@ import org.junit.jupiter.api.Test;
  * @author Taylor Smock
  * @since 17862
  */
-class ProtobufTest {
+public class ProtobufTest {
     /**
      * Convert an int array into a byte array
      * @param intArray The int array to convert (NOTE: numbers must be below 255)
      * @return A byte array that can be used
      */
-    static byte[] toByteArray(int[] intArray) {
+    public static byte[] toByteArray(int[] intArray) {
         byte[] byteArray = new byte[intArray.length];
         for (int i = 0; i < intArray.length; i++) {
             if (intArray[i] > Byte.MAX_VALUE - Byte.MIN_VALUE) {
@@ -201,9 +201,9 @@ class ProtobufTest {
 
     @Test
     void testZigZag() {
-        assertEquals(0, ProtobufParser.decodeZigZag(0).intValue());
-        assertEquals(-1, ProtobufParser.decodeZigZag(1).intValue());
-        assertEquals(1, ProtobufParser.decodeZigZag(2).intValue());
-        assertEquals(-2, ProtobufParser.decodeZigZag(3).intValue());
+        assertEquals(0, ProtobufParser.decodeZigZag(Integer.valueOf(0)).intValue());
+        assertEquals(-1, ProtobufParser.decodeZigZag(Integer.valueOf(1)).intValue());
+        assertEquals(1, ProtobufParser.decodeZigZag(Long.valueOf(2)).intValue());
+        assertEquals(-2, ProtobufParser.decodeZigZag(Long.valueOf(3)).intValue());
     }
 }

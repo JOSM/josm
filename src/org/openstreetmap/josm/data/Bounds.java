@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.Objects;
+import java.util.Arrays;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -592,7 +592,7 @@ public class Bounds implements IBounds {
 
     @Override
     public int hashCode() {
-        return Objects.hash(minLat, minLon, maxLat, maxLon);
+        return Arrays.hashCode(new double[] {minLat, minLon, maxLat, maxLon});
     }
 
     @Override

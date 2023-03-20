@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.openstreetmap.josm.tools.Logging;
@@ -30,6 +31,8 @@ public class ProtobufParser implements AutoCloseable {
      * Used to get the most significant byte
      */
     static final byte MOST_SIGNIFICANT_BYTE = (byte) (1 << 7);
+    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+
     /**
      * Convert a byte array to a number (little endian)
      *
@@ -38,12 +41,27 @@ public class ProtobufParser implements AutoCloseable {
      * @return An appropriate {@link Number} class.
      */
     public static Number convertByteArray(byte[] bytes, byte byteSize) {
+        return convertLong(convertByteArray(bytes, byteSize, 0, bytes.length));
+    }
+
+    /**
+     * Convert a byte array to a number (little endian)
+     *
+     * @param bytes    The bytes to convert
+     * @param byteSize The size of the byte. For var ints, this is 7, for other ints, this is 8.
+     * @param start    The start position in the byte array
+     * @param end      The end position in the byte array (exclusive - [start, end) )
+     * @return t
+     * he number from the byte array. Depending upon length of time the number will be stored, narrowing may be helpful.
+     * @since 18695
+     */
+    public static long convertByteArray(byte[] bytes, byte byteSize, int start, int end) {
         long number = 0;
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = start; i < end; i++) {
             // Need to convert to uint64 in order to avoid bit operation from filling in 1's and overflow issues
-            number += Byte.toUnsignedLong(bytes[i]) << (byteSize * i);
+            number += Byte.toUnsignedLong(bytes[i]) << (byteSize * (i - start));
         }
-        return convertLong(number);
+        return number;
     }
 
     /**
@@ -71,8 +89,18 @@ public class ProtobufParser implements AutoCloseable {
      * @return The decoded value
      */
     public static Number decodeZigZag(Number signed) {
-        final long value = signed.longValue();
-        return convertLong((value >> 1) ^ -(value & 1));
+        return convertLong(decodeZigZag(signed.longValue()));
+    }
+
+    /**
+     * Decode a zig-zag encoded value
+     *
+     * @param signed The value to decode
+     * @return The decoded value
+     * @since 18695
+     */
+    public static long decodeZigZag(long signed) {
+        return (signed >> 1) ^ -(signed & 1);
     }
 
     /**
@@ -203,7 +231,8 @@ public class ProtobufParser implements AutoCloseable {
      * @throws IOException - if an IO error occurs
      */
     public byte[] nextLengthDelimited(ByteArrayOutputStream byteArrayOutputStream) throws IOException {
-        int length = convertByteArray(this.nextVarInt(byteArrayOutputStream), VAR_INT_BYTE_SIZE).intValue();
+        final byte[] nextVarInt = this.nextVarInt(byteArrayOutputStream);
+        int length = (int) convertByteArray(nextVarInt, VAR_INT_BYTE_SIZE, 0, nextVarInt.length);
         return readNextBytes(length);
     }
 
@@ -236,13 +265,16 @@ public class ProtobufParser implements AutoCloseable {
      * Read an arbitrary number of bytes
      *
      * @param size The number of bytes to read
-     * @return a byte array of the specified size, filled with bytes read (unsigned)
+     * @return a byte array filled with bytes read (unsigned)
      * @throws IOException - if an IO error occurs
      */
     private byte[] readNextBytes(int size) throws IOException {
         byte[] bytesRead = new byte[size];
-        for (int i = 0; i < bytesRead.length; i++) {
-            bytesRead[i] = (byte) this.nextByte();
+        int read = this.inputStream.read(bytesRead);
+        if (read == -1) {
+            return EMPTY_BYTE_ARRAY;
+        } else if (read != size) {
+            return Arrays.copyOf(bytesRead, read);
         }
         return bytesRead;
     }

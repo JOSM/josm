@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
 import org.openstreetmap.josm.gui.io.importexport.NoteImporter;
 import org.openstreetmap.josm.gui.io.importexport.OsmChangeImporter;
 import org.openstreetmap.josm.gui.io.importexport.OsmImporter;
+import org.openstreetmap.josm.gui.io.importexport.OsmPbfImporter;
 import org.openstreetmap.josm.gui.io.importexport.OziWptImporter;
 import org.openstreetmap.josm.gui.io.importexport.RtkLibImporter;
 import org.openstreetmap.josm.gui.io.importexport.WMSLayerImporter;
@@ -65,6 +66,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         final List<Class<? extends FileImporter>> importerNames = Arrays.asList(
                 OsmImporter.class,
                 OsmChangeImporter.class,
+                OsmPbfImporter.class,
                 GeoJSONImporter.class,
                 GpxImporter.class,
                 NMEAImporter.class,
