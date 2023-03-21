@@ -10,14 +10,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
-import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream;
 
 /**
  * A "Blob" of data from an OSM PBF file. It, in turn, contains additional data in PBF format, which may be compressed.
  * @since 18695
  */
 public final class Blob {
+    /** The compression types for the blob */
     public enum CompressionType {
         /** No compression */
         raw,
@@ -36,6 +35,13 @@ public final class Blob {
     private final Integer rawSize;
     private final CompressionType compressionType;
     private final byte[] bytes;
+
+    /**
+     * Create a new blob
+     * @param rawSize The blob size
+     * @param compressionType The compression type
+     * @param bytes The bytes of the blob
+     */
     public Blob(@Nullable Integer rawSize, @Nonnull CompressionType compressionType, @Nonnull byte... bytes) {
         this.rawSize = rawSize;
         this.compressionType = compressionType;
@@ -74,8 +80,6 @@ public final class Blob {
      * @return The decompressed inputstream
      * @throws IOException if we don't support the compression type <i>or</i> the decompressor has issues, see
      * <ul>
-     *     <li>{@link LZMACompressorInputStream}</li>
-     *     <li>{@link ZstdCompressorInputStream}</li>
      *     <li>{@link BZip2CompressorInputStream}</li>
      * </ul>
      */
@@ -85,14 +89,12 @@ public final class Blob {
         switch (this.compressionType) {
             case raw:
                 return bais;
-            case lzma:
-                return new LZMACompressorInputStream(bais);
-            case zstd:
-                return new ZstdCompressorInputStream(bais);
             case bzip2:
                 return new BZip2CompressorInputStream(bais);
+            case lzma:
+            case zstd:
             case lz4:
-                throw new IOException("lz4 pbf is not currently supported");
+                throw new IOException(this.compressionType + " pbf is not currently supported");
             case zlib:
                 return new InflaterInputStream(bais);
             default:
