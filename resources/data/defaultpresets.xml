@@ -9038,7 +9038,10 @@
             <link wiki="Tag:leisure=garden" />
             <space />
             <key key="leisure" value="garden" />
-            <reference ref="optional_name" />
+            <combo key="garden:type" text="Garden type" values="residential,community,botanical,arboretum" />
+            <combo key="garden:style" text="Aesthetic / Style" values="english,french,chinese,japanese,persian,zen" />
+            <reference ref="optional_name_operator" />
+            <reference ref="POI_access" />
             <preset_link preset_name="Flowerbed" text="Similar but different tags:" />
         </item> <!-- Garden -->
         <item name="Grass" icon="presets/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
