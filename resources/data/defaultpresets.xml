@@ -655,7 +655,7 @@
             <list_entry value="zebra" />
             <list_entry value="zebra:double" />
             <list_entry value="zebra:paired" />
-            <list_entry value="zebra:bicolor" />
+            <list_entry value="zebra:bicolour" />
             <list_entry value="ladder" />
             <list_entry value="ladder:skewed" />
             <list_entry value="ladder:paired" />
