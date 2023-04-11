@@ -35,6 +35,7 @@ public final class Info {
     }
 
     /**
+     * Get the OSM version
      * @return The version
      */
     public int version() {
@@ -42,6 +43,7 @@ public final class Info {
     }
 
     /**
+     * Get the OSM timestamp
      * @return The timestamp
      */
     public Long timestamp() {
@@ -49,6 +51,7 @@ public final class Info {
     }
 
     /**
+     * Get the OSM changeset
      * @return The changeset
      */
     public Long changeset() {
@@ -56,6 +59,7 @@ public final class Info {
     }
 
     /**
+     * Get the OSM user id
      * @return The user id
      */
     public Integer uid() {
@@ -63,6 +67,7 @@ public final class Info {
     }
 
     /**
+     * Get the id for the username in the PBF
      * @return The user string id (in PBF strings)
      */
     public Integer userSid() {
@@ -70,6 +75,7 @@ public final class Info {
     }
 
     /**
+     * Get the visibility of the object
      * @return {@code false} if the object was deleted
      */
     public boolean isVisible() {

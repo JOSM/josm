@@ -26,6 +26,7 @@ public final class BlobHeader {
     }
 
     /**
+     * Get the blob type
      * @return The blob type
      */
     public String type() {
@@ -33,6 +34,7 @@ public final class BlobHeader {
     }
 
     /**
+     * Get the blob metadata
      * @return The blob metadata
      */
     public byte[] indexData() {
@@ -40,6 +42,7 @@ public final class BlobHeader {
     }
 
     /**
+     * Get the blob size
      * @return The blob size
      */
     public int dataSize() {
