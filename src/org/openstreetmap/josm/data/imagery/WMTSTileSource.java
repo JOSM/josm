@@ -549,6 +549,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         List<String> supportedMimeTypes = new ArrayList<>(Arrays.asList(ImageIO.getReaderMIMETypes()));
         supportedMimeTypes.add("image/jpgpng");         // used by ESRI
         supportedMimeTypes.add("image/png8");           // used by geoserver
+        supportedMimeTypes.add("image/vnd.jpeg-png");   // used by geoserver
+        supportedMimeTypes.add("image/vnd.jpeg-png8");  // used by geoserver
         supportedMimeTypes.add("image/png; mode=8bit"); // used by MapServer
         if (supportedMimeTypes.contains("image/jpeg")) {
             supportedMimeTypes.add("image/jpg"); // sometimes misspelled by Arcgis
