@@ -175,6 +175,14 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         for (Layer l: MainApplication.getLayerManager().getLayers()) {
             registerOnLayer(l);
         }
+        // This listener gets called _prior to_ the reorder event. If we do not delay the execution of the
+        // model update, then the image will change instead of remaining the same.
+        this.layers.getModel().addChangeListener(l -> MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
+            Component selected = this.layers.getSelectedComponent();
+            if (selected instanceof MoveImgDisplayPanel) {
+                ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
+            }
+        })));
     }
 
     private static JButton createButton(AbstractAction action, Dimension buttonDim) {
@@ -297,8 +305,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      */
     private void addButtonsForImageLayers() {
         List<MoveImgDisplayPanel<?>> alreadyAdded = this.getImageTabs().collect(Collectors.toList());
-        // Avoid the setVisible call recursively calling this method and adding duplicates
-        alreadyAdded.forEach(m -> m.finishedAddingButtons = false);
         List<Layer> availableLayers = MainApplication.getLayerManager().getLayers();
         List<IGeoImageLayer> geoImageLayers = availableLayers.stream()
                 .sorted(Comparator.comparingInt(entry -> /*reverse*/-availableLayers.indexOf(entry)))
@@ -322,9 +328,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                     do {
                         int index = layers.indexOfTabComponent(source);
                         if (index >= 0) {
-                            getImageTabs().forEach(m -> m.finishedAddingButtons = false);
                             removeImageTab(((MoveImgDisplayPanel<?>) layers.getComponentAt(index)).layer);
-                            getImageTabs().forEach(m -> m.finishedAddingButtons = true);
                             getImageTabs().forEach(m -> m.setVisible(m.isVisible()));
                             return;
                         }
@@ -342,8 +346,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 // remove that layer, and then get a layer at index 1, which was previously at index 2.
                 .collect(Collectors.toList()).forEach(this::removeImageTab);
 
-        // This is need to avoid the first button becoming visible, and then recalling this method.
-        this.getImageTabs().forEach(m -> m.finishedAddingButtons = true);
         // After that, trigger the visibility set code
         this.getImageTabs().forEach(m -> m.setVisible(m.isVisible()));
     }
@@ -764,23 +766,19 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         private final T layer;
         private final ImageDisplay imgDisplay;
 
-        /**
-         * The purpose of this field is to avoid having the same tab added to the dialog multiple times. This is only a problem when the dialog
-         * has multiple tabs on initialization (like from a session).
-         */
-        boolean finishedAddingButtons;
         MoveImgDisplayPanel(ImageDisplay imgDisplay, T layer) {
             super(new BorderLayout());
             this.layer = layer;
             this.imgDisplay = imgDisplay;
         }
 
-        @Override
-        public void setVisible(boolean visible) {
-            super.setVisible(visible);
+        /**
+         * Call when the selection model updates
+         */
+        void fireModelUpdate() {
             JTabbedPane layers = ImageViewerDialog.getInstance().layers;
             int index = layers.indexOfComponent(this);
-            if (visible && this.finishedAddingButtons) {
+            if (this == layers.getSelectedComponent()) {
                 if (!this.layer.getSelection().isEmpty() && !this.layer.getSelection().contains(ImageViewerDialog.getCurrentImage())) {
                     ImageViewerDialog.getInstance().displayImages(this.layer.getSelection());
                     this.layer.invalidate(); // This will force the geoimage layers to update properly.
