@@ -81,7 +81,10 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         RESTART
     }
 
-    private enum UserAction {
+    /**
+     * The action a user decided to take with respect to an operation
+     */
+    enum UserAction {
         /** save/upload layers was successful, proceed with operation */
         PROCEED,
         /** save/upload of layers was not successful or user canceled operation */
@@ -112,7 +115,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, Reason reason) {
         if (!GraphicsEnvironment.isHeadless()) {
             SaveLayersDialog dialog = new SaveLayersDialog(MainApplication.getMainFrame());
-            List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
+            List<AbstractModifiableLayer> layersWithUnsavedChanges = new ArrayList<>();
             for (Layer l: selectedLayers) {
                 if (!(l instanceof AbstractModifiableLayer)) {
                     continue;
@@ -121,13 +124,13 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 if (odl.isModified() &&
                         ((!odl.isSavable() && !odl.isUploadable()) ||
                                 odl.requiresSaveToFile() ||
-                                (odl.requiresUploadToServer() && !odl.isUploadDiscouraged()))) {
-                    layersWithUnmodifiedChanges.add(odl);
+                                odl.requiresUploadToServer())) {
+                    layersWithUnsavedChanges.add(odl);
                 }
             }
             dialog.prepareForSavingAndUpdatingLayers(reason);
-            if (!layersWithUnmodifiedChanges.isEmpty()) {
-                dialog.getModel().populate(layersWithUnmodifiedChanges);
+            if (!layersWithUnsavedChanges.isEmpty()) {
+                dialog.getModel().populate(layersWithUnsavedChanges);
                 dialog.setVisible(true);
                 switch(dialog.getUserAction()) {
                     case PROCEED: return true;
