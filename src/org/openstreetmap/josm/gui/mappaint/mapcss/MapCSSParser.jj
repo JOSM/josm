@@ -1162,8 +1162,7 @@ void error_skipto(int kind, MapCSSException me) {
         e = new ParseException(pe.getMessage()); // prevent memory leak
     }
     
-    Logging.error("Skipping to the next rule, because of an error:");
-    Logging.error(e);
+    Logging.error("Skipping to the next rule, because of an error: " + e);
     if (sheet != null) {
         sheet.logError(e);
     }
