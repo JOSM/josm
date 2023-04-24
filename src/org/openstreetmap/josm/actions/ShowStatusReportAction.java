@@ -159,12 +159,12 @@ public final class ShowStatusReportAction extends JosmAction {
                     text.format("WebStart package: %s%n", webStartDetails);
                 }
             }
-            // Add Gnome Atk wrapper details if found
+            // Add Gnome ATK wrapper details if found
             String atkWrapperDetails = platform.getAtkWrapperPackageDetails();
             if (atkWrapperDetails != null) {
                 text.format("Java ATK Wrapper package: %s%n", atkWrapperDetails);
             }
-            // Add dependencies details if found
+            // Add dependency details if found
             for (String p : new String[] {
                     "apache-commons-compress", "libcommons-compress-java",
                     "apache-commons-jcs-core",
@@ -207,7 +207,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
             if (!vmArguments.isEmpty()) {
-                text.format("VM arguments: %s%n", vmArguments.toString().replace("\\\\", "\\"));
+                text.format("VM arguments: %s%n", paramCleanup(vmArguments).toString().replace("\\\\", "\\"));
             }
         } catch (SecurityException e) {
             Logging.trace(e);
@@ -280,7 +280,7 @@ public final class ShowStatusReportAction extends JosmAction {
     }
 
     /**
-     * Shortens and removes private informations from a parameter used for status report.
+     * Shortens and removes private information from a parameter used for status report.
      * @param param parameter to cleanup
      * @return shortened/anonymized parameter
      */
