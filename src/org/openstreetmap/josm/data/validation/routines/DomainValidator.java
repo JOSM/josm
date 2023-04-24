@@ -877,7 +877,6 @@ public final class DomainValidator extends AbstractValidator {
         "limited", // limited Big Fest, LLC
         "limo", // limo Hidden Frostbite, LLC
         "lincoln", // lincoln Ford Motor Company
-        "linde", // linde Linde Aktiengesellschaft
         "link", // link Uniregistry, Corp.
         "lipsy", // lipsy Lipsy Ltd
         "live", // live United TLD Holdco Ltd.
