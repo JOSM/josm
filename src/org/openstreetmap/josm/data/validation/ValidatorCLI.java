@@ -430,8 +430,7 @@ public class ValidatorCLI implements CLIModule {
             final IPreferences pref = Config.getPref();
             if (pref instanceof MemoryPreferences) {
                 final MemoryPreferences memoryPreferences = (MemoryPreferences) pref;
-                tempPreferences.getAllSettings().entrySet().stream().filter(entry -> entry.getValue().isNew())
-                        .forEach(entry -> memoryPreferences.putSetting(entry.getKey(), entry.getValue()));
+                tempPreferences.getAllSettings().forEach(memoryPreferences::putSetting);
             } else {
                 throw new JosmRuntimeException(tr("Preferences are not the expected type"));
             }

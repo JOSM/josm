@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +46,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
 import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -173,6 +175,28 @@ class ValidatorCLITest {
         errors.addAll(readJsonObjects(Paths.get(errorPath)));
         assertEquals(0, errors.size());
         Files.deleteIfExists(Paths.get(errorPath));
+    }
+
+    /**
+     * A non-regression test for #22898: Validator CLI errors out when is run with --load-preferences argument
+     */
+    @Test
+    void testNonRegression22898(final @TempDir Path preferencesLocation) throws IOException {
+        final ValidatorCLI validatorCLI = new ValidatorCLI();
+        final Path preferences = preferencesLocation.resolve("preferences.xml");
+        try (OutputStream fos = Files.newOutputStream(preferences)) {
+            final String pref = "<config>\n" +
+                    "    <preferences operation=\"replace\">\n" +
+                    "        <list key='plugins'>\n" +
+                    "          <entry value='baz'/>\n" +
+                    "        </list>\n" +
+                    "    </preferences>\n" +
+                    "</config>";
+            fos.write(pref.getBytes(StandardCharsets.UTF_8));
+        }
+        validatorCLI.processArguments(new String[]{"--load-preferences=" + preferences,
+                "--input", "resources/styles/standard/elemstyles.mapcss"});
+        assertEquals(Collections.singletonList("baz"), Config.getPref().getList("plugins"));
     }
 
     /**
