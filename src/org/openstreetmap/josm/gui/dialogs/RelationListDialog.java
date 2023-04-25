@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.FocusManager;
@@ -35,6 +34,7 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.relation.AddSelectionToRelations;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
 import org.openstreetmap.josm.actions.relation.DuplicateRelationAction;
@@ -88,7 +88,6 @@ import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -375,14 +374,17 @@ public class RelationListDialog extends ToggleDialog
     /**
      * The action for creating a new relation.
      */
-    static class NewAction extends AbstractAction implements LayerChangeListener, ActiveLayerChangeListener {
+    static class NewAction extends JosmAction implements LayerChangeListener, ActiveLayerChangeListener {
         NewAction() {
-            putValue(SHORT_DESCRIPTION, tr("Create a new relation"));
-            putValue(NAME, tr("New"));
-            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this, true);
+            super(tr("New"), "dialogs/add", tr("Create a new relation"),
+                    Shortcut.registerShortcut("relation:new", tr("Create a new relation"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
             updateEnabledState();
         }
 
+        /**
+         * Make a new relation
+         */
         public void run() {
             RelationEditor.getEditor(MainApplication.getLayerManager().getEditLayer(), null, null).setVisible(true);
         }
@@ -392,6 +394,7 @@ public class RelationListDialog extends ToggleDialog
             run();
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(MainApplication.getLayerManager().getEditLayer() != null);
         }
@@ -513,7 +516,7 @@ public class RelationListDialog extends ToggleDialog
             if (removedPrimitives == null) return;
             // extract the removed relations
             Set<Relation> removedRelations = removedPrimitives.stream()
-                    .filter(p -> p instanceof Relation).map(p -> (Relation) p)
+                    .filter(Relation.class::isInstance).map(Relation.class::cast)
                     .collect(Collectors.toSet());
             if (removedRelations.isEmpty())
                 return;
@@ -597,6 +600,9 @@ public class RelationListDialog extends ToggleDialog
             }
         }
 
+        /**
+         * Update the title for the relation list dialog
+         */
         public void updateTitle() {
             if (!relations.isEmpty() && relations.size() != getSize()) {
                 RelationListDialog.this.setTitle(tr("Relations: {0}/{1}", getSize(), relations.size()));

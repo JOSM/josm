@@ -9,9 +9,9 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
@@ -34,6 +33,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenBrowserAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
@@ -59,11 +59,10 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * ChangesetDialog is a toggle dialog which displays the current list of changesets.
@@ -296,15 +295,22 @@ public class ChangesetDialog extends ToggleDialog {
     /**
      * Selects objects for the currently selected changesets.
      */
-    class SelectObjectsAction extends AbstractAction implements ListSelectionListener, ItemListener {
+    class SelectObjectsAction extends JosmAction implements ListSelectionListener, ItemListener {
 
         SelectObjectsAction() {
-            putValue(NAME, tr("Select"));
-            putValue(SHORT_DESCRIPTION, tr("Select all objects assigned to the currently selected changesets"));
-            new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);
+            super(tr("Select"), "dialogs/select", tr("Select all objects assigned to the currently selected changesets"),
+                    Shortcut.registerShortcut("changeset:select:objects",
+                            tr("Changesets: Select all objects assigned to the currently selected changesets"),
+                            KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
             updateEnabledState();
         }
 
+        /**
+         * Select objects based off of the changeset id
+         * @param ds The dataset to select objects from
+         * @param ids The ids to select
+         */
         public void selectObjectsByChangesetIds(DataSet ds, Set<Integer> ids) {
             if (ds == null || ids == null)
                 return;
@@ -327,6 +333,7 @@ public class ChangesetDialog extends ToggleDialog {
             selectObjectsByChangesetIds(ds, sel);
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
         }
@@ -347,11 +354,13 @@ public class ChangesetDialog extends ToggleDialog {
      * Downloads selected changesets
      *
      */
-    class ReadChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener {
+    class ReadChangesetsAction extends JosmAction implements ListSelectionListener, ItemListener {
         ReadChangesetsAction() {
-            putValue(NAME, tr("Download"));
-            putValue(SHORT_DESCRIPTION, tr("Download information about the selected changesets from the OSM server"));
-            new ImageProvider("download").getResource().attachImageIcon(this, true);
+            super(tr("Download"), "download", tr("Download information about the selected changesets from the OSM server"),
+                    Shortcut.registerShortcut("changeset:download:information",
+                            tr("Changesets: Download information about the selected changeset from the OSM server"),
+                            KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
             updateEnabledState();
         }
 
@@ -365,6 +374,7 @@ public class ChangesetDialog extends ToggleDialog {
             MainApplication.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0 && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
@@ -384,11 +394,12 @@ public class ChangesetDialog extends ToggleDialog {
      * Closes the currently selected changesets
      *
      */
-    class CloseOpenChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener {
+    class CloseOpenChangesetsAction extends JosmAction implements ListSelectionListener, ItemListener {
         CloseOpenChangesetsAction() {
-            putValue(NAME, tr("Close open changesets"));
-            putValue(SHORT_DESCRIPTION, tr("Close the selected open changesets"));
-            new ImageProvider("closechangeset").getResource().attachImageIcon(this, true);
+            super(tr("Close open changesets"), "closechangeset", tr("Close the selected open changesets"),
+                    Shortcut.registerShortcut("changeset:close",
+                            tr("Changesets: Close the selected open changesets"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
             updateEnabledState();
         }
 
@@ -400,6 +411,7 @@ public class ChangesetDialog extends ToggleDialog {
             MainApplication.worker.submit(new CloseChangesetTask(sel));
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(getCurrentChangesetListModel().hasSelectedOpenChangesets());
         }
@@ -419,11 +431,12 @@ public class ChangesetDialog extends ToggleDialog {
      * Show information about the currently selected changesets
      *
      */
-    class ShowChangesetInfoAction extends AbstractAction implements ListSelectionListener, ItemListener {
+    class ShowChangesetInfoAction extends JosmAction implements ListSelectionListener, ItemListener {
         ShowChangesetInfoAction() {
-            putValue(NAME, tr("Show info"));
-            putValue(SHORT_DESCRIPTION, tr("Open a web page for each selected changeset"));
-            new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
+            super(tr("Show info"), "help/internet", tr("Open a web page for each selected changeset"),
+                    Shortcut.registerShortcut("changeset:info",
+                            tr("Changesets: Open a web page for each selected changeset"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
             updateEnabledState();
         }
 
@@ -440,6 +453,7 @@ public class ChangesetDialog extends ToggleDialog {
             }
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
         }
@@ -459,11 +473,13 @@ public class ChangesetDialog extends ToggleDialog {
      * Show information about the currently selected changesets
      *
      */
-    class LaunchChangesetManagerAction extends AbstractAction {
+    class LaunchChangesetManagerAction extends JosmAction {
         LaunchChangesetManagerAction() {
-            putValue(NAME, tr("Details"));
-            putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
-            new ImageProvider("dialogs/changeset", "changesetmanager").getResource().attachImageIcon(this, true);
+            super(tr("Details"), "dialogs/changeset/changesetmanager", tr("Opens the Changeset Manager window for the selected changesets"),
+                    Shortcut.registerShortcut("changeset:launch:manager",
+                            tr("Changesets: Opens the Changeset Manager window for the selected changesets"),
+                            KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
         }
 
         @Override

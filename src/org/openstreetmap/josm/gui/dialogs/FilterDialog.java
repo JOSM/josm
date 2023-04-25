@@ -26,6 +26,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Filter;
@@ -51,7 +52,6 @@ import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -118,12 +118,10 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             tr("Filter mode")
     };
 
-    private abstract class FilterAction extends AbstractAction implements IEnabledStateUpdating {
+    private abstract class FilterAction extends JosmAction implements IEnabledStateUpdating {
 
-        FilterAction(String name, String description, String icon) {
-            putValue(NAME, name);
-            putValue(SHORT_DESCRIPTION, description);
-            new ImageProvider("dialogs", icon).getResource().attachImageIcon(this, true);
+        FilterAction(String name, String description, String icon, Shortcut shortcut) {
+            super(name, "dialogs/" + icon, description, shortcut, false, false);
         }
 
         @Override
@@ -134,7 +132,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     private class AddAction extends FilterAction {
         AddAction() {
-            super(tr("Add"), tr("Add filter."), /* ICON(dialogs/) */ "add");
+            super(tr("Add"), tr("Add filter."), /* ICON(dialogs/) */ "add",
+                    Shortcut.registerShortcut("filter:add", tr("Filter: Add"), KeyEvent.VK_UNDEFINED, Shortcut.NONE));
         }
 
         @Override
@@ -153,7 +152,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     private class EditAction extends FilterAction {
         EditAction() {
-            super(tr("Edit"), tr("Edit filter."), /* ICON(dialogs/) */ "edit");
+            super(tr("Edit"), tr("Edit filter."), /* ICON(dialogs/) */ "edit",
+                    Shortcut.registerShortcut("filter:edit", tr("Filter: Edit"), KeyEvent.VK_UNDEFINED, Shortcut.NONE));
         }
 
         @Override
@@ -170,7 +170,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     private class DeleteAction extends FilterAction {
         DeleteAction() {
-            super(tr("Delete"), tr("Delete filter."), /* ICON(dialogs/) */ "delete");
+            super(tr("Delete"), tr("Delete filter."), /* ICON(dialogs/) */ "delete",
+                    Shortcut.registerShortcut("filter:delete", tr("Filter: Delete"), KeyEvent.VK_UNDEFINED, Shortcut.NONE));
         }
 
         @Override
@@ -181,7 +182,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     private class MoveUpAction extends FilterAction {
         MoveUpAction() {
-            super(tr("Up"), tr("Move filter up."), /* ICON(dialogs/) */ "up");
+            super(tr("Up"), tr("Move filter up."), /* ICON(dialogs/) */ "up",
+                    Shortcut.registerShortcut("filter:up", tr("Filter: Move up"), KeyEvent.VK_UNDEFINED, Shortcut.NONE));
         }
 
         @Override
@@ -197,7 +199,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     private class MoveDownAction extends FilterAction {
         MoveDownAction() {
-            super(tr("Down"), tr("Move filter down."), /* ICON(dialogs/) */ "down");
+            super(tr("Down"), tr("Move filter down."), /* ICON(dialogs/) */ "down",
+                    Shortcut.registerShortcut("filter:down", tr("Filter: Move down"), KeyEvent.VK_UNDEFINED, Shortcut.NONE));
         }
 
         @Override
@@ -213,7 +216,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     private class SortAction extends FilterAction {
         SortAction() {
-            super(tr("Sort"), tr("Sort filters."), /* ICON(dialogs/) */ "sort");
+            super(tr("Sort"), tr("Sort filters."), /* ICON(dialogs/) */ "sort",
+                    Shortcut.registerShortcut("filter:sort", tr("Filter: Sort"), KeyEvent.VK_UNDEFINED, Shortcut.NONE));
         }
 
         @Override
@@ -229,7 +233,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     private class ReverseAction extends FilterAction {
         ReverseAction() {
-            super(tr("Reverse"), tr("Reverse the filters order."), /* ICON(dialogs/) */ "reverse");
+            super(tr("Reverse"), tr("Reverse the filters order."), /* ICON(dialogs/) */ "reverse",
+                    Shortcut.registerShortcut("filter:reverse", tr("Filter: Reverse"), KeyEvent.VK_UNDEFINED, Shortcut.NONE));
         }
 
         @Override

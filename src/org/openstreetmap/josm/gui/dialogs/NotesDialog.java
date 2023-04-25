@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -34,6 +34,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.DownloadNotesInViewAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.UploadNotesAction;
 import org.openstreetmap.josm.actions.mapmode.AddNoteAction;
 import org.openstreetmap.josm.data.notes.Note;
@@ -342,7 +343,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
             if (filter == null) {
                 filteredData.addAll(data);
             } else {
-                data.stream().filter(filter).forEach(filteredData::add);
+                filteredData.addAll(data.stream().filter(filter).collect(Collectors.toList()));
             }
             fireContentsChanged(this, 0, getSize());
             setTitle(data.isEmpty()
@@ -350,12 +351,19 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
                     : tr("Notes: {0}/{1}", filteredData.size(), data.size()));
         }
 
+        /**
+         * Set the note data
+         * @param noteList The notes to show
+         */
         public void setData(Collection<Note> noteList) {
             data.clear();
             data.addAll(noteList);
             setFilter(filter);
         }
 
+        /**
+         * Clear the note data
+         */
         public void clearData() {
             displayList.clearSelection();
             data.clear();
@@ -363,15 +371,18 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         }
     }
 
-    class AddCommentAction extends AbstractAction {
+    /**
+     * The action to add a new comment to OSM
+     */
+    class AddCommentAction extends JosmAction {
 
         /**
          * Constructs a new {@code AddCommentAction}.
          */
         AddCommentAction() {
-            putValue(SHORT_DESCRIPTION, tr("Add comment"));
-            putValue(NAME, tr("Comment"));
-            new ImageProvider("dialogs/notes", "note_comment").getResource().attachImageIcon(this, true);
+            super(tr("Comment"), "dialogs/notes/note_comment", tr("Add comment"),
+                    Shortcut.registerShortcut("notes:comment:add", tr("Notes: Add comment"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
         }
 
         @Override
@@ -395,15 +406,18 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         }
     }
 
-    class CloseAction extends AbstractAction {
+    /**
+     * Close a note
+     */
+    class CloseAction extends JosmAction {
 
         /**
          * Constructs a new {@code CloseAction}.
          */
         CloseAction() {
-            putValue(SHORT_DESCRIPTION, tr("Close note"));
-            putValue(NAME, tr("Close"));
-            new ImageProvider("dialogs/notes", "note_closed").getResource().attachImageIcon(this, true);
+            super(tr("Close"), "dialogs/notes/note_closed", tr("Close note"),
+                    Shortcut.registerShortcut("notes:comment:close", tr("Notes: Close note"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
         }
 
         @Override
@@ -427,15 +441,18 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         }
     }
 
-    class NewAction extends AbstractAction {
+    /**
+     * Create a new note
+     */
+    class NewAction extends JosmAction {
 
         /**
          * Constructs a new {@code NewAction}.
          */
         NewAction() {
-            putValue(SHORT_DESCRIPTION, tr("Create a new note"));
-            putValue(NAME, tr("Create"));
-            new ImageProvider("dialogs/notes", "note_new").getResource().attachImageIcon(this, true);
+            super(tr("Create"), "dialogs/notes/note_new", tr("Create a new note"),
+                    Shortcut.registerShortcut("notes:comment:new", tr("Notes: New note"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
         }
 
         @Override
@@ -449,15 +466,18 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         }
     }
 
-    class ReopenAction extends AbstractAction {
+    /**
+     * Reopen a note
+     */
+    class ReopenAction extends JosmAction {
 
         /**
          * Constructs a new {@code ReopenAction}.
          */
         ReopenAction() {
-            putValue(SHORT_DESCRIPTION, tr("Reopen note"));
-            putValue(NAME, tr("Reopen"));
-            new ImageProvider("dialogs/notes", "note_open").getResource().attachImageIcon(this, true);
+            super(tr("Reopen"), "dialogs/notes/note_open", tr("Reopen note"),
+                    Shortcut.registerShortcut("notes:comment:reopen", tr("Notes: Reopen note"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
         }
 
         @Override
@@ -475,15 +495,18 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         }
     }
 
-    class SortAction extends AbstractAction {
+    /**
+     * Sort notes
+     */
+    class SortAction extends JosmAction {
 
         /**
          * Constructs a new {@code SortAction}.
          */
         SortAction() {
-            putValue(SHORT_DESCRIPTION, tr("Sort notes"));
-            putValue(NAME, tr("Sort"));
-            new ImageProvider("dialogs", "sort").getResource().attachImageIcon(this, true);
+            super(tr("Sort"), "dialogs/sort", tr("Sort notes"),
+                    Shortcut.registerShortcut("notes:comment:sort", tr("Notes: Sort notes"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
         }
 
         @Override
@@ -496,11 +519,14 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         }
     }
 
-    class OpenInBrowserAction extends AbstractAction {
+    /**
+     * Open the note in a browser
+     */
+    class OpenInBrowserAction extends JosmAction {
         OpenInBrowserAction() {
-            super(tr("Open in browser"));
-            putValue(SHORT_DESCRIPTION, tr("Open the note in an external browser"));
-            new ImageProvider("help", "internet").getResource().attachImageIcon(this, true);
+            super(tr("Open in browser"), "help/internet", tr("Open the note in an external browser"),
+                    Shortcut.registerShortcut("notes:comment:open_in_browser", tr("Notes: Open note in browser"),
+                            KeyEvent.VK_UNDEFINED, Shortcut.NONE), false, false);
         }
 
         @Override

@@ -310,17 +310,18 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
 
-    protected class OnOffAction extends AbstractAction implements ListSelectionListener {
+    protected class OnOffAction extends JosmAction implements ListSelectionListener {
         /**
          * Constructs a new {@code OnOffAction}.
          */
         public OnOffAction() {
-            putValue(NAME, tr("On/Off"));
-            putValue(SHORT_DESCRIPTION, tr("Turn selected styles on or off"));
-            new ImageProvider("apply").getResource().attachImageIcon(this, true);
+            super(tr("On/Off"), "apply", tr("Turn selected styles on or off"),
+                    Shortcut.registerShortcut("map:paint:style:on_off", tr("Filter: Add"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
             updateEnabledState();
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(!cbWireframe.isSelected() && tblStyles.getSelectedRowCount() > 0);
         }
@@ -341,7 +342,7 @@ public class MapPaintDialog extends ToggleDialog {
     /**
      * The action to move down the currently selected entries in the list.
      */
-    protected class MoveUpDownAction extends AbstractAction implements ListSelectionListener {
+    protected class MoveUpDownAction extends JosmAction implements ListSelectionListener {
 
         private final int increment;
 
@@ -350,13 +351,18 @@ public class MapPaintDialog extends ToggleDialog {
          * @param isDown {@code true} to move the entry down, {@code false} to move it up
          */
         public MoveUpDownAction(boolean isDown) {
+            super(isDown ? tr("Down") : tr("Up"), "dialogs/" + (isDown ? "down" : "up"),
+                    isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."),
+                    isDown ? Shortcut.registerShortcut("map:paint:style:down", tr("Map Paint Styles: Move selected entry down"),
+                            KeyEvent.VK_UNDEFINED, Shortcut.NONE)
+                    : Shortcut.registerShortcut("map:paint:style:up", tr("Map Paint Styles: Move selected entry up"),
+                            KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, false);
             increment = isDown ? 1 : -1;
-            putValue(NAME, isDown ? tr("Down") : tr("Up"));
-            new ImageProvider("dialogs", isDown ? "down" : "up").getResource().attachImageIcon(this, true);
-            putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
             updateEnabledState();
         }
 
+        @Override
         public void updateEnabledState() {
             int[] sel = tblStyles.getSelectedRows();
             setEnabled(!cbWireframe.isSelected() && MapPaintStyles.canMoveStyles(sel, increment));

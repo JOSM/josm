@@ -29,6 +29,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
@@ -45,7 +46,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -163,18 +163,24 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
         return model.getSelectedUsers(rows);
     }
 
-    class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener {
+    /**
+     * Select the primitives that a user modified <i>last</i>.
+     */
+    class SelectUsersPrimitivesAction extends JosmAction implements ListSelectionListener {
 
         /**
          * Constructs a new {@code SelectUsersPrimitivesAction}.
          */
         SelectUsersPrimitivesAction() {
-            putValue(NAME, tr("Select"));
-            putValue(SHORT_DESCRIPTION, tr("Select objects submitted by this user"));
-            new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);
+            super(tr("Select"), "dialogs/select", tr("Select objects submitted by this user"),
+                    Shortcut.registerShortcut("user:select_primitives", tr("User: objects submitted by selected user"),
+                            KeyEvent.VK_UNDEFINED, Shortcut.NONE), false, false);
             updateEnabledState();
         }
 
+        /**
+         * Select the primitives owned by the selected users
+         */
         public void select() {
             int[] indexes = userTable.getSelectedRows();
             if (indexes.length == 0)
@@ -187,6 +193,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
             select();
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(userTable != null && userTable.getSelectedRowCount() > 0);
         }
@@ -203,10 +210,9 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
     class ShowUserInfoAction extends AbstractInfoAction implements ListSelectionListener {
 
         ShowUserInfoAction() {
-            super(false);
-            putValue(NAME, tr("Show info"));
-            putValue(SHORT_DESCRIPTION, tr("Launches a browser with information about the user"));
-            new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
+            super(tr("Show info"), "help/internet", tr("Launches a browser with information about the user"),
+                    Shortcut.registerShortcut("user:open_in_browser", tr("User: Show info in browser"), KeyEvent.VK_UNDEFINED, Shortcut.NONE),
+                    false, null, false);
             updateEnabledState();
         }
 
@@ -234,7 +240,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
         protected String createInfoUrl(Object infoObject) {
             if (infoObject instanceof User) {
                 User user = (User) infoObject;
-                return Config.getUrls().getBaseUserUrl() + '/' + Utils.encodeUrl(user.getName()).replaceAll("\\+", "%20");
+                return Config.getUrls().getBaseUserUrl() + '/' + Utils.encodeUrl(user.getName()).replace("+", "%20");
             } else {
                 return null;
             }
