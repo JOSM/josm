@@ -157,42 +157,33 @@ public final class CertificateAmendment {
      * </ul>
      */
     private static final NativeCertAmend[] PLATFORM_CERT_AMEND = {
-        // Let's Encrypt - should be included in JDK, but problems with Ubuntu 18.04, see #15851
-        new NativeCertAmend(Collections.singleton("DST Root CA X3"),
-                "DST_Root_CA_X3.pem",
-                "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739",
-                "https://acme-v02.api.letsencrypt.org"),
-        // #19872 - Government of Netherlands - for PDOK aerial imagery at ​https://geodata.nationaalgeoregister.nl
-        new NativeCertAmend(Collections.singleton("Staat der Nederlanden EV Root CA"),
-                "Staat_der_Nederlanden_EV_Root_CA.crt",
-                "4d2491414cfe956746ec4cefa6cf6f72e28a1329432f9d8a907ac4cb5dadc15a",
-                "https://roottest-ev.pkioverheid.nl"),
-        // #14649 - Government of Netherlands - for PDOK aerial imagery at ​https://geodata.nationaalgeoregister.nl
+        // #14649 - Government of Netherlands - for PDOK aerial imagery at ​https://geodata.nationaalgeoregister.nl (expires 2028)
         new NativeCertAmend(Arrays.asList("Government of Netherlands G3", "Staat der Nederlanden Root CA - G3"),
                 "Staat_der_Nederlanden_Root_CA_-_G3.crt",
                 "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428",
                 "https://roottest-g3.pkioverheid.nl"),
         // #15178 - Trusted and used by French Government - for cadastre - https://www.certigna.fr/autorites/index.xhtml?ac=Racine#lracine
+        // (expires 2027, should be in Java 21)
         new NativeCertAmend(Collections.singleton("Certigna"),
                 "Certigna.crt",
                 "e3b6a2db2ed7ce48842f7ac53241c7b71d54144bfb40c11f3f1d0b42f5eea12d",
                 "https://www.certigna.fr"),
-        // #16307 - Trusted and used by Slovakian Government - https://eidas.disig.sk/en/cacert/
+        // #16307 - Trusted and used by Slovakian Government - https://eidas.disig.sk/en/cacert/ (expires 2042)
         new NativeCertAmend(Collections.singleton("CA Disig Root R2"),
                 "CA_Disig_Root_R2.pem",
                 "e23d4a036d7b70e9f595b1422079d2b91edfbb1fb651a0633eaa8a9dc5f80703",
                 "https://eidas.disig.sk"),
-        // #17062 - Government of Taiwan - for https://data.gov.tw/license - https://grca.nat.gov.tw/GRCAeng/index.html
+        // #17062 - Government of Taiwan - for https://data.gov.tw/license - https://grca.nat.gov.tw/GRCAeng/index.html (expires 2032)
         new NativeCertAmend(Arrays.asList("TW Government Root Certification Authority", "Government Root Certification Authority"),
                 "Taiwan_GRCA.pem",
                 "7600295eefe85b9e1fd624db76062aaaae59818a54d2774cd4c0b2c01131e1b3",
                 "https://grca.nat.gov.tw"),
-        // #17668 - used by city of Budapest - for https://terinfo.ujbuda.hu - https://e-szigno.hu/
+        // #17668 - used by city of Budapest - for https://terinfo.ujbuda.hu - https://e-szigno.hu/ (expires 2029)
         new NativeCertAmend(Collections.singleton("MicroSec e-Szigno Root CA 2009"),
                 "Microsec_e-Szigno_Root_CA_2009.pem",
                 "3c5f81fea5fab82c64bfa2eaecafcde8e077fc8620a7cae537163df36edbf378",
                 "https://e-szigno.hu"),
-        // #18920 - Spanish Government - https://www.sede.fnmt.gob.es/descargas/certificados-raiz-de-la-fnmt
+        // #18920 - Spanish Government - https://www.sede.fnmt.gob.es/descargas/certificados-raiz-de-la-fnmt (expires 2030)
         new NativeCertAmend(Collections.singleton("AC RAIZ FNMT-RCM"),
                 "AC_RAIZ_FNMT-RCM.pem",
                 "ebc5570c29018c4d67b1aa127baf12f703b4611ebc17b7dab5573894179b93fa",
