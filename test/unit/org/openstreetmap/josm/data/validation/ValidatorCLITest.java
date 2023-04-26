@@ -4,14 +4,13 @@ package org.openstreetmap.josm.data.validation;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,11 +27,13 @@ import java.util.stream.Stream;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.swing.SwingUtilities;
 
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,17 +43,15 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
 import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.AnnotationUtils;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.ThreadSync;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
-
-import mockit.Mock;
-import mockit.MockUp;
 
 /**
  * Test class for {@link ValidatorCLI}
@@ -60,22 +59,13 @@ import mockit.MockUp;
  */
 @BasicPreferences
 class ValidatorCLITest {
+    @RegisterExtension
+    ThreadSync.ThreadSyncExtension threadSync = new ThreadSync.ThreadSyncExtension();
+
     @TempDir
     static File temporaryDirectory;
 
     TestHandler handler;
-
-    private static void synchronizeThreads() {
-        MainApplication.worker.execute(() -> { /* Sync worker thread */ });
-        try {
-            SwingUtilities.invokeAndWait(() -> { /* Sync EDT thread */ });
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            fail(e);
-        } catch (InvocationTargetException e) {
-            fail(e);
-        }
-    }
 
     @BeforeEach
     void setup() {
@@ -86,8 +76,7 @@ class ValidatorCLITest {
     }
 
     @AfterEach
-    void tearDown() throws InterruptedException, InvocationTargetException {
-        synchronizeThreads();
+    void tearDown() {
         Logging.getLogger().removeHandler(this.handler);
         this.handler.close();
         this.handler = null;
@@ -112,9 +101,8 @@ class ValidatorCLITest {
                     try {
                         return Files.copy(file.toPath(), Paths.get(temporaryDirectory.getPath(), renamedValidator)).getFileName().toString();
                     } catch (IOException e) {
-                        fail(e);
+                        throw new UncheckedIOException(e);
                     }
-                    return null;
                 }).map(Arguments::of);
     }
 
@@ -137,7 +125,7 @@ class ValidatorCLITest {
         new ValidatorCLI().processArguments(new String[]{"--input", dataPath, "--output", outputPath});
         final File outputFile = new File(outputPath);
         assertTrue(outputFile.exists());
-        synchronizeThreads();
+        threadSync.threadSync();
         final List<JsonObject> errors = readJsonObjects(outputFile.toPath());
         assertEquals(3, errors.stream().map(ValidatorCLITest::getMessage).filter("Overlapping Identical Landuses"::equals).count());
         assertEquals(3, errors.size(), errors.stream().map(ValidatorCLITest::getMessage).collect(Collectors.joining("\n")));
@@ -181,7 +169,8 @@ class ValidatorCLITest {
      * A non-regression test for #22898: Validator CLI errors out when is run with --load-preferences argument
      */
     @Test
-    void testNonRegression22898(final @TempDir Path preferencesLocation) throws IOException {
+    void testNonRegression22898(final @TempDir Path preferencesLocation) throws IOException, ReflectiveOperationException {
+        AnnotationUtils.resetStaticClass(Config.class);
         final ValidatorCLI validatorCLI = new ValidatorCLI();
         final Path preferences = preferencesLocation.resolve("preferences.xml");
         try (OutputStream fos = Files.newOutputStream(preferences)) {

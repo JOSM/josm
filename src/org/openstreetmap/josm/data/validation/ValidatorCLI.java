@@ -162,6 +162,8 @@ public class ValidatorCLI implements CLIModule {
     @Override
     public void processArguments(final String[] argArray) {
         try {
+            // for right-left-hand traffic cache file, needed for preferences
+            Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
             // Ensure that preferences are only in memory
             Config.setPreferencesInstance(new MemoryPreferences());
             Logging.setLogLevel(Level.INFO);
@@ -347,7 +349,6 @@ public class ValidatorCLI implements CLIModule {
     void initialize() {
         Logging.setLogLevel(this.logLevel);
         HttpClient.setFactory(Http1Client::new);
-        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance()); // for right-left-hand traffic cache file
         Config.setUrlsProvider(JosmUrls.getInstance());
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("epsg:3857".toUpperCase(Locale.ROOT)));
 
