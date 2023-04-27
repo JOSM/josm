@@ -3571,6 +3571,13 @@ node[vending=excrement_bags] {
     icon-image: "presets/service/excrement_bags.svg";
     set icon_z17;
 }
+node[amenity=parcel_locker] {
+    icon-image: "presets/service/parcel_locker.svg";
+    set icon_z17;
+}
+area[amenity=parcel_locker] {
+    fill-color: parcel_locker#734a08;
+}
 
 /**************/
 /* craft tags */

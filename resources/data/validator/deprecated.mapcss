@@ -2363,6 +2363,39 @@ way[shoulder=none] {
   group: tr("deprecated tagging");
 }
 
+/* #21782 */
+*[amenity=vending_machine][vending=parcel_mail_in],
+*[amenity=vending_machine][vending=parcel_pickup] {
+  set .parcel_fixable;
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "amenity=parcel_locker + {1.value}=yes";
+  fixAdd: "amenity=parcel_locker";
+  fixAdd: "{1.value}=yes";
+  fixRemove: "vending";
+  group: tr("deprecated tagging");
+  assertMatch: "node amenity=vending_machine vending=parcel_mail_in";
+  assertMatch: "node amenity=vending_machine vending=parcel_pickup";
+}
+*[amenity=vending_machine][vending][vending~=parcel_mail_in][vending~=parcel_pickup][count(uniq_list(split(";", tag("vending")))) == 2] {
+  set .parcel_fixable;
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "amenity=parcel_locker + parcel_pickup=yes + parcel_mail_in=yes";
+  fixAdd: "amenity=parcel_locker";
+  fixAdd: "parcel_pickup=yes";
+  fixAdd: "parcel_mail_in=yes";
+  fixRemove: "vending";
+  group: tr("deprecated tagging");
+  assertMatch: "node amenity=vending_machine vending=parcel_mail_in;parcel_pickup";
+  assertMatch: "node amenity=vending_machine vending=parcel_pickup;parcel_mail_in";
+}
+*[amenity=vending_machine][vending~=parcel_mail_in]!.parcel_fixable,
+*[amenity=vending_machine][vending~=parcel_pickup]!.parcel_fixable {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "amenity=parcel_locker + {1.value}=yes";
+  assertMatch: "node amenity=vending_machine vending=parcel_pickup;stamp";
+  group: tr("deprecated tagging");
+}
+
 /* #21954 decoturf was added to JOSM presets in r8123 and replaced with acrylic in r18404 */
 *[surface=decoturf] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
