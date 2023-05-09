@@ -7148,7 +7148,21 @@
             <space />
             <key key="historic" value="memorial" />
             <text key="name" text="Name" />
-            <combo key="memorial" text="Type" values="bust,plaque,statue,stele,stone,war_memorial" values_context="memorial" values_searchable="true" />
+            <combo key="memorial" text="Type" values_context="memorial" values_searchable="true">
+                <list_entry value="bust" short_description="Like a statue, but only showing the upper half of a person." />
+                <list_entry value="plaque" short_description="A commemorative sign, often mounted on a wall." />
+                <list_entry value="statue" short_description="A statue representing a person." />
+                <list_entry value="stele" short_description="An upright slab engraved or painted with decorations or inscriptions." />
+                <list_entry value="stone" short_description="A stone with an inscription, picture, or similar." />
+                <list_entry value="war_memorial" short_description="A building, monument, statue or other edifice celebrating a victory or commemorating those who died or were injured in a war." />
+                <list_entry value="sculpture" short_description="A non figurative sculpture which does not match any of the other categories." />
+                <list_entry value="cross" short_description="A cross-shaped memorial." />
+                <list_entry value="blue_plaque" short_description="A blue plaque commemorating a historical link to that location. (UK)" />
+                <list_entry value="obelisk" short_description="An obelisk." />
+                <list_entry value="ghost_bike" short_description="A bicycle painted white permanently placed as memorial for a victim of a road accident (usually cyclists)." />
+                <list_entry value="stolperstein" short_description="10cm × 10cm brass plaque commemorating victims of Nazi persecution. (EU,RU)" />
+                <list_entry value="bench" short_description="A bench placed in memory of someone or something; usually has a plaque, and sometimes a statue sitting on (part of) it." />
+            </combo>
             <optional>
                 <text key="inscription" text="Inscription" />
                 <text key="artist_name" text="Artist Name" />
