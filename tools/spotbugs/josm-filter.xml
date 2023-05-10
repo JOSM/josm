@@ -56,6 +56,9 @@
         <Class name="~com.*" />
     </Match>
     <Match>
+        <Class name="~jakarta.json.*" />
+    </Match>
+    <Match>
         <Class name="~javax.json.*" />
     </Match>
     <Match>
@@ -63,6 +66,9 @@
     </Match>
     <Match>
         <Class name="~org.apache.*" />
+    </Match>
+    <Match>
+        <Class name="~org.eclipse.parsson.*" />
     </Match>
     <Match>
         <Class name="~org.glassfish.json.*" />

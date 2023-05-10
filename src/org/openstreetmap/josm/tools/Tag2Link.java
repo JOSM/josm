@@ -22,10 +22,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;

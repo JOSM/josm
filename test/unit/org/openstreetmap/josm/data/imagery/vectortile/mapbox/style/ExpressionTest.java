@@ -4,8 +4,8 @@ package org.openstreetmap.josm.data.imagery.vectortile.mapbox.style;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-import javax.json.Json;
-import javax.json.JsonValue;
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;

@@ -16,7 +16,7 @@ import java.time.Instant;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.json.JsonException;
+import jakarta.json.JsonException;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -259,9 +259,9 @@ class OsmJsonReaderTest {
      * See #22680: Unexpected exception downloading from Overpass query
      * The JSON parser throws {@link RuntimeException}s, specifically
      * <ul>
-     *     <li>{@link javax.json.JsonException}</li>
-     *     <li>{@link javax.json.stream.JsonParsingException}, extends {@link javax.json.JsonException}</li>
-     *     <li>{@link javax.json.stream.JsonGenerationException}, extends {@link javax.json.JsonException}
+     *     <li>{@link jakarta.json.JsonException}</li>
+     *     <li>{@link jakarta.json.stream.JsonParsingException}, extends {@link jakarta.json.JsonException}</li>
+     *     <li>{@link jakarta.json.stream.JsonGenerationException}, extends {@link jakarta.json.JsonException}
      *         (which we don't care about when we are <em>parsing</em> JSON)</li>
      * </ul>
      */
@@ -299,7 +299,7 @@ class OsmJsonReaderTest {
         bais.reset();
         // Check that a generic parsing error is properly reported
         ide = assertThrows(IllegalDataException.class, () -> OsmJsonReader.parseDataSet(bais, NullProgressMonitor.INSTANCE));
-        assertEquals("javax.json.stream.JsonParsingException: Invalid token=COMMA at (line no=1, column no=8, offset=7). " +
+        assertEquals("jakarta.json.stream.JsonParsingException: Invalid token=COMMA at (line no=1, column no=8, offset=7). " +
                 "Expected tokens are: [COLON]", ExceptionUtil.explainException(ide));
         bais.reset();
         // Check that an unknown exception is thrown properly

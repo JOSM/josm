@@ -19,9 +19,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.data.StructUtils.StructEntry;

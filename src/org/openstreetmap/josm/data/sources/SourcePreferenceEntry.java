@@ -3,7 +3,7 @@ package org.openstreetmap.josm.data.sources;
 
 import java.util.Map;
 
-import javax.json.stream.JsonCollectors;
+import jakarta.json.stream.JsonCollectors;
 
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.imagery.DefaultLayer;

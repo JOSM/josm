@@ -24,9 +24,9 @@ import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 
 import mockit.Mock;
 import mockit.MockUp;

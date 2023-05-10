@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonWriter;
+import jakarta.json.stream.JsonGenerator;
 
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;

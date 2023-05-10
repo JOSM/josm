@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.json.JsonException;
+import jakarta.json.JsonException;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.data.oauth.IOAuthToken;

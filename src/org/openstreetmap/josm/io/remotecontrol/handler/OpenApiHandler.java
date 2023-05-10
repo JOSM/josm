@@ -8,9 +8,9 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;

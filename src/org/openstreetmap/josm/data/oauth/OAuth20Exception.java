@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 /**
  * A generic OAuth 2.0 exception

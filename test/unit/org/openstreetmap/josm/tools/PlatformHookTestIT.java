@@ -7,7 +7,7 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.json.Json;
+import jakarta.json.Json;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

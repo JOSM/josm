@@ -23,11 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
+import jakarta.json.Json;
+import jakarta.json.JsonException;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.InvalidMapboxVectorTileException;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;

@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import javax.json.Json;
+import jakarta.json.Json;
 
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.help.HelpUtil;
