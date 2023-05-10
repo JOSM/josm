@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -127,16 +128,20 @@ public class AddPrimitivesCommand extends Command {
             createdPrimitives = PurgeCommand.topoSort(createdPrimitives);
         }
         // reversed order, see #14620
-        for (int i = createdPrimitives.size() - 1; i >= 0; i--) {
-            OsmPrimitive osm = createdPrimitives.get(i);
-            Optional<PrimitiveData> previous = preExistingData.stream()
-                    .filter(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId())).findAny();
-            if (previous.isPresent()) {
-                osm.load(previous.get());
-            } else {
-                ds.removePrimitive(osm);
-            }
-        }
+        final List<PrimitiveId> toRemove = new ArrayList<>(this.createdPrimitives.size());
+        ds.update(() -> {
+                    for (int i = createdPrimitives.size() - 1; i >= 0; i--) {
+                        OsmPrimitive osm = createdPrimitives.get(i);
+                        Optional<PrimitiveData> previous = preExistingData.stream()
+                                .filter(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId())).findAny();
+                        if (previous.isPresent()) {
+                            osm.load(previous.get());
+                        } else {
+                            toRemove.add(osm);
+                        }
+                    }
+                });
+        ds.removePrimitives(toRemove);
     }
 
     @Override
