@@ -92,7 +92,7 @@
             <isset property="clevel"/>
         </condition>
         <!-- For Java specific stuff by version -->
-        <condition property="isJava9"><matches string="${ant.java.version}" pattern="(1.)?(9|[2-9][0-9])" /></condition>
+        <condition property="isJava9"><matches string="${ant.java.version}" pattern="(1.)?(9|[1-9][0-9])" /></condition>
         <condition property="isJava10"><matches string="${ant.java.version}" pattern="[1-9][0-9]" /></condition>
         <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]|[2-9][0-9]" /></condition>
         <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]|[2-9][0-9]" /></condition>
