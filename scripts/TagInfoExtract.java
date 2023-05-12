@@ -334,7 +334,7 @@ public class TagInfoExtract {
                     Logging.warn(ex);
                 }
             }
-            writeJson("JOSM user presets", "Tags supported by the user contributed presets in the OSM editor JOSM", tags);
+            writeJson("JOSM user presets", "Tags supported by the user contributed presets to the OSM editors JOSM and Vespucci", tags);
         }
     }
 
