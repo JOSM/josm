@@ -87,7 +87,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
                 Future<?> future = task.download(new DownloadParams().withNewLayer(newLayer), bbox, null);
                 MainApplication.worker.submit(new PostDownloadHandler(task, future));
                 if (zoom) {
-                    tasks.add(new Pair<AbstractDownloadTask<?>, Future<?>>(task, future));
+                    tasks.add(new Pair<>(task, future));
                 }
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -211,8 +211,10 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             setLayout(new GridBagLayout());
 
             // size check depends on selected data source
-            checkboxChangeListener = e ->
-                    dialog.getSelectedDownloadArea().ifPresent(this::updateSizeCheck);
+            checkboxChangeListener = e -> {
+                rememberSettings();
+                dialog.getSelectedDownloadArea().ifPresent(OSMDownloadSourcePanel.this::boundingBoxChanged);
+            };
 
             downloadSourcesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             add(downloadSourcesPanel, GBC.eol().fill(GBC.HORIZONTAL));
@@ -280,7 +282,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
                 return false;
             }
 
-            final Boolean slippyMapShowsDownloadBounds = settings.getSlippyMapBounds()
+            final boolean slippyMapShowsDownloadBounds = settings.getSlippyMapBounds()
                     .map(b -> b.intersects(settings.getDownloadBounds().get()))
                     .orElse(true);
             if (!slippyMapShowsDownloadBounds) {
@@ -324,15 +326,6 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
 
         @Override
         public void boundingBoxChanged(Bounds bbox) {
-            updateSizeCheck(bbox);
-        }
-
-        @Override
-        public String getSimpleName() {
-            return SIMPLE_NAME;
-        }
-
-        private void updateSizeCheck(Bounds bbox) {
             if (bbox == null) {
                 sizeCheck.setText(tr("No area selected yet"));
                 sizeCheck.setForeground(Color.darkGray);
@@ -340,7 +333,13 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             }
 
             displaySizeCheckResult(DOWNLOAD_SOURCES.stream()
+                    .filter(IDownloadSourceType::isEnabled)
                     .anyMatch(type -> type.isDownloadAreaTooLarge(bbox)));
+        }
+
+        @Override
+        public String getSimpleName() {
+            return SIMPLE_NAME;
         }
 
         private void displaySizeCheckResult(boolean isAreaTooLarge) {
@@ -351,31 +350,6 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
                 sizeCheck.setText(tr("Download area ok, size probably acceptable to server"));
                 sizeCheck.setForeground(Color.darkGray);
             }
-        }
-    }
-
-    /**
-     * Encapsulates data that is required to download from the OSM server.
-     */
-    static class OSMDownloadData {
-
-        private final List<IDownloadSourceType> downloadPossibilities;
-
-        /**
-         * Constructs a new {@code OSMDownloadData}.
-         * @param downloadPossibilities A list of DataDownloadTypes (instantiated, with
-         *                              options set)
-         */
-        OSMDownloadData(List<IDownloadSourceType> downloadPossibilities) {
-            this.downloadPossibilities = downloadPossibilities;
-        }
-
-        /**
-         * Returns the download possibilities.
-         * @return A list of DataDownloadTypes (instantiated, with options set)
-         */
-        public List<IDownloadSourceType> getDownloadPossibilities() {
-            return downloadPossibilities;
         }
     }
 
@@ -414,7 +388,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         @Override
         public boolean isDownloadAreaTooLarge(Bounds bound) {
             // see max_request_area in
-            // https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+            // https://github.com/openstreetmap/openstreetmap-website/blob/master/config/settings.yml
             return bound.getArea() > Config.getPref().getDouble("osm-server.max-request-area", 0.25);
         }
     }
@@ -492,7 +466,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         @Override
         public boolean isDownloadAreaTooLarge(Bounds bound) {
             // see max_note_request_area in
-            // https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+            // https://github.com/openstreetmap/openstreetmap-website/blob/master/config/settings.yml
             return bound.getArea() > Config.getPref().getDouble("osm-server.max-request-area-notes", 25);
         }
     }
