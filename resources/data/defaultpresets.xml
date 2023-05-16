@@ -40,11 +40,12 @@
         <reference ref="surface_smoothness" />
     </chunk>
     <chunk id="highway_yesno">
-        <checkgroup columns="4">
+        <checkgroup columns="5">
             <check key="bridge" text="Bridge" disable_off="true" />
             <check key="tunnel" text="Tunnel" disable_off="true" />
             <check key="embankment" text="Embankment" disable_off="true" />
             <check key="cutting" text="Cutting" disable_off="true" />
+            <check key="lane_markings" text="Lane Markings" />
         </checkgroup>
     </chunk>
     <chunk id="highway_yesno_incline">
@@ -1338,7 +1339,14 @@
             <link wiki="Tag:highway=footway" />
             <key key="highway" value="footway" />
             <optional>
-                <combo key="footway" text="Type" values="access_aisle,crossing,sidewalk" values_context="footway" />
+                <combo key="footway" text="Type" values_context="footway" >
+                    <list_entry value="access_aisle" short_description="Marked footpath in a parking lot" />
+                    <list_entry value="crossing" short_description="A pedestrian crossing"/>
+                    <list_entry value="sidewalk" short_description="A footway alongside a street"/>
+                    <list_entry value="link" short_description="Footway sections that do not exist but are necessary for routing"/>
+                    <list_entry value="traffic_island" short_description="Footway sections inside a crossing island"/>
+                    <list_entry value="alley" short_description="Access for back entrances and/or emergency access"/>
+                </combo>
                 <reference ref="name_layer" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
@@ -2515,6 +2523,13 @@
                 <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Bus Guideway -->
+        <item name="Miniature Rail" icon="presets/transport/railway/miniature_rail.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:railway=miniature" />
+            <key key="railway" value="miniature" />
+            <optional>
+                <reference ref="railway_service_gauge_electrified_yesno" />
+            </optional>
+        </item>
         <separator/>
         <item name="Railway construction" icon="presets/transport/railway/railway_construction.svg" type="way" preset_name_label="true">
             <link wiki="Key:construction" />
@@ -5989,6 +6004,15 @@
             <space />
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
+        <item name="Avalanche Protection" icon="presets/misc/avalanche_protection.svg" type="node,way,closed_way" preset_name_label="true">
+            <link wiki="Tag:man_made=avalanche_protection" />
+            <space />
+            <key key="man_made" value="avalanche_protection" />
+            <optional>
+                <combo key="avalanche_protection" values="snow_bridge,dam,berm,mound,shed,gas_ignition" />
+                <check key="barrier" value="fence" />
+            </optional>
+        </item> <!-- Avalanche Protection -->
         <separator/>
         <item name="Utility Pole" icon="presets/tower/pole.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=utility_pole" />
@@ -7031,6 +7055,18 @@
             <key key="historic" value="archaeological_site" />
             <combo key="archaeological_site" text="Type" values="baths,catacombs,city,crannog,enclosure,fortification,geoglyph,grave_field,petroglyph,hut_circle,megalith,necropolis,roman_circus,roman_theater,roman_villa,settlement,tumulus" />
             <reference ref="name_oh_wheelchair" />
+            <optional>
+                <combo key="fortification_type">
+                    <list_entry value="hill_fort" short_description="Forts using a rise of elevation"/>
+                    <list_entry value="limes" short_description="Fortifications for border defense"/>
+                    <list_entry value="sconce" short_description="A small protective fortification"/>
+                    <list_entry value="ring_ditch" short_description="Circular ditched enclosures"/>
+                    <list_entry value="ringfort" short_description="Circular fortified settlement"/>
+                    <list_entry value="motte" short_description="Raised area of ground for a castle"/>
+                    <list_entry value="watchtower" short_description="Military observation"/>
+                    <list_entry value="battery" short_description="A group of artillary (cannon) in a fixed fortification"/>
+                </combo>
+            </optional>
         </item> <!-- Archaeological Site -->
         <item name="Battlefield" icon="presets/sightseeing/battlefield.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:historic=battlefield" />
@@ -9067,6 +9103,16 @@
             </optional>
             <preset_link preset_name="Garden" text="Similar but different tags:" />
         </item> <!-- Flowerbed -->
+        <item name="Planter" icon="presets/misc/planter.svg" type="closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:man_made=planter"/>
+            <space />
+            <key key="man_made" value="planter"/>
+            <optional>
+                <text key="material" text="The material the planter is made out of"/>
+                <text key="surface" text="The material inside the planter"/>
+                <check key="barrier" value_on="planter" disable_off="true"/>
+            </optional>
+        </item>
         <item name="Garden" icon="presets/leisure/garden.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=garden" />
             <space />
@@ -9164,7 +9210,7 @@
             <link wiki="Tag:landuse=industrial" />
             <space />
             <key key="landuse" value="industrial" />
-            <combo key="industrial" text="Type" values="bakery,brewery,brickyard,depot,distributor,factory,grinding_mill,heating_station,machine_shop,mine,oil,port,salt_pond,sawmill,scrap_yard,shipyard,slaughterhouse,warehouse" values_context="industrial" />
+            <combo key="industrial" text="Type" values="bakery,brewery,brickyard,depot,distributor,factory,grinding_mill,heating_station,machine_shop,mine,oil,port,salt_pond,sawmill,scrap_yard,shipyard,slaughterhouse,warehouse,wellsite" values_context="industrial" />
             <reference ref="optional_name" />
         </item> <!-- Industrial -->
         <item name="Garages" icon="presets/landuse/garages.svg" type="closedway,multipolygon" preset_name_label="true">

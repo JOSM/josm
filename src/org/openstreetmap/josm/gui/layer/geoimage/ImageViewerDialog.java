@@ -186,7 +186,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
                     }
                 }));
-            }});
+            }
+        });
     }
 
     private static JButton createButton(AbstractAction action, Dimension buttonDim) {
