@@ -177,12 +177,16 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
         // This listener gets called _prior to_ the reorder event. If we do not delay the execution of the
         // model update, then the image will change instead of remaining the same.
-        this.layers.getModel().addChangeListener(l -> MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
-            Component selected = this.layers.getSelectedComponent();
-            if (selected instanceof MoveImgDisplayPanel) {
-                ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
-            }
-        })));
+        this.layers.getModel().addChangeListener(l -> {
+            // We need to check to see whether or not the worker is shut down. See #22922 for details.
+            if (!MainApplication.worker.isShutdown()) {
+                MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
+                    Component selected = this.layers.getSelectedComponent();
+                    if (selected instanceof MoveImgDisplayPanel) {
+                        ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
+                    }
+                }));
+            }});
     }
 
     private static JButton createButton(AbstractAction action, Dimension buttonDim) {
