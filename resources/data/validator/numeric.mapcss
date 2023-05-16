@@ -299,6 +299,34 @@
   assertNoMatch: "node width=10'";
 }
 
+*[min_height][min_height =~ /^-?[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
+  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
+  fixAdd: concat("min_height=", get(regexp_match("(-?[0-9.]+)( )*(.+)",tag("min_height")),1)," m");
+  set min_height_meter_autofix;
+  assertMatch: "node min_height=6.78 meters";
+  assertMatch: "node min_height=5  metre";
+  assertMatch: "node min_height=2m";
+  assertNoMatch: "node min_height=2 m";
+  assertNoMatch: "node min_height=5";
+}
+*[min_height][min_height =~ /^-?[0-9]+,[0-9][0-9]?( m|\')?$/] {
+  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
+  fixAdd: concat("min_height=", replace(tag("min_height"), ",", "."));
+  set min_height_separator_autofix;
+  assertMatch: "node min_height=5,5";
+  assertMatch: "node min_height=12,00";
+  assertMatch: "node min_height=12,5'";
+  assertNoMatch: "node min_height=12,000";
+  assertNoMatch: "node min_height=3,50,5";
+  assertNoMatch: "node min_height=3.5";
+  assertNoMatch: "node min_height=4";
+}
+*[min_height ][min_height  !~ /^(-?([0-9]+(\.[0-9]+)?( m)?)|(-?[1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.min_height_separator_autofix!.min_height_meter_autofix!.min_height_foot_autofix {
+  throwWarning: tr("unusual value of {0}: {1} is default; point is decimal separator; if units, put space then unit", "{0.key}", tr("meters"));
+  assertMatch: "node min_height=\"12. m\"";
+  assertNoMatch: "node min_height=-5";
+}
+
 *[maxaxleload][maxaxleload =~ /^[0-9]+,[0-9][0-9]?( (t|kg|st|lbs))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("maxaxleload=", replace(tag("maxaxleload"), ",", "."));

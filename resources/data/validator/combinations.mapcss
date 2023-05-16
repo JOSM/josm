@@ -47,6 +47,8 @@ way[workrules                  ][!railway][route!=railway],
 way[length_unit                ][!waterway],
 way[canal                      ][!waterway],
 way[have_riverbank             ][!waterway],
+area[min_height                ][!height][/^(building|building:part)$/], /* #21286 */
+area[building:min_level        ][!building:levels][/^(building|building:part)$/], /* #21286 */
 *[border_type                  ][!boundary],
 *[piste:difficulty             ][!piste:type],
 *[place                        ][!name][place!=islet][place!=plot][noname!=yes],
@@ -1076,3 +1078,11 @@ relation[piste:type=nordic][!piste:grooming]{
   throwWarning: tr("{0} is lower than {1} on {2}.", "{1.key}", "{0.key}", "{2.tag}");
   group: tr("suspicious tag combination");
 }
+
+/* #21286 */
+area[/^(building|building:part)$/][height =~ /^[0-9]+(\.[0-9]+)?( m)?$/][min_height =~ /^[0-9]+(\.[0-9]+)?( m)?$/][get(split(" ", tag(height)), 0) <= get(split(" ", tag(min_height)), 0)],
+area[/^(building|building:part)$/][building:levels][building:min_level][tag("building:levels") <= tag("building:min_level")] {
+  throwWarning: tr("{0} is lower or equal to {1} on {2}", "{1.key}", "{2.key}", "{0.key}");
+  group: tr("suspicious tag combination");
+}
+
