@@ -72,6 +72,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             SearchSetting::readFromString, SearchSetting::writeToString);
 
     static {
+        // Load the history on initial load (for the drop-down dialog)
+        loadPrefs();
         SearchCompiler.addMatchFactory(new SimpleMatchFactory() {
             @Override
             public Collection<String> getKeywords() {
@@ -185,11 +187,19 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * Launches the dialog for specifying search criteria and runs a search
      */
     public static void search() {
-        prefs.load("search.history");
+        // Load the prefs, just in case someone fiddled with the preference value
+        loadPrefs();
         SearchSetting se = showSearchDialog(lastSearch);
         if (se != null) {
             searchWithHistory(se);
         }
+    }
+
+    /**
+     * Load preference values into the model
+     */
+    private static void loadPrefs() {
+        prefs.load("search.history");
     }
 
     /**
