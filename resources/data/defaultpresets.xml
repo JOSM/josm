@@ -6009,8 +6009,8 @@
             <space />
             <key key="man_made" value="avalanche_protection" />
             <optional>
-                <combo key="avalanche_protection" values="snow_bridge,dam,berm,mound,shed,gas_ignition" />
-                <check key="barrier" value_on="fence" />
+                <combo key="avalanche_protection" text="Avalance protection" values="snow_bridge,dam,berm,mound,shed,gas_ignition" />
+                <check key="barrier" value_on="fence" text="Fence"/>
             </optional>
         </item> <!-- Avalanche Protection -->
         <separator/>
@@ -7056,7 +7056,7 @@
             <combo key="archaeological_site" text="Type" values="baths,catacombs,city,crannog,enclosure,fortification,geoglyph,grave_field,petroglyph,hut_circle,megalith,necropolis,roman_circus,roman_theater,roman_villa,settlement,tumulus" />
             <reference ref="name_oh_wheelchair" />
             <optional>
-                <combo key="fortification_type">
+                <combo key="fortification_type" text="Fortification type">
                     <list_entry value="hill_fort" short_description="Forts using a rise of elevation"/>
                     <list_entry value="limes" short_description="Fortifications for border defense"/>
                     <list_entry value="sconce" short_description="A small protective fortification"/>
@@ -9110,7 +9110,7 @@
             <optional>
                 <text key="material" text="The material the planter is made out of"/>
                 <text key="surface" text="The material inside the planter"/>
-                <check key="barrier" value_on="planter" disable_off="true"/>
+                <check key="barrier" value_on="planter" text="Planter barrier" disable_off="true"/>
             </optional>
         </item>
         <item name="Garden" icon="presets/leisure/garden.svg" type="node,closedway,multipolygon" preset_name_label="true">
