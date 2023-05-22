@@ -120,7 +120,7 @@ way[cutline                    ][man_made!=cutline],
 }
 
 /* #20742 - No warning about barrier with inappropriate access tags on highway */
-way[highway=~/^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link)$/][!access][!vehicle] > node[barrier][barrier!~/entrance|border_control|height_restrictor|toll_booth/][!access][!motor_vehicle][!vehicle] {
+way[highway=~/^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link)$/][!access][!vehicle] > node[barrier][barrier!~/entrance|border_control|cattle_grid|height_restrictor|toll_booth/][!access][!motor_vehicle][!vehicle] {
   throwWarning: tr("{0} without access tags such as {1}, {2}, or {3}.", "{0.tag}", "{2.key}", "{3.key}", "{4.key}");
   group: tr("suspicious barrier");
 }
