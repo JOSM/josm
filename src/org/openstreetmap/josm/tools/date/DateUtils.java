@@ -11,7 +11,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
@@ -80,84 +79,84 @@ public final class DateUtils {
      */
     public static Instant parseInstant(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01[:00]}"
-        if (checkLayout(str, "xxxx-xx-xx") ||
-                checkLayout(str, "xxxx-xx") ||
-                checkLayout(str, "xxxx")) {
-            final ZonedDateTime local = ZonedDateTime.of(
-                    parsePart4(str, 0),
-                    str.length() > 5 ? parsePart2(str, 5) : 1,
-                    str.length() > 8 ? parsePart2(str, 8) : 1,
-                    0, 0, 0, 0, ZoneOffset.UTC);
-            return local.toInstant();
-        } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
-                checkLayout(str, "xxxx:xx:xx xx:xx:xx") ||
-                checkLayout(str, "xxxx/xx/xx xx:xx:xx") ||
-                checkLayout(str, "xxxx-xx-xx xx:xx:xxZ") ||
-                checkLayout(str, "xxxx-xx-xx xx:xx:xx UTC") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx:00") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx:00")) {
-            final ZonedDateTime local = ZonedDateTime.of(
-                parsePart4(str, 0),
-                parsePart2(str, 5),
-                parsePart2(str, 8),
-                parsePart2(str, 11),
-                parsePart2(str, 14),
-                parsePart2(str, 17),
-                0,
-                ZoneOffset.UTC
-            );
-            if (str.length() == 22 || str.length() == 25) {
-                final int plusHr = parsePart2(str, 20);
-                return local.plusHours(str.charAt(19) == '+' ? -plusHr : plusHr).toInstant();
-            }
-            return local.toInstant();
-        } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
-                checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ||
-                checkLayout(str, "xxxx/xx/xx xx:xx:xx.xxx") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
-                checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx-xx:00")) {
-            final ZonedDateTime local = ZonedDateTime.of(
-                parsePart4(str, 0),
-                parsePart2(str, 5),
-                parsePart2(str, 8),
-                parsePart2(str, 11),
-                parsePart2(str, 14),
-                parsePart2(str, 17),
-                parsePart3(str, 20) * 1_000_000,
-                ZoneOffset.UTC
-            );
-            if (str.length() == 29) {
-                final int plusHr = parsePart2(str, 24);
-                return local.plusHours(str.charAt(23) == '+' ? -plusHr : plusHr).toInstant();
-            }
-            return local.toInstant();
-        } else if (checkLayout(str, "xxxx/xx/xx xx:xx:xx.xxxxxx")) {
-            return ZonedDateTime.of(
-                parsePart4(str, 0),
-                parsePart2(str, 5),
-                parsePart2(str, 8),
-                parsePart2(str, 11),
-                parsePart2(str, 14),
-                parsePart2(str, 17),
-                parsePart6(str, 20) * 1_000,
-                ZoneOffset.UTC
-            ).toInstant();
-        } else {
-            // example date format "18-AUG-08 13:33:03"
-            SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
-            Date d = f.parse(str, new ParsePosition(0));
-            if (d != null)
-                return d.toInstant();
-        }
-
         try {
+            if (checkLayout(str, "xxxx-xx-xx") ||
+                    checkLayout(str, "xxxx-xx") ||
+                    checkLayout(str, "xxxx")) {
+                final ZonedDateTime local = ZonedDateTime.of(
+                        parsePart4(str, 0),
+                        str.length() > 5 ? parsePart2(str, 5) : 1,
+                        str.length() > 8 ? parsePart2(str, 8) : 1,
+                        0, 0, 0, 0, ZoneOffset.UTC);
+                return local.toInstant();
+            } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
+                    checkLayout(str, "xxxx:xx:xx xx:xx:xx") ||
+                    checkLayout(str, "xxxx/xx/xx xx:xx:xx") ||
+                    checkLayout(str, "xxxx-xx-xx xx:xx:xxZ") ||
+                    checkLayout(str, "xxxx-xx-xx xx:xx:xx UTC") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx:00") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx:00")) {
+                final ZonedDateTime local = ZonedDateTime.of(
+                        parsePart4(str, 0),
+                        parsePart2(str, 5),
+                        parsePart2(str, 8),
+                        parsePart2(str, 11),
+                        parsePart2(str, 14),
+                        parsePart2(str, 17),
+                        0,
+                        ZoneOffset.UTC
+                );
+                if (str.length() == 22 || str.length() == 25) {
+                    final int plusHr = parsePart2(str, 20);
+                    return local.plusHours(str.charAt(19) == '+' ? -plusHr : plusHr).toInstant();
+                }
+                return local.toInstant();
+            } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
+                    checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ||
+                    checkLayout(str, "xxxx/xx/xx xx:xx:xx.xxx") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
+                    checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx-xx:00")) {
+                final ZonedDateTime local = ZonedDateTime.of(
+                        parsePart4(str, 0),
+                        parsePart2(str, 5),
+                        parsePart2(str, 8),
+                        parsePart2(str, 11),
+                        parsePart2(str, 14),
+                        parsePart2(str, 17),
+                        parsePart3(str, 20) * 1_000_000,
+                        ZoneOffset.UTC
+                );
+                if (str.length() == 29) {
+                    final int plusHr = parsePart2(str, 24);
+                    return local.plusHours(str.charAt(23) == '+' ? -plusHr : plusHr).toInstant();
+                }
+                return local.toInstant();
+            } else if (checkLayout(str, "xxxx/xx/xx xx:xx:xx.xxxxxx")) {
+                return ZonedDateTime.of(
+                        parsePart4(str, 0),
+                        parsePart2(str, 5),
+                        parsePart2(str, 8),
+                        parsePart2(str, 11),
+                        parsePart2(str, 14),
+                        parsePart2(str, 17),
+                        parsePart6(str, 20) * 1_000,
+                        ZoneOffset.UTC
+                ).toInstant();
+            } else {
+                // example date format "18-AUG-08 13:33:03"
+                SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
+                Date d = f.parse(str, new ParsePosition(0));
+                if (d != null)
+                    return d.toInstant();
+            }
+
             // slow path for fractional seconds different from millisecond precision
             return ZonedDateTime.parse(str).toInstant();
-        } catch (IllegalArgumentException | DateTimeParseException ex) {
+        } catch (IllegalArgumentException | DateTimeException ex) {
             throw new UncheckedParseException("The date string (" + str + ") could not be parsed.", ex);
         }
     }
@@ -212,6 +211,12 @@ public final class DateUtils {
         return d != null ? (Date) d.clone() : null;
     }
 
+    /**
+     * Check text for a specified layout
+     * @param text The text to check
+     * @param pattern The pattern to use
+     * @return {@code true} if the layout matches, otherwise {@code false}
+     */
     private static boolean checkLayout(String text, String pattern) {
         if (text.length() != pattern.length())
             return false;
@@ -243,12 +248,12 @@ public final class DateUtils {
     }
 
     private static int parsePart6(String str, int off) {
-        return 100000 * num(str.charAt(off))
-              + 10000 * num(str.charAt(off + 1))
-               + 1000 * num(str.charAt(off + 2))
-                + 100 * num(str.charAt(off + 3))
-                 + 10 * num(str.charAt(off + 4))
-                      + num(str.charAt(off + 5));
+        return 100_000 * num(str.charAt(off))
+              + 10_000 * num(str.charAt(off + 1))
+               + 1_000 * num(str.charAt(off + 2))
+                 + 100 * num(str.charAt(off + 3))
+                  + 10 * num(str.charAt(off + 4))
+                       + num(str.charAt(off + 5));
     }
 
     /**
@@ -267,7 +272,7 @@ public final class DateUtils {
      * @since 7299
      */
     public static DateFormat getDateFormat(int dateStyle) {
-        if (PROP_ISO_DATES.get()) {
+        if (Boolean.TRUE.equals(PROP_ISO_DATES.get())) {
             return newIsoDateFormat();
         } else {
             return DateFormat.getDateInstance(dateStyle, Locale.getDefault());
@@ -280,7 +285,7 @@ public final class DateUtils {
      * @return The date format
      */
     public static DateTimeFormatter getDateFormatter(FormatStyle dateStyle) {
-        DateTimeFormatter formatter = PROP_ISO_DATES.get()
+        DateTimeFormatter formatter = Boolean.TRUE.equals(PROP_ISO_DATES.get())
                 ? DateTimeFormatter.ISO_LOCAL_DATE
                 : DateTimeFormatter.ofLocalizedDate(dateStyle);
         return formatter.withZone(ZoneId.systemDefault());
@@ -305,7 +310,7 @@ public final class DateUtils {
      * @since 7299
      */
     public static DateFormat getTimeFormat(int timeStyle) {
-        if (PROP_ISO_DATES.get()) {
+        if (Boolean.TRUE.equals(PROP_ISO_DATES.get())) {
             // This is not strictly conform to ISO 8601. We just want to avoid US-style times such as 3.30pm
             return new SimpleDateFormat("HH:mm:ss");
         } else {
@@ -319,7 +324,7 @@ public final class DateUtils {
      * @return The time format
      */
     public static DateTimeFormatter getTimeFormatter(FormatStyle timeStyle) {
-        DateTimeFormatter formatter = PROP_ISO_DATES.get()
+        DateTimeFormatter formatter = Boolean.TRUE.equals(PROP_ISO_DATES.get())
                 ? DateTimeFormatter.ISO_LOCAL_TIME
                 : DateTimeFormatter.ofLocalizedTime(timeStyle);
         return formatter.withZone(ZoneId.systemDefault());
@@ -345,7 +350,7 @@ public final class DateUtils {
      * @since 7299
      */
     public static DateFormat getDateTimeFormat(int dateStyle, int timeStyle) {
-        if (PROP_ISO_DATES.get()) {
+        if (Boolean.TRUE.equals(PROP_ISO_DATES.get())) {
             // This is not strictly conform to ISO 8601. We just want to avoid US-style times such as 3.30pm
             // and we don't want to use the 'T' separator as a space character is much more readable
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -371,7 +376,7 @@ public final class DateUtils {
      * @return The date/time format
      */
     public static DateTimeFormatter getDateTimeFormatter(FormatStyle dateStyle, FormatStyle timeStyle) {
-        DateTimeFormatter formatter = PROP_ISO_DATES.get()
+        DateTimeFormatter formatter = Boolean.TRUE.equals(PROP_ISO_DATES.get())
                 ? ISO_LOCAL_DATE_TIME
                 : DateTimeFormatter.ofLocalizedDateTime(dateStyle, timeStyle);
         return formatter.withZone(ZoneId.systemDefault());

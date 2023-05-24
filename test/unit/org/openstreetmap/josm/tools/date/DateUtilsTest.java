@@ -16,14 +16,15 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.concurrent.ForkJoinPool;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.UncheckedParseException;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link DateUtils} class.
@@ -115,9 +116,10 @@ public class DateUtilsTest {
     /**
      * Verifies that parsing an illegal date throws a {@link UncheckedParseException}
      */
-    @Test
-    void testIllegalDate() {
-        assertThrows(UncheckedParseException.class, () -> DateUtils.fromString("2014-"));
+    @ParameterizedTest
+    @ValueSource(strings = {"2014-", "2014-01-", "2014-01-01T", "2014-00-01", "2014-01-00"})
+    void testIllegalDate(String date) {
+        assertThrows(UncheckedParseException.class, () -> DateUtils.fromString(date));
     }
 
     /**
