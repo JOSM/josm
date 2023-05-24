@@ -2464,4 +2464,23 @@ way[shoulder=none] {
   assertNoMatch: "node historic=archaeological_site site_type2=fortification";
 }
 
+/* Tag was renamed, see #22957 */
+area[parking:orientation][!orientation] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "{1.key}={0.value}";
+  fixChangeKey: "{0.key} => {1.key}";
+}
+area[parking:orientation][orientation]["parking:orientation"=*orientation] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  fixRemove: "{0.key}";
+}
+area[parking:orientation][orientation]["parking:orientation"!=*orientation] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "{1.key}={0.value}";
+  suggestAlternative: "{1.key}={1.value}";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
