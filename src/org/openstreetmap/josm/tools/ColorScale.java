@@ -72,7 +72,7 @@ public final class ColorScale {
         sc.colors = new Color[count];
         for (int i = 0; i < sc.colors.length; i++) {
 
-            float angle = i / 256f * 4;
+            float angle = i * 4f / count;
             int quadrant = (int) angle;
             angle -= quadrant;
             quadrant = Utils.mod(quadrant+1, 4);
@@ -235,7 +235,6 @@ public final class ColorScale {
      */
     public void drawColorBar(Graphics2D g, int x, int y, int w, int h, double valueScale) {
         int n = colors.length;
-
         for (int i = 0; i < n; i++) {
             g.setColor(colors[i]);
             if (w < h) {
@@ -268,7 +267,9 @@ public final class ColorScale {
                 final double val = min+i*(max-min)/intervalCount;
                 txt = String.format("%.3f", val*valueScale);
             }
-            if (w < h) {
+            if (intervalCount == 0) {
+                g.drawString(txt, x-fw-3, y+h/2+fh/2);
+            } else if (w < h) {
                 g.drawString(txt, x-fw-3, y+i*h/intervalCount+fh/2);
             } else {
                 g.drawString(txt, x+i*w/intervalCount-fw/2, y+fh-3);

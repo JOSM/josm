@@ -431,6 +431,11 @@ public class NmeaReader implements IGpxReader {
                         break;
                     }
                 }
+                // h-dilution
+                accu = e[GGA.REF.position];
+                if (!accu.isEmpty()) {
+                    currentwp.put(GpxConstants.PT_DGPSID, accu);
+                }
             } else if (isSentence(e[0], Sentence.VTG)) {
                 // COURSE
                 accu = e[VTG.COURSE_REF.position];

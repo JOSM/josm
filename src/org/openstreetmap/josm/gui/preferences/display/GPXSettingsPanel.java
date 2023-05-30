@@ -71,6 +71,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
     private final JRadioButton colorTypeQuality = new JRadioButton(tr("Quality (RTKLib only, if available)"));
     private final JRadioButton colorTypeFix = new JRadioButton(tr("GPS fix value"));
+    private final JRadioButton colorTypeRef = new JRadioButton(tr("GPS reference ID"));
     private final JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
     private final JRadioButton colorTypeHeatMap = new JRadioButton(tr("Heat Map (dark = few, bright = many)"));
     private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized in the layer manager)"));
@@ -454,6 +455,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorGroup.add(colorTypeDilution);
         colorGroup.add(colorTypeQuality);
         colorGroup.add(colorTypeFix);
+        colorGroup.add(colorTypeRef);
         colorGroup.add(colorTypeTime);
         colorGroup.add(colorTypeHeatMap);
 
@@ -465,6 +467,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorTypeQuality.setToolTipText(
                 tr("Colors points and track segments by RTKLib quality flag (Q). Your capture device needs to log that information."));
         colorTypeFix.setToolTipText(tr("Colors points and track segments by GPS fix value."));
+        colorTypeRef.setToolTipText(tr("Colors points and track segments by GPS reference ID."));
         colorTypeTime.setToolTipText(tr("Colors points and track segments by its timestamp."));
         colorTypeHeatMap.setToolTipText(tr("Collected points and track segments for a position and displayed as heat map."));
 
@@ -487,6 +490,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeDilution, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeQuality, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeFix, GBC.eol().insets(40, 0, 0, 0));
+        add(colorTypeRef, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeTime, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeHeatMap, GBC.std().insets(40, 0, 0, 0));
         add(colorTypeHeatIconLabel, GBC.std().insets(5, 0, 0, 5));
@@ -641,6 +645,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             case 5: colorTypeHeatMap.setSelected(true); break;
             case 6: colorTypeQuality.setSelected(true); break;
             case 7: colorTypeFix.setSelected(true); break;
+            case 8: colorTypeRef.setSelected(true); break;
             default: Logging.warn("Unknown color type: " + colorType);
             }
             int ccts = prefInt("colormode.velocity.tune");
@@ -719,6 +724,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             putPref("colormode", 6);
         } else if (colorTypeFix.isSelected()) {
             putPref("colormode", 7);
+        } else if (colorTypeRef.isSelected()) {
+            putPref("colormode", 8);
         } else {
             putPref("colormode", 0);
         }
