@@ -626,19 +626,19 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         }
 
         ArrayList<String> refs = new ArrayList<String>();
-        if(colored == ColorMode.REF) {
+        if (colored == ColorMode.REF) {
             for (Line segment : getLinesIterable(null)) {
                 for (WayPoint trkPnt : segment) {
                     if (trkPnt.get(GpxConstants.PT_DGPSID) != null) {
                         String refval = trkPnt.get(GpxConstants.PT_DGPSID).toString();
                         int i = refs.indexOf(refval);
-                        if(i < 0) {
+                        if (i < 0) {
                             refs.add(refval);
                         }
                     }
                 }
             }
-            if(refs.size() > 0) {
+            if (refs.size() > 0) {
                 Collections.sort(refs);
                 String[] a = {};
                 refScale = ColorScale.createCyclicScale(refs.size()).addTitle(tr("GPS ref")).addColorBarTitles(refs.toArray(a));

@@ -432,7 +432,7 @@ public class NmeaReader implements IGpxReader {
                     }
                 }
                 // reference ID
-                if(GGA.REF.position < e.length) {
+                if (GGA.REF.position < e.length) {
                     accu = e[GGA.REF.position];
                     if (!accu.isEmpty()) {
                         currentwp.put(GpxConstants.PT_DGPSID, accu);
