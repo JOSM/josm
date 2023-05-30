@@ -432,9 +432,12 @@ public class NmeaReader implements IGpxReader {
                     }
                 }
                 // reference ID
-                accu = e[GGA.REF.position];
-                if (!accu.isEmpty()) {
-                    currentwp.put(GpxConstants.PT_DGPSID, accu);
+                if(GGA.REF.position < e.length)
+                {
+                    accu = e[GGA.REF.position];
+                    if (!accu.isEmpty()) {
+                        currentwp.put(GpxConstants.PT_DGPSID, accu);
+                    }
                 }
             } else if (isSentence(e[0], Sentence.VTG)) {
                 // COURSE
