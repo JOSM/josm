@@ -30,6 +30,18 @@ for my $arg (@ARGV ? @ARGV : @default)
     my $extends = "";
     while(my $l = <FILE>)
     {
+      if($l =~ /extends MapMode/)
+      {
+        $extends = "mapmode/";
+      }
+      elsif($l =~ /extends ToggleDialog/)
+      {
+        $extends = "dialogs/";
+      }
+      elsif($l =~ /extends JosmAction/)
+      {
+        $extends = "";
+      }
       if($l =~ /private static final String ([A-Z_]+) = ("[^"]+")/)
       {
         push(@defs, [$1, $2]);
@@ -115,18 +127,6 @@ for my $arg (@ARGV ? @ARGV : @default)
           my $i = $1;
           ++$icons{$i};
         }
-      }
-      if($l =~ /extends MapMode/)
-      {
-        $extends = "mapmode/";
-      }
-      elsif($l =~ /extends ToggleDialog/)
-      {
-        $extends = "dialogs/";
-      }
-      elsif($l =~ /extends JosmAction/)
-      {
-        $extends = "";
       }
     }
     close FILE;
