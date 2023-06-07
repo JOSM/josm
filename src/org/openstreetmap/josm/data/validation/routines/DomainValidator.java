@@ -299,7 +299,6 @@ public final class DomainValidator extends AbstractValidator {
         // Taken from Version 2022042200, Last Updated Fri Apr 22 07:07:01 2022 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
-        "abarth", // abarth Fiat Chrysler Automobiles N.V.
         "abb", // abb ABB Ltd
         "abbott", // abbott Abbott Laboratories, Inc.
         "abbvie", // abbvie AbbVie Inc.
@@ -327,7 +326,6 @@ public final class DomainValidator extends AbstractValidator {
         "airforce", // airforce United TLD Holdco Ltd.
         "airtel", // airtel Bharti Airtel Limited
         "akdn", // akdn Fondation Aga Khan (Aga Khan Foundation)
-        "alfaromeo", // alfaromeo Fiat Chrysler Automobiles N.V.
         "alibaba", // alibaba Alibaba Group Holding Limited
         "alipay", // alipay Alibaba Group Holding Limited
         "allfinanz", // allfinanz Allfinanz Deutsche Vermögensberatung Aktiengesellschaft
@@ -638,7 +636,6 @@ public final class DomainValidator extends AbstractValidator {
         "feedback", // feedback Top Level Spectrum, Inc.
         "ferrari", // ferrari Fiat Chrysler Automobiles N.V.
         "ferrero", // ferrero Ferrero Trading Lux S.A.
-        "fiat", // fiat Fiat Chrysler Automobiles N.V.
         "fidelity", // fidelity Fidelity Brokerage Services LLC
         "fido", // fido Rogers Communications Canada Inc.
         "film", // film Motion Picture Domain Registry Pty Ltd
@@ -849,7 +846,6 @@ public final class DomainValidator extends AbstractValidator {
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
         "lamer", // lamer The Estée Lauder Companies Inc.
         "lancaster", // lancaster LANCASTER
-        "lancia", // lancia Fiat Chrysler Automobiles N.V.
         "land", // land Pine Moon, LLC
         "landrover", // landrover Jaguar Land Rover Ltd
         "lanxess", // lanxess LANXESS Corporation
@@ -912,7 +908,6 @@ public final class DomainValidator extends AbstractValidator {
         "markets", // markets DOTMARKETS REGISTRY LTD
         "marriott", // marriott Marriott Worldwide Corporation
         "marshalls", // marshalls The TJX Companies, Inc.
-        "maserati", // maserati Fiat Chrysler Automobiles N.V.
         "mattel", // mattel Mattel Sites, Inc.
         "mba", // mba Lone Hollow, LLC
         "mckinsey", // mckinsey McKinsey Holdings, Inc.
