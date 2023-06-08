@@ -24,7 +24,7 @@
         <!-- The javax json dependencies should be removed sometime in 2024 -->
         <dependency conf="api->default" org="javax.json" name="javax.json-api" rev="1.1.4"/>
         <dependency conf="api->default" org="org.glassfish" name="javax.json" rev="1.1.4"/>
-        <dependency conf="api->default" org="jakarta.json" name="jakarta.json-api" rev="2.0.2"/>
+        <dependency conf="api->default" org="jakarta.json" name="jakarta.json-api" rev="2.1.1"/>
         <!-- parsson is an implementation for jakarta.json -->
         <dependency conf="runtimeOnly->default" org="org.eclipse.parsson" name="parsson" rev="1.1.1"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-jcs3-core" rev="3.1"/>
