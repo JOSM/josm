@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import jakarta.json.JsonObject;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.cli.CLIModule;
@@ -176,9 +178,9 @@ public class ValidatorCLI implements CLIModule {
             fileMonitor.beginTask(tr("Processing files..."), this.input.size());
             for (String inputFile : this.input) {
                 if (inputFile.endsWith(".validator.mapcss")) {
-                    this.processValidatorFile(inputFile);
+                    processValidatorFile(inputFile);
                 } else if (inputFile.endsWith(".mapcss")) {
-                    this.processMapcssFile(inputFile);
+                    processMapcssFile(inputFile);
                 } else {
                     this.processFile(inputFile);
                 }
@@ -197,7 +199,7 @@ public class ValidatorCLI implements CLIModule {
      * @param inputFile The mapcss file to validate
      * @throws ParseException if the file does not match the mapcss syntax
      */
-    private void processMapcssFile(final String inputFile) throws ParseException {
+    private static void processMapcssFile(final String inputFile) throws ParseException {
         final MapCSSStyleSource styleSource = new MapCSSStyleSource(new File(inputFile).toURI().getPath(), inputFile, inputFile);
         styleSource.loadStyleSource();
         if (!styleSource.getErrors().isEmpty()) {
@@ -214,7 +216,7 @@ public class ValidatorCLI implements CLIModule {
      * @throws IOException if there is a problem reading the file
      * @throws ParseException if the file does not match the validator mapcss syntax
      */
-    private void processValidatorFile(final String inputFile) throws ParseException, IOException {
+    private static void processValidatorFile(final String inputFile) throws ParseException, IOException {
         // Check asserts
         Config.getPref().putBoolean("validator.check_assert_local_rules", true);
         final MapCSSTagChecker mapCSSTagChecker = new MapCSSTagChecker();
@@ -256,7 +258,6 @@ public class ValidatorCLI implements CLIModule {
         OsmDataLayer dataLayer = null;
         try {
             Logging.info(task);
-            OsmValidator.initializeTests();
             dataLayer = MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)
                     .stream().filter(layer -> inputFileFile.equals(layer.getAssociatedFile()))
                     .findFirst().orElseThrow(() -> new JosmRuntimeException(tr("Could not find a layer for {0}", inputFile)));
@@ -269,19 +270,45 @@ public class ValidatorCLI implements CLIModule {
                     }
                 }
             }
-            Collection<Test> tests = OsmValidator.getEnabledTests(false);
-            if (Files.isRegularFile(Paths.get(outputFile)) && !Files.deleteIfExists(Paths.get(outputFile))) {
+            Path path = Paths.get(outputFile);
+            if (path.toFile().isFile() && !Files.deleteIfExists(path)) {
                 Logging.error("Could not delete {0}, attempting to append", outputFile);
             }
             GeoJSONMapRouletteWriter geoJSONMapRouletteWriter = new GeoJSONMapRouletteWriter(dataSet);
-            try (OutputStream fileOutputStream = Files.newOutputStream(Paths.get(outputFile))) {
-                tests.parallelStream().forEach(test -> runTest(test, geoJSONMapRouletteWriter, fileOutputStream, dataSet));
+            OsmValidator.initializeTests();
+
+            try (OutputStream fileOutputStream = Files.newOutputStream(path)) {
+                // The first writeErrors catches anything that was written, for whatever reason. This is probably never
+                // going to be called.
+                ValidationTask validationTask = new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
+                        progressMonitorFactory.get(), OsmValidator.getEnabledTests(false),
+                        dataSet.allPrimitives(), Collections.emptyList(), false);
+                // This avoids keeping errors in memory
+                validationTask.setTestConsumer((t, test) -> {
+                    writeErrors(geoJSONMapRouletteWriter, fileOutputStream, test.getErrors());
+                    t.getErrors().removeIf(test.getErrors()::contains);
+                });
+                validationTask.run();
             }
         } finally {
             if (dataLayer != null) {
                 MainApplication.getLayerManager().removeLayer(dataLayer);
             }
             Logging.info(stopwatch.toString(task));
+        }
+    }
+
+    private void writeErrors(GeoJSONMapRouletteWriter geoJSONMapRouletteWriter, OutputStream fileOutputStream,
+            Collection<TestError> errors) {
+        for (TestError error : errors) {
+            Optional<JsonObject> object = geoJSONMapRouletteWriter.write(error);
+            if (object.isPresent()) {
+                try {
+                    writeToFile(fileOutputStream, object.get().toString().getBytes(StandardCharsets.UTF_8));
+                } catch (IOException e) {
+                    throw new JosmRuntimeException(e);
+                }
+            }
         }
     }
 
@@ -299,30 +326,6 @@ public class ValidatorCLI implements CLIModule {
             return FileNameUtils.getBaseName(inputString) + ".validated.geojson";
         }
         return FileNameUtils.getBaseName(FileNameUtils.getBaseName(inputString)) + ".geojson";
-    }
-
-    /**
-     * Run a test
-     * @param test The test to run
-     * @param geoJSONMapRouletteWriter The object to use to create challenges
-     * @param fileOutputStream The location to write data to
-     * @param dataSet The dataset to check
-     */
-    private void runTest(final Test test, final GeoJSONMapRouletteWriter geoJSONMapRouletteWriter,
-            final OutputStream fileOutputStream, DataSet dataSet) {
-        test.startTest(progressMonitorFactory.get());
-        test.visit(dataSet.allPrimitives());
-        test.endTest();
-        test.getErrors().stream().map(geoJSONMapRouletteWriter::write)
-                .filter(Optional::isPresent).map(Optional::get)
-                .map(jsonObject -> jsonObject.toString().getBytes(StandardCharsets.UTF_8)).forEach(bytes -> {
-                    try {
-                        writeToFile(fileOutputStream, bytes);
-                    } catch (IOException e) {
-                        throw new JosmRuntimeException(e);
-                    }
-                });
-        test.clear();
     }
 
     /**

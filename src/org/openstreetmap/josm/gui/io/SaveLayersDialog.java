@@ -63,8 +63,8 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Dialog that pops up when the user closes a layer with modified data.
- *
- * It asks for confirmation that all modification should be discarded and offers
+ * <p>
+ * It asks for confirmation that all modifications should be discarded and offer
  * to save the layers to file or upload to server, depending on the type of layer.
  */
 public class SaveLayersDialog extends JDialog implements TableModelListener {
@@ -449,8 +449,8 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     setUserAction(UserAction.PROCEED);
                     closeDialog();
                 }
-            } catch (UserCancelException ignore) {
-                Logging.trace(ignore);
+            } catch (UserCancelException userCancelException) {
+                Logging.trace(userCancelException);
             }
         }
     }
@@ -556,53 +556,67 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             for (final SaveLayerInfo layerInfo: toUpload) {
                 AbstractModifiableLayer layer = layerInfo.getLayer();
                 if (canceled) {
-                    model.setUploadState(layer, UploadOrSaveState.CANCELED);
+                    GuiHelper.runInEDTAndWait(() -> model.setUploadState(layer, UploadOrSaveState.CANCELED));
                     continue;
                 }
-                monitor.subTask(tr("Preparing layer ''{0}'' for upload ...", layerInfo.getName()));
+                GuiHelper.runInEDTAndWait(() -> monitor.subTask(tr("Preparing layer ''{0}'' for upload ...", layerInfo.getName())));
 
+                // checkPreUploadConditions must not be run in the EDT to avoid deadlocks
                 if (!UploadAction.checkPreUploadConditions(layer)) {
-                    model.setUploadState(layer, UploadOrSaveState.FAILED);
+                    GuiHelper.runInEDTAndWait(() -> model.setUploadState(layer, UploadOrSaveState.FAILED));
                     continue;
                 }
 
-                AbstractUploadDialog dialog = layer.getUploadDialog();
-                if (dialog != null) {
-                    dialog.setVisible(true);
-                    if (dialog.isCanceled()) {
-                        model.setUploadState(layer, UploadOrSaveState.CANCELED);
-                        continue;
-                    }
-                    dialog.rememberUserInput();
-                }
-
-                currentTask = layer.createUploadTask(monitor);
-                if (currentTask == null) {
-                    model.setUploadState(layer, UploadOrSaveState.FAILED);
-                    continue;
-                }
-                Future<?> currentFuture = worker.submit(currentTask);
-                try {
-                    // wait for the asynchronous task to complete
-                    currentFuture.get();
-                } catch (CancellationException e) {
-                    Logging.trace(e);
-                    model.setUploadState(layer, UploadOrSaveState.CANCELED);
-                } catch (InterruptedException | ExecutionException e) {
-                    Logging.error(e);
-                    model.setUploadState(layer, UploadOrSaveState.FAILED);
-                    ExceptionDialogUtil.explainException(e);
-                }
-                if (currentTask.isCanceled()) {
-                    model.setUploadState(layer, UploadOrSaveState.CANCELED);
-                } else if (currentTask.isFailed()) {
-                    Logging.error(currentTask.getLastException());
-                    ExceptionDialogUtil.explainException(currentTask.getLastException());
-                    model.setUploadState(layer, UploadOrSaveState.FAILED);
-                } else {
-                    model.setUploadState(layer, UploadOrSaveState.OK);
-                }
+                GuiHelper.runInEDTAndWait(() -> uploadLayersUploadModelStateOnFinish(layer));
                 currentTask = null;
+            }
+        }
+
+        /**
+         * Update the {@link #model} state on upload finish
+         * @param layer The layer that has been saved
+         */
+        private void uploadLayersUploadModelStateOnFinish(AbstractModifiableLayer layer) {
+            AbstractUploadDialog dialog = layer.getUploadDialog();
+            if (dialog != null) {
+                dialog.setVisible(true);
+                if (dialog.isCanceled()) {
+                    model.setUploadState(layer, UploadOrSaveState.CANCELED);
+                    return;
+                }
+                dialog.rememberUserInput();
+            }
+
+            currentTask = layer.createUploadTask(monitor);
+            if (currentTask == null) {
+                model.setUploadState(layer, UploadOrSaveState.FAILED);
+                return;
+            }
+            Future<?> currentFuture = worker.submit(currentTask);
+            try {
+                // wait for the asynchronous task to complete
+                currentFuture.get();
+            } catch (CancellationException e) {
+                Logging.trace(e);
+                model.setUploadState(layer, UploadOrSaveState.CANCELED);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Logging.error(e);
+                model.setUploadState(layer, UploadOrSaveState.FAILED);
+                ExceptionDialogUtil.explainException(e);
+            } catch (ExecutionException e) {
+                Logging.error(e);
+                model.setUploadState(layer, UploadOrSaveState.FAILED);
+                ExceptionDialogUtil.explainException(e);
+            }
+            if (currentTask.isCanceled()) {
+                model.setUploadState(layer, UploadOrSaveState.CANCELED);
+            } else if (currentTask.isFailed()) {
+                Logging.error(currentTask.getLastException());
+                ExceptionDialogUtil.explainException(currentTask.getLastException());
+                model.setUploadState(layer, UploadOrSaveState.FAILED);
+            } else {
+                model.setUploadState(layer, UploadOrSaveState.OK);
             }
         }
 
@@ -672,12 +686,13 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         @Override
         public void run() {
+            GuiHelper.runInEDTAndWait(() -> model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING));
+            // We very specifically do not want to block the EDT or the worker thread when validating
+            List<SaveLayerInfo> toUpload = model.getLayersToUpload();
+            if (!toUpload.isEmpty()) {
+                uploadLayers(toUpload);
+            }
             GuiHelper.runInEDTAndWait(() -> {
-                model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
-                List<SaveLayerInfo> toUpload = model.getLayersToUpload();
-                if (!toUpload.isEmpty()) {
-                    uploadLayers(toUpload);
-                }
                 List<SaveLayerInfo> toSave = model.getLayersToSave();
                 if (!toSave.isEmpty()) {
                     saveLayers(toSave);
