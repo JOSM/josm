@@ -26,6 +26,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.json.JsonWriter;
+import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
 import jakarta.json.stream.JsonParsingException;
@@ -73,8 +74,18 @@ public class GeoJSONWriter {
     private static final Projection projection = Projections.getProjectionByCode("EPSG:4326"); // WGS 84
     private static final BooleanProperty SKIP_EMPTY_NODES = new BooleanProperty("geojson.export.skip-empty-nodes", true);
     private static final BooleanProperty UNTAGGED_CLOSED_IS_POLYGON = new BooleanProperty("geojson.export.untagged-closed-is-polygon", false);
+
+    /**
+     * Used to avoid many calls to {@link JsonProvider#provider} in {@link #getCoorArray(JsonArrayBuilder, EastNorth)}.
+     * For validating Mesa County, CO, this reduces CPU and memory usage of {@link #write()} by ~80%. By using this for
+     * other {@link Json} calls, {@link #write()} takes ~95% less resources than the original. And the entire process
+     * takes 1/4 of the time (38 minutes -&gt; <10 minutes).
+     * <p>
+     * For more details, see <a href="https://github.com/jakartaee/jsonp-api/issues/346">JSONP #346</a>.
+     */
+    protected static final JsonProvider JSON_PROVIDER = JsonProvider.provider();
     private static final Set<Way> processedMultipolygonWays = new HashSet<>();
-    private EnumSet<Options> options = EnumSet.noneOf(Options.class);
+    private final EnumSet<Options> options = EnumSet.noneOf(Options.class);
 
     /**
      * This is used to determine that a tag should be interpreted as a json
@@ -137,8 +148,8 @@ public class GeoJSONWriter {
      */
     public void write(boolean pretty, Writer writer) {
         Map<String, Object> config = Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, pretty);
-        try (JsonWriter jsonWriter = Json.createWriterFactory(config).createWriter(writer)) {
-            JsonObjectBuilder object = Json.createObjectBuilder()
+        try (JsonWriter jsonWriter = JSON_PROVIDER.createWriterFactory(config).createWriter(writer)) {
+            JsonObjectBuilder object = JSON_PROVIDER.createObjectBuilder()
                     .add("type", "FeatureCollection")
                     .add("generator", "JOSM");
             appendLayerBounds(data, object);
@@ -183,7 +194,7 @@ public class GeoJSONWriter {
                 final JsonArrayBuilder array = getCoorsArray(nodes);
                 if (writeAsPolygon) {
                     geomObj.add("type", "Polygon");
-                    geomObj.add("coordinates", Json.createArrayBuilder().add(array));
+                    geomObj.add("coordinates", JSON_PROVIDER.createArrayBuilder().add(array));
                 } else {
                     geomObj.add("type", "LineString");
                     geomObj.add("coordinates", array);
@@ -222,10 +233,10 @@ public class GeoJSONWriter {
          * @param r The relation to visit.
          */
         private void visitMultiGeometry(final Relation r) {
-            final JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+            final JsonArrayBuilder jsonArrayBuilder = JSON_PROVIDER.createArrayBuilder();
             r.getMemberPrimitives().stream().filter(p -> !(p instanceof Relation))
                     .map(p -> {
-                        final JsonObjectBuilder tempGeomObj = Json.createObjectBuilder();
+                        final JsonObjectBuilder tempGeomObj = JSON_PROVIDER.createObjectBuilder();
                         p.accept(new GeometryPrimitiveVisitor(tempGeomObj));
                         return tempGeomObj.build();
                     }).forEach(jsonArrayBuilder::add);
@@ -238,7 +249,7 @@ public class GeoJSONWriter {
          * @param r The relation to visit
          */
         private void visitMultiPoints(final Relation r) {
-            final JsonArrayBuilder multiPoint = Json.createArrayBuilder();
+            final JsonArrayBuilder multiPoint = JSON_PROVIDER.createArrayBuilder();
             r.getMembers().stream().map(RelationMember::getMember).filter(Node.class::isInstance).map(Node.class::cast)
                     .map(latLon -> getCoorArray(null, latLon))
                     .forEach(multiPoint::add);
@@ -251,7 +262,7 @@ public class GeoJSONWriter {
          * @param r The relation to convert
          */
         private void visitMultiLineString(final Relation r) {
-            final JsonArrayBuilder multiLine = Json.createArrayBuilder();
+            final JsonArrayBuilder multiLine = JSON_PROVIDER.createArrayBuilder();
             r.getMembers().stream().map(RelationMember::getMember).filter(Way.class::isInstance).map(Way.class::cast)
                     .map(Way::getNodes).map(p -> {
                 JsonArrayBuilder array = getCoorsArray(p);
@@ -273,7 +284,7 @@ public class GeoJSONWriter {
         private void visitMultipolygon(final Relation r) throws MultipolygonBuilder.JoinedPolygonCreationException {
                 final Pair<List<MultipolygonBuilder.JoinedPolygon>, List<MultipolygonBuilder.JoinedPolygon>> mp =
                         MultipolygonBuilder.joinWays(r);
-                final JsonArrayBuilder polygon = Json.createArrayBuilder();
+                final JsonArrayBuilder polygon = JSON_PROVIDER.createArrayBuilder();
                 // Peek would theoretically be better for these two streams, but SonarLint doesn't like it.
                 // java:S3864: "Stream.peek" should be used with caution
                 final Stream<List<Node>> outer = mp.a.stream().map(MultipolygonBuilder.JoinedPolygon::getNodes).map(nodes -> {
@@ -302,14 +313,14 @@ public class GeoJSONWriter {
                             return ll.isLatLonKnown() ? array.add(getCoorArray(null, ll)) : array;
                         })
                         .forEach(polygon::add);
-                final JsonArrayBuilder multiPolygon = Json.createArrayBuilder().add(polygon);
+                final JsonArrayBuilder multiPolygon = JSON_PROVIDER.createArrayBuilder().add(polygon);
                 geomObj.add("type", "MultiPolygon");
                 geomObj.add("coordinates", multiPolygon);
                 processedMultipolygonWays.addAll(r.getMemberPrimitives(Way.class));
         }
 
         private JsonArrayBuilder getCoorsArray(Iterable<Node> nodes) {
-            final JsonArrayBuilder builder = Json.createArrayBuilder();
+            final JsonArrayBuilder builder = JSON_PROVIDER.createArrayBuilder();
             for (Node n : nodes) {
                 if (n.isLatLonKnown()) {
                     builder.add(getCoorArray(null, n));
@@ -324,7 +335,7 @@ public class GeoJSONWriter {
     }
 
     private static JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, EastNorth c) {
-        return (builder != null ? builder : Json.createArrayBuilder())
+        return (builder != null ? builder : JSON_PROVIDER.createArrayBuilder())
                 .add(BigDecimal.valueOf(c.getX()).setScale(11, RoundingMode.HALF_UP))
                 .add(BigDecimal.valueOf(c.getY()).setScale(11, RoundingMode.HALF_UP));
     }
@@ -336,7 +347,7 @@ public class GeoJSONWriter {
         }
 
         // Properties
-        final JsonObjectBuilder propObj = Json.createObjectBuilder();
+        final JsonObjectBuilder propObj = JSON_PROVIDER.createObjectBuilder();
         for (Map.Entry<String, String> t : p.getKeys().entrySet()) {
             // If writing OSM information, follow Overpass syntax (escape `@` with another `@`)
             final String key = options.contains(Options.WRITE_OSM_INFORMATION) && t.getKey().startsWith("@")
@@ -356,15 +367,15 @@ public class GeoJSONWriter {
                 propObj.add("@uid", p.getUser().getId());
             }
             if (options.contains(Options.WRITE_OSM_INFORMATION) && p.getReferrers(true).stream().anyMatch(Relation.class::isInstance)) {
-                final JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+                final JsonArrayBuilder jsonArrayBuilder = JSON_PROVIDER.createArrayBuilder();
                 for (Relation relation : Utils.filteredCollection(p.getReferrers(), Relation.class)) {
-                    final JsonObjectBuilder relationObject = Json.createObjectBuilder();
+                    final JsonObjectBuilder relationObject = JSON_PROVIDER.createObjectBuilder();
                     relationObject.add("rel", relation.getId());
                     Collection<RelationMember> members = relation.getMembersFor(Collections.singleton(p));
                     // Each role is a separate object in overpass-turbo geojson export. For now, just concat them.
                     relationObject.add("role",
                             members.stream().map(RelationMember::getRole).collect(Collectors.joining(";")));
-                    final JsonObjectBuilder relationKeys = Json.createObjectBuilder();
+                    final JsonObjectBuilder relationKeys = JSON_PROVIDER.createObjectBuilder();
                     // Uncertain if the @relation reltags need to be @ escaped. I don't think so, as example output
                     // didn't have any metadata in it.
                     for (Map.Entry<String, String> tag : relation.getKeys().entrySet()) {
@@ -378,13 +389,13 @@ public class GeoJSONWriter {
         final JsonObject prop = propObj.build();
 
         // Geometry
-        final JsonObjectBuilder geomObj = Json.createObjectBuilder();
+        final JsonObjectBuilder geomObj = JSON_PROVIDER.createObjectBuilder();
         p.accept(new GeometryPrimitiveVisitor(geomObj));
         final JsonObject geom = geomObj.build();
 
         if (!geom.isEmpty()) {
             // Build primitive JSON object
-            array.add(Json.createObjectBuilder()
+            array.add(JSON_PROVIDER.createObjectBuilder()
                     .add("type", "Feature")
                     .add("properties", prop.isEmpty() ? JsonValue.NULL : prop)
                     .add("geometry", geom.isEmpty() ? JsonValue.NULL : geom));
@@ -393,7 +404,7 @@ public class GeoJSONWriter {
 
     private static JsonValue convertValueToJson(String value) {
         if (value.startsWith(JSON_VALUE_START_MARKER) && value.endsWith(JSON_VALUE_END_MARKER)) {
-            try (JsonParser parser = Json.createParser(new StringReader(value))) {
+            try (JsonParser parser = JSON_PROVIDER.createParser(new StringReader(value))) {
                 if (parser.hasNext() && parser.next() != null) {
                     return parser.getValue();
                 }
@@ -401,7 +412,7 @@ public class GeoJSONWriter {
                 Logging.warn(e);
             }
         }
-        return Json.createValue(value);
+        return JSON_PROVIDER.createValue(value);
     }
 
     protected void appendLayerBounds(DataSet ds, JsonObjectBuilder object) {
@@ -419,7 +430,7 @@ public class GeoJSONWriter {
 
     protected void appendBounds(Bounds b, JsonObjectBuilder object) {
         if (b != null) {
-            JsonArrayBuilder builder = Json.createArrayBuilder();
+            JsonArrayBuilder builder = JSON_PROVIDER.createArrayBuilder();
             getCoorArray(builder, b.getMin());
             getCoorArray(builder, b.getMax());
             object.add("bbox", builder);
@@ -427,7 +438,7 @@ public class GeoJSONWriter {
     }
 
     protected void appendLayerFeatures(DataSet ds, JsonObjectBuilder object) {
-        JsonArrayBuilder array = Json.createArrayBuilder();
+        JsonArrayBuilder array = JSON_PROVIDER.createArrayBuilder();
         if (ds != null) {
             processedMultipolygonWays.clear();
             Collection<OsmPrimitive> primitives = ds.allNonDeletedPrimitives();

@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
@@ -40,9 +39,9 @@ public class GeoJSONMapRouletteWriter extends GeoJSONWriter {
      * @return The MapRoulette challenge object
      */
     public Optional<JsonObject> write(final TestError testError) {
-        final JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        final JsonArrayBuilder featuresBuilder = Json.createArrayBuilder();
-        final JsonObjectBuilder propertiesBuilder = Json.createObjectBuilder();
+        final JsonObjectBuilder jsonObjectBuilder = JSON_PROVIDER.createObjectBuilder();
+        final JsonArrayBuilder featuresBuilder = JSON_PROVIDER.createArrayBuilder();
+        final JsonObjectBuilder propertiesBuilder = JSON_PROVIDER.createObjectBuilder();
         propertiesBuilder.add("message", testError.getMessage());
         Optional.ofNullable(testError.getDescription()).ifPresent(description -> propertiesBuilder.add("description", description));
         propertiesBuilder.add("code", testError.getUniqueCode());
@@ -61,18 +60,18 @@ public class GeoJSONMapRouletteWriter extends GeoJSONWriter {
         }).filter(Objects::nonNull).distinct().map(OsmPrimitive.class::cast)
                 .forEach(primitive -> super.appendPrimitive(primitive, featuresBuilder));
         final JsonArray featureArray = featuresBuilder.build();
-        final JsonArrayBuilder featuresMessageBuilder = Json.createArrayBuilder();
+        final JsonArrayBuilder featuresMessageBuilder = JSON_PROVIDER.createArrayBuilder();
         if (featureArray.isEmpty()) {
             Logging.trace("Could not generate task for {0}", testError.getMessage());
             return Optional.empty();
         }
         JsonObject primitive = featureArray.getJsonObject(0);
-        JsonObjectBuilder replacementPrimitive = Json.createObjectBuilder(primitive);
+        JsonObjectBuilder replacementPrimitive = JSON_PROVIDER.createObjectBuilder(primitive);
         final JsonObjectBuilder properties;
         if (primitive.containsKey("properties") && primitive.get("properties").getValueType() == JsonValue.ValueType.OBJECT) {
-            properties = Json.createObjectBuilder(primitive.getJsonObject("properties"));
+            properties = JSON_PROVIDER.createObjectBuilder(primitive.getJsonObject("properties"));
         } else {
-            properties = Json.createObjectBuilder();
+            properties = JSON_PROVIDER.createObjectBuilder();
         }
         properties.addAll(propertiesBuilder);
         replacementPrimitive.add("properties", properties);
