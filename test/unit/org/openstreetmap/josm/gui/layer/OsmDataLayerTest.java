@@ -244,15 +244,15 @@ class OsmDataLayerTest {
         Iterator<WayPoint> it = trackpoints.iterator();
         WayPoint p1 = it.next();
         assertEquals(new LatLon(47.0, 9.0), p1.getCoor());
-        assertEquals("123", p1.get(GpxConstants.PT_ELE));
+        assertEquals(123, (double) p1.get(GpxConstants.PT_ELE));
         assertEquals("2018-08-01T10:00:00Z", String.valueOf(p1.get(GpxConstants.PT_TIME)));
         WayPoint p2 = it.next();
         assertEquals(new LatLon(47.1, 9.1), p2.getCoor());
-        assertEquals("456", p2.get(GpxConstants.PT_ELE));
+        assertEquals(456, (double) p2.get(GpxConstants.PT_ELE));
         assertEquals("2018-08-01T10:01:00Z", String.valueOf(p2.get(GpxConstants.PT_TIME)));
         WayPoint p3 = it.next();
         assertEquals(new LatLon(47.05, 9.05), p3.getCoor());
-        assertEquals("789", p3.get(GpxConstants.PT_ELE));
+        assertEquals(789, (double) p3.get(GpxConstants.PT_ELE));
         assertEquals("2018-08-01T10:02:00Z", String.valueOf(p3.get(GpxConstants.PT_TIME)));
     }
 

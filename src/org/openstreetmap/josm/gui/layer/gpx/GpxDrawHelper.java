@@ -625,7 +625,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             dateScale.setRange(minval, maxval);
         }
 
-        ArrayList<String> refs = new ArrayList<String>();
+        ArrayList<String> refs = new ArrayList<>();
         if (colored == ColorMode.REF) {
             for (Line segment : getLinesIterable(null)) {
                 for (WayPoint trkPnt : segment) {
@@ -638,7 +638,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     }
                 }
             }
-            if (refs.size() > 0) {
+            if (!refs.isEmpty()) {
                 Collections.sort(refs);
                 String[] a = {};
                 refScale = ColorScale.createCyclicScale(refs.size()).addTitle(tr("GPS ref")).addColorBarTitles(refs.toArray(a));
@@ -659,9 +659,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 Color color = null;
 
                 if (colored == ColorMode.HDOP) {
-                    color = hdopScale.getColor((Float) trkPnt.get(GpxConstants.PT_HDOP));
+                    color = hdopScale.getColor((Number) trkPnt.get(GpxConstants.PT_HDOP));
                 } else if (colored == ColorMode.QUALITY) {
-                    color = qualityScale.getColor((Integer) trkPnt.get(GpxConstants.RTKLIB_Q));
+                    color = qualityScale.getColor((Number) trkPnt.get(GpxConstants.RTKLIB_Q));
                 } else if (colored == ColorMode.FIX) {
                     Object fixval = trkPnt.get(GpxConstants.PT_FIX);
                     if (fixval != null) {
@@ -670,13 +670,11 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                             color = fixScale.getColor(fix);
                         }
                     }
-                } else if (colored == ColorMode.REF) {
-                    if (trkPnt.get(GpxConstants.PT_DGPSID) != null) {
-                        String refval = trkPnt.get(GpxConstants.PT_DGPSID).toString();
-                        int i = refs.indexOf(refval);
-                        if (i >= 0) {
-                            color = refScale.getColor(i);
-                        }
+                } else if (colored == ColorMode.REF && trkPnt.get(GpxConstants.PT_DGPSID) != null) {
+                    String refVal = trkPnt.get(GpxConstants.PT_DGPSID).toString();
+                    int i = refs.indexOf(refVal);
+                    if (i >= 0) {
+                        color = refScale.getColor(i);
                     }
                 }
                 if (oldWp != null) { // other coloring modes need segment for calcuation
@@ -851,7 +849,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
 
                 if (hdopCircle && trkPnt.get(GpxConstants.PT_HDOP) != null) {
                     // hdop value
-                    float hdop = (Float) trkPnt.get(GpxConstants.PT_HDOP);
+                    float hdop = ((Number) trkPnt.get(GpxConstants.PT_HDOP)).floatValue();
                     if (hdop < 0) {
                         hdop = 0;
                     }

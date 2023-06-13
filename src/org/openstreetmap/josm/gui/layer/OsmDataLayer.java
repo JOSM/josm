@@ -944,11 +944,11 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
         if (value != null) {
             try {
-                int i = Integer.parseInt(value);
+                final int i = Integer.parseInt(value);
                 // Sanity checks
                 if ((!GpxConstants.PT_SAT.equals(gpxKey) || i >= 0) &&
                         (!GpxConstants.PT_DGPSID.equals(gpxKey) || (0 <= i && i <= 1023))) {
-                    wpt.put(gpxKey, value);
+                    wpt.put(gpxKey, i);
                 }
             } catch (NumberFormatException e) {
                 Logging.trace(e);
@@ -963,10 +963,10 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
         if (value != null) {
             try {
-                double d = Double.parseDouble(value);
+                final double d = Double.parseDouble(value);
                 // Sanity checks
                 if (!GpxConstants.PT_MAGVAR.equals(gpxKey) || (0.0 <= d && d < 360.0)) {
-                    wpt.put(gpxKey, value);
+                    wpt.put(gpxKey, d);
                 }
             } catch (NumberFormatException e) {
                 Logging.trace(e);
