@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -9,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -102,7 +104,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                     // Trigger a repaint of all data layers
                     MainApplication.getLayerManager().getLayers()
                         .stream()
-                        .filter(layer -> layer instanceof OsmDataLayer)
+                        .filter(OsmDataLayer.class::isInstance)
                         .forEach(Layer::invalidate)
                 );
             }
@@ -236,6 +238,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private Rectangle lastClipBounds = new Rectangle();
     private transient MapMover mapMover;
 
+    private final List<? extends JComponent> mapNavigationComponents;
+    private final Stroke worldBorderStroke = new BasicStroke(1.0f);
+
     /**
      * The listener that listens to invalidations of all layers.
      */
@@ -293,10 +298,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         setFocusTraversalKeysEnabled(!Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent());
 
-        for (JComponent c : getMapNavigationComponents(this)) {
+        mapNavigationComponents = getMapNavigationComponents(this);
+        for (JComponent c : mapNavigationComponents) {
             add(c);
         }
-        if (AutoFilterManager.PROP_AUTO_FILTER_ENABLED.get()) {
+        if (Boolean.TRUE.equals(AutoFilterManager.PROP_AUTO_FILTER_ENABLED.get())) {
             AutoFilterManager.getInstance().enableAutoFilterRule(AutoFilterManager.PROP_AUTO_FILTER_RULE.get());
         }
         setTransferHandler(new OsmTransferHandler());
@@ -658,6 +664,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private void drawWorldBorders(Graphics2D tempG) {
         tempG.setColor(Color.WHITE);
+        tempG.setStroke(worldBorderStroke);
         Bounds b = getProjection().getWorldBoundsLatLon();
 
         int w = getWidth();
@@ -910,5 +917,16 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     public final MapMover getMapMover() {
         return mapMover;
+    }
+
+    /**
+     * Set the visibility of the navigation component
+     * @param visible {@code true} to make the navigation component visible
+     * @since 18755
+     */
+    public void setMapNavigationComponentVisibility(boolean visible) {
+        for (JComponent c : mapNavigationComponents) {
+            c.setVisible(visible);
+        }
     }
 }

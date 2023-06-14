@@ -65,6 +65,7 @@ public class DialogsToggleAction extends ToggleAction {
             if (!Config.getPref().getBoolean("sidetoolbar.always-visible", true) && (!selected || sideToolbarPreviouslyVisible)) {
                 MapFrame.SIDE_TOOLBAR_VISIBLE.put(selected);
             }
+            map.mapView.setMapNavigationComponentVisibility(selected || Config.getPref().getBoolean("navigation.always-visible", true));
             map.mapView.rememberLastPositionOnScreen();
         }
     }

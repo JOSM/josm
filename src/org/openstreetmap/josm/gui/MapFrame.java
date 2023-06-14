@@ -38,12 +38,9 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicArrowButton;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
@@ -226,7 +223,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
          */
         splitPane.setDividerSize(5);
         splitPane.setBorder(null);
-        splitPane.setUI(new NoBorderSplitPaneUI());
 
         // JSplitPane supports F6, F8, Home and End shortcuts by default, but we need them for Audio and Image Mapping actions
         InputMap splitInputMap = splitPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -312,7 +308,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * @return <code>true</code> if it is selected
      */
     public boolean selectSelectTool(boolean onlyIfModeless) {
-        if (onlyIfModeless && !MODELESS.get())
+        if (onlyIfModeless && Boolean.FALSE.equals(MODELESS.get()))
             return false;
 
         return selectMapMode(mapModeSelect);
@@ -324,7 +320,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * @return <code>true</code> if it is selected
      */
     public boolean selectDrawTool(boolean onlyIfModeless) {
-        if (onlyIfModeless && !MODELESS.get())
+        if (onlyIfModeless && Boolean.FALSE.equals(MODELESS.get()))
             return false;
 
         return selectMapMode(mapModeDraw);
@@ -336,7 +332,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * @return <code>true</code> if it is selected
      */
     public boolean selectZoomTool(boolean onlyIfModeless) {
-        if (onlyIfModeless && !MODELESS.get())
+        if (onlyIfModeless && Boolean.FALSE.equals(MODELESS.get()))
             return false;
 
         return selectMapMode(mapModeZoom);
@@ -570,24 +566,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         }
     }
 
-    static final class NoBorderSplitPaneUI extends BasicSplitPaneUI {
-        static final class NoBorderBasicSplitPaneDivider extends BasicSplitPaneDivider {
-            NoBorderBasicSplitPaneDivider(BasicSplitPaneUI ui) {
-                super(ui);
-            }
-
-            @Override
-            public void setBorder(Border b) {
-                // Do nothing
-            }
-        }
-
-        @Override
-        public BasicSplitPaneDivider createDefaultDivider() {
-            return new NoBorderBasicSplitPaneDivider(this);
-        }
-    }
-
     private final class SideToolbarPopupMenu extends JPopupMenu {
         private static final int staticMenuEntryCount = 2;
         private final JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide toolbar")) {
@@ -684,7 +662,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if ((Boolean) getValue(SELECTED_KEY)) {
+                            if (Boolean.TRUE.equals(getValue(SELECTED_KEY))) {
                                 t.showButton();
                             } else {
                                 t.hideButton();
