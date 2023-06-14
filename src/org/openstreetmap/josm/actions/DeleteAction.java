@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.DeleteFromRelationConfirmationDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -102,7 +103,7 @@ public final class DeleteAction extends JosmAction {
      */
     public static boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives,
             Collection<? extends OsmPrimitive> ignore) {
-        return checkAndConfirmOutlyingOperation("delete",
+        return Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() -> checkAndConfirmOutlyingOperation("delete",
                 tr("Delete confirmation"),
                 tr("You are about to delete nodes which can have other referrers not yet downloaded."
                         + "<br>"
@@ -113,7 +114,7 @@ public final class DeleteAction extends JosmAction {
                         + "<br>"
                         + "This will cause problems because you don''t see the real object."
                         + "<br>" + "Do you really want to delete?"),
-                primitives, ignore);
+                primitives, ignore)));
     }
 
     /**
