@@ -435,7 +435,7 @@ public class PluginInformation {
      *
      * The plugin is not initialized. If the plugin is a .jar file, it is not loaded
      * (only the manifest is extracted). In the classloader-case, the class is
-     * bootstraped (e.g. static {} - declarations will run. However, nothing else is done.
+     * bootstrapped (e.g. static {} - declarations will run. However, nothing else is done.
      *
      * @param pluginName The name of the plugin (in all lowercase). E.g. "lang-de"
      * @return Information about the plugin or <code>null</code>, if the plugin
