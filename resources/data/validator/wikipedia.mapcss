@@ -54,8 +54,7 @@
 
 *[/^wikipedia:[-a-z]{2,12}$/][/^wikipedia:[-a-z]{2,12}$/ =~ /(?i).*%[0-9A-F][0-9A-F]/] {
   throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.key}");
-  /* fixAdd: concat("{0.key}", "=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("{0.key}")),1), trim(replace(URL_decode(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("{0.key}")),2)), "_", " "))); */
-    /* tag("{0.key}") is not yet supported */
+  fixAdd: concat("{0.key}", "=", get(regexp_match("(?i)^([-a-z]+:)?(.*)$", tag("{0.key}")),1), trim(replace(URL_decode(get(println(regexp_match("(?i)^([-a-z]+:)?(.+)$", tag("{0.key}"))),2)), "_", " ")));
   assertMatch: "node wikipedia:de=Foo%27s";
   assertNoMatch: "node wikipedia:de=Foo";
 }

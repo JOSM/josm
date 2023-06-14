@@ -74,8 +74,8 @@ final class MapCSSTagCheckerAsserts {
                 // Check that autofix works as expected
                 Command fix = check.fixPrimitive(p);
                 if (fix != null && fix.executeCommand() && !MapCSSTagChecker.getErrorsForPrimitive(p, true, checksToRun).isEmpty()) {
-                    assertionConsumer.accept(MessageFormat.format("Autofix does not work for test ''{0}'' (i.e., {1})",
-                            check.getMessage(p), check.rule.selectors));
+                    assertionConsumer.accept(MessageFormat.format("Autofix does not work for test ''{0}'' (i.e., {1}). Failing test: {2}",
+                            check.getMessage(p), check.rule.selectors, i.getKey()));
                 }
             }
             ds.removePrimitive(p);

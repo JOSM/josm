@@ -231,9 +231,10 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
                 final Selector selector = check.whichSelectorMatchesEnvironment(env);
                 if (selector != null) {
-                    check.rule.declaration.execute(env);
+                    final Environment envWithSelector = env.withSelector(selector);
+                    check.rule.declaration.execute(envWithSelector);
                     if (!ignoreError && !check.errors.isEmpty()) {
-                        r.addAll(check.getErrorsForPrimitive(p, selector, env, new MapCSSTagCheckerAndRule(check.rule)));
+                        r.addAll(check.getErrorsForPrimitive(p, selector, envWithSelector, new MapCSSTagCheckerAndRule(check.rule)));
                     }
                 }
             }

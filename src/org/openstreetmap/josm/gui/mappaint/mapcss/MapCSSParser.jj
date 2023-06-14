@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.PlaceholderExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
@@ -1052,6 +1053,9 @@ Expression primary() :
         { 
             if (lit == null)
                 return NullExpression.INSTANCE;
+            else if (lit instanceof String && PlaceholderExpression.PATTERN_PLACEHOLDER.matcher((String) lit).find()) {
+                return new PlaceholderExpression((String) lit);
+            }
             return new LiteralExpression(lit);
         }
     |

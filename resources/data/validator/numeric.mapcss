@@ -67,72 +67,6 @@
   assertNoMatch: "node building:levels=0"; /* valid because there can be building:levels:underground > 0 or roof:levels > 0 */
 }
 
-*[height][height =~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set height_meter_autofix;
-  fixAdd: concat("height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("height")),1)," m");
-  assertMatch: "node height=6.78 meters";
-  assertMatch: "node height=5  metre";
-  assertMatch: "node height=2m";
-  assertNoMatch: "node height=2 m";
-  assertNoMatch: "node height=5";
-}
-*[height][height =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set height_foot_autofix;
-  fixAdd: concat("height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("height")),1)," ft");
-  assertMatch: "node height=6.78 foot";
-  assertMatch: "node height=5  Feet";
-  assertMatch: "node height=2ft";
-  assertNoMatch: "node height=2 ft";
-  assertNoMatch: "node height=5";
-}
-*[height][height =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("height=", replace(tag("height"), ",", "."));
-  set height_separator_autofix;
-  assertMatch: "node height=5,5";
-  assertMatch: "node height=12,00";
-  assertMatch: "node height=12,5 ft";
-  assertNoMatch: "node height=12,000";
-  assertNoMatch: "node height=3,50,5";
-  assertNoMatch: "node height=3.5";
-  assertNoMatch: "node height=4";
-}
-
-*[maxheight][maxheight =~ /^[1-9][0-9]*(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set maxheight_meter_autofix;
-  fixAdd: concat("maxheight=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxheight")),1)," m");
-  assertMatch: "node maxheight=6.78 meters";
-  assertMatch: "node maxheight=5  metre";
-  assertMatch: "node maxheight=2m";
-  assertNoMatch: "node maxheight=2 m";
-  assertNoMatch: "node maxheight=5";
-}
-*[maxheight][maxheight =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set maxheight_foot_autofix;
-  fixAdd: concat("maxheight=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxheight")),1)," ft");
-  assertMatch: "node maxheight=6.78 foot";
-  assertMatch: "node maxheight=5  Feet";
-  assertMatch: "node maxheight=2ft";
-  assertNoMatch: "node maxheight=2 ft";
-  assertNoMatch: "node maxheight=5";
-}
-*[maxheight][maxheight =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("maxheight=", replace(tag("maxheight"), ",", "."));
-  set maxheight_separator_autofix;
-  assertMatch: "node maxheight=5,5";
-  assertMatch: "node maxheight=12,00";
-  assertMatch: "node maxheight=12,5 ft";
-  assertNoMatch: "node maxheight=12,000";
-  assertNoMatch: "node maxheight=3,50,5";
-  assertNoMatch: "node maxheight=3.5";
-  assertNoMatch: "node maxheight=4";
-}
-
 *[roof:height][roof:height =~ /^0*(\.0*)?( (m|ft))?$/][roof:shape=flat] {
   throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{2.tag}");
   group: tr("unnecessary tag");
@@ -143,176 +77,158 @@
   assertNoMatch: "node roof:shape=flat roof:height=2 m roof:shape=flat";
   assertNoMatch: "node roof:height=0 roof:shape=gabled";
 }
-*[roof:height][roof:height =~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/]!.zero_roof_height_flat {
+
+/*********************
+ * Begin Unit checks *
+ *********************/
+/* See https://wiki.openstreetmap.org/wiki/Map_features/Units */
+/* 1. Replace aliases to make the rest of the checks easier to implement */
+/* Distance measurements, note that these should look also match `,` separators to ensure that at least one error is matched */
+/* Meters; Note that we cannot assertMatch "2  m" since we replace the double space with a single space */
+*[height][height            =~ /^(?i)[0-9]+([.,][0-9]+)?( *(metres?|meters?)|m| {2,}m)$/],
+*[roof:height][roof:height  =~ /^(?i)[0-9]+([.,][0-9]+)?( *(metres?|meters?)|m| {2,}m)$/]!.zero_roof_height_flat,
+*[width][width              =~ /^(?i)[0-9]+([.,][0-9]+)?( *(metres?|meters?)|m| {2,}m)$/],
+*[maxwidth][maxwidth        =~ /^(?i)[0-9]+([.,][0-9]+)?( *(metres?|meters?)|m| {2,}m)$/],
+*[min_height][min_height    =~ /^(?i)-?[0-9]+([.,][0-9]+)?( *(metres?|meters?)|m| {2,}m)$/],
+*[maxheight][maxheight      =~ /^(?i)[1-9][0-9]*([.,][0-9]+)?( *(metres?|meters?)|m| {2,}m)$/],
+*[maxlength][maxlength      =~ /^(?i)[1-9][0-9]*([.,][0-9]+)?( *(metres?|meters?)|m| {2,}m)$/] {
+  set _unit_auto_fix;
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set roof_height_meter_autofix;
-  fixAdd: concat("roof:height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("roof:height")),1)," m");
+  fixAdd: concat("{0.key}", "=", get(regexp_match("([0-9.,]+) *.+", "{0.value}"), 1), " m");
+  assertMatch: "node height=6.78 meters";
+  assertMatch: "node height=6,78 meters";
+  assertMatch: "node height=5  metre";
+  assertMatch: "node height=2m";
+  assertNoMatch: "node height=2 m";
+  assertNoMatch: "node height=5";
+  assertMatch: "node maxheight=6.78 meters";
+  assertMatch: "node maxheight=5  metre";
+  assertMatch: "node maxheight=2m";
+  assertNoMatch: "node maxheight=2 m";
+  assertNoMatch: "node maxheight=5";
   assertMatch: "node roof:height=6.78 meters";
   assertMatch: "node roof:height=5  metre";
   assertMatch: "node roof:height=2m";
   assertNoMatch: "node roof:height=2 m";
   assertNoMatch: "node roof:height=5";
-}
-*[roof:height][roof:height =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/]!.zero_roof_height_flat {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set roof_height_foot_autofix;
-  fixAdd: concat("roof:height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("roof:height")),1)," ft");
-  assertMatch: "node roof:height=6.78 foot";
-  assertMatch: "node roof:height=5  Feet";
-  assertMatch: "node roof:height=2ft";
-  assertNoMatch: "node roof:height=2 ft";
-  assertNoMatch: "node roof:height=5";
-}
-*[roof:height][roof:height =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("roof:height=", replace(tag("roof:height"), ",", "."));
-  set roof_height_separator_autofix;
-  assertMatch: "node roof:height=5,5";
-  assertMatch: "node roof:height=12,00";
-  assertMatch: "node roof:height=12,5 ft";
-  assertNoMatch: "node roof:height=12,000";
-  assertNoMatch: "node roof:height=3,50,5";
-  assertNoMatch: "node roof:height=3.5";
-  assertNoMatch: "node roof:height=4";
-}
-
-*[maxlength][maxlength =~ /^[1-9][0-9]*(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set maxlength_meter_autofix;
-  fixAdd: concat("maxlength=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxlength")),1)," m");
   assertMatch: "node maxlength=6.78 meters";
   assertMatch: "node maxlength=5  metre";
   assertMatch: "node maxlength=2m";
   assertNoMatch: "node maxlength=2 m";
   assertNoMatch: "node maxlength=5";
-}
-*[maxlength][maxlength =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set maxlength_foot_autofix;
-  fixAdd: concat("maxlength=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxlength")),1)," ft");
-  assertMatch: "node maxlength=6.78 foot";
-  assertMatch: "node maxlength=5  Feet";
-  assertMatch: "node maxlength=2ft";
-  assertNoMatch: "node maxlength=2 ft";
-  assertNoMatch: "node maxlength=5";
-}
-*[maxlength][maxlength =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("maxlength=", replace(tag("maxlength"), ",", "."));
-  set maxlength_separator_autofix;
-  assertMatch: "node maxlength=5,5";
-  assertMatch: "node maxlength=12,00";
-  assertMatch: "node maxlength=12,5 ft";
-  assertNoMatch: "node maxlength=12,000";
-  assertNoMatch: "node maxlength=3,50,5";
-  assertNoMatch: "node maxlength=3.5";
-  assertNoMatch: "node maxlength=4";
-}
-
-*[width][width =~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set width_meter_autofix;
-  fixAdd: concat("width=", get(regexp_match("([0-9.]+)( )*(.+)",tag("width")),1)," m");
   assertMatch: "node width=6.78 meters";
   assertMatch: "node width=5  metre";
   assertMatch: "node width=2m";
   assertNoMatch: "node width=2 m";
   assertNoMatch: "node width=5";
-}
-*[width][width =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set width_foot_autofix;
-  fixAdd: concat("width=", get(regexp_match("([0-9.]+)( )*(.+)",tag("width")),1)," ft");
-  assertMatch: "node width=6.78 foot";
-  assertMatch: "node width=5  Feet";
-  assertMatch: "node width=2ft";
-  assertNoMatch: "node width=2 ft";
-  assertNoMatch: "node width=5";
-}
-*[width][width =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("width=", replace(tag("width"), ",", "."));
-  set width_separator_autofix;
-  assertMatch: "node width=5,5";
-  assertMatch: "node width=12,00";
-  assertNoMatch: "node width=12,000";
-  assertNoMatch: "node width=3,50,5";
-  assertNoMatch: "node width=3.5";
-  assertNoMatch: "node width=4";
-}
-
-*[maxwidth][maxwidth=~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set maxwidth_meter_autofix;
-  fixAdd: concat("maxwidth=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxwidth")),1)," m");
   assertMatch: "node maxwidth=6.78 meters";
   assertMatch: "node maxwidth=5  metre";
   assertMatch: "node maxwidth=2m";
   assertNoMatch: "node maxwidth=2 m";
   assertNoMatch: "node maxwidth=5";
-}
-*[maxwidth][maxwidth =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  set maxwidth_foot_autofix;
-  fixAdd: concat("maxwidth=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxwidth")),1)," ft");
-  assertMatch: "node maxwidth=6.78 foot";
-  assertMatch: "node maxwidth=5  Feet";
-  assertMatch: "node maxwidth=2ft";
-  assertNoMatch: "node maxwidth=2 ft";
-  assertNoMatch: "node maxwidth=5";
-}
-*[maxwidth][maxwidth =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("maxwidth=", replace(tag("maxwidth"), ",", "."));
-  set maxwidth_separator_autofix;
-  assertMatch: "node maxwidth=5,5";
-  assertMatch: "node maxwidth=12,00";
-  assertNoMatch: "node maxwidth=12,000";
-  assertNoMatch: "node maxwidth=3,50,5";
-  assertNoMatch: "node maxwidth=3.5";
-  assertNoMatch: "node maxwidth=4";
-}
-
-*[height     ][height      !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.height_separator_autofix!.height_meter_autofix!.height_foot_autofix,
-*[maxheight  ][maxheight   !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxheight_separator_autofix!.maxheight_meter_autofix!.maxheight_foot_autofix,
-*[roof:height][roof:height !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.roof_height_separator_autofix!.roof_height_meter_autofix!.roof_height_foot_autofix!.zero_roof_height_flat,
-*[maxlength  ][maxlength   !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxlength_separator_autofix!.maxlength_meter_autofix!.maxlength_foot_autofix,
-*[width      ][width       !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.width_separator_autofix!.width_meter_autofix!.width_foot_autofix,
-*[maxwidth   ][maxwidth    !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxwidth_separator_autofix!.maxwidth_meter_autofix!.maxwidth_foot_autofix {
-  throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", tr("meters"));
-  assertMatch: "node height=medium";
-  assertMatch: "node maxheight=-5";
-  assertMatch: "node maxlength=0";
-  assertMatch: "node maxlength=10'13\"";
-  assertMatch: "node width=10'2.\"";
-  assertMatch: "node maxheight=\"2. m\"";
-  assertMatch: "node height=\"12. m\"";
-  assertNoMatch: "node height=6.78 meters";
-  assertNoMatch: "node height=5  metre";
-  assertNoMatch: "node height=2m";
-  assertNoMatch: "node height=3";
-  assertNoMatch: "node height=2.22 m";
-  assertNoMatch: "node height=7.8";
-  assertNoMatch: "node maxwidth=7 ft";
-  assertNoMatch: "node height=22'";
-  assertNoMatch: "node width=10'5\"";
-  assertNoMatch: "node width=10'";
-}
-
-*[min_height][min_height =~ /^-?[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
-  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
-  fixAdd: concat("min_height=", get(regexp_match("(-?[0-9.]+)( )*(.+)",tag("min_height")),1)," m");
-  set min_height_meter_autofix;
   assertMatch: "node min_height=6.78 meters";
   assertMatch: "node min_height=5  metre";
   assertMatch: "node min_height=2m";
   assertNoMatch: "node min_height=2 m";
   assertNoMatch: "node min_height=5";
 }
-*[min_height][min_height =~ /^-?[0-9]+,[0-9][0-9]?( m|\')?$/] {
+
+/* Foot inches */
+*[height][height            =~ /^(?i)[0-9]+([.,][0-9]+)?( *(foot|feet|ft)| +\')$/],
+*[maxheight][maxheight      =~ /^(?i)[0-9]+([.,][0-9]+)?( *(foot|feet|ft)| +\')$/],
+*[roof:height][roof:height  =~ /^(?i)[0-9]+([.,][0-9]+)?( *(foot|feet|ft)| +\')$/]!.zero_roof_height_flat,
+*[maxlength][maxlength      =~ /^(?i)[0-9]+([.,][0-9]+)?( *(foot|feet|ft)| +\')$/],
+*[width][width              =~ /^(?i)[0-9]+([.,][0-9]+)?( *(foot|feet|ft)| +\')$/],
+*[maxwidth][maxwidth        =~ /^(?i)[0-9]+([.,][0-9]+)?( *(foot|feet|ft)| +\')$/] {
+  set _unit_auto_fix;
+  throwWarning: tr("unusual value of {0}: use '' for foot and \" for inches, no spaces", "{0.key}");
+  fixAdd: concat("{0.key}", "=", get(regexp_match("([0-9.,]+) *.+", "{0.value}"), 1), "'");
+  assertMatch: "node height=6.78 foot";
+  assertMatch: "node height=5  Feet";
+  assertMatch: "node height=2 '";
+  assertNoMatch: "node height=2'";
+  assertNoMatch: "node height=5";
+  assertMatch: "node maxheight=6.78 foot";
+  assertMatch: "node maxheight=5  Feet";
+  assertMatch: "node maxheight=2 '";
+  assertNoMatch: "node maxheight=2'";
+  assertNoMatch: "node maxheight=5";
+  assertMatch: "node roof:height=6.78 foot";
+  assertMatch: "node roof:height=5  Feet";
+  assertMatch: "node roof:height=2 '";
+  assertNoMatch: "node roof:height=2'";
+  assertNoMatch: "node roof:height=5";
+  assertMatch: "node maxlength=6.78 foot";
+  assertMatch: "node maxlength=5  Feet";
+  assertMatch: "node maxlength=2 '";
+  assertNoMatch: "node maxlength=2'";
+  assertNoMatch: "node maxlength=5";
+  assertMatch: "node width=6.78 foot";
+  assertMatch: "node width=5  Feet";
+  assertMatch: "node width=2 '";
+  assertNoMatch: "node width=2'";
+  assertNoMatch: "node width=5";
+  assertMatch: "node maxwidth=6.78 foot";
+  assertMatch: "node maxwidth=5  Feet";
+  assertMatch: "node maxwidth=2 '";
+  assertNoMatch: "node maxwidth=2'";
+  assertNoMatch: "node maxwidth=5";
+}
+
+/* 2. Convert `,` to `.` */
+*[height][height            =~   /^[0-9]+,[0-9][0-9]?( m|\')?$/],
+*[maxheight][maxheight      =~   /^[0-9]+,[0-9][0-9]?( m|\')?$/],
+*[roof:height][roof:height  =~   /^[0-9]+,[0-9][0-9]?( m|\')?$/],
+*[maxlength][maxlength      =~   /^[0-9]+,[0-9][0-9]?( m|\')?$/],
+*[width][width              =~   /^[0-9]+,[0-9][0-9]?( m|\')?$/],
+*[maxwidth][maxwidth        =~   /^[0-9]+,[0-9][0-9]?( m|\')?$/],
+*[min_height][min_height    =~ /^-?[0-9]+,[0-9][0-9]?( m|\')?$/],
+*[maxaxleload][maxaxleload  =~   /^[0-9]+,[0-9][0-9]?( (t|kg|st|lbs))?$/],
+*[maxweight][maxweight      =~   /^[0-9]+,[0-9][0-9]?( (t|kg|st|lbs))?$/],
+*[distance][distance        =~   /^[0-9]+,[0-9][0-9]?( (m|km|mi|nmi))?$/] {
+  set _unit_auto_fix;
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("min_height=", replace(tag("min_height"), ",", "."));
-  set min_height_separator_autofix;
+  fixAdd: concat("{0.key}", "=", replace(tag("{0.key}"), ",", "."));
+  assertMatch: "node height=5,5";
+  assertMatch: "node height=12,00";
+  assertMatch: "node height=12,5'";
+  assertNoMatch: "node height=12,000";
+  assertNoMatch: "node height=3,50,5";
+  assertNoMatch: "node height=3.5";
+  assertNoMatch: "node height=4";
+  assertMatch: "node maxheight=5,5";
+  assertMatch: "node maxheight=12,00";
+  assertMatch: "node maxheight=12,5'";
+  assertNoMatch: "node maxheight=12,000";
+  assertNoMatch: "node maxheight=3,50,5";
+  assertNoMatch: "node maxheight=3.5";
+  assertNoMatch: "node maxheight=4";
+  assertMatch: "node roof:height=5,5";
+  assertMatch: "node roof:height=12,00";
+  assertMatch: "node roof:height=12,5'";
+  assertNoMatch: "node roof:height=12,000";
+  assertNoMatch: "node roof:height=3,50,5";
+  assertNoMatch: "node roof:height=3.5";
+  assertNoMatch: "node roof:height=4";
+  assertMatch: "node maxlength=5,5";
+  assertMatch: "node maxlength=12,00";
+  assertMatch: "node maxlength=12,5'";
+  assertNoMatch: "node maxlength=12,000";
+  assertNoMatch: "node maxlength=3,50,5";
+  assertNoMatch: "node maxlength=3.5";
+  assertNoMatch: "node maxlength=4";
+  assertMatch: "node width=5,5";
+  assertMatch: "node width=12,00";
+  assertNoMatch: "node width=12,000";
+  assertNoMatch: "node width=3,50,5";
+  assertNoMatch: "node width=3.5";
+  assertNoMatch: "node width=4";
+  assertMatch: "node maxwidth=5,5";
+  assertMatch: "node maxwidth=12,00";
+  assertNoMatch: "node maxwidth=12,000";
+  assertNoMatch: "node maxwidth=3,50,5";
+  assertNoMatch: "node maxwidth=3.5";
+  assertNoMatch: "node maxwidth=4";
   assertMatch: "node min_height=5,5";
   assertMatch: "node min_height=12,00";
   assertMatch: "node min_height=12,5'";
@@ -320,39 +236,59 @@
   assertNoMatch: "node min_height=3,50,5";
   assertNoMatch: "node min_height=3.5";
   assertNoMatch: "node min_height=4";
-}
-*[min_height ][min_height  !~ /^(-?([0-9]+(\.[0-9]+)?( m)?)|(-?[1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.min_height_separator_autofix!.min_height_meter_autofix!.min_height_foot_autofix {
-  throwWarning: tr("unusual value of {0}: {1} is default; point is decimal separator; if units, put space then unit", "{0.key}", tr("meters"));
-  assertMatch: "node min_height=\"12. m\"";
-  assertNoMatch: "node min_height=-5";
-}
-
-*[maxaxleload][maxaxleload =~ /^[0-9]+,[0-9][0-9]?( (t|kg|st|lbs))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("maxaxleload=", replace(tag("maxaxleload"), ",", "."));
-  set maxaxleload_separator_autofix;
   assertMatch: "node maxaxleload=5,5";
   assertMatch: "node maxaxleload=12,00";
   assertNoMatch: "node maxaxleload=12,000";
   assertNoMatch: "node maxaxleload=3,50,5";
   assertNoMatch: "node maxaxleload=3.5";
   assertNoMatch: "node maxaxleload=4";
-}
-
-*[maxweight][maxweight =~ /^[0-9]+,[0-9][0-9]?( (t|kg|st|lbs))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("maxweight=", replace(tag("maxweight"), ",", "."));
-  set maxweight_separator_autofix;
   assertMatch: "node maxweight=5,5";
   assertMatch: "node maxweight=12,00";
   assertNoMatch: "node maxweight=12,000";
   assertNoMatch: "node maxweight=3,50,5";
   assertNoMatch: "node maxweight=3.5";
   assertNoMatch: "node maxweight=4";
+  assertMatch: "node distance=5,5";
+  assertMatch: "node distance=12,00";
+  assertNoMatch: "node distance=12,000";
+  assertNoMatch: "node distance=3,50,5";
+  assertNoMatch: "node distance=3.5";
+  assertNoMatch: "node distance=4";
+}
+/* 3. Convert to the default unit for usage later. Use the tag prefixed with _. */
+/* 4. Start doing comparison checks. */
+
+*[height     ][height      !~ /^(([0-9]+(\.[0-9]+)?( m)?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!._unit_auto_fix,
+*[maxheight  ][maxheight   !~ /^(([1-9][0-9]*(\.[0-9]+)?( m)?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!._unit_auto_fix,
+*[min_height ][min_height  !~ /^(-?([0-9]+(\.[0-9]+)?( m)?)|(-?[1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!._unit_auto_fix,
+*[roof:height][roof:height !~ /^(([0-9]+(\.[0-9]+)?( m)?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.zero_roof_height_flat!._unit_auto_fix,
+*[maxlength  ][maxlength   !~ /^(([1-9][0-9]*(\.[0-9]+)?( m)?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!._unit_auto_fix,
+*[width      ][width       !~ /^(([0-9]+(\.[0-9]+)?( m)?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!._unit_auto_fix,
+*[maxwidth   ][maxwidth    !~ /^(([0-9]+(\.[0-9]+)?( m)?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!._unit_auto_fix {
+  throwWarning: tr("unusual value of {0}: meters is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}");
+  assertMatch: "node height=medium";
+  assertMatch: "node maxheight=-5";
+  assertMatch: "node maxlength=0";
+  assertMatch: "node maxlength=10'13\"";
+  assertMatch: "node width=10'2.\"";
+  assertMatch: "node maxheight=\"2. m\"";
+  assertMatch: "node height=\"12. m\"";
+  assertNoMatch: "node height=6.78 m";
+  assertNoMatch: "node height=5  m";
+  assertNoMatch: "node height=2 m";
+  assertNoMatch: "node height=3";
+  assertNoMatch: "node height=2.22 m";
+  assertNoMatch: "node height=7.8";
+  assertMatch: "node min_height=\"12. m\"";
+  assertNoMatch: "node min_height=-5";
+  assertNoMatch: "node maxwidth=7'";
+  assertNoMatch: "node height=22'";
+  assertNoMatch: "node width=10'5\"";
+  assertNoMatch: "node width=10'";
 }
 
-*[maxaxleload][maxaxleload !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/]!.maxaxleload_separator_autofix,
-*[maxweight][maxweight !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/]!.maxweight_separator_autofix {
+*[maxaxleload][maxaxleload !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/],
+*[maxweight][maxweight !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/] {
   throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", tr("tonne"));
   assertMatch: "node maxaxleload=something";
   assertMatch: "node maxweight=-5";
@@ -379,18 +315,7 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "way maxspeed=variable";
 }
 
-*[distance][distance =~ /^[0-9]+,[0-9][0-9]?( (m|km|mi|nmi))?$/] {
-  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
-  fixAdd: concat("distance=", replace(tag("distance"), ",", "."));
-  set distance_separator_autofix;
-  assertMatch: "node distance=5,5";
-  assertMatch: "node distance=12,00";
-  assertNoMatch: "node distance=12,000";
-  assertNoMatch: "node distance=3,50,5";
-  assertNoMatch: "node distance=3.5";
-  assertNoMatch: "node distance=4";
-}
-*[distance][distance !~ /^(([0-9]+(\.[0-9]+)?( (m|km|mi|nmi))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.distance_separator_autofix {
+*[distance][distance !~ /^(([0-9]+(\.[0-9]+)?( (m|km|mi|nmi))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/] {
   throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", tr("kilometers"));
   assertMatch: "way distance=something";
   assertMatch: "way distance=-5";
@@ -420,6 +345,10 @@ way[frequency][frequency !~ /^(0|[1-9][0-9]*(\.[0-9]+)?)( (kHz|MHz|GHz|THz))?$/]
   assertNoMatch: "way frequency=680 kHz";
   assertNoMatch: "way frequency=123.5 MHz";
 }
+
+/*******************
+ * End Unit checks *
+ *******************/
 
 way[gauge][gauge      =~ /^(broad|standard|narrow)$/],
 relation[gauge][gauge =~ /^(broad|standard|narrow)$/] {
@@ -523,7 +452,7 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertMatch: "node direction=45-100;190-250;300-";
   assertNoMatch: "node direction=45-100;190-250;300";
   assertNoMatch: "node direction=90;270";
-  assertNoMatch: "node direction=up"; 
+  assertNoMatch: "node direction=up";
   assertNoMatch: "node direction=down"; /* up/down are replaced by incline tag, has separate warning */
   assertMatch: "node direction=-10";
   assertNoMatch: "node direction=0";

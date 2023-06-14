@@ -48,7 +48,7 @@ interface MapCSSTagCheckerFixCommand {
     static String evaluateObject(final Object obj, final OsmPrimitive p, final Selector matchingSelector) {
         final String s;
         if (obj instanceof Expression) {
-            s = (String) ((Expression) obj).evaluate(new Environment(p));
+            s = (String) ((Expression) obj).evaluate(new Environment(p).withSelector(matchingSelector));
         } else if (obj instanceof String) {
             s = (String) obj;
         } else {
