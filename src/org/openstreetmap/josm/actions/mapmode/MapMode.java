@@ -184,10 +184,12 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @param modifiers old modifiers
      * @return extended modifiers
      */
-    @SuppressWarnings("deprecation")
     private static int mapOldModifiers(int modifiers) {
         if ((modifiers & InputEvent.CTRL_MASK) != 0) {
             modifiers |= InputEvent.CTRL_DOWN_MASK;
+        }
+        if ((modifiers & InputEvent.META_MASK) != 0) {
+            modifiers |= InputEvent.META_DOWN_MASK;
         }
         if ((modifiers & InputEvent.ALT_MASK) != 0) {
             modifiers |= InputEvent.ALT_DOWN_MASK;

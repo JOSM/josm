@@ -79,7 +79,7 @@ public class HighlightHelper {
      * @return {@code true} if a repaint is needed
      */
     public boolean setHighlight(OsmPrimitive p, boolean flag) {
-        return setHighlight(p, flag, new HashSet<Relation>());
+        return setHighlight(p, flag, new HashSet<>());
     }
 
     private boolean setHighlight(OsmPrimitive p, boolean flag, Set<Relation> seenRelations) {
@@ -108,6 +108,16 @@ public class HighlightHelper {
     }
 
     /**
+     * Returns an (unmodifiable) set of currently highlighted primitives
+     * @return Currently highlighted primitives
+     * 
+     * @since 18759
+     */
+    public Set<OsmPrimitive> getHighlighted() {
+        return Collections.unmodifiableSet(highlightedPrimitives);
+    }
+
+    /**
      * Clear highlighting of all remembered primitives
      */
     public void clear() {
@@ -115,6 +125,16 @@ public class HighlightHelper {
             p.setHighlighted(false);
         }
         highlightedPrimitives.clear();
+    }
+
+    /**
+     * Check whether there are any primitives highlighted
+     * @return true when there are highlighted primitives
+     * 
+     * @since 18759
+     */
+    public boolean anyHighlighted() {
+        return !highlightedPrimitives.isEmpty();
     }
 
     /**

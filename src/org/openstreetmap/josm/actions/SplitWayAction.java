@@ -64,7 +64,7 @@ public class SplitWayAction extends JosmAction {
      * Create a new SplitWayAction.
      */
     public SplitWayAction() {
-        super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
+        super(tr("Split Way"), "mapmode/splitway", tr("Split a way at the selected node."),
                 Shortcut.registerShortcut("tools:splitway", tr("Tools: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.DIRECT), true);
         setHelpId(ht("/Action/SplitWay"));
     }
@@ -146,16 +146,27 @@ public class SplitWayAction extends JosmAction {
 
         // Finally, applicableWays contains only one perfect way
         final Way selectedWay = applicableWays.get(0);
-        final List<List<Node>> wayChunks = SplitWayCommand.buildSplitChunks(selectedWay, selectedNodes);
-        if (wayChunks != null) {
-            final List<OsmPrimitive> sel = new ArrayList<>(ds.getSelectedRelations());
-            sel.addAll(selectedWays);
+        final List<OsmPrimitive> sel = new ArrayList<>(ds.getSelectedRelations());
+        sel.addAll(selectedWays);
+        doSplitWayShowSegmentSelection(selectedWay, selectedNodes, sel);
+    }
 
-            final List<Way> newWays = SplitWayCommand.createNewWaysFromChunks(selectedWay, wayChunks);
+    /**
+     * Perform way splitting after presenting the user with a choice which way segment history should be preserved (in expert mode)
+     * @param splitWay The way to split
+     * @param splitNodes The nodes at which the way should be split
+     * @param selection (Optional) selection which should be updated
+     *
+     * @since 18759
+     */
+    public static void doSplitWayShowSegmentSelection(Way splitWay, List<Node> splitNodes, List<OsmPrimitive> selection) {
+        final List<List<Node>> wayChunks = SplitWayCommand.buildSplitChunks(splitWay, splitNodes);
+        if (wayChunks != null) {
+            final List<Way> newWays = SplitWayCommand.createNewWaysFromChunks(splitWay, wayChunks);
             final Way wayToKeep = SplitWayCommand.Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
-            if (ExpertToggleAction.isExpert() && !selectedWay.isNew()) {
-                final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, selectedNodes, sel);
+            if (ExpertToggleAction.isExpert() && !splitWay.isNew()) {
+                final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(splitWay, newWays, wayToKeep, splitNodes, selection);
                 dialog.toggleEnable("way.split.segment-selection-dialog");
                 if (!dialog.toggleCheckState()) {
                     dialog.setModal(false);
@@ -164,7 +175,7 @@ public class SplitWayAction extends JosmAction {
                 }
             }
             if (wayToKeep != null) {
-                doSplitWay(selectedWay, wayToKeep, newWays, sel);
+                doSplitWay(splitWay, wayToKeep, newWays, selection);
             }
         }
     }
