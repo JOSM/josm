@@ -108,8 +108,6 @@ public class SplitMode extends MapMode {
         return isEditableDataLayer(l);
     }
 
-
-
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
@@ -227,8 +225,6 @@ public class SplitMode extends MapMode {
             MainApplication.getMap().mapView.repaint();
         }
     }
-
-
 
     @Override
     public String getModeHelpText() {
@@ -441,8 +437,6 @@ public class SplitMode extends MapMode {
         return text.toString();
     }
 
-
-
     /**
      * Split a specified {@link Way} at the given nodes
      * <p>
@@ -463,7 +457,7 @@ public class SplitMode extends MapMode {
          * @param splitNodes The nodes the way should be split at
          * @param selection (Optional, can be null) Selection which should be updated
          */
-        public SplitWayActionConcrete(Way splitWay, List<Node> splitNodes, List<OsmPrimitive> selection) {
+        SplitWayActionConcrete(Way splitWay, List<Node> splitNodes, List<OsmPrimitive> selection) {
             super(tr("Split way {0}", DefaultNameFormatter.getInstance().format(splitWay)),
                     ImageProvider.get(splitWay.getType()));
             putValue(SHORT_DESCRIPTION, getValue(NAME));

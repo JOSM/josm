@@ -66,16 +66,17 @@ final class MapCSSTagCheckerAsserts {
             Logging.debug("- Errors: {0}", pErrors);
             final boolean isError = pErrors.stream().anyMatch(e -> e.getTester() instanceof MapCSSTagChecker.MapCSSTagCheckerAndRule
                     && ((MapCSSTagChecker.MapCSSTagCheckerAndRule) e.getTester()).rule.equals(check.rule));
-            if (isError != i.getValue()) {
+            final boolean iValue = Boolean.TRUE.equals(i.getValue());
+            if (isError != iValue) {
                 assertionConsumer.accept(MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
-                        check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys()));
+                        check.getMessage(null, p), check.rule.selectors, iValue ? "match" : "not match", i.getKey(), p.getKeys()));
             }
             if (isError) {
                 // Check that autofix works as expected
                 Command fix = check.fixPrimitive(p);
                 if (fix != null && fix.executeCommand() && !MapCSSTagChecker.getErrorsForPrimitive(p, true, checksToRun).isEmpty()) {
                     assertionConsumer.accept(MessageFormat.format("Autofix does not work for test ''{0}'' (i.e., {1}). Failing test: {2}",
-                            check.getMessage(p), check.rule.selectors, i.getKey()));
+                            check.getMessage(null, p), check.rule.selectors, i.getKey()));
                 }
             }
             ds.removePrimitive(p);
@@ -83,6 +84,9 @@ final class MapCSSTagCheckerAsserts {
         previousChecks.add(check);
     }
 
+    /**
+     * Clear previous checks (remove from memory)
+     */
     public static void clear() {
         previousChecks.clear();
         previousChecks.trimToSize();
@@ -105,15 +109,15 @@ final class MapCSSTagCheckerAsserts {
     private static Optional<String> getFirstInsideCountry(MapCSSTagCheckerRule check) {
         return check.rule.selectors.stream()
                 .filter(s -> s instanceof Selector.GeneralSelector)
-                .flatMap(s -> ((Selector.GeneralSelector) s).getConditions().stream())
+                .flatMap(s -> s.getConditions().stream())
                 .filter(c -> c instanceof ConditionFactory.ExpressionCondition)
                 .map(c -> ((ConditionFactory.ExpressionCondition) c).getExpression())
                 .filter(c -> c instanceof ExpressionFactory.IsInsideFunction)
                 .map(c -> (ExpressionFactory.IsInsideFunction) c)
                 .map(ExpressionFactory.IsInsideFunction::getArg)
-                .filter(e -> e instanceof LiteralExpression)
+                .filter(LiteralExpression.class::isInstance)
                 .map(e -> ((LiteralExpression) e).getLiteral())
-                .filter(l -> l instanceof String)
+                .filter(String.class::isInstance)
                 .map(l -> ((String) l).split(",", -1)[0])
                 .findFirst();
     }

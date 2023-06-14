@@ -98,7 +98,7 @@ class MapCSSTagCheckerTest {
         assertTrue(result.parseErrors.isEmpty());
         final MapCSSTagCheckerRule check = checks.get(0);
         assertNotNull(check);
-        assertEquals("{0.key}=null is deprecated", check.getDescription(null));
+        assertEquals("{0.key}=null is deprecated", check.getDescription(null, null));
         assertEquals("fixRemove: <{0.key}>", check.fixCommands.get(0).toString());
         assertEquals("fixAdd: natural=wetland", check.fixCommands.get(1).toString());
         assertEquals("fixAdd: wetland=marsh", check.fixCommands.get(2).toString());

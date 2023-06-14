@@ -266,18 +266,20 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
     /**
      * Constructs a (localized) message for this deprecation check.
      *
+     * @param selector The selector to use
      * @param p OSM primitive
      * @return a message
      */
-    String getMessage(OsmPrimitive p) {
+    String getMessage(Selector selector, OsmPrimitive p) {
         if (errors.isEmpty()) {
             // Return something to avoid NPEs
             return rule.declaration.toString();
         } else {
             final Object val = errors.keySet().iterator().next().val;
+            selector = selector == null ? whichSelectorMatchesPrimitive(p) : selector;
             return String.valueOf(
                     val instanceof Expression
-                            ? ((Expression) val).evaluate(new Environment(p).withSelector(p == null ? null : whichSelectorMatchesPrimitive(p)))
+                            ? ((Expression) val).evaluate(new Environment(p).withSelector(selector))
                             : val
             );
         }
@@ -286,16 +288,17 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
     /**
      * Constructs a (localized) description for this deprecation check.
      *
+     * @param selector The selector to use
      * @param p OSM primitive
      * @return a description (possibly with alternative suggestions)
      * @see #getDescriptionForMatchingSelector
      */
-    String getDescription(OsmPrimitive p) {
+    String getDescription(Selector selector, OsmPrimitive p) {
         if (alternatives.isEmpty()) {
-            return getMessage(p);
+            return getMessage(selector, p);
         } else {
             /* I18N: {0} is the test error message and {1} is an alternative */
-            return tr("{0}, use {1} instead", getMessage(p), String.join(tr(" or "), alternatives));
+            return tr("{0}, use {1} instead", getMessage(selector, p), String.join(tr(" or "), alternatives));
         }
     }
 
@@ -308,7 +311,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
      * @return a description (possibly with alternative suggestions)
      */
     String getDescriptionForMatchingSelector(OsmPrimitive p, Selector matchingSelector) {
-        return insertArguments(matchingSelector, getDescription(p), p);
+        return insertArguments(matchingSelector, getDescription(matchingSelector, p), p);
     }
 
     Severity getSeverity() {
@@ -317,7 +320,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
 
     @Override
     public String toString() {
-        return getDescription(null);
+        return getDescription(null, null);
     }
 
     /**
