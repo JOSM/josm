@@ -2,10 +2,12 @@
 package org.openstreetmap.josm.gui.preferences.server;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.lang.reflect.Field;
 import java.net.Authenticator;
@@ -74,7 +76,8 @@ class OAuthAuthenticationPreferencesPanelTest {
         assertSame(pnlAlreadyAuthorised.get(panel), holder.getComponent(0), "Authentication should now be set");
         assertNotNull(getAuthorization(oAuthVersion));
         final JPanel buttons = (JPanel) ((JPanel) pnlAlreadyAuthorised.get(panel)).getComponent(6);
-        final JButton action = (JButton) buttons.getComponent(oAuthVersion == OAuthVersion.OAuth10a ? 2 : 0);
+        final JButton action = (JButton) buttons.getComponent(oAuthVersion == OAuthVersion.OAuth10a ? 2 : 1);
+        assertEquals(tr("Remove token"), action.getText(), "The selected button should be for removing the token");
         action.getAction().actionPerformed(null);
         panel.saveToPreferences(); // Save to preferences should make the removal permanent
         // Ensure that the token holder has been reset for OAuth 1.0a
