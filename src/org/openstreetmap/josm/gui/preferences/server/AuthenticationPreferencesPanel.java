@@ -17,6 +17,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -152,7 +153,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         } else {
             throw new IllegalStateException("One of OAuth 2.0, OAuth 1.0a, or Basic authentication must be checked");
         }
-        Config.getPref().put("osm-server.auth-method", authMethod);
+        final boolean initUser = Config.getPref().put("osm-server.auth-method", authMethod);
         if ("basic".equals(authMethod)) {
             // save username and password and clear the OAuth token
             pnlBasicAuthPreferences.saveToPreferences();
@@ -168,6 +169,13 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             pnlBasicAuthPreferences.clearPassword();
             pnlBasicAuthPreferences.saveToPreferences();
             pnlOAuth20Preferences.saveToPreferences();
+        }
+        if (initUser) {
+            if ("basic".equals(authMethod)) {
+                UserIdentityManager.getInstance().initFromPreferences();
+            } else {
+                UserIdentityManager.getInstance().initFromOAuth();
+            }
         }
     }
 

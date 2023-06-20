@@ -282,8 +282,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             if (oAuthVersion == OAuthVersion.OAuth10a) {
                 // these want the OAuth 1.0 token information
                 btns.add(new JButton(new RenewAuthorisationAction(AuthorizationProcedure.FULLY_AUTOMATIC)));
-                btns.add(new JButton(new TestAuthorisationAction()));
             }
+            btns.add(new JButton(new TestAuthorisationAction(oAuthVersion)));
             btns.add(new JButton(new RemoveAuthorisationAction()));
             gc.gridy = 4;
             gc.gridx = 0;
@@ -422,10 +422,13 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      * Runs a test whether we can access the OSM server with the current Access Token
      */
     private class TestAuthorisationAction extends AbstractAction {
+        private final OAuthVersion oAuthVersion;
+
         /**
          * Constructs a new {@code TestAuthorisationAction}.
          */
-        TestAuthorisationAction() {
+        TestAuthorisationAction(OAuthVersion oAuthVersion) {
+            this.oAuthVersion = oAuthVersion;
             putValue(NAME, tr("Test Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click test access to the OSM server with the current access token"));
             new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
@@ -433,15 +436,26 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            OAuthToken token = OAuthAccessTokenHolder.getInstance().getAccessToken();
-            OAuthParameters parameters = OAuthParameters.createFromApiUrl(OsmApi.getOsmApi().getServerUrl());
-            TestAccessTokenTask task = new TestAccessTokenTask(
-                    OAuthAuthenticationPreferencesPanel.this,
-                    apiUrl,
-                    parameters,
-                    token
-            );
-            MainApplication.worker.submit(task);
+            if (this.oAuthVersion == OAuthVersion.OAuth10a) {
+                OAuthToken token = OAuthAccessTokenHolder.getInstance().getAccessToken();
+                OAuthParameters parameters = OAuthParameters.createFromApiUrl(OsmApi.getOsmApi().getServerUrl());
+                TestAccessTokenTask task = new TestAccessTokenTask(
+                        OAuthAuthenticationPreferencesPanel.this,
+                        apiUrl,
+                        parameters,
+                        token
+                );
+                MainApplication.worker.submit(task);
+            } else {
+                IOAuthToken token = OAuthAccessTokenHolder.getInstance().getAccessToken(OsmApi.getOsmApi().getBaseUrl(), OAuthVersion.OAuth20);
+                TestAccessTokenTask task = new TestAccessTokenTask(
+                        OAuthAuthenticationPreferencesPanel.this,
+                        apiUrl,
+                        token.getParameters(),
+                        token
+                );
+                MainApplication.worker.submit(task);
+            }
         }
     }
 

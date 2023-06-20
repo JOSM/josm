@@ -129,8 +129,10 @@ public class OAuthAccessTokenHolder {
         try {
             IOAuthToken token = CredentialsManager.getInstance().lookupOAuthAccessToken(api);
             // We *do* want to set the API token to null, if it doesn't exist. Just to avoid unnecessary lookups.
-            this.setAccessToken(api, token);
-            return token;
+            if (token == null || token.getOAuthType() == version) {
+                this.setAccessToken(api, token);
+                return token;
+            }
         } catch (CredentialsAgentException exception) {
             Logging.trace(exception);
         }

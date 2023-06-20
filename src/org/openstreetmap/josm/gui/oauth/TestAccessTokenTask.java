@@ -11,6 +11,9 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openstreetmap.josm.data.oauth.IOAuthParameters;
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuth20Token;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.osm.UserInfo;
@@ -41,8 +44,9 @@ import oauth.signpost.exception.OAuthException;
  *
  */
 public class TestAccessTokenTask extends PleaseWaitRunnable {
-    private final OAuthToken token;
-    private final OAuthParameters oauthParameters;
+    private final OAuthToken tokenOAuth1;
+    private final IOAuthToken tokenOAuth2;
+    private final IOAuthParameters oauthParameters;
     private boolean canceled;
     private final Component parent;
     private final String apiUrl;
@@ -61,7 +65,29 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         CheckParameterUtil.ensureParameterNotNull(accessToken, "accessToken");
-        this.token = accessToken;
+        this.tokenOAuth1 = accessToken;
+        this.tokenOAuth2 = null;
+        this.oauthParameters = parameters;
+        this.parent = parent;
+        this.apiUrl = apiUrl;
+    }
+
+    /**
+     * Create the task
+     *
+     * @param parent the parent component relative to which the  {@link PleaseWaitRunnable}-Dialog is displayed
+     * @param apiUrl the API URL. Must not be null.
+     * @param parameters the OAuth parameters. Must not be null.
+     * @param accessToken the Access Token. Must not be null.
+     * @since xxx
+     */
+    public TestAccessTokenTask(Component parent, String apiUrl, IOAuthParameters parameters, IOAuthToken accessToken) {
+        super(parent, tr("Testing OAuth Access Token"), false /* don't ignore exceptions */);
+        CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
+        CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
+        CheckParameterUtil.ensureParameterNotNull(accessToken, "accessToken");
+        this.tokenOAuth1 = null;
+        this.tokenOAuth2 = accessToken;
         this.oauthParameters = parameters;
         this.parent = parent;
         this.apiUrl = apiUrl;
@@ -83,9 +109,18 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void sign(HttpClient con) throws OAuthException {
-        OAuthConsumer consumer = oauthParameters.buildConsumer();
-        consumer.setTokenWithSecret(token.getKey(), token.getSecret());
-        consumer.sign(con);
+        if (oauthParameters instanceof OAuthParameters) {
+            OAuthConsumer consumer = ((OAuthParameters) oauthParameters).buildConsumer();
+            consumer.setTokenWithSecret(tokenOAuth1.getKey(), tokenOAuth1.getSecret());
+            consumer.sign(con);
+        } else {
+            try {
+                this.tokenOAuth2.sign(con);
+            } catch (org.openstreetmap.josm.data.oauth.OAuthException e) {
+                // Adapt our OAuthException to the SignPost OAuth exception
+                throw new OAuthException(e) {};
+            }
+        }
     }
 
     protected String normalizeApiUrl(String url) {
@@ -113,13 +148,15 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 connection.connect();
             }
 
+            final String oauthKey = getAuthKey();
             if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                 throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,
-                        tr("Retrieving user details with Access Token Key ''{0}'' was rejected.", token.getKey()), null);
+                        tr("Retrieving user details with Access Token Key ''{0}'' was rejected.",
+                                oauthKey), null);
 
             if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN)
                 throw new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN,
-                        tr("Retrieving user details with Access Token Key ''{0}'' was forbidden.", token.getKey()), null);
+                        tr("Retrieving user details with Access Token Key ''{0}'' was forbidden.", oauthKey), null);
 
             if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK)
                 throw new OsmApiException(connection.getResponse().getResponseCode(),
@@ -145,7 +182,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "access the OSM server at ''{1}''.<br>"
                         + "You are accessing the OSM server as user ''{2}'' with id ''{3}''."
                         + "</html>",
-                        token.getKey(),
+                        getAuthKey(),
                         apiUrl,
                         Utils.escapeReservedCharactersHTML(userInfo.getDisplayName()),
                         userInfo.getId()
@@ -166,7 +203,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "be able to access any protected resource on this server using this token."
                         +"</html>",
                         apiUrl,
-                        token.getKey()
+                        getAuthKey()
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -184,7 +221,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "to upload data, upload GPS traces, and/or access other protected resources."
                         +"</html>",
                         apiUrl,
-                        token.getKey()
+                        getAuthKey()
                 ),
                 tr("Token allows restricted access"),
                 JOptionPane.WARNING_MESSAGE,
@@ -203,7 +240,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "URL and your Internet connection."
                         +"</html>",
                         apiUrl,
-                        token.getKey()
+                        getAuthKey()
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -220,7 +257,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "The token ist probably invalid."
                         +"</html>",
                         apiUrl,
-                        token.getKey()
+                        getAuthKey()
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -236,7 +273,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "JOSM could not decide whether the token is valid. Please try again later."
                         + "</html>",
                         apiUrl,
-                        token.getKey()
+                        getAuthKey()
                 ),
                 tr("Test failed"),
                 JOptionPane.WARNING_MESSAGE,
@@ -274,5 +311,15 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             Logging.error(e);
             alertFailedConnection();
         }
+    }
+
+    private String getAuthKey() {
+        if (this.tokenOAuth1 != null) {
+            return this.tokenOAuth1.getKey();
+        }
+        if (this.tokenOAuth2 instanceof OAuth20Token) {
+            return ((OAuth20Token) this.tokenOAuth2).getBearerToken();
+        }
+        throw new IllegalArgumentException("Only OAuth1 and OAuth2 tokens are understood: " + this.tokenOAuth2);
     }
 }
