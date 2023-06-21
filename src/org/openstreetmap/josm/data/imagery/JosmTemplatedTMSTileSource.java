@@ -18,6 +18,9 @@ public class JosmTemplatedTMSTileSource extends TemplatedTMSTileSource {
      */
     public JosmTemplatedTMSTileSource(TileSourceInfo info) {
         super(info);
+        if (info instanceof ImageryInfo) {
+            getHeaders().putAll(((ImageryInfo) info).getCustomHttpHeaders());
+        }
     }
 
     @Override

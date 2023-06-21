@@ -5,32 +5,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.vectortile.mapbox.style.MapboxVectorStyle;
-import org.openstreetmap.josm.data.imagery.vectortile.mapbox.style.Source;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.TileSourceTest;
+import org.openstreetmap.josm.data.imagery.vectortile.mapbox.style.MapboxVectorStyle;
+import org.openstreetmap.josm.data.imagery.vectortile.mapbox.style.Source;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 
 /**
  * Test class for {@link MapboxVectorTileSource}
  * @author Taylor Smock
  * @since 17862
  */
-class MapboxVectorTileSourceTest {
-    @RegisterExtension
-    JOSMTestRules rule = new JOSMTestRules();
+class MapboxVectorTileSourceTest implements TileSourceTest {
     private static class SelectLayerDialogMocker extends ExtendedDialogMocker {
         int index;
         @Override
@@ -44,10 +39,19 @@ class MapboxVectorTileSourceTest {
         }
     }
 
+    @Override
+    public ImageryInfo getInfo() {
+        return new ImageryInfo("Test Mapillary", "file:/" + TestUtils.getTestDataRoot() + "pbf/mapillary/{z}/{x}/{y}.mvt");
+    }
+
+    @Override
+    public MapboxVectorTileSource getTileSource(ImageryInfo info) {
+        return new MapboxVectorTileSource(info);
+    }
+
     @Test
     void testNoStyle() {
-        MapboxVectorTileSource tileSource = new MapboxVectorTileSource(
-          new ImageryInfo("Test Mapillary", "file:/" + TestUtils.getTestDataRoot() + "pbf/mapillary/{z}/{x}/{y}.mvt"));
+        MapboxVectorTileSource tileSource = getTileSource(getInfo());
         assertNull(tileSource.getStyleSource());
     }
 
@@ -68,7 +72,7 @@ class MapboxVectorTileSourceTest {
         SelectLayerDialogMocker extendedDialogMocker = new SelectLayerDialogMocker();
         extendedDialogMocker.index = index;
         extendedDialogMocker.getMockResultMap().put(dialogMockerText, "Add layers");
-        MapboxVectorTileSource tileSource = new MapboxVectorTileSource(
+        MapboxVectorTileSource tileSource = getTileSource(
           new ImageryInfo("Test Mapillary", "file:/" + TestUtils.getTestDataRoot() + "mapillary.json"));
         MapboxVectorStyle styleSource = tileSource.getStyleSource();
         assertNotNull(styleSource);
