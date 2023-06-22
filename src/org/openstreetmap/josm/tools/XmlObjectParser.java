@@ -136,6 +136,13 @@ public class XmlObjectParser implements Iterable<Object> {
             try {
                 Object c = current.peek();
                 Field f = entry.getField(fieldName);
+                if ("regions".equals(fieldName)) {
+                    List<String> regions = null;
+                    if (value != null) {
+                        regions = Arrays.asList(value.split(","));
+                    }
+                    entry.getField(fieldName).set(current.peek(), regions);
+                }
                 if (f == null && fieldName.startsWith(lang)) {
                     f = entry.getField("locale_" + fieldName.substring(lang.length()));
                 }

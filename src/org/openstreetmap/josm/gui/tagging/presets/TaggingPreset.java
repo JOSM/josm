@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.tagging.presets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import static org.openstreetmap.josm.tools.Territories.isIso3166Code;
 
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -39,16 +40,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.OsmData;
-import org.openstreetmap.josm.data.osm.OsmDataManager;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.osm.Tagged;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
@@ -141,6 +133,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * The types as preparsed collection.
      */
     public transient Set<TaggingPresetType> types;
+    /**
+     * list of regions the preset is applicable for
+     */
+    Set<String> regions;
     /**
      * The list of preset items
      */
@@ -605,6 +601,25 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
         int answer = 1;
         boolean canCreateRelation = types == null || types.contains(TaggingPresetType.RELATION);
+        if(regions!=null && !sel.isEmpty()){
+            boolean flag=true;
+            for(OsmPrimitive osm : sel){
+                for(String region : regions){
+
+                    //TODO iterate through the nodes of way and relation
+                    /*if(!isIso3166Code(region, osm.getCoor())){
+                        flag=false;
+                    }*/
+                }
+            }
+            if(flag){
+                new Notification(
+                        tr("The preset <i>{0}</i> cannot be applied to this region!", getLocaleName()))
+                        .setIcon(JOptionPane.WARNING_MESSAGE)
+                        .show();
+                return DIALOG_ANSWER_CANCEL;
+            }
+        }
         if (originalSelectionEmpty && !canCreateRelation) {
             new Notification(
                     tr("The preset <i>{0}</i> cannot be applied since nothing has been selected!", getLocaleName()))
