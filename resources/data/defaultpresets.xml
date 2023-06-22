@@ -7775,8 +7775,11 @@
             <link wiki="Tag:shop=beauty" />
             <space />
             <key key="shop" value="beauty" />
+            <multiselect key="beauty" text="Beauty services" values="nails;tanning;cosmetics;spa;skin_care;waxing;hair_removal;eyebrow;massage;eyelash" values_searchable="true" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Massage" text="Similar but different tags:" />
+            <preset_link preset_name="Hairdresser/Barber" text="Similar but different tags:" />
         </item> <!-- Beauty -->
         <item name="Tobacco" icon="presets/shop/tobacco.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=tobacco" />
@@ -7803,6 +7806,7 @@
                 <check key="unisex" text="Unisex" />
             </checkgroup>
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Beauty" text="Similar but different tags:" />
         </item> <!-- Hairdresser/Barber -->
         <item name="Massage" icon="presets/shop/massage.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=massage" />
@@ -7810,6 +7814,7 @@
             <key key="shop" value="massage" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Beauty" text="Similar but different tags:" />
         </item> <!-- Massage -->
         <item name="Tattoo" icon="presets/shop/tattoo.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=tattoo" />
