@@ -785,7 +785,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         } else {
             startEN = currentEN; // drag can continue after scaling/rotation
 
-            if (mode != Mode.ROTATE && mode != Mode.SCALE || SwingUtilities.isRightMouseButton(mouseEvent)) {
+            if ((mode != Mode.ROTATE && mode != Mode.SCALE) || SwingUtilities.isRightMouseButton(mouseEvent)) {
                 return false;
             }
 

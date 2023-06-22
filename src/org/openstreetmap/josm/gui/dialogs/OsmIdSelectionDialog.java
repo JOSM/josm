@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -221,7 +222,14 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
     protected void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = ClipboardUtils.getClipboardStringContent();
         if (Utils.isEmpty(buf)) return;
-        if (buf.length() > Config.getPref().getInt("downloadprimitive.max-autopaste-length", 2000)) return;
+        final int maxPasteLength = Config.getPref().getInt("downloadprimitive.max-autopaste-length", 2000);
+        if (buf.length() > maxPasteLength) {
+            new Notification(tr("Clipboard has more than {0} characters. Not auto-pasting.\n" +
+                    "You may want to use Overpass instead.", maxPasteLength))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .show();
+            return;
+        }
         final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
         if (!ids.isEmpty()) {
             final String parsedText = ids.stream().map(x -> x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId()))
