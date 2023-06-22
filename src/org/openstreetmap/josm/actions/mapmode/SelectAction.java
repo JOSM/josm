@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.AddCommand;
@@ -479,11 +480,6 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        // Mac OSX simulates with ctrl + mouse 1 the second mouse button hence no dragging events get fired.
-        if (PlatformManager.isPlatformOsx() && (mode == Mode.ROTATE || mode == Mode.SCALE)) {
-            mouseDragged(e);
-            return;
-        }
         oldEvent = e;
         if (giveUserFeedback(e)) {
             mv.repaint();
@@ -570,7 +566,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         if (virtualManager.hasVirtualWaysToBeConstructed()) {
             virtualManager.createMiddleNodeFromVirtual(currentEN);
         } else {
-            if (!updateCommandWhileDragging(currentEN)) return;
+            if (!updateCommandWhileDragging(e, currentEN)) return;
         }
 
         mv.repaint();
@@ -712,10 +708,11 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     /**
      * Create or update data modification command while dragging mouse - implementation of
      * continuous moving, scaling and rotation
+     * @param mouseEvent The triggering mouse event
      * @param currentEN - mouse position
      * @return status of action (<code>true</code> when action was performed)
      */
-    private boolean updateCommandWhileDragging(EastNorth currentEN) {
+    private boolean updateCommandWhileDragging(MouseEvent mouseEvent, EastNorth currentEN) {
         // Currently we support only transformations which do not affect relations.
         // So don't add them in the first place to make handling easier
         DataSet ds = getLayerManager().getEditDataSet();
@@ -788,7 +785,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         } else {
             startEN = currentEN; // drag can continue after scaling/rotation
 
-            if (mode != Mode.ROTATE && mode != Mode.SCALE) {
+            if (mode != Mode.ROTATE && mode != Mode.SCALE || SwingUtilities.isRightMouseButton(mouseEvent)) {
                 return false;
             }
 
