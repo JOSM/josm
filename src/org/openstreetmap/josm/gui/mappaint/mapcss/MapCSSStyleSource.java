@@ -209,18 +209,21 @@ public class MapCSSStyleSource extends StyleSource {
         if (css != null) {
             return new ByteArrayInputStream(css.getBytes(StandardCharsets.UTF_8));
         }
-        CachedFile cf = getCachedFile();
-        if (isZip) {
-            File file = cf.getFile();
-            zipFile = new ZipFile(file, StandardCharsets.UTF_8);
-            zipIcons = file;
-            I18n.addTexts(zipIcons);
-            ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
-            return zipFile.getInputStream(zipEntry);
-        } else {
-            zipFile = null;
-            zipIcons = null;
-            return cf.getInputStream();
+        // This just closes any open http connections. It does not (with the current CachedFile implementation) close
+        // streams that it provides via getInputStream.
+        try (CachedFile cf = getCachedFile()) {
+            if (isZip) {
+                File file = cf.getFile();
+                zipFile = new ZipFile(file, StandardCharsets.UTF_8);
+                zipIcons = file;
+                I18n.addTexts(zipIcons);
+                ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
+                return zipFile.getInputStream(zipEntry);
+            } else {
+                zipFile = null;
+                zipIcons = null;
+                return cf.getInputStream();
+            }
         }
     }
 
