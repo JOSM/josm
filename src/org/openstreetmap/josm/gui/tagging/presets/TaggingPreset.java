@@ -14,8 +14,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +43,18 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
@@ -136,7 +150,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     /**
      * list of regions the preset is applicable for
      */
-    Set<String> regions;
+    private Set<String> regions;
     /**
      * The list of preset items
      */
@@ -343,6 +357,25 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             Logging.error("Error while parsing" + filter + ": " + e.getMessage());
             throw new SAXException(e);
         }
+    }
+
+    /**
+     * Get the regions for the preset
+     * @return The regions that the preset is valid for
+     * @apiNote This is not {@code getRegions} just in case we decide to make {@link TaggingPreset} a record class.
+     * @since xxx
+     */
+    public final Set<String> regions() {
+        return this.regions;
+    }
+
+    /**
+     * Set the regions for the preset
+     * @param regions The region list (comma delimited)
+     * @since xxx
+     */
+    public final void setRegions(String regions) {
+        this.regions = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(regions.split(","))));
     }
 
     private static class PresetPanel extends JPanel {
@@ -601,24 +634,30 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
         int answer = 1;
         boolean canCreateRelation = types == null || types.contains(TaggingPresetType.RELATION);
-        if(regions!=null && !sel.isEmpty()){
-            boolean flag=true;
-            for(OsmPrimitive osm : sel){
-                for(String region : regions){
-
-                    //TODO iterate through the nodes of way and relation
-                    /*if(!isIso3166Code(region, osm.getCoor())){
-                        flag=false;
-                    }*/
-                }
-            }
-            if(flag){
-                new Notification(
-                        tr("The preset <i>{0}</i> cannot be applied to this region!", getLocaleName()))
-                        .setIcon(JOptionPane.WARNING_MESSAGE)
-                        .show();
-                return DIALOG_ANSWER_CANCEL;
-            }
+        if (!Utils.isEmpty(this.regions)) {
+           for (OsmPrimitive osm : sel) {
+               LatLon center = null;
+               if (osm instanceof Node) {
+                   center = ((Node) osm).getCoor();
+               } else if (osm instanceof Way) {
+                   center = osm.getBBox().getCenter();
+               } else if (osm instanceof Relation) {
+                   center = osm.getBBox().getCenter();
+               }
+               boolean check = true;
+               for (String region : regions) {
+                   if (isIso3166Code(region, center)) {
+                        check = false;
+                   }
+               }
+               if (check) {
+                   new Notification(
+                           tr("The preset <i>{0}</i> should not be applied in this region!",
+                                   getLocaleName()))
+                           .setIcon(JOptionPane.WARNING_MESSAGE)
+                           .show();
+               }
+           }
         }
         if (originalSelectionEmpty && !canCreateRelation) {
             new Notification(
