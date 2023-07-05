@@ -59,6 +59,11 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         if (TaggingPresetReader.getPresetSources().stream().noneMatch(url -> url.contains("name-suggestion-index"))) {
             Utils.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
         }
+    }
+
+    @Override
+    public void preStartupHook() {
+        // This may need to be set early, see #23022. The behavior in the ticket was not reproduced on macOS 13.4.
         Utils.updateSystemProperty("apple.awt.application.name", "JOSM");
     }
 
