@@ -14,9 +14,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
-import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.ValidationTask;
 import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
@@ -52,10 +50,6 @@ public class ValidateUploadHook implements UploadHook {
         Collection<OsmPrimitive> visited = v.visit(apiDataSet.getPrimitivesToUpdate());
         OsmValidator.initializeTests();
         new ValidationTask(errors -> {
-            if (!Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER_UPLOAD.get())) {
-                // Use >= just in case we add additional levels.
-                errors.removeIf(error -> error.getSeverity().getLevel() >= Severity.OTHER.getLevel());
-            }
             if (errors.stream().allMatch(TestError::isIgnored)) {
                 returnCode.set(true);
             } else {

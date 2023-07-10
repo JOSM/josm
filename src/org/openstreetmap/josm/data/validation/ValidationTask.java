@@ -107,6 +107,12 @@ public class ValidationTask extends PleaseWaitRunnable {
             });
         }
         if (this.onFinish != null) {
+            // Remove any low severity issues if they are not desired.
+            if (!(Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER.get()) &&
+                    (!this.beforeUpload || Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER_UPLOAD.get())))) {
+                // Use >= just in case we add additional levels.
+                this.errors.removeIf(error -> error.getSeverity().getLevel() >= Severity.OTHER.getLevel());
+            }
             this.onFinish.accept(this.errors);
         }
     }
@@ -124,7 +130,8 @@ public class ValidationTask extends PleaseWaitRunnable {
             testCounter++;
             getProgressMonitor().setCustomText(tr("Test {0}/{1}: Starting {2}", testCounter, tests.size(), test.getName()));
             test.setBeforeUpload(this.beforeUpload);
-            test.setPartialSelection(formerValidatedPrimitives != null);
+            // Pre-upload checks only run on a partial selection.
+            test.setPartialSelection(this.beforeUpload || formerValidatedPrimitives != null);
             test.startTest(getProgressMonitor().createSubTaskMonitor(validatedPrimitives.size(), false));
             test.visit(validatedPrimitives);
             test.endTest();

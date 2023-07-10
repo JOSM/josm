@@ -5,13 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Mock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
@@ -47,10 +49,20 @@ class ValidateUploadHookTest {
         assertTrue(new ValidateUploadHook().checkUpload(new APIDataSet()));
     }
 
+    static Stream<Arguments> testUploadOtherErrors() {
+        return Stream.of(
+                Arguments.of(true, true),
+                Arguments.of(true, false),
+                Arguments.of(false, false),
+                Arguments.of(false, true)
+        );
+    }
+
     @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void testUploadOtherErrors(boolean otherEnabled) {
-        ValidatorPrefHelper.PREF_OTHER_UPLOAD.put(otherEnabled);
+    @MethodSource
+    void testUploadOtherErrors(boolean otherUploadEnabled, boolean otherEnabled) {
+        ValidatorPrefHelper.PREF_OTHER.put(otherEnabled);
+        ValidatorPrefHelper.PREF_OTHER_UPLOAD.put(otherUploadEnabled);
         final DataSet ds = new DataSet();
         final Way building = TestUtils.newWay("building=yes", new Node(new LatLon(33.2287665, -111.8259225)),
                 new Node(new LatLon(33.2287335, -111.8257513)), new Node(new LatLon(33.2285316, -111.8258086)),
@@ -73,6 +85,6 @@ class ValidateUploadHookTest {
                     }
                 };
         new ValidateUploadHook().checkUpload(new APIDataSet(ds));
-        assertEquals(!otherEnabled, mocker.getInvocationLog().isEmpty());
+        assertEquals(!(otherEnabled && otherUploadEnabled), mocker.getInvocationLog().isEmpty());
     }
 }
