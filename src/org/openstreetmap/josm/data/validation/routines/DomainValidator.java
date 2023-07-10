@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2022042200, Last Updated Fri Apr 22 07:07:01 2022 UTC
+        // Taken from Version 2023071000, Last Updated Mon Jul 10 07:07:02 2023 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -759,7 +759,6 @@ public final class DomainValidator extends AbstractValidator {
         "host", // host DotHost Inc.
         "hosting", // hosting Uniregistry, Corp.
         "hot", // hot Amazon Registry Services, Inc.
-        "hoteles", // hoteles Travel Reservations SRL
         "hotels", // hotels Booking.com B.V.
         "hotmail", // hotmail Microsoft Corporation
         "house", // house Sugar Park, LLC
@@ -1016,7 +1015,6 @@ public final class DomainValidator extends AbstractValidator {
         "partners", // partners Magic Glen, LLC
         "parts", // parts Sea Goodbye, LLC
         "party", // party Blue Sky Registry Limited
-        "passagens", // passagens Travel Reservations SRL
         "pay", // pay Amazon Registry Services, Inc.
         "pccw", // pccw PCCW Enterprises Limited
         "pet", // pet Afilias plc
@@ -1310,7 +1308,6 @@ public final class DomainValidator extends AbstractValidator {
         "voting", // voting Valuetainment Corp.
         "voto", // voto Monolith Registry LLC
         "voyage", // voyage Ruby House, LLC
-        "vuelos", // vuelos Travel Reservations SRL
         "wales", // wales Nominet UK
         "walmart", // walmart Wal-Mart Stores, Inc.
         "walter", // walter Sandvik AB
