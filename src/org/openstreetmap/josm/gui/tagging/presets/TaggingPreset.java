@@ -136,6 +136,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * Show the preset name if true
      */
     public boolean preset_name_label;
+    /**
+     * True if the preset is deprecated
+     */
+    private boolean deprecated = false;
 
     /**
      * The types as preparsed collection.
@@ -347,6 +351,23 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             Logging.error("Error while parsing" + filter + ": " + e.getMessage());
             throw new SAXException(e);
         }
+    }
+
+    /**
+     * @return true if the preset is deprecated
+     * @apiNote this is not {@code isDeprecated} just in case we decide to make {@link TaggingPreset} a record class.
+     * @since xxx
+     */
+    public final boolean deprecated() {
+        return this.deprecated;
+    }
+
+    /**
+     * Set if the preset is deprecated
+     * @param deprecated if true the preset is deprecated
+     */
+    public final void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
     }
 
     private static class PresetPanel extends JPanel {

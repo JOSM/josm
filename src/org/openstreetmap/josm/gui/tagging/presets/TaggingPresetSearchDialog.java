@@ -34,7 +34,7 @@ public final class TaggingPresetSearchDialog extends ExtendedDialog {
         super(MainApplication.getMainFrame(), tr("Search presets"), tr("Select"), tr("Cancel"));
         setButtonIcons("dialogs/search", "cancel");
         configureContextsensitiveHelp("/Action/TaggingPresetSearch", true /* show help button */);
-        selector = new TaggingPresetSelector(true, true);
+        selector = new TaggingPresetSelector(true, true, true);
         setContent(selector, false);
         SelectionEventManager.getInstance().addSelectionListener(selector);
         selector.setDblClickListener(e -> buttonAction(0, null));

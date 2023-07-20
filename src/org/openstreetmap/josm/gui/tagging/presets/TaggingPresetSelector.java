@@ -51,7 +51,7 @@ import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * GUI component to select tagging preset: the list with filter and two checkboxes
+ * GUI component to select tagging preset: the list with filter and three checkboxes
  * @since 6068
  */
 public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPreset>
@@ -66,9 +66,11 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
     private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
     private static final BooleanProperty ONLY_APPLICABLE = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
+    private static final BooleanProperty DISPLAY_DEPRECATED = new BooleanProperty("taggingpreset.dialog.display-deprecated", true);
 
     private final JCheckBox ckOnlyApplicable;
     private final JCheckBox ckSearchInTags;
+    private final JCheckBox ckDeprecated;
     private final Set<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
     private final transient PresetClassifications classifications = new PresetClassifications();
@@ -199,8 +201,9 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
      * Constructs a new {@code TaggingPresetSelector}.
      * @param displayOnlyApplicable if {@code true} display "Show only applicable to selection" checkbox
      * @param displaySearchInTags if {@code true} display "Search in tags" checkbox
+     * @param displayDeprecated if {@code true} display "Applicable in region" checkbox
      */
-    public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags) {
+    public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags, boolean displayDeprecated) {
         super();
         lsResult.setCellRenderer(new ResultListCellRenderer());
         classifications.loadPresets(TaggingPresets.getTaggingPresets());
@@ -226,6 +229,15 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             pnChecks.add(ckSearchInTags);
         } else {
             ckSearchInTags = null;
+        }
+
+        if (displayDeprecated) {
+            ckDeprecated = new JCheckBox();
+            ckDeprecated.setText(tr("Show deprecated tags"));
+            pnChecks.add(ckDeprecated);
+            ckDeprecated.addItemListener(e -> filterItems());
+        } else {
+            ckDeprecated = null;
         }
 
         add(pnChecks, BorderLayout.SOUTH);
@@ -254,11 +266,12 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         String text = edSearchText.getText().toLowerCase(Locale.ENGLISH);
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
+        boolean isDeprecated = ckDeprecated != null && ckDeprecated.isSelected();
 
         DataSet ds = OsmDataManager.getInstance().getEditDataSet();
         Collection<OsmPrimitive> selected = (ds == null) ? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
-                text, onlyApplicable, inTags, getTypesInSelection(), selected);
+                text, onlyApplicable, inTags, isDeprecated, getTypesInSelection(), selected);
 
         final TaggingPreset oldPreset = getSelectedPreset();
         lsResultModel.setItems(Utils.transform(result, x -> x.preset));
@@ -279,7 +292,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
         private final List<PresetClassification> classifications = new ArrayList<>();
 
-        public List<PresetClassification> getMatchingPresets(String searchText, boolean onlyApplicable, boolean inTags,
+        public List<PresetClassification> getMatchingPresets(String searchText, boolean onlyApplicable, boolean inTags, boolean isDeprecated,
                 Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
             final String[] groupWords;
             final String[] nameWords;
@@ -292,11 +305,11 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                 nameWords = searchText.split("\\s", -1);
             }
 
-            return getMatchingPresets(groupWords, nameWords, onlyApplicable, inTags, presetTypes, selectedPrimitives);
+            return getMatchingPresets(groupWords, nameWords, onlyApplicable, inTags, isDeprecated, presetTypes, selectedPrimitives);
         }
 
-        public List<PresetClassification> getMatchingPresets(String[] groupWords, String[] nameWords, boolean onlyApplicable,
-                boolean inTags, Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
+        public List<PresetClassification> getMatchingPresets(String[] groupWords, String[] nameWords, boolean onlyApplicable, boolean inTags,
+                 boolean isDeprecated, Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
 
             final List<PresetClassification> result = new ArrayList<>();
             for (PresetClassification presetClassification : classifications) {
@@ -315,6 +328,11 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                     if (!suitable) {
                         continue;
                     }
+                }
+
+                //do not show the preset in search dialog if isDeprecated is true and preset is deprecated
+                if (!isDeprecated && preset.deprecated()) {
+                    continue;
                 }
 
                 if (groupWords != null && presetClassification.isMatchingGroup(groupWords) == 0) {
@@ -423,6 +441,9 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         }
         if (ckOnlyApplicable != null && ckOnlyApplicable.isEnabled()) {
             ONLY_APPLICABLE.put(ckOnlyApplicable.isSelected());
+        }
+        if (ckDeprecated != null && ckDeprecated.isEnabled()) {
+            DISPLAY_DEPRECATED.put(ckDeprecated.isSelected());
         }
     }
 
