@@ -7,9 +7,7 @@ import java.awt.Polygon;
 import java.text.MessageFormat;
 import java.util.AbstractList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -53,8 +51,7 @@ public class Shape {
      */
     public String encodeAsString(String separator) {
         return getPoints().stream()
-                .flatMap(c -> Stream.of(c.getLat(), c.getLon()))
-                .map(String::valueOf)
+                .map(c -> c.getLat() + separator + c.getLon())
                 .collect(Collectors.joining(separator));
     }
 
@@ -70,19 +67,7 @@ public class Shape {
     }
 
     public List<Coordinate> getPoints() {
-        return new AbstractList<Coordinate>() {
-            @Override
-            public Coordinate get(int index) {
-                double lat = coords.ypoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
-                double lon = coords.xpoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
-                return new Coordinate(lat, lon);
-            }
-
-            @Override
-            public int size() {
-                return coords.npoints;
-            }
-        };
+        return new CoordinateList(this.coords);
     }
 
     /**
@@ -126,7 +111,8 @@ public class Shape {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPoints());
+        // This was Objects.hash(getPoints()), but that made 8-24MB of allocations on application startup
+        return 31 + hashPolygon(this.coords); // Arrays#hash, new array instantiation
     }
 
     @Override
@@ -134,11 +120,92 @@ public class Shape {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Shape shape = (Shape) obj;
-        return Objects.equals(getPoints(), shape.getPoints());
+        return equalsPolygon(this.coords, shape.coords);
     }
 
     @Override
     public String toString() {
         return "Shape{coords=" + getPoints() + '}';
+    }
+
+    /**
+     * Hash a polygon
+     * @param coords The polygon to hash
+     * @return The hashcode to use; equivalent to {@link Polygon#hashCode()}, but zero allocations.
+     */
+    private static int hashPolygon(Polygon coords) {
+        // This is faster than coords.hashCode() by ~90% and performs effectively no memory allocations.
+        // This was originally written to replace Objects.hash(getPoints()). The only difference is +31 on the return.
+        // Objects.hash(getPoints()) -> Arrays.hash(getPoints()) -> sum of hashes of Coordinates
+        // First, AbstractList#hashCode equivalent
+        int hashCode = 1;
+        for (int index = 0; index < coords.npoints; index++) {
+            final double lat = coords.ypoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
+            final double lon = coords.xpoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
+            // Coordinate uses Object.hash(x, y) - new array instantiation *and* two Double instantiations
+            // Double conversion is 3.22MB
+            // The array creation for Object.hash(x, y) is 2.11 MB
+            final int coordinateHash = 31 * (31 + Double.hashCode(lon)) + Double.hashCode(lat);
+            hashCode = 31 * hashCode + coordinateHash; // hashCode * 31 + coordinate.hashCode()
+        }
+        return hashCode;
+    }
+
+    /**
+     * Check that two {@link Polygon}s are equal
+     * @param first The first polygon to check
+     * @param second The second polygon to check
+     * @return {@code true} if the polygons are equal
+     */
+    private static boolean equalsPolygon(Polygon first, Polygon second) {
+        // If the coordinate lists aren't the same size, short circuit.
+        // We aren't doing fuzzy comparisons here.
+        if (first.npoints != second.npoints) {
+            return false;
+        }
+        for (int i = 0; i < first.npoints; i++) {
+            if (first.xpoints[i] != second.xpoints[i] ||
+                    first.ypoints[i] != second.ypoints[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * A list of {@link Coordinate}s that attempts to be very efficient in terms of CPU time and memory allocations.
+     */
+    private static final class CoordinateList extends AbstractList<Coordinate> {
+        private final Polygon coords;
+
+        CoordinateList(Polygon coords) {
+            this.coords = coords;
+        }
+
+        @Override
+        public Coordinate get(int index) {
+            double lat = coords.ypoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
+            double lon = coords.xpoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
+            return new Coordinate(lat, lon);
+        }
+
+        @Override
+        public int size() {
+            return coords.npoints;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof CoordinateList) {
+                CoordinateList other = (CoordinateList) o;
+                return equalsPolygon(this.coords, other.coords);
+            }
+            return super.equals(o);
+        }
+
+        @Override
+        public int hashCode() {
+            return hashPolygon(this.coords);
+        }
     }
 }
