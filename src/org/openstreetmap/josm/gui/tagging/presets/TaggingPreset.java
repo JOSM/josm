@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.tagging.presets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
-import static org.openstreetmap.josm.tools.Territories.isIso3166Code;
 
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -43,10 +42,8 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -151,6 +148,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * list of regions the preset is applicable for
      */
     private Set<String> regions;
+    /**
+     * If true, invert the meaning of regions
+     */
+    private boolean exclude_regions = false;
     /**
      * The list of preset items
      */
@@ -376,6 +377,23 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     public final void setRegions(String regions) {
         this.regions = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(regions.split(","))));
+    }
+
+    /**
+     * Get the exclude_regions for the preset
+     * @apiNote This is not {@code getExclude_regions} just in case we decide to make {@link TaggingPreset} a record class.
+     * @since xxx
+     */
+    public final boolean exclude_regions() {
+        return this.exclude_regions;
+    }
+    /**
+     * Set if the preset should not be used in the given region
+     * @param exclude_regions if true the function of regions is inverted
+     * @since xxx
+     */
+    public final void setExclude_regions(boolean exclude_regions) {
+        this.exclude_regions = exclude_regions;
     }
 
     private static class PresetPanel extends JPanel {
@@ -634,31 +652,6 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
         int answer = 1;
         boolean canCreateRelation = types == null || types.contains(TaggingPresetType.RELATION);
-        if (!Utils.isEmpty(this.regions)) {
-           for (OsmPrimitive osm : sel) {
-               LatLon center = null;
-               if (osm instanceof Node) {
-                   center = ((Node) osm).getCoor();
-               } else if (osm instanceof Way) {
-                   center = osm.getBBox().getCenter();
-               } else if (osm instanceof Relation) {
-                   center = osm.getBBox().getCenter();
-               }
-               boolean check = true;
-               for (String region : regions) {
-                   if (isIso3166Code(region, center)) {
-                        check = false;
-                   }
-               }
-               if (check) {
-                   new Notification(
-                           tr("The preset <i>{0}</i> should not be applied in this region!",
-                                   getLocaleName()))
-                           .setIcon(JOptionPane.WARNING_MESSAGE)
-                           .show();
-               }
-           }
-        }
         if (originalSelectionEmpty && !canCreateRelation) {
             new Notification(
                     tr("The preset <i>{0}</i> cannot be applied since nothing has been selected!", getLocaleName()))

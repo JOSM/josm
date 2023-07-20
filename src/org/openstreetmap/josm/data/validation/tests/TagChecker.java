@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import static org.openstreetmap.josm.tools.Territories.isIso3166Code;
 
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionListener;
@@ -37,8 +38,10 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -131,6 +134,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to check presets
      */
     public static final String PREF_CHECK_PRESETS_TYPES = PREFIX + ".checkPresetsTypes";
+    public static final String PREF_CHECK_REGIONS = PREFIX + ".checkPresetsRegions";
 
     /**
      * The preference key for source files
@@ -159,6 +163,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to search for presets - used before upload
      */
     public static final String PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD = PREF_CHECK_PRESETS_TYPES + BEFORE_UPLOAD;
+    public static final String PREF_CHECK_REGIONS_BEFORE_UPLOAD = PREF_CHECK_REGIONS + BEFORE_UPLOAD;
 
     /**
      * The preference key for the list of tag keys that are allowed to be the same on a multipolygon and an outer way
@@ -175,18 +180,21 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected boolean checkComplex;
     protected boolean checkFixmes;
     protected boolean checkPresetsTypes;
+    protected boolean checkRegions;
 
     protected JCheckBox prefCheckKeys;
     protected JCheckBox prefCheckValues;
     protected JCheckBox prefCheckComplex;
     protected JCheckBox prefCheckFixmes;
     protected JCheckBox prefCheckPresetsTypes;
+    protected JCheckBox prefCheckRegions;
 
     protected JCheckBox prefCheckKeysBeforeUpload;
     protected JCheckBox prefCheckValuesBeforeUpload;
     protected JCheckBox prefCheckComplexBeforeUpload;
     protected JCheckBox prefCheckFixmesBeforeUpload;
     protected JCheckBox prefCheckPresetsTypesBeforeUpload;
+    protected JCheckBox prefCheckRegionsBeforeUpload;
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final int EMPTY_VALUES                     = 1200;
@@ -210,6 +218,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected static final int MULTIPOLYGON_INCOMPLETE          = 1219;
     protected static final int MULTIPOLYGON_MAYBE_NO_AREA       = 1220;
     protected static final int MULTIPOLYGON_SAME_TAG_ON_OUTER   = 1221;
+    protected static final int INVALID_REGION                   = 1222;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected EditableList sourcesList;
@@ -687,6 +696,33 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 }
             }
         }
+
+        if(checkRegions) {
+            TaggingPreset preset = new TaggingPreset();
+            if(preset.regions()!= null) {
+                LatLon center = null;
+                if (p instanceof Node) {
+                    center = ((Node) p).getCoor();
+                } else if ((p instanceof Way) || (p instanceof Relation)) {
+                    center = p.getBBox().getCenter();
+                }
+                boolean check = false;
+                for (String region : preset.regions()) {
+                    if (isIso3166Code(region, center)) { //check if center of the object is in a region
+                        check = true;
+                    }
+                } if (preset.exclude_regions()) {
+                    check = !check;  //invert the meaning of region if exclude_regions is true
+                } if (!check) {
+                    errors.add(TestError.builder(this, Severity.WARNING, INVALID_REGION)
+                            .message(tr("Object should not be applied in this region"),
+                                    marktr("Preset {0} should not be applied in this region"),
+                                    tr(preset.getName()))
+                            .primitives(p)
+                            .build());
+                }
+            }
+        }
     }
 
     private static final Collection<String> NO_AREA_KEYS = Arrays.asList("name", "area", "ref", "access", "operator");
@@ -1099,6 +1135,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (isBeforeUpload) {
             checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
         }
+
+        checkRegions = includeOtherSeverity && Config.getPref().getBoolean(PREF_CHECK_REGIONS, true);
+        if (isBeforeUpload) {
+            checkRegions = checkRegions && Config.getPref().getBoolean(PREF_CHECK_REGIONS_BEFORE_UPLOAD, true);
+        }
         deprecatedChecker = OsmValidator.getTest(MapCSSTagChecker.class);
         ignoreForOuterMPSameTagCheck.addAll(Config.getPref().getList(PREF_KEYS_IGNORE_OUTER_MP_SAME_TAG, Collections.emptyList()));
     }
@@ -1111,7 +1152,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
     @Override
     public void visit(Collection<OsmPrimitive> selection) {
-        if (checkKeys || checkValues || checkComplex || checkFixmes || checkPresetsTypes) {
+        if (checkKeys || checkValues || checkComplex || checkFixmes || checkPresetsTypes || checkRegions) {
             super.visit(selection);
         }
     }
@@ -1176,6 +1217,14 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         prefCheckPresetsTypesBeforeUpload = new JCheckBox();
         prefCheckPresetsTypesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckPresetsTypesBeforeUpload, a);
+
+        prefCheckRegions = new JCheckBox(tr("Check for regions."), Config.getPref().getBoolean(PREF_CHECK_REGIONS, true));
+        prefCheckRegions.setToolTipText(tr("Validate that objects are in the correct region."));
+        testPanel.add(prefCheckRegions, GBC.std().insets(20, 0, 0, 0));
+
+        prefCheckRegionsBeforeUpload = new JCheckBox();
+        prefCheckRegionsBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_REGIONS_BEFORE_UPLOAD, true));
+        testPanel.add(prefCheckRegionsBeforeUpload, a);
     }
 
     /**
@@ -1198,11 +1247,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         Config.getPref().putBoolean(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES, prefCheckPresetsTypes.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_REGIONS, prefCheckRegions.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, prefCheckPresetsTypesBeforeUpload.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_REGIONS_BEFORE_UPLOAD, prefCheckRegionsBeforeUpload.isSelected());
         return Config.getPref().putList(PREF_SOURCES, sourcesList.getItems());
     }
 

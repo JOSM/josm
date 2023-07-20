@@ -24,7 +24,9 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.OpeningHourTest;
+import org.openstreetmap.josm.data.validation.tests.TagChecker;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -55,11 +57,19 @@ interface TaggingPresetValidation {
         try {
             MapCSSTagChecker mapCSSTagChecker = OsmValidator.getTest(MapCSSTagChecker.class);
             OpeningHourTest openingHourTest = OsmValidator.getTest(OpeningHourTest.class);
-            OsmValidator.initializeTests(Arrays.asList(mapCSSTagChecker, openingHourTest));
+            TagChecker tagChecker = OsmValidator.getTest(TagChecker.class);
+            tagChecker.startTest(NullProgressMonitor.INSTANCE); //since initializeTest works if test is enabled
+            OsmValidator.initializeTests(Arrays.asList(mapCSSTagChecker, openingHourTest, tagChecker));
+            tagChecker.endTest();
+
 
             List<TestError> errors = new ArrayList<>();
             openingHourTest.addErrorsForPrimitive(primitive, errors);
             errors.addAll(mapCSSTagChecker.getErrorsForPrimitive(primitive, ValidatorPrefHelper.PREF_OTHER.get()));
+            tagChecker.startTest(NullProgressMonitor.INSTANCE);
+            tagChecker.check(primitive);
+            errors.addAll(tagChecker.getErrors());
+            tagChecker.endTest();
 
             boolean visible = !errors.isEmpty();
             String toolTipText = "<html>" + Utils.joinAsHtmlUnorderedList(Utils.transform(errors, e ->
