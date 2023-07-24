@@ -195,20 +195,27 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * Launches a conflict resolution dialog for the first selected conflict
      */
     private void resolve() {
+        final ConflictResolutionDialog dialog;
+        int index;
         synchronized (this) {
             if (conflicts == null || model.getSize() == 0)
                 return;
 
-            int index = lstConflicts.getSelectedIndex();
+            index = lstConflicts.getSelectedIndex();
             if (index < 0) {
                 index = 0;
             }
 
             Conflict<? extends OsmPrimitive> c = conflicts.get(index);
-            ConflictResolutionDialog dialog = new ConflictResolutionDialog(MainApplication.getMainFrame());
+            dialog = new ConflictResolutionDialog(MainApplication.getMainFrame());
             dialog.getConflictResolver().populate(c);
-            dialog.showDialog();
-
+        }
+        // This must not be synchronized. See #23079.
+        // On macOS, under some instances, the AppKit thread may want to lock this (`ConflictDialog`) in order to add a
+        // property change listener. This dialog currently locks the UI thread, so it *should* be safe to have outside
+        // of the synchronized lock.
+        dialog.showDialog();
+        synchronized (this) {
             if (index < conflicts.size() - 1) {
                 lstConflicts.setSelectedIndex(index);
             } else {
