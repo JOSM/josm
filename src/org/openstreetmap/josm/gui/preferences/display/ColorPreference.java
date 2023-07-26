@@ -441,10 +441,12 @@ public class ColorPreference extends ExtensibleTabPreferenceSetting implements L
 
     private void updateEnabledState() {
         int sel = colors.getSelectedRow();
-        if (sel < 0 || sel >= colors.getRowCount()) {
-            return;
+        ColorEntry ce;
+        if (sel >= 0 && sel < colors.getRowCount()) {
+            ce = (ColorEntry) colors.getValueAt(sel, 0);
+        } else {
+            ce = null;
         }
-        ColorEntry ce = (ColorEntry) colors.getValueAt(sel, 0);
         remove.setEnabled(ce != null && isRemoveColor(ce));
         colorEdit.setEnabled(ce != null);
         defaultSet.setEnabled(ce != null && !ce.isDefault());
