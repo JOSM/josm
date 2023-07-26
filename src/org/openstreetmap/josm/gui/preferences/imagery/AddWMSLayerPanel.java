@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -15,6 +17,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -23,7 +26,12 @@ import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.LayerDetails;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
@@ -81,37 +89,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         add(new JLabel(tr("{0} Enter name for this layer", "7.")), GBC.eol());
         add(name, GBC.eop().fill(GBC.HORIZONTAL));
 
-        getLayers.addActionListener(e -> {
-            try {
-                wms = new WMSImagery(Utils.strip(rawUrl.getText()), getCommonHeaders());
-                tree.updateTree(wms);
-                Collection<String> wmsFormats = wms.getFormats();
-                formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[0])));
-                formats.setSelectedItem(wms.getPreferredFormat());
-            } catch (MalformedURLException | InvalidPathException ex1) {
-                Logging.log(Logging.LEVEL_ERROR, ex1);
-                JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
-                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-            } catch (IOException ex2) {
-                Logging.log(Logging.LEVEL_ERROR, ex2);
-                JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
-                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-            } catch (WMSImagery.WMSGetCapabilitiesException ex3) {
-                String incomingData = ex3.getIncomingData() != null ? ex3.getIncomingData().trim() : "";
-                String title = tr("WMS Error");
-                StringBuilder message = new StringBuilder(tr("Could not parse WMS layer list."));
-                Logging.log(Logging.LEVEL_ERROR, "Could not parse WMS layer list. Incoming data:\n"+incomingData, ex3);
-                if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
-                  && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
-                    GuiHelper.notifyUserHtmlError(this, title, message.toString(), incomingData);
-                } else {
-                    if (ex3.getMessage() != null) {
-                        message.append('\n').append(ex3.getMessage());
-                    }
-                    JOptionPane.showMessageDialog(getParent(), message.toString(), title, JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+        getLayers.addActionListener(e -> MainApplication.worker.execute(new GetCapabilitiesRunnable(e)));
 
         ActionListener availabilityManagerAction = a -> {
             setDefaultLayers.setEnabled(endpoint.isSelected());
@@ -223,6 +201,72 @@ public class AddWMSLayerPanel extends AddImageryPanel {
             return !getImageryRawUrl().isEmpty();
         } else {
             return !getWmsUrl().isEmpty();
+        }
+    }
+
+    /**
+     * Perform the get WMS layers network calls in a separate thread, mostly to allow for cancellation
+     */
+    private class GetCapabilitiesRunnable extends PleaseWaitRunnable {
+        private final ActionEvent actionEvent;
+
+        GetCapabilitiesRunnable(ActionEvent actionEvent) {
+            super(tr("Trying WMS urls"), GraphicsEnvironment.isHeadless() ? NullProgressMonitor.INSTANCE : new PleaseWaitProgressMonitor(),
+                    false);
+            this.actionEvent = actionEvent;
+        }
+
+        @Override
+        protected void cancel() {
+            // We don't really have something we can do -- we use the monitor to pass the cancel state on
+        }
+
+        @Override
+        protected void realRun() {
+            if (actionEvent.getSource() instanceof JComponent) {
+                GuiHelper.runInEDT(() -> ((JComponent) actionEvent.getSource()).setEnabled(false));
+            }
+            ProgressMonitor monitor = getProgressMonitor();
+            try {
+                wms = new WMSImagery(Utils.strip(rawUrl.getText()), getCommonHeaders(), monitor);
+            } catch (MalformedURLException | InvalidPathException ex1) {
+                Logging.log(Logging.LEVEL_ERROR, ex1);
+                GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE));
+            } catch (IOException ex2) {
+                Logging.log(Logging.LEVEL_ERROR, ex2);
+                GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE));
+            } catch (WMSImagery.WMSGetCapabilitiesException ex3) {
+                String incomingData = ex3.getIncomingData() != null ? ex3.getIncomingData().trim() : "";
+                String title = tr("WMS Error");
+                StringBuilder message = new StringBuilder(tr("Could not parse WMS layer list."));
+                Logging.log(Logging.LEVEL_ERROR, "Could not parse WMS layer list. Incoming data:\n"+incomingData, ex3);
+                if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
+                        && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
+                    GuiHelper.runInEDT(() -> GuiHelper.notifyUserHtmlError(AddWMSLayerPanel.this, title, message.toString(), incomingData));
+                } else {
+                    if (ex3.getMessage() != null) {
+                        message.append('\n').append(ex3.getMessage());
+                    }
+                    GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(getParent(), message.toString(), title, JOptionPane.ERROR_MESSAGE));
+                }
+            }
+        }
+
+        @Override
+        protected void finish() {
+            if (wms != null) {
+                GuiHelper.runInEDT(() -> {
+                    tree.updateTree(wms);
+                    Collection<String> wmsFormats = wms.getFormats();
+                    formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[0])));
+                    formats.setSelectedItem(wms.getPreferredFormat());
+                });
+            }
+            if (actionEvent.getSource() instanceof JComponent) {
+                GuiHelper.runInEDT(() -> ((JComponent) actionEvent.getSource()).setEnabled(true));
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,6 +36,8 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.LayerDetails;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -150,20 +153,44 @@ public class WMSImagery {
      * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
      */
     public WMSImagery(String url, Map<String, String> headers) throws IOException, WMSGetCapabilitiesException {
+        this(url, headers, NullProgressMonitor.INSTANCE);
+    }
+
+    /**
+     * Make getCapabilities request towards given URL using headers
+     * @param url service url
+     * @param headers HTTP headers to be sent with request
+     * @param monitor Feedback for which URL we are currently trying, the integer is the <i>total number of urls</i> we are going to try
+     * @throws IOException when connection error when fetching get capabilities document
+     * @throws WMSGetCapabilitiesException when there are errors when parsing get capabilities document
+     * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
+     * @since xxx
+     */
+    public WMSImagery(String url, Map<String, String> headers, ProgressMonitor monitor)
+            throws IOException, WMSGetCapabilitiesException {
         if (headers != null) {
             this.headers.putAll(headers);
         }
 
         IOException savedExc = null;
         String workingAddress = null;
+        final String[] baseAdditions = {
+            normalizeUrl(url),
+            url,
+            url + CAPABILITIES_QUERY_STRING,
+        };
+        final String[] versionAdditions = {"", "&VERSION=1.3.0", "&VERSION=1.1.1"};
+        final int totalNumberOfUrlsToTry = baseAdditions.length * versionAdditions.length;
+        monitor.setTicksCount(totalNumberOfUrlsToTry);
         url_search:
-        for (String z: new String[]{
-                normalizeUrl(url),
-                url,
-                url + CAPABILITIES_QUERY_STRING,
-        }) {
-            for (String ver: new String[]{"", "&VERSION=1.3.0", "&VERSION=1.1.1"}) {
+        for (String z : baseAdditions) {
+            for (String ver : versionAdditions) {
+                if (monitor.isCanceled()) {
+                    break url_search;
+                }
                 try {
+                    monitor.setCustomText(z + ver);
+                    monitor.worked(1);
                     attemptGetCapabilities(z + ver);
                     workingAddress = z;
                     calculateChildren();
@@ -192,7 +219,6 @@ public class WMSImagery {
                 }
             }
         }
-
         if (savedExc != null) {
             throw savedExc;
         }
@@ -615,7 +641,7 @@ public class WMSImagery {
     }
 
     private static Bounds parseBBox(Projection conv, String miny, String minx, String maxy, String maxx) {
-        if (miny == null || minx == null || maxy == null || maxx == null) {
+        if (miny == null || minx == null || maxy == null || maxx == null || Arrays.asList(miny, minx, maxy, maxx).contains("nan")) {
             return null;
         }
         if (conv != null) {
