@@ -321,7 +321,13 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     private synchronized boolean isConflictSelected() {
         final ListSelectionModel selModel = lstConflicts.getSelectionModel();
-        return selModel.getMinSelectionIndex() >= 0 && selModel.getMaxSelectionIndex() >= selModel.getMinSelectionIndex();
+        final int minSelectionIndex = selModel.getMinSelectionIndex();
+        final int maxSelectionIndex = selModel.getMaxSelectionIndex();
+        final int maxIndex = conflicts.size();
+        // if minSelectionIndex < 0, nothing is selected
+        // if minSelectionIndex > maxIndex, then nothing is selected (we are operating with an old selection context, most likely)
+        // if maxSelectionIndex < minSelectionIndex, _something_ funny is going on. Or there was a typo in the original code.
+        return minSelectionIndex >= 0 && maxIndex > minSelectionIndex && maxSelectionIndex >= minSelectionIndex;
     }
 
     @Override
@@ -368,6 +374,8 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
             btnResolveMy.setVisible(ExpertToggleAction.isExpert());
             btnResolveTheir.setVisible(ExpertToggleAction.isExpert());
+            ((ResolveAction) btnResolveMy.getAction()).valueChanged(null);
+            ((ResolveAction) btnResolveTheir.getAction()).valueChanged(null);
         }
 
         @Override
@@ -528,7 +536,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                     }
                 }
             }
-            UndoRedoHandler.getInstance().add(new SequenceCommand(name, commands));
+                UndoRedoHandler.getInstance().add(new SequenceCommand(name, commands));
             refreshView();
         }
     }
