@@ -536,7 +536,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                     }
                 }
             }
-                UndoRedoHandler.getInstance().add(new SequenceCommand(name, commands));
+            UndoRedoHandler.getInstance().add(new SequenceCommand(name, commands));
             refreshView();
         }
     }
