@@ -45,6 +45,8 @@ public abstract class AbstractTextComponentValidator extends ChangeNotifier
 
     protected static final Color WARNING_COLOR = new NamedColorProperty(marktr("Input validation: warning"), new Color(0xFFA500)).get();
     protected static final Border WARNING_BORDER = BorderFactory.createLineBorder(WARNING_COLOR, 1);
+    protected static final Color WARNING_FOREGROUND = new NamedColorProperty(
+            marktr("Input validation: warning foreground"), Color.BLACK).get();
     protected static final Color WARNING_BACKGROUND = new NamedColorProperty(
             marktr("Input validation: warning background"), new Color(0xFFEDCC)).get();
 

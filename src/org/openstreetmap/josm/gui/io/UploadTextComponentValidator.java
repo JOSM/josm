@@ -48,7 +48,7 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
         super.feedbackWarning(msg);
         if (!Objects.equals(msg, feedback.getText())) {
             feedback.setText(msg);
-            feedback.setForeground(null);
+            feedback.setForeground(WARNING_FOREGROUND);
             feedback.setBackground(WARNING_BACKGROUND);
             feedback.setBorder(WARNING_BORDER);
         }
