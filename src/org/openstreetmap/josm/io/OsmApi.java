@@ -248,6 +248,9 @@ public class OsmApi extends OsmConnection {
         if (initialized)
             return;
         cancel = false;
+        if (monitor != null) {
+            monitor.addCancelListener(this::cancel);
+        }
         try {
             CapabilitiesCache cache = new CapabilitiesCache(monitor, fastFail);
             try {
