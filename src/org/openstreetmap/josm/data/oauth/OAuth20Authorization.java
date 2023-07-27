@@ -101,12 +101,13 @@ public class OAuth20Authorization implements IOAuthAuthorization {
                     consumer.accept(Optional.of(oAuth20Token));
                 } catch (IOException | OAuth20Exception e) {
                     consumer.accept(Optional.empty());
-                    throw new JosmRuntimeException(e);
+                    throw new RequestHandler.RequestHandlerErrorException(e);
                 } finally {
                     tradeCodeForToken.disconnect();
                 }
             } catch (MalformedURLException e) {
-                throw new JosmRuntimeException(e);
+                consumer.accept(Optional.empty());
+                throw new RequestHandler.RequestHandlerBadRequestException(e);
             }
             return null;
         }

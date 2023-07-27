@@ -20,6 +20,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -374,6 +375,12 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
                     OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), token.orElse(null));
                     OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
                     GuiHelper.runInEDT(OAuthAuthenticationPreferencesPanel.this::refreshView);
+                    if (!token.isPresent()) {
+                        GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.getMainPanel(),
+                                tr("Authentication failed, please check browser for details."),
+                                tr("OAuth Authentication Failed"),
+                                JOptionPane.ERROR_MESSAGE));
+                    }
                 }, OsmScopes.read_gpx, OsmScopes.write_gpx,
                         OsmScopes.read_prefs, OsmScopes.write_prefs,
                         OsmScopes.write_api, OsmScopes.write_notes);

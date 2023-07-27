@@ -1,12 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +21,7 @@ import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.http.FixedDelayDistribution;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
@@ -61,8 +64,14 @@ class OAuth20AuthorizationTest {
     private static final String CODE_CHALLENGE_METHOD_VALUE = "S256";
     private static final String CODE_CHALLENGE = "code_challenge";
 
+    private enum ConnectionProblems {
+        NONE,
+        SOCKET_TIMEOUT
+    }
+
     private static class OAuthServerWireMock extends ResponseTransformer {
         String stateToReturn;
+        ConnectionProblems connectionProblems = ConnectionProblems.NONE;
         @Override
         public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
             try {
@@ -88,7 +97,15 @@ class OAuth20AuthorizationTest {
                     || !queryParameters.containsKey("code") || !queryParameters.containsKey("code_verifier")) {
                 return Response.Builder.like(response).but().status(500).build();
             }
-            return Response.Builder.like(response).but().body("{\"token_type\": \"bearer\", \"access_token\": \"test_access_token\"}").build();
+            switch (connectionProblems) {
+                case SOCKET_TIMEOUT:
+                    return Response.Builder.like(response).but().configureDelay(null, null,
+                                    10_000, new FixedDelayDistribution(0)).build();
+                case NONE:
+                default:
+                    return Response.Builder.like(response).but()
+                            .body("{\"token_type\": \"bearer\", \"access_token\": \"test_access_token\"}").build();
+            }
         }
 
         private Response authorizationRequest(Request request, Response response) {
@@ -135,6 +152,7 @@ class OAuth20AuthorizationTest {
         OpenBrowserMocker.getCalledURIs().clear();
         RemoteControl.stop(); // Ensure remote control is stopped
         oauthServer.stateToReturn = null;
+        oauthServer.connectionProblems = ConnectionProblems.NONE;
     }
 
     /**
@@ -163,17 +181,22 @@ class OAuth20AuthorizationTest {
         wireMockRuntimeInfo.getWireMock().register(WireMock.post(WireMock.urlPathEqualTo("/oauth2/token")));
     }
 
-    @Test
-    void testAuthorize(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+    private HttpClient generateClient(WireMockRuntimeInfo wireMockRuntimeInfo, AtomicReference<Optional<IOAuthToken>> consumer) {
         final OAuth20Authorization authorization = new OAuth20Authorization();
-        final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
         OAuth20Parameters parameters = (OAuth20Parameters) OAuthParameters.createDefault(OsmApi.getOsmApi().getBaseUrl(), OAuthVersion.OAuth20);
         RemoteControl.start();
         authorization.authorize(new OAuth20Parameters(parameters.getClientId(), parameters.getClientSecret(),
                 wireMockRuntimeInfo.getHttpBaseUrl() + "/oauth2", wireMockRuntimeInfo.getHttpBaseUrl() + "/api",
                 parameters.getRedirectUri()), consumer::set, OsmScopes.read_gpx);
         assertEquals(1, OpenBrowserMocker.getCalledURIs().size());
-        HttpClient client = HttpClient.create(OpenBrowserMocker.getCalledURIs().get(0).toURL());
+        final URL url = assertDoesNotThrow(() -> OpenBrowserMocker.getCalledURIs().get(0).toURL());
+        return HttpClient.create(url);
+    }
+
+    @Test
+    void testAuthorize(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+        final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
+        final HttpClient client = generateClient(wireMockRuntimeInfo, consumer);
         try {
             HttpClient.Response response = client.connect();
             assertEquals(200, response.getResponseCode());
@@ -190,15 +213,8 @@ class OAuth20AuthorizationTest {
     @Test
     void testAuthorizeBadState(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
         oauthServer.stateToReturn = "Bad_State";
-        final OAuth20Authorization authorization = new OAuth20Authorization();
         final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
-        OAuth20Parameters parameters = (OAuth20Parameters) OAuthParameters.createDefault(OsmApi.getOsmApi().getBaseUrl(), OAuthVersion.OAuth20);
-        RemoteControl.start();
-        authorization.authorize(new OAuth20Parameters(parameters.getClientId(), parameters.getClientSecret(),
-                wireMockRuntimeInfo.getHttpBaseUrl() + "/oauth2", wireMockRuntimeInfo.getHttpBaseUrl() + "/api",
-                parameters.getRedirectUri()), consumer::set, OsmScopes.read_gpx);
-        assertEquals(1, OpenBrowserMocker.getCalledURIs().size());
-        HttpClient client = HttpClient.create(OpenBrowserMocker.getCalledURIs().get(0).toURL());
+        final HttpClient client = generateClient(wireMockRuntimeInfo, consumer);
         try {
             HttpClient.Response response = client.connect();
             assertEquals(400, response.getResponseCode());
@@ -208,5 +224,26 @@ class OAuth20AuthorizationTest {
             client.disconnect();
         }
         assertNull(consumer.get(), "The OAuth consumer should not be called since the state does not match");
+    }
+
+    @Test
+    void testSocketTimeout(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+        // 1s before timeout
+        Config.getPref().putInt("socket.timeout.connect", 1);
+        Config.getPref().putInt("socket.timeout.read", 1);
+        oauthServer.connectionProblems = ConnectionProblems.SOCKET_TIMEOUT;
+
+        final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
+        final HttpClient client = generateClient(wireMockRuntimeInfo, consumer)
+                .setConnectTimeout(15_000).setReadTimeout(30_000);
+        try {
+            HttpClient.Response response = client.connect();
+            assertEquals(500, response.getResponseCode());
+            String content = response.fetchContent();
+            assertTrue(content.contains("java.net.SocketTimeoutException: Read timed out"));
+        } finally {
+            client.disconnect();
+        }
+        assertEquals(Optional.empty(), consumer.get());
     }
 }
