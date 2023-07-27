@@ -105,12 +105,12 @@ class NmeaReaderTest {
      */
     @Test
     void testIsSentence() {
-        assertTrue(NmeaReader.isSentence("$GPVTG", Sentence.VTG));
-        assertTrue(NmeaReader.isSentence("$GAVTG", Sentence.VTG));
-        assertTrue(NmeaReader.isSentence("$GNVTG", Sentence.VTG));
-        assertFalse(NmeaReader.isSentence("XGAVTG", Sentence.VTG));
-        assertFalse(NmeaReader.isSentence("$GPXXX", Sentence.VTG));
-        assertFalse(NmeaReader.isSentence("$XXVTG", Sentence.VTG));
+        assertTrue(NmeaParser.isSentence("$GPVTG", Sentence.VTG));
+        assertTrue(NmeaParser.isSentence("$GAVTG", Sentence.VTG));
+        assertTrue(NmeaParser.isSentence("$GNVTG", Sentence.VTG));
+        assertFalse(NmeaParser.isSentence("XGAVTG", Sentence.VTG));
+        assertFalse(NmeaParser.isSentence("$GPXXX", Sentence.VTG));
+        assertFalse(NmeaParser.isSentence("$XXVTG", Sentence.VTG));
     }
 
     /**
