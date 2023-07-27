@@ -663,15 +663,21 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         checkMultipolygonTags(p);
         }
 
-        if (checkPresetsTypes) {
-            TagMap tags = p.getKeys();
-            TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
-            EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
-
-            Collection<TaggingPreset> matchingPresets = presetIndex.entrySet().stream()
+        final Collection<TaggingPreset> matchingPresets;
+        TagMap tags = p.getKeys();
+        if (checkPresetsTypes || checkRegions) {
+            matchingPresets = presetIndex.entrySet().stream()
                     .filter(e -> TaggingPresetItem.matches(e.getValue(), tags))
                     .map(Entry::getKey)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            matchingPresets = null;
+        }
+
+        if (checkPresetsTypes) {
+            TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
+            EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
+
             Collection<TaggingPreset> matchingPresetsOK = matchingPresets.stream().filter(
                     tp -> tp.typeMatches(presetTypes)).collect(Collectors.toList());
             Collection<TaggingPreset> matchingPresetsKO = matchingPresets.stream().filter(
@@ -697,29 +703,30 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             }
         }
 
-        if(checkRegions) {
-            TaggingPreset preset = new TaggingPreset();
-            if(preset.regions()!= null) {
-                LatLon center = null;
-                if (p instanceof Node) {
-                    center = ((Node) p).getCoor();
-                } else if ((p instanceof Way) || (p instanceof Relation)) {
-                    center = p.getBBox().getCenter();
-                }
-                boolean check = false;
-                for (String region : preset.regions()) {
-                    if (isIso3166Code(region, center)) { //check if center of the object is in a region
-                        check = true;
+
+        if (checkRegions) {
+            for (TaggingPreset preset : matchingPresets) {
+                if (preset.regions() != null) {
+                    LatLon center;
+                    if (p instanceof Node) {
+                        center = ((Node) p).getCoor();
+                    } else {
+                        center = p.getBBox().getCenter();
                     }
-                } if (preset.exclude_regions()) {
-                    check = !check;  //invert the meaning of region if exclude_regions is true
-                } if (!check) {
-                    errors.add(TestError.builder(this, Severity.WARNING, INVALID_REGION)
-                            .message(tr("Object should not be applied in this region"),
-                                    marktr("Preset {0} should not be applied in this region"),
-                                    tr(preset.getName()))
-                            .primitives(p)
-                            .build());
+                    boolean isInRegion = false; //true if the object is in an applicable region
+                    for (String region : preset.regions()) {
+                        if (isIso3166Code(region, center)) { //check if center of the object is in a region
+                            isInRegion = true;
+                        }
+                    }
+                    if (isInRegion == preset.exclude_regions()) {
+                        errors.add(TestError.builder(this, Severity.WARNING, INVALID_REGION)
+                                .message(tr("Preset not valid for region"),
+                                        marktr("Preset {0} should not be applied in this region"),
+                                        tr(preset.getName()))
+                                .primitives(p)
+                                .build());
+                    }
                 }
             }
         }

@@ -151,7 +151,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     /**
      * If true, invert the meaning of regions
      */
-    private boolean exclude_regions = false;
+    private boolean exclude_regions;
     /**
      * The list of preset items
      */
@@ -387,13 +387,14 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     public final boolean exclude_regions() {
         return this.exclude_regions;
     }
+
     /**
      * Set if the preset should not be used in the given region
-     * @param exclude_regions if true the function of regions is inverted
+     * @param excludeRegions if true the function of regions is inverted
      * @since xxx
      */
-    public final void setExclude_regions(boolean exclude_regions) {
-        this.exclude_regions = exclude_regions;
+    public final void setExclude_regions(boolean excludeRegions) {
+        this.exclude_regions = excludeRegions;
     }
 
     private static class PresetPanel extends JPanel {

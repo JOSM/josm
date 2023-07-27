@@ -69,7 +69,6 @@ interface TaggingPresetValidation {
             tagChecker.startTest(NullProgressMonitor.INSTANCE);
             tagChecker.check(primitive);
             errors.addAll(tagChecker.getErrors());
-            tagChecker.endTest();
 
             boolean visible = !errors.isEmpty();
             String toolTipText = "<html>" + Utils.joinAsHtmlUnorderedList(Utils.transform(errors, e ->
