@@ -60,13 +60,11 @@ interface TaggingPresetValidation {
             TagChecker tagChecker = OsmValidator.getTest(TagChecker.class);
             tagChecker.startTest(NullProgressMonitor.INSTANCE); //since initializeTest works if test is enabled
             OsmValidator.initializeTests(Arrays.asList(mapCSSTagChecker, openingHourTest, tagChecker));
-            tagChecker.endTest();
 
 
             List<TestError> errors = new ArrayList<>();
             openingHourTest.addErrorsForPrimitive(primitive, errors);
             errors.addAll(mapCSSTagChecker.getErrorsForPrimitive(primitive, ValidatorPrefHelper.PREF_OTHER.get()));
-            tagChecker.startTest(NullProgressMonitor.INSTANCE);
             tagChecker.check(primitive);
             errors.addAll(tagChecker.getErrors());
 
