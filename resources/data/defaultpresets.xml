@@ -2844,7 +2844,7 @@
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Fuel -->
-        <item name="Charging Station" icon="presets/vehicle/charging_station.svg" regions="US,CA" type="node" preset_name_label="true">
+        <item name="Charging Station" icon="presets/vehicle/charging_station.svg" type="node" preset_name_label="true">
             <link wiki="Tag:amenity=charging_station" />
             <space />
             <key key="amenity" value="charging_station" />
