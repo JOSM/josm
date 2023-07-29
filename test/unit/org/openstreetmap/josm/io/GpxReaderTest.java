@@ -13,13 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 /**
