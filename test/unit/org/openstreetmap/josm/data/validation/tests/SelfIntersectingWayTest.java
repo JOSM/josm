@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
- * JUnit Test of SelfIntersectingWay validation test.
+ * JUnit Test of {@link SelfIntersectingWay} validation test.
  */
 class SelfIntersectingWayTest {
 
