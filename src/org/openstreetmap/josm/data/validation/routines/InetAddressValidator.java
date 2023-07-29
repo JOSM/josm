@@ -156,7 +156,7 @@ public class InetAddressValidator extends AbstractValidator {
         int emptyOctets = 0;
         for (int index = 0; index < octets.length; index++) {
             String octet = octets[index];
-            if (octet.length() == 0) {
+            if (octet.isEmpty()) {
                 emptyOctets++;
                 if (emptyOctets > 1) {
                     return false;

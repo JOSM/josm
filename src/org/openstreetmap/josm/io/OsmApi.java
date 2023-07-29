@@ -808,13 +808,13 @@ public class OsmApi extends OsmConnection {
                 if (response.getHeaderField("Error") != null) {
                     errorHeader = response.getHeaderField("Error");
                     Logging.error("Error header: " + errorHeader);
-                } else if (retCode != HttpURLConnection.HTTP_OK && responseBody.length() > 0) {
+                } else if (retCode != HttpURLConnection.HTTP_OK && !responseBody.isEmpty()) {
                     Logging.error("Error body: " + responseBody);
                 }
                 activeConnection.disconnect();
 
                 errorHeader = errorHeader == null ? null : errorHeader.trim();
-                String errorBody = responseBody.length() == 0 ? null : responseBody.trim();
+                String errorBody = responseBody.isEmpty() ? null : responseBody.trim();
                 switch(retCode) {
                 case HttpURLConnection.HTTP_OK:
                     return responseBody;

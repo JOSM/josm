@@ -96,7 +96,7 @@ public class PrefJPanel extends JPanel {
                 try {
                     int i = field.getInt(null);
                     String s = KeyEvent.getKeyText(i);
-                    if (s != null && s.length() > 0 && !s.contains(unknown)) {
+                    if (s != null && !s.isEmpty() && !s.contains(unknown)) {
                         list.put(Integer.valueOf(i), s);
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {

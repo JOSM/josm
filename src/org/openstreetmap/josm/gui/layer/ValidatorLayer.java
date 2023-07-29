@@ -100,7 +100,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
                 .map(s -> tr(s.toString()) + ": " + errorTree.get(s).size() + "<br>")
                 .collect(Collectors.joining());
 
-        if (b.length() == 0)
+        if (b.isEmpty())
             return "<html>" + tr("No validation errors") + "</html>";
         else
             return "<html>" + tr("Validation errors") + ":<br>" + b + "</html>";
