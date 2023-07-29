@@ -465,7 +465,7 @@ public final class PluginHandler {
         } else {
             long tim = System.currentTimeMillis();
             long last = Config.getPref().getLong("pluginmanager.lastupdate", 0);
-            Integer maxTime = Config.getPref().getInt("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
+            int maxTime = Config.getPref().getInt("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
             long d = TimeUnit.MILLISECONDS.toDays(tim - last);
             if ((last <= 0) || (maxTime <= 0)) {
                 Config.getPref().put("pluginmanager.lastupdate", Long.toString(tim));

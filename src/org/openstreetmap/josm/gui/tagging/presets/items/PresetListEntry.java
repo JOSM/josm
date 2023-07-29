@@ -82,7 +82,7 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
      */
     public String getListDisplay(int width) {
         String displayValue = getDisplayValue();
-        Integer count = getCount();
+        int count = getCount();
 
         if (count > 0 && cms.usage.getSelectedCount() > 1) {
             displayValue = tr("{0} ({1})", displayValue, count);

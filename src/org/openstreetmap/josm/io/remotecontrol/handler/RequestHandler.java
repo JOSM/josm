@@ -202,7 +202,7 @@ public abstract class RequestHandler {
          */
         if (GLOBAL_CONFIRMATION.get()) {
             // Ensure dialog box does not exceed main window size
-            Integer maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth()*0.6);
+            int maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth()*0.6);
             String message = "<html><div>" + getPermissionMessage() +
                     "<br/>" + tr("Do you want to allow this?") + "</div></html>";
             JLabel label = new JLabel(message);
