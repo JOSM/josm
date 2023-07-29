@@ -21,7 +21,7 @@ public final class GuiSizesHelper {
     }
 
     /** cache value for screen resolution */
-    private static float screenDPI = -1;
+    private static volatile float screenDPI = -1;
 
     /**
      * Request the screen resolution (cached)
