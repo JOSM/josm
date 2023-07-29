@@ -216,10 +216,10 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
          */
         protected void renderValue(Object value) {
             setFont(UIManager.getFont("ComboBox.font"));
-            if (String.class.isInstance(value)) {
-                setText(String.class.cast(value));
-            } else if (MultiValueDecisionType.class.isInstance(value)) {
-                switch(MultiValueDecisionType.class.cast(value)) {
+            if (value instanceof String) {
+                setText((String) value);
+            } else if (value instanceof MultiValueDecisionType) {
+                switch((MultiValueDecisionType) value) {
                 case UNDECIDED:
                     setText(tr("Choose a value"));
                     setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
