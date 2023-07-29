@@ -1327,7 +1327,7 @@ public final class PluginHandler {
         if (!pluginDir.exists() || !pluginDir.isDirectory() || !pluginDir.canWrite())
             return;
 
-        final File[] files = pluginDir.listFiles((FilenameFilter) (dir, name) -> name.endsWith(".jar.new"));
+        final File[] files = pluginDir.listFiles((dir, name) -> name.endsWith(".jar.new"));
         if (files == null)
             return;
 
