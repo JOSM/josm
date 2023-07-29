@@ -1006,7 +1006,7 @@ public final class PluginHandler {
     }
 
     /**
-     * Builds the set of plugins to load. Deprecated and unmaintained plugins are filtered
+     * Builds the list of plugins to load. Deprecated and unmaintained plugins are filtered
      * out. This involves user interaction. This method displays alert and confirmation
      * messages.
      *
