@@ -75,14 +75,14 @@ public class Lanes extends Test.TagTest {
         final String forward = Utils.firstNonNull(p.get("lanes:forward"), "0");
         final String backward = Utils.firstNonNull(p.get("lanes:backward"), "0");
         try {
-        if (Integer.parseInt(lanes) < Integer.parseInt(forward) + Integer.parseInt(backward)) {
-            errors.add(TestError.builder(this, Severity.WARNING, 3101)
-                    .message(tr("Number of {0} greater than {1}", tr("{0}+{1}", "lanes:forward", "lanes:backward"), "lanes"))
-                    .primitives(p)
-                    .build());
-        }
-        } catch (NumberFormatException ignore) {
-            Logging.debug(ignore.getMessage());
+            if (Integer.parseInt(lanes) < Integer.parseInt(forward) + Integer.parseInt(backward)) {
+                errors.add(TestError.builder(this, Severity.WARNING, 3101)
+                        .message(tr("Number of {0} greater than {1}", tr("{0}+{1}", "lanes:forward", "lanes:backward"), "lanes"))
+                        .primitives(p)
+                        .build());
+            }
+        } catch (NumberFormatException e) {
+            Logging.debug(e.getMessage());
         }
     }
 
