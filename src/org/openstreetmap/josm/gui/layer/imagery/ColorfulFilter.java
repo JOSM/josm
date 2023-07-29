@@ -212,11 +212,7 @@ public class ColorfulFilter implements BufferedImageOp {
         int val = (int) (colorfulness * color + (1 - colorfulness) * luminosity);
         if (val < 0) {
             return 0;
-        } else if (val > 0xff) {
-            return 0xff;
-        } else {
-            return val;
-        }
+        } else return Math.min(val, 0xff);
     }
 
     private byte mix(int color, double luminosity) {
