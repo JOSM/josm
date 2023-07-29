@@ -118,7 +118,7 @@ public final class OsmUtils {
     /**
      * Check if a tag value represents a boolean false value
      * @param value The value to check
-     * @return true if it is a true value.
+     * @return true if it is a false value.
      */
     public static boolean isFalse(String value) {
         if (value == null) {
@@ -137,7 +137,7 @@ public final class OsmUtils {
 
     /**
      * Creates a new OSM primitive around (0,0) according to the given assertion. Originally written for unit tests,
-     * this can also be used in another places like validation of local MapCSS validator rules.
+     * this can also be used in other places like validation of local MapCSS validator rules.
      * Ways and relations created using this method are empty.
      * @param assertion The assertion describing OSM primitive (ex: "way name=Foo railway=rail")
      * @return a new OSM primitive according to the given assertion
@@ -150,7 +150,7 @@ public final class OsmUtils {
 
     /**
      * Creates a new OSM primitive according to the given assertion. Originally written for unit tests,
-     * this can also be used in another places like validation of local MapCSS validator rules.
+     * this can also be used in other places like validation of local MapCSS validator rules.
      * @param assertion The assertion describing OSM primitive (ex: "way name=Foo railway=rail")
      * @param around the coordinate at which the primitive will be located
      * @param enforceLocation if {@code true}, ways and relations will not be empty to force a physical location

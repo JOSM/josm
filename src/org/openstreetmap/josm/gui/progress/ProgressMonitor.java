@@ -75,10 +75,10 @@ public interface ProgressMonitor {
     void finishTask();
 
     /**
-     * Can be used if method receive ProgressMonitor but it's not interested progress monitoring.
+     * Can be used if method receives ProgressMonitor, but it's not interested progress monitoring.
      * Basically replaces {@link #beginTask(String)} and {@link #finishTask()}
      *
-     * This method can be also used in finally section if method expects that some exception
+     * This method can be also used in finally section if method expects that some exceptions
      * might prevent it from passing progressMonitor away. If {@link #beginTask(String)} was
      * already called then this method does nothing.
      */

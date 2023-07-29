@@ -287,7 +287,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * used to check against edit conflicts.
      *
      * @return date of last modification
-     * @see #getInstant
+     * @see #setInstant
      */
     Instant getInstant();
 

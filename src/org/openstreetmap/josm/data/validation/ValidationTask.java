@@ -42,7 +42,7 @@ public class ValidationTask extends PleaseWaitRunnable {
      *
      * @param tests                     the tests to run
      * @param validatedPrimitives       the collection of primitives to validate.
-     * @param formerValidatedPrimitives the last collection of primitives being validates. May be null.
+     * @param formerValidatedPrimitives the last collection of primitives being validated. May be null.
      */
     public ValidationTask(Collection<Test> tests,
                           Collection<OsmPrimitive> validatedPrimitives,
@@ -57,7 +57,7 @@ public class ValidationTask extends PleaseWaitRunnable {
      * @param progressMonitor           the progress monitor to update with test progress
      * @param tests                     the tests to run
      * @param validatedPrimitives       the collection of primitives to validate.
-     * @param formerValidatedPrimitives the last collection of primitives being validates. May be null.
+     * @param formerValidatedPrimitives the last collection of primitives being validated. May be null.
      * @param beforeUpload              {@code true} if this is being run prior to upload
      * @since 18752
      */

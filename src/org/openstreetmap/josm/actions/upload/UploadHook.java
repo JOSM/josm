@@ -6,7 +6,7 @@ import java.util.Map;
 import org.openstreetmap.josm.data.APIDataSet;
 
 /**
- * Change, or block, the upload.
+ * Change or block the upload.
  *
  * The UploadHook may modify the uploaded data silently, it may display a
  * warning message to the user or prevent the upload altogether.
@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.APIDataSet;
 public interface UploadHook {
 
     /**
-     * Check, and/or change, the data to be uploaded.
+     * Check and/or change the data to be uploaded.
      * Default implementation is to approve the upload.
      * @param apiDataSet the data to upload, modify this to change the data.
      * @return {@code true} if upload is possible, {@code false} to block the upload.

@@ -14,7 +14,7 @@ import java.util.Set;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * A Set-like class that allows looking up equivalent preexising instance.
+ * A Set-like class that allows looking up equivalent preexisting instance.
  * It is useful wherever one would use self-mapping construct like
  * <code>Map&lt;T,T&gt;.put(t,t)</code>, that is, for caches, uniqueness filters or similar.
  *

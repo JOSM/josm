@@ -991,9 +991,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     /**
-     * Equal, if the id (and class) is equal.
-     *
-     * An primitive is equal to its incomplete counter part.
+     * Equal if the id (and class) are equal.
+     * <p>
+     * A primitive is equal to its incomplete counterpart.
      */
     @Override
     public boolean equals(Object obj) {
@@ -1009,8 +1009,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Return the id plus the class type encoded as hashcode or super's hashcode if id is 0.
-     *
-     * An primitive has the same hashcode as its incomplete counterpart.
+     * <p>
+     * A primitive has the same hashcode as its incomplete counterpart.
      */
     @Override
     public int hashCode() {

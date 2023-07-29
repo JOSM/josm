@@ -264,7 +264,7 @@ public class ChangesetQuery {
      * Restricts the result to changesets which have been closed after the date given by <code>d</code>.
      * <code>d</code> d is a date relative to the current time zone.
      *
-     * @param d the date . Must not be null.
+     * @param d the date. Must not be null.
      * @return the restricted changeset query
      * @throws IllegalArgumentException if d is null
      */
@@ -569,7 +569,7 @@ public class ChangesetQuery {
          * <code>query</code> is the query part of a API url for querying changesets,
          * see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API</a>.
          *
-         * Example for an query string:<br>
+         * Example for a query string:<br>
          * <pre>
          *    uid=1234&amp;open=true
          * </pre>

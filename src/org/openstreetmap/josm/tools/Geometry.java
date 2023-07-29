@@ -350,7 +350,7 @@ public final class Geometry {
     }
 
     /**
-     * Get the segment segment intersection of two line segments
+     * Get the segment-segment intersection of two line segments
      * @param x1 The x coordinate of the first point (first segment)
      * @param y1 The y coordinate of the first point (first segment)
      * @param x2 The x coordinate of the second point (first segment)
@@ -921,7 +921,7 @@ public final class Geometry {
     }
 
     /**
-     * Get angles in radians and return it's value in range [0, 180].
+     * Get angles in radians and return its value in range [0, 180].
      *
      * @param angle the angle in radians
      * @return normalized angle in degrees
@@ -992,7 +992,7 @@ public final class Geometry {
     }
 
     /**
-     * Compute center of the circle closest to different nodes.
+     * Compute the center of the circle closest to different nodes.
      *
      * Ensure exact center computation in case nodes are already aligned in circle.
      * This is done by least square method.
