@@ -35,16 +35,19 @@ public final class OsmUtils {
 
     /**
      * Discouraged synonym for {@link #TRUE_VALUE}
+     * @deprecated Use {@link OsmUtils#TRUE_VALUE} instead.
      */
     @Deprecated
     public static final String trueval = TRUE_VALUE;
     /**
      * Discouraged synonym for {@link #FALSE_VALUE}
+     * @deprecated Use {@link OsmUtils#FALSE_VALUE} instead.
      */
     @Deprecated
     public static final String falseval = FALSE_VALUE;
     /**
      * Discouraged synonym for {@link #REVERSE_VALUE}
+     * @deprecated Use {@link OsmUtils#REVERSE_VALUE} instead.
      */
     @Deprecated
     public static final String reverseval = REVERSE_VALUE;
