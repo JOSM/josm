@@ -248,7 +248,7 @@ public final class ColorScale {
         FontMetrics fm = g.getFontMetrics();
         fh = fm.getHeight()/2;
         if (colorBarTitles != null && colorBarTitles.length > 0) {
-             fw = Arrays.asList(colorBarTitles).stream().mapToInt(title -> fm.stringWidth(title)).max().orElse(50);
+             fw = Arrays.stream(colorBarTitles).mapToInt(fm::stringWidth).max().orElse(50);
         } else {
             fw = fm.stringWidth(
                     String.valueOf(Math.max((int) Math.abs(max * valueScale), (int) Math.abs(min * valueScale))))

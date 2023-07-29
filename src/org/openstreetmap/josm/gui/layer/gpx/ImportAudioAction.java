@@ -9,8 +9,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -125,7 +125,7 @@ public class ImportAudioAction extends AbstractAction {
         URL url = Utils.fileToURL(audioFile);
         boolean hasTracks = !Utils.isEmpty(layer.data.tracks);
         boolean hasWaypoints = !Utils.isEmpty(layer.data.waypoints);
-        Collection<WayPoint> waypoints = new ArrayList<>();
+        List<WayPoint> waypoints = new ArrayList<>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
         double snapDistance = Config.getPref().getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3);
@@ -272,7 +272,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // we must have got at least one waypoint now
-        ((ArrayList<WayPoint>) waypoints).sort(Comparator.naturalOrder());
+        waypoints.sort(Comparator.naturalOrder());
 
         firstTime = -1.0; // this time of the first waypoint, not first trackpoint
         for (WayPoint w : waypoints) {

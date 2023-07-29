@@ -551,8 +551,8 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     public Set<OsmPrimitive> getChildPrimitives(Collection<? extends OsmPrimitive> referenceSet) {
         if (referenceSet == null) return null;
         return members.stream()
-                .filter(m -> referenceSet.contains(m.getMember()))
                 .map(RelationMember::getMember)
+                .filter(referenceSet::contains)
                 .collect(Collectors.toSet());
     }
 

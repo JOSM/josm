@@ -78,9 +78,7 @@ public class Text extends KeyedItem {
         List<String> keys = new ArrayList<>();
         keys.add(key);
         if (alternative_autocomplete_keys != null) {
-            for (String k : alternative_autocomplete_keys.split(",", -1)) {
-                keys.add(k);
-            }
+            Collections.addAll(keys, alternative_autocomplete_keys.split(",", -1));
         }
         getAllForKeys(keys).forEach(model::addElement);
 

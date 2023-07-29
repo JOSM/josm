@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -41,7 +40,6 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
-import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -293,7 +291,7 @@ public class AutoCompletionManager implements DataSetListener {
         if (r != null && !Utils.isEmpty(presets)) {
             for (TaggingPreset tp : presets) {
                 if (tp.roles != null) {
-                    list.add(Utils.transform(tp.roles.roles, (Function<Role, String>) x -> x.key), AutoCompletionPriority.IS_IN_STANDARD);
+                    list.add(Utils.transform(tp.roles.roles, x -> x.key), AutoCompletionPriority.IS_IN_STANDARD);
                 }
             }
             list.add(r.getMemberRoles(), AutoCompletionPriority.IS_IN_DATASET);

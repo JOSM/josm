@@ -26,6 +26,7 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.ZoomToAction;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -130,8 +131,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         if (MainApplication.isDisplayingMapView()) {
             Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
             final Set<OsmPrimitive> toHighlight = sel.stream()
-                    .filter(r -> r.getMember().isUsable())
                     .map(RelationMember::getMember)
+                    .filter(AbstractPrimitive::isUsable)
                     .collect(Collectors.toSet());
             SwingUtilities.invokeLater(() -> {
                 if (MainApplication.isDisplayingMapView() && highlightHelper.highlightOnly(toHighlight)) {

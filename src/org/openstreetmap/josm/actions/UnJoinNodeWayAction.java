@@ -156,13 +156,11 @@ public class UnJoinNodeWayAction extends JosmAction {
         // Remove broken ways
         result.removeIf(way -> way.getNodesCount() <= 2);
 
-        if (selectedWays.isEmpty())
-            return result;
-        else {
-            // Return only selected ways
+        // Remove selected ways
+        if (!selectedWays.isEmpty()) {
             result.removeIf(way -> !selectedWays.contains(way));
-            return result;
         }
+        return result;
     }
 
     @Override

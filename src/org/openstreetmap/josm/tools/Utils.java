@@ -1761,7 +1761,7 @@ public final class Utils {
         int bPos = version.indexOf('b');
         int pPos = version.indexOf('+');
         try {
-            return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1, version.length()));
+            return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1));
         } catch (NumberFormatException e) {
             Logging.trace(e);
             return 0;

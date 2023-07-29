@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -161,7 +161,7 @@ public class HistoryBrowser extends JPanel implements Destroyable {
             model.unlinkAsListener();
             model = null;
         }
-        Arrays.asList(tagInfoViewer, nodeListViewer, relationMemberListViewer, coordinateInfoViewer).stream()
+        Stream.of(tagInfoViewer, nodeListViewer, relationMemberListViewer, coordinateInfoViewer)
                 .filter(Destroyable.class::isInstance).forEach(Destroyable::destroy);
         tagInfoViewer = null;
         nodeListViewer = null;

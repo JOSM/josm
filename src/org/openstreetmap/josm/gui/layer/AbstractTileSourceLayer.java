@@ -778,7 +778,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private void zoomChanged(boolean invalidate) {
         Logging.debug("zoomChanged(): {0}", currentZoomLevel);
         if (tileLoader instanceof TMSCachedTileLoader) {
-            ((TMSCachedTileLoader) tileLoader).cancelOutstandingTasks();
+            tileLoader.cancelOutstandingTasks();
         }
         if (invalidate) {
             invalidate();
@@ -1148,7 +1148,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             StringBuilder line = new StringBuilder();
             StringBuilder ret = new StringBuilder();
             for (String s: text.split(" ", -1)) {
-                if (g.getFontMetrics().stringWidth(line.toString() + s) > tileSource.getTileSize()) {
+                if (g.getFontMetrics().stringWidth(line + s) > tileSource.getTileSize()) {
                     ret.append(line).append('\n');
                     line.setLength(0);
                 }

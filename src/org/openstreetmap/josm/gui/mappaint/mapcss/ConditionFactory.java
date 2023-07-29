@@ -829,7 +829,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object is an unclosed multipolygon
          */
         static boolean unclosed_multipolygon(Environment e) {
-            return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
+            return e.osm instanceof Relation && e.osm.isMultipolygon() &&
                     !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
                     !MultipolygonCache.getInstance().get((Relation) e.osm).getOpenEnds().isEmpty();
         }
