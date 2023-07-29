@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -591,7 +592,7 @@ public class RelationListDialog extends ToggleDialog
          */
         public void setSelectedRelations(Collection<? extends IRelation<?>> sel) {
             if (!Utils.isEmpty(sel)) {
-                if (!getVisibleRelations().containsAll(sel)) {
+                if (!new HashSet<>(getVisibleRelations()).containsAll(sel)) {
                     resetFilter();
                 }
                 TableHelper.setSelectedIndices(selectionModel, sel.stream().mapToInt(getVisibleRelations()::indexOf));

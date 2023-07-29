@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -433,10 +434,10 @@ public class RelationChecker extends Test implements TaggingPresetListener {
             Iterator<List<Relation>> iter = loops.iterator();
             while (iter.hasNext()) {
                 List<Relation> loop = iter.next();
-                if (loop.size() > path.size() && loop.containsAll(path)) {
+                if (loop.size() > path.size() && new HashSet<>(loop).containsAll(path)) {
                     // remove same loop with irrelevant parent
                     iter.remove();
-                } else if (path.size() >= loop.size() && path.containsAll(loop)) {
+                } else if (path.size() >= loop.size() && new HashSet<>(path).containsAll(loop)) {
                     // same or smaller loop is already known
                     return;
                 }
