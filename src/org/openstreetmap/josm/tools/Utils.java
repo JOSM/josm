@@ -1827,7 +1827,7 @@ public final class Utils {
 
     /**
      * Determines if a class can be found for the given name.
-     * @param className class nmae to find
+     * @param className class name to find
      * @return {@code true} if the class can be found, {@code false} otherwise
      * @since 17692
      */

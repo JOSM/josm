@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
- * HistoryBrowser is an UI component which displays history information about an {@link OsmPrimitive}.
+ * HistoryBrowser is a UI component which displays history information about an {@link OsmPrimitive}.
  *
  * @since 1709
  */

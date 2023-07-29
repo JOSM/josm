@@ -356,7 +356,7 @@ public final class Ellipsoid {
     public double latitude(double latIso, double e, double epsilon) {
         double lat0 = 2*Math.atan(Math.exp(latIso))-Math.PI/2;
         double lati = lat0;
-        double lati1 = 1.0; // random value to start the iterative processus
+        double lati1 = 1.0; // random value to start the iterative processes
         while (Math.abs(lati1-lati) >= epsilon) {
             lati = lati1;
             double v1 = 1+e*Math.sin(lati);
