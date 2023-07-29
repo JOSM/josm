@@ -918,9 +918,9 @@ public class SearchCompiler {
                 throw new SearchParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
             this.key = key;
             this.value = value == null ? "" : value;
-            if ("".equals(this.value) && "*".equals(key)) {
+            if (this.value.isEmpty() && "*".equals(key)) {
                 mode = Mode.NONE;
-            } else if ("".equals(this.value)) {
+            } else if (this.value.isEmpty()) {
                 if (regexp) {
                     mode = Mode.MISSING_KEY_REGEXP;
                 } else {

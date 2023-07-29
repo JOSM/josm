@@ -914,7 +914,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             fixedKey = prettifiedKey;
         }
 
-        if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
+        if (fixedKey != null && !fixedKey.isEmpty() && !fixedKey.equals(key)) {
             final String proposedKey = fixedKey;
             // misspelled preset key
             final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)

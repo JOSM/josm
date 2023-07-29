@@ -266,7 +266,7 @@ public final class Shortcut {
     public static String getKeyText(KeyStroke keyStroke) {
         if (keyStroke == null) return "";
         String modifText = KeyEvent.getModifiersExText(keyStroke.getModifiers());
-        if ("".equals(modifText)) return KeyEvent.getKeyText(keyStroke.getKeyCode());
+        if (modifText.isEmpty()) return KeyEvent.getKeyText(keyStroke.getKeyCode());
         return modifText + '+' + KeyEvent.getKeyText(keyStroke.getKeyCode());
     }
 

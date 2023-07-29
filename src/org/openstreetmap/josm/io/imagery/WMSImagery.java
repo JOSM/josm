@@ -508,7 +508,7 @@ public class WMSImagery {
                             getMapUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
                         }
                         // TODO should we handle also POST?
-                        if ("GET".equalsIgnoreCase(mode) && getMapUrl != null && !"".equals(getMapUrl)) {
+                        if ("GET".equalsIgnoreCase(mode) && getMapUrl != null && !getMapUrl.isEmpty()) {
                             try {
                                 String query = new URL(getMapUrl).getQuery();
                                 if (query == null) {
