@@ -63,8 +63,8 @@ public class Lanes extends Test.TagTest {
                             .primitives(p)
                             .build());
                 }
-            } catch (NumberFormatException ignore) {
-                Logging.debug(ignore.getMessage());
+            } catch (NumberFormatException e) {
+                Logging.debug(e.getMessage());
             }
         }
     }
