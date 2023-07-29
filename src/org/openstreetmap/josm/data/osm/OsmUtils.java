@@ -36,14 +36,17 @@ public final class OsmUtils {
     /**
      * Discouraged synonym for {@link #TRUE_VALUE}
      */
+    @Deprecated
     public static final String trueval = TRUE_VALUE;
     /**
      * Discouraged synonym for {@link #FALSE_VALUE}
      */
+    @Deprecated
     public static final String falseval = FALSE_VALUE;
     /**
      * Discouraged synonym for {@link #REVERSE_VALUE}
      */
+    @Deprecated
     public static final String reverseval = REVERSE_VALUE;
 
     private OsmUtils() {
@@ -53,9 +56,9 @@ public final class OsmUtils {
     /**
      * Converts a string to a boolean value
      * @param value The string to convert
-     * @return {@link Boolean#TRUE} if that string represents a true value,
-     *         {@link Boolean#FALSE} if it represents a false value,
-     *         <code>null</code> otherwise.
+     * @return {@link Boolean#TRUE} if that string represents a true value,<br>
+     *         {@link Boolean#FALSE} if it represents a false value,<br>
+     *         {@code null} otherwise.
      */
     public static Boolean getOsmBoolean(String value) {
         if (value == null) return null;
@@ -74,7 +77,7 @@ public final class OsmUtils {
      */
     public static String getNamedOsmBoolean(String value) {
         Boolean res = getOsmBoolean(value);
-        return res == null ? value : (res ? trueval : falseval);
+        return res == null ? value : (res ? TRUE_VALUE : FALSE_VALUE);
     }
 
     /**
