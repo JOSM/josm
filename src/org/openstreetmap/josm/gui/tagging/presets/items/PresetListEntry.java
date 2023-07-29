@@ -75,7 +75,7 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
      * Returns the contents displayed in the dropdown list.
      *
      * This is the contents that would be displayed in the current view plus a short description to
-     * aid the user.  The whole contents is wrapped to {@code width}.
+     * aid the user. The whole content is wrapped to {@code width}.
      *
      * @param width the width in px
      * @return HTML formatted contents
