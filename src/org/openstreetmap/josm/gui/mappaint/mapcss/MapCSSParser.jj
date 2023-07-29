@@ -711,7 +711,7 @@ String tag_key() :
 Condition simple_key_condition(Context context) :
 {
     boolean not = false;
-    KeyMatchType matchType = null;;
+    KeyMatchType matchType = null;
     String key;
 }
 {
@@ -732,7 +732,7 @@ Condition simple_key_value_condition(Context context) :
     String val;
     float f;
     int i;
-    KeyMatchType matchType = null;;
+    KeyMatchType matchType = null;
     Op op;
     boolean considerValAsKey = false;
 }
