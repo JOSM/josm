@@ -1064,7 +1064,8 @@ public class MultiSplitLayout implements LayoutManager {
             int nChildren = getChildren().size();
             StringBuilder sb = new StringBuilder("MultiSplitLayout.Split");
             sb.append(isRowLayout() ? " ROW [" : " COLUMN [")
-              .append(nChildren + ((nChildren == 1) ? " child" : " children"))
+              .append(nChildren)
+              .append((nChildren == 1) ? " child" : " children")
               .append("] ")
               .append(getBounds());
             return sb.toString();
