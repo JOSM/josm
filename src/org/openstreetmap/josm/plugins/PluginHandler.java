@@ -955,7 +955,7 @@ public final class PluginHandler {
      * plugin lists.
      *
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
-     * @return the list of locally available plugin information, null in case of errors
+     * @return the map of locally available plugin information, null in case of errors
      *
      */
     private static Map<String, PluginInformation> loadLocallyAvailablePluginInformation(ProgressMonitor monitor) {
@@ -1012,7 +1012,7 @@ public final class PluginHandler {
      *
      * @param parent The parent component to be used for the displayed dialog
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
-     * @return the set of plugins to load (as set of plugin names)
+     * @return the list of plugins to load (as set of plugin names)
      */
     public static List<PluginInformation> buildListOfPluginsToLoad(Component parent, ProgressMonitor monitor) {
         if (monitor == null) {

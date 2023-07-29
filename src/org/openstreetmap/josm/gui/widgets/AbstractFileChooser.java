@@ -80,7 +80,7 @@ public abstract class AbstractFileChooser {
     /**
      * Returns a list of selected files if the file chooser is
      * set to allow multiple selection.
-     * @return a list of selected files if the file chooser is
+     * @return an array of selected files if the file chooser is
      * set to allow multiple selection, or an empty array otherwise.
      */
     public abstract File[] getSelectedFiles();

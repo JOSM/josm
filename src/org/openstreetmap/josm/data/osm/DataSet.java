@@ -373,8 +373,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     private final Map<String, String> changeSetTags = new HashMap<>();
 
     /**
-     * Replies the set of changeset tags to be applied when or if this is ever uploaded.
-     * @return the set of changeset tags
+     * Replies the map of changeset tags to be applied when or if this is ever uploaded.
+     * @return the map of changeset tags
      * @see #addChangeSetTag
      */
     public Map<String, String> getChangeSetTags() {

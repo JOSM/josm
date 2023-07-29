@@ -96,7 +96,7 @@ public final class Geometry {
      * @param cmds  list of commands, typically empty when handed to this method.
      *              Will be filled with commands that add intersection nodes to
      *              the ways.
-     * @return list of new nodes, if test is true the list might not contain all intersections
+     * @return set of new nodes, if test is true the list might not contain all intersections
      */
     public static Set<Node> addIntersections(List<Way> ways, boolean test, List<Command> cmds) {
 

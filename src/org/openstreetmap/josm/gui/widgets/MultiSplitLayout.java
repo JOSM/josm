@@ -118,8 +118,8 @@ public class MultiSplitLayout implements LayoutManager {
     }
 
     /**
-     * Replies list of property change listeners.
-     * @return list of property change listeners
+     * Replies array of property change listeners.
+     * @return array of property change listeners
      */
     public PropertyChangeListener[] getPropertyChangeListeners() {
         return pcs.getPropertyChangeListeners();

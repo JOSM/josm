@@ -424,7 +424,7 @@ public class AutoCompletionManager implements DataSetListener {
      * Returns the currently cached tag values for a given list of tag keys.
      * @param keys the tag keys
      * @param comparator the custom comparator used to sort the list
-     * @return a set of tag values
+     * @return a list of tag values
      * @since 12859
      */
     public List<AutoCompletionItem> getTagValues(List<String> keys, Comparator<AutoCompletionItem> comparator) {

@@ -431,7 +431,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
 
     /**
      * Returns the filter list
-     * @return the list of primitives used for filtering
+     * @return the set of primitives used for filtering
      */
     public Set<? extends OsmPrimitive> getFilter() {
         return filter;
