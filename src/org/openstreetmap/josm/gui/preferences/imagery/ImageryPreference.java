@@ -222,7 +222,7 @@ public final class ImageryPreference extends ExtensibleTabPreferenceSetting {
                 if (list.getSelectedRow() == -1) {
                     JOptionPane.showMessageDialog(gui, tr("Please select the row to delete."));
                 } else {
-                    Integer i;
+                    int i;
                     while ((i = list.getSelectedRow()) != -1) {
                         model.removeRow(i);
                     }
