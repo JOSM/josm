@@ -173,14 +173,15 @@ public final class Utils {
     }
 
     /**
-     * Return the modulus in the range [0, n)
-     * @param a dividend
-     * @param n divisor
-     * @return modulo (remainder of the Euclidian division of a by n)
+     * Returns the modulo in the range [0, n) for the given dividend and divisor.
+     * @param a the dividend
+     * @param n the divisor
+     * @return the modulo, which is the remainder of the Euclidean division of a by n, in the range [0, n)
+     * @throws IllegalArgumentException if n is less than or equal to 0
      */
     public static int mod(int a, int n) {
         if (n <= 0)
-            throw new IllegalArgumentException("n must be <= 0 but is "+n);
+            throw new IllegalArgumentException("n must be <= 0 but is " + n);
         int res = a % n;
         if (res < 0) {
             res += n;
