@@ -4,8 +4,8 @@ package org.openstreetmap.josm.tools.template_engine;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
@@ -20,8 +20,8 @@ import org.openstreetmap.josm.tools.template_engine.Tokenizer.TokenType;
 public class TemplateParser {
     private final Tokenizer tokenizer;
 
-    private static final Collection<TokenType> EXPRESSION_END_TOKENS = Arrays.asList(TokenType.EOF);
-    private static final Collection<TokenType> CONDITION_WITH_APOSTROPHES_END_TOKENS = Arrays.asList(TokenType.APOSTROPHE);
+    private static final Collection<TokenType> EXPRESSION_END_TOKENS = Collections.singletonList(TokenType.EOF);
+    private static final Collection<TokenType> CONDITION_WITH_APOSTROPHES_END_TOKENS = Collections.singletonList(TokenType.APOSTROPHE);
 
     /**
      * Constructs a new {@code TemplateParser}.

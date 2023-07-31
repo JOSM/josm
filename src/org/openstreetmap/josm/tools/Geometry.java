@@ -832,7 +832,7 @@ public final class Geometry {
     public static Double computeArea(IPrimitive osm) {
         if (osm instanceof Way && ((Way) osm).isClosed()) {
             return closedWayArea((Way) osm);
-        } else if (osm instanceof Relation && ((Relation) osm).isMultipolygon() && !((Relation) osm).hasIncompleteMembers()) {
+        } else if (osm instanceof Relation && osm.isMultipolygon() && !((Relation) osm).hasIncompleteMembers()) {
             return multipolygonArea((Relation) osm);
         } else {
             return null;

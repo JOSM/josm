@@ -77,11 +77,7 @@ public class FilterMatcher {
         private final boolean isInverted;
 
         FilterInfo(Filter filter) throws SearchParseError {
-            if (filter.mode == SearchMode.remove || filter.mode == SearchMode.in_selection) {
-                isDelete = true;
-            } else {
-                isDelete = false;
-            }
+            isDelete = filter.mode == SearchMode.remove || filter.mode == SearchMode.in_selection;
 
             Match compiled = SearchCompiler.compile(filter);
             this.match = filter.inverted ? new Not(compiled) : compiled;

@@ -518,9 +518,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
                 return false;
         }
         if ((checkRes & Command.IS_INCOMPLETE) != 0) {
-            boolean answer = showConfirmOutlyingOperationDialog(operation + "_incomplete", incompleteDialogMessage, dialogTitle);
-            if (!answer)
-                return false;
+            return showConfirmOutlyingOperationDialog(operation + "_incomplete", incompleteDialogMessage, dialogTitle);
         }
         return true;
     }
