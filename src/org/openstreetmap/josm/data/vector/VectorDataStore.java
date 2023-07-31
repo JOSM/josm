@@ -79,7 +79,7 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
                 // This pretty much does the "right" thing
                 mergeWays(mergedRelation);
             } else if (!(primitive instanceof IWay)) {
-                // Can't merge, ever (one of the childs is a node/relation)
+                // Can't merge, ever (one of the children is a node/relation)
                 mergedRelation.remove(JOSM_MERGE_TYPE_KEY);
             }
         } else if (mergedRelation != null && primitive instanceof VectorRelation) {

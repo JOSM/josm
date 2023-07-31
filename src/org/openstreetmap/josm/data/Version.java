@@ -45,7 +45,7 @@ public class Version {
     private boolean isLocalBuild;
 
     /**
-     * Initializes the version infos from the revision resource file
+     * Initializes the version info from the revision resource file
      *
      * @param revisionInfo the revision info from a revision resource file as InputStream
      */

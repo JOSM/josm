@@ -79,7 +79,7 @@ class DataStore<O extends IPrimitive, N extends INode, W extends IWay<N>, R exte
 
     /**
      * Add a datasource to this data set
-     * @param dataSource The data soure to add
+     * @param dataSource The datasource to add
      */
     public void addDataSource(DataSource dataSource) {
         this.dataSources.add(dataSource);

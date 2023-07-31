@@ -284,7 +284,7 @@ public class OffsetBookmark {
     }
 
     /**
-     * Stores the bookmakrs in the settings.
+     * Stores the bookmarks in the settings.
      */
     public static void saveBookmarks() {
         StructUtils.putListOfStructs(Config.getPref(), "imagery.offsetbookmarks", allBookmarks, OffsetBookmark.class);

@@ -137,7 +137,7 @@ public final class Vector3D {
     }
 
     /**
-     * Get the polar angle cossine (inclination)
+     * Get the polar angle cosine (inclination)
      *
      * @return The polar angle cosine
      */

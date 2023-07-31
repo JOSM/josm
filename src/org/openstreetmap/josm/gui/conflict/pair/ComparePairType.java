@@ -22,7 +22,7 @@ public enum ComparePairType {
     MY_WITH_MERGED(tr("My with Merged"), MY_ENTRIES, MERGED_ENTRIES),
 
     /**
-     * compare their version of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with the merged veresion
+     * compare their version of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with the merged version
      */
     THEIR_WITH_MERGED(tr("Their with Merged"), THEIR_ENTRIES, MERGED_ENTRIES);
 

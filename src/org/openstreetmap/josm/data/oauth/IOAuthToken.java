@@ -12,7 +12,7 @@ public interface IOAuthToken {
     /**
      * Sign a client
      * @param client The client to sign
-     * @throws OAuthException if the OAuth token type is unknown (AKA we do't know how to handle it)
+     * @throws OAuthException if the OAuth token type is unknown (AKA we don't know how to handle it)
      */
     void sign(HttpClient client) throws OAuthException;
 

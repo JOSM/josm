@@ -130,7 +130,7 @@ public final class Geometry {
                 List<Node> way1Nodes = newNodes[seg1Way];
                 List<Node> way2Nodes = newNodes[seg2Way];
 
-                //iterate over primary segmemt
+                //iterate over primary segment
                 for (int seg1Pos = 0; seg1Pos + 1 < way1Nodes.size(); seg1Pos++) {
 
                     //iterate over secondary segment

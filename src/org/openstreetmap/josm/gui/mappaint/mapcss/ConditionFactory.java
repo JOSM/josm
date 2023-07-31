@@ -211,7 +211,7 @@ public final class ConditionFactory {
 
         /**
          * Create a new float operation that compares two float values
-         * @param comparatorResult A function to mapt the result of the comparison
+         * @param comparatorResult A function to map the result of the comparison
          */
         Op(IntFunction<Boolean> comparatorResult) {
             this.function = (test, prototype) -> {

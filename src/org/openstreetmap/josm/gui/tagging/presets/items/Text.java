@@ -267,7 +267,7 @@ public class Text extends KeyedItem {
     /**
      * Set the value template.
      * @param pattern The value_template pattern.
-     * @throws SAXException If an error occured while parsing.
+     * @throws SAXException If an error occurred while parsing.
      */
     public void setValue_template(String pattern) throws SAXException { // NOPMD
         try {

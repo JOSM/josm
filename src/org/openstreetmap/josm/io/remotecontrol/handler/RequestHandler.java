@@ -159,7 +159,7 @@ public abstract class RequestHandler {
     }
 
     /**
-     * Returns usage examples for the given command. To be overriden only my handlers that define several commands.
+     * Returns usage examples for the given command. To be overridden only my handlers that define several commands.
      * @param cmd The command asked
      * @return Usage examples for the given command
      * @since 6332
@@ -497,7 +497,7 @@ public abstract class RequestHandler {
     }
 
     /**
-     * Handler that takes an URL as parameter.
+     * Handler that takes a URL as a parameter.
      */
     public abstract static class RawURLParseRequestHandler extends RequestHandler {
         @Override

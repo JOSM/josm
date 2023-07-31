@@ -207,7 +207,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
      * handles everything related to highlighting primitives and way
      * segments for the given pointer position (via MouseEvent) and modifiers.
      * @param e current mouse event
-     * @param modifiers extended mouse modifiers, not necessarly taken from the given mouse event
+     * @param modifiers extended mouse modifiers, not necessarily taken from the given mouse event
      */
     private void addHighlighting(MouseEvent e, int modifiers) {
         if (!drawTargetHighlight)
@@ -255,7 +255,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
      * This function handles all work related to updating the cursor and highlights
      *
      * @param e current mouse event
-     * @param modifiers extended mouse modifiers, not necessarly taken from the given mouse event
+     * @param modifiers extended mouse modifiers, not necessarily taken from the given mouse event
      */
     private void updateCursor(MouseEvent e, int modifiers) {
         if (!MainApplication.isDisplayingMapView())

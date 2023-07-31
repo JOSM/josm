@@ -149,8 +149,7 @@ public class DataSetMerger {
     }
 
     /**
-     * Postprocess the dataset and fix all merged references to point to the actual
-     * data.
+     * Postprocess the dataset and fix all merged references to point to the actual data.
      */
     public void fixReferences() {
         for (Way w : sourceDataSet.getWays()) {
