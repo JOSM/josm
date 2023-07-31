@@ -1566,7 +1566,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (osm != null) {
             if (p.distanceSq(getPoint2D(osm)) <= (4*4)) return true;
             if (osm.isTagged()) return true;
-            return useSelected && osm.isSelected();
+            if (useSelected && osm.isSelected()) return true;
         }
         return false;
     }
