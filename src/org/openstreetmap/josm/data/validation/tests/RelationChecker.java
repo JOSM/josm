@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.ChangeMembersCommand;
@@ -430,17 +431,20 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     }
 
     private void checkLoop(Relation parent, List<Relation> path) {
-        if (path.contains(parent)) {
+        Set<Relation> pathSet = new HashSet<>(path);
+        if (pathSet.contains(parent)) {
             Iterator<List<Relation>> iter = loops.iterator();
+            Set<Relation> loop = new HashSet<>();
             while (iter.hasNext()) {
-                List<Relation> loop = iter.next();
-                if (loop.size() > path.size() && new HashSet<>(loop).containsAll(path)) {
+                loop.addAll(iter.next());
+                if (loop.size() > path.size() && loop.containsAll(path)) {
                     // remove same loop with irrelevant parent
                     iter.remove();
-                } else if (path.size() >= loop.size() && new HashSet<>(path).containsAll(loop)) {
+                } else if (path.size() >= loop.size() && pathSet.containsAll(loop)) {
                     // same or smaller loop is already known
                     return;
                 }
+                loop.clear();
             }
             if (path.get(0).equals(parent)) {
                 path.add(parent);
