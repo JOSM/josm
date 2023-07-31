@@ -525,7 +525,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     public Collection<OsmPrimitive> getIncompleteMembers() {
         return Arrays.stream(members)
                 .map(RelationMember::getMember)
-                .filter(AbstractPrimitive::isIncomplete)
+                .filter(OsmPrimitive::isIncomplete)
                 .collect(Collectors.toSet());
     }
 
