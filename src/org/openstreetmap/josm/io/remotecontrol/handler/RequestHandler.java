@@ -356,12 +356,11 @@ public abstract class RequestHandler {
     protected DownloadParams getDownloadParams() {
         DownloadParams result = new DownloadParams();
         if (args != null) {
-            result = result
-                .withNewLayer(isLoadInNewLayer())
-                .withLayerName(args.get("layer_name"))
-                .withLocked(get("layer_locked"))
-                .withDownloadPolicy(get("download_policy", DownloadPolicy::of, () -> DownloadPolicy.NORMAL))
-                .withUploadPolicy(get("upload_policy", UploadPolicy::of, () -> UploadPolicy.NORMAL));
+            result.withNewLayer(isLoadInNewLayer())
+                    .withLayerName(args.get("layer_name"))
+                    .withLocked(get("layer_locked"))
+                    .withDownloadPolicy(get("download_policy", DownloadPolicy::of, () -> DownloadPolicy.NORMAL))
+                    .withUploadPolicy(get("upload_policy", UploadPolicy::of, () -> UploadPolicy.NORMAL));
         }
         return result;
     }
