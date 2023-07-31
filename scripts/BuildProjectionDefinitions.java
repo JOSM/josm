@@ -92,7 +92,7 @@ public final class BuildProjectionDefinitions {
         }
         if (list.isEmpty())
             throw new AssertionError("EPSG file seems corrupted");
-        Pattern badDmsPattern = Pattern.compile("(\\d+(?:\\.\\d+)?d\\d+(?:\\.\\d+)?')(N|S|E|W)");
+        Pattern badDmsPattern = Pattern.compile("(\\d+(?:\\.\\d+)?d\\d+(?:\\.\\d+)?')([NSEW])");
         for (ProjectionDefinition pd : list) {
             // DMS notation without second causes problems with cs2cs, add 0"
             Matcher matcher = badDmsPattern.matcher(pd.definition);
@@ -144,44 +144,44 @@ public final class BuildProjectionDefinitions {
         }
 
         if (printStats) {
-            System.out.println(String.format("loaded %d entries from %s", epsgJosm.size(), JOSM_EPSG_FILE));
-            System.out.println(String.format("loaded %d entries from %s", epsgProj4.size(), PROJ4_EPSG_FILE));
-            System.out.println(String.format("loaded %d entries from %s", esriProj4.size(), PROJ4_ESRI_FILE));
+            System.out.printf("loaded %d entries from %s%n", epsgJosm.size(), JOSM_EPSG_FILE);
+            System.out.printf("loaded %d entries from %s%n", epsgProj4.size(), PROJ4_EPSG_FILE);
+            System.out.printf("loaded %d entries from %s%n", esriProj4.size(), PROJ4_ESRI_FILE);
             System.out.println();
             System.out.println("some entries from proj.4 have not been included:");
-            System.out.println(String.format(" * already in the maintained JOSM list: %d entries", noInJosm));
+            System.out.printf(" * already in the maintained JOSM list: %d entries%n", noInJosm);
             if (noInProj4 > 0) {
-                System.out.println(String.format(" * ESRI already in the standard EPSG list: %d entries", noInProj4));
+                System.out.printf(" * ESRI already in the standard EPSG list: %d entries%n", noInProj4);
             }
-            System.out.println(String.format(" * deprecated: %d entries", noDeprecated));
-            System.out.println(String.format(" * using +proj=geocent, which is 3D (X,Y,Z) and not useful in JOSM: %d entries", noGeocent));
+            System.out.printf(" * deprecated: %d entries%n", noDeprecated);
+            System.out.printf(" * using +proj=geocent, which is 3D (X,Y,Z) and not useful in JOSM: %d entries%n", noGeocent);
             if (noEllipsoid > 0) {
-                System.out.println(String.format(" * unsupported ellipsoids: %d entries", noEllipsoid));
+                System.out.printf(" * unsupported ellipsoids: %d entries%n", noEllipsoid);
                 System.out.println("   in particular: " + ellipsoidMap);
             }
             if (noBaseProjection > 0) {
-                System.out.println(String.format(" * unsupported base projection: %d entries", noBaseProjection));
+                System.out.printf(" * unsupported base projection: %d entries%n", noBaseProjection);
                 System.out.println("   in particular: " + baseProjectionMap);
             }
             if (noDatumgrid > 0) {
-                System.out.println(String.format(" * requires data file for vertical datum conversion: %d entries", noDatumgrid));
+                System.out.printf(" * requires data file for vertical datum conversion: %d entries%n", noDatumgrid);
                 System.out.println("   in particular: " + datumgridMap);
             }
             if (noNadgrid > 0) {
-                System.out.println(String.format(" * requires data file for datum conversion: %d entries", noNadgrid));
+                System.out.printf(" * requires data file for datum conversion: %d entries%n", noNadgrid);
                 System.out.println("   in particular: " + nadgridMap);
             }
             if (noOmercNoBounds > 0) {
-                System.out.println(String.format(
-                        " * projection is Oblique Mercator (requires bounds), but no bounds specified: %d entries", noOmercNoBounds));
+                System.out.printf(
+                        " * projection is Oblique Mercator (requires bounds), but no bounds specified: %d entries%n", noOmercNoBounds);
             }
             if (noEquatorStereo > 0) {
-                System.out.println(String.format(" * projection is Equatorial Stereographic (see #15970): %d entries", noEquatorStereo));
+                System.out.printf(" * projection is Equatorial Stereographic (see #15970): %d entries%n", noEquatorStereo);
             }
             System.out.println();
-            System.out.println(String.format("written %d entries from %s", noJosm, JOSM_EPSG_FILE));
-            System.out.println(String.format("written %d entries from %s", noProj4, PROJ4_EPSG_FILE));
-            System.out.println(String.format("written %d entries from %s", noEsri, PROJ4_ESRI_FILE));
+            System.out.printf("written %d entries from %s%n", noJosm, JOSM_EPSG_FILE);
+            System.out.printf("written %d entries from %s%n", noProj4, PROJ4_EPSG_FILE);
+            System.out.printf("written %d entries from %s%n", noEsri, PROJ4_ESRI_FILE);
         }
     }
 

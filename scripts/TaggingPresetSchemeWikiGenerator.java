@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * This script generates the wiki content for https://josm.openstreetmap.de/wiki/TaggingPresets#Attributes
+ * This script generates the wiki content for <a href="https://josm.openstreetmap.de/wiki/TaggingPresets#Attributes">TaggingPresets#Attributes</a>
  */
 public final class TaggingPresetSchemeWikiGenerator {
 
