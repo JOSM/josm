@@ -1643,7 +1643,11 @@ public final class Utils {
             throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greater than max ({1})", min, max));
         } else if (val < min) {
             return min;
-        } else return Math.min(val, max);
+        } else if (val > max) {
+            return max;
+        } else {
+            return val;
+        }
     }
 
     /**
@@ -1660,7 +1664,11 @@ public final class Utils {
             throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greater than max ({1})", min, max));
         } else if (val < min) {
             return min;
-        } else return Math.min(val, max);
+        } else if (val > max) {
+            return max;
+        } else {
+            return val;
+        }
     }
 
     /**
