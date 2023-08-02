@@ -550,9 +550,11 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      */
     public Set<OsmPrimitive> getChildPrimitives(Collection<? extends OsmPrimitive> referenceSet) {
         if (referenceSet == null) return null;
+        Collection<? extends OsmPrimitive> referenceActualSet = referenceSet instanceof Set ?
+                (Set<? extends OsmPrimitive>) referenceSet : new HashSet<>(referenceSet);
         return members.stream()
                 .map(RelationMember::getMember)
-                .filter(referenceSet::contains)
+                .filter(referenceActualSet::contains)
                 .collect(Collectors.toSet());
     }
 
