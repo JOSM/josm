@@ -664,14 +664,16 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         }
 
         final Collection<TaggingPreset> matchingPresets;
-        TagMap tags = p.getKeys();
+        TagMap tags;
         if (checkPresetsTypes || checkRegions) {
+            tags = p.getKeys();
             matchingPresets = presetIndex.entrySet().stream()
                     .filter(e -> TaggingPresetItem.matches(e.getValue(), tags))
                     .map(Entry::getKey)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         } else {
             matchingPresets = null;
+            tags = null;
         }
 
         if (checkPresetsTypes) {
@@ -721,7 +723,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     }
                     if (isInRegion == preset.exclude_regions()) {
                         errors.add(TestError.builder(this, Severity.WARNING, INVALID_REGION)
-                                .message(tr("Preset not valid for region"),
+                                .message(tr("Invalid region for this preset"),
                                         marktr("Preset {0} should not be applied in this region"),
                                         tr(preset.getName()))
                                 .primitives(p)

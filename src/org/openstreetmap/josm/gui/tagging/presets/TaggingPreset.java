@@ -145,11 +145,11 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     public transient Set<TaggingPresetType> types;
     /**
-     * list of regions the preset is applicable for
+     * List of regions the preset is applicable for.
      */
     private Set<String> regions;
     /**
-     * If true, invert the meaning of regions
+     * If true, invert the meaning of regions.
      */
     private boolean exclude_regions;
     /**
