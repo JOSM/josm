@@ -145,6 +145,9 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForMy(OsmPrimitive my) {
+        if (conflicts.isEmpty()) {
+            return null;
+        }
         return conflicts.stream()
                 .filter(c -> c.isMatchingMy(my))
                 .findFirst()
@@ -160,6 +163,9 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForTheir(OsmPrimitive their) {
+        if (conflicts.isEmpty()) {
+            return null;
+        }
         return conflicts.stream()
                 .filter(c -> c.isMatchingTheir(their))
                 .findFirst()

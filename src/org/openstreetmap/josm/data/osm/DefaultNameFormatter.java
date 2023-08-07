@@ -29,6 +29,8 @@ import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetNameTemplateList;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -48,6 +50,16 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     private static DefaultNameFormatter instance;
 
     private static final List<NameFormatterHook> formatHooks = new LinkedList<>();
+    private static final CachingProperty<Boolean> PROPERTY_SHOW_ID =
+            new BooleanProperty("osm-primitives.showid", false).cached();
+    private static final CachingProperty<Boolean> PROPERTY_SHOW_ID_NEW_PRIMITIVES =
+            new BooleanProperty("osm-primitives.showid.new-primitives", false).cached();
+    private static final CachingProperty<Boolean> PROPERTY_SHOW_VERSION =
+            new BooleanProperty("osm-primitives.showversion", false).cached();
+    private static final CachingProperty<Boolean> PROPERTY_SHOW_COOR =
+            new BooleanProperty("osm-primitives.showcoor", false).cached();
+    private static final CachingProperty<Boolean> PROPERTY_LOCALIZE_NAME =
+            new BooleanProperty("osm-primitives.localize-name", true).cached();
 
     private static final List<String> HIGHWAY_RAILWAY_WATERWAY_LANDUSE_BUILDING = Arrays.asList(
             marktr("highway"), marktr("railway"), marktr("waterway"), marktr("landuse"), marktr("building"));
@@ -142,15 +154,15 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     protected void decorateNameWithId(StringBuilder name, IPrimitive primitive) {
         int version = primitive.getVersion();
-        if (Config.getPref().getBoolean("osm-primitives.showid")) {
-            long id = Config.getPref().getBoolean("osm-primitives.showid.new-primitives") ?
+        if (Boolean.TRUE.equals(PROPERTY_SHOW_ID.get())) {
+            long id = Boolean.TRUE.equals(PROPERTY_SHOW_ID_NEW_PRIMITIVES.get()) ?
                     primitive.getUniqueId() : primitive.getId();
-            if (Config.getPref().getBoolean("osm-primitives.showversion") && version > 0) {
+            if (version > 0 && Boolean.TRUE.equals(PROPERTY_SHOW_VERSION.get())) {
                 name.append(tr(" [id: {0}, v{1}]", id, version));
             } else {
                 name.append(tr(" [id: {0}]", id));
             }
-        } else if (Config.getPref().getBoolean("osm-primitives.showversion")) {
+        } else if (Boolean.TRUE.equals(PROPERTY_SHOW_VERSION.get())) {
             name.append(tr(" [v{0}]", version));
         }
     }
@@ -187,7 +199,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             } else {
                 preset.nameTemplate.appendText(name, (TemplateEngineDataProvider) node);
             }
-            if (node.isLatLonKnown() && Config.getPref().getBoolean("osm-primitives.showcoor")) {
+            if (node.isLatLonKnown() && Boolean.TRUE.equals(PROPERTY_SHOW_COOR.get())) {
                 name.append(" \u200E(");
                 name.append(CoordinateFormatManager.getDefaultFormat().toString(node, ", "));
                 name.append(")\u200C");
@@ -196,10 +208,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         decorateNameWithId(name, node);
 
         String result = name.toString();
-        return formatHooks.stream().map(hook -> hook.checkFormat(node, result))
-                .filter(Objects::nonNull)
-                .findFirst().orElse(result);
-
+        // This avoids memallocs from Stream map, filter and Optional creation.
+        for (NameFormatterHook hook : formatHooks) {
+            final String checkFormat = hook.checkFormat(node, result);
+            if (checkFormat != null) {
+                return checkFormat;
+            }
+        }
+        return result;
     }
 
     private final Comparator<INode> nodeComparator = Comparator.comparing(this::format);
@@ -274,7 +290,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private static String formatLocalName(IPrimitive osm) {
-        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
+        if (Boolean.TRUE.equals(PROPERTY_LOCALIZE_NAME.get())) {
             return osm.getLocalName();
         } else {
             return osm.getName();
@@ -282,7 +298,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private static String formatLocalName(HistoryOsmPrimitive osm) {
-        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
+        if (Boolean.TRUE.equals(PROPERTY_LOCALIZE_NAME.get())) {
             return osm.getLocalName();
         } else {
             return osm.getName();
@@ -529,7 +545,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param primitive the primitive
      */
     protected void decorateNameWithId(StringBuilder name, HistoryOsmPrimitive primitive) {
-        if (Config.getPref().getBoolean("osm-primitives.showid")) {
+        if (Boolean.TRUE.equals(PROPERTY_SHOW_ID.get())) {
             name.append(tr(" [id: {0}]", primitive.getId()));
         }
     }

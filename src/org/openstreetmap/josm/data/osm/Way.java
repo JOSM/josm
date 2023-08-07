@@ -634,7 +634,17 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * @since 13033
      */
     public boolean hasOnlyLocatableNodes() {
-        return Arrays.stream(nodes).allMatch(Node::isLatLonKnown);
+        // This is used in various places, some of which are on the UI thread.
+        // If this is called many times, the memory allocations can become prohibitive, if
+        // we use Java streams.
+        // This can be easily tested by loading a large amount of ways into JOSM, and then
+        // selecting everything.
+        for (Node node : nodes) {
+            if (!node.isLatLonKnown()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
