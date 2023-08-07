@@ -131,6 +131,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to check presets
      */
     public static final String PREF_CHECK_PRESETS_TYPES = PREFIX + ".checkPresetsTypes";
+    public static final String PREF_CHECK_DEPRECATED = PREFIX + ".checkDeprecated";
 
     /**
      * The preference key for source files
@@ -159,6 +160,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to search for presets - used before upload
      */
     public static final String PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD = PREF_CHECK_PRESETS_TYPES + BEFORE_UPLOAD;
+    public static final String PREF_CHECK_DEPRECATED_BEFORE_UPLOAD = PREF_CHECK_DEPRECATED + BEFORE_UPLOAD;
 
     /**
      * The preference key for the list of tag keys that are allowed to be the same on a multipolygon and an outer way
@@ -175,18 +177,21 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected boolean checkComplex;
     protected boolean checkFixmes;
     protected boolean checkPresetsTypes;
+    protected boolean checkDeprecated;
 
     protected JCheckBox prefCheckKeys;
     protected JCheckBox prefCheckValues;
     protected JCheckBox prefCheckComplex;
     protected JCheckBox prefCheckFixmes;
     protected JCheckBox prefCheckPresetsTypes;
+    protected JCheckBox prefCheckDeprecated;
 
     protected JCheckBox prefCheckKeysBeforeUpload;
     protected JCheckBox prefCheckValuesBeforeUpload;
     protected JCheckBox prefCheckComplexBeforeUpload;
     protected JCheckBox prefCheckFixmesBeforeUpload;
     protected JCheckBox prefCheckPresetsTypesBeforeUpload;
+    protected JCheckBox prefCheckDeprecatedBeforeUpload;
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final int EMPTY_VALUES                     = 1200;
@@ -210,6 +215,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected static final int MULTIPOLYGON_INCOMPLETE          = 1219;
     protected static final int MULTIPOLYGON_MAYBE_NO_AREA       = 1220;
     protected static final int MULTIPOLYGON_SAME_TAG_ON_OUTER   = 1221;
+    protected static final int DEPRECATED_TAG = 1223;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected EditableList sourcesList;
@@ -654,15 +660,22 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         checkMultipolygonTags(p);
         }
 
-        if (checkPresetsTypes) {
-            TagMap tags = p.getKeys();
-            TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
-            EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
-
-            Collection<TaggingPreset> matchingPresets = presetIndex.entrySet().stream()
+        final Collection<TaggingPreset> matchingPresets;
+        TagMap tags = p.getKeys();
+        if (checkPresetsTypes || checkDeprecated) {
+            matchingPresets = presetIndex.entrySet().stream()
                     .filter(e -> TaggingPresetItem.matches(e.getValue(), tags))
                     .map(Entry::getKey)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            matchingPresets = null;
+        }
+        if (checkPresetsTypes) {
+
+            TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
+            EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
+
+
             Collection<TaggingPreset> matchingPresetsOK = matchingPresets.stream().filter(
                     tp -> tp.typeMatches(presetTypes)).collect(Collectors.toList());
             Collection<TaggingPreset> matchingPresetsKO = matchingPresets.stream().filter(
@@ -682,6 +695,18 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                             .message(tr("Object type not in preset"),
                                     marktr("Object type {0} is not supported by tagging preset: {1}"),
                                     tr(presetType.getName()), tp.getLocaleName())
+                            .primitives(p)
+                            .build());
+                }
+            }
+        }
+        if (checkDeprecated) {
+            for (TaggingPreset preset : matchingPresets) {
+                if (preset.deprecated()) {
+                    errors.add(TestError.builder(this, Severity.ERROR, DEPRECATED_TAG)
+                            .message(tr("Preset is deprecated"),
+                                    marktr("Preset {0} should not be used"),
+                                    tr(preset.getName()))
                             .primitives(p)
                             .build());
                 }
@@ -1099,6 +1124,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (isBeforeUpload) {
             checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
         }
+
+        checkDeprecated = includeOtherSeverity && Config.getPref().getBoolean(PREF_CHECK_DEPRECATED, true);
+        if (isBeforeUpload) {
+            checkDeprecated = checkDeprecated && Config.getPref().getBoolean(PREF_CHECK_DEPRECATED_BEFORE_UPLOAD, true);
+        }
         deprecatedChecker = OsmValidator.getTest(MapCSSTagChecker.class);
         ignoreForOuterMPSameTagCheck.addAll(Config.getPref().getList(PREF_KEYS_IGNORE_OUTER_MP_SAME_TAG, Collections.emptyList()));
     }
@@ -1111,7 +1141,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
     @Override
     public void visit(Collection<OsmPrimitive> selection) {
-        if (checkKeys || checkValues || checkComplex || checkFixmes || checkPresetsTypes) {
+        if (checkKeys || checkValues || checkComplex || checkFixmes || checkPresetsTypes || checkDeprecated) {
             super.visit(selection);
         }
     }
@@ -1176,6 +1206,14 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         prefCheckPresetsTypesBeforeUpload = new JCheckBox();
         prefCheckPresetsTypesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckPresetsTypesBeforeUpload, a);
+
+        prefCheckDeprecated = new JCheckBox(tr("Check for deprecated tags"), Config.getPref().getBoolean(PREF_CHECK_DEPRECATED, true));
+        prefCheckDeprecated.setToolTipText(tr("Check whether the preset is deprecated"));
+        testPanel.add(prefCheckDeprecated, GBC.std().insets(20, 0, 0, 0));
+
+        prefCheckDeprecatedBeforeUpload = new JCheckBox();
+        prefCheckDeprecatedBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_DEPRECATED_BEFORE_UPLOAD, true));
+        testPanel.add(prefCheckDeprecatedBeforeUpload, a);
     }
 
     /**
@@ -1198,11 +1236,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         Config.getPref().putBoolean(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES, prefCheckPresetsTypes.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_DEPRECATED, prefCheckDeprecated.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, prefCheckPresetsTypesBeforeUpload.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_DEPRECATED_BEFORE_UPLOAD, prefCheckDeprecatedBeforeUpload.isSelected());
         return Config.getPref().putList(PREF_SOURCES, sourcesList.getItems());
     }
 

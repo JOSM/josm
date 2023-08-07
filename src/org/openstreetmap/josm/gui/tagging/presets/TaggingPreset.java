@@ -139,7 +139,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     /**
      * True if the preset is deprecated
      */
-    private boolean deprecated = false;
+    private boolean deprecated;
 
     /**
      * The types as preparsed collection.

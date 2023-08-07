@@ -38,7 +38,6 @@ import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.presets.items.ComboMultiSelect;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
@@ -64,13 +63,12 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
     private static final Pattern PATTERN_PUNCTUATION = Pattern.compile("\\p{Punct}", Pattern.UNICODE_CHARACTER_CLASS);
 
-    private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
-    private static final BooleanProperty ONLY_APPLICABLE = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
-    private static final BooleanProperty DISPLAY_DEPRECATED = new BooleanProperty("taggingpreset.dialog.display-deprecated", true);
-
-    private final JCheckBox ckOnlyApplicable;
-    private final JCheckBox ckSearchInTags;
-    private final JCheckBox ckDeprecated;
+    PresetSearchFilter ONLY_APPLICABLE = PresetSearchFilter.ONLY_APPLICABLE;
+    PresetSearchFilter SEARCH_IN_TAGS = PresetSearchFilter.SEARCH_IN_TAGS;
+    PresetSearchFilter DEPRECATED_TAGS = PresetSearchFilter.DEPRECATED_TAGS;
+    private JCheckBox ckOnlyApplicable;
+    private JCheckBox ckSearchInTags;
+    private JCheckBox ckDeprecated;
     private final Set<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
     private final transient PresetClassifications classifications = new PresetClassifications();
@@ -201,9 +199,17 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
      * Constructs a new {@code TaggingPresetSelector}.
      * @param displayOnlyApplicable if {@code true} display "Show only applicable to selection" checkbox
      * @param displaySearchInTags if {@code true} display "Search in tags" checkbox
-     * @param displayDeprecated if {@code true} display "Applicable in region" checkbox
      */
     public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags, boolean displayDeprecated) {
+        this(displayOnlyApplicable ? PresetSearchFilter.ONLY_APPLICABLE : null, displaySearchInTags ? PresetSearchFilter.SEARCH_IN_TAGS : null,
+                displayDeprecated ? PresetSearchFilter.DEPRECATED_TAGS : null);
+    }
+
+    /**
+     * Called from the {@code TaggingPresetConstructor}.
+     *
+     */
+    public TaggingPresetSelector(PresetSearchFilter... options) {
         super();
         lsResult.setCellRenderer(new ResultListCellRenderer());
         classifications.loadPresets(TaggingPresets.getTaggingPresets());
@@ -212,32 +218,30 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         JPanel pnChecks = new JPanel();
         pnChecks.setLayout(new BoxLayout(pnChecks, BoxLayout.Y_AXIS));
 
-        if (displayOnlyApplicable) {
-            ckOnlyApplicable = new JCheckBox();
-            ckOnlyApplicable.setText(tr("Show only applicable to selection"));
-            pnChecks.add(ckOnlyApplicable);
-            ckOnlyApplicable.addItemListener(e -> filterItems());
-        } else {
-            ckOnlyApplicable = null;
-        }
-
-        if (displaySearchInTags) {
-            ckSearchInTags = new JCheckBox();
-            ckSearchInTags.setText(tr("Search in tags"));
-            ckSearchInTags.setSelected(SEARCH_IN_TAGS.get());
-            ckSearchInTags.addItemListener(e -> filterItems());
-            pnChecks.add(ckSearchInTags);
-        } else {
-            ckSearchInTags = null;
-        }
-
-        if (displayDeprecated) {
-            ckDeprecated = new JCheckBox();
-            ckDeprecated.setText(tr("Show deprecated tags"));
-            pnChecks.add(ckDeprecated);
-            ckDeprecated.addItemListener(e -> filterItems());
-        } else {
-            ckDeprecated = null;
+        for (PresetSearchFilter option : options) {
+            switch(option) {
+                case ONLY_APPLICABLE: {
+                    ckOnlyApplicable = new JCheckBox();
+                    ckOnlyApplicable.setText(tr(PresetSearchFilter.ONLY_APPLICABLE.getText()));
+                    pnChecks.add(ckOnlyApplicable);
+                    ckOnlyApplicable.addItemListener(e -> filterItems());
+                    break;
+                }
+                case SEARCH_IN_TAGS: {
+                    ckSearchInTags = new JCheckBox();
+                    ckSearchInTags.setText(tr(PresetSearchFilter.ONLY_APPLICABLE.getText()));
+                    ckSearchInTags.setSelected(SEARCH_IN_TAGS.getPref(PresetSearchFilter.SEARCH_IN_TAGS));
+                    ckSearchInTags.addItemListener(e -> filterItems());
+                    pnChecks.add(ckSearchInTags);
+                    break;
+                }
+                case DEPRECATED_TAGS: {
+                    ckDeprecated = new JCheckBox();
+                    ckDeprecated.setText(tr(PresetSearchFilter.DEPRECATED_TAGS.getText()));
+                    pnChecks.add(ckDeprecated);
+                    ckDeprecated.addItemListener(e -> filterItems());
+                }
+            }
         }
 
         add(pnChecks, BorderLayout.SOUTH);
@@ -264,14 +268,12 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     protected synchronized void filterItems() {
         //TODO Save favorites to file
         String text = edSearchText.getText().toLowerCase(Locale.ENGLISH);
-        boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
-        boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
-        boolean isDeprecated = ckDeprecated != null && ckDeprecated.isSelected();
 
         DataSet ds = OsmDataManager.getInstance().getEditDataSet();
         Collection<OsmPrimitive> selected = (ds == null) ? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
-                text, onlyApplicable, inTags, isDeprecated, getTypesInSelection(), selected);
+                text, ONLY_APPLICABLE.getPref(PresetSearchFilter.ONLY_APPLICABLE), SEARCH_IN_TAGS.getPref(PresetSearchFilter.SEARCH_IN_TAGS),
+                DEPRECATED_TAGS.getPref(PresetSearchFilter.DEPRECATED_TAGS), getTypesInSelection(), selected);
 
         final TaggingPreset oldPreset = getSelectedPreset();
         lsResultModel.setItems(Utils.transform(result, x -> x.preset));
@@ -417,7 +419,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     public synchronized void init() {
         if (ckOnlyApplicable != null) {
             ckOnlyApplicable.setEnabled(!getTypesInSelection().isEmpty());
-            ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.get());
+            ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.getPref(PresetSearchFilter.ONLY_APPLICABLE));
         }
         super.init();
     }
@@ -437,13 +439,13 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
      */
     public void savePreferences() {
         if (ckSearchInTags != null) {
-            SEARCH_IN_TAGS.put(ckSearchInTags.isSelected());
+            SEARCH_IN_TAGS.setPref(PresetSearchFilter.SEARCH_IN_TAGS, ckSearchInTags.isSelected());
         }
         if (ckOnlyApplicable != null && ckOnlyApplicable.isEnabled()) {
-            ONLY_APPLICABLE.put(ckOnlyApplicable.isSelected());
+            ONLY_APPLICABLE.setPref(PresetSearchFilter.ONLY_APPLICABLE, ckOnlyApplicable.isSelected());
         }
         if (ckDeprecated != null && ckDeprecated.isEnabled()) {
-            DISPLAY_DEPRECATED.put(ckDeprecated.isSelected());
+            DEPRECATED_TAGS.setPref(PresetSearchFilter.DEPRECATED_TAGS, ckDeprecated.isSelected());
         }
     }
 
