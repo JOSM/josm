@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2023072502, Last Updated Wed Jul 26 07:07:01 2023 UTC
+        // Taken from Version 2023080700, Last Updated Mon Aug  7 07:07:01 2023 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -947,7 +947,6 @@ public final class DomainValidator extends AbstractValidator {
         "mtr", // mtr MTR Corporation Limited
         "museum", // museum Museum Domain Management Association
         "music", // music DotMusic Limited
-        "mutual", // mutual Northwestern Mutual MU TLD Registry, LLC
         "nab", // nab National Australia Bank Limited
         "nagoya", // nagoya GMO Registry, Inc.
         "name", // name VeriSign Information Services, Inc.
