@@ -735,7 +735,13 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        initFromData(MainApplication.getLayerManager().getActiveData());
+        // I have no clue how it would be empty, but just in case use the original code.
+        // {@code null} is used during initialization
+        if (event == null || Utils.isEmpty(event.getEvents())) {
+            initFromData(MainApplication.getLayerManager().getActiveData());
+        } else {
+            dataChangedIndividualEvents(event);
+        }
     }
 
     @Override

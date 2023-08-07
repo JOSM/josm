@@ -648,7 +648,7 @@ public final class PluginHandler {
     }
 
     private static void alertJavaUpdateRequired(Component parent, String plugin, int requiredVersion) {
-        final ButtonSpec[] options = new ButtonSpec[] {
+        final ButtonSpec[] options = {
                 new ButtonSpec(tr("OK"), ImageProvider.get("ok"), tr("Click to close the dialog"), null),
                 new ButtonSpec(tr("Update Java"), ImageProvider.get("java"), tr("Update Java"), null)
         };
