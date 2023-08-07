@@ -77,6 +77,8 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.ResourceProvider;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
@@ -645,12 +647,32 @@ public final class PluginHandler {
                 ));
     }
 
-    private static void logJavaUpdateRequired(String plugin, int requiredVersion) {
-        Logging.warn(
-                tr("Plugin {0} requires Java version {1}. The current Java version is {2}. "
-                        +"You have to update Java in order to use this plugin.",
+    private static void alertJavaUpdateRequired(Component parent, String plugin, int requiredVersion) {
+        final ButtonSpec[] options = new ButtonSpec[] {
+                new ButtonSpec(tr("OK"), ImageProvider.get("ok"), tr("Click to close the dialog"), null),
+                new ButtonSpec(tr("Update Java"), ImageProvider.get("java"), tr("Update Java"), null)
+        };
+        final int selected = HelpAwareOptionPane.showOptionDialog(
+                parent,
+                "<html>" + tr("Plugin {0} requires Java version {1}. The current Java version is {2}.<br>"
+                                + "You have to update Java in order to use this plugin.",
                         plugin, Integer.toString(requiredVersion), Utils.getJavaVersion()
-                ));
+                ) + "</html>",
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[0],
+                null
+        );
+        if (selected == 1) {
+            if (Utils.isRunningJavaWebStart()) {
+                OpenBrowser.displayUrl(Config.getPref().get("openwebstart.download.url", "https://openwebstart.com/download/"));
+            } else if (!Utils.isRunningWebStart()) {
+                final String javaUrl = PlatformManager.getPlatform().getJavaUrl();
+                OpenBrowser.displayUrl(javaUrl);
+            }
+        }
     }
 
     private static void alertJOSMUpdateRequired(Component parent, String plugin, int requiredVersion) {
@@ -662,7 +684,7 @@ public final class PluginHandler {
                 ),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
-                ht("/Plugin/Loading#JOSMUpdateRequired")
+                null
         );
     }
 
@@ -687,8 +709,7 @@ public final class PluginHandler {
 
         // make sure the plugin is compatible with the current Java version
         if (plugin.localminjavaversion > Utils.getJavaVersion()) {
-            // Just log a warning until we switch to Java 11 so that javafx plugin does not trigger a popup
-            logJavaUpdateRequired(plugin.name, plugin.localminjavaversion);
+            alertJavaUpdateRequired(parent, plugin.name, plugin.localminjavaversion);
             return false;
         }
 

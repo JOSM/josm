@@ -312,10 +312,8 @@ public interface PlatformHook {
      * @since 18580
      */
     default void warnSoonToBeUnsupportedJava(JavaExpirationCallback callback) {
-        // Java 11 is our next minimum version, and OpenWebStart should be replacing Oracle WebStart
-        // We'd go to 17, but some Linux distributions (Debian) default to Java 11.
-        // And OpenWebStart currently doesn't have Java 17 JREs.
-        if (Utils.getJavaVersion() < 11 && !Utils.isRunningWebStart()) {
+        // Java 17 is our next minimum version, and OpenWebStart should be replacing Oracle WebStart
+        if (Utils.getJavaVersion() < 17 && !Utils.isRunningWebStart()) {
             String latestVersion = Utils.getJavaLatestVersion();
             String currentVersion = Utils.getSystemProperty("java.version");
             // #17831 WebStart may be launched with an expired JRE but then launching JOSM with up-to-date JRE
@@ -333,7 +331,7 @@ public interface PlatformHook {
      * @since 18580
      */
     default String getJavaUrl() {
-        StringBuilder defaultDownloadUrl = new StringBuilder("https://www.azul.com/downloads/?version=java-17-lts&package=jre-fx");
+        StringBuilder defaultDownloadUrl = new StringBuilder("https://www.azul.com/downloads/?version=java-17-lts");
         if (PlatformManager.isPlatformWindows()) {
             defaultDownloadUrl.append("&os=windows");
         } else if (PlatformManager.isPlatformOsx()) {
@@ -347,16 +345,16 @@ public interface PlatformHook {
             // for PROCESSOR_ARCHITEW6432
             if ("x86_64".equals(osArch) || "amd64".equals(osArch)
                     || "AMD64".equalsIgnoreCase(System.getenv("PROCESSOR_ARCHITEW6432"))) {
-                defaultDownloadUrl.append("&architecture=x86-64-bit");
+                defaultDownloadUrl.append("&architecture=x86-64-bit").append("&package=jdk-fx"); // jdk-fx has an installer
             } else if ("aarch64".equals(osArch)) {
-                defaultDownloadUrl.append("&architecture=arm-64-bit");
+                defaultDownloadUrl.append("&architecture=arm-64-bit").append("&package=jdk-fx"); // jdk-fx has an installer
             } else if ("x86".equals(osArch)) {
                 // Honestly, just about everyone should be on x86_64 at this point. But just in case someone
                 // is running JOSM on a 10-year-old computer. They'd probably be better off running a RPi.
-                defaultDownloadUrl.append("&architecture=x86-32-bit");
+                defaultDownloadUrl.append("&architecture=x86-32-bit").append("&package=jdk"); // jdk has an installer
             } // else user will have to figure it out themselves.
         }
-        defaultDownloadUrl.append("#download-openjdk"); // Scrolls to download section
+        defaultDownloadUrl.append("#zulu"); // Scrolls to download section
         return defaultDownloadUrl.toString();
     }
 
