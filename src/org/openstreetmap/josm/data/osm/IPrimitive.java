@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -544,5 +545,17 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
         } else if (p instanceof IRelation<?>) {
             ((IRelation<?>) p).setMembers(null);
         }
+    }
+
+    /**
+     * Get child primitives that are referred by this primitive.
+     * {@link Relation}: Members of the relation
+     * {@link Way}: Nodes used by the way
+     * {@link Node}: None
+     * @return List of child primitives
+     * @since xxx
+     */
+    default List<? extends IPrimitive> getChildren() {
+        return Collections.emptyList();
     }
 }

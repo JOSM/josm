@@ -45,6 +45,11 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     @Override
+    public List<Node> getChildren() {
+        return getNodes();
+    }
+
+    @Override
     public void setNodes(List<Node> nodes) {
         checkDatasetNotReadOnly();
         boolean locked = writeLock();

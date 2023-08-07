@@ -427,6 +427,11 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     }
 
     @Override
+    public List<OsmPrimitive> getChildren() {
+        return getMemberPrimitivesList();
+    }
+
+    @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.RELATION;
     }

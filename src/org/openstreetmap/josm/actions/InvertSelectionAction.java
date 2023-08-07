@@ -22,7 +22,7 @@ public class InvertSelectionAction extends JosmAction {
         super(tr("Invert Selection"), "invert_selection", tr("Invert Selection"),
                 Shortcut.registerShortcut("selection:invertselection",
                 tr("Selection: {0}", tr("Invert Selection")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true);
-                setHelpId(ht("/Action/InvertSelection"));
+        setHelpId(ht("/Action/InvertSelection"));
     }
 
     @Override

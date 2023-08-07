@@ -96,6 +96,7 @@ import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SearchNotesDownloadAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.SelectNonBranchingWaySequencesAction;
+import org.openstreetmap.josm.actions.SelectSharedChildObjectsAction;
 import org.openstreetmap.josm.actions.SessionSaveAction;
 import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
@@ -319,6 +320,8 @@ public class MainMenu extends JMenuBar {
     public final InvertSelectionAction invertSelection = new InvertSelectionAction();
     /** Selection / Non-branching way sequences */
     public final SelectNonBranchingWaySequencesAction nonBranchingWaySequences = new SelectNonBranchingWaySequencesAction();
+    /** Selection / Shared Child Objects */
+    public final SelectSharedChildObjectsAction sharedChildObjects = new SelectSharedChildObjectsAction();
 
     /* Audio menu */
     /** Audio / Play/Pause */
@@ -863,6 +866,7 @@ public class MainMenu extends JMenuBar {
         add(selectionMenu, unselectAll);
         add(selectionMenu, invertSelection, true);
         add(selectionMenu, nonBranchingWaySequences);
+        add(selectionMenu, sharedChildObjects, true);
 
         add(toolsMenu, splitWay);
         add(toolsMenu, combineWay);
