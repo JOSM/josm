@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.Attributes;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -62,11 +64,16 @@ public class PluginListParser {
             String name = null;
             String url = null;
             Attributes manifest = new Attributes();
+            final Pattern spaceColonSpace = Pattern.compile("\\s*:\\s*", Pattern.UNICODE_CHARACTER_CLASS);
+            final Matcher matcher = spaceColonSpace.matcher("");
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
-                    final String[] keyValue = line.split("\\s*:\\s*", 2);
-                    if (keyValue.length >= 2)
-                        manifest.put(new Attributes.Name(keyValue[0].substring(1)), keyValue[1]);
+                    matcher.reset(line);
+                    if (matcher.find() && matcher.start() > 0 && matcher.end() < line.length()) {
+                        final String key = line.substring(1, matcher.start());
+                        final String value = line.substring(matcher.end());
+                        manifest.put(new Attributes.Name(key), value);
+                    }
                     continue;
                 }
                 addPluginInformation(ret, name, url, manifest);

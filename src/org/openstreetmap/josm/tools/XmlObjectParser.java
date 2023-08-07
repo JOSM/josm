@@ -9,7 +9,6 @@ import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -189,6 +188,10 @@ public class XmlObjectParser implements Iterable<Object> {
         private final boolean both;
         private final Map<String, Field> fields = new HashMap<>();
         private final Map<String, Method> methods = new HashMap<>();
+        /** This is used to avoid array copies in {@link #getUncachedMethod(String)}. Do not modify. */
+        private Method[] cachedKlassMethods;
+        /** This is used to avoid array copies in {@link #getUncachedField(String)}. Do not modify. */
+        private Field[] cachedKlassFields;
 
         Entry(Class<?> klass, boolean onStart, boolean both) {
             this.klass = klass;
@@ -197,17 +200,47 @@ public class XmlObjectParser implements Iterable<Object> {
         }
 
         Field getField(String s) {
-            return fields.computeIfAbsent(s, ignore -> Arrays.stream(klass.getFields())
-                    .filter(f -> f.getName().equals(s))
-                    .findFirst()
-                    .orElse(null));
+            return fields.computeIfAbsent(s, this::getUncachedField);
+        }
+
+        /**
+         * Get a field (uncached in {@link #fields})
+         * @implNote Please profile startup when changing
+         * @param s The field to get
+         * @return The field, or {@code null}.
+         */
+        private Field getUncachedField(String s) {
+            if (this.cachedKlassFields == null) {
+                this.cachedKlassFields = klass.getFields();
+            }
+            for (Field field : this.cachedKlassFields) {
+                if (field.getName().equals(s)) {
+                    return field;
+                }
+            }
+            return null;
         }
 
         Method getMethod(String s) {
-            return methods.computeIfAbsent(s, ignore -> Arrays.stream(klass.getMethods())
-                    .filter(m -> m.getName().equals(s) && m.getParameterTypes().length == 1)
-                    .findFirst()
-                    .orElse(null));
+            return methods.computeIfAbsent(s, this::getUncachedMethod);
+        }
+
+        /**
+         * Get an uncached method (in {@link #methods})
+         * @implNote Please profile startup when changing
+         * @param s The method to find
+         * @return The method or {@code null}.
+         */
+        private Method getUncachedMethod(String s) {
+            if (cachedKlassMethods == null) {
+                cachedKlassMethods = klass.getMethods();
+            }
+            for (Method method : cachedKlassMethods) {
+                if (method.getParameterCount() == 1 && method.getName().equals(s)) {
+                    return method;
+                }
+            }
+            return null;
         }
     }
 

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -82,7 +84,8 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     private static File[] listFiles(File pluginsDirectory, final String regex) {
-        return pluginsDirectory.listFiles((FilenameFilter) (dir, name) -> name.matches(regex));
+        final Matcher matcher = Pattern.compile(regex).matcher("");
+        return pluginsDirectory.listFiles((dir, name) -> matcher.reset(name).matches());
     }
 
     protected void scanSiteCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
