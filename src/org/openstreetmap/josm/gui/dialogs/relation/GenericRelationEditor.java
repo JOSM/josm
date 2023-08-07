@@ -123,7 +123,6 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     /** the tag table and its model */
     private final TagEditorPanel tagEditorPanel;
     private final ReferringRelationsBrowser referrerBrowser;
-    private final ReferringRelationsBrowserModel referrerModel;
 
     /** the member table and its model */
     private final MemberTable memberTable;
@@ -153,18 +152,6 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      */
     private final SelectAction selectAction;
     /**
-     * Action for performing the {@link DuplicateRelationAction}
-     */
-    private final DuplicateRelationAction duplicateAction;
-    /**
-     * Action for performing the {@link DeleteCurrentRelationAction}
-     */
-    private final DeleteCurrentRelationAction deleteAction;
-    /**
-     * Action for performing the {@link OKAction}
-     */
-    private final OKAction okAction;
-    /**
      * Action for performing the {@link CancelAction}
      */
     private final CancelAction cancelAction;
@@ -174,12 +161,12 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     private final ArrayList<FlavorListener> clipboardListeners = new ArrayList<>();
 
     private Component selectedTabPane;
-    private JTabbedPane tabbedPane;
+    private final JTabbedPane tabbedPane;
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
      * selects "ok" in the editor.
-     *
+     * <p>
      * If no relation is given, will create an editor for a new relation.
      *
      * @param layer the {@link OsmDataLayer} the new or edited relation belongs to
@@ -201,9 +188,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
 
             @Override
             public Collection<OsmPrimitive> getSelection() {
-                Relation relation = new Relation();
-                tagEditorPanel.getModel().applyToPrimitive(relation);
-                return Collections.<OsmPrimitive>singletonList(relation);
+                return Collections.singletonList(getRelation());
             }
         };
 
@@ -213,7 +198,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         memberTableModel.register();
         selectionTableModel = new SelectionTableModel(getLayer());
         selectionTableModel.register();
-        referrerModel = new ReferringRelationsBrowserModel(relation);
+        ReferringRelationsBrowserModel referrerModel = new ReferringRelationsBrowserModel(relation);
 
         tagEditorPanel = new TagEditorPanel(relation, presetHandler);
         populateModels(relation);
@@ -270,15 +255,18 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         refreshAction = new RefreshAction(actionAccess);
         applyAction = new ApplyAction(actionAccess);
         selectAction = new SelectAction(actionAccess);
-        duplicateAction = new DuplicateRelationAction(actionAccess);
-        deleteAction = new DeleteCurrentRelationAction(actionAccess);
+        // Action for performing the {@link DuplicateRelationAction}
+        final DuplicateRelationAction duplicateAction = new DuplicateRelationAction(actionAccess);
+        // Action for performing the {@link DeleteCurrentRelationAction}
+        final DeleteCurrentRelationAction deleteAction = new DeleteCurrentRelationAction(actionAccess);
 
         this.memberTableModel.addTableModelListener(applyAction);
         this.tagEditorPanel.getModel().addTableModelListener(applyAction);
 
         addPropertyChangeListener(deleteAction);
 
-        okAction = new OKAction(actionAccess);
+        // Action for performing the {@link OKAction}
+        final OKAction okAction = new OKAction(actionAccess);
         cancelAction = new CancelAction(actionAccess);
 
         getContentPane().add(buildToolBar(refreshAction, applyAction, selectAction, duplicateAction, deleteAction), BorderLayout.NORTH);
@@ -517,7 +505,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      *
      * @return the panel for the relation member editor
      */
-    protected static JPanel buildMemberEditorPanel(
+    static JPanel buildMemberEditorPanel(
             LeftButtonToolbar leftButtonToolbar, IRelationEditorActionAccess editorAccess) {
         final JPanel pnl = new JPanel(new GridBagLayout());
         final JScrollPane scrollPane = new JScrollPane(editorAccess.getMemberTable());

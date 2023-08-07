@@ -4,40 +4,40 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.platform.commons.support.ReflectionSupport;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.IRelationEditorActionAccess;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.PasteMembersAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link GenericRelationEditor} class.
  */
+@BasicPreferences
+@Main
 public class GenericRelationEditorTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().main();
-
     /**
      * Returns a new relation editor for unit tests.
      * @param orig relation
@@ -131,5 +131,31 @@ public class GenericRelationEditorTest {
         JPanel top = GenericRelationEditor.buildTagEditorPanel(tagEditorPanel);
         assertNotNull(top);
         assertNotNull(tagEditorPanel.getModel());
+    }
+
+    @Test
+    void testNonRegression23091() throws Exception {
+        new MockUp<PasteMembersAction>() {
+            @Mock
+            protected void updateEnabledState() {
+                // Do nothing
+            }
+        };
+
+        DataSet ds = new DataSet();
+        Relation relation = new Relation(1);
+        ds.addPrimitive(relation);
+        OsmDataLayer layer = new OsmDataLayer(ds, "test", null);
+
+        final GenericRelationEditor gr = new GenericRelationEditor(layer, relation, Collections.emptyList());
+        final IRelationEditorActionAccess iAccess = (IRelationEditorActionAccess)
+                ReflectionSupport.tryToReadFieldValue(GenericRelationEditor.class.getDeclaredField("actionAccess"), gr)
+                        .get();
+        final TaggingPresetHandler handler = (TaggingPresetHandler)
+                ReflectionSupport.tryToReadFieldValue(MemberTableModel.class.getDeclaredField("presetHandler"), iAccess.getMemberTableModel())
+                        .get();
+        final Collection<OsmPrimitive> selection = handler.getSelection();
+        assertEquals(1, selection.size());
+        assertSame(relation, selection.iterator().next(), "The selection should be the same");
     }
 }
