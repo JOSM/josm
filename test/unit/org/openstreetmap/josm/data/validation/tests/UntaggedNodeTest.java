@@ -7,29 +7,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.InputStream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@code UntaggedNode} class.
  */
+@Projection
 class UntaggedNodeTest {
 
     private final UntaggedNode test = new UntaggedNode();
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules();
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12436">Bug #12436</a>.

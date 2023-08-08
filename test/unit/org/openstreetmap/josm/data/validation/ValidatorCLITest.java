@@ -66,6 +66,7 @@ class ValidatorCLITest {
     static File temporaryDirectory;
 
     TestHandler handler;
+    private ValidatorCLI validatorCLI;
 
     @BeforeEach
     void setup() {
@@ -73,6 +74,7 @@ class ValidatorCLITest {
         new LifecycleMock();
         this.handler = new TestHandler();
         Logging.getLogger().addHandler(this.handler);
+        validatorCLI = new ValidatorCLI();
     }
 
     @AfterEach
@@ -85,7 +87,7 @@ class ValidatorCLITest {
     @ParameterizedTest
     @ValueSource(strings = {"resources/styles/standard/elemstyles.mapcss", "resources/styles/standard/potlatch2.mapcss"})
     void testInternalMapcss(final String resourceLocation) {
-        new ValidatorCLI().processArguments(new String[]{"--input", resourceLocation});
+        validatorCLI.processArguments(new String[]{"--input", resourceLocation});
         assertEquals(2, this.handler.logRecordList.size());
         assertEquals(resourceLocation + " had no errors", this.handler.logRecordList.get(0).getMessage());
         assertTrue(this.handler.logRecordList.get(1).getMessage().contains("Finishing task"));
@@ -110,7 +112,7 @@ class ValidatorCLITest {
     @MethodSource
     void testInternalValidatorMapcss(final String resourceLocation) {
         final String path = Paths.get(temporaryDirectory.getPath(), resourceLocation).toString();
-        new ValidatorCLI().processArguments(new String[]{"--input", path});
+        validatorCLI.processArguments(new String[]{"--input", path});
         assertEquals(2, this.handler.logRecordList.size(), this.handler.logRecordList.stream().map(LogRecord::getMessage).collect(
                 Collectors.joining(",\n")));
         assertEquals(path + " had no errors", this.handler.logRecordList.get(0).getMessage());
@@ -122,7 +124,7 @@ class ValidatorCLITest {
         // Ticket #13165 was a validator non-regression test.
         final String dataPath = TestUtils.getRegressionDataFile(13165, "13165.osm");
         final String outputPath = Paths.get(temporaryDirectory.getPath(), "testBadDataTicket13165.geojson").toString();
-        new ValidatorCLI().processArguments(new String[]{"--input", dataPath, "--output", outputPath});
+        validatorCLI.processArguments(new String[]{"--input", dataPath, "--output", outputPath});
         final File outputFile = new File(outputPath);
         assertTrue(outputFile.exists());
         threadSync.threadSync();
@@ -133,7 +135,6 @@ class ValidatorCLITest {
 
     @Test
     void testBadDataPlusChangeFile() throws IOException {
-        final ValidatorCLI validatorCLI = new ValidatorCLI();
         // Write test data out
         final String osmPath = Paths.get(temporaryDirectory.getPath(), "testBadDataPlusChangeFile.osm").toString();
         final String changePath = Paths.get(temporaryDirectory.getPath(), "testBadDataPlusChangeFile.osc").toString();
@@ -171,7 +172,6 @@ class ValidatorCLITest {
     @Test
     void testNonRegression22898(final @TempDir Path preferencesLocation) throws IOException, ReflectiveOperationException {
         AnnotationUtils.resetStaticClass(Config.class);
-        final ValidatorCLI validatorCLI = new ValidatorCLI();
         final Path preferences = preferencesLocation.resolve("preferences.xml");
         try (OutputStream fos = Files.newOutputStream(preferences)) {
             final String pref = "<config>\n" +

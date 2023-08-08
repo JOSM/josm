@@ -3,25 +3,19 @@ package org.openstreetmap.josm.tools;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link RightAndLefthandTraffic} class.
  */
+@Projection
+@Territories
 class RightAndLefthandTrafficTest {
-    /**
-     * Test rules.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().projection().territories();
-
     /**
      * Tests that {@code RightAndLefthandTraffic} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs

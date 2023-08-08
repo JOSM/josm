@@ -9,7 +9,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -24,9 +23,11 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Territories;
 
 import mockit.Invocation;
 import mockit.Mock;
@@ -37,20 +38,18 @@ import mockit.MockUp;
  * @author Taylor Smock
  */
 @BasicPreferences
+@Main
+@Projection
+// Territories is needed due to test pollution. One of the listeners
+// that may get registered on SelectionEventManager requires
+// Territories. Rather unfortunately, we also need the external data to
+// avoid the NPE.
+@Territories(Territories.Initialize.ALL)
 class UploadActionTest {
     // Only needed for layer cleanup. And user identity cleanup. And ensuring that data isn't accidentally uploaded.
     // Note that the setUp method can be replaced by the @Territories extension, when that is merged.
     @RegisterExtension
-    static JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeAPI();
-
-    @BeforeAll
-    static void setUp() {
-        // Territories is needed due to test pollution. One of the listeners
-        // that may get registered on SelectionEventManager requires
-        // Territories. Rather unfortunately, we also need the external data to
-        // avoid the NPE.
-        Territories.initialize();
-    }
+    static JOSMTestRules josmTestRules = new JOSMTestRules().fakeAPI();
 
     /**
      * Non-regression test for JOSM #21476.

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -74,6 +75,7 @@ import mockit.integration.TestRunnerDecorator;
  * Various utils, useful for unit tests.
  */
 public final class TestUtils {
+    private static Boolean workingJMockit;
 
     private TestUtils() {
         // Hide constructor for utility classes
@@ -514,16 +516,20 @@ public final class TestUtils {
      */
     @SuppressWarnings("null")
     public static void assumeWorkingJMockit() {
-        try {
-            // Workaround to https://github.com/jmockit/jmockit1/issues/534
-            // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
-            new WindowMocker();
-            new JOptionPaneSimpleMocker();
-        } catch (UnsupportedOperationException e) {
-            assumeFalse(e != null);
-        } finally {
-            TestRunnerDecorator.cleanUpAllMocks();
+        if (workingJMockit == null) {
+            try {
+                // Workaround to https://github.com/jmockit/jmockit1/issues/534
+                // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
+                new WindowMocker();
+                new JOptionPaneSimpleMocker();
+                workingJMockit = true;
+            } catch (UnsupportedOperationException e) {
+                workingJMockit = false;
+            } finally {
+                TestRunnerDecorator.cleanUpAllMocks();
+            }
         }
+        assumeTrue(workingJMockit);
     }
 
     /**

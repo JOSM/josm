@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
 /**
  * Unit tests of {@link GenericRelationEditor} class.
@@ -141,6 +142,7 @@ public class GenericRelationEditorTest {
                 // Do nothing
             }
         };
+        new WindowMocker();
 
         DataSet ds = new DataSet();
         Relation relation = new Relation(1);
