@@ -19,6 +19,7 @@ import org.openstreetmap.josm.io.session.SessionWriterTest;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
 /**
  * Unit tests for class {@link SessionSaveAsAction}.
@@ -33,6 +34,7 @@ class SessionSaveActionTest {
     @Test
     void testSaveAction() throws IOException {
         TestUtils.assumeWorkingJMockit();
+        new WindowMocker();
 
         File jos = File.createTempFile("session", ".jos");
         File joz = new File(jos.getAbsolutePath().replaceFirst(".jos$", ".joz"));
