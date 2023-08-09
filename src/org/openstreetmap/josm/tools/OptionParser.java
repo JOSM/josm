@@ -279,7 +279,7 @@ public class OptionParser {
         }
 
         /**
-         * Called once if the parameter is encountered, afer basic validation.
+         * Called once if the parameter is encountered, after basic validation.
          * @param parameter The parameter if {@link #requiresParameter()} is true, <code>null</code> otherwise.
          */
         void runFor(String parameter);

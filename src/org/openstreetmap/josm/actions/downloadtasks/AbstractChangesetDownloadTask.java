@@ -103,7 +103,7 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
      * <pre>
      *    Future&lt;?&gt; future = task.download();
      *    // DON'T run this on the Swing EDT or JOSM will freeze
-     *    future.get(); // waits for the dowload task to complete
+     *    future.get(); // waits for the download task to complete
      * </pre>
      *
      * The following example uses a pattern which is better suited if a task is launched from the Swing EDT:

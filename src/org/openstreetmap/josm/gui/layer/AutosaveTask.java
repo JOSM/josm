@@ -394,7 +394,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public List<File> getUnsavedLayersFiles() {
         List<File> result = new ArrayList<>();
         try {
-            File[] files = autosaveDir.listFiles((FileFilter)
+            File[] files = autosaveDir.listFiles(
                     pathname -> OsmImporter.FILE_FILTER.accept(pathname) || NoteImporter.FILE_FILTER.accept(pathname));
             if (files == null)
                 return result;

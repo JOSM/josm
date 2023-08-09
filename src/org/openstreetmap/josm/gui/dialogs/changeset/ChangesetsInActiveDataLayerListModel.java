@@ -81,10 +81,6 @@ public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel imp
         // just init the model content. Don't register as DataSetListener. The mode
         // is already registered to receive DataChangedEvents from the current edit layer
         DataSet ds = e.getSource().getActiveDataSet();
-        if (ds != null) {
-            initFromDataSet(ds);
-        } else {
-            initFromDataSet(null);
-        }
+        initFromDataSet(ds);
     }
 }

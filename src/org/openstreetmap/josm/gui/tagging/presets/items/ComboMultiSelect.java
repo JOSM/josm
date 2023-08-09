@@ -10,7 +10,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -153,7 +152,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * @param delimiter the delimiter, e.g. a comma. separates the entries and
      *      must be escaped within one entry
      * @param s the string
-     * @return splitted items
+     * @return split items
      */
     public static List<String> splitEscaped(char delimiter, String s) {
         if (s == null)
@@ -311,7 +310,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         }
 
         if (values_sort && TaggingPresets.SORT_MENU.get()) {
-            Collections.sort(presetListEntries, (a, b) -> AlphanumComparator.getInstance().compare(a.getDisplayValue(), b.getDisplayValue()));
+            presetListEntries.sort((a, b) -> AlphanumComparator.getInstance().compare(a.getDisplayValue(), b.getDisplayValue()));
         }
     }
 

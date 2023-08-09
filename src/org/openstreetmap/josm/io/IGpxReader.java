@@ -32,8 +32,8 @@ public interface IGpxReader {
     GpxData getGpxData();
 
     /**
-     * Returns the number of coordinates that have been successfuly read.
-     * @return the number of coordinates that have been successfuly read
+     * Returns the number of coordinates that have been successfully read.
+     * @return the number of coordinates that have been successfully read
      * @since 18179
      */
     default int getNumberOfCoordinates() {

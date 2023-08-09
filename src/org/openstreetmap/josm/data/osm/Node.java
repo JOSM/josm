@@ -358,8 +358,8 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     /**
-     * Replies the set of referring ways.
-     * @return the set of referring ways
+     * Replies the list of referring ways.
+     * @return the list of referring ways
      * @since 12031
      */
     public List<Way> getParentWays() {

@@ -509,7 +509,7 @@ public class DeleteCommand extends Command {
             return delete(Collections.singleton(ws.getWay()), false);
 
         if (ws.getWay().isClosed()) {
-            // If the way is circular (first and last nodes are the same), the way shouldn't be splitted
+            // If the way is circular (first and last nodes are the same), the way shouldn't be split
 
             List<Node> n = new ArrayList<>();
 

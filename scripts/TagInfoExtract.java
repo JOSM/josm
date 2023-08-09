@@ -89,9 +89,11 @@ import org.xml.sax.SAXException;
  * <p>
  * Run from the base directory of a JOSM checkout:
  * <p>
+ * <pre>
  * java -cp dist/josm-custom.jar TagInfoExtract --type mappaint
  * java -cp dist/josm-custom.jar TagInfoExtract --type presets
  * java -cp dist/josm-custom.jar TagInfoExtract --type external_presets
+ * </pre>
  */
 public class TagInfoExtract {
 
@@ -244,7 +246,7 @@ public class TagInfoExtract {
                         .add("tags", jsonTags)
                         .build());
                 if (options.outputFile == null) {
-                    System.out.println(writer.toString());
+                    System.out.println(writer);
                 }
             }
         }

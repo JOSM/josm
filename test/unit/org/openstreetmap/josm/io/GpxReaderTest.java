@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +37,7 @@ public class GpxReaderTest {
      */
     public static GpxData parseGpxData(String filename) throws IOException, SAXException {
         final GpxData result;
-        try (FileInputStream in = new FileInputStream(new File(filename))) {
+        try (FileInputStream in = new FileInputStream(filename)) {
             GpxReader reader = new GpxReader(in);
             assertTrue(reader.parse(false));
             result = reader.getGpxData();

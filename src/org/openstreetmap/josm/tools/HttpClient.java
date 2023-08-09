@@ -35,7 +35,7 @@ import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
- * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
+ * Provides uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
  * @since 9168
  */
 public abstract class HttpClient {

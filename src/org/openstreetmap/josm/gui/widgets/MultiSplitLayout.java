@@ -118,8 +118,8 @@ public class MultiSplitLayout implements LayoutManager {
     }
 
     /**
-     * Replies list of property change listeners.
-     * @return list of property change listeners
+     * Replies array of property change listeners.
+     * @return array of property change listeners
      */
     public PropertyChangeListener[] getPropertyChangeListeners() {
         return pcs.getPropertyChangeListeners();
@@ -1064,7 +1064,8 @@ public class MultiSplitLayout implements LayoutManager {
             int nChildren = getChildren().size();
             StringBuilder sb = new StringBuilder("MultiSplitLayout.Split");
             sb.append(isRowLayout() ? " ROW [" : " COLUMN [")
-              .append(nChildren + ((nChildren == 1) ? " child" : " children"))
+              .append(nChildren)
+              .append((nChildren == 1) ? " child" : " children")
               .append("] ")
               .append(getBounds());
             return sb.toString();

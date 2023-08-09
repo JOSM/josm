@@ -104,7 +104,7 @@ public class DiffResultProcessor {
 
     /**
      * Postprocesses the diff result read and parsed from the server.
-     *
+     * <p>
      * Uploaded objects are assigned their new id (if they got assigned a new
      * id by the server), their new version (if the version was incremented),
      * and the id of the changeset to which they were uploaded.

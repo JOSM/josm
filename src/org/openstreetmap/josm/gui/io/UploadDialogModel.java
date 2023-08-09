@@ -75,11 +75,10 @@ public class UploadDialogModel extends TagEditorModel {
      * @return the hashtags separated by ";" or null
      */
     String findHashTags(String comment) {
-        String hashtags = String.join(";",
-            Arrays.stream(comment.split("\\s", -1))
-                .map(s -> Utils.strip(s, ",;"))
-                .filter(s -> s.matches("#[a-zA-Z0-9][-_a-zA-Z0-9]+"))
-                .collect(Collectors.toList()));
+        String hashtags = Arrays.stream(comment.split("\\s", -1))
+            .map(s -> Utils.strip(s, ",;"))
+            .filter(s -> s.matches("#[a-zA-Z0-9][-_a-zA-Z0-9]+"))
+            .collect(Collectors.joining(";"));
         return hashtags.isEmpty() ? null : hashtags;
     }
 
@@ -155,7 +154,7 @@ public class UploadDialogModel extends TagEditorModel {
      */
     public void putAll(Map<String, String> map) {
         commitPendingEdit();
-        map.forEach((key, value) -> doPut(key, value));
+        map.forEach(this::doPut);
         setDirty(true);
         fireTableDataChanged();
     }

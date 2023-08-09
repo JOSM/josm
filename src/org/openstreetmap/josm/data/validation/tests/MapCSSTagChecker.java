@@ -445,7 +445,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 cnt++;
                 // add frequently changing info to progress monitor so that it
                 // doesn't seem to hang when test takes longer than 0.5 seconds
-                if (cnt % 10000 == 0 && stopwatch.elapsed() >= 500) {
+                if (cnt % 10_000 == 0 && stopwatch.elapsed() >= 500) {
                     progressMonitor.setExtraText(tr(" {0}: {1} of {2} elements done", title, cnt, selection.size()));
                 }
             }

@@ -159,7 +159,7 @@ public abstract class RequestHandler {
     }
 
     /**
-     * Returns usage examples for the given command. To be overriden only my handlers that define several commands.
+     * Returns usage examples for the given command. To be overridden only my handlers that define several commands.
      * @param cmd The command asked
      * @return Usage examples for the given command
      * @since 6332
@@ -202,7 +202,7 @@ public abstract class RequestHandler {
          */
         if (GLOBAL_CONFIRMATION.get()) {
             // Ensure dialog box does not exceed main window size
-            Integer maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth()*0.6);
+            int maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth() * 0.6);
             String message = "<html><div>" + getPermissionMessage() +
                     "<br/>" + tr("Do you want to allow this?") + "</div></html>";
             JLabel label = new JLabel(message);
@@ -356,12 +356,11 @@ public abstract class RequestHandler {
     protected DownloadParams getDownloadParams() {
         DownloadParams result = new DownloadParams();
         if (args != null) {
-            result = result
-                .withNewLayer(isLoadInNewLayer())
-                .withLayerName(args.get("layer_name"))
-                .withLocked(get("layer_locked"))
-                .withDownloadPolicy(get("download_policy", DownloadPolicy::of, () -> DownloadPolicy.NORMAL))
-                .withUploadPolicy(get("upload_policy", UploadPolicy::of, () -> UploadPolicy.NORMAL));
+            result.withNewLayer(isLoadInNewLayer())
+                    .withLayerName(args.get("layer_name"))
+                    .withLocked(get("layer_locked"))
+                    .withDownloadPolicy(get("download_policy", DownloadPolicy::of, () -> DownloadPolicy.NORMAL))
+                    .withUploadPolicy(get("upload_policy", UploadPolicy::of, () -> UploadPolicy.NORMAL));
         }
         return result;
     }
@@ -497,7 +496,7 @@ public abstract class RequestHandler {
     }
 
     /**
-     * Handler that takes an URL as parameter.
+     * Handler that takes a URL as a parameter.
      */
     public abstract static class RawURLParseRequestHandler extends RequestHandler {
         @Override

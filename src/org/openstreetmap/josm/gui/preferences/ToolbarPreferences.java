@@ -1249,7 +1249,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             sc = ((JosmAction) action.getAction()).getShortcut();
             if (sc.getAssignedKey() == KeyEvent.CHAR_UNDEFINED) {
                 sc = null;
-        }
+            }
         }
 
         long paramCode = 0;

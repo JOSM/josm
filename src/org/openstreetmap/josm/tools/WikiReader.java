@@ -136,7 +136,7 @@ public class WikiReader {
             if (inside && !transl && !skip) {
                 // add a border="0" attribute to images, otherwise the internal help browser
                 // will render a thick  border around images inside an <a> element
-                // remove width information to avoid distorded images (fix #11262)
+                // remove width information to avoid distorted images (fix #11262)
                 b.append(line.replace("<img ", "<img border=\"0\" ")
                          .replaceAll("width=\"(\\d+)\"", "")
                          .replaceAll("<span class=\"icon\">.</span>", "")

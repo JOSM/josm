@@ -59,8 +59,8 @@ public class DefaultProxySelector extends ProxySelector {
      * from the system settings, if the system property <code>java.net.useSystemProxies</code>
      * is defined <strong>at startup</strong>. It has no effect if the property is set
      * later by the application.
-     *
-     * We therefore read the property at class loading time and remember it's value.
+     * <p>
+     * We therefore read the property at class loading time and remember its value.
      */
     private static boolean jvmWillUseSystemProxies;
     static {

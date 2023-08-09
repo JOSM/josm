@@ -65,9 +65,7 @@ public class UidInputFieldValidator extends AbstractTextComponentValidator {
         if (Utils.isBlank(value)) return 0;
         try {
             int uid = Integer.parseInt(value.trim());
-            if (uid > 0)
-                return uid;
-            return 0;
+            return Math.max(uid, 0);
         } catch (NumberFormatException e) {
             return 0;
         }

@@ -211,7 +211,7 @@ public final class ConditionFactory {
 
         /**
          * Create a new float operation that compares two float values
-         * @param comparatorResult A function to mapt the result of the comparison
+         * @param comparatorResult A function to map the result of the comparison
          */
         Op(IntFunction<Boolean> comparatorResult) {
             this.function = (test, prototype) -> {
@@ -829,7 +829,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object is an unclosed multipolygon
          */
         static boolean unclosed_multipolygon(Environment e) {
-            return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
+            return e.osm instanceof Relation && e.osm.isMultipolygon() &&
                     !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
                     !MultipolygonCache.getInstance().get((Relation) e.osm).getOpenEnds().isEmpty();
         }

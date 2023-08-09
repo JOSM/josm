@@ -180,7 +180,7 @@ public class CloseChangesetDialog extends JDialog {
     /**
      * Sets whether this dialog is canceled
      *
-     * @param canceled true, if this dialog is canceld
+     * @param canceled true, if this dialog is canceled
      */
     protected void setCanceled(boolean canceled) {
         this.canceled = canceled;

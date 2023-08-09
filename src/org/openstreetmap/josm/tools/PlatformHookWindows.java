@@ -486,7 +486,7 @@ public class PlatformHookWindows implements PlatformHook {
                     if (prevValue != null && !prevValue.equals(value)) {
                         Logging.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
                     }
-                    w.append(key + '=' + value + '\n');
+                    w.append(key).append('=').append(value).append('\n');
                 }
                 w.append('\n');
                 for (FontEntry entry: extras) {
@@ -499,7 +499,7 @@ public class PlatformHookWindows implements PlatformHook {
                     if (prevValue != null && !prevValue.equals(value)) {
                         Logging.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
                     }
-                    w.append(key + '=' + value + '\n');
+                    w.append(key).append('=').append(value).append('\n');
                 }
                 w.append('\n');
                 w.append("sequence.fallback=");

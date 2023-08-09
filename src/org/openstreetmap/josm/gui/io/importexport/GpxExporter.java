@@ -78,7 +78,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
     @Override
     public boolean acceptFile(File pathname, Layer layer) {
-        return isSupportedLayer(layer) ? super.acceptFile(pathname, layer) : false;
+        return isSupportedLayer(layer) && super.acceptFile(pathname, layer);
     }
 
     @Override

@@ -173,14 +173,15 @@ public final class Utils {
     }
 
     /**
-     * Return the modulus in the range [0, n)
-     * @param a dividend
-     * @param n divisor
-     * @return modulo (remainder of the Euclidian division of a by n)
+     * Returns the modulo in the range [0, n) for the given dividend and divisor.
+     * @param a the dividend
+     * @param n the divisor
+     * @return the modulo, which is the remainder of the Euclidean division of a by n, in the range [0, n)
+     * @throws IllegalArgumentException if n is less than or equal to 0
      */
     public static int mod(int a, int n) {
         if (n <= 0)
-            throw new IllegalArgumentException("n must be <= 0 but is "+n);
+            throw new IllegalArgumentException("n must be <= 0 but is " + n);
         int res = a % n;
         if (res < 0) {
             res += n;
@@ -289,7 +290,7 @@ public final class Utils {
      * Recursive directory copy function
      * @param in The source directory
      * @param out The destination directory
-     * @throws IOException if any I/O error ooccurs
+     * @throws IOException if any I/O error occurs
      * @throws IllegalArgumentException if {@code in} or {@code out} is {@code null}
      * @since 7835
      */
@@ -1004,7 +1005,7 @@ public final class Utils {
     }
 
     /**
-     * Cast an object savely.
+     * Cast an object safely.
      * @param <T> the target type
      * @param o the object to cast
      * @param klass the target class (same as T)
@@ -1087,7 +1088,7 @@ public final class Utils {
      * the collection is shortened and the {@code overflowIndicator} is appended.
      * @param <T> type of elements
      * @param elements collection to shorten
-     * @param maxElements maximum number of elements to keep (including including the {@code overflowIndicator})
+     * @param maxElements maximum number of elements to keep (including the {@code overflowIndicator})
      * @param overflowIndicator the element used to indicate that the collection has been shortened
      * @return the shortened collection
      */
@@ -1761,7 +1762,7 @@ public final class Utils {
         int bPos = version.indexOf('b');
         int pPos = version.indexOf('+');
         try {
-            return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1, version.length()));
+            return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1));
         } catch (NumberFormatException e) {
             Logging.trace(e);
             return 0;
@@ -1827,7 +1828,7 @@ public final class Utils {
 
     /**
      * Determines if a class can be found for the given name.
-     * @param className class nmae to find
+     * @param className class name to find
      * @return {@code true} if the class can be found, {@code false} otherwise
      * @since 17692
      */
@@ -1920,7 +1921,7 @@ public final class Utils {
     }
 
     /**
-     * Convenient method to open an URL stream, using JOSM HTTP client if neeeded.
+     * Convenient method to open an URL stream, using JOSM HTTP client if needed.
      * @param url URL for reading from
      * @return an input stream for reading from the URL
      * @throws IOException if any I/O error occurs

@@ -61,7 +61,7 @@ public class UploadAction extends AbstractUploadAction {
      * when the user wants to upload data. Plugins can insert their own hooks here
      * if they want to be able to veto an upload.
      * <p>
-     * Be default, the standard upload dialog is the only element in the list.
+     * By default, the standard upload dialog is the only element in the list.
      * Plugins should normally insert their code before that, so that the upload
      * dialog is the last thing shown before upload really starts; on occasion
      * however, a plugin might also want to insert something after that.

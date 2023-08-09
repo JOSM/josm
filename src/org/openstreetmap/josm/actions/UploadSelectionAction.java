@@ -135,7 +135,7 @@ public class UploadSelectionAction extends AbstractUploadAction {
      * deleted parents in order to avoid precondition violations on the server.
      *
      * @param layer the data layer from which we upload a subset of primitives
-     * @param toUpload the primitives to upload. If null or empty returns immediatelly
+     * @param toUpload the primitives to upload. If null or empty returns immediately
      */
     public void uploadPrimitives(OsmDataLayer layer, Collection<OsmPrimitive> toUpload) {
         if (Utils.isEmpty(toUpload)) return;

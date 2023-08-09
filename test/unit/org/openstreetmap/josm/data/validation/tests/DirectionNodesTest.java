@@ -9,10 +9,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * JUnit Test of Multipolygon validation test.
+ * JUnit Test of {@link DirectionNodes} validation test.
  */
 class DirectionNodesTest {
-
 
     /**
      * Setup test.
@@ -26,7 +25,7 @@ class DirectionNodesTest {
      * @throws Exception in case of error
      */
     @Test
-    void testDirectionsNodesTestFile() throws Exception {
+    void testDirectionNodesTestFile() throws Exception {
         final DirectionNodes test = new DirectionNodes();
         ValidatorTestUtils.testSampleFile("nodist/data/direction-nodes.osm", DataSet::getNodes, null, test);
     }

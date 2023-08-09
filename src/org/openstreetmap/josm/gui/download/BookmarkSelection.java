@@ -143,7 +143,6 @@ public class BookmarkSelection implements DownloadSelection {
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        gc.gridx = 1;
         dlg.add(new JScrollPane(bookmarks), gc);
 
         this.parent = gui;

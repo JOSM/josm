@@ -135,7 +135,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * If no object is selected, the dialog list is empty.
  * If only one is selected, all tags of this object are selected.
- * If more than one object are selected, the sum of all tags are displayed. If the
+ * If more than one object is selected, the sum of all tags is displayed. If the
  * different objects share the same tag, the shared value is displayed. If they have
  * different values, all of them are put in a combo box and the string "&lt;different&gt;"
  * is displayed in italic.

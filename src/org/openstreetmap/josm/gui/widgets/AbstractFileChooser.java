@@ -80,7 +80,7 @@ public abstract class AbstractFileChooser {
     /**
      * Returns a list of selected files if the file chooser is
      * set to allow multiple selection.
-     * @return a list of selected files if the file chooser is
+     * @return an array of selected files if the file chooser is
      * set to allow multiple selection, or an empty array otherwise.
      */
     public abstract File[] getSelectedFiles();
@@ -97,7 +97,7 @@ public abstract class AbstractFileChooser {
      * as an available choice in the choosable filter list.
      * If false, the <code>AcceptAll</code> file filter is removed from
      * the list of available file filters.
-     * If true, the <code>AcceptAll</code> file filter will become the
+     * If true, the <code>AcceptAll</code> file filter will become
      * the actively used file filter.
      * @param b whether the <code>AcceptAll FileFilter</code> is used
      * as an available choice in the choosable filter list

@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
- * HistoryBrowser is an UI component which displays history information about an {@link OsmPrimitive}.
+ * HistoryBrowser is a UI component which displays history information about an {@link OsmPrimitive}.
  *
  * @since 1709
  */
@@ -161,7 +161,7 @@ public class HistoryBrowser extends JPanel implements Destroyable {
             model.unlinkAsListener();
             model = null;
         }
-        Arrays.asList(tagInfoViewer, nodeListViewer, relationMemberListViewer, coordinateInfoViewer).stream()
+        Stream.of(tagInfoViewer, nodeListViewer, relationMemberListViewer, coordinateInfoViewer)
                 .filter(Destroyable.class::isInstance).forEach(Destroyable::destroy);
         tagInfoViewer = null;
         nodeListViewer = null;

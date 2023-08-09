@@ -486,7 +486,7 @@ public class OsmReader extends AbstractReader {
     }
 
     /**
-     * Exception thrown after user cancelation.
+     * Exception thrown after user cancellation.
      */
     private static final class OsmParsingCanceledException extends XmlStreamParsingException implements ImportCancelException {
         /**

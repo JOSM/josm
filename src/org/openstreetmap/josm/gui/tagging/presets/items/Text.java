@@ -78,9 +78,7 @@ public class Text extends KeyedItem {
         List<String> keys = new ArrayList<>();
         keys.add(key);
         if (alternative_autocomplete_keys != null) {
-            for (String k : alternative_autocomplete_keys.split(",", -1)) {
-                keys.add(k);
-            }
+            Collections.addAll(keys, alternative_autocomplete_keys.split(",", -1));
         }
         getAllForKeys(keys).forEach(model::addElement);
 
@@ -269,7 +267,7 @@ public class Text extends KeyedItem {
     /**
      * Set the value template.
      * @param pattern The value_template pattern.
-     * @throws SAXException If an error occured while parsing.
+     * @throws SAXException If an error occurred while parsing.
      */
     public void setValue_template(String pattern) throws SAXException { // NOPMD
         try {

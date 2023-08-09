@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Colorful filter.
@@ -210,13 +211,7 @@ public class ColorfulFilter implements BufferedImageOp {
 
     private int mixInt(int color, double luminosity) {
         int val = (int) (colorfulness * color + (1 - colorfulness) * luminosity);
-        if (val < 0) {
-            return 0;
-        } else if (val > 0xff) {
-            return 0xff;
-        } else {
-            return val;
-        }
+        return Utils.clamp(val, 0, 0xff);
     }
 
     private byte mix(int color, double luminosity) {

@@ -992,7 +992,7 @@ public class MainApplication {
         ChangesetUpdater.start();
 
         if (Config.getPref().getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
-            // Repaint manager is registered so late for a reason - there is lots of violation during startup process
+            // Repaint manager is registered so late for a reason - there are lots of violations during startup process
             // but they don't seem to break anything and are difficult to fix
             Logging.info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
@@ -1190,7 +1190,7 @@ public class MainApplication {
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
         UIManager.put("OptionPane.cancelIcon", ImageProvider.getIfAvailable("cancel"));
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
-        // Ensures caret color is the same than text foreground color, see #12257
+        // Ensures caret color is the same as text foreground color, see #12257
         // See https://docs.oracle.com/javase/8/docs/api/javax/swing/plaf/synth/doc-files/componentProperties.html
         for (String p : Arrays.asList(
                 "EditorPane", "FormattedTextField", "PasswordField", "TextArea", "TextField", "TextPane")) {

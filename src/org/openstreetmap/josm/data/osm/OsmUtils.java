@@ -35,15 +35,21 @@ public final class OsmUtils {
 
     /**
      * Discouraged synonym for {@link #TRUE_VALUE}
+     * @deprecated since xxx, use {@link #TRUE_VALUE} instead.
      */
+    @Deprecated
     public static final String trueval = TRUE_VALUE;
     /**
      * Discouraged synonym for {@link #FALSE_VALUE}
+     * @deprecated since xxx, use {@link #FALSE_VALUE} instead.
      */
+    @Deprecated
     public static final String falseval = FALSE_VALUE;
     /**
      * Discouraged synonym for {@link #REVERSE_VALUE}
+     * @deprecated since xxx, use {@link #REVERSE_VALUE} instead.
      */
+    @Deprecated
     public static final String reverseval = REVERSE_VALUE;
 
     private OsmUtils() {
@@ -53,9 +59,9 @@ public final class OsmUtils {
     /**
      * Converts a string to a boolean value
      * @param value The string to convert
-     * @return {@link Boolean#TRUE} if that string represents a true value,
-     *         {@link Boolean#FALSE} if it represents a false value,
-     *         <code>null</code> otherwise.
+     * @return {@link Boolean#TRUE} if that string represents a true value,<br>
+     *         {@link Boolean#FALSE} if it represents a false value,<br>
+     *         {@code null} otherwise.
      */
     public static Boolean getOsmBoolean(String value) {
         if (value == null) return null;
@@ -74,7 +80,7 @@ public final class OsmUtils {
      */
     public static String getNamedOsmBoolean(String value) {
         Boolean res = getOsmBoolean(value);
-        return res == null ? value : (res ? trueval : falseval);
+        return res == null ? value : (res ? TRUE_VALUE : FALSE_VALUE);
     }
 
     /**
@@ -118,7 +124,7 @@ public final class OsmUtils {
     /**
      * Check if a tag value represents a boolean false value
      * @param value The value to check
-     * @return true if it is a true value.
+     * @return true if it is a false value.
      */
     public static boolean isFalse(String value) {
         if (value == null) {
@@ -137,7 +143,7 @@ public final class OsmUtils {
 
     /**
      * Creates a new OSM primitive around (0,0) according to the given assertion. Originally written for unit tests,
-     * this can also be used in another places like validation of local MapCSS validator rules.
+     * this can also be used in other places like validation of local MapCSS validator rules.
      * Ways and relations created using this method are empty.
      * @param assertion The assertion describing OSM primitive (ex: "way name=Foo railway=rail")
      * @return a new OSM primitive according to the given assertion
@@ -150,7 +156,7 @@ public final class OsmUtils {
 
     /**
      * Creates a new OSM primitive according to the given assertion. Originally written for unit tests,
-     * this can also be used in another places like validation of local MapCSS validator rules.
+     * this can also be used in other places like validation of local MapCSS validator rules.
      * @param assertion The assertion describing OSM primitive (ex: "way name=Foo railway=rail")
      * @param around the coordinate at which the primitive will be located
      * @param enforceLocation if {@code true}, ways and relations will not be empty to force a physical location

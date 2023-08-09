@@ -45,7 +45,7 @@ public class PresetLink extends TextItem {
     public String preset_name = ""; // NOSONAR
 
     /**
-     * Creates a label to be inserted aboive this link
+     * Creates a label to be inserted above this link
      * @return a label
      */
     public JLabel createLabel() {

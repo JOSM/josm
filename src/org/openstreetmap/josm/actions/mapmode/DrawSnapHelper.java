@@ -464,7 +464,7 @@ class DrawSnapHelper {
                 }
                 EastNorth enOpt = null;
                 double dOpt = 1e5;
-                for (EastNorth en: pointsToProject) { // searching for besht projection
+                for (EastNorth en: pointsToProject) { // searching for best projection
                     double l1 = (en.east()-e0)*pe+(en.north()-n0)*pn;
                     double d1 = Math.abs(l1-l);
                     if (d1 < delta && d1 < dOpt) {

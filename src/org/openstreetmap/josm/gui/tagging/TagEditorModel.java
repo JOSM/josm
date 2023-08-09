@@ -530,8 +530,8 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public List<String> getKeys() {
         return tags.stream()
-                .filter(tag -> !Utils.isStripEmpty(tag.getName()))
                 .map(TagModel::getName)
+                .filter(name -> !Utils.isStripEmpty(name))
                 .collect(Collectors.toList());
     }
 

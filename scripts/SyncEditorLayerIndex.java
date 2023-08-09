@@ -69,19 +69,15 @@ import org.xml.sax.SAXException;
 /**
  * Compare and analyse the differences of the editor layer index and the JOSM imagery list.
  * The goal is to keep both lists in sync.
- *
- * The editor layer index project (https://github.com/osmlab/editor-layer-index)
- * provides also a version in the JOSM format, but the GEOJSON is the original source
- * format, so we read that.
- *
- * How to run:
- * -----------
- *
- * Main JOSM binary needs to be in classpath, e.g.
- *
- * $ java -cp ../dist/josm-custom.jar SyncEditorLayerIndex
- *
- * Add option "-h" to show the available command line flags.
+ * <p>
+ * The <a href="https://github.com/osmlab/editor-layer-index">editor layer index</a> project
+ * provides also a version in the JOSM format, but the GEOJSON is the original source format, so we read that.
+ * <p>
+ * For running, the main JOSM binary needs to be in classpath, e.g.
+ * <p>
+ * {@code $ java -cp ../dist/josm-custom.jar SyncEditorLayerIndex}
+ * <p>
+ * Add option {@code -h} to show the available command line flags.
  */
 @SuppressWarnings("unchecked")
 public class SyncEditorLayerIndex {
@@ -293,11 +289,12 @@ public class SyncEditorLayerIndex {
 
     void myprintln(String s) {
         String color;
+        final String escaped = s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         if ((color = isSkipString(s)) != null) {
             skip.remove(s);
             if (optionXhtmlBody || optionXhtml) {
                 s = "<pre style=\"margin:3px;color:"+color+"\">"
-                        + s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</pre>";
+                        + escaped +"</pre>";
             }
             if (!optionNoSkip) {
                 return;
@@ -309,7 +306,7 @@ public class SyncEditorLayerIndex {
                             (s.startsWith("#") ? "indigo" :
                                 (s.startsWith("!") ? "orange" :
                                     (s.startsWith("~") ? "red" : "brown"))));
-            s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</pre>";
+            s = "<pre style=\"margin:3px;color:"+color+"\">"+ escaped +"</pre>";
         }
         if ((s.startsWith("+ ") || s.startsWith("+++ ELI") || s.startsWith("#")) && optionNoEli) {
             return;

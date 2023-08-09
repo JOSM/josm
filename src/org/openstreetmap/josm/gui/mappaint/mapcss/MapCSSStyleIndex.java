@@ -148,7 +148,7 @@ public final class MapCSSStyleIndex {
                 return wayRules;
             }
         } else if (p instanceof IRelation) {
-            if (((IRelation<?>) p).isMultipolygon()) {
+            if (p.isMultipolygon()) {
                 return multipolygonRules;
             } else if (p.hasKey("#canvas")) {
                 return canvasRules;

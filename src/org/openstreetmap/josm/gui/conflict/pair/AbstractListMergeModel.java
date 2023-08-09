@@ -634,7 +634,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
          * replies true if the {@link ListRole} of this {@link EntriesTableModel}
          * participates in the current {@link ComparePairType}
          *
-         * @return true, if the if the {@link ListRole} of this {@link EntriesTableModel}
+         * @return true, if the {@link ListRole} of this {@link EntriesTableModel}
          * participates in the current {@link ComparePairType}
          *
          * @see AbstractListMergeModel.ComparePairListModel#getSelectedComparePair()

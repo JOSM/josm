@@ -898,7 +898,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     }
 
     /**
-     * Asks confirmationbefore adding a primitive.
+     * Asks confirmation before adding a primitive.
      * @param primitive primitive to add
      * @return {@code true} is user confirms the operation, {@code false} otherwise
      * @throws AddAbortException if user aborts operation

@@ -37,7 +37,7 @@ set -u
 # so we replace a placeholder to get an absolute path when wix reads this file
 #sed -i "s|%josm-source-dir%|$(pwd)|g" native/windows/main.wxs
 cp native/windows/main.wxs native/windows/main.wxs.bak
-sed -i 's?%josm-source-dir%?'`pwd`'?' native/windows/main.wxs
+sed -i "s?%josm-source-dir%?$(pwd)?" native/windows/main.wxs
 sed -i 's?"/c/?"c:/?g' native/windows/main.wxs
 sed -i 's?"/d/?"d:/?g' native/windows/main.wxs
 
@@ -46,7 +46,7 @@ JPACKAGEOPTIONS=""
 echo "Building EXE and MSI"
 for type in exe msi
 do
-    jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
+    jpackage "$JPACKAGEOPTIONS" -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/windows/logo.ico --type $type --dest app \
     --java-options "--add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web" \
@@ -85,8 +85,8 @@ done
 
 mv native/windows/main.wxs.bak native/windows/main.wxs
 
-mv app/JOSM-1.5.$1.exe app/JOSM.exe
-mv app/JOSM-1.5.$1.msi app/JOSM.msi
+mv app/JOSM-1.5."$1".exe app/JOSM.exe
+mv app/JOSM-1.5."$1".msi app/JOSM.msi
 
 # Workaround to https://bugs.openjdk.java.net/browse/JDK-8261845
 # to remove after we switch to Java 17+ for jpackage builds

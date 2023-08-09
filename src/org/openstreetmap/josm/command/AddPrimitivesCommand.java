@@ -103,9 +103,7 @@ public class AddPrimitivesCommand extends Command {
                 if (preExistingData.stream().anyMatch(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId()))) {
                     Optional<PrimitiveData> o = data.stream()
                             .filter(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId())).findAny();
-                    if (o.isPresent()) {
-                        osm.load(o.get());
-                    }
+                    o.ifPresent(osm::load);
                 } else {
                     ds.addPrimitive(osm);
                 }

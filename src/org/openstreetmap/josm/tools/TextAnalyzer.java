@@ -81,7 +81,7 @@ public class TextAnalyzer {
                 if (!s.toString().trim().isEmpty()) { // we had   ||some text"||
                     s.append(c); // just add ", not open
                 } else {
-                    s.delete(0, s.length()); // forget that empty characthers and start reading "....
+                    s.delete(0, s.length()); // forget that empty characters and start reading "....
                     quotesStarted = true;
                 }
             } else if (c == '\"' && quotesStarted) {  // closing "

@@ -186,7 +186,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
     }
 
     /**
-     * Remebers the update policy preference settings on the JOSM preferences
+     * Remembers the update policy preference settings on the JOSM preferences
      */
     public void rememberInPreferences() {
 

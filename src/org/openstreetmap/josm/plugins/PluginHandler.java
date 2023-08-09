@@ -13,7 +13,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -467,7 +466,7 @@ public final class PluginHandler {
         } else {
             long tim = System.currentTimeMillis();
             long last = Config.getPref().getLong("pluginmanager.lastupdate", 0);
-            Integer maxTime = Config.getPref().getInt("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
+            int maxTime = Config.getPref().getInt("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
             long d = TimeUnit.MILLISECONDS.toDays(tim - last);
             if ((last <= 0) || (maxTime <= 0)) {
                 Config.getPref().put("pluginmanager.lastupdate", Long.toString(tim));
@@ -976,7 +975,7 @@ public final class PluginHandler {
      * plugin lists.
      *
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
-     * @return the list of locally available plugin information, null in case of errors
+     * @return the map of locally available plugin information, null in case of errors
      *
      */
     private static Map<String, PluginInformation> loadLocallyAvailablePluginInformation(ProgressMonitor monitor) {
@@ -1027,13 +1026,13 @@ public final class PluginHandler {
     }
 
     /**
-     * Builds the set of plugins to load. Deprecated and unmaintained plugins are filtered
+     * Builds the list of plugins to load. Deprecated and unmaintained plugins are filtered
      * out. This involves user interaction. This method displays alert and confirmation
      * messages.
      *
      * @param parent The parent component to be used for the displayed dialog
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
-     * @return the set of plugins to load (as set of plugin names)
+     * @return the list of plugins to load (as set of plugin names)
      */
     public static List<PluginInformation> buildListOfPluginsToLoad(Component parent, ProgressMonitor monitor) {
         if (monitor == null) {
@@ -1348,7 +1347,7 @@ public final class PluginHandler {
         if (!pluginDir.exists() || !pluginDir.isDirectory() || !pluginDir.canWrite())
             return;
 
-        final File[] files = pluginDir.listFiles((FilenameFilter) (dir, name) -> name.endsWith(".jar.new"));
+        final File[] files = pluginDir.listFiles((dir, name) -> name.endsWith(".jar.new"));
         if (files == null)
             return;
 

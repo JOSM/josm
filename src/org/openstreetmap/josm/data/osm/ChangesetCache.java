@@ -154,8 +154,8 @@ public final class ChangesetCache implements PreferenceChangedListener {
     }
 
     /**
-     * Returns the list of changesets contained in the cache.
-     * @return the list of changesets contained in the cache
+     * Returns the set of changesets contained in the cache.
+     * @return the set of changesets contained in the cache
      */
     public Set<Changeset> getChangesets() {
         return new HashSet<>(cache.values());

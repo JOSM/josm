@@ -510,7 +510,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     }
 
     /**
-     * Action to undo or redo all commands up to (and including) the seleced item.
+     * Action to undo or redo all commands up to (and including) the selected item.
      */
     protected class UndoRedoAction extends JosmAction implements IEnabledStateUpdating {
         private final UndoRedoType type;

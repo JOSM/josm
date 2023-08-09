@@ -38,7 +38,7 @@ public abstract class CorrectionTable<T extends CorrectionTableModel<?>> extends
         super(correctionTableModel);
 
         final int correctionsSize = correctionTableModel.getCorrections().size();
-        final int lines = correctionsSize > MAX_VISIBLE_LINES ? MAX_VISIBLE_LINES : correctionsSize;
+        final int lines = Math.min(correctionsSize, MAX_VISIBLE_LINES);
         setPreferredScrollableViewportSize(new Dimension(400, lines * getRowHeight()));
         getColumnModel().getColumn(correctionTableModel.getApplyColumn()).setPreferredWidth(40);
         setRowSelectionAllowed(false);

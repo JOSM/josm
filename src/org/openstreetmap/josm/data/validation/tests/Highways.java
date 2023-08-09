@@ -98,7 +98,7 @@ public class Highways extends Test {
         if (w.isUsable()) {
             if (w.isClosed() && w.hasTag(HIGHWAY, CLASSIFIED_HIGHWAYS) && w.hasTag("junction", "circular", "roundabout")
                     && IN_DOWNLOADED_AREA_STRICT.test(w)) {
-                // TODO: find out how to handle splitted roundabouts (see #12841)
+                // TODO: find out how to handle split roundabouts (see #12841)
                 testWrongRoundabout(w);
             }
             if (w.hasKey(SOURCE_MAXSPEED)) {

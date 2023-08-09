@@ -112,7 +112,7 @@ public class UntaggedWay extends Test {
             }
         }
 
-        // #20393 - ways tagged with just area=yes are catched by MapCSS tests
+        // #20393 - ways tagged with just area=yes are caught by MapCSS tests
         if (!w.isTagged() && !w.hasTag("area", OsmUtils.TRUE_VALUE) && !waysUsedInRelations.contains(w)) {
             if (w.hasKeys()) {
                 errors.add(TestError.builder(this, Severity.WARNING, COMMENTED_WAY)

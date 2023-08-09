@@ -96,7 +96,7 @@ public final class Geometry {
      * @param cmds  list of commands, typically empty when handed to this method.
      *              Will be filled with commands that add intersection nodes to
      *              the ways.
-     * @return list of new nodes, if test is true the list might not contain all intersections
+     * @return set of new nodes, if test is true the list might not contain all intersections
      */
     public static Set<Node> addIntersections(List<Way> ways, boolean test, List<Command> cmds) {
 
@@ -130,7 +130,7 @@ public final class Geometry {
                 List<Node> way1Nodes = newNodes[seg1Way];
                 List<Node> way2Nodes = newNodes[seg2Way];
 
-                //iterate over primary segmemt
+                //iterate over primary segment
                 for (int seg1Pos = 0; seg1Pos + 1 < way1Nodes.size(); seg1Pos++) {
 
                     //iterate over secondary segment
@@ -350,7 +350,7 @@ public final class Geometry {
     }
 
     /**
-     * Get the segment segment intersection of two line segments
+     * Get the segment-segment intersection of two line segments
      * @param x1 The x coordinate of the first point (first segment)
      * @param y1 The y coordinate of the first point (first segment)
      * @param x2 The x coordinate of the second point (first segment)
@@ -832,7 +832,7 @@ public final class Geometry {
     public static Double computeArea(IPrimitive osm) {
         if (osm instanceof Way && ((Way) osm).isClosed()) {
             return closedWayArea((Way) osm);
-        } else if (osm instanceof Relation && ((Relation) osm).isMultipolygon() && !((Relation) osm).hasIncompleteMembers()) {
+        } else if (osm instanceof Relation && osm.isMultipolygon() && !((Relation) osm).hasIncompleteMembers()) {
             return multipolygonArea((Relation) osm);
         } else {
             return null;
@@ -921,7 +921,7 @@ public final class Geometry {
     }
 
     /**
-     * Get angles in radians and return it's value in range [0, 180].
+     * Get angles in radians and return its value in range [0, 180].
      *
      * @param angle the angle in radians
      * @return normalized angle in degrees
@@ -992,7 +992,7 @@ public final class Geometry {
     }
 
     /**
-     * Compute center of the circle closest to different nodes.
+     * Compute the center of the circle closest to different nodes.
      *
      * Ensure exact center computation in case nodes are already aligned in circle.
      * This is done by least square method.

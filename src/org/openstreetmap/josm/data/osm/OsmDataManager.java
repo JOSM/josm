@@ -70,9 +70,7 @@ public final class OsmDataManager implements IOsmDataManager {
     public void setActiveDataSet(DataSet ds) {
         Optional<OsmDataLayer> layer = MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class).stream()
                 .filter(l -> l.data.equals(ds)).findFirst();
-        if (layer.isPresent()) {
-            MainApplication.getLayerManager().setActiveLayer(layer.get());
-        }
+        layer.ifPresent(osmDataLayer -> MainApplication.getLayerManager().setActiveLayer(osmDataLayer));
     }
 
     @Override

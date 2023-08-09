@@ -98,7 +98,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 String leftRight = m.group(2).toLowerCase(Locale.ENGLISH);
 
                 StringBuilder result = new StringBuilder();
-                result.append(text.substring(0, m.start(2)))
+                result.append(text, 0, m.start(2))
                       .append(leftRight.equals(a) ? b : a)
                       .append(text.substring(m.end(2)));
 

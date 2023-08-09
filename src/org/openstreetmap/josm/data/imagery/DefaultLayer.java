@@ -8,6 +8,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  *
@@ -33,7 +34,7 @@ public class DefaultLayer {
     public DefaultLayer(ImageryType imageryType, String layerName, String style, String tileMatrixSet) {
         this.layerName = layerName == null ? "" : layerName;
         this.style = style == null ? "" : style;
-        if (imageryType != ImageryType.WMTS && !(tileMatrixSet == null || "".equals(tileMatrixSet))) {
+        if (imageryType != ImageryType.WMTS && !Utils.isEmpty(tileMatrixSet)) {
             throw new IllegalArgumentException(tr("{0} imagery has tileMatrixSet defined to: {1}", imageryType, tileMatrixSet));
         }
         this.tileMatrixSet = tileMatrixSet == null ? "" : tileMatrixSet;

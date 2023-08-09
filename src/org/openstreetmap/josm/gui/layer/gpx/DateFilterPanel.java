@@ -106,7 +106,7 @@ public class DateFilterPanel extends JPanel {
     }
 
     /**
-     * If possible, load date ragne and "zero timestamp" option from preferences
+     * If possible, load date range and "zero timestamp" option from preferences
      * Called by other components when it is needed.
      */
     public void loadFromPrefs() {

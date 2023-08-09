@@ -53,7 +53,6 @@ public class ChangesetManagementPanel extends JPanel implements ItemListener, Ch
     private JosmComboBox<Changeset> cbOpenChangesets;
     private JosmComboBoxModel<Changeset> model;
     private JCheckBox cbCloseAfterUpload;
-    private JButton btnClose;
 
     /**
      * Constructs a new {@code ChangesetManagementPanel}.
@@ -126,7 +125,7 @@ public class ChangesetManagementPanel extends JPanel implements ItemListener, Ch
 
         gc.gridx++;
         CloseChangesetAction closeChangesetAction = new CloseChangesetAction();
-        btnClose = new JButton(closeChangesetAction);
+        JButton btnClose = new JButton(closeChangesetAction);
         btnClose.setPreferredSize(prefSize);
         btnClose.setMinimumSize(prefSize);
         add(btnClose, gc);
@@ -277,6 +276,6 @@ public class ChangesetManagementPanel extends JPanel implements ItemListener, Ch
     @Override
     public void changesetCacheUpdated(ChangesetCacheEvent event) {
         // This listener might have been called by a background task.
-        SwingUtilities.invokeLater(() -> refreshCombo());
+        SwingUtilities.invokeLater(this::refreshCombo);
     }
 }

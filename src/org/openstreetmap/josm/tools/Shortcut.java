@@ -266,7 +266,7 @@ public final class Shortcut {
     public static String getKeyText(KeyStroke keyStroke) {
         if (keyStroke == null) return "";
         String modifText = KeyEvent.getModifiersExText(keyStroke.getModifiers());
-        if ("".equals(modifText)) return KeyEvent.getKeyText(keyStroke.getKeyCode());
+        if (modifText.isEmpty()) return KeyEvent.getKeyText(keyStroke.getKeyCode());
         return modifText + '+' + KeyEvent.getKeyText(keyStroke.getKeyCode());
     }
 
@@ -521,7 +521,7 @@ public final class Shortcut {
     // and now the workhorse. same parameters as above, just one more
     private static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier) {
         doInit();
-        Integer defaultModifier = findModifier(requestedGroup, modifier);
+        int defaultModifier = findModifier(requestedGroup, modifier);
         final Optional<Shortcut> existing = findShortcutByKeyOrShortText(requestedKey, defaultModifier, shortText);
         if (existing.isPresent() && shortText.equals(existing.get().getShortText())) {
             // a re-register? maybe a sc already read from the preferences?

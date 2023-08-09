@@ -107,7 +107,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
         public void valueChanged(ListSelectionEvent e) {
             TableCellEditor editor = table.getCellEditor();
             if (editor != null) {
-                ((DefaultCellEditor) editor).stopCellEditing();
+                editor.stopCellEditing();
             }
             if (entryList.getSelectedIndices().length != 1) {
                 entryIdx = null;

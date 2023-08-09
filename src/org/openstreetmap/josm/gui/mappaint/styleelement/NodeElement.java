@@ -379,13 +379,13 @@ public class NodeElement extends StyleElement {
     public String toString() {
         StringBuilder s = new StringBuilder(64).append("NodeElement{").append(super.toString());
         if (mapImage != null) {
-            s.append(" icon=[" + mapImage + ']');
+            s.append(" icon=[").append(mapImage).append(']');
         }
         if (mapImage != null && mapImageAngle != null) {
-            s.append(" mapImageAngle=[" + mapImageAngle + ']');
+            s.append(" mapImageAngle=[").append(mapImageAngle).append(']');
         }
         if (symbol != null) {
-            s.append(" symbol=[" + symbol + ']');
+            s.append(" symbol=[").append(symbol).append(']');
         }
         s.append('}');
         return s.toString();

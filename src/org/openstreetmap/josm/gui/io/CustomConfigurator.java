@@ -130,11 +130,10 @@ public final class CustomConfigurator {
      * @param unzip - if true file wil be unzipped and deleted after download
      */
     public static void processDownloadOperation(String address, String path, String parentDir, boolean mkdir, boolean unzip) {
-        String dir = parentDir;
         if (path.contains("..") || path.startsWith("/") || path.contains(":")) {
             return; // some basic protection
         }
-        File fOut = new File(dir, path);
+        File fOut = new File(parentDir, path);
         DownloadFileTask downloadFileTask = new DownloadFileTask(MainApplication.getMainFrame(), address, fOut, mkdir, unzip);
 
         MainApplication.worker.submit(downloadFileTask);

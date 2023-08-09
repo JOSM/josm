@@ -126,11 +126,7 @@ public class AutoCompletionPriority implements Comparable<AutoCompletionPriority
         if (ds != 0)
             return ds;
 
-        int std = Boolean.compare(inStandard, other.inStandard);
-        if (std != 0)
-            return std;
-
-        return 0;
+        return Boolean.compare(inStandard, other.inStandard);
     }
 
     /**

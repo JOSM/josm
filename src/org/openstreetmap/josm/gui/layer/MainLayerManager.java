@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.Logging;
  * <p>
  * The active layer is the layer the user is currently working on.
  * <p>
- * The edit layer is an data layer that we currently work with.
+ * The edit layer is a data layer that we currently work with.
  * @author Michael Zangl
  * @since 10279
  */
@@ -210,7 +210,7 @@ public class MainLayerManager extends LayerManager {
     }
 
     /**
-     * Adds a active/edit layer change listener. Fire a fake active-layer-changed-event right after adding
+     * Adds an active/edit layer change listener. Fire a fake active-layer-changed-event right after adding
      * the listener. The previous layers will be null. The listener is notified in the current thread.
      * @param listener the listener.
      */

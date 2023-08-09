@@ -501,7 +501,7 @@ public class Bounds implements IBounds {
 
     /**
      * Determines if this Bounds object crosses the 180th Meridian.
-     * See http://wiki.openstreetmap.org/wiki/180th_meridian
+     * See <a href="http://wiki.openstreetmap.org/wiki/180th_meridian">180th Meridian</a>.
      * @return true if this Bounds object crosses the 180th Meridian.
      */
     @Override

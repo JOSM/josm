@@ -16,7 +16,7 @@ public class EDTAssertionMocker extends MockUp<GuiHelper> {
     static void handleEDTException(final Invocation invocation, final Throwable t) throws Throwable {
         final Throwable cause = t.getCause();
         if (cause instanceof AssertionError) {
-            throw (AssertionError) cause;
+            throw cause;
         }
 
         invocation.proceed(t);

@@ -514,7 +514,7 @@ public class ImageryProvidersPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Integer i;
+            int i;
             while ((i = activeTable.getSelectedRow()) != -1) {
                 activeModel.removeRow(i);
             }
