@@ -298,6 +298,13 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="alternative" type="boolean">
+            <annotation>
+                <documentation>
+                    Indicates that the preset link points to an alternative tagging of the object.
+                </documentation>
+            </annotation>
+        </attribute>
         <attributeGroup ref="tns:attributes.text" />
         <attribute name="name" use="prohibited" />
         <anyAttribute processContents="skip" />

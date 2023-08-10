@@ -45,11 +45,39 @@ public class PresetLink extends TextItem {
     public String preset_name = ""; // NOSONAR
 
     /**
+     * true if the PresetLink points to the alternative tagging of the preset.
+     */
+    private boolean alternative;
+
+    /**
+     * Gets the alternative for the preset
+     */
+    public boolean isAlternative() {
+        return alternative;
+    }
+
+    /**
+     * Sets the alternative for the preset.
+     */
+    public void setAlternative(boolean alternative) {
+        this.alternative = alternative;
+    }
+
+    /**
      * Creates a label to be inserted above this link
      * @return a label
      */
     public JLabel createLabel() {
         initializeLocaleText(tr("Edit also …"));
+        return new JLabel(locale_text);
+    }
+
+    /**
+     * Creates a label to be inserted above the alternative presets
+     * @return a label
+     */
+    public JLabel createAlternativeLabel() {
+        initializeLocaleText(tr("Alternative Presets"));
         return new JLabel(locale_text);
     }
 

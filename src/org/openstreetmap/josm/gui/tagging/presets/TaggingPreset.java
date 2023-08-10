@@ -420,6 +420,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         };
         JPanel linkPanel = new JPanel(new GridBagLayout());
         TaggingPresetItem previous = null;
+        boolean alternativeLabel = false; // true if an alternative label has been added
         for (TaggingPresetItem i : data) {
             if (i instanceof Link) {
                 i.addToPanel(linkPanel, itemGuiSupport);
@@ -427,7 +428,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             } else {
                 if (i instanceof PresetLink) {
                     PresetLink link = (PresetLink) i;
-                    if (!(previous instanceof PresetLink && Objects.equals(((PresetLink) previous).text, link.text))) {
+                    if (!alternativeLabel && link.isAlternative()) {
+                        itemPanel.add(link.createAlternativeLabel(), GBC.eol().insets(0, 8, 0, 0));
+                        alternativeLabel = true;
+                    } else if (!(previous instanceof PresetLink && Objects.equals(((PresetLink) previous).text, link.text))) {
                         itemPanel.add(link.createLabel(), GBC.eol().insets(0, 8, 0, 0));
                     }
                 }
