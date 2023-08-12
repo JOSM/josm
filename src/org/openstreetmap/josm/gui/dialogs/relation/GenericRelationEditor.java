@@ -188,6 +188,13 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
 
             @Override
             public Collection<OsmPrimitive> getSelection() {
+                // Creating a new relation will open the window. The relation, in that case, will be null.
+                if (getRelation() == null) {
+                    Relation relation = new Relation();
+                    tagEditorPanel.getModel().applyToPrimitive(relation);
+                    memberTableModel.applyToRelation(relation);
+                    return Collections.singletonList(relation);
+                }
                 return Collections.singletonList(getRelation());
             }
         };
