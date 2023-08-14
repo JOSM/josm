@@ -82,10 +82,10 @@ public class PlaceSelection implements DownloadSelection {
     private final JosmComboBox<Server> serverComboBox = new JosmComboBox<>(SERVERS);
 
     private static class Server {
-        public final String name;
-        public final BiFunction<String, Collection<SearchResult>, URL> urlFunction;
-        public final String thirdcol;
-        public final String fourthcol;
+        final String name;
+        final BiFunction<String, Collection<SearchResult>, URL> urlFunction;
+        final String thirdcol;
+        final String fourthcol;
 
         Server(String n, BiFunction<String, Collection<SearchResult>, URL> u, String t, String f) {
             name = n;
@@ -132,7 +132,7 @@ public class PlaceSelection implements DownloadSelection {
 
     /**
      * Adds a new tab to the download dialog in JOSM.
-     *
+     * <p>
      * This method is, for all intents and purposes, the constructor for this class.
      */
     @Override
@@ -191,7 +191,7 @@ public class PlaceSelection implements DownloadSelection {
         @Override
         public void actionPerformed(ActionEvent e) {
             String searchExpression = cbSearchExpression.getText();
-            if (!isEnabled() || searchExpression.trim().isEmpty())
+            if (!isEnabled() || searchExpression.trim().isEmpty() || serverComboBox.getSelectedItem() == null)
                 return;
             cbSearchExpression.addCurrentItemToHistory();
             cbSearchExpression.getModel().prefs().save(HISTORY_KEY);
@@ -297,13 +297,23 @@ public class PlaceSelection implements DownloadSelection {
                             tr("Bad response"),
                             JOptionPane.WARNING_MESSAGE, null
                     ));
+                    generateLastException(e);
                 }
             } catch (IOException | ParserConfigurationException e) {
-                if (!canceled) {
-                    OsmTransferException ex = new OsmTransferException(e);
-                    ex.setUrl(url.toString());
-                    lastException = ex;
-                }
+                generateLastException(e);
+            }
+        }
+
+        /**
+         * Generate an {@link OsmTransferException} that will be stored in {@link #lastException} if the operation is
+         * not cancelled.
+         * @param throwable The throwable to store as an {@link OsmTransferException}
+         */
+        private void generateLastException(Throwable throwable) {
+            if (!canceled) {
+                OsmTransferException ex = new OsmTransferException(throwable);
+                ex.setUrl(url.toString());
+                lastException = ex;
             }
         }
     }
@@ -336,6 +346,10 @@ public class PlaceSelection implements DownloadSelection {
             fireTableDataChanged();
         }
 
+        /**
+         * Add data to the table
+         * @param data The data to add
+         */
         public void addData(List<SearchResult> data) {
             this.data.addAll(data);
             fireTableDataChanged();
@@ -402,6 +416,11 @@ public class PlaceSelection implements DownloadSelection {
             addColumn(col4);
         }
 
+        /**
+         * Set the header column values for the third and fourth columns
+         * @param third The new header for the third column
+         * @param fourth The new header for the fourth column
+         */
         public void setHeadlines(String third, String fourth) {
             col3.setHeaderValue(third);
             col4.setHeaderValue(fourth);
