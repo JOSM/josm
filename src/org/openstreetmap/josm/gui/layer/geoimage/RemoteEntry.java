@@ -219,7 +219,7 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
 
     @Override
     public Instant getLastModified() {
-        if (this.getImageURI().getScheme().contains("file:")) {
+        if ("file".equals(this.getImageURI().getScheme())) {
             try {
                 return Files.getLastModifiedTime(Paths.get(this.getImageURI())).toInstant();
             } catch (IOException e) {
