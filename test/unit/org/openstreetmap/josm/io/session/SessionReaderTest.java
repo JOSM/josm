@@ -14,10 +14,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -27,22 +27,13 @@ import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for Session reading.
  */
+@Projection
 class SessionReaderTest {
-
-    /**
-     * Setup tests.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     private static String getSessionDataDir() {
         return TestUtils.getTestDataRoot() + "/sessions";
     }
@@ -158,6 +149,19 @@ class SessionReaderTest {
         final NoteLayer layer = assertInstanceOf(NoteLayer.class, layers.get(0));
         assertEquals("Notes", layer.getName());
         assertEquals(174, layer.getNoteData().getNotes().size());
+    }
+
+    @Test
+    void testReadGeojson() throws IOException, IllegalDataException {
+        final List<Layer> layers = testRead("geojson.jos");
+        assertEquals(1, layers.size());
+        final OsmDataLayer osmDataLayer = assertInstanceOf(OsmDataLayer.class, layers.get(0));
+        assertEquals("Geojson layer name", osmDataLayer.getName());
+        assertEquals(1, osmDataLayer.getDataSet().allPrimitives().size());
+        final Node node = assertInstanceOf(Node.class, osmDataLayer.getDataSet().allPrimitives().iterator().next());
+        assertEquals(2d, node.lat(), 1e-9);
+        assertEquals(1d, node.lon(), 1e-9);
+        assertEquals("Test point", node.get("name"));
     }
 
     /**

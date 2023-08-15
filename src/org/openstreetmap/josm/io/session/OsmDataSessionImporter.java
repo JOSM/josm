@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.session;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,6 +13,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.io.importexport.FileImporter;
 import org.openstreetmap.josm.gui.io.importexport.OsmImporter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -30,7 +33,14 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
     @Override
     public Layer load(Element elem, ImportSupport support, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         checkMetaVersion(elem);
-        String fileStr = extractFileName(elem, support);
+        final String fileStr = extractFileName(elem, support);
+        final File file = new File(fileStr);
+        for (FileImporter importer : ExtensionFileFilter.getImporters()) {
+            if (importer instanceof OsmImporter && importer.acceptFile(file)) {
+                return importData((OsmImporter) importer, support, fileStr, progressMonitor);
+            }
+        }
+        // Fall back to the default OsmImporter, just in case. It will probably fail.
         return importData(new OsmImporter(), support, fileStr, progressMonitor);
     }
 
