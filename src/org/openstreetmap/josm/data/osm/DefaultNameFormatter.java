@@ -168,6 +168,31 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     /**
+     * Decorates the name of primitive with nodes count
+     *
+     * @param name the name without the nodes count
+     * @param primitive the primitive
+     * @since 18808
+     */
+    protected void decorateNameWithNodes(StringBuilder name, IWay way) {
+        char mark;
+        // If current language is left-to-right (almost all languages)
+        if (ComponentOrientation.getOrientation(Locale.getDefault()).isLeftToRight()) {
+            // will insert Left-To-Right Mark to ensure proper display of text in the case when object name is right-to-left
+            mark = '\u200E';
+        } else {
+            // otherwise will insert Right-To-Left Mark to ensure proper display in the opposite case
+            mark = '\u200F';
+        }
+        int nodesNo = way.getRealNodesCount();
+        /* note: length == 0 should no longer happen, but leave the bracket code
+            nevertheless, who knows what future brings */
+        /* I18n: count of nodes as parameter */
+        String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
+        name.append(mark).append(" (").append(nodes).append(')');
+    }
+
+    /**
      * Formats a name for an {@link IPrimitive}.
      *
      * @param osm the primitive
@@ -272,12 +297,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 preset.nameTemplate.appendText(name, (TemplateEngineDataProvider) way);
             }
 
-            int nodesNo = way.getRealNodesCount();
-            /* note: length == 0 should no longer happen, but leave the bracket code
-               nevertheless, who knows what future brings */
-            /* I18n: count of nodes as parameter */
-            String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
-            name.append(mark).append(" (").append(nodes).append(')');
+            decorateNameWithNodes(name, way);
         }
         decorateNameWithId(name, way);
         name.append('\u200C');
