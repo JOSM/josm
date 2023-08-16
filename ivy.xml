@@ -24,9 +24,9 @@
         <!-- The javax json dependencies should be removed sometime in 2024 -->
         <dependency conf="api->default" org="javax.json" name="javax.json-api" rev="1.1.4"/>
         <dependency conf="api->default" org="org.glassfish" name="javax.json" rev="1.1.4"/>
-        <dependency conf="api->default" org="jakarta.json" name="jakarta.json-api" rev="2.1.1"/>
+        <dependency conf="api->default" org="jakarta.json" name="jakarta.json-api" rev="2.1.2"/>
         <!-- parsson is an implementation for jakarta.json -->
-        <dependency conf="runtimeOnly->default" org="org.eclipse.parsson" name="parsson" rev="1.1.1"/>
+        <dependency conf="runtimeOnly->default" org="org.eclipse.parsson" name="parsson" rev="1.1.4"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-jcs3-core" rev="3.1"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-compress" rev="1.23.0"/>
         <dependency conf="api->default" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
@@ -42,8 +42,8 @@
         <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.16"/>
         <dependency conf="sources->sources" org="javax.json" name="javax.json-api" rev="1.1.4"/>
         <dependency conf="sources->sources" org="org.glassfish" name="javax.json" rev="1.1.4"/>
-        <dependency conf="sources->sources" org="jakarta.json" name="jakarta.json-api" rev="2.1.1"/>
-        <dependency conf="sources->sources" org="org.eclipse.parsson" name="parsson" rev="1.1.1"/>
+        <dependency conf="sources->sources" org="jakarta.json" name="jakarta.json-api" rev="2.1.2"/>
+        <dependency conf="sources->sources" org="org.eclipse.parsson" name="parsson" rev="1.1.4"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-jcs3-core" rev="3.1"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-compress" rev="1.23.0"/>
         <dependency conf="sources->sources" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
@@ -55,7 +55,7 @@
         <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
         <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2022.11.28"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
         <!-- commonslang->default -->
-        <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.12.0"/>
+        <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.13.0"/>
         <!-- jacocoant->default -->
         <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.10">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
@@ -65,17 +65,17 @@
         <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.7.3"/>
         <dependency conf="test->default" org="com.ginsberg" name="junit5-system-exit" rev="1.1.2"/>
         <dependency conf="test->default" org="com.github.tomakehurst" name="wiremock-jre8" rev="2.35.0"/>
-        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.158"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.9.3"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.9.3"/>
-        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.9.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.9.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.9.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.9.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.9.3"/>
+        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.162"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.10.0"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.10.0"/>
+        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.10.0"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.10.0"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.10.0"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.10.0"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.10.0"/>
         <dependency conf="test->default" org="net.trajano.commons" name="commons-testing" rev="2.1.0"/>
-        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.14.1"/>
-        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.12.0"/>
+        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.15.1"/>
+        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.13.0"/>
         <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.2.0"/>
     </dependencies>
 </ivy-module>
