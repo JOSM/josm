@@ -46,7 +46,9 @@ JPACKAGEOPTIONS=""
 echo "Building EXE and MSI"
 for type in exe msi
 do
-    jpackage "$JPACKAGEOPTIONS" -n "JOSM" --input dist --main-jar josm-custom.jar \
+    # $JPACKAGEOPTIONS is supposed to be expanded
+    # shellcheck disable=SC2086
+    jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/windows/logo.ico --type $type --dest app \
     --java-options "--add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web" \
