@@ -171,10 +171,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * Decorates the name of primitive with nodes count
      *
      * @param name the name without the nodes count
-     * @param primitive the primitive
+     * @param way the way
      * @since 18808
      */
-    protected void decorateNameWithNodes(StringBuilder name, IWay way) {
+    protected void decorateNameWithNodes(StringBuilder name, IWay<?> way) {
         char mark;
         // If current language is left-to-right (almost all languages)
         if (ComponentOrientation.getOrientation(Locale.getDefault()).isLeftToRight()) {
@@ -558,8 +558,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     /**
      * Decorates the name of primitive with its id, if the preference
      * <code>osm-primitives.showid</code> is set.
-     *
-     * The id is append to the {@link StringBuilder} passed in <code>name</code>.
+     * <p>
+     * The id is appended to the {@link StringBuilder} passed in <code>name</code>.
      *
      * @param name  the name without the id
      * @param primitive the primitive

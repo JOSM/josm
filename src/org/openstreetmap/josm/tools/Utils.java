@@ -75,7 +75,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 public final class Utils {
 
     /** Pattern matching white spaces */
-    public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
+    public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+", Pattern.UNICODE_CHARACTER_CLASS);
 
     private static final long MILLIS_OF_SECOND = TimeUnit.SECONDS.toMillis(1);
     private static final long MILLIS_OF_MINUTE = TimeUnit.MINUTES.toMillis(1);
@@ -104,11 +104,14 @@ public final class Utils {
     static final Method mapOfEntries = mapOfEntriesMethod();
 
     private static Method mapOfEntriesMethod() {
-        try {
-            return Map.class.getMethod("ofEntries", Map.Entry[].class);
-        } catch (NoSuchMethodException e) {
-            return null;
+        if (getJavaVersion() >= 9) {
+            try {
+                return Map.class.getMethod("ofEntries", Map.Entry[].class);
+            } catch (NoSuchMethodException noSuchMethodException) {
+                Logging.trace(noSuchMethodException);
+            }
         }
+        return null;
     }
 
     private Utils() {
@@ -196,7 +199,7 @@ public final class Utils {
      * @param values collection of objects, null is converted to the
      *  empty string
      * @return null if values is null. The joined string otherwise.
-     * @deprecated use {@link String#join} or {@link Collectors#joining}
+     * @deprecated since 15718, use {@link String#join} or {@link Collectors#joining}
      */
     @Deprecated
     public static String join(String sep, Collection<?> values) {
@@ -520,8 +523,8 @@ public final class Utils {
         }
 
         char[] hexChars = new char[len * 2];
-        for (int i = 0, j = 0; i < len; i++) {
-            final int v = bytes[i];
+        int j = 0;
+        for (final int v : bytes) {
             hexChars[j++] = HEX_ARRAY[(v & 0xf0) >> 4];
             hexChars[j++] = HEX_ARRAY[v & 0xf];
         }
@@ -681,9 +684,9 @@ public final class Utils {
         } else if (mapOfEntries != null) {
             try {
                 // Java 9: use Map.ofEntries(...)
-                return (Map<K, V>) mapOfEntries.invoke(null, new Object[]{map.entrySet().toArray(new Map.Entry[0])});
-            } catch (Exception ignore) {
-                Logging.trace(ignore);
+                return (Map<K, V>) mapOfEntries.invoke(null, (Object) map.entrySet().toArray(new Map.Entry[0]));
+            } catch (ReflectiveOperationException toLog) {
+                Logging.trace(toLog);
             }
         }
         return Collections.unmodifiableMap(map);
@@ -1519,8 +1522,7 @@ public final class Utils {
         if (stream == null) {
             return new byte[0];
         }
-        try { // NOPMD
-            ByteArrayOutputStream bout = new ByteArrayOutputStream(stream.available());
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream(stream.available())) {
             byte[] buffer = new byte[8192];
             boolean finished = false;
             do {
@@ -1542,7 +1544,7 @@ public final class Utils {
     /**
      * Returns the initial capacity to pass to the HashMap / HashSet constructor
      * when it is initialized with a known number of entries.
-     *
+     * <p>
      * When a HashMap is filled with entries, the underlying array is copied over
      * to a larger one multiple times. To avoid this process when the number of
      * entries is known in advance, the initial capacity of the array can be
@@ -1559,13 +1561,13 @@ public final class Utils {
     /**
      * Returns the initial capacity to pass to the HashMap / HashSet constructor
      * when it is initialized with a known number of entries.
-     *
+     * <p>
      * When a HashMap is filled with entries, the underlying array is copied over
      * to a larger one multiple times. To avoid this process when the number of
      * entries is known in advance, the initial capacity of the array can be
      * given to the HashMap constructor. This method returns a suitable value
      * that avoids rehashing but doesn't waste memory.
-     *
+     * <p>
      * Assumes default load factor (0.75).
      * @param nEntries the number of entries expected
      * @return the initial capacity for the HashMap constructor
@@ -1639,6 +1641,7 @@ public final class Utils {
      * @since 10805
      */
     public static double clamp(double val, double min, double max) {
+        // Switch to Math.clamp when we move to Java 21
         if (min > max) {
             throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greater than max ({1})", min, max));
         } else if (val < min) {
@@ -1673,7 +1676,7 @@ public final class Utils {
 
     /**
      * Convert angle from radians to degrees.
-     *
+     * <p>
      * Replacement for {@link Math#toDegrees(double)} to match the Java 9
      * version of that method. (Can be removed when JOSM support for Java 8 ends.)
      * Only relevant in relation to ProjectionRegressionTest.
@@ -1688,7 +1691,7 @@ public final class Utils {
 
     /**
      * Convert angle from degrees to radians.
-     *
+     * <p>
      * Replacement for {@link Math#toRadians(double)} to match the Java 9
      * version of that method. (Can be removed when JOSM support for Java 8 ends.)
      * Only relevant in relation to ProjectionRegressionTest.
@@ -1707,7 +1710,8 @@ public final class Utils {
      * @since 12130
      */
     public static int getJavaVersion() {
-        String version = getSystemProperty("java.version");
+        // Switch to Runtime.version() once we move past Java 8
+        String version = Objects.requireNonNull(getSystemProperty("java.version"));
         if (version.startsWith("1.")) {
             version = version.substring(2);
         }
@@ -1728,7 +1732,8 @@ public final class Utils {
      * @since 12217
      */
     public static int getJavaUpdate() {
-        String version = getSystemProperty("java.version");
+        // Switch to Runtime.version() once we move past Java 8
+        String version = Objects.requireNonNull(getSystemProperty("java.version"));
         if (version.startsWith("1.")) {
             version = version.substring(2);
         }
@@ -1737,6 +1742,8 @@ public final class Utils {
         // 9-ea
         // 9
         // 9.0.1
+        // 17.0.4.1+1-LTS
+        // $MAJOR.$MINOR.$SECURITY.$PATCH
         int undePos = version.indexOf('_');
         int dashPos = version.indexOf('-');
         if (undePos > -1) {
@@ -1744,12 +1751,12 @@ public final class Utils {
                     dashPos > -1 ? dashPos : version.length()));
         }
         int firstDotPos = version.indexOf('.');
-        int lastDotPos = version.lastIndexOf('.');
-        if (firstDotPos == lastDotPos) {
+        int secondDotPos = version.indexOf('.', firstDotPos + 1);
+        if (firstDotPos == secondDotPos) {
             return 0;
         }
         return firstDotPos > -1 ? Integer.parseInt(version.substring(firstDotPos + 1,
-                lastDotPos > -1 ? lastDotPos : version.length())) : 0;
+                secondDotPos > -1 ? secondDotPos : version.length())) : 0;
     }
 
     /**
@@ -1758,7 +1765,8 @@ public final class Utils {
      * @since 12217
      */
     public static int getJavaBuild() {
-        String version = getSystemProperty("java.runtime.version");
+        // Switch to Runtime.version() once we move past Java 8
+        String version = Objects.requireNonNull(getSystemProperty("java.runtime.version"));
         int bPos = version.indexOf('b');
         int pPos = version.indexOf('+');
         try {
@@ -2040,9 +2048,9 @@ public final class Utils {
      */
     public static String stripHtml(String rawString) {
         // remove HTML tags
-        rawString = rawString.replaceAll("<.*?>", " ");
+        rawString = rawString.replaceAll("<[^>]+>", " ");
         // consolidate multiple spaces between a word to a single space
-        rawString = rawString.replaceAll("\\b\\s{2,}\\b", " ");
+        rawString = rawString.replaceAll("(?U)\\b\\s{2,}\\b", " ");
         // remove extra whitespaces
         return rawString.trim();
     }

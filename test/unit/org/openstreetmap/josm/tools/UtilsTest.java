@@ -311,6 +311,9 @@ class UtilsTest {
 
             System.setProperty("java.version", "9.1.2");
             assertEquals(1, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "17.0.4.1+1-LTS");
+            assertEquals(0, Utils.getJavaUpdate());
         } finally {
             System.setProperty("java.version", javaVersion);
         }
