@@ -115,6 +115,11 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
         return Utils.transform(getMembers(), IRelationMember::getMember);
     }
 
+    @Override
+    default List<? extends IPrimitive> getChildren() {
+        return getMemberPrimitivesList();
+    }
+
     /**
      * Replies a collection with the incomplete children this relation refers to.
      *

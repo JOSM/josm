@@ -147,9 +147,9 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
         checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
-            List<RelationMember> members = getMembers();
-            RelationMember result = members.remove(index);
-            setMembers(members);
+            List<RelationMember> currentMembers = getMembers();
+            RelationMember result = currentMembers.remove(index);
+            setMembers(currentMembers);
             return result;
         } finally {
             writeUnlock(locked);
@@ -389,9 +389,9 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
 
         boolean locked = writeLock();
         try {
-            List<RelationMember> members = getMembers();
-            members.removeAll(getMembersFor(primitives));
-            setMembers(members);
+            List<RelationMember> currentMembers = getMembers();
+            currentMembers.removeAll(getMembersFor(primitives));
+            setMembers(currentMembers);
         } finally {
             writeUnlock(locked);
         }
@@ -427,6 +427,11 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     }
 
     @Override
+    public List<OsmPrimitive> getChildren() {
+        return getMemberPrimitivesList();
+    }
+
+    @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.RELATION;
     }
@@ -443,7 +448,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
         }
 
         BBox box = new BBox();
-        addToBBox(box, new HashSet<PrimitiveId>());
+        addToBBox(box, new HashSet<>());
         if (getDataSet() == null) {
             return box;
         }
@@ -493,7 +498,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
             if (Config.getPref().getBoolean("debug.checkDeleteReferenced", true)) {
                 for (RelationMember rm: members) {
                     if (rm.getMember().isDeleted())
-                        throw new DataIntegrityProblemException("Deleted member referenced: " + toString(), null, this, rm.getMember());
+                        throw new DataIntegrityProblemException("Deleted member referenced: " + this, null, this, rm.getMember());
                 }
             }
         }
@@ -559,8 +564,8 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     @Override
     public List<? extends OsmPrimitive> findRelationMembers(String role) {
         return IRelation.super.findRelationMembers(role).stream()
-                .filter(m -> m instanceof OsmPrimitive)
-                .map(m -> (OsmPrimitive) m).collect(Collectors.toList());
+                .filter(OsmPrimitive.class::isInstance)
+                .map(OsmPrimitive.class::cast).collect(Collectors.toList());
     }
 
     @Override

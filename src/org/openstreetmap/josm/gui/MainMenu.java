@@ -96,6 +96,7 @@ import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SearchNotesDownloadAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.SelectNonBranchingWaySequencesAction;
+import org.openstreetmap.josm.actions.SelectSharedChildObjectsAction;
 import org.openstreetmap.josm.actions.SessionSaveAction;
 import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
@@ -142,7 +143,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide all menu
  * entries as member variables (sort of collect them).
- *
+ * <p>
  * It also provides possibilities to attach new menu entries (used by plugins).
  *
  * @author Immanuel.Scholz
@@ -319,6 +320,8 @@ public class MainMenu extends JMenuBar {
     public final InvertSelectionAction invertSelection = new InvertSelectionAction();
     /** Selection / Non-branching way sequences */
     public final SelectNonBranchingWaySequencesAction nonBranchingWaySequences = new SelectNonBranchingWaySequencesAction();
+    /** Selection / Shared Child Objects */
+    public final SelectSharedChildObjectsAction sharedChildObjects = new SelectSharedChildObjectsAction();
 
     /* Audio menu */
     /** Audio / Play/Pause */
@@ -470,13 +473,13 @@ public class MainMenu extends JMenuBar {
             final JPopupMenu m = ((JMenu) a.getSource()).getPopupMenu();
             for (int i = 0; i < m.getComponentCount()-1; i++) {
                 // hide separator if the next menu item is one as well
-                if (m.getComponent(i) instanceof JSeparator && m.getComponent(i+1) instanceof JSeparator) {
-                    ((JSeparator) m.getComponent(i)).setVisible(false);
+                if (m.getComponent(i) instanceof JSeparator && m.getComponent(i + 1) instanceof JSeparator) {
+                    m.getComponent(i).setVisible(false);
                 }
             }
             // hide separator at the end of the menu
-            if (m.getComponent(m.getComponentCount()-1) instanceof JSeparator) {
-                ((JSeparator) m.getComponent(m.getComponentCount()-1)).setVisible(false);
+            if (m.getComponent(m.getComponentCount() - 1) instanceof JSeparator) {
+                m.getComponent(m.getComponentCount() - 1).setVisible(false);
             }
         }
     };
@@ -492,7 +495,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Add a JosmAction at the end of a menu.
-     *
+     * <p>
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      * @param menu the menu to add the action to
@@ -505,7 +508,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Add a JosmAction at the end of a menu.
-     *
+     * <p>
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      * @param menu the menu to add the action to
@@ -519,7 +522,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Add a JosmAction at the end of a menu.
-     *
+     * <p>
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      * @param menu the menu to add the action to
@@ -551,7 +554,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Add the JosmAction {@code actionToBeInserted} directly below {@code existingMenuEntryAction}.
-     *
+     * <p>
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      * @param menu the menu to add the action to
@@ -574,7 +577,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Add a JosmAction to a menu.
-     *
+     * <p>
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      * @param <E> group item enum type
@@ -863,6 +866,7 @@ public class MainMenu extends JMenuBar {
         add(selectionMenu, unselectAll);
         add(selectionMenu, invertSelection, true);
         add(selectionMenu, nonBranchingWaySequences);
+        add(selectionMenu, sharedChildObjects, true);
 
         add(toolsMenu, splitWay);
         add(toolsMenu, combineWay);
@@ -947,8 +951,8 @@ public class MainMenu extends JMenuBar {
      */
     public Optional<JCheckBoxMenuItem> findMapModeMenuItem(MapMode mode) {
         return Arrays.stream(modeMenu.getMenuComponents())
-                .filter(m -> m instanceof JCheckBoxMenuItem)
-                .map(m -> (JCheckBoxMenuItem) m)
+                .filter(JCheckBoxMenuItem.class::isInstance)
+                .map(JCheckBoxMenuItem.class::cast)
                 .filter(m -> Objects.equals(mode, m.getAction()))
                 .findFirst();
     }

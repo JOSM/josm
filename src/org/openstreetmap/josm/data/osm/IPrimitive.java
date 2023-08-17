@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
     /**
      * Replies <code>true</code> if the object has been modified since it was loaded from
      * the server. In this case, on next upload, this object will be updated.
-     *
+     * <p>
      * Deleted objects are deleted from the server. If the objects are added (id=0),
      * the modified is ignored and the object is added to the server.
      *
@@ -67,7 +68,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
 
     /**
      * Sets whether this primitive is deleted or not.
-     *
+     * <p>
      * Also marks this primitive as modified if deleted is true.
      *
      * @param deleted  true, if this primitive is deleted; false, otherwise
@@ -243,7 +244,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
 
     /**
      * Sets the id and the version of this primitive if it is known to the OSM API.
-     *
+     * <p>
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
      *
@@ -276,7 +277,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      *
      * @return date of last modification
      * @see #setTimestamp
-     * @deprecated Use {@link #getInstant}
+     * @deprecated since 17749, use {@link #getInstant} instead
      */
     @Deprecated
     Date getTimestamp();
@@ -305,7 +306,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * Sets time of last modification to this object
      * @param timestamp date of last modification
      * @see #getTimestamp
-     * @deprecated Use {@link #setInstant}
+     * @deprecated since 17749, use {@link #setInstant} instead
      */
     @Deprecated
     void setTimestamp(Date timestamp);
@@ -544,5 +545,17 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
         } else if (p instanceof IRelation<?>) {
             ((IRelation<?>) p).setMembers(null);
         }
+    }
+
+    /**
+     * Get child primitives that are referred by this primitive.
+     * {@link Relation}: Members of the relation
+     * {@link Way}: Nodes used by the way
+     * {@link Node}: None
+     * @return List of child primitives
+     * @since 18814
+     */
+    default List<? extends IPrimitive> getChildren() {
+        return Collections.emptyList();
     }
 }
