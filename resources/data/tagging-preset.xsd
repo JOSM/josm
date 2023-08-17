@@ -407,7 +407,7 @@
         <attribute name="editable" type="boolean">
             <annotation>
                 <documentation>
-                    The combo box is read only, which means that the user can only select an item in the list. Default is "true", which means, the user can add other values as text. Feature is broken, see #6157.
+                    The combo box is read only, which means that the user can only select an item in the list. Default is "true", which means, the user can add other values as text.
                 </documentation>
             </annotation>
         </attribute>
