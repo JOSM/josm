@@ -960,7 +960,7 @@ public final class MapStatus extends JPanel implements
         progressBar.addMouseListener(new ShowMonitorDialogMouseAdapter());
 
         Config.getPref().addPreferenceChangeListener(this);
-        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
+        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListenerForEdt(this);
 
         mvComponentAdapter = new ComponentAdapter() {

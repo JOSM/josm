@@ -174,7 +174,7 @@ public class SelectionListDialog extends ToggleDialog {
     public void showNotify() {
         SelectionEventManager.getInstance().addSelectionListenerForEdt(actShowHistory);
         SelectionEventManager.getInstance().addSelectionListenerForEdt(model);
-        DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
+        DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT_CONSOLIDATED);
         MainApplication.getLayerManager().addActiveLayerChangeListener(actSearch);
         // editLayerChanged also gets the selection history of the level. Listener calls setJOSMSelection when fired.
         MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(model);
