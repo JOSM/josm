@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -81,10 +84,9 @@ public class GpxReaderTest {
 
     /**
      * Tests invalid data.
-     * @throws Exception always SAXException
      */
     @Test
-    void testException() throws Exception {
+    void testException() {
         assertThrows(SAXException.class,
                 () -> new GpxReader(new ByteArrayInputStream("--foo--bar--".getBytes(StandardCharsets.UTF_8))).parse(true));
     }
@@ -98,5 +100,22 @@ public class GpxReaderTest {
     void testTicket15634() throws IOException, SAXException {
         assertEquals(new Bounds(53.7229357, -7.9135019, 53.9301103, -7.59656),
                 GpxReaderTest.parseGpxData(TestUtils.getRegressionDataFile(15634, "drumlish.gpx")).getMetaBounds());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "<gpx><wpt></wpt></gpx>",
+    })
+    void testIncompleteLocations(String gpx) {
+        SAXException saxException = assertThrows(SAXException.class,
+                () -> new GpxReader(new ByteArrayInputStream(gpx.getBytes(StandardCharsets.UTF_8))).parse(true));
+        final String type;
+        if ("<wpt>".regionMatches(0, gpx, 5, 4)) {
+            type = "wpt";
+        } else {
+            fail("You need to add code to tell us what the exception for \"" + gpx + "\" should be");
+            type = null;
+        }
+        assertEquals(type + " element does not have valid latitude and/or longitude.", saxException.getMessage());
     }
 }
