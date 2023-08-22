@@ -14,11 +14,15 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import jakarta.json.JsonException;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -28,6 +32,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Unit tests of {@link OsmReader} class.
@@ -254,6 +259,24 @@ class OsmJsonReaderTest {
         assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
     }
 
+    static Stream<Arguments> testException() {
+        final byte[] smallJson = "{\"type\", \"node\", \"id\": 1, \"lat\": 1.0, \"lon\": 2.0}".getBytes(StandardCharsets.UTF_8);
+        return Stream.of(
+                // Check that a SocketException is properly reported
+                Arguments.of(IllegalDataException.class, new ThrowableInputStream<>(() -> new SocketException("Read timed out"), smallJson),
+                        "java.net.SocketException: Read timed out"),
+                // Check that a random JsonException is reported
+                Arguments.of(JsonException.class, new ThrowableInputStream<>(() -> new JsonException("Some random json exception"), smallJson),
+                        "Some random json exception"),
+                // Check that bad data still throws an IllegalDataException
+                Arguments.of(IllegalDataException.class, new ThrowableInputStream<>(() -> null, smallJson),
+                        "jakarta.json.stream.JsonParsingException: Invalid token=COMMA at (line no=1, column no=8, offset=7). " +
+                        "Expected tokens are: [COLON]"),
+                // Check that an IOException is properly thrown when the stream is closed
+                Arguments.of(IllegalDataException.class, new ThrowableInputStream<>(() -> new JsonException("I/O error while parsing JSON",
+                        new IOException("stream is closed")), smallJson), "java.io.IOException: stream is closed")
+        );
+    }
 
     /**
      * See #22680: Unexpected exception downloading from Overpass query
@@ -265,43 +288,52 @@ class OsmJsonReaderTest {
      *         (which we don't care about when we are <em>parsing</em> JSON)</li>
      * </ul>
      */
-    @SuppressWarnings("resource")
-    @Test
-    void testException() {
-        final ByteArrayInputStream bais =
-                new ByteArrayInputStream("{\"type\", \"node\", \"id\": 1, \"lat\": 1.0, \"lon\": 2.0}".getBytes(StandardCharsets.UTF_8));
-        final AtomicBoolean throwJson = new AtomicBoolean();
-        final InputStream socketExceptionStream = new InputStream() {
-            int read = 0; // Necessary, since otherwise the exception might not be wrapped in a Json exception
-            @Override
-            public int read() throws IOException {
-                try {
-                    if (read > 0 && !throwJson.get()) {
-                        throw new SocketException("Read timed out");
-                    } else if (read > 0 && throwJson.get()) {
-                        throw new JsonException("Some random json exception");
+    @ParameterizedTest
+    @MethodSource
+    <E extends Exception> void testException(Class<E> exceptionClass, ThrowableInputStream<?> exceptionStream, String exceptionMessage) {
+        E exception = assertThrows(exceptionClass, () -> OsmJsonReader.parseDataSet(exceptionStream, NullProgressMonitor.INSTANCE));
+        assertEquals(exceptionMessage, ExceptionUtil.explainException(exception));
+        assertDoesNotThrow(exceptionStream::close);
+    }
+
+    /**
+     * An {@link InputStream} that will throw a specified exception after the first byte is read
+     * @param <E> The exception to be thrown
+     */
+    private static class ThrowableInputStream<E extends Throwable> extends InputStream {
+        private final Supplier<E> exceptionSupplier;
+        private final ByteArrayInputStream bais;
+        private int read = 0; // Necessary, since otherwise the exception might not be wrapped in a Json exception
+
+        ThrowableInputStream(Supplier<E> exceptionSupplier, byte[] source) {
+            this.exceptionSupplier = exceptionSupplier;
+            this.bais = new ByteArrayInputStream(source);
+        }
+
+        @Override
+        public int read() throws IOException {
+            try {
+                if (read > 0) {
+                    E exception = this.exceptionSupplier.get();
+                    if (exception instanceof IOException) {
+                        throw (IOException) exception;
+                    } else if (exception instanceof RuntimeException) {
+                        throw (RuntimeException) exception;
+                    } else if (exception != null) {
+                        // This shouldn't be possible in actual code, so if something hits this, it is a failure.
+                        throw new JosmRuntimeException(exception);
                     }
-                    return bais.read();
-                } finally {
-                    read++;
                 }
+                return bais.read();
+            } finally {
+                read++;
             }
-        };
-        // Check that a SocketException is properly reported
-        IllegalDataException ide = assertThrows(IllegalDataException.class,
-                () -> OsmJsonReader.parseDataSet(socketExceptionStream, NullProgressMonitor.INSTANCE));
-        assertEquals("java.net.SocketException: Read timed out", ExceptionUtil.explainException(ide));
-        assertDoesNotThrow(socketExceptionStream::close);
-        bais.reset();
-        // Check that a generic exception is properly thrown -- we only want to handle known "good" cases specially
-        throwJson.set(true);
-        assertThrows(JsonException.class, () -> OsmJsonReader.parseDataSet(socketExceptionStream, NullProgressMonitor.INSTANCE));
-        bais.reset();
-        // Check that a generic parsing error is properly reported
-        ide = assertThrows(IllegalDataException.class, () -> OsmJsonReader.parseDataSet(bais, NullProgressMonitor.INSTANCE));
-        assertEquals("jakarta.json.stream.JsonParsingException: Invalid token=COMMA at (line no=1, column no=8, offset=7). " +
-                "Expected tokens are: [COLON]", ExceptionUtil.explainException(ide));
-        bais.reset();
-        // Check that an unknown exception is thrown properly
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.bais.close();
+            super.close();
+        }
     }
 }
