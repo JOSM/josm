@@ -187,6 +187,7 @@ Build-Date: ${build.tstamp}
                 <attribute name="Add-Opens" value="java.base/java.lang java.base/java.nio java.base/jdk.internal.loader java.base/jdk.internal.ref java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
                 <!-- Indicate that this jar may have version specific classes. Only used in Java9+. -->
                 <attribute name="Multi-Release" value="true"/>
+                <attribute name="Automatic-Module-Name" value="org.openstreetmap.josm"/>
             </manifest>
         </jar>
         <!-- Sign jar if all environment variables are set -->

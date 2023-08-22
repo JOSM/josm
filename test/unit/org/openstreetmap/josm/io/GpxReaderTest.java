@@ -103,9 +103,7 @@ public class GpxReaderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "<gpx><wpt></wpt></gpx>",
-    })
+    @ValueSource(strings = "<gpx><wpt></wpt></gpx>")
     void testIncompleteLocations(String gpx) {
         SAXException saxException = assertThrows(SAXException.class,
                 () -> new GpxReader(new ByteArrayInputStream(gpx.getBytes(StandardCharsets.UTF_8))).parse(true));

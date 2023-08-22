@@ -17,15 +17,14 @@ import static org.openstreetmap.josm.data.gpx.GpxConstants.PT_TIME;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.time.DateTimeException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Stack;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -76,8 +75,8 @@ class GpxParser extends DefaultHandler {
     private GpxLink currentLink;
     private GpxExtensionCollection currentExtensionCollection;
     private GpxExtensionCollection currentTrackExtensionCollection;
-    private Deque<State> states;
-    private final Deque<String[]> elements = new ArrayDeque<>();
+    private final Stack<State> states = new Stack<>();
+    private final Stack<String[]> elements = new Stack<>();
 
     private StringBuilder accumulator = new StringBuilder();
 
@@ -86,7 +85,6 @@ class GpxParser extends DefaultHandler {
     @Override
     public void startDocument() {
         accumulator = new StringBuilder();
-        states = new ArrayDeque<>();
         data = new GpxData(true);
         currentExtensionCollection = new GpxExtensionCollection();
         currentTrackExtensionCollection = new GpxExtensionCollection();
@@ -401,7 +399,7 @@ class GpxParser extends DefaultHandler {
      * @param attributes The attributes attached to the element. If there are no attributes, it shall be an empty Attributes object.
      */
     private void startElementExt(String namespaceURI, String qName, Attributes attributes) {
-        if (states.peekLast() == State.TRK) {
+        if (states.lastElement() == State.TRK) {
             currentTrackExtensionCollection.openChild(namespaceURI, qName, attributes);
         } else {
             currentExtensionCollection.openChild(namespaceURI, qName, attributes);
@@ -650,10 +648,6 @@ class GpxParser extends DefaultHandler {
                 currentState = states.pop();
                 convertUrlToLink(currentWayPoint.attr);
                 currentWayPoint.getExtensions().addAll(currentExtensionCollection);
-                if (!currentWayPoint.isLatLonKnown()) {
-                    currentExtensionCollection.clear();
-                    throw new SAXException(tr("{0} element does not have valid latitude and/or longitude.", "wpt"));
-                }
                 data.waypoints.add(currentWayPoint);
                 currentExtensionCollection.clear();
                 break;
@@ -722,7 +716,7 @@ class GpxParser extends DefaultHandler {
             currentState = states.pop();
         } else if (currentExtensionCollection != null) {
             String acc = accumulator.toString().trim();
-            if (states.peekLast() == State.TRK) {
+            if (states.lastElement() == State.TRK) {
                 currentTrackExtensionCollection.closeChild(qName, acc); //a segment inside the track can have an extension too
             } else {
                 currentExtensionCollection.closeChild(qName, acc);
