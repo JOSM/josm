@@ -637,17 +637,27 @@ class GpxParser extends DefaultHandler {
             case "rtept":
                 currentState = states.pop();
                 convertUrlToLink(currentWayPoint.attr);
+                if (!currentWayPoint.isLatLonKnown()) {
+                    throw new SAXException(tr("{0} element does not have valid latitude and/or longitude.", localName));
+                }
                 currentRoute.routePoints.add(currentWayPoint);
                 break;
             case "trkpt":
                 currentState = states.pop();
                 convertUrlToLink(currentWayPoint.attr);
+                if (!currentWayPoint.isLatLonKnown()) {
+                    throw new SAXException(tr("{0} element does not have valid latitude and/or longitude.", localName));
+                }
                 currentTrackSeg.add(currentWayPoint);
                 break;
             case "wpt":
                 currentState = states.pop();
                 convertUrlToLink(currentWayPoint.attr);
                 currentWayPoint.getExtensions().addAll(currentExtensionCollection);
+                if (!currentWayPoint.isLatLonKnown()) {
+                    currentExtensionCollection.clear();
+                    throw new SAXException(tr("{0} element does not have valid latitude and/or longitude.", localName));
+                }
                 data.waypoints.add(currentWayPoint);
                 currentExtensionCollection.clear();
                 break;

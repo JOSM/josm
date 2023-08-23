@@ -103,13 +103,21 @@ public class GpxReaderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = "<gpx><wpt></wpt></gpx>")
+    @ValueSource(strings = {
+            "<gpx><wpt></wpt></gpx>",
+            "<gpx><trk><trkseg><trkpt></trkpt></trkseg></trk></gpx>",
+            "<gpx><rte><rtept></rtept></rte></gpx>"
+    })
     void testIncompleteLocations(String gpx) {
         SAXException saxException = assertThrows(SAXException.class,
                 () -> new GpxReader(new ByteArrayInputStream(gpx.getBytes(StandardCharsets.UTF_8))).parse(true));
         final String type;
         if ("<wpt>".regionMatches(0, gpx, 5, 4)) {
             type = "wpt";
+        } else if ("<trkpt>".regionMatches(0, gpx, 18, 7)) {
+            type = "trkpt";
+        } else if ("<rtept>".regionMatches(0, gpx, 10, 7)) {
+            type = "rtept";
         } else {
             fail("You need to add code to tell us what the exception for \"" + gpx + "\" should be");
             type = null;
