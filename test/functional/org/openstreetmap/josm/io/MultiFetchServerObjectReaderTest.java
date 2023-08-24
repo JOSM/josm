@@ -4,8 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,16 +22,21 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
 import java.util.TreeSet;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import org.awaitility.Awaitility;
+import org.awaitility.Durations;
+import org.awaitility.core.ConditionTimeoutException;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -42,8 +47,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.testutils.annotations.TestUser;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -52,15 +58,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 @Timeout(value = 1, unit = TimeUnit.MINUTES)
+@org.openstreetmap.josm.testutils.annotations.OsmApi(org.openstreetmap.josm.testutils.annotations.OsmApi.APIType.DEV)
+@TestUser
 class MultiFetchServerObjectReaderTest {
     private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * builds a large data set to be used later for testing MULTI FETCH on the server
@@ -158,17 +159,7 @@ class MultiFetchServerObjectReaderTest {
      */
     @BeforeAll
     public static void init() throws Exception {
-        if (!TestUtils.areCredentialsProvided()) {
-            logger.severe("OSM DEV API credentials not provided. Please define them with -Dosm.username and -Dosm.password");
-            return;
-        }
         logger.info("initializing ...");
-        JOSMFixture.createFunctionalTestFixture().init();
-
-        Config.getPref().put("osm-server.auth-method", "basic");
-
-        // don't use atomic upload, the test API server can't cope with large diff uploads
-        Config.getPref().putBoolean("osm-server.atomic-upload", false);
 
         File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"),
                 MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
@@ -212,9 +203,6 @@ class MultiFetchServerObjectReaderTest {
      */
     @BeforeEach
     public void setUp() throws IOException, IllegalDataException, FileNotFoundException {
-        if (!TestUtils.areCredentialsProvided()) {
-            return;
-        }
         File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
@@ -229,7 +217,6 @@ class MultiFetchServerObjectReaderTest {
      */
     @Test
     void testMultiGet10Nodes() throws OsmTransferException {
-        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 10; i++) {
@@ -251,7 +238,6 @@ class MultiFetchServerObjectReaderTest {
      */
     @Test
     void testMultiGet10Ways() throws OsmTransferException {
-        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Way> ways = new ArrayList<>(ds.getWays());
         for (int i = 0; i < 10; i++) {
@@ -274,7 +260,6 @@ class MultiFetchServerObjectReaderTest {
      */
     @Test
     void testMultiGet10Relations() throws OsmTransferException {
-        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Relation> relations = new ArrayList<>(ds.getRelations());
         for (int i = 0; i < 10; i++) {
@@ -297,7 +282,6 @@ class MultiFetchServerObjectReaderTest {
      */
     @Test
     void testMultiGet800Nodes() throws OsmTransferException {
-        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 812; i++) {
@@ -319,7 +303,6 @@ class MultiFetchServerObjectReaderTest {
      */
     @Test
     void testMultiGetWithNonExistingNode() throws OsmTransferException {
-        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 10; i++) {
@@ -347,5 +330,60 @@ class MultiFetchServerObjectReaderTest {
         String requestString = new MultiFetchServerObjectReader()
                 .buildRequestString(OsmPrimitiveType.WAY, new TreeSet<>(Arrays.asList(130L, 123L, 126L)));
         assertEquals("ways?ways=123,126,130", requestString);
+    }
+
+    /**
+     * This is a non-regression test for #23140: Cancelling `MultiFetchServerObjectReader` while it is adding jobs
+     * to the executor causes a {@link RejectedExecutionException}.
+     * This was caused by a race condition between {@link MultiFetchServerObjectReader#cancel()} and queuing download
+     * jobs.
+     */
+    @Test
+    void testCancelDuringJobAdd() {
+        final AtomicBoolean parsedData = new AtomicBoolean();
+        final AtomicBoolean continueAddition = new AtomicBoolean();
+        final AtomicInteger callCounter = new AtomicInteger();
+        final AtomicReference<Throwable> thrownFailure = new AtomicReference<>();
+        // We have 5 + 10 maximum (5 previous calls, 10 calls when iterating through the nodes).
+        final int expectedCancelCalls = 5;
+        final MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader() {
+            @Override
+            public boolean isCanceled() {
+                final boolean result = super.isCanceled();
+                // There are some calls prior to the location where we are interested
+                if (callCounter.incrementAndGet() >= expectedCancelCalls) {
+                    // This will throw a ConditionTimeoutException.
+                    // By blocking here until cancel() is called, we block cancel (since we are interested in a loop).
+                    Awaitility.await().timeout(Durations.FIVE_HUNDRED_MILLISECONDS).untilTrue(continueAddition);
+                }
+                return result;
+            }
+        };
+        ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
+        for (int i = 0; i < 10; i++) {
+            reader.append(nodes.get(i));
+        }
+        GuiHelper.runInEDT(() -> {
+                try {
+                    reader.parseOsm(NullProgressMonitor.INSTANCE);
+                } catch (ConditionTimeoutException timeoutException) {
+                    // This is expected due to the synchronization, so we just swallow it.
+                    Logging.trace(timeoutException);
+                } catch (Exception failure) {
+                    thrownFailure.set(failure);
+                } finally {
+                    parsedData.set(true);
+                }
+            });
+        // cancel, then continue
+        Awaitility.await().untilAtomic(callCounter, Matchers.greaterThanOrEqualTo(expectedCancelCalls));
+        reader.cancel();
+        continueAddition.set(true);
+        Awaitility.await().untilTrue(parsedData);
+        if (thrownFailure.get() != null) {
+            Logging.error(thrownFailure.get());
+        }
+        assertNull(thrownFailure.get());
+        assertEquals(expectedCancelCalls, callCounter.get());
     }
 }
