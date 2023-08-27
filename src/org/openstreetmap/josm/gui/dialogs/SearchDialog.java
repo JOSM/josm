@@ -38,7 +38,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel;
-import org.openstreetmap.josm.gui.tagging.presets.PresetSearchFilter;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
@@ -232,7 +231,7 @@ public class SearchDialog extends ExtendedDialog {
          * selected preset by the user. Every query is of the form ' group/sub-group/.../presetName'
          * if the corresponding group of the preset exists, otherwise it is simply ' presetName'.
          */
-        selector = new TaggingPresetSelector(PresetSearchFilter.values());
+        selector = new TaggingPresetSelector();
         selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
         selector.setDblClickListener(ev -> setPresetDblClickListener(selector, editorComponent));
 

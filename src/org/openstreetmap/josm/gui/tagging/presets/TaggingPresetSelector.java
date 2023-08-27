@@ -10,11 +10,13 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -63,12 +65,15 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
     private static final Pattern PATTERN_PUNCTUATION = Pattern.compile("\\p{Punct}", Pattern.UNICODE_CHARACTER_CLASS);
 
-    PresetSearchFilter ONLY_APPLICABLE = PresetSearchFilter.ONLY_APPLICABLE;
-    PresetSearchFilter SEARCH_IN_TAGS = PresetSearchFilter.SEARCH_IN_TAGS;
-    PresetSearchFilter DEPRECATED_TAGS = PresetSearchFilter.DEPRECATED_TAGS;
-    private JCheckBox ckOnlyApplicable;
-    private JCheckBox ckSearchInTags;
-    private JCheckBox ckDeprecated;
+    Map<PresetSearchFilter, Boolean> ckpreferences = new EnumMap<>(PresetSearchFilter.class);
+    {
+        //initial value of the checkboxes
+        ckpreferences.put(PresetSearchFilter.ONLY_APPLICABLE, true);
+        ckpreferences.put(PresetSearchFilter.SEARCH_IN_TAGS, true);
+        ckpreferences.put(PresetSearchFilter.DEPRECATED_TAGS, false);
+    }
+
+    final Map<PresetSearchFilter, JCheckBox> checkboxes = new EnumMap<>(PresetSearchFilter.class);
     private final Set<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
     private final transient PresetClassifications classifications = new PresetClassifications();
@@ -200,9 +205,8 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
      * @param displayOnlyApplicable if {@code true} display "Show only applicable to selection" checkbox
      * @param displaySearchInTags if {@code true} display "Search in tags" checkbox
      */
-    public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags, boolean displayDeprecated) {
-        this(displayOnlyApplicable ? PresetSearchFilter.ONLY_APPLICABLE : null, displaySearchInTags ? PresetSearchFilter.SEARCH_IN_TAGS : null,
-                displayDeprecated ? PresetSearchFilter.DEPRECATED_TAGS : null);
+    public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags) {
+        this(displayOnlyApplicable ? PresetSearchFilter.ONLY_APPLICABLE : null, displaySearchInTags ? PresetSearchFilter.SEARCH_IN_TAGS : null);
     }
 
     /**
@@ -219,27 +223,25 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         pnChecks.setLayout(new BoxLayout(pnChecks, BoxLayout.Y_AXIS));
 
         for (PresetSearchFilter option : options) {
+            final JCheckBox box = new JCheckBox();
+            box.setText(tr(option.getText()));
+            pnChecks.add(box);
+            box.addItemListener(e -> filterItems());
             switch(option) {
                 case ONLY_APPLICABLE: {
-                    ckOnlyApplicable = new JCheckBox();
-                    ckOnlyApplicable.setText(tr(PresetSearchFilter.ONLY_APPLICABLE.getText()));
-                    pnChecks.add(ckOnlyApplicable);
-                    ckOnlyApplicable.addItemListener(e -> filterItems());
+                    box.setSelected(ckpreferences.get(PresetSearchFilter.ONLY_APPLICABLE));
+                    checkboxes.put(PresetSearchFilter.ONLY_APPLICABLE, box);
                     break;
                 }
                 case SEARCH_IN_TAGS: {
-                    ckSearchInTags = new JCheckBox();
-                    ckSearchInTags.setText(tr(PresetSearchFilter.ONLY_APPLICABLE.getText()));
-                    ckSearchInTags.setSelected(SEARCH_IN_TAGS.getPref(PresetSearchFilter.SEARCH_IN_TAGS));
-                    ckSearchInTags.addItemListener(e -> filterItems());
-                    pnChecks.add(ckSearchInTags);
+                    box.setSelected(ckpreferences.get(PresetSearchFilter.SEARCH_IN_TAGS));
+                    checkboxes.put(PresetSearchFilter.SEARCH_IN_TAGS, box);
                     break;
                 }
                 case DEPRECATED_TAGS: {
-                    ckDeprecated = new JCheckBox();
-                    ckDeprecated.setText(tr(PresetSearchFilter.DEPRECATED_TAGS.getText()));
-                    pnChecks.add(ckDeprecated);
-                    ckDeprecated.addItemListener(e -> filterItems());
+                    box.setSelected((ckpreferences.get(PresetSearchFilter.DEPRECATED_TAGS)));
+                    checkboxes.put(PresetSearchFilter.DEPRECATED_TAGS, box);
+                    break;
                 }
             }
         }
@@ -268,12 +270,17 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     protected synchronized void filterItems() {
         //TODO Save favorites to file
         String text = edSearchText.getText().toLowerCase(Locale.ENGLISH);
+        boolean onlyApplicable = checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE) != null &&
+                checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE).isSelected();
+        boolean deprecatedTags = checkboxes.get(PresetSearchFilter.DEPRECATED_TAGS) != null &&
+                checkboxes.get(PresetSearchFilter.DEPRECATED_TAGS).isSelected();
+        boolean searchInTags = checkboxes.get(PresetSearchFilter.SEARCH_IN_TAGS) != null &&
+                checkboxes.get(PresetSearchFilter.SEARCH_IN_TAGS).isSelected();
 
         DataSet ds = OsmDataManager.getInstance().getEditDataSet();
         Collection<OsmPrimitive> selected = (ds == null) ? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
-                text, ONLY_APPLICABLE.getPref(PresetSearchFilter.ONLY_APPLICABLE), SEARCH_IN_TAGS.getPref(PresetSearchFilter.SEARCH_IN_TAGS),
-                DEPRECATED_TAGS.getPref(PresetSearchFilter.DEPRECATED_TAGS), getTypesInSelection(), selected);
+                text, onlyApplicable, searchInTags, deprecatedTags, getTypesInSelection(), selected);
 
         final TaggingPreset oldPreset = getSelectedPreset();
         lsResultModel.setItems(Utils.transform(result, x -> x.preset));
@@ -417,9 +424,10 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
     @Override
     public synchronized void init() {
-        if (ckOnlyApplicable != null) {
-            ckOnlyApplicable.setEnabled(!getTypesInSelection().isEmpty());
-            ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.getPref(PresetSearchFilter.ONLY_APPLICABLE));
+        if (checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE) != null) {
+            checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE).setEnabled(!getTypesInSelection().isEmpty());
+            checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE).setSelected(!getTypesInSelection().isEmpty() &&
+                    ckpreferences.get(PresetSearchFilter.ONLY_APPLICABLE));
         }
         super.init();
     }
@@ -438,14 +446,14 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
      * Save checkbox values in preferences for future reuse
      */
     public void savePreferences() {
-        if (ckSearchInTags != null) {
-            SEARCH_IN_TAGS.setPref(PresetSearchFilter.SEARCH_IN_TAGS, ckSearchInTags.isSelected());
+        if (checkboxes.get(PresetSearchFilter.SEARCH_IN_TAGS) != null) {
+            ckpreferences.put(PresetSearchFilter.SEARCH_IN_TAGS, checkboxes.get(PresetSearchFilter.SEARCH_IN_TAGS).isSelected());
         }
-        if (ckOnlyApplicable != null && ckOnlyApplicable.isEnabled()) {
-            ONLY_APPLICABLE.setPref(PresetSearchFilter.ONLY_APPLICABLE, ckOnlyApplicable.isSelected());
+        if (checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE) != null && checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE).isEnabled()) {
+            ckpreferences.put(PresetSearchFilter.ONLY_APPLICABLE, checkboxes.get(PresetSearchFilter.ONLY_APPLICABLE).isSelected());
         }
-        if (ckDeprecated != null && ckDeprecated.isEnabled()) {
-            DEPRECATED_TAGS.setPref(PresetSearchFilter.DEPRECATED_TAGS, ckDeprecated.isSelected());
+        if (checkboxes.get(PresetSearchFilter.DEPRECATED_TAGS) != null && checkboxes.get(PresetSearchFilter.DEPRECATED_TAGS).isEnabled()) {
+            ckpreferences.put(PresetSearchFilter.DEPRECATED_TAGS, checkboxes.get(PresetSearchFilter.DEPRECATED_TAGS).isSelected());
         }
     }
 
