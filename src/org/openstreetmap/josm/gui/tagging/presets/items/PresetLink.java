@@ -68,7 +68,7 @@ public class PresetLink extends TextItem {
      * @return a label
      */
     public JLabel createLabel() {
-        initializeLocaleText(tr("Edit also …"));
+        initializeLocaleText(tr("Additional tags to edit"));
         return new JLabel(locale_text);
     }
 
@@ -77,7 +77,7 @@ public class PresetLink extends TextItem {
      * @return a label
      */
     public JLabel createAlternativeLabel() {
-        initializeLocaleText(tr("Alternative Tags"));
+        initializeLocaleText(tr("Similar but different tags"));
         return new JLabel(locale_text);
     }
 

@@ -288,7 +288,7 @@
     <complexType name="preset_link">
         <annotation>
             <documentation><![CDATA[
-                Adds a link to an other preset with a label on top. The preset_name attribute is required, text to override the label (default is "Edit also …") and text_context are optional. A sequence of <preset_link /> without text or a identical text value are grouped below one label. Watch out for presets with identical name as it is not predictable to which preset the link will lead to, see #12716.
+                Adds a link to an other preset with a label on top. The preset_name attribute is required. alternative, text to override the label (default is "Edit also …") and text_context are optional. A sequence of <preset_link /> without text or a identical text value are grouped below one label. Watch out for presets with identical name as it is not predictable to which preset the link will lead to, see #12716.
             ]]></documentation>
         </annotation>
         <attribute name="preset_name" type="string" use="required">
