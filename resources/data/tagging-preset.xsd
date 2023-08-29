@@ -121,7 +121,7 @@
     <complexType name="item">
         <annotation>
             <documentation>
-                Every item is one annotation set to select from. name is required, type and preset_name_label are recommended, icon and name_template are optional attributes.
+                Every item is one annotation set to select from. name is required, type and preset_name_label are recommended, deprecated, icon, name_template are optional attributes.
             </documentation>
         </annotation>
         <sequence>
@@ -168,6 +168,13 @@
             <annotation>
                 <documentation>
                     Whether to insert "[preset name]" label in dialog (defaults to "false" for backward-compatibility on external presets).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="deprecated" type="boolean">
+            <annotation>
+                <documentation>
+                    Whether this preset is deprecated (defaults to "false").
                 </documentation>
             </annotation>
         </attribute>
