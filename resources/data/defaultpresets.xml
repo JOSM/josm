@@ -2862,13 +2862,12 @@
             <combo key="amperage" text="Amperage" values="16,32" />
             <space />
             <label text="Types of vehicles which can be charged:" />
-            <checkgroup columns="4">
-                <check key="bicycle" text="Bicycle" />
-                <check key="scooter" text="Scooter" />
-                <check key="motorcycle" text="Motorcycle" />
-                <check key="motorcar" text="Motorcar" />
-                <check key="truck" text="Truck" />
+            <checkgroup columns="3">
+                <check key="motorcar" text="Cars" default="on" delete_if_empty="true" />
+                <check key="motorcycle" text="Motorcycles" default="on" delete_if_empty="true" />
+                <check key="hgv" text="Trucks (HGV)" default="" delete_if_empty="true" />
             </checkgroup>
+            <label text="(Note: For most charging stations, check 'Cars' and 'Motorcycles'. Check 'Trucks' only if there is sufficient space.)" />
             <space />
             <label text="Number of Sockets:" />
             <combo key="socket:type1" text="SAE J1772 (IEC Type 1)" values="1,2,3,4,5,6" />
