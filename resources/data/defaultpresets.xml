@@ -2885,15 +2885,13 @@
             <text key="socket:tesla_supercharger:output" text="Tesla Supercharger" default="" delete_if_empty="true" />
             <text key="socket:schuko:output" text="Schuko" default="" delete_if_empty="true" />
             <space />
-            <label text="Authentication:" />
-            <checkgroup columns="4">
-                <check key="authentication:none" text="None" />
-                <check key="authentication:phone_call" text="Phone call" />
-                <check key="authentication:short_message" text="Short message" />
-                <check key="authentication:nfc" text="NFC" />
+            <label text="Unlocking (Authentication):" />
+            <checkgroup columns="3">
+                <check key="authentication:app" text="Unlock through App" />
+                <check key="authentication:contactless" text="Unlock through RFID/NFC" />
+                <check key="authentication:none" text="Usable without registration" />
             </checkgroup>
-            <combo key="authentication:membership_card" text="Membership card" values="yes" />
-            <preset_link preset_name="Payment Methods" />
+            <preset_link preset_name="Payment Methods" text="Edit Payment Methods (only if usable without registration)" />
         </item> <!-- Charging Station -->
         <item name="Wash" icon="presets/vehicle/car_wash.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=car_wash" />
