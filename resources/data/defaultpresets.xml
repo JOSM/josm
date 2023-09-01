@@ -2857,10 +2857,6 @@
                 <check key="fee" text="Charging fee" default="on" delete_if_empty="true" />
                 <check key="parking:fee" text="Parking fee" default="" delete_if_empty="true" />
             </checkgroup>
-            <space />
-            <combo key="voltage" text="Voltage" values="230,400"/>
-            <combo key="amperage" text="Amperage" values="16,32" />
-            <space />
             <label text="Types of vehicles which can be charged:" />
             <checkgroup columns="3">
                 <check key="motorcar" text="Cars" default="on" delete_if_empty="true" />
@@ -2877,6 +2873,15 @@
             <text key="socket:chademo" text="CHAdeMO" default="" delete_if_empty="true" />
             <text key="socket:tesla_supercharger" text="Tesla Supercharger" default="" delete_if_empty="true" />
             <text key="socket:schuko" text="Schuko" default="" delete_if_empty="true" />
+            <space />
+            <label text="Charging Power (e.g. '22 kW'):" />
+            <text key="socket:type1:output" text="IEC Type 1" default="" delete_if_empty="true" />
+            <text key="socket:type2:output" text="IEC Type 2 (Mennekes) socket only" default="" delete_if_empty="true" />
+            <text key="socket:type2_cable:output" text="IEC Type 2 (Mennekes) with cable" default="" delete_if_empty="true" />
+            <text key="socket:type2_combo:output" text="IEC Type 2 Combo (CCS)" default="" delete_if_empty="true" />
+            <text key="socket:chademo:output" text="CHAdeMO" default="" delete_if_empty="true" />
+            <text key="socket:tesla_supercharger:output" text="Tesla Supercharger" default="" delete_if_empty="true" />
+            <text key="socket:schuko:output" text="Schuko" default="" delete_if_empty="true" />
             <space />
             <label text="Authentication:" />
             <checkgroup columns="4">
