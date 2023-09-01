@@ -2850,7 +2850,8 @@
             <key key="amenity" value="charging_station" />
             <reference ref="name_ref_operator" />
             <reference ref="oh" />
-            <reference ref="fee" />
+            <check key="fee" text="Charging fee" default="on" delete_if_empty="true" />
+            <check key="parking:fee" text="Parking fee" default="" delete_if_empty="true" />
             <space />
             <combo key="voltage" text="Voltage" values="230,400"/>
             <combo key="amperage" text="Amperage" values="16,32" />
