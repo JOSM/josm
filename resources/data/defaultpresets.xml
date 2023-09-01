@@ -2848,7 +2848,9 @@
             <link wiki="Tag:amenity=charging_station" />
             <space />
             <key key="amenity" value="charging_station" />
-            <reference ref="name_ref_operator" />
+            <text key="name" text="Name" />
+            <text key="network" text="Charging Network (MSP)" />
+            <text key="operator" text="Operator (CPO)" />
             <reference ref="oh" />
             <text key="capacity" text="Simultaneously usable charging spots" default="" delete_if_empty="true" />
             <label text="Surroundings and Fees:" />
