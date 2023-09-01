@@ -2870,19 +2870,13 @@
             <label text="(Note: For most charging stations, check 'Cars' and 'Motorcycles'. Check 'Trucks' only if there is sufficient space.)" />
             <space />
             <label text="Number of Sockets:" />
-            <combo key="socket:type1" text="SAE J1772 (IEC Type 1)" values="1,2,3,4,5,6" />
-            <combo key="socket:type1_combo" text="SAE J1772 Combo (DC)" values="1,2,3,4,5,6" />
-            <combo key="socket:type2" text="IEC Type 2 (Mennekes)" values="1,2,3,4,5,6" />
-            <combo key="socket:type2_combo" text="IEC Type 2 Combo (DC)" values="1,2,3,4,5,6" />
-            <combo key="socket:type3" text="Type 3 (SCAME)" values="1,2,3,4,5,6" />
-            <combo key="socket:chademo" text="CHAdeMO" values="1,2,3,4,5,6" />
-            <combo key="socket:tesla_supercharger" text="Tesla Supercharger" values="1,2,3,4,5,6" />
-            <combo key="socket:schuko" text="Schuko" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_blue" text="CEE blue" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_red_16a" text="CEE red 16A" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_red_32a" text="CEE red 32A" values="1,2,3,4,5,6" />
-            <combo key="socket:nema_5_15" text="NEMA 5-15" values="1,2,3,4,5,6" />
-            <combo key="socket:nema_5_20" text="NEMA 5-20" values="1,2,3,4,5,6" />
+            <text key="socket:type1" text="IEC Type 1" default="" delete_if_empty="true" />
+            <text key="socket:type2" text="IEC Type 2 (Mennekes) socket only" default="" delete_if_empty="true" />
+            <text key="socket:type2_cable" text="IEC Type 2 (Mennekes) with cable" default="" delete_if_empty="true" />
+            <text key="socket:type2_combo" text="IEC Type 2 Combo (CCS)" default="" delete_if_empty="true" />
+            <text key="socket:chademo" text="CHAdeMO" default="" delete_if_empty="true" />
+            <text key="socket:tesla_supercharger" text="Tesla Supercharger" default="" delete_if_empty="true" />
+            <text key="socket:schuko" text="Schuko" default="" delete_if_empty="true" />
             <space />
             <label text="Authentication:" />
             <checkgroup columns="4">
