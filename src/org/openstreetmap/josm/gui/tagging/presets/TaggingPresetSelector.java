@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -63,6 +64,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     private static final int CLASSIFICATION_TAGS_MATCH = 100;
 
     private static final Pattern PATTERN_PUNCTUATION = Pattern.compile("\\p{Punct}", Pattern.UNICODE_CHARACTER_CLASS);
+    private static final Pattern PATTERN_WHITESPACE = Pattern.compile("\\s", Pattern.UNICODE_CHARACTER_CLASS);
 
     private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
     private static final BooleanProperty ONLY_APPLICABLE = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
@@ -89,12 +91,23 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
      * Computes the match ration of a {@link TaggingPreset} wrt. a searchString.
      */
     public static class PresetClassification implements Comparable<PresetClassification> {
+        /** The preset for this classification object */
         public final TaggingPreset preset;
+        /**
+         * The classification for the preset (see {@link #CLASSIFICATION_TAGS_MATCH}, {@link #CLASSIFICATION_GROUP_MATCH},
+         * {@link #CLASSIFICATION_NAME_MATCH}, and {@link #CLASSIFICATION_IN_FAVORITES}). Higher numbers are better.
+         */
         public int classification;
+        /**
+         * The index in favorites, index = {@link #CLASSIFICATION_IN_FAVORITES} - favoriteIndex
+         */
         public int favoriteIndex;
-        private final Collection<String> groups;
-        private final Collection<String> names;
-        private final Collection<String> tags;
+        /** Groups that have been run through {@link #simplifyString(String)} */
+        private final String[] groupsSimplified;
+        /** Names that have been run through {@link #simplifyString(String)}*/
+        private final String[] namesSimplified;
+        /** Tags that have been run through {@link #simplifyString(String)} */
+        private final String[] tagsSimplified;
 
         PresetClassification(TaggingPreset preset) {
             this.preset = preset;
@@ -125,15 +138,19 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                     }
                 }
             }
-            this.groups = Utils.toUnmodifiableList(groupSet);
-            this.names = Utils.toUnmodifiableList(nameSet);
-            this.tags = Utils.toUnmodifiableList(tagSet);
+            // These should be "frozen" arrays
+            this.groupsSimplified = groupSet.stream().map(PresetClassification::simplifyString)
+                    .toArray(String[]::new);
+            this.namesSimplified = nameSet.stream().map(PresetClassification::simplifyString)
+                    .toArray(String[]::new);
+            this.tagsSimplified = tagSet.stream().map(PresetClassification::simplifyString)
+                    .toArray(String[]::new);
         }
 
         private static void addLocaleNames(Collection<String> collection, TaggingPreset preset) {
             String locName = preset.getLocaleName();
             if (locName != null) {
-                Collections.addAll(collection, locName.toLowerCase(Locale.ENGLISH).split("\\s", -1));
+                Collections.addAll(collection, PATTERN_WHITESPACE.split(locName.toLowerCase(Locale.ENGLISH), -1));
             }
         }
 
@@ -141,14 +158,17 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             return PATTERN_PUNCTUATION.matcher(Utils.deAccent(s).toLowerCase(Locale.ENGLISH)).replaceAll("");
         }
 
-        private static int isMatching(Collection<String> values, String... searchString) {
+        /**
+         * Check to see if the search string matches values
+         * @param deaccentedValues Values that have been simplified
+         * @param deaccentedSearchString The simplified search string to use
+         * @return The number used for sorting hits (bigger == more matches)
+         */
+        private static int isMatching(String[] deaccentedValues, String... deaccentedSearchString) {
             int sum = 0;
-            List<String> deaccentedValues = values.stream()
-                    .map(PresetClassification::simplifyString).collect(Collectors.toList());
-            for (String word: searchString) {
+            for (String deaccentedWord: deaccentedSearchString) {
                 boolean found = false;
                 boolean foundFirst = false;
-                String deaccentedWord = simplifyString(word);
                 for (String value: deaccentedValues) {
                     int index = value.indexOf(deaccentedWord);
                     if (index == 0) {
@@ -168,16 +188,16 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             return sum;
         }
 
-        int isMatchingGroup(String... words) {
-            return isMatching(groups, words);
+        private int isMatchingGroup(String... words) {
+            return isMatching(groupsSimplified, words);
         }
 
-        int isMatchingName(String... words) {
-            return isMatching(names, words);
+        private int isMatchingName(String... words) {
+            return isMatching(namesSimplified, words);
         }
 
-        int isMatchingTags(String... words) {
-            return isMatching(tags, words);
+        private int isMatchingTags(String... words) {
+            return isMatching(tagsSimplified, words);
         }
 
         @Override
@@ -187,6 +207,22 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                 return preset.getName().compareTo(o.preset.getName());
             else
                 return result;
+        }
+
+        @Override
+        public int hashCode() {
+            return this.preset.hashCode() + 31 * (Integer.hashCode(this.classification)
+                    + 31 * Integer.hashCode(this.favoriteIndex));
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this.getClass().isInstance(obj)) {
+                PresetClassification other = (PresetClassification) obj;
+                return this.preset.equals(other.preset) && this.classification == other.classification
+                        && this.favoriteIndex == other.favoriteIndex;
+            }
+            return false;
         }
 
         @Override
@@ -256,7 +292,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
         DataSet ds = OsmDataManager.getInstance().getEditDataSet();
-        Collection<OsmPrimitive> selected = (ds == null) ? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
+        Collection<OsmPrimitive> selected = (ds == null) ? Collections.emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
 
@@ -276,29 +312,54 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
      * A collection of {@link PresetClassification}s with the functionality of filtering wrt. searchString.
      */
     public static class PresetClassifications implements Iterable<PresetClassification> {
+        private static final PresetClassification[] EMPTY_PRESET_CLASSIFICATION = new PresetClassification[0];
+        private PresetClassification[] classifications = EMPTY_PRESET_CLASSIFICATION;
 
-        private final List<PresetClassification> classifications = new ArrayList<>();
-
+        /**
+         * Get matching presets
+         * @param searchText The text to search for
+         * @param onlyApplicable Only look for presets that are applicable to the selection
+         * @param inTags Search for names in tags
+         * @param presetTypes The preset types to look for, may be {@code null}
+         * @param selectedPrimitives The primitives to filter on, must not be {@code null}
+         *                           if {@code onlyApplicable} is {@code true}
+         * @return The matching presets in a sorted list based off of relevance.
+         */
         public List<PresetClassification> getMatchingPresets(String searchText, boolean onlyApplicable, boolean inTags,
                 Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
             final String[] groupWords;
             final String[] nameWords;
 
             if (searchText.contains("/")) {
-                groupWords = searchText.substring(0, searchText.lastIndexOf('/')).split("[\\s/]", -1);
-                nameWords = searchText.substring(searchText.indexOf('/') + 1).split("\\s", -1);
+                groupWords = searchText.substring(0, searchText.lastIndexOf('/')).split("(?U)[\\s/]", -1);
+                nameWords = PATTERN_WHITESPACE.split(searchText.substring(searchText.indexOf('/') + 1), -1);
             } else {
                 groupWords = null;
-                nameWords = searchText.split("\\s", -1);
+                nameWords = PATTERN_WHITESPACE.split(searchText, -1);
             }
 
             return getMatchingPresets(groupWords, nameWords, onlyApplicable, inTags, presetTypes, selectedPrimitives);
         }
 
+        /**
+         * Get matching presets
+         * @param groupWords The groups to search for
+         * @param nameWords The names to search for, may look in tags if {@code inTags} is {@code true}
+         * @param onlyApplicable Only look for presets that are applicable to the selection
+         * @param inTags Search for names in tags
+         * @param presetTypes The preset types to look for, may be {@code null}
+         * @param selectedPrimitives The primitives to filter on, must not be {@code null}
+         *                           if {@code onlyApplicable} is {@code true}
+         * @return The matching presets in a sorted list based off of relevance.
+         */
         public List<PresetClassification> getMatchingPresets(String[] groupWords, String[] nameWords, boolean onlyApplicable,
                 boolean inTags, Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
 
             final List<PresetClassification> result = new ArrayList<>();
+            final String[] simplifiedGroupWords = groupWords == null ? null :
+                    Arrays.stream(groupWords).map(PresetClassification::simplifyString).toArray(String[]::new);
+            final String[] simplifiedNameWords = nameWords == null ? null :
+                    Arrays.stream(nameWords).map(PresetClassification::simplifyString).toArray(String[]::new);
             for (PresetClassification presetClassification : classifications) {
                 TaggingPreset preset = presetClassification.preset;
                 presetClassification.classification = 0;
@@ -317,21 +378,21 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                     }
                 }
 
-                if (groupWords != null && presetClassification.isMatchingGroup(groupWords) == 0) {
+                if (simplifiedGroupWords != null && presetClassification.isMatchingGroup(simplifiedGroupWords) == 0) {
                     continue;
                 }
 
-                int matchName = presetClassification.isMatchingName(nameWords);
+                int matchName = presetClassification.isMatchingName(simplifiedNameWords);
 
                 if (matchName == 0) {
-                    if (groupWords == null) {
-                        int groupMatch = presetClassification.isMatchingGroup(nameWords);
+                    if (simplifiedGroupWords == null) {
+                        int groupMatch = presetClassification.isMatchingGroup(simplifiedNameWords);
                         if (groupMatch > 0) {
                             presetClassification.classification = CLASSIFICATION_GROUP_MATCH + groupMatch;
                         }
                     }
                     if (presetClassification.classification == 0 && inTags) {
-                        int tagsMatch = presetClassification.isMatchingTags(nameWords);
+                        int tagsMatch = presetClassification.isMatchingTags(simplifiedNameWords);
                         if (tagsMatch > 0) {
                             presetClassification.classification = CLASSIFICATION_TAGS_MATCH + tagsMatch;
                         }
@@ -354,7 +415,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
          * Clears the selector.
          */
         public void clear() {
-            classifications.clear();
+            classifications = EMPTY_PRESET_CLASSIFICATION;
         }
 
         /**
@@ -362,17 +423,19 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
          * @param presets presets collection
          */
         public void loadPresets(Collection<TaggingPreset> presets) {
+            final List<PresetClassification> classificationList = new ArrayList<>(presets.size());
             for (TaggingPreset preset : presets) {
                 if (preset instanceof TaggingPresetSeparator || preset instanceof TaggingPresetMenu) {
                     continue;
                 }
-                classifications.add(new PresetClassification(preset));
+                classificationList.add(new PresetClassification(preset));
             }
+            classifications = classificationList.toArray(new PresetClassification[0]);
         }
 
         @Override
         public Iterator<PresetClassification> iterator() {
-            return classifications.iterator();
+            return Arrays.stream(classifications).iterator();
         }
     }
 
