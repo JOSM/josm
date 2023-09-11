@@ -34,7 +34,7 @@ public class ValidationTask extends PleaseWaitRunnable {
     private final Collection<OsmPrimitive> formerValidatedPrimitives;
     private final boolean beforeUpload;
     private boolean canceled;
-    private List<TestError> errors;
+    private final List<TestError> errors = new ArrayList<>();
     private BiConsumer<ValidationTask, Test> testConsumer;
 
     /**
@@ -121,7 +121,6 @@ public class ValidationTask extends PleaseWaitRunnable {
     protected void realRun() {
         if (Utils.isEmpty(tests))
             return;
-        errors = new ArrayList<>();
         getProgressMonitor().setTicksCount(tests.size() * validatedPrimitives.size());
         int testCounter = 0;
         for (Test test : tests) {
