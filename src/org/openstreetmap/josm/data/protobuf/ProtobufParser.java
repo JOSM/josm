@@ -51,8 +51,7 @@ public class ProtobufParser implements AutoCloseable {
      * @param byteSize The size of the byte. For var ints, this is 7, for other ints, this is 8.
      * @param start    The start position in the byte array
      * @param end      The end position in the byte array (exclusive - [start, end) )
-     * @return t
-     * he number from the byte array. Depending upon length of time the number will be stored, narrowing may be helpful.
+     * @return the number from the byte array. Depending upon length of time the number will be stored, narrowing may be helpful.
      * @since 18695
      */
     public static long convertByteArray(byte[] bytes, byte byteSize, int start, int end) {
@@ -100,7 +99,7 @@ public class ProtobufParser implements AutoCloseable {
      * @since 18695
      */
     public static long decodeZigZag(long signed) {
-        return (signed >> 1) ^ -(signed & 1);
+        return (signed >>> 1) ^ -(signed & 1);
     }
 
     /**

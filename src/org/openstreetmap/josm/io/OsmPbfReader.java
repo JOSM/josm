@@ -631,7 +631,7 @@ public final class OsmPbfReader extends AbstractReader {
                 ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
-                        id = protobufRecord.asUnsignedVarInt().intValue();
+                        id = protobufRecord.asUnsignedVarInt().longValue();
                         break;
                     case 2:
                         for (long number : new ProtobufPacked(protobufRecord.getBytes()).getArray()) {
@@ -698,7 +698,7 @@ public final class OsmPbfReader extends AbstractReader {
                 ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
-                        id = protobufRecord.asUnsignedVarInt().intValue();
+                        id = protobufRecord.asUnsignedVarInt().longValue();
                         break;
                     case 2:
                         for (long number : new ProtobufPacked(protobufRecord.getBytes()).getArray()) {
@@ -837,9 +837,6 @@ public final class OsmPbfReader extends AbstractReader {
      * @param info                 The specific info for the primitive
      */
     private static void setOsmPrimitiveData(PrimitiveBlockRecord primitiveBlockRecord, PrimitiveData primitive, Info info) {
-        if (info.changeset() != null) {
-            primitive.setChangesetId(Math.toIntExact(info.changeset()));
-        }
         primitive.setVisible(info.isVisible());
         if (info.timestamp() != null) {
             primitive.setRawTimestamp(Math.toIntExact(info.timestamp() * primitiveBlockRecord.dateGranularity / 1000));
@@ -851,6 +848,9 @@ public final class OsmPbfReader extends AbstractReader {
         }
         if (info.version() > 0) {
             primitive.setVersion(info.version());
+        }
+        if (info.changeset() != null) {
+            primitive.setChangesetId(Math.toIntExact(info.changeset()));
         }
     }
 

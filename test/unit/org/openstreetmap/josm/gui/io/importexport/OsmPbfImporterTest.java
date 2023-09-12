@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.io.importexport;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,11 +18,14 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.protobuf.ProtobufTest;
@@ -127,6 +131,38 @@ class OsmPbfImporterTest {
                     () -> assertEquals("outer", rel.getRole(0)),
                     () -> assertSame(way, rel.getMember(0).getMember())
             );
+        }
+    }
+
+    @Test
+    void testIdParsing() throws IOException, IllegalDataException {
+        final DataSet dataSet;
+        try (InputStream inputStream = TestUtils.getRegressionDataStream(23165, "largeIds.osm.pbf")) {
+            dataSet = importer.parseDataSet(inputStream, NullProgressMonitor.INSTANCE);
+        }
+        assertNotNull(dataSet.getPrimitiveById(9223372036854775806L, OsmPrimitiveType.NODE));
+        assertNotNull(dataSet.getPrimitiveById(9223372036854775806L, OsmPrimitiveType.WAY));
+        assertNotNull(dataSet.getPrimitiveById(9223372036854775806L, OsmPrimitiveType.RELATION));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Downloads/24165.osm.pbf", "workspace/tasking-manager/frontend/24165.osmosis.osm.pbf",
+    "workspace/tasking-manager/frontend/24165.osmium.osm.pbf"})
+    void test23165(String path) throws IOException {
+        try (InputStream is = Files.newInputStream(Paths.get("/Users/tsmock", path))) {
+            DataSet ds = assertDoesNotThrow(() -> importer.parseDataSet(is, NullProgressMonitor.INSTANCE));
+            assertNotNull(ds.getPrimitiveById(22319993769L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(32920002105L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(29706529395L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(23842321089L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(31341235510L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(30053292843L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(28917983832L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(29875275836L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(32694472600L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(22545520445L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(23222110547L, OsmPrimitiveType.NODE));
+            assertNotNull(ds.getPrimitiveById(2147640293L, OsmPrimitiveType.WAY));
         }
     }
 }
