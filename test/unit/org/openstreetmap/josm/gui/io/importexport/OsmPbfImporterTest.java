@@ -144,25 +144,4 @@ class OsmPbfImporterTest {
         assertNotNull(dataSet.getPrimitiveById(9223372036854775806L, OsmPrimitiveType.WAY));
         assertNotNull(dataSet.getPrimitiveById(9223372036854775806L, OsmPrimitiveType.RELATION));
     }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"Downloads/24165.osm.pbf", "workspace/tasking-manager/frontend/24165.osmosis.osm.pbf",
-    "workspace/tasking-manager/frontend/24165.osmium.osm.pbf"})
-    void test23165(String path) throws IOException {
-        try (InputStream is = Files.newInputStream(Paths.get("/Users/tsmock", path))) {
-            DataSet ds = assertDoesNotThrow(() -> importer.parseDataSet(is, NullProgressMonitor.INSTANCE));
-            assertNotNull(ds.getPrimitiveById(22319993769L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(32920002105L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(29706529395L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(23842321089L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(31341235510L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(30053292843L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(28917983832L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(29875275836L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(32694472600L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(22545520445L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(23222110547L, OsmPrimitiveType.NODE));
-            assertNotNull(ds.getPrimitiveById(2147640293L, OsmPrimitiveType.WAY));
-        }
-    }
 }
