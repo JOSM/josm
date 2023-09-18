@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 
 /**
@@ -19,11 +20,11 @@ public interface DownloadTask {
 
     /**
      * Asynchronously launches the download task for a given bounding box.
-     *
+     * <p>
      * Set <code>progressMonitor</code> to null, if the task should create, open, and close a progress monitor.
      * Set progressMonitor to {@link NullProgressMonitor#INSTANCE} if progress information is to
      * be discarded.
-     *
+     * <p>
      * You can wait for the asynchronous download task to finish by synchronizing on the returned
      * {@link Future}, but make sure not to freeze up JOSM. Example:
      * <pre>
@@ -59,7 +60,7 @@ public interface DownloadTask {
 
     /**
      * Asynchronously launches the download task for a given bounding URL.
-     *
+     * <p>
      * Set progressMonitor to null, if the task should create, open, and close a progress monitor.
      * Set progressMonitor to {@link NullProgressMonitor#INSTANCE} if progress information is to
      * be discarded.
@@ -92,7 +93,24 @@ public interface DownloadTask {
      * @return The HTML documentation
      * @since 6031
      */
-    String acceptsDocumentationSummary();
+    default String acceptsDocumentationSummary() {
+        StringBuilder buff = new StringBuilder(128)
+                .append("<tr><td>")
+                .append(getTitle())
+                .append(":</td><td>");
+        String[] patterns = getPatterns();
+        if (patterns.length > 0) {
+            buff.append("<ul>");
+            for (String pattern: patterns) {
+                buff.append("<li>")
+                        .append(XmlWriter.encode(pattern))
+                        .append("</li>");
+            }
+            buff.append("</ul>");
+        }
+        buff.append("</td></tr>");
+        return buff.toString();
+    }
 
     /**
      * Returns human-readable description of the task
@@ -110,7 +128,7 @@ public interface DownloadTask {
 
     /**
      * Replies the error objects of the task. Empty list, if no error messages are available.
-     *
+     * <p>
      * Error objects are either {@link String}s with error messages or {@link Exception}s.
      *
      * @return the list of error objects
@@ -130,7 +148,7 @@ public interface DownloadTask {
             } else if (o instanceof Exception) {
                 return ExceptionUtil.explainException((Exception) o).replace("<html>", "").replace("</html>", "");
             } else {
-                return (String) null;
+                return null;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
