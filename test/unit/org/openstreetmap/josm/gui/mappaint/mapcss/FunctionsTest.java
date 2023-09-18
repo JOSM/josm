@@ -1,21 +1,30 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.osm.OsmPrimitiveType.NODE;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
@@ -179,5 +188,44 @@ class FunctionsTest {
         });
         assertEquals("#000000", Functions.JOSM_pref(null, key, "#000000"));
         Config.getPref().put(colorKey, null);
+    }
+
+    @Test
+    void testConvertPrimitivesToString() {
+        assertEquals(Collections.singletonList("n1"), Functions.convert_primitives_to_string(
+                Collections.singleton(new SimplePrimitiveId(1, NODE))));
+        assertEquals(Arrays.asList("n1", "n9223372036854775807"), Functions.convert_primitives_to_string(
+                Arrays.asList(new SimplePrimitiveId(1, NODE), new SimplePrimitiveId(Long.MAX_VALUE, NODE))));
+    }
+
+    @Test
+    void testParentOsmPrimitives() {
+        final Environment env = new EnvBuilder(NODE).build();
+        final Relation relation1 = TestUtils.newRelation("", new RelationMember("", (Node) env.osm));
+        final Relation relation2 = TestUtils.newRelation("type=something", new RelationMember("", (Node) env.osm));
+        final Relation relation3 = TestUtils.newRelation("type=somethingelse", new RelationMember("", (Node) env.osm));
+
+        TestUtils.addFakeDataSet((Node) env.osm);
+        for (Relation relation : Arrays.asList(relation1, relation2, relation3)) {
+            ((Node) env.osm).getDataSet().addPrimitive(relation);
+        }
+
+        final List<IPrimitive> allReferrers = Functions.parent_osm_primitives(env);
+        assertAll(() -> assertEquals(3, allReferrers.size()),
+                () -> assertTrue(allReferrers.contains(relation1)),
+                () -> assertTrue(allReferrers.contains(relation2)),
+                () -> assertTrue(allReferrers.contains(relation3)));
+
+        final List<IPrimitive> typeReferrers = Functions.parent_osm_primitives(env, "type");
+        assertAll(() -> assertEquals(2, typeReferrers.size()),
+                () -> assertFalse(typeReferrers.contains(relation1)),
+                () -> assertTrue(typeReferrers.contains(relation2)),
+                () -> assertTrue(typeReferrers.contains(relation3)));
+
+        final List<IPrimitive> typeSomethingReferrers = Functions.parent_osm_primitives(env, "type", "something");
+        assertAll(() -> assertEquals(1, typeSomethingReferrers.size()),
+                () -> assertSame(relation2, typeSomethingReferrers.get(0)));
+
+        assertTrue(Functions.parent_osm_primitives(env, "type2").isEmpty());
     }
 }

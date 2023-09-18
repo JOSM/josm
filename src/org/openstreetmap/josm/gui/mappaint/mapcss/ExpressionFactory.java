@@ -6,6 +6,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -100,7 +103,7 @@ public final class ExpressionFactory {
         static <T, U, V> Factory of(Class<T> type1, Class<U> type2, Class<V> type3,
                                     BiFunction<T, U, ?> biFunction, TriFunction<T, U, V, ?> triFunction) {
             return args -> env -> {
-                T v1 = args.size() >= 1 ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
+                T v1 = !args.isEmpty() ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
                 U v2 = args.size() >= 2 ? Cascade.convertTo(args.get(1).evaluate(env), type2) : null;
                 V v3 = args.size() >= 3 ? Cascade.convertTo(args.get(2).evaluate(env), type3) : null;
                 return v1 == null || v2 == null ? null : v3 == null ? biFunction.apply(v1, v2) : triFunction.apply(v1, v2, v3);
@@ -110,7 +113,7 @@ public final class ExpressionFactory {
         static <T, U, V, W> Factory of(Class<T> type1, Class<U> type2, Class<V> type3, Class<W> type4,
                                        QuadFunction<T, U, V, W, ?> function) {
             return args -> env -> {
-                T v1 = args.size() >= 1 ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
+                T v1 = !args.isEmpty() ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
                 U v2 = args.size() >= 2 ? Cascade.convertTo(args.get(1).evaluate(env), type2) : null;
                 V v3 = args.size() >= 3 ? Cascade.convertTo(args.get(2).evaluate(env), type3) : null;
                 W v4 = args.size() >= 4 ? Cascade.convertTo(args.get(3).evaluate(env), type4) : null;
@@ -118,10 +121,42 @@ public final class ExpressionFactory {
             };
         }
 
-        static <T> Factory ofEnv(Function<Environment, ?> function) {
+        /**
+         * Create a factory that accepts an iterable (array <i>or</i> generic iterable)
+         * @param type The expected type class
+         * @param function The function to apply the arguments to
+         * @param <T> The iterable type
+         * @return The result of the function call
+         */
+        @SuppressWarnings("unchecked")
+        static <T> Factory ofIterable(Class<T> type, Function<Iterable<T>, ?> function) {
+            return args -> env -> {
+                Object arg0 = args.get(0).evaluate(env);
+                if (args.size() == 1 && arg0 instanceof Iterable) {
+                    return function.apply((Iterable<T>) arg0);
+                } else {
+                    return function.apply(Arrays.asList(args.stream().map(arg -> Cascade.convertTo(arg, type))
+                            .toArray(length -> (T[]) Array.newInstance(type, length))));
+                }
+            };
+        }
+
+        /**
+         * Create a {@link Factory} for a function
+         * @param function The function to use
+         * @return The result of the function
+         */
+        static Factory ofEnv(Function<Environment, ?> function) {
             return args -> function::apply;
         }
 
+        /**
+         * Create a {@link Factory} for a function that takes a parameter
+         * @param type The parameter type class
+         * @param function The function to use when one argument is available
+         * @param <T> the type of the input to the function
+         * @return The result of the function
+         */
         static <T> Factory ofEnv(Class<T> type, BiFunction<Environment, T, ?> function) {
             return args -> env -> {
                 T v = Cascade.convertTo(args.get(0).evaluate(env), type);
@@ -129,12 +164,42 @@ public final class ExpressionFactory {
             };
         }
 
+        /**
+         * Create a {@link Factory} for an overloaded function
+         * @param type1 The first parameter type class
+         * @param type2 The second parameter type class
+         * @param biFunction The function to use when one argument is available
+         * @param triFunction The function to use when two arguments are available
+         * @param <T> the type of the input to the function
+         * @param <U> the type of the input to the function
+         * @return The result of one of the functions
+         */
         static <T, U> Factory ofEnv(Class<T> type1, Class<U> type2,
                                     BiFunction<Environment, T, ?> biFunction, TriFunction<Environment, T, U, ?> triFunction) {
             return args -> env -> {
-                T v1 = args.size() >= 1 ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
+                T v1 = !args.isEmpty() ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
                 U v2 = args.size() >= 2 ? Cascade.convertTo(args.get(1).evaluate(env), type2) : null;
                 return v1 == null ? null : v2 == null ? biFunction.apply(env, v1) : triFunction.apply(env, v1, v2);
+            };
+        }
+
+        /**
+         * Create a {@link Factory} for an overloaded function
+         * @param type1 The first parameter type class
+         * @param type2 The second parameter type class
+         * @param function The function to use when no args are available
+         * @param biFunction The function to use when one argument is available
+         * @param triFunction The function to use when two arguments are available
+         * @param <T> the type of the input to the function
+         * @param <U> the type of the input to the function
+         * @return The result of one of the functions
+         */
+        static <T, U> Factory ofEnv(Class<T> type1, Class<U> type2, Function<Environment, ?> function,
+                                    BiFunction<Environment, T, ?> biFunction, TriFunction<Environment, T, U, ?> triFunction) {
+            return args -> env -> {
+                T v1 = !args.isEmpty() ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
+                U v2 = args.size() >= 2 ? Cascade.convertTo(args.get(1).evaluate(env), type2) : null;
+                return v1 == null ? function.apply(env) : v2 == null ? biFunction.apply(env, v1) : triFunction.apply(env, v1, v2);
             };
         }
     }
@@ -169,6 +234,8 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("child_tag", Factory.ofEnv(String.class, Functions::child_tag));
         FACTORY_MAP.put("color2html", Factory.of(Color.class, Functions::color2html));
         FACTORY_MAP.put("concat", Factory.ofObjectVarargs(Functions::concat));
+        FACTORY_MAP.put("convert_primitive_to_string", Factory.of(PrimitiveId.class, Functions::convert_primitive_to_string));
+        FACTORY_MAP.put("convert_primitives_to_string", Factory.ofIterable(PrimitiveId.class, Functions::convert_primitives_to_string));
         FACTORY_MAP.put("cos", Factory.of(Math::cos));
         FACTORY_MAP.put("cosh", Factory.of(Math::cosh));
         FACTORY_MAP.put("count", Factory.of(List.class, Functions::count));
@@ -214,6 +281,8 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("osm_version", Factory.ofEnv(Functions::osm_version));
         FACTORY_MAP.put("outside", Factory.ofEnv(String.class, Functions::outside));
         FACTORY_MAP.put("parent_osm_id", Factory.ofEnv(Functions::parent_osm_id));
+        FACTORY_MAP.put("parent_osm_primitives", Factory.ofEnv(String.class, String.class,
+                Functions::parent_osm_primitives, Functions::parent_osm_primitives, Functions::parent_osm_primitives));
         FACTORY_MAP.put("parent_tag", Factory.ofEnv(String.class, Functions::parent_tag));
         FACTORY_MAP.put("parent_tags", Factory.ofEnv(String.class, Functions::parent_tags));
         FACTORY_MAP.put("parent_way_angle", Factory.ofEnv(Functions::parent_way_angle));
@@ -390,9 +459,9 @@ public final class ExpressionFactory {
 
     /**
      * Function to calculate the length of a string or list in a MapCSS eval expression.
-     *
+     * <p>
      * Separate implementation to support overloading for different argument types.
-     *
+     * <p>
      * The use for calculating the length of a list is deprecated, use
      * {@link Functions#count(java.util.List)} instead (see #10061).
      */
