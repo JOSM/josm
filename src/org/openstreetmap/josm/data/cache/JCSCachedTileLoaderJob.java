@@ -292,7 +292,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
-     * @return true if object was successfully downloaded, false, if there was a loading failure
+     * Load an cache object
+     * @return {@code true} if object was successfully downloaded, false, if there was a loading failure
      * @since 18831
      */
     protected boolean loadObject() {
@@ -333,7 +334,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
-     * @return true if object was successfully downloaded via http, false, if there was a loading failure
+     * Load an cache object via HTTP
+     * @return {@code true} if object was successfully downloaded via http, false, if there was a loading failure
      */
     private boolean loadObjectHttp() {
         try {
