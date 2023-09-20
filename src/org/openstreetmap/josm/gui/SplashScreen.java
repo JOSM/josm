@@ -390,6 +390,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
         private static final String LABEL_HTML = "<html>"
                 + "<style>ul {margin-top: 0; margin-bottom: 0; padding: 0;} li {margin: 0; padding: 0;}</style>";
 
+        private String lastTasks;
+
         protected void build() {
             setLayout(new GridBagLayout());
 
@@ -415,9 +417,13 @@ public class SplashScreen extends JFrame implements ChangeListener {
          * @param tasks HTML formatted list of tasks
          */
         public void setTasks(String tasks) {
-            lblTaskTitle.setText(LABEL_HTML + tasks);
-            lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
-            scrollPane.getHorizontalScrollBar().setValue(0);
+            // Only update the display when the tasks change
+            if (!Objects.equals(lastTasks, tasks)) {
+                lastTasks = tasks;
+                lblTaskTitle.setText(LABEL_HTML + tasks);
+                lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
+                scrollPane.getHorizontalScrollBar().setValue(0);
+            }
         }
     }
 }
