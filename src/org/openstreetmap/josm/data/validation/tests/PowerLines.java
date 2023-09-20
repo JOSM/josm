@@ -628,7 +628,7 @@ public class PowerLines extends Test {
      * @return {@code true} if primitive has a tag that marks it as a water area or boundary of a water area
      */
     private static boolean concernsWaterArea(OsmPrimitive p) {
-        return p.hasTag("water", "river", "lake") || p.hasKey("waterway") || p.hasTag("natural", "coastline");
+        return (p.hasTag("water", "river", "lake") || p.hasKey("waterway") || p.hasTag("natural", "coastline")) && p.concernsArea();
     }
 
     /**
