@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,8 +57,10 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.io.session.PluginSessionExporter;
 import org.openstreetmap.josm.io.session.SessionLayerExporter;
 import org.openstreetmap.josm.io.session.SessionWriter;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -78,6 +81,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
     private transient MultiMap<Layer, Layer> dependencies;
 
     private static final BooleanProperty SAVE_LOCAL_FILES_PROPERTY = new BooleanProperty("session.savelocal", true);
+    private static final BooleanProperty SAVE_PLUGIN_INFORMATION_PROPERTY = new BooleanProperty("session.saveplugins", false);
     private static final String TOOLTIP_DEFAULT = tr("Save the current session.");
 
     protected transient FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
@@ -88,6 +92,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
     private static String tooltip = TOOLTIP_DEFAULT;
     static File sessionFile;
     static boolean isZipSessionFile;
+    private static boolean pluginData;
     static List<WeakReference<Layer>> layersInSessionFile;
 
     private static final SessionSaveAction instance = new SessionSaveAction();
@@ -170,7 +175,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
                 .collect(Collectors.toList());
 
         boolean zipRequired = layersOut.stream().map(l -> exporters.get(l))
-                .anyMatch(ex -> ex != null && ex.requiresZip());
+                .anyMatch(ex -> ex != null && ex.requiresZip()) || pluginsWantToSave();
 
         saveAs = !doGetFile(saveAs, zipRequired);
 
@@ -240,7 +245,14 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             active = layersOut.indexOf(activeLayer);
         }
 
-        SessionWriter sw = new SessionWriter(layersOut, active, exporters, dependencies, isZipSessionFile);
+        final EnumSet<SessionWriter.SessionWriterFlags> flags = EnumSet.noneOf(SessionWriter.SessionWriterFlags.class);
+        if (pluginData || (Boolean.TRUE.equals(SAVE_PLUGIN_INFORMATION_PROPERTY.get()) && pluginsWantToSave())) {
+            flags.add(SessionWriter.SessionWriterFlags.SAVE_PLUGIN_INFORMATION);
+        }
+        if (isZipSessionFile) {
+            flags.add(SessionWriter.SessionWriterFlags.IS_ZIP);
+        }
+        SessionWriter sw = new SessionWriter(layersOut, active, exporters, dependencies, flags.toArray(new SessionWriter.SessionWriterFlags[0]));
         try {
             Notification savingNotification = showSavingNotification(sessionFile.getName());
             sw.write(sessionFile);
@@ -434,7 +446,13 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             op.add(tabs, GBC.eol().fill());
             JCheckBox chkSaveLocal = new JCheckBox(tr("Save all local files to disk"), SAVE_LOCAL_FILES_PROPERTY.get());
             chkSaveLocal.addChangeListener(l -> SAVE_LOCAL_FILES_PROPERTY.put(chkSaveLocal.isSelected()));
-            op.add(chkSaveLocal);
+            op.add(chkSaveLocal, GBC.eol());
+            if (pluginsWantToSave()) {
+                JCheckBox chkSavePlugins = new JCheckBox(tr("Save plugin information to disk"), SAVE_PLUGIN_INFORMATION_PROPERTY.get());
+                chkSavePlugins.addChangeListener(l -> SAVE_PLUGIN_INFORMATION_PROPERTY.put(chkSavePlugins.isSelected()));
+                chkSavePlugins.setToolTipText(tr("Plugins may have additional information that can be saved"));
+                op.add(chkSavePlugins, GBC.eol());
+            }
             return op;
         }
 
@@ -509,10 +527,41 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
      * @param file file
      * @param zip if it is a zip session file
      * @param layers layers that are currently represented in the session file
+     * @deprecated since 18833, use {@link #setCurrentSession(File, List, SessionWriter.SessionWriterFlags...)} instead
      */
+    @Deprecated
     public static void setCurrentSession(File file, boolean zip, List<Layer> layers) {
+        if (zip) {
+            setCurrentSession(file, layers, SessionWriter.SessionWriterFlags.IS_ZIP);
+        } else {
+            setCurrentSession(file, layers);
+        }
+    }
+
+    /**
+     * Sets the current session file and the layers included in that file
+     * @param file file
+     * @param layers layers that are currently represented in the session file
+     * @param flags The flags for the current session
+     * @since 18833
+     */
+    public static void setCurrentSession(File file, List<Layer> layers, SessionWriter.SessionWriterFlags... flags) {
+        final EnumSet<SessionWriter.SessionWriterFlags> flagSet = EnumSet.noneOf(SessionWriter.SessionWriterFlags.class);
+        flagSet.addAll(Arrays.asList(flags));
+        setCurrentSession(file, layers, flagSet);
+    }
+
+    /**
+     * Sets the current session file and the layers included in that file
+     * @param file file
+     * @param layers layers that are currently represented in the session file
+     * @param flags The flags for the current session
+     * @since 18833
+     */
+    public static void setCurrentSession(File file, List<Layer> layers, Set<SessionWriter.SessionWriterFlags> flags) {
         setCurrentLayers(layers);
-        setCurrentSession(file, zip);
+        setCurrentSession(file, flags.contains(SessionWriter.SessionWriterFlags.IS_ZIP));
+        pluginData = flags.contains(SessionWriter.SessionWriterFlags.SAVE_PLUGIN_INFORMATION);
     }
 
     /**
@@ -548,6 +597,19 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
      */
     public static String getTooltip() {
         return tooltip;
+    }
+
+    /**
+     * Check to see if any plugins want to save their state
+     * @return {@code true} if the plugin wants to save their state
+     */
+    private static boolean pluginsWantToSave() {
+        for (PluginSessionExporter exporter : PluginHandler.load(PluginSessionExporter.class)) {
+            if (exporter.requiresSaving()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

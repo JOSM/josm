@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -358,9 +359,21 @@ public final class PluginHandler {
     }
 
     /**
+     * Get a {@link ServiceLoader} for the specified service. This uses {@link #getJoinedPluginResourceCL()} as the
+     * class loader, so that we don't have to iterate through the {@link ClassLoader}s from {@link #getPluginClassLoaders()}.
+     * @param <S> The service type
+     * @param service The service class to look for
+     * @return The service loader
+     * @since 18833
+     */
+    public static <S> ServiceLoader<S> load(Class<S> service) {
+        return ServiceLoader.load(service, getJoinedPluginResourceCL());
+    }
+
+    /**
      * Removes deprecated plugins from a collection of plugins. Modifies the
      * collection <code>plugins</code>.
-     *
+     * <p>
      * Also notifies the user about removed deprecated plugins
      *
      * @param parent The parent Component used to display warning popup
@@ -411,7 +424,7 @@ public final class PluginHandler {
      * Removes unmaintained plugins from a collection of plugins. Modifies the
      * collection <code>plugins</code>. Also removes the plugin from the list
      * of plugins in the preferences, if necessary.
-     *
+     * <p>
      * Asks the user for every unmaintained plugin whether it should be removed.
      * @param parent The parent Component used to display warning popup
      *
@@ -777,7 +790,7 @@ public final class PluginHandler {
 
     /**
      * Get class loader to locate resources from plugins.
-     *
+     * <p>
      * It joins URLs of all plugins, to find images, etc.
      * (Not for loading Java classes - each plugin has a separate {@link PluginClassLoader}
      * for that purpose.)
@@ -930,7 +943,7 @@ public final class PluginHandler {
     /**
      * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early} set to true
      * <i>and</i> a negative {@link PluginInformation#stage} value.
-     *
+     * <p>
      * This is meant for plugins that provide additional {@link javax.swing.LookAndFeel}.
      */
     public static void loadVeryEarlyPlugins() {
@@ -1040,7 +1053,7 @@ public final class PluginHandler {
         }
         try {
             monitor.beginTask(tr("Determining plugins to load..."));
-            Set<String> plugins = new HashSet<>(Config.getPref().getList("plugins", new LinkedList<String>()));
+            Set<String> plugins = new HashSet<>(Config.getPref().getList("plugins", new LinkedList<>()));
             Logging.debug("Plugins list initialized to {0}", plugins);
             String systemProp = Utils.getSystemProperty("josm.plugins");
             if (systemProp != null) {
@@ -1333,7 +1346,7 @@ public final class PluginHandler {
 
     /**
      * Installs downloaded plugins. Moves files with the suffix ".jar.new" to the corresponding ".jar" files.
-     *
+     * <p>
      * If {@code dowarn} is true, this methods emits warning messages on the console if a downloaded
      * but not yet installed plugin .jar can't be be installed. If {@code dowarn} is false, the
      * installation of the respective plugin is silently skipped.

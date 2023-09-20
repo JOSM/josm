@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.layer.SaveToFile;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.w3c.dom.Element;
@@ -210,7 +211,15 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
 
     @Override
     public boolean requiresZip() {
-        return include.isSelected();
+        if (include.isSelected()) {
+            return true;
+        }
+        for (PluginSessionExporter exporter : PluginHandler.load(PluginSessionExporter.class)) {
+            if (exporter.requiresSaving()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected abstract void addDataFile(OutputStream out) throws IOException;

@@ -12,6 +12,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -33,6 +34,7 @@ import org.openstreetmap.josm.io.session.SessionImporter;
 import org.openstreetmap.josm.io.session.SessionReader;
 import org.openstreetmap.josm.io.session.SessionReader.SessionProjectionChoiceData;
 import org.openstreetmap.josm.io.session.SessionReader.SessionViewportData;
+import org.openstreetmap.josm.io.session.SessionWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -205,7 +207,14 @@ public class SessionLoadAction extends DiskAccessAction {
                     postLoadTasks = reader.getPostLoadTasks();
                     viewport = reader.getViewport();
                     projectionChoice = reader.getProjectionChoice();
-                    SessionSaveAction.setCurrentSession(file, zip, reader.getLayers());
+                    final EnumSet<SessionWriter.SessionWriterFlags> flagSet = EnumSet.noneOf(SessionWriter.SessionWriterFlags.class);
+                    if (zip) {
+                        flagSet.add(SessionWriter.SessionWriterFlags.IS_ZIP);
+                    }
+                    if (reader.loadedPluginData()) {
+                        flagSet.add(SessionWriter.SessionWriterFlags.SAVE_PLUGIN_INFORMATION);
+                    }
+                    SessionSaveAction.setCurrentSession(file, reader.getLayers(), flagSet);
                 } finally {
                     if (tempFile) {
                         Utils.deleteFile(file);

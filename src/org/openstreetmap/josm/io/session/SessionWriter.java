@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +44,7 @@ import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -58,6 +60,21 @@ import org.w3c.dom.Text;
  */
 public class SessionWriter {
 
+    /**
+     * {@link SessionWriter} options
+     * @since 18833
+     */
+    public enum SessionWriterFlags {
+        /**
+         * Use if the file to be written needs to be a zip file
+         */
+        IS_ZIP,
+        /**
+         * Use if there are plugins that want to save information
+         */
+        SAVE_PLUGIN_INFORMATION
+    }
+
     private static final Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
 
     private final List<Layer> layers;
@@ -65,6 +82,7 @@ public class SessionWriter {
     private final Map<Layer, SessionLayerExporter> exporters;
     private final MultiMap<Layer, Layer> dependencies;
     private final boolean zip;
+    private final boolean plugins;
 
     private ZipOutputStream zipOut;
 
@@ -82,7 +100,7 @@ public class SessionWriter {
 
     /**
      * Register a session layer exporter.
-     *
+     * <p>
      * The exporter class must have a one-argument constructor with layerClass as formal parameter type.
      * @param layerClass layer class
      * @param exporter exporter for this layer class
@@ -120,11 +138,29 @@ public class SessionWriter {
      */
     public SessionWriter(List<Layer> layers, int active, Map<Layer, SessionLayerExporter> exporters,
                 MultiMap<Layer, Layer> dependencies, boolean zip) {
+        this(layers, active, exporters, dependencies,
+                zip ? new SessionWriterFlags[] {SessionWriterFlags.IS_ZIP} : new SessionWriterFlags[0]);
+    }
+
+    /**
+     * Constructs a new {@code SessionWriter}.
+     * @param layers The ordered list of layers to save
+     * @param active The index of active layer in {@code layers} (starts at 0). Ignored if set to -1
+     * @param exporters The exporters to use to save layers
+     * @param dependencies layer dependencies
+     * @param flags The flags to use when writing data
+     * @since 18833
+     */
+    public SessionWriter(List<Layer> layers, int active, Map<Layer, SessionLayerExporter> exporters,
+                         MultiMap<Layer, Layer> dependencies, SessionWriterFlags... flags) {
         this.layers = layers;
         this.active = active;
         this.exporters = exporters;
         this.dependencies = dependencies;
-        this.zip = zip;
+        final EnumSet<SessionWriterFlags> flagSet = flags.length == 0 ? EnumSet.noneOf(SessionWriterFlags.class) :
+                EnumSet.of(flags[0], flags);
+        this.zip = flagSet.contains(SessionWriterFlags.IS_ZIP);
+        this.plugins = flagSet.contains(SessionWriterFlags.SAVE_PLUGIN_INFORMATION);
     }
 
     /**
@@ -218,7 +254,7 @@ public class SessionWriter {
      * @throws IOException if any I/O error occurs
      */
     public Document createJosDocument() throws IOException {
-        DocumentBuilder builder = null;
+        DocumentBuilder builder;
         try {
             builder = XmlUtils.newSafeDOMBuilder();
         } catch (ParserConfigurationException e) {
@@ -361,6 +397,11 @@ public class SessionWriter {
             ZipEntry entry = new ZipEntry("session.jos");
             zipOut.putNextEntry(entry);
             writeJos(doc, zipOut);
+            if (this.plugins) {
+                for (PluginSessionExporter exporter : PluginHandler.load(PluginSessionExporter.class)) {
+                    exporter.writeZipEntries(zipOut);
+                }
+            }
             Utils.close(zipOut);
         } else {
             writeJos(doc, new BufferedOutputStream(out));

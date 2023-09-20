@@ -109,13 +109,13 @@ public class FakeOsmApi extends OsmApi {
 
     /**
      * Gets and caches an instance of this API.
-     * @return The API intance. Always the same object.
+     * @return The API instance. Always the same object.
      */
     public static synchronized FakeOsmApi getInstance() {
         if (instance == null) {
             instance = new FakeOsmApi();
-            cacheInstance(instance);
         }
+        cacheInstance(instance);
         return instance;
     }
 }

@@ -39,13 +39,16 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -156,6 +159,7 @@ public class SessionReader {
 
     private URI sessionFileURI;
     private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
+    private boolean pluginData; // true, if a plugin restored state from a .joz file. False otherwise.
     private ZipFile zipFile;
     private List<Layer> layers = new ArrayList<>();
     private int active = -1;
@@ -192,7 +196,7 @@ public class SessionReader {
         Class<? extends SessionLayerImporter> importerClass = sessionLayerImporters.get(layerType);
         if (importerClass == null)
             return null;
-        SessionLayerImporter importer = null;
+        SessionLayerImporter importer;
         try {
             importer = importerClass.getConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
@@ -241,6 +245,15 @@ public class SessionReader {
      */
     public SessionProjectionChoiceData getProjectionChoice() {
         return projectionChoice;
+    }
+
+    /**
+     * Returns whether plugins loaded additonal data
+     * @return {@code true} if at least one plugin loaded additional data
+     * @since 18833
+     */
+    public boolean loadedPluginData() {
+        return this.pluginData;
     }
 
     /**
@@ -308,9 +321,9 @@ public class SessionReader {
 
         /**
          * Return an InputStream for a URI from a .jos/.joz file.
-         *
+         * <p>
          * The following forms are supported:
-         *
+         * <p>
          * - absolute file (both .jos and .joz):
          *         "file:///home/user/data.osm"
          *         "file:/home/user/data.osm"
@@ -351,7 +364,7 @@ public class SessionReader {
 
         /**
          * Return a File for a URI from a .jos/.joz file.
-         *
+         * <p>
          * Returns null if the URI points to a file inside the zip archive.
          * In this case, inZipPath will be set to the corresponding path.
          * @param uriStr the URI as string
@@ -712,7 +725,7 @@ public class SessionReader {
     /**
      * Show Dialog when there is an error for one layer.
      * Ask the user whether to cancel the complete session loading or just to skip this layer.
-     *
+     * <p>
      * This is expected to run in a worker thread (PleaseWaitRunnable), so invokeAndWait is
      * needed to block the current thread and wait for the result of the modal dialog from EDT.
      */
@@ -742,6 +755,19 @@ public class SessionReader {
         }
     }
 
+    private void loadPluginData() {
+        if (!zip) {
+            return;
+        }
+        for (PluginSessionImporter importer : PluginHandler.load(PluginSessionImporter.class)) {
+            try {
+                this.pluginData |= importer.readZipFile(zipFile);
+            } catch (IOException ioException) {
+                GuiHelper.runInEDT(() -> ExceptionDialogUtil.explainException(ioException));
+            }
+        }
+    }
+
     /**
      * Loads session from the given file.
      * @param sessionFile session file to load
@@ -753,6 +779,7 @@ public class SessionReader {
     public void loadSession(File sessionFile, boolean zip, ProgressMonitor progressMonitor) throws IllegalDataException, IOException {
         try (InputStream josIS = createInputStream(sessionFile, zip)) {
             loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
+            this.postLoadTasks.add(this::loadPluginData);
         }
     }
 
