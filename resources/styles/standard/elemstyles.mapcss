@@ -1042,7 +1042,8 @@ way[oneway?][oneway:bicycle=no][cycleway=lane]::core_cycleway {
 }
 
     /* prepare shared_lane */
-way[oneway?][cycleway=shared_lane]:righthandtraffic::core_cycleway {
+way[oneway?][cycleway=shared_lane]:righthandtraffic::core_cycleway,
+way[!oneway][cycleway=shared_lane][junction=roundabout]:righthandtraffic::core_cycleway {
     set shared_laneRight;
     set righthandtr;
 }
@@ -1050,7 +1051,8 @@ way[oneway=-1][cycleway=shared_lane]:righthandtraffic::core_cycleway {
     set shared_laneLeft;
     set righthandtr;
 }
-way[oneway?][cycleway=shared_lane]!.righthandtr::core_cycleway {
+way[oneway?][cycleway=shared_lane]!.righthandtr::core_cycleway,
+way[!oneway][cycleway=shared_lane][junction=roundabout]!.righthandtr::core_cycleway {
     set shared_laneLeft;
 }
 way[oneway=-1][cycleway=shared_lane]!.righthandtr::core_cycleway {
@@ -1063,7 +1065,7 @@ way[cycleway:right=shared_lane]::core_cycleway {
     set shared_laneRight;
 }
 way[oneway=no][cycleway=shared_lane]::core_cycleway,
-way[!oneway][cycleway=shared_lane]::core_cycleway,
+way[!oneway][junction!=roundabout][cycleway=shared_lane]::core_cycleway,
 way[oneway?][oneway:bicycle=no][cycleway=shared_lane]::core_cycleway,
 way[cycleway:both=shared_lane]::core_cycleway {
     set shared_laneLeft;
