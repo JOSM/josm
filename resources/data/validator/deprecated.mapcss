@@ -1897,8 +1897,9 @@ way[/^is_in:/] {
   throwWarning: tr("{0} is deprecated for {1}", "{0.key}", "{1.tag}");
   suggestAlternative: "design";
   suggestAlternative: "structure";
-  suggestAlternative: "line_management";
+  suggestAlternative: "line_arrangement";
   suggestAlternative: "line_attachment";
+  suggestAlternative: "line_management";
   set generic_power_tower_type_warning;
   group: tr("deprecated tagging");
 }
@@ -1957,8 +1958,9 @@ node[pole:type=transition] {
 }
 *[pole:type][power][power=~/^(tower|pole|insulator|portal|terminal)$/]!.power_pole_type_warning!.generic_power_tower_type_warning {
   throwWarning: tr("{0} is deprecated for {1}", "{0.key}", "{1.tag}");
-  suggestAlternative: "line_management";
+  suggestAlternative: "line_arrangement";
   suggestAlternative: "line_attachment";
+  suggestAlternative: "line_management";
   group: tr("deprecated tagging");
 }
 

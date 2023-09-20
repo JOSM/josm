@@ -391,6 +391,11 @@
         <reference ref="cables" />
         <combo key="circuits" text="Amount of circuits" values="1,2,3,4" />
     </chunk>
+    <chunk id="line_properties">
+        <combo key="line_attachment" text="Line attachment" values="suspension,anchor,pin,pulley" values_sort="false" values_context="power" />
+        <combo key="line_arrangement" text="Line arrangement" values="horizontal,semi_horizontal,vertical,semi_vertical,triangular,delta,square,unarranged" values_sort="false" values_context="power" />
+        <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
+    </chunk>
     <chunk id="power_loc">
         <combo key="location" text="Location" values="outdoor,indoor,underground,platform,roof,surface" values_context="power" />
     </chunk>
@@ -464,8 +469,7 @@
         <reference ref="ref_operator" />
     </chunk>
     <chunk id="power_pole">
-        <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
-        <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
+        <reference ref="line_properties" />
         <check key="location:transition" text="Location transition" disable_off="true" />
         <reference ref="pole" />
     </chunk>
@@ -6020,6 +6024,9 @@
             <key key="man_made" value="utility_pole" />
             <reference ref="pole" />
             <reference ref="utilities" />
+            <optional>
+                <reference ref="line_properties"/>
+            </optional>
             <preset_link preset_name="Pole" text="Similar preset:" />
         </item> <!-- Utility Pole -->
         <item name="Street Lamp" icon="presets/misc/streetlamp.svg" type="node" preset_name_label="true">
@@ -6870,8 +6877,7 @@
             <space />
             <key key="power" value="terminal" />
             <optional>
-                <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
-                <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
+                <reference ref="line_properties" />
                 <reference ref="ref_operator" />
             </optional>
         </item> <!-- Terminal -->
@@ -6885,8 +6891,7 @@
             <reference ref="color" />
             <reference ref="ref_operator" />
             <combo key="design" text="Portal design" values="portal,portal_two-level,portal_three-level" values_context="power" />
-            <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
-            <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
+            <reference ref="line_properties" />
         </item> <!-- Power Portal -->
         <item name="Power Tower" icon="presets/power/tower.svg" type="node" preset_name_label="true">
             <link wiki="Tag:power=tower" />
@@ -6899,8 +6904,7 @@
             <reference ref="ref_operator" />
             <optional>
                 <combo key="design" text="Tower design" values="one-level,two-level,donau,three-level,barrel,asymmetric,triangle,flag,donau;one-level,four-level,six-level,nine-level,delta,delta_two-level,y-frame,x-frame,h-frame,guyed_h-frame,portal,portal_two-level,portal_three-level,guyed_v-frame,bipole,monopolar" values_context="power" />
-                <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
-                <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
+                <reference ref="line_properties" />
                 <check key="triple_tower" text="Triple tower" />
                 <check key="design:incomplete" text="Incomplete tower" />
                 <check key="location:transition" text="Location transition" disable_off="true" />
@@ -6960,8 +6964,7 @@
             <link wiki="Tag:power=insulator" />
             <space />
             <key key="power" value="insulator" />
-            <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
-            <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
+            <reference ref="line_properties" />
             <reference ref="ref_operator" />
         </item> <!-- Insulator -->
         <separator/>
