@@ -14,9 +14,11 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,8 @@ import org.openstreetmap.josm.actions.mapmode.AddNoteAction;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
+import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.NoteData.NoteDataUpdateListener;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -57,6 +61,7 @@ import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -422,12 +427,14 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            Note note = displayList.getSelectedValue();
+            final List<String> changesetUrls = note == null ? Collections.emptyList() : getRelatedChangesetUrls(note.getId());
             NoteInputDialog dialog = new NoteInputDialog(MainApplication.getMainFrame(), tr("Close note"), tr("Close note"));
-            dialog.showNoteDialog(tr("Close note with message:"), ImageProvider.get("dialogs/notes", "note_closed"));
+            dialog.showNoteDialog(tr("Close note with message:"), ImageProvider.get("dialogs/notes", "note_closed"),
+                    String.join("\n", changesetUrls));
             if (dialog.getValue() != 1) {
                 return;
             }
-            Note note = displayList.getSelectedValue();
             if (note != null) {
                 int selectedIndex = displayList.getSelectedIndex();
                 noteData.closeNote(note, dialog.getInputText());
@@ -439,6 +446,31 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
                 }
             }
         }
+    }
+
+    /**
+     * Get a list of changeset urls that may have fixed a note
+     * @param noteId The note ID to look for
+     * @return A list of changeset URLs
+     */
+    static List<String> getRelatedChangesetUrls(long noteId) {
+        final List<String> changesetUrls = new ArrayList<>();
+        final int patternFlags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS;
+        final Matcher noteMatcher = Pattern.compile("note " + noteId + "( |$)", patternFlags).matcher("");
+        final Matcher shortOsmMatcher = Pattern.compile("osm.org/note/" + noteId + "( |$)", patternFlags).matcher("");
+        final String hostUrl = Pattern.compile("https?://(www\\.)?")
+                .matcher(Config.getUrls().getBaseBrowseUrl())
+                .replaceFirst("");
+        final Matcher longOsmMatcher = Pattern.compile(hostUrl + "/note/" + noteId + "( |$)", patternFlags).matcher("");
+        final boolean isUsingDefaultOsmApi = Config.getUrls().getDefaultOsmApiUrl().equals(OsmApi.getOsmApi().getServerUrl());
+        for (Changeset cs: ChangesetCache.getInstance().getChangesets()) {
+            final String comment = cs.getComment();
+            if ((isUsingDefaultOsmApi && (shortOsmMatcher.reset(comment).find() || noteMatcher.reset(comment).find()))
+                    || longOsmMatcher.reset(comment).find()) {
+                changesetUrls.add(Config.getUrls().getBaseBrowseUrl() + "/changeset/" + cs.getId());
+            }
+        }
+        return changesetUrls;
     }
 
     /**

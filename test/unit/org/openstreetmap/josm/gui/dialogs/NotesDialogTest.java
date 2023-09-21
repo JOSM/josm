@@ -8,24 +8,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.NoteComment;
+import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.NotesDialog.NoteRenderer;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
@@ -95,5 +104,38 @@ class NotesDialogTest {
         noteLayer.getNoteData().setSelectedNote(note);
         filter.setText("open");
         assertDoesNotThrow(() -> closeAction.actionPerformed(null));
+    }
+
+    static Stream<Arguments> testCloseActionGetRelatedChangesetUrls() {
+        return Stream.of(
+                Arguments.of(1, 0, Collections.singletonList("/note/123")),
+                Arguments.of(1, 0, Collections.singletonList("/note/231")),
+                Arguments.of(1, 1, Collections.singletonList("/note/1")),
+                Arguments.of(1, 2, Arrays.asList("/note/1", "/note/1 again")),
+                Arguments.of(1, 2, Arrays.asList("/note/1", "/note/1 again", "/note/12 here")),
+                Arguments.of(1, 2, Arrays.asList("/note/1", "/note/12 again", "/note/1 here")),
+                Arguments.of(1, 2, Arrays.asList("/note/12", "/note/1 again", "/note/1 here")),
+                Arguments.of(1, 3, Arrays.asList("/note/1", "/note/1 again", "/note/1 here")),
+                Arguments.of(1, 3, Arrays.asList("note 1", "note 1 again", "note 1 here"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testCloseActionGetRelatedChangesetUrls(long noteId, int expectedChangesets, List<String> changesetComments) {
+        try {
+            Config.getPref().put("osm-server.url", null);
+            final String[] apiList = {"osm.org", "openstreetmap.org", Config.getUrls().getBaseBrowseUrl()};
+            for (int i = 0; i < changesetComments.size(); i++) {
+                final String comment = changesetComments.get(i);
+                final Changeset cs = new Changeset(i + 1);
+                cs.put("comment", apiList[i % 3] + comment);
+                ChangesetCache.getInstance().update(cs);
+            }
+            final List<String> changesetUrls = NotesDialog.getRelatedChangesetUrls(noteId);
+            assertEquals(expectedChangesets, changesetUrls.size());
+        } finally {
+            ChangesetCache.getInstance().clear();
+        }
     }
 }

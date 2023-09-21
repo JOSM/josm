@@ -44,6 +44,18 @@ public class NoteInputDialog extends ExtendedDialog {
      * @param icon Icon to display in the action button
      */
     public void showNoteDialog(String message, Icon icon) {
+        showNoteDialog(message, icon, "");
+    }
+
+    /**
+     * Displays the dialog to the user
+     * @param message Translated message to display to the user as input prompt
+     * @param icon Icon to display in the action button
+     * @param text Default text of the note's comment
+     * @since xxx
+     */
+    public void showNoteDialog(String message, Icon icon, String text) {
+        textArea.setText(text);
         textArea.setRows(6);
         textArea.setColumns(30);
         textArea.setLineWrap(true);

@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.layer;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
