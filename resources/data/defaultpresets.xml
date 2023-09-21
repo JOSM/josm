@@ -8227,6 +8227,8 @@
         <text key="name" text="Name" />
         <combo key="diplomatic" text="Type" values="consulate,embassy,liaison" />
         <reference ref="oh_wheelchair" />
+        <text key="country" text="Country" length="2" />
+        <text key="target" text="Receiving country" length="2" />
         <reference ref="link_contact_address" />
     </item> <!-- Diplomatic -->
     <item name="Educational institution" icon="presets/office/educational_institution.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
