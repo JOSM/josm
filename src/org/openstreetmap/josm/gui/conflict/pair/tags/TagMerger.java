@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.conflict.pair.tags;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Adjustable;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -18,6 +20,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -29,6 +32,7 @@ import org.openstreetmap.josm.gui.conflict.pair.AbstractMergePanel;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -112,7 +116,11 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
          * @return the scroll pane embedding the table
          */
         JScrollPane embeddInScrollPane(JTable table) {
-            JScrollPane pane = new JScrollPane(table);
+            // See #23189: Tag tables should resize (where possible) with the window
+            final JPanel panel = new JPanel(new GridBagLayout());
+            panel.add(table.getTableHeader(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            panel.add(table, GBC.eol().fill(GridBagConstraints.BOTH));
+            final JScrollPane pane = GuiHelper.embedInVerticalScrollPane(panel);
             adjustmentSynchronizer.synchronizeAdjustment(pane.getVerticalScrollBar());
             return pane;
         }
