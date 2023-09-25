@@ -3590,6 +3590,7 @@ area[craft=shoemaker],
 area[craft=photographer],
 area[craft=metal_construction],
 area[craft=electrician],
+area[craft=electronics_repair],
 area[craft=brewery],
 area[craft=plumber],
 area[craft=sawmill],
@@ -3626,8 +3627,13 @@ node[craft=photographer] {
 node[craft=metal_construction] {
     icon-image: "presets/craft/metal_construction.svg";
     set icon_z17;
-}node[craft=electrician] {
+}
+node[craft=electrician] {
     icon-image: "presets/craft/electrician.svg";
+    set icon_z17;
+}
+node[craft=electronics_repair] {
+    icon-image: "presets/craft/electronics_repair.svg";
     set icon_z17;
 }
 node[craft=brewery] {
@@ -4042,8 +4048,12 @@ area[landuse=landfill] {
     fill-color: landfill#663300;
 }
 area[landuse=basin],
-area[landuse=reservoir] {
+area[landuse=reservoir],
+area[natural=water][water=reservoir] {
     fill-color: basin#0000bf;
+}
+area[man_made=tailings_pond] {
+    fill-color:tailings_pond#af0073;
 }
 area[landuse=forest] {
     fill-color: forest#b1efc8;
@@ -4965,6 +4975,13 @@ node[natural=cliff] {
     icon-image: "presets/misc/cliff.svg";
     set icon_z17;
 }
+way[natural=earth_bank] {
+    repeat-image: "presets/misc/earth_bank_pattern.svg";
+    repeat-image-align: top;
+    repeat-image-offset: 0.5;
+    width: 1;
+    color: #9c6f32;
+}
 way[natural=arete] {
     width: 1;
     color: arete#e6e6e6;
@@ -5463,6 +5480,7 @@ area[setting("place_fill_colour")][place=city],
 area[setting("place_fill_colour")][place=town],
 area[setting("place_fill_colour")][place=village],
 area[setting("place_fill_colour")][place=hamlet],
+area[setting("place_fill_colour")][place=municipality],
 area[setting("place_fill_colour")][place=farm],
 area[setting("place_fill_colour")][place=isolated_dwelling],
 area[setting("place_fill_colour")][place=neighbourhood],
@@ -5486,6 +5504,7 @@ node[place=village],
 node[place=quarter],
 node[place=neighbourhood],
 node[place=hamlet],
+node[place=municipality],
 node[place=isolated_dwelling],
 node[place=farm],
 node[place=city_block],
@@ -5535,6 +5554,10 @@ node[place=neighbourhood] {
 node[place=hamlet] {
     icon-image: "presets/place/hamlet.svg";
     z-index: 2.3;
+}
+node[place=municipality] {
+    icon-image: "presets/place/municipality.svg";
+    z-index: 2.21;
 }
 node[place=isolated_dwelling] {
     icon-image: "presets/place/isolated_dwelling.svg";

@@ -72,6 +72,35 @@ way[class] {
   fixAdd: "natural=wetland";
   fixAdd: "wetland=marsh";
 }
+#23185
+*[landuse=reservoir][!reservoir_type],
+*[landuse=reservoir][reservoir_type=water_storage] {
+  group: tr("deprecated tagging");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=water + water=reservoir";
+  fixAdd: "natural=water";
+  fixAdd: "water=reservoir";
+  fixRemove: "reservoir_type";
+}
+*[landuse=reservoir][reservoir_type=tailings] {
+  group: tr("deprecated tagging");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=tailings_pond";
+  fixAdd: "man_made=tailings_pond";
+  fixRemove: "reservoir_type";
+  fixRemove: "reservoir_type";
+}
+*[landuse=reservoir][reservoir_type=evaporator] {
+  group: tr("deprecated tagging");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "basin=evaporation or landuse=salt_pond";
+}
+*[landuse=reservoir][reservoir_type=sewage] {
+  group: tr("deprecated tagging");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=water + water=wastewater or landuse=basin + basin=settling or man_made=basin + basin=settling";
+}
+
 *[highway=byway] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   group: tr("deprecated tagging");
