@@ -72,7 +72,7 @@ way[class] {
   fixAdd: "natural=wetland";
   fixAdd: "wetland=marsh";
 }
-#23185
+/* #23185 */
 *[landuse=reservoir][!reservoir_type],
 *[landuse=reservoir][reservoir_type=water_storage] {
   group: tr("deprecated tagging");

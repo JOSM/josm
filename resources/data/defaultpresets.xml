@@ -8863,11 +8863,11 @@
         <item name="Earth Bank" icon="presets/misc/earth_bank.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=earth_bank" />
             <space />
-            <label text="A steep earth bank, with significant vertical, or near vertical (leave the lower face to the right of the way)." />
+            <label text="A steep earth bank, with a significant vertical, or near vertical (leave the lower face to the right of the way)." />
             <space />
             <key key="natural" value="earth_bank" />
             <text key="depth" text="Depth (meters)" />
-            <combo key="earth_bank" values="gully,scarp,cut_bank,grassy_steep_slope" />
+            <combo key="earth_bank" values="gully,scarp,cut_bank,grassy_steep_slope" text="Type"/>
 
             <preset_link preset_name="Cliff" text="Similar but different tags:" />
             <preset_link preset_name="Ditch" text="Similar but different tags:" />

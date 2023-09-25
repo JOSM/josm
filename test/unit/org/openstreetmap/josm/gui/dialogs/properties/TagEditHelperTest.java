@@ -124,6 +124,7 @@ class TagEditHelperTest {
     @Test
     void testTicket23191() {
         TestUtils.assumeWorkingJMockit();
+        new WindowMocker();
         final TagEditHelper tagEditHelper = newTagEditHelper();
         final DataSet original = new DataSet();
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(original, "TagEditHelperTest.testTicket23191_1", null));
