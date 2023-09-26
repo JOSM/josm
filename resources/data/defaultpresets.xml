@@ -1002,7 +1002,7 @@
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <text key="operator" text="Operator" />
-                <combo key="embedded_rails" values="abandoned,construction,disused,funicular,light_rail,miniature,narrow_gauge,rail,tram,yes" />
+                <combo key="embedded_rails" values="abandoned,construction,disused,funicular,light_rail,miniature,narrow_gauge,rail,tram,yes" text="Embedded rails" />
                 <check key="trolley_wire" text="Trolley wire" />
             </optional>
             <reference ref="link_road_access_restrictions" />
