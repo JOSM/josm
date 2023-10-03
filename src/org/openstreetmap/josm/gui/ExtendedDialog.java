@@ -459,6 +459,9 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
                 rememberWindowGeometry(new WindowGeometry(this));
             }
         }
+        if (visible && isModal()) {
+            this.setAlwaysOnTop(true);
+        }
         super.setVisible(visible);
 
         if (!visible && disposeOnClose) {

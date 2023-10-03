@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +15,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -23,7 +26,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * ConditionalOptionPaneUtil provides static utility methods for displaying modal message dialogs
  * which can be enabled/disabled by the user.
- *
+ * <p>
  * They wrap the methods provided by {@link JOptionPane}. Within JOSM you should use these
  * methods rather than the bare methods from {@link JOptionPane} because the methods provided
  * by ConditionalOptionPaneUtil ensure that a dialog window is always on top and isn't hidden by one of the
@@ -92,13 +95,13 @@ public final class ConditionalOptionPaneUtil {
      * Displays an confirmation dialog with some option buttons given by <code>optionType</code>.
      * It is always on top even if there are other open windows like detached dialogs,
      * relation editors, history browsers and the like.
-     *
+     * <p>
      * Set <code>optionType</code> to {@link JOptionPane#YES_NO_OPTION} for a dialog with a YES and
      * a NO button.
-
+     * <p>
      * Set <code>optionType</code> to {@link JOptionPane#YES_NO_CANCEL_OPTION} for a dialog with a YES,
      * a NO and a CANCEL button
-     *
+     * <p>
      * Returns one of the constants JOptionPane.YES_OPTION, JOptionPane.NO_OPTION,
      * JOptionPane.CANCEL_OPTION or JOptionPane.CLOSED_OPTION depending on the action chosen by
      * the user.
@@ -132,13 +135,13 @@ public final class ConditionalOptionPaneUtil {
      * Displays a confirmation dialog with some option buttons given by <code>optionType</code>.
      * It is always on top even if there are other open windows like detached dialogs,
      * relation editors, history browsers and the like.
-     *
+     * <p>
      * Set <code>optionType</code> to {@link JOptionPane#YES_NO_OPTION} for a dialog with a YES and
      * a NO button.
-
+     * <p>
      * Set <code>optionType</code> to {@link JOptionPane#YES_NO_CANCEL_OPTION} for a dialog with a YES,
      * a NO and a CANCEL button
-     *
+     * <p>
      * Replies true, if the selected option is equal to <code>trueOption</code>, otherwise false.
      * Replies true, if the dialog is not displayed because the respective preference option
      * <code>preferenceKey</code> is set to false and the user has previously chosen
@@ -180,7 +183,7 @@ public final class ConditionalOptionPaneUtil {
      * Displays an message in modal dialog with an OK button. Makes sure the dialog
      * is always on top even if there are other open windows like detached dialogs,
      * relation editors, history browsers and the like.
-     *
+     * <p>
      * If there is a preference with key <code>preferenceKey</code> and value <code>false</code>
      * the dialog is not show.
      *
@@ -283,6 +286,35 @@ public final class ConditionalOptionPaneUtil {
                 add(cbShowImmediateDialog, GBC.eol());
             }
             add(cbStandard, GBC.eol());
+
+            this.addAncestorListener(new AncestorListener() {
+                boolean wasAlwaysOnTop;
+                @Override
+                public void ancestorAdded(AncestorEvent event) {
+                    if (event.getAncestor() instanceof Dialog) {
+                        Dialog dialog = (Dialog) event.getAncestor();
+                        wasAlwaysOnTop = dialog.isAlwaysOnTop();
+                        if (dialog.isVisible() && dialog.isModal()) {
+                            dialog.setAlwaysOnTop(true);
+                        }
+                    }
+                }
+
+                @Override
+                public void ancestorRemoved(AncestorEvent event) {
+                    if (event.getAncestor() instanceof Dialog) {
+                        Dialog dialog = (Dialog) event.getAncestor();
+                        if (dialog.isVisible() && dialog.isModal()) {
+                            dialog.setAlwaysOnTop(wasAlwaysOnTop);
+                        }
+                    }
+                }
+
+                @Override
+                public void ancestorMoved(AncestorEvent event) {
+                    // Do nothing
+                }
+            });
         }
 
         NotShowAgain getNotShowAgain() {

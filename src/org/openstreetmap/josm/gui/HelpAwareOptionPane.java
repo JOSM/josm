@@ -218,11 +218,11 @@ public final class HelpAwareOptionPane {
      * the dialog includes a "Help" button and launches the help browser if the user presses F1. If the
      * user clicks on the "Help" button the option dialog remains open and JOSM launches the help
      * browser.
-     *
+     * <p>
      * <code>helpTopic</code> is the trailing part of a JOSM online help URL, i.e. the part after the leading
-     * <code>https://josm.openstreetmap.de/wiki/Help</code>. It should start with a leading '/' and it
+     * {@code https://josm.openstreetmap.de/wiki/Help}. It should start with a leading '/' and it
      * may include an anchor after a '#'.
-     *
+     * <p>
      * <strong>Examples</strong>
      * <ul>
      *    <li>/Dialogs/RelationEditor</li>
@@ -350,6 +350,9 @@ public final class HelpAwareOptionPane {
         if (helpTopic != null) {
             HelpUtil.setHelpContext(dialog.getRootPane(), helpTopic);
         }
+        if (dialog.isModal()) {
+            dialog.setAlwaysOnTop(true);
+        }
         dialog.setVisible(true);
     }
 
@@ -371,7 +374,7 @@ public final class HelpAwareOptionPane {
     /**
      * Run it in Event Dispatch Thread.
      * This version does not return anything, so it is more like {@code showMessageDialog}.
-     *
+     * <p>
      * It can be used, when you need to show a message dialog from a worker thread,
      * e.g. from {@code PleaseWaitRunnable}.
      *
