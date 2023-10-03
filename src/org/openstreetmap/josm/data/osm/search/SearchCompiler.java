@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -126,6 +129,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * The core factory for "simple" {@link Match} objects
+     */
     public static class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "members", "tags", "areasize", "waylength", "modified", "deleted", "selected",
@@ -155,57 +161,63 @@ public class SearchCompiler {
                 return new InDataSourceArea(true);
             default:
                 if (tokenizer != null) {
-                    switch (keyword) {
-                    case "id":
-                        return new Id(tokenizer);
-                    case "version":
-                        return new Version(tokenizer);
-                    case "type":
-                        return new ExactType(tokenizer.readTextOrNumber());
-                    case "preset":
-                        return new Preset(tokenizer.readTextOrNumber());
-                    case "user":
-                        return new UserMatch(tokenizer.readTextOrNumber());
-                    case "role":
-                        return new RoleMatch(tokenizer.readTextOrNumber());
-                    case "changeset":
-                        return new ChangesetId(tokenizer);
-                    case "nodes":
-                        return new NodeCountRange(tokenizer);
-                    case "ways":
-                        return new WayCountRange(tokenizer);
-                    case "members":
-                        return new MemberCountRange(tokenizer);
-                    case "tags":
-                        return new TagCountRange(tokenizer);
-                    case "areasize":
-                        return new AreaSize(tokenizer);
-                    case "waylength":
-                        return new WayLength(tokenizer);
-                    case "nth":
-                        return new Nth(tokenizer, false);
-                    case "nth%":
-                        return new Nth(tokenizer, true);
-                    case "hasRole":
-                        return new HasRole(tokenizer);
-                    case "timestamp":
-                        // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
-                        String rangeS = ' ' + tokenizer.readTextOrNumber() + ' ';
-                        String[] rangeA = rangeS.split("/", -1);
-                        if (rangeA.length == 1) {
-                            return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
-                        } else if (rangeA.length == 2) {
-                            return TimestampRange.create(rangeA);
-                        } else {
-                            throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>")
-                                + "</html>");
-                        }
-                    }
+                    return getTokenizer(keyword, caseSensitive, regexSearch, tokenizer);
                 } else {
                     throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<code>:</code>", "<i>" + keyword + "</i>") + "</html>");
                 }
             }
-            throw new IllegalStateException("Not expecting keyword " + keyword);
+        }
+
+        private static Match getTokenizer(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer)
+                throws SearchParseError {
+            switch (keyword) {
+                case "id":
+                    return new Id(tokenizer);
+                case "version":
+                    return new Version(tokenizer);
+                case "type":
+                    return new ExactType(tokenizer.readTextOrNumber());
+                case "preset":
+                    return new Preset(tokenizer.readTextOrNumber());
+                case "user":
+                    return new UserMatch(tokenizer.readTextOrNumber());
+                case "role":
+                    return new RoleMatch(tokenizer.readTextOrNumber());
+                case "changeset":
+                    return new ChangesetId(tokenizer);
+                case "nodes":
+                    return new NodeCountRange(tokenizer);
+                case "ways":
+                    return new WayCountRange(tokenizer);
+                case "members":
+                    return new MemberCountRange(tokenizer);
+                case "tags":
+                    return new TagCountRange(tokenizer);
+                case "areasize":
+                    return new AreaSize(tokenizer);
+                case "waylength":
+                    return new WayLength(tokenizer);
+                case "nth":
+                    return new Nth(tokenizer, false);
+                case "nth%":
+                    return new Nth(tokenizer, true);
+                case "hasRole":
+                    return new HasRole(tokenizer);
+                case "timestamp":
+                    // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
+                    String rangeS = ' ' + tokenizer.readTextOrNumber() + ' ';
+                    String[] rangeA = rangeS.split("/", -1);
+                    if (rangeA.length == 1) {
+                        return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
+                    } else if (rangeA.length == 2) {
+                        return TimestampRange.create(rangeA);
+                    } else {
+                        throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>")
+                                + "</html>");
+                    }
+                default:
+                    throw new IllegalStateException("Not expecting keyword " + keyword);
+            }
         }
 
         @Override
@@ -214,6 +226,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * The core {@link UnaryMatch} factory
+     */
     public static class CoreUnaryMatchFactory implements UnaryMatchFactory {
         private static final Collection<String> keywords = Arrays.asList("parent", "child");
 
@@ -241,15 +256,50 @@ public class SearchCompiler {
         Collection<String> getKeywords();
     }
 
+    /**
+     * A factory for getting {@link Match} objects
+     */
     public interface SimpleMatchFactory extends MatchFactory {
+        /**
+         * Get the {@link Match} object
+         * @param keyword The keyword to get/create the correct {@link Match} object
+         * @param caseSensitive {@code true} if the search is case-sensitive
+         * @param regexSearch {@code true} if the search is regex-based
+         * @param tokenizer May be used to construct the {@link Match} object
+         * @return The {@link Match} object for the keyword and its arguments
+         * @throws SearchParseError If the {@link Match} object could not be constructed.
+         */
         Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError;
     }
 
+    /**
+     * A factory for getting {@link UnaryMatch} objects
+     */
     public interface UnaryMatchFactory extends MatchFactory {
+        /**
+         * Get the {@link UnaryMatch} object
+         * @param keyword The keyword to get/create the correct {@link UnaryMatch} object
+         * @param matchOperand May be used to construct the {@link UnaryMatch} object
+         * @param tokenizer May be used to construct the {@link UnaryMatch} object
+         * @return The {@link UnaryMatch} object for the keyword and its arguments
+         * @throws SearchParseError If the {@link UnaryMatch} object could not be constructed.
+         */
         UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) throws SearchParseError;
     }
 
+    /**
+     * A factor for getting {@link AbstractBinaryMatch} objects
+     */
     public interface BinaryMatchFactory extends MatchFactory {
+        /**
+         * Get the {@link AbstractBinaryMatch} object
+         * @param keyword The keyword to get/create the correct {@link AbstractBinaryMatch} object
+         * @param lhs May be used to construct the {@link AbstractBinaryMatch} object (see {@link AbstractBinaryMatch#getLhs()})
+         * @param rhs May be used to construct the {@link AbstractBinaryMatch} object (see {@link AbstractBinaryMatch#getRhs()})
+         * @param tokenizer May be used to construct the {@link AbstractBinaryMatch} object
+         * @return The {@link AbstractBinaryMatch} object for the keyword and its arguments
+         * @throws SearchParseError If the {@link AbstractBinaryMatch} object could not be constructed.
+         */
         AbstractBinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws SearchParseError;
     }
 
@@ -302,6 +352,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * A common subclass of {@link Match} for matching against tags
+     */
     public abstract static class TaggedMatch extends Match {
 
         @Override
@@ -329,10 +382,10 @@ public class SearchCompiler {
      * A unary search operator which may take data parameters.
      */
     public abstract static class UnaryMatch extends Match {
-
+        @Nonnull
         protected final Match match;
 
-        protected UnaryMatch(Match match) {
+        protected UnaryMatch(@Nullable Match match) {
             if (match == null) {
                 // "operator" (null) should mean the same as "operator()"
                 // (Always). I.e. match everything
@@ -348,7 +401,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            return 31 + ((match == null) ? 0 : match.hashCode());
+            return 31 + match.hashCode();
         }
 
         @Override
@@ -358,12 +411,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             UnaryMatch other = (UnaryMatch) obj;
-            if (match == null) {
-                if (other.match != null)
-                    return false;
-            } else if (!match.equals(other.match))
-                return false;
-            return true;
+            return match.equals(other.match);
         }
     }
 
@@ -429,17 +477,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             AbstractBinaryMatch other = (AbstractBinaryMatch) obj;
-            if (lhs == null) {
-                if (other.lhs != null)
-                    return false;
-            } else if (!lhs.equals(other.lhs))
-                return false;
-            if (rhs == null) {
-                if (other.rhs != null)
-                    return false;
-            } else if (!rhs.equals(other.rhs))
-                return false;
-            return true;
+            return Objects.equals(lhs, other.lhs) && Objects.equals(rhs, other.rhs);
         }
     }
 
@@ -535,12 +573,7 @@ public class SearchCompiler {
             BooleanMatch other = (BooleanMatch) obj;
             if (defaultValue != other.defaultValue)
                 return false;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            return true;
+            return Objects.equals(key, other.key);
         }
     }
 
@@ -793,6 +826,14 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Match a primitive based off of a value comparison. This currently supports:
+     * <ul>
+     *     <li>ISO8601 dates (YYYY-MM-DD)</li>
+     *     <li>Numbers</li>
+     *     <li>Alpha-numeric comparison</li>
+     * </ul>
+     */
     public static class ValueComparison extends TaggedMatch {
         private final String key;
         private final String referenceValue;
@@ -800,6 +841,13 @@ public class SearchCompiler {
         private final int compareMode;
         private static final Pattern ISO8601 = Pattern.compile("\\d+-\\d+-\\d+");
 
+        /**
+         * Create a new {@link ValueComparison} object
+         * @param key The key to get the value from
+         * @param referenceValue The value to compare to
+         * @param compareMode The compare mode to use; {@code < 0} is {@code currentValue < referenceValue} and
+         *                    {@code > 0} is {@code currentValue > referenceValue}. {@code 0} is effectively an equality check.
+         */
         public ValueComparison(String key, String referenceValue, int compareMode) {
             this.key = key;
             this.referenceValue = referenceValue;
@@ -808,8 +856,8 @@ public class SearchCompiler {
                 if (referenceValue != null) {
                     v = Double.valueOf(referenceValue);
                 }
-            } catch (NumberFormatException ignore) {
-                Logging.trace(ignore);
+            } catch (NumberFormatException numberFormatException) {
+                Logging.trace(numberFormatException);
             }
             this.referenceNumber = v;
             this.compareMode = compareMode;
@@ -854,22 +902,9 @@ public class SearchCompiler {
             ValueComparison other = (ValueComparison) obj;
             if (compareMode != other.compareMode)
                 return false;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            if (referenceNumber == null) {
-                if (other.referenceNumber != null)
-                    return false;
-            } else if (!referenceNumber.equals(other.referenceNumber))
-                return false;
-            if (referenceValue == null) {
-                if (other.referenceValue != null)
-                    return false;
-            } else if (!referenceValue.equals(other.referenceValue))
-                return false;
-            return true;
+            return Objects.equals(key, other.key)
+                    && Objects.equals(referenceNumber, other.referenceNumber)
+                    && Objects.equals(referenceValue, other.referenceValue);
         }
 
         @Override
@@ -894,9 +929,30 @@ public class SearchCompiler {
      */
     public static class ExactKeyValue extends TaggedMatch {
 
+        /**
+         * The mode to use for the comparison
+         */
         public enum Mode {
-            ANY, ANY_KEY, ANY_VALUE, EXACT, NONE, MISSING_KEY,
-            ANY_KEY_REGEXP, ANY_VALUE_REGEXP, EXACT_REGEXP, MISSING_KEY_REGEXP;
+            /** Matches everything */
+            ANY,
+            /** Any key with the specified value will match */
+            ANY_KEY,
+            /** Any value with the specified key will match */
+            ANY_VALUE,
+            /** A key with the specified value will match */
+            EXACT,
+            /** Nothing matches */
+            NONE,
+            /** The key does not exist */
+            MISSING_KEY,
+            /** Similar to {@link #ANY_KEY}, but the value matches a regex */
+            ANY_KEY_REGEXP,
+            /** Similar to {@link #ANY_VALUE}, but the key matches a regex */
+            ANY_VALUE_REGEXP,
+            /** Both the key and the value matches their respective regex */
+            EXACT_REGEXP,
+            /** No key matching the regex exists */
+            MISSING_KEY_REGEXP
         }
 
         private final String key;
@@ -970,11 +1026,11 @@ public class SearchCompiler {
             case NONE:
                 return false;
             case MISSING_KEY:
-                return !osm.hasTag(key);
+                return !osm.hasKey(key);
             case ANY:
                 return true;
             case ANY_VALUE:
-                return osm.hasTag(key);
+                return osm.hasKey(key);
             case ANY_KEY:
                 return osm.getKeys().values().stream().anyMatch(v -> v.equals(value));
             case EXACT:
@@ -1020,29 +1076,12 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             ExactKeyValue other = (ExactKeyValue) obj;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            if (keyPattern == null) {
-                if (other.keyPattern != null)
-                    return false;
-            } else if (!keyPattern.equals(other.keyPattern))
-                return false;
             if (mode != other.mode)
                 return false;
-            if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            if (valuePattern == null) {
-                if (other.valuePattern != null)
-                    return false;
-            } else if (!valuePattern.equals(other.valuePattern))
-                return false;
-            return true;
+            return Objects.equals(key, other.key)
+                    && Objects.equals(value, other.value)
+                    && Objects.equals(keyPattern, other.keyPattern)
+                    && Objects.equals(valuePattern, other.valuePattern);
         }
     }
 
@@ -1123,20 +1162,14 @@ public class SearchCompiler {
             Any other = (Any) obj;
             if (caseSensitive != other.caseSensitive)
                 return false;
-            if (search == null) {
-                if (other.search != null)
-                    return false;
-            } else if (!search.equals(other.search))
-                return false;
-            if (searchRegex == null) {
-                if (other.searchRegex != null)
-                    return false;
-            } else if (!searchRegex.equals(other.searchRegex))
-                return false;
-            return true;
+            return Objects.equals(search, other.search)
+                    && Objects.equals(searchRegex, other.searchRegex);
         }
     }
 
+    /**
+     * Filter OsmPrimitives based off of the base primitive type
+     */
     public static class ExactType extends Match {
         private final OsmPrimitiveType type;
 
@@ -1219,12 +1252,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             UserMatch other = (UserMatch) obj;
-            if (user == null) {
-                if (other.user != null)
-                    return false;
-            } else if (!user.equals(other.user))
-                return false;
-            return true;
+            return Objects.equals(user, other.user);
         }
     }
 
@@ -1232,6 +1260,7 @@ public class SearchCompiler {
      * Matches objects with the given relation role (i.e. "outer").
      */
     private static class RoleMatch extends Match {
+        @Nonnull
         private final String role;
 
         RoleMatch(String role) {
@@ -1258,7 +1287,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            return 31 + ((role == null) ? 0 : role.hashCode());
+            return 31 + role.hashCode();
         }
 
         @Override
@@ -1268,12 +1297,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             RoleMatch other = (RoleMatch) obj;
-            if (role == null) {
-                if (other.role != null)
-                    return false;
-            } else if (!role.equals(other.role))
-                return false;
-            return true;
+            return role.equals(other.role);
         }
     }
 
@@ -1282,7 +1306,7 @@ public class SearchCompiler {
      */
     private static class Nth extends Match {
 
-        private final int nth;
+        private final int nthObject;
         private final boolean modulo;
 
         Nth(PushbackTokenizer tokenizer, boolean modulo) throws SearchParseError {
@@ -1290,9 +1314,9 @@ public class SearchCompiler {
         }
 
         private Nth(int nth, boolean modulo) throws SearchParseError {
-            this.nth = nth;
+            this.nthObject = nth;
             this.modulo = modulo;
-            if (this.modulo && this.nth == 0) {
+            if (this.modulo && this.nthObject == 0) {
                 throw new SearchParseError(tr("Non-zero integer expected"));
             }
         }
@@ -1313,9 +1337,9 @@ public class SearchCompiler {
                 } else {
                     continue;
                 }
-                if (nth < 0 && idx - maxIndex == nth) {
+                if (nthObject < 0 && idx - maxIndex == nthObject) {
                     return true;
-                } else if (idx == nth || (modulo && idx % nth == 0))
+                } else if (idx == nthObject || (modulo && idx % nthObject == 0))
                     return true;
             }
             return false;
@@ -1323,12 +1347,12 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "Nth{nth=" + nth + ", modulo=" + modulo + '}';
+            return "Nth{nth=" + nthObject + ", modulo=" + modulo + '}';
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(modulo, nth);
+            return Objects.hash(modulo, nthObject);
         }
 
         @Override
@@ -1339,7 +1363,7 @@ public class SearchCompiler {
                 return false;
             Nth other = (Nth) obj;
             return modulo == other.modulo
-                   && nth == other.nth;
+                   && nthObject == other.nthObject;
         }
     }
 
@@ -1520,7 +1544,7 @@ public class SearchCompiler {
             final long minDate;
             final long maxDate;
             try {
-                // if min timestamp is empty: use lowest possible date
+                // if min timestamp is empty: use the lowest possible date
                 minDate = DateUtils.parseInstant(rangeA1.isEmpty() ? "1980" : rangeA1).toEpochMilli();
             } catch (UncheckedParseException | DateTimeException ex) {
                 throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
@@ -1572,12 +1596,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             HasRole other = (HasRole) obj;
-            if (role == null) {
-                if (other.role != null)
-                    return false;
-            } else if (!role.equals(other.role))
-                return false;
-            return true;
+            return Objects.equals(role, other.role);
         }
     }
 
@@ -1643,7 +1662,7 @@ public class SearchCompiler {
 
     /**
      * Match objects that are incomplete, where only id and type are known.
-     * Typically some members of a relation are incomplete until they are
+     * Typically, some members of a relation are incomplete until they are
      * fetched from the server.
      */
     private static class Incomplete extends Match {
@@ -1864,7 +1883,7 @@ public class SearchCompiler {
 
     /**
      * Matches objects which are not outside the source area ("downloaded area").
-     * Unlike {@link InDataSourceArea} this matches also if no source area is set (e.g., for new layers).
+     * Unlike {@link InDataSourceArea}, this matches also if no source area is set (e.g., for new layers).
      */
     public static class NotOutsideDataSourceArea extends InDataSourceArea {
 
@@ -1954,12 +1973,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             Preset other = (Preset) obj;
-            if (presets == null) {
-                if (other.presets != null)
-                    return false;
-            } else if (!presets.equals(other.presets))
-                return false;
-            return true;
+            return Objects.equals(presets, other.presets);
         }
     }
 
@@ -2155,7 +2169,10 @@ public class SearchCompiler {
 
                 // key:value form where value is a string (may be OSM key search)
                 final String value = tokenizer.readTextOrNumber();
-                return new KeyValue(key, value != null ? value : "", regexSearch, caseSensitive).validate();
+                if (value == null) {
+                    return new ExactKeyValue(regexSearch, caseSensitive, key, "*").validate();
+                }
+                return new KeyValue(key, value, regexSearch, caseSensitive).validate();
             } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
             else {

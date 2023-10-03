@@ -37,19 +37,22 @@ public final class SearchCompilerQueryWizard {
      */
     public static String constructQuery(final String search) {
         try {
-            Matcher matcher = Pattern.compile("\\s+GLOBAL\\s*$", Pattern.CASE_INSENSITIVE).matcher(search);
+            Matcher matcher = Pattern.compile("\\s+GLOBAL\\s*$", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS)
+                    .matcher(search);
             if (matcher.find()) {
                 final Match match = SearchCompiler.compile(matcher.replaceFirst(""));
                 return constructQuery(match, ";", "");
             }
 
-            matcher = Pattern.compile("\\s+IN BBOX\\s*$", Pattern.CASE_INSENSITIVE).matcher(search);
+            matcher = Pattern.compile("\\s+IN BBOX\\s*$", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS)
+                    .matcher(search);
             if (matcher.find()) {
                 final Match match = SearchCompiler.compile(matcher.replaceFirst(""));
                 return constructQuery(match, "[bbox:{{bbox}}];", "");
             }
 
-            matcher = Pattern.compile("\\s+(?<mode>IN|AROUND)\\s+(?<area>[^\" ]+|\"[^\"]+\")\\s*$", Pattern.CASE_INSENSITIVE).matcher(search);
+            matcher = Pattern.compile("\\s+(?<mode>IN|AROUND)\\s+(?<area>[^\" ]+|\"[^\"]+\")\\s*$",
+                    Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS).matcher(search);
             if (matcher.find()) {
                 final Match match = SearchCompiler.compile(matcher.replaceFirst(""));
                 final String mode = matcher.group("mode").toUpperCase(Locale.ENGLISH);
@@ -78,10 +81,11 @@ public final class SearchCompilerQueryWizard {
         for (Match conjunction : normalized) {
             final EnumSet<OsmPrimitiveType> types = EnumSet.noneOf(OsmPrimitiveType.class);
             final String query = constructQuery(conjunction, types);
-            (types.isEmpty() || types.size() == 3
+            queryLines.addAll((types.isEmpty() || types.size() == 3
                     ? Stream.of("nwr")
                     : types.stream().map(OsmPrimitiveType::getAPIName))
-                    .forEach(type -> queryLines.add("  " + type + query + queryLineSuffix + ";"));
+                    .map(type -> "  " + type + query + queryLineSuffix + ";")
+                    .collect(Collectors.toList()));
         }
         queryLines.add(");");
         queryLines.add("(._;>;);");
