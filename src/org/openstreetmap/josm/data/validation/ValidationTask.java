@@ -93,7 +93,14 @@ public class ValidationTask extends PleaseWaitRunnable {
     protected void finish() {
         if (canceled) return;
 
-        if (!GraphicsEnvironment.isHeadless() && MainApplication.getMap() != null) {
+        // Remove any low severity issues if they are not desired.
+        if (!(Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER.get()) &&
+                (!this.beforeUpload || Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER_UPLOAD.get())))) {
+            // Use >= just in case we add additional levels.
+            this.errors.removeIf(error -> error.getSeverity().getLevel() >= Severity.OTHER.getLevel());
+        }
+
+        if (!GraphicsEnvironment.isHeadless() && MainApplication.getMap() != null && (!beforeUpload || !errors.isEmpty())) {
             // update GUI on Swing EDT
             GuiHelper.runInEDT(() -> {
                 MapFrame map = MainApplication.getMap();
@@ -107,12 +114,6 @@ public class ValidationTask extends PleaseWaitRunnable {
             });
         }
         if (this.onFinish != null) {
-            // Remove any low severity issues if they are not desired.
-            if (!(Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER.get()) &&
-                    (!this.beforeUpload || Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER_UPLOAD.get())))) {
-                // Use >= just in case we add additional levels.
-                this.errors.removeIf(error -> error.getSeverity().getLevel() >= Severity.OTHER.getLevel());
-            }
             this.onFinish.accept(this.errors);
         }
     }
