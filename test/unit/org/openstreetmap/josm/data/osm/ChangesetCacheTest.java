@@ -15,27 +15,15 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.UserIdentityManager;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit test of {@link ChangesetCache}
  */
 @BasicPreferences
 class ChangesetCacheTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static final ChangesetCache cache = ChangesetCache.getInstance();
 
     /**
@@ -48,7 +36,7 @@ class ChangesetCacheTest {
         cache.clear();
     }
 
-    abstract class TestListener implements ChangesetCacheListener {
+    abstract static class TestListener implements ChangesetCacheListener {
 
         protected final CountDownLatch latch = new CountDownLatch(1);
         protected ChangesetCacheEvent event;
@@ -71,7 +59,7 @@ class ChangesetCacheTest {
     }
 
     /**
-     * Unit test of {@link ChangesetCache#ChangesetCache}
+     * Unit test of {@link ChangesetCache#getInstance()}
      */
     @Test
     void testConstructor() {

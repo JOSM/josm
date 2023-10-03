@@ -5,26 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
+import java.util.Collections;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.advanced.ListEditor.ListSettingTableModel;
 
 /**
  * Unit tests of {@link ListEditor} class.
  */
 class ListEditorTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test of {@link ListSettingTableModel} class.
      */
@@ -32,7 +21,7 @@ class ListEditorTest {
     void testListSettingTableModel() {
         ListSettingTableModel model = new ListSettingTableModel(null);
         assertNotNull(model.getData());
-        model = new ListSettingTableModel(Arrays.asList("foo"));
+        model = new ListSettingTableModel(Collections.singletonList("foo"));
         assertTrue(model.getData().contains("foo"));
         assertEquals(2, model.getRowCount());
         assertEquals(1, model.getColumnCount());

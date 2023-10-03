@@ -1,18 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.PerformanceTestUtils;
-import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
-import org.openstreetmap.josm.data.osm.DataSet;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.openstreetmap.josm.PerformanceTestUtils;
+import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
+import org.openstreetmap.josm.data.osm.DataSet;
 
 /**
  * This test tests how fast we are at writing an OSM file.
@@ -23,14 +21,6 @@ import java.util.concurrent.TimeUnit;
 class OsmWriterPerformanceTest {
     private static final int TIMES = 4;
     private DataSet neubrandenburgDataSet;
-
-    /**
-     * Prepare the test.
-     */
-    @BeforeAll
-    public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init(true);
-    }
 
     /**
      * Setup test

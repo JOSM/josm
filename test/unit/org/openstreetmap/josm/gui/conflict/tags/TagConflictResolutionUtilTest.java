@@ -14,17 +14,14 @@ import java.util.List;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticChoice;
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticChoiceGroup;
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticCombine;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unit tests of {@link TagConflictResolutionUtil} class.
@@ -101,14 +98,15 @@ class TagConflictResolutionUtilTest {
     /**
      * Unit tests of {@link AutomaticCombine} class.
      */
-    static class AutomaticCombineTest {
+    @Nested
+    class AutomaticCombineTest {
 
         /**
          * Return AutomaticCombine instantiated with the two possible constructors.
          * @param ac a model for the constructed object.
          * @return AutomaticCombine object constructed with the two different constructors.
          */
-        private static List<AutomaticCombine> differentlyConstructed(AutomaticCombine ac) {
+        private List<AutomaticCombine> differentlyConstructed(AutomaticCombine ac) {
             AutomaticCombine fullyConstructed = new AutomaticCombine(ac.key, ac.description, ac.isRegex, ac.separator, ac.sort);
             AutomaticCombine defaultConstructed = new AutomaticCombine();
             defaultConstructed.key = ac.key;
@@ -118,13 +116,6 @@ class TagConflictResolutionUtilTest {
             defaultConstructed.sort = ac.sort;
             return Arrays.asList(defaultConstructed, fullyConstructed);
         }
-
-        /**
-         * Setup test.
-         */
-        @RegisterExtension
-        @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-        public JOSMTestRules test = new JOSMTestRules();
 
         /**
          * Unit test of {@link AutomaticCombine#matchesKey} with empty key.
@@ -228,21 +219,14 @@ class TagConflictResolutionUtilTest {
     /**
      * Unit tests of {@link AutomaticChoice} class.
      */
-    static class AutomaticChoiceTest {
+    @Nested
+    class AutomaticChoiceTest {
         /**
-         * Setup test.
-         */
-        @RegisterExtension
-        @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-        public JOSMTestRules test = new JOSMTestRules();
-
-        /**
-
          * Return AutomaticCombine instantiated with the two possible constructors.
          * @param ac a model for the constructed object.
          * @return AutomaticCombine object constructed with the two different constructors.
          */
-        private static List<AutomaticChoice> differentlyConstructed(AutomaticChoice ac) {
+        private List<AutomaticChoice> differentlyConstructed(AutomaticChoice ac) {
             AutomaticChoice fullyConstructed = new AutomaticChoice(ac.key, ac.group, ac.description, ac.isRegex, ac.value, ac.score);
             AutomaticChoice defaultConstructed = new AutomaticChoice();
             defaultConstructed.key = ac.key;
@@ -348,14 +332,8 @@ class TagConflictResolutionUtilTest {
     /**
      * Unit tests of {@link AutomaticChoiceGroup} class.
      */
-    static class AutomaticChoiceGroupTest {
-        /**
-         * Setup test.
-         */
-        @RegisterExtension
-        @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-        public JOSMTestRules test = new JOSMTestRules();
-
+    @Nested
+    class AutomaticChoiceGroupTest {
         AutomaticChoice choiceKey1Group1 = new AutomaticChoice("Key1", "Group1", "", false, "value1", "score1");
         AutomaticChoice choiceKey1Group1bis = new AutomaticChoice("Key1", "Group1", "", false, "value2", "score2");
         AutomaticChoice choiceKey1Group2 = new AutomaticChoice("Key1", "Group2", "", false, "value1", "score1");

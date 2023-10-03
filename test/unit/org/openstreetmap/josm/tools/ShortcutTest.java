@@ -8,23 +8,12 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 
 /**
  * Unit tests of {@link Shortcut} class.
  */
 class ShortcutTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Test method for {@code Shortcut#makeTooltip}
      */

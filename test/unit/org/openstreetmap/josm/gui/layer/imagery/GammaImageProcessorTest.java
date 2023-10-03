@@ -3,25 +3,13 @@ package org.openstreetmap.josm.gui.layer.imagery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Tests for the {@link GammaImageProcessor} class.
  * @author Michael Zangl
  */
 class GammaImageProcessorTest {
-
-    /**
-     * No special rules
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Test {@link GammaImageProcessor#setGamma(double)} and {@link GammaImageProcessor#getGamma()}
      */

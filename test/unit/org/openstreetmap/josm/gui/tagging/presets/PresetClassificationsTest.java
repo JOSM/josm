@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -36,7 +35,6 @@ class PresetClassificationsTest {
      */
     @BeforeAll
     public static void setUp() throws IOException, SAXException {
-        JOSMFixture.createUnitTestFixture().init();
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll("resource://data/defaultpresets.xml", true);
         classifications.loadPresets(presets);
     }

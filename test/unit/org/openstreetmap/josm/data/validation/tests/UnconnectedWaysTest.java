@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -21,10 +20,12 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@code UnconnectedWays} class.
  */
+@Projection
 class UnconnectedWaysTest {
 
     private UnconnectedWays bib;
@@ -36,7 +37,6 @@ class UnconnectedWaysTest {
     @BeforeEach
     public void setUp() throws Exception {
         bib = new UnconnectedWays.UnconnectedHighways();
-        JOSMFixture.createUnitTestFixture().init();
         bib.initialize();
     }
 

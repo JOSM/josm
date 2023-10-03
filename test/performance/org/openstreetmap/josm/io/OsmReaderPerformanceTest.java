@@ -11,10 +11,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -29,14 +27,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 class OsmReaderPerformanceTest {
     private static final int TIMES = 4;
-
-    /**
-     * Prepare the test.
-     */
-    @BeforeAll
-    public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init(true);
-    }
 
     /**
      * Simulates a plain read of a .osm.bz2 file (from memory)

@@ -5,24 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link ChangesetDiscussionComment}.
  */
 class ChangesetDiscussionCommentTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Unit test of {@link ChangesetDiscussionComment} constructor.
      */

@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -17,11 +16,6 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
 
 class HistoryBrowserTestFT extends JFrame {
-
-    @BeforeAll
-    public static void init() {
-        JOSMFixture.createFunctionalTestFixture().init();
-    }
 
     private HistoryBrowser browser;
 
@@ -56,7 +50,7 @@ class HistoryBrowserTestFT extends JFrame {
     }
 
     public static void main(String[] args) {
-        HistoryBrowserTestFT.init();
+        JOSMFixture.createFunctionalTestFixture().init();
         new HistoryBrowserTestFT().setVisible(true);
     }
 }

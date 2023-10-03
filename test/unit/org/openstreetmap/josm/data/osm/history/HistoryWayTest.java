@@ -10,26 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Unit tests for class {@link HistoryWay}.
  */
 class HistoryWayTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static HistoryWay create(Instant d) {
         return new HistoryWay(
                 1,    // id

@@ -12,18 +12,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * JUnit Test of the Sharp Angles validation test.
  */
 @BasicPreferences
+@Projection
 class SharpAnglesTest {
     private SharpAngles angles;
 
@@ -33,7 +34,6 @@ class SharpAnglesTest {
      */
     @BeforeEach
     public void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init();
         angles = new SharpAngles();
         angles.initialize();
     }

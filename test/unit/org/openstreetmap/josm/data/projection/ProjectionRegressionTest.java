@@ -19,7 +19,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Bounds;
@@ -31,12 +30,12 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This test is used to monitor changes in projection code.
- *
+ * <p>
  * It keeps a record of test data in the file nodist/data/projection/projection-regression-test-data.
  * This record is generated from the current Projection classes available in JOSM. It needs to
  * be updated, whenever a projection is added / removed or an algorithm is changed, such that
  * the computed values are numerically different. There is no error threshold, every change is reported.
- *
+ * <p>
  * So when this test fails, first check if the change is intended. Then update the regression
  * test data, by running the main method of this class and commit the new data file.
  */
@@ -57,7 +56,7 @@ class ProjectionRegressionTest {
      * @throws IOException if any I/O errors occurs
      */
     public static void main(String[] args) throws IOException {
-        setUp();
+        JOSMFixture.createUnitTestFixture().init();
 
         Map<String, Projection> supportedCodesMap = Projections.getAllProjectionCodes().stream()
                 .collect(Collectors.toMap(code -> code, Projections::getProjectionByCode));
@@ -132,14 +131,6 @@ class ProjectionRegressionTest {
         double a = Double.parseDouble(fields[1]);
         double b = Double.parseDouble(fields[2]);
         return Pair.create(a, b);
-    }
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
     }
 
     /**

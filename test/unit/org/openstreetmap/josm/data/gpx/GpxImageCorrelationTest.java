@@ -17,34 +17,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Timezone;
 import org.openstreetmap.josm.tools.date.DateUtils;
-import org.openstreetmap.josm.tools.date.DateUtilsTest;
 import org.xml.sax.SAXException;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link GpxImageCorrelation} class.
  */
-@TestMethodOrder(MethodName.class)
 @TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodName.class)
+@Timezone
 class GpxImageCorrelationTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     GpxData gpx;
     GpxImageEntry ib, i0, i1, i2, i3, i4, i5, i6, i7;
     List<GpxImageEntry> images;
@@ -58,7 +47,6 @@ class GpxImageCorrelationTest {
     @BeforeAll
     public void setUp() throws IOException, SAXException {
         s = Config.getPref();
-        DateUtilsTest.setTimeZone(DateUtils.UTC);
 
         gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks.gpx");
         assertEquals(5, gpx.tracks.size());
@@ -108,7 +96,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #1: default settings
      * tag images within 2 minutes to tracks/segments, interpolate between segments only
      */
@@ -156,7 +144,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #2: Disable all interpolation and tagging close to tracks. Only i1-i4 are tagged
      */
     @Test
@@ -180,7 +168,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #3: Disable all interpolation and allow tagging within 1 minute of a track. i0-i5 are tagged.
      * i6 will not be tagged, because it's 68 seconds away from the next waypoint in either direction
      * i7 will keep the old position
@@ -209,7 +197,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #4: Force tagging (parameter forceTags=true, no change of configuration). All images will be tagged
      * i5-i6 will now be interpolated, therefore it will have an elevation and different coordinates than in tests above
      * i7 will be at the end of the track
@@ -235,7 +223,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #5: Force tagging (parameter forceTags=false, but configuration changed).
      * Results same as #4
      */
@@ -272,7 +260,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #6: Disable tagging but allow interpolation when tracks are less than 500m apart. i0-i4 are tagged.
      * i5-i6 will not be tagged, because the tracks are 897m apart.
      * not checking all the coordinates again, did that 5 times already, just the number of matched images
@@ -292,7 +280,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #7: Disable tagging but allow interpolation when tracks are less than 1000m apart. i0-i6 are tagged.
      * i5-i6 will be tagged, because the tracks are 897m apart.
      */
@@ -311,7 +299,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #8: Disable tagging but allow interpolation when tracks are less than 2 min apart. i0-i4 are tagged.
      * i5-i6 will not be tagged, because the tracks are 2.5min apart.
      */
@@ -330,7 +318,7 @@ class GpxImageCorrelationTest {
 
     /**
      * Tests matching of images to a GPX track.
-     *
+     * <p>
      * TEST #9: Disable tagging but allow interpolation when tracks are less than 3 min apart. i0-i6 are tagged.
      * i5-i6 will be tagged, because the tracks are 2.5min apart.
      */

@@ -7,26 +7,14 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import jakarta.json.Json;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.json.Json;
 
 /**
  * Integration tests of {@link PlatformHook} class.
  */
 class PlatformHookTestIT {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Test that we always support the latest Ubuntu version.
      * @throws Exception in case of error

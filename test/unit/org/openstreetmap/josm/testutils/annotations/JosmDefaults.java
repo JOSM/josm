@@ -76,8 +76,9 @@ public @interface JosmDefaults {
 
         /**
          * Clean up what test not using these test rules may have broken.
+         * See {@link org.openstreetmap.josm.JOSMFixture} for the most common reason why this needs to be called.
          */
-        private void cleanUpFromJosmFixture() {
+        private static void cleanUpFromJosmFixture() {
             MemoryManagerTest.resetState(true);
             JOSMTestRules.cleanLayerEnvironment();
             Preferences.main().resetToInitialState();

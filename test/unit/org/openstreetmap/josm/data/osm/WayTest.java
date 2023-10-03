@@ -3,16 +3,14 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
@@ -20,15 +18,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * @since 11270
  */
 class WayTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Test BBox calculation with Way
      */

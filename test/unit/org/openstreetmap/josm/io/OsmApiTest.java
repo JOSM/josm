@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -17,15 +15,6 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
  * Unit tests of {@link OsmApi} class.
  */
 class OsmApiTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12675">Bug #12675</a>.
      * @throws IllegalDataException if an error occurs

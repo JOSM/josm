@@ -8,30 +8,25 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.stream.Stream;
 
+import org.awaitility.Awaitility;
+import org.awaitility.Durations;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.TileJobOptions;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import org.awaitility.Awaitility;
-import org.awaitility.Durations;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test class for {@link MVTTile}
  */
-public class MVTTileTest {
+class MVTTileTest {
     private MapboxVectorTileSource tileSource;
     private MapboxVectorCachedTileLoader loader;
-    @RegisterExtension
-    JOSMTestRules rule = new JOSMTestRules();
     @BeforeEach
     void setup() {
         tileSource = new MapboxVectorTileSource(new ImageryInfo("Test Mapillary", "file:/" + TestUtils.getTestDataRoot()

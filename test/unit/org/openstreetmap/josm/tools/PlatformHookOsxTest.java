@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -27,7 +26,6 @@ class PlatformHookOsxTest {
      */
     @BeforeAll
     public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
         hook = new PlatformHookOsx();
     }
 

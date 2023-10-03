@@ -2,18 +2,15 @@
 package org.openstreetmap.josm.io.audio;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.tools.Stopwatch;
 
@@ -27,20 +24,10 @@ class AudioPlayerTest {
     private static final long MAX_DURATION = 16000;
 
     /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
-    /**
      * Test method for {@code AudioPlayer#play(URL)}
-     * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
-     * @throws MalformedURLException wrong URL
      */
     @Test
-    void testPlay() throws MalformedURLException, Exception {
+    void testPlay() {
         assertTimeout(Duration.ofMillis(4*MAX_DURATION), () -> {
             File wav1 = new File(TestUtils.getRegressionDataFile(6851, "20111003_121226.wav"));
             File wav2 = new File(TestUtils.getRegressionDataFile(6851, "20111003_121557.wav"));

@@ -3,12 +3,11 @@ package org.openstreetmap.josm.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.CyclicUploadDependencyException;
@@ -18,22 +17,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link APIDataSet}.
  */
 class APIDataSetTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     @Test
     void testOneNewRelationOnly() throws CyclicUploadDependencyException {
         Relation r = new Relation();
@@ -249,11 +237,6 @@ class APIDataSetTest {
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
-        try {
-            apiDataSet.adjustRelationUploadOrder();
-            fail("expected cyclic upload dependency exception not thrown");
-        } catch (CyclicUploadDependencyException e) {
-            System.out.println(e);
-        }
+        assertThrows(CyclicUploadDependencyException.class, apiDataSet::adjustRelationUploadOrder);
     }
 }

@@ -7,23 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 
 /**
  * Unit tests for class {@link Version}.
  */
 class VersionTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test of {@link Version#getAgentString}
      */

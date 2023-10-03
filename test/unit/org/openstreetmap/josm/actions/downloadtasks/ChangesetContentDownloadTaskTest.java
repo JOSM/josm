@@ -1,30 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Component;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link ChangesetContentDownloadTask}.
  */
 class ChangesetContentDownloadTaskTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Unit test of {@code ChangesetContentDownloadTask#ChangesetContentDownloadTask}.
      */
@@ -33,9 +22,9 @@ class ChangesetContentDownloadTaskTest {
         Component parent = new Component() {
             // empty component
         };
-        assertNotNull(new ChangesetContentDownloadTask(parent, 1));
-        assertNotNull(new ChangesetContentDownloadTask(parent, Arrays.asList(1, 2)));
-        assertNotNull(new ChangesetContentDownloadTask(parent, null));
+        assertDoesNotThrow(() -> new ChangesetContentDownloadTask(parent, 1));
+        assertDoesNotThrow(() -> new ChangesetContentDownloadTask(parent, Arrays.asList(1, 2)));
+        assertDoesNotThrow(() -> new ChangesetContentDownloadTask(parent, null));
     }
 
     /**
@@ -59,6 +48,7 @@ class ChangesetContentDownloadTaskTest {
      */
     @Test
     void testChangesetContentDownloadTaskNullParent2() {
-        assertThrows(IllegalArgumentException.class, () -> new ChangesetContentDownloadTask(Arrays.asList(1, 2)));
+        final List<Integer> toDownload = Arrays.asList(1, 2);
+        assertThrows(IllegalArgumentException.class, () -> new ChangesetContentDownloadTask(toDownload));
     }
 }

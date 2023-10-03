@@ -17,27 +17,15 @@ import java.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link DataSetMerger}.
  */
 class DataSetMergerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private DataSet my;
     private DataSet their;
 
@@ -75,7 +63,7 @@ class DataSetMergerTest {
 
     /**
      * two identical nodes, even in id and version. No conflict expected.
-     *
+     * <p>
      * Can happen if data is loaded in two layers and then merged from one layer
      * on the other.
      */
@@ -149,7 +137,7 @@ class DataSetMergerTest {
     /**
      * Node with same id, my is modified, their has a higher version
      * => results in a conflict
-     *
+     * <p>
      * Use case: node which is modified locally and updated by another mapper on
      * the server
      */
@@ -183,7 +171,7 @@ class DataSetMergerTest {
     /**
      * node with same id, my is deleted, their has a higher version
      * => results in a conflict
-     *
+     * <p>
      * Use case: node which is deleted locally and updated by another mapper on
      * the server
      */
@@ -242,7 +230,7 @@ class DataSetMergerTest {
 
     /**
      * My and their node are new but semantically equal. My node is deleted.
-     *
+     * <p>
      * => Ignore my node, no conflict
      */
     @Test
@@ -265,7 +253,7 @@ class DataSetMergerTest {
 
     /**
      * My and their node are new but semantically equal. Both are deleted.
-     *
+     * <p>
      * => take mine
      */
     @Test
@@ -290,7 +278,7 @@ class DataSetMergerTest {
     /**
      * their node has no assigned id (id == 0) and is semantically equal to one of my
      * nodes with id == 0
-     *
+     * <p>
      * => merge it onto my node.
      */
     @Test
@@ -330,7 +318,7 @@ class DataSetMergerTest {
 
     /**
      * my node is incomplete, their node is complete
-     *
+     * <p>
      * => merge it onto my node. My node becomes complete
      */
     @Test
@@ -360,7 +348,7 @@ class DataSetMergerTest {
     /**
      * their way has a higher version and different tags. the nodes are the same. My
      * way is not modified. Merge is possible. No conflict.
-     *
+     * <p>
      * => merge it onto my way.
      */
     @Test
@@ -432,7 +420,7 @@ class DataSetMergerTest {
     /**
      * their way has a higher version and different tags. And it has more nodes. Two
      * of the existing nodes are modified.
-     *
+     * <p>
      * => merge it onto my way, no conflict
      */
     @Test
@@ -493,7 +481,7 @@ class DataSetMergerTest {
         assertEquals("value1", merged.getNode(2).get("key1"));
 
         assertSame(merged.getNode(0), n1);
-        assertNotSame(merged.getNode(1), n5); // must be clone of the original node in their
+        assertNotSame(merged.getNode(1), n5); // must be a clone of the original node in their
         assertSame(merged.getNode(2), n2);
 
         assertFalse(merged.isModified());  // the target wasn't modified before merging, it mustn't be after merging
@@ -501,7 +489,7 @@ class DataSetMergerTest {
 
     /**
      * their way has a higher version and different nodes. My way is modified.
-     *
+     * <p>
      * => merge onto my way not possible, create a conflict
      */
     @Test
@@ -565,7 +553,7 @@ class DataSetMergerTest {
 
     /**
      * their way is not visible anymore.
-     *
+     * <p>
      * => conflict
      */
     @Test
@@ -718,7 +706,7 @@ class DataSetMergerTest {
     /**
      * My dataset includes a deleted node.
      * Their dataset includes a way with three nodes, the first one being my node.
-     *
+     * <p>
      * => the merged way should include all three nodes. Deleted node should have deleted=false and
      * special conflict with isDeleted should exist
      */
@@ -772,7 +760,7 @@ class DataSetMergerTest {
     /**
      * My dataset includes a deleted node.
      * Their dataset includes a relation with three nodes, the first one being my node.
-     *
+     * <p>
      * => the merged relation should include all three nodes. There should be conflict for deleted
      * node with isMyDeleted set
      */
@@ -822,7 +810,7 @@ class DataSetMergerTest {
 
     /**
      * Merge an incomplete way with two incomplete nodes into an empty dataset.
-     *
+     * <p>
      * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456
      */
     @Test
@@ -864,8 +852,8 @@ class DataSetMergerTest {
 
     /**
      * Merge an incomplete way with two incomplete nodes into a dataset where the way already exists as complete way.
-     *
-     * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456 after a "Update selection " of this way
+     * <p>
+     * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456 after an "Update selection " of this way
      */
     @Test
     void testIncompleteWayOntoCompleteWay() {
@@ -927,7 +915,7 @@ class DataSetMergerTest {
 
         // -- source dataset
 
-        // an complete node
+        // a complete node
         Node n1 = new Node(1, 1);
         n1.setCoor(new LatLon(1, 1));
         their.addPrimitive(n1);
@@ -991,7 +979,7 @@ class DataSetMergerTest {
         their.addPrimitive(n1);
 
         // --- target dataset
-        // an complete node
+        // a complete node
         Node n1b = new Node(1, 2);
         n1b.setCoor(new LatLon(1, 1));
         n1b.setVisible(false);
@@ -1097,7 +1085,7 @@ class DataSetMergerTest {
     }
 
     /**
-     * Dependency loop in relations,, both deleted in source
+     * Dependency loop in relations, both deleted in source
      * => make sure that DataIntegrityProblemException is thrown.
      */
     @Test

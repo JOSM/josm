@@ -11,10 +11,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Tests for the {@link ColorfulImageProcessor} class.
@@ -39,13 +35,6 @@ class ColorfulImageProcessorTest {
     };
 
     private static final IndexColorModel COLOR_MODEL = new IndexColorModel(8, PALETTE.length, PALETTE, 0, true, 255, DataBuffer.TYPE_BYTE);
-
-    /**
-     * No special rules
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Test {@link ColorfulImageProcessor#setColorfulness(double)} and {@link ColorfulImageProcessor#getColorfulness()}
