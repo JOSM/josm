@@ -1026,7 +1026,7 @@ public class SearchCompiler {
             case NONE:
                 return false;
             case MISSING_KEY:
-                return !osm.hasKey(key);
+                return !osm.hasTag(key);
             case ANY:
                 return true;
             case ANY_VALUE:
