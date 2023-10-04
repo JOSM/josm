@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.gpx;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerActionTest;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.io.GpxWriterTest;
 
@@ -18,7 +17,7 @@ class GpxExtensionTest {
      * Unit test of methods {@link GpxExtension#equals} and {@link GpxExtension#hashCode}.
      * @see GpxWriterTest#testExtensions()
      * @see GpxReaderTest#testLayerPrefs()
-     * @see ConvertToDataLayerActionTest#testFromTrack()
+     * @see org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerActionTest#testFromTrack()
      */
     @Test
     void testEqualsContract() {
