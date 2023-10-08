@@ -48,7 +48,7 @@ public class CycleDetector extends Test {
     private final Set<Way> visitedWays = new HashSet<>();
 
     /** Currently used directional waterways from the OSM wiki */
-    private static List<String> directionalWaterways;
+    private List<String> directionalWaterways;
 
     protected static final String PREFIX = ValidatorPrefHelper.PREFIX + "." + CycleDetector.class.getSimpleName();
 
@@ -151,7 +151,7 @@ public class CycleDetector extends Test {
      * Returns the way index of a node. Only the first occurrence is considered in case it's a closed way.
      * @param w parent way
      * @param n the node to look up
-     * @return >=0 if the node is found or<br>-1 if node not part of the way
+     * @return {@code >=0} if the node is found or<br>{@code -1} if node not part of the way
      */
     private static int getNodeIndex(Way w, Node n) {
         for (int i = 0; i < w.getNodesCount(); i++) {
