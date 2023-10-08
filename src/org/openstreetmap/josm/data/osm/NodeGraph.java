@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
- * A directed or undirected graph of nodes.
+ * A directed or undirected graph of nodes. Nodes are connected via edges represented by NodePair instances.
  *
  * @since 12463 (extracted from CombineWayAction)
  */
@@ -211,8 +211,10 @@ public class NodeGraph {
     }
 
     /**
-     * Creates a lookup table from the existing edges to make querying possible.
-     * @return a map containing all the graph data, where the key is queryable, values are direct successors of the key node
+     * Constructs a lookup table from the existing edges in the graph to enable efficient querying.
+     * This method creates a map where each node is associated with a list of nodes that are directly connected to it.
+     *
+     * @return A map representing the graph structure, where nodes are keys, and values are their direct successors.
      * @since xxx
      */
     public Map<Node, List<Node>> createMap() {
