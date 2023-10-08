@@ -1,0 +1,38 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.data.validation.tests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+/**
+ * JUnit test for {@link CycleDetector} validation test.
+ */
+class CycleDetectorTest {
+    /**
+     * Setup test.
+     */
+    @RegisterExtension
+    public JOSMTestRules test = new JOSMTestRules();
+
+    @Test()
+    void testCycleDetection() throws Exception {
+        CycleDetector cycleDetector = new CycleDetector();
+        DataSet ds = OsmReader.parseDataSet(
+            Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "CycleDetector_test_wikipedia.osm")), null);
+        cycleDetector.startTest(null);
+        cycleDetector.visit(ds.allPrimitives());
+        cycleDetector.endTest();
+
+        // we have 4 cycles in the test file
+        assertEquals(4, cycleDetector.getErrors().size());
+    }
+}
