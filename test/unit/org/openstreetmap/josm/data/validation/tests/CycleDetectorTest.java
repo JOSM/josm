@@ -7,21 +7,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * JUnit test for {@link CycleDetector} validation test.
  */
+@BasicPreferences
 class CycleDetectorTest {
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    public JOSMTestRules test = new JOSMTestRules();
 
     @Test()
     void testCycleDetection() throws Exception {
