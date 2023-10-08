@@ -77,6 +77,51 @@ class DistributeActionTest {
     }
 
     @Test
+    void testNodesAlignment() {
+        Way way = new Way();
+        final int totalNodeCount = 11;  // should be in range [2,180]!
+        final int innerNodeCount = totalNodeCount - 2;
+        final int lastLon = totalNodeCount - 1;
+
+        // add first node
+        Node n = new Node(new LatLon(LatLon.ZERO));
+        ds.addPrimitive(n);
+        way.addNode(n);
+
+        // add interim nodes
+        for (int i = 0; i < innerNodeCount; i++) {
+            n = new Node(new LatLon(0, getRandomDoubleInRange(0, lastLon)));
+            ds.addPrimitive(n);
+            way.addNode(n);
+        }
+
+        // add last node
+        n = new Node(new LatLon(0, lastLon));
+        ds.addPrimitive(n);
+        way.addNode(n);
+        ds.addPrimitive(way);
+
+
+        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
+        MainApplication.getLayerManager().addLayer(layer);
+        assertNotNull(MainApplication.getLayerManager().getActiveLayer());
+
+        // select all nodes on the way
+        layer.getDataSet().setSelected(way.getNodes());
+        assertEquals(way.getNodes().size(), layer.getDataSet().getSelected().size());
+
+        new DistributeAction().actionPerformed(null);
+
+        for (int i = 0; i < totalNodeCount; i++) {
+            assertEquals(
+                    (double) (1 / lastLon) + i,
+                    way.getNode(i).lon(),
+                    1e-7
+            );
+        }
+    }
+
+    @Test
     void testSingleNodeAlignment() {
         Way way = new Way();
         final int totalNodeCount = 11;  // should be in range [3,180]!
