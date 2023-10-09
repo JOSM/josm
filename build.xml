@@ -190,7 +190,7 @@ Build-Date: ${build.tstamp}
             </manifest>
         </jar>
         <!-- Sign jar if all environment variables are set -->
-    	<signjar jar="${dist.jar}" alias="${env.SIGN_ALIAS}" tsaurl="${env.SIGN_TSA}"
+        <signjar jar="${dist.jar}" alias="${env.SIGN_ALIAS}" tsaurl="${env.SIGN_TSA}"
             keystore="${env.SIGN_KEYSTORE}" storepass="${env.SIGN_STOREPASS}" keypass="${env.SIGN_KEYPASS}" if:set="sign.jar" />
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired" description="Compile the MapCSS compiler">
@@ -447,7 +447,8 @@ Build-Date: ${build.tstamp}
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
             <jacoco:agent destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}" dumponexit="true"
-		    inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}" property="jacocoagent@{testfamily}@{testITsuffix}" if:true="@{coverage}"/>
+                          inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}"
+                          property="jacocoagent@{testfamily}@{testITsuffix}" if:true="@{coverage}"/>
             <junitlauncher printsummary="${junit.printsummary}" failureproperty="test.@{testfamily}@{testITsuffix}.failed">
                 <classpath>
                     <path refid="test.classpath"/>
@@ -456,48 +457,48 @@ Build-Date: ${build.tstamp}
                 </classpath>
                 <testclasses outputDir="${test.dir}/report">
                     <fileset dir="${test.dir}/build/@{testfamily}" includes="@{includes}" excludes="@{excludes}"/>
-	                <fork>
-	                    <jvmarg value="${jacocoagent@{testfamily}@{testITsuffix}}" if:set="jacocoagent@{testfamily}@{testITsuffix}" />
-	                    <jvmarg value="-Dfile.encoding=UTF-8"/>
-	                    <jvmarg value="-Djava.locale.providers=SPI,JRE,CLDR" if:set="isJava9" />
-	                    <jvmarg value="-Djava.security.manager=allow" if:set="isJava17" />
-	                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
-	                    <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
-	                    <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
-	                    <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
-	                    <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
-	                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
-	                    <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
-	                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="isJava11" />
-	                    <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" unless:set="isJava11" />
-	                    <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
-	                    <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.base/java.lang=ALL-UNNAMED" if:set="isJava9" />
-	                    <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.base/java.nio=ALL-UNNAMED" if:set="isJava9" />
-	                    <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.base/java.text=ALL-UNNAMED" if:set="isJava9" />
-	                    <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.base/java.util=ALL-UNNAMED" if:set="isJava9" />
-	                    <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" if:set="isJava9" />
-	                    <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
+                    <fork>
+                        <jvmarg value="${jacocoagent@{testfamily}@{testITsuffix}}" if:set="jacocoagent@{testfamily}@{testITsuffix}" />
+                        <jvmarg value="-Dfile.encoding=UTF-8"/>
+                        <jvmarg value="-Djava.locale.providers=SPI,JRE,CLDR" if:set="isJava9" />
+                        <jvmarg value="-Djava.security.manager=allow" if:set="isJava17" />
+                        <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
+                        <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
+                        <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
+                        <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
+                        <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
+                        <jvmarg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
+                        <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
+                        <jvmarg value="--add-exports" if:set="isJava9" unless:set="isJava11" />
+                        <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" unless:set="isJava11" />
                         <jvmarg value="--add-opens" if:set="isJava9" />
-	                    <jvmarg value="java.prefs/java.util.prefs=ALL-UNNAMED" if:set="isJava9" />
-	                    <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
-	                    <sysproperty key="josm.test.data" value="${test.dir}/data"/>
-	                    <sysproperty key="java.awt.headless" value="${test.headless}"/>
-	                    <sysproperty key="java.security.manager" value="allow" if:set="isJava17" />
-	                    <sysproperty key="glass.platform" value="Monocle"/>
-	                    <sysproperty key="monocle.platform" value="Headless"/>
-	                    <sysproperty key="prism.order" value="sw"/>
-	                    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
-	                    <sysproperty key="junit.jupiter.execution.parallel.enabled" value="${junit.jupiter.execution.parallel.enabled}" if:set="junit.jupiter.execution.parallel.enabled"/>
-	                    <sysproperty key="junit.jupiter.execution.parallel.mode.default" value="${junit.jupiter.execution.parallel.mode.default}" if:set="junit.jupiter.execution.parallel.mode.default"/>
-	                    <sysproperty key="junit.jupiter.execution.parallel.mode.classes.default" value="${junit.jupiter.execution.parallel.mode.classes.default}" if:set="junit.jupiter.execution.parallel.mode.classes.default"/>
-	                </fork>
+                        <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" if:set="isJava9" />
+                        <jvmarg value="java.base/java.lang=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" if:set="isJava9" />
+                        <jvmarg value="java.base/java.nio=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" if:set="isJava9" />
+                        <jvmarg value="java.base/java.text=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" if:set="isJava9" />
+                        <jvmarg value="java.base/java.util=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" if:set="isJava9" />
+                        <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" if:set="isJava9" />
+                        <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" if:set="isJava9" />
+                        <jvmarg value="java.prefs/java.util.prefs=ALL-UNNAMED" if:set="isJava9" />
+                        <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
+                        <sysproperty key="josm.test.data" value="${test.dir}/data"/>
+                        <sysproperty key="java.awt.headless" value="${test.headless}"/>
+                        <sysproperty key="java.security.manager" value="allow" if:set="isJava17" />
+                        <sysproperty key="glass.platform" value="Monocle"/>
+                        <sysproperty key="monocle.platform" value="Headless"/>
+                        <sysproperty key="prism.order" value="sw"/>
+                        <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+                        <sysproperty key="junit.jupiter.execution.parallel.enabled" value="${junit.jupiter.execution.parallel.enabled}" if:set="junit.jupiter.execution.parallel.enabled"/>
+                        <sysproperty key="junit.jupiter.execution.parallel.mode.default" value="${junit.jupiter.execution.parallel.mode.default}" if:set="junit.jupiter.execution.parallel.mode.default"/>
+                        <sysproperty key="junit.jupiter.execution.parallel.mode.classes.default" value="${junit.jupiter.execution.parallel.mode.classes.default}" if:set="junit.jupiter.execution.parallel.mode.classes.default"/>
+                    </fork>
                     <listener type="legacy-brief" sendSysOut="true" sendSysErr="true"/>
                     <listener type="legacy-plain" />
                     <listener type="legacy-xml" />
@@ -640,7 +641,8 @@ Build-Date: ${build.tstamp}
             <arg value="${dist-optimized.jar}"/>
         </exec>
     </target>
-    <target name="check-plugins" depends="dist-optimized" description="Check of plugins binary compatibility" unless="isJava11">
+    <target name="check-plugins" depends="dist-optimized" description="Check of plugins binary compatibility" unless="isJava21">
+        <!-- animal_sniffer doesn't support Java 21 yet. The unless statement can be removed after animal_sniffer is updated to 1.24. -->
         <local name="dir"/>
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
@@ -675,13 +677,18 @@ Build-Date: ${build.tstamp}
                 <linecontainsregexp negate="true">
                     <regexp pattern="${deprecated-plugins}"/>
                 </linecontainsregexp>
-                <linecontainsregexp negate="true" unless:set="isJava10">
-                    <!-- Skip javafx on Java 8/9, built for Java 10+ only -->
-                    <regexp pattern="javafx.*"/>
-                </linecontainsregexp>
+                <!-- Ideally these would not be hardcoded, and instead read from the manifest file -->
                 <linecontainsregexp negate="true" unless:set="isJava11">
-                    <!-- Skip http2 on Java 8/9/10, built for Java 11+ only -->
-                    <regexp pattern="http2.*"/>
+                    <!-- Skip Java 11 plugins -->
+                    <regexp pattern="(areaselector|http|javafx|josm_magic_wand)\..*"/>
+                </linecontainsregexp>
+                <linecontainsregexp negate="true" unless:set="isJava17">
+                    <!-- Skip Java 17 plugins -->
+                    <regexp pattern="(ImageIO|pmtiles|todo|MapRoulette|mapwithai|contourmerge|scripting)\..*"/>
+                </linecontainsregexp>
+                <linecontainsregexp negate="true" unless:set="isJava21">
+                    <!-- Skip Java 21 plugins -->
+                    <regexp pattern="FIT\..*"/>
                 </linecontainsregexp>
                 <tokenfilter>
                     <replaceregex pattern="^.*;" replace="" flags="gi"/>
