@@ -669,26 +669,10 @@ Build-Date: ${build.tstamp}
         </loadfile>
         <!-- Download list of plugins -->
         <loadresource property="plugins">
-            <url url="https://josm.openstreetmap.de/plugin"/>
+            <url url="https://josm.openstreetmap.de/pluginicons?minjava=8&amp;noparams=1"/>
             <filterchain>
                 <linecontainsregexp negate="true">
-                    <regexp pattern="^\t.*"/>
-                </linecontainsregexp>
-                <linecontainsregexp negate="true">
                     <regexp pattern="${deprecated-plugins}"/>
-                </linecontainsregexp>
-                <!-- Ideally these would not be hardcoded, and instead read from the manifest file -->
-                <linecontainsregexp negate="true" unless:set="isJava11">
-                    <!-- Skip Java 11 plugins -->
-                    <regexp pattern="(areaselector|http|javafx|josm_magic_wand)\..*"/>
-                </linecontainsregexp>
-                <linecontainsregexp negate="true" unless:set="isJava17">
-                    <!-- Skip Java 17 plugins -->
-                    <regexp pattern="(ImageIO|pmtiles|todo|MapRoulette|mapwithai|contourmerge|scripting)\..*"/>
-                </linecontainsregexp>
-                <linecontainsregexp negate="true" unless:set="isJava21">
-                    <!-- Skip Java 21 plugins -->
-                    <regexp pattern="FIT\..*"/>
                 </linecontainsregexp>
                 <tokenfilter>
                     <replaceregex pattern="^.*;" replace="" flags="gi"/>
