@@ -6616,7 +6616,7 @@
                 <space />
                 <reference ref="power_generator" />
                 <key key="generator:method" value="combustion" match="none" />
-                <combo key="generator:type" text="Generator Type" values="gas_turbine,reciprocating_engine,steam_generator" />
+                <combo key="generator:type" text="Generator Type" values="boiler,gas_turbine,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
             </item> <!-- Biofuel Power Generator -->
             <item name="Biogas Power Generator" icon="presets/power/power_source-biofuel.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6625,7 +6625,7 @@
                 <space />
                 <reference ref="power_generator" />
                 <key key="generator:method" value="combustion" match="none" />
-                <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
+                <combo key="generator:type" text="Generator Type" values="boiler,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
             </item> <!-- Biogas Power Generator -->
             <item name="Biomass Power Generator" icon="presets/power/power_source-biofuel.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6635,8 +6635,8 @@
                 <reference ref="power_generator" />
                 <combo key="generator:method" text="Method" values_context="generator method" values="anaerobic_digestion,combustion,gasification" />
                 <combo key="generator:type" text="Generator Type" values_searchable="true">
-                    <list_entry value="bioreactor" short_description="anaerobic_digestion / combustion" />
-                    <list_entry value="pyrolysis" short_description="" />
+                    <list_entry value="bioreactor" short_description="anaerobic_digestion / gasification" />
+                    <list_entry value="boiler" short_description="combustion" />
                     <list_entry value="steam_generator" short_description="combustion" />
                     <list_entry value="steam_turbine" short_description="combustion" />
                 </combo>
@@ -6648,7 +6648,7 @@
                 <space />
                 <reference ref="power_generator" />
                 <key key="generator:method" value="combustion" match="none" />
-                <combo key="generator:type" text="Generator Type" values="steam_generator,steam_turbine" />
+                <combo key="generator:type" text="Generator Type" values="steam_generator,steam_turbine,boiler" />
                 <reference ref="power_output" />
             </item> <!-- Coal Power Generator -->
             <item name="Gas Power Generator" icon="presets/power/power_source-gas.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6657,7 +6657,7 @@
                 <space />
                 <reference ref="power_generator" />
                 <key key="generator:method" value="combustion" match="none" />
-                <combo key="generator:type" text="Generator Type" values="combined_cycle,gas_turbine,reciprocating_engine,steam_generator,steam_turbine" />
+                <combo key="generator:type" text="Generator Type" values="boiler,combined_cycle,gas_turbine,reciprocating_engine,steam_generator,steam_turbine" />
                 <reference ref="power_output" />
             </item> <!-- Gas Power Generator -->
             <item name="Oil Power Generator" icon="presets/power/power_source-oil.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6666,7 +6666,7 @@
                 <space />
                 <reference ref="power_generator" />
                 <key key="generator:method" value="combustion" match="none" />
-                <combo key="generator:type" text="Generator Type" values="steam_generator,steam_turbine" />
+                <combo key="generator:type" text="Generator Type" values="boiler,steam_generator,steam_turbine" />
                 <reference ref="power_output" />
             </item> <!-- Oil Power Generator -->
             <item name="Diesel Power Generator" icon="presets/power/power_source-oil.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6675,7 +6675,7 @@
                 <space />
                 <reference ref="power_generator" />
                 <key key="generator:method" value="combustion" match="none" />
-                <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
+                <combo key="generator:type" text="Generator Type" values="boiler,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
             </item> <!-- Diesel Power Generator -->
             <item name="Gasoline Power Generator" icon="presets/power/power_source-oil.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6684,7 +6684,7 @@
                 <space />
                 <reference ref="power_generator" />
                 <key key="generator:method" value="combustion" match="none" />
-                <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
+                <combo key="generator:type" text="Generator Type" values="boiler,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
             </item> <!-- Gasoline Power Generator -->
             <item name="Nuclear Reactor" icon="presets/power/power_source-nuclear.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -6751,7 +6751,7 @@
                     <list_entry value="reciprocating_engine" short_description="combustion" />
                     <list_entry value="steam_generator" short_description="combustion" />
                 </combo>
-                <combo key="generator:type" text="Generator Type" values="bioreactor,reciprocating_engine,steam_generator" />
+                <combo key="generator:type" text="Generator Type" values="bioreactor,boiler,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
             </item> <!-- Waste Power Generator -->
             <item name="Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">
