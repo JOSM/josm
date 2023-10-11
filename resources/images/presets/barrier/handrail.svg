@@ -1,102 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="9"
-   viewBox="0 0 16 9"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="handrail.svg">
-  <defs
-     id="defs4" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="10.805196"
-     inkscape:cy="8.8610249"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     units="px"
-     inkscape:window-width="1680"
-     inkscape:window-height="987"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     viewbox-height="16">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4136"
-       originx="0"
-       originy="0"
-       spacingx="1"
-       spacingy="1" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-1044.3622)">
-    <rect
-       style="fill:#784421;fill-opacity:1;stroke:none;stroke-width:0.94099998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect816"
-       width="16"
-       height="2"
-       x="0"
-       y="1044.3622"
-       ry="1" />
-    <rect
-       style="fill:#784421;fill-opacity:1;stroke:none;stroke-width:0.94099998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect818"
-       width="2"
-       height="7.0000172"
-       x="3"
-       y="1046.3622"
-       ry="0" />
-    <rect
-       style="fill:#784421;fill-opacity:1;stroke:none;stroke-width:0.94099998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect822"
-       width="2"
-       height="7.0000172"
-       x="11"
-       y="1046.3622"
-       ry="0" />
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
+  <g transform="matrix(.16 0 0 .16 -340.479 0)">
+    <path style="fill:none" d="M2128 0h100v100h-100z"/>
+    <clipPath id="a">
+      <path d="M2128 0h100v100h-100z"/>
+    </clipPath>
+    <g clip-path="url(#a)">
+      <g transform="matrix(6.25 0 0 6.25 -11434.5 -262.5)">
+        <path d="M2170 58h16V48h-4v5h-5v4h-7v1Z" style="fill:silver"/>
+        <clipPath id="b">
+          <path d="M2170 58h16V48h-4v5h-5v4h-7v1Z"/>
+        </clipPath>
+        <g clip-path="url(#b)">
+          <path d="M2170 55h7v-4h5v-5h5" style="fill:none;stroke:#505050;stroke-width:.83px" transform="translate(0 2)"/>
+        </g>
+      </g>
+      <path d="M2196.4 48.779h-20.7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 1 0-5h15.08" style="fill:none;stroke:#000;stroke-width:1.07px;stroke-linejoin:miter" transform="scale(4.84965) rotate(-30 1232.498 3261.066)"/>
+      <path d="M2178.54 44.932v8.179" style="fill:none;stroke:#000;stroke-width:.74px;stroke-linejoin:miter" transform="translate(-13130.4 -304.831) scale(7.03391)"/>
+    </g>
   </g>
 </svg>
