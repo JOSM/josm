@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.notes.Note;
@@ -72,7 +73,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
     @Override
     public Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor) {
-        downloadTask = new DownloadBoundingBoxTask(new BoundingBoxDownloader(downloadArea), progressMonitor);
+        downloadTask = new DownloadBoundingBoxTask(downloadArea, progressMonitor);
         return MainApplication.worker.submit(downloadTask);
     }
 
@@ -144,6 +145,9 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             }
 
             noteLayer = new NoteLayer(notesData, tr("Notes"));
+            if (this instanceof DownloadBoundingBoxTask && ((DownloadBoundingBoxTask) this).bounds != null) {
+                noteLayer.getNoteData().addDataSource(new DataSource(((DownloadBoundingBoxTask) this).bounds, "OpenStreetMap server"));
+            }
             NoteLayer l = MainApplication.getLayerManager().getNoteLayer();
             if (l != null) {
                 l.mergeFrom(noteLayer);
@@ -169,6 +173,12 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
     }
 
     class DownloadBoundingBoxTask extends DownloadTask {
+        private Bounds bounds;
+
+        DownloadBoundingBoxTask(Bounds bounds, ProgressMonitor progressMonitor) {
+            this(new BoundingBoxDownloader(bounds), progressMonitor);
+            this.bounds = bounds;
+        }
 
         DownloadBoundingBoxTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(reader, progressMonitor);
