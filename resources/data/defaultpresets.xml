@@ -1076,7 +1076,7 @@
                 <list_entry value="primary" display_value="Primary" icon="presets/transport/way/way_primary.svg" />
                 <list_entry value="primary_link" display_value="Primary Link" icon="presets/transport/way/way_primary_link.svg" />
                 <list_entry value="secondary" display_value="Secondary" icon="presets/transport/way/way_secondary.svg" />
-                <list_entry value="secondary_link" display_value="Secondary" icon="presets/transport/way/way_secondary_link.svg" />
+                <list_entry value="secondary_link" display_value="Secondary Link" icon="presets/transport/way/way_secondary_link.svg" />
                 <list_entry value="tertiary" display_value="Tertiary" icon="presets/transport/way/way_tertiary.svg" />
                 <list_entry value="tertiary_link" display_value="Tertiary Link" icon="presets/transport/way/way_tertiary_link.svg" />
                 <list_entry value="unclassified" display_value="Unclassified" icon="presets/transport/way/way_unclassified.svg" />
