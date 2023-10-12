@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 public final class TaggingPresets {
 
     /** The collection of tagging presets */
-    private static final Collection<TaggingPreset> taggingPresets = new ArrayList<>();
+    private static final List<TaggingPreset> TAGGING_PRESETS = new ArrayList<>();
 
     /** cache for key/value pairs found in the preset */
     private static final MultiMap<String, String> PRESET_TAG_CACHE = new MultiMap<>();
@@ -68,9 +68,9 @@ public final class TaggingPresets {
      * Initializes tagging presets from preferences.
      */
     public static void readFromPreferences() {
-        taggingPresets.clear();
-        taggingPresets.addAll(TaggingPresetReader.readFromPreferences(false, false));
-        cachePresets(taggingPresets);
+        TAGGING_PRESETS.clear();
+        TAGGING_PRESETS.addAll(TaggingPresetReader.readFromPreferences(false, false));
+        cachePresets(TAGGING_PRESETS);
     }
 
     /**
@@ -88,19 +88,19 @@ public final class TaggingPresets {
         }
 
         readFromPreferences();
-        final List<TaggingPreset> activeLayerChangeListeners = new ArrayList<>(taggingPresets.size());
-        for (TaggingPreset tp: taggingPresets) {
+        final List<TaggingPreset> activeLayerChangeListeners = new ArrayList<>(TAGGING_PRESETS.size());
+        for (TaggingPreset tp: TAGGING_PRESETS) {
             if (!(tp instanceof TaggingPresetSeparator)) {
                 MainApplication.getToolbar().register(tp);
                 activeLayerChangeListeners.add(tp);
             }
         }
         MainApplication.getLayerManager().addActiveLayerChangeListeners(activeLayerChangeListeners);
-        if (taggingPresets.isEmpty()) {
+        if (TAGGING_PRESETS.isEmpty()) {
             presetsMenu.setVisible(false);
         } else {
             Map<TaggingPresetMenu, JMenu> submenus = new HashMap<>();
-            for (final TaggingPreset p : taggingPresets) {
+            for (final TaggingPreset p : TAGGING_PRESETS) {
                 JMenu m = p.group != null ? submenus.get(p.group) : presetsMenu;
                 if (m == null && p.group != null) {
                     Logging.error("No tagging preset submenu for " + p.group);
@@ -126,7 +126,7 @@ public final class TaggingPresets {
                 }
             }
         }
-        if (SORT_MENU.get()) {
+        if (Boolean.TRUE.equals(SORT_MENU.get())) {
             TaggingPresetMenu.sortMenu(presetsMenu);
         }
         listeners.forEach(TaggingPresetListener::taggingPresetsModified);
@@ -141,13 +141,13 @@ public final class TaggingPresets {
      */
     public static void destroy() {
         ToolbarPreferences toolBar = MainApplication.getToolbar();
-        for (TaggingPreset tp: taggingPresets) {
+        for (TaggingPreset tp: TAGGING_PRESETS) {
             toolBar.unregister(tp);
             if (!(tp instanceof TaggingPresetSeparator)) {
                 MainApplication.getLayerManager().removeActiveLayerChangeListener(tp);
             }
         }
-        taggingPresets.clear();
+        TAGGING_PRESETS.clear();
         PRESET_TAG_CACHE.clear();
         PRESET_ROLE_CACHE.clear();
         MainApplication.getMenu().presetsMenu.removeAll();
@@ -190,7 +190,7 @@ public final class TaggingPresets {
      * @return a new collection containing all tagging presets. Empty if presets are not initialized (never null)
      */
     public static Collection<TaggingPreset> getTaggingPresets() {
-        return Collections.unmodifiableCollection(taggingPresets);
+        return Collections.unmodifiableList(TAGGING_PRESETS);
     }
 
     /**
@@ -263,7 +263,7 @@ public final class TaggingPresets {
      * @param presets The tagging presets to add
      */
     public static void addTaggingPresets(Collection<TaggingPreset> presets) {
-        if (presets != null && taggingPresets.addAll(presets)) {
+        if (presets != null && TAGGING_PRESETS.addAll(presets)) {
             listeners.forEach(TaggingPresetListener::taggingPresetsModified);
         }
     }
