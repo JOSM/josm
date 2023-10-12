@@ -8,22 +8,26 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import mockit.Invocation;
-import mockit.Mock;
-import mockit.MockUp;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +39,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
@@ -44,12 +49,22 @@ import org.openstreetmap.josm.gui.dialogs.relation.actions.PasteMembersAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetLabel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.TaggingPresets;
+import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+
+import mockit.Invocation;
+import mockit.Mock;
+import mockit.MockUp;
 
 /**
  * Unit tests of {@link GenericRelationEditor} class.
@@ -104,6 +119,24 @@ public class GenericRelationEditorTest {
     void setup() {
         new PasteMembersActionMock();
         new WindowMocker();
+    }
+
+    private static AtomicReference<RelationEditor> setupGuiMocks() {
+        AtomicReference<RelationEditor> editorReference = new AtomicReference<>();
+        new MockUp<RelationEditor>() {
+            @Mock public RelationEditor getEditor(Invocation invocation, OsmDataLayer layer, Relation r,
+                                                  Collection<RelationMember> selectedMembers) {
+                editorReference.set(invocation.proceed(layer, r, selectedMembers));
+                return editorReference.get();
+            }
+        };
+        // We want to go through the `setVisible` code, just in case. So we have to mock the window location
+        new MockUp<GenericRelationEditor>() {
+            @Mock public void setVisible(boolean visible) {
+                // Do nothing. Ideally, we would just mock the awt methods called, but that would take a lot of mocking.
+            }
+        };
+        return editorReference;
     }
 
     /**
@@ -184,20 +217,7 @@ public class GenericRelationEditorTest {
     @Test
     void testNonRegression23116() {
         // Setup the mocks
-        final AtomicReference<RelationEditor> editorReference = new AtomicReference<>();
-        new MockUp<RelationEditor>() {
-            @Mock public RelationEditor getEditor(Invocation invocation, OsmDataLayer layer, Relation r,
-                    Collection<RelationMember> selectedMembers) {
-                editorReference.set(invocation.proceed(layer, r, selectedMembers));
-                return editorReference.get();
-            }
-        };
-        // We want to go through the `setVisible` code, just in case. So we have to mock the window location
-        new MockUp<GenericRelationEditor>() {
-            @Mock public void setVisible(boolean visible) {
-                // Do nothing. Ideally, we would just mock the awt methods called, but that would take a lot of mocking.
-            }
-        };
+        final AtomicReference<RelationEditor> editorReference = setupGuiMocks();
         // Set up the data
         final DataSet dataSet = new DataSet();
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(dataSet, "GenericRelationEditorTest.testNonRegression23116", null));
@@ -231,6 +251,67 @@ public class GenericRelationEditorTest {
                 RelationDialogManager.getRelationDialogManager().windowClosed(new WindowEvent(editorReference.get(), 0));
             }
         }
+    }
+
+    /**
+     * Ensure that users can create new relations with a preset available and open the preset.
+     * See {@link TaggingPreset#showAndApply} for where a relation may exist without a dataset.
+     */
+    @BasicPreferences
+    @TaggingPresets
+    @Test
+    void testNonRegression23196() {
+        // This happens when the preset validator is enabled (Preferences -> `Tagging Presets` -> `Run data validator on user input`)
+        Config.getPref().putBoolean("taggingpreset.validator", true);
+        // Setup the mocks
+        final AtomicReference<RelationEditor> editorReference = setupGuiMocks();
+        new ExtendedDialogMocker(Collections.singletonMap("Change 1 object", "Apply Preset")) {
+            @Override
+            protected String getString(ExtendedDialog instance) {
+                return instance.getTitle();
+            }
+        };
+        // Set up the data
+        final DataSet dataSet = new DataSet();
+        final OsmDataLayer layer = new OsmDataLayer(dataSet, "GenericRelationEditorTest.testNonRegression23196", null);
+        MainApplication.getLayerManager().addLayer(layer);
+        dataSet.addPrimitive(TestUtils.newNode(""));
+        dataSet.setSelected(dataSet.allPrimitives());
+        try {
+            RelationEditor.getEditor(layer, TestUtils.newRelation("type=multipolygon"),
+                    dataSet.getSelected().stream().map(p -> new RelationMember("", p)).collect(Collectors.toList()));
+            final GenericRelationEditor editor = assertInstanceOf(GenericRelationEditor.class, editorReference.get());
+            TaggingPresetLabel label = getComponentByNameOrText(TaggingPresetLabel.class, editor, "Relations/Multipolygon …");
+            final MouseEvent mouseEvent = new MouseEvent(label, 0, 0, 0, 0, 0, 0, false);
+            for (MouseListener listener : label.getMouseListeners()) {
+                assertDoesNotThrow(() -> listener.mouseClicked(mouseEvent));
+            }
+        } finally {
+            // This avoids an issue with the cleanup code and the mocks for this test
+            if (editorReference.get() != null) {
+                RelationDialogManager.getRelationDialogManager().windowClosed(new WindowEvent(editorReference.get(), 0));
+            }
+        }
+    }
+
+    private static <T extends Component> T getComponentByNameOrText(Class<T> clazz, Container parent, String name) {
+        final ArrayDeque<Component> componentDeque = new ArrayDeque<>(Collections.singletonList(parent));
+        while (!componentDeque.isEmpty()) {
+            final Component current = componentDeque.pop();
+            if (current instanceof Container) {
+                componentDeque.addAll(Arrays.asList(((Container) current).getComponents()));
+            }
+            if (clazz.isInstance(current)) {
+                T component = clazz.cast(current);
+                if (name.equals(component.getName())) {
+                    return component;
+                } else if (component instanceof JLabel && name.equals(((JLabel) component).getText())) {
+                    return component;
+                }
+            }
+        }
+        fail("Component with name " + name + " not found");
+        throw new JosmRuntimeException("This should never happen due to the fail line");
     }
 
     @SuppressWarnings("unchecked")

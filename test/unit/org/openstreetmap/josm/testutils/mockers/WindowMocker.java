@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.testutils.mockers;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.Window;
@@ -35,5 +36,13 @@ public class WindowMocker extends MockUp<Window> {
 
     @Mock
     private void $init(final Invocation invocation, final Window window, final GraphicsConfiguration gc) {
+    }
+
+    @Mock
+    public void pack() {
+    }
+
+    @Mock
+    public void setLocationRelativeTo(final Component c) {
     }
 }

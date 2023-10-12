@@ -84,7 +84,7 @@ import org.xml.sax.SAXException;
  * This class read encapsulate one tagging preset. A class method can
  * read in all predefined presets, either shipped with JOSM or that are
  * in the config directory.
- *
+ * <p>
  * It is also able to construct dialogs out of preset definitions.
  * @since 294
  */
@@ -404,12 +404,12 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         JPanel itemPanel = new JPanel(new GridBagLayout()) {
             /**
              * This hack allows the items to have their own orientation.
-             *
+             * <p>
              * The problem is that
              * {@link org.openstreetmap.josm.gui.ExtendedDialog#showDialog ExtendedDialog} calls
              * {@code applyComponentOrientation} very late in the dialog construction process thus
              * overwriting the orientation the components have chosen for themselves.
-             *
+             * <p>
              * This stops the propagation of {@code applyComponentOrientation}, thus all
              * {@code TaggingPresetItem}s may (and have to) set their own orientation.
              */
@@ -445,9 +445,6 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         }
 
         if (selected.size() == 1 && Boolean.TRUE.equals(USE_VALIDATOR.get())) {
-            // Fail early -- validateAsync requires the primitive(s) to be part of a dataset. Failing later in validateAsync ''does not'' give us
-            // a usable stack trace. See #21829 for details.
-            selected.forEach(OsmPrimitive::checkDataset);
             itemGuiSupport.addListener((source, key, newValue) ->
                     TaggingPresetValidation.validateAsync(selected.iterator().next(), validationLabel, getChangedTags()));
         }

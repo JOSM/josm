@@ -173,15 +173,6 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
     }
 
     @Mock
-    private void setupDialog(final Invocation invocation) {
-        if (!GraphicsEnvironment.isHeadless()) {
-            invocation.proceed();
-        }
-        // else do nothing - WindowMocker-ed Windows doesn't work well enough for some of the
-        // component constructions
-    }
-
-    @Mock
     private void setVisible(final Invocation invocation, final boolean value) throws Throwable {
         if (value) {
             try {
