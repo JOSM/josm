@@ -62,8 +62,8 @@ public final class DistributeAction extends JosmAction {
 
         // Collect user selected objects
         Collection<OsmPrimitive> selected = getLayerManager().getEditDataSet().getSelected();
-        Collection<Way> ways = new ArrayList<>();
-        Collection<Node> nodes = new ArrayList<>();
+        List<Way> ways = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
         for (OsmPrimitive osm : selected) {
             if (osm instanceof Node) {
                 nodes.add((Node) osm);
@@ -194,9 +194,9 @@ public final class DistributeAction extends JosmAction {
      * @param nodes The selected node. Collection type and naming kept for compatibility with similar methods.
      * @return true in this case
      */
-    private static boolean checkDistributeNode(Collection<Node> nodes) {
+    private static boolean checkDistributeNode(List<Node> nodes) {
         if (nodes.size() == 1) {
-            Node node = nodes.iterator().next();
+            Node node = nodes.get(0);
             int goodWays = 0;
             for (Way way : node.getParentWays()) {
                 // the algorithm is applicable only if there is one way which:
@@ -213,24 +213,20 @@ public final class DistributeAction extends JosmAction {
     /**
      * Distribute a single node relative to way neighbours.
      * @see DistributeAction#distributeNodes(Collection)
-     * @param nodes nodes to distribute
+     * @param nodes a single node in a collection to distribute
      * @return Commands to execute to perform action
      */
-    private static Collection<Command> distributeNode(Collection<Node> nodes) {
-        final Node node = nodes.iterator().next();
-        Way parent = node.getParentWays().iterator().next();
+    private static Collection<Command> distributeNode(List<Node> nodes) {
+        final Node nodeToDistribute = nodes.get(0);
+        Way parent = nodeToDistribute.getParentWays().get(0);
 
-        // make the user selected node the middle in the output variable
-        nodes.clear();
+        List<Node> neighbours = new ArrayList<>(parent.getNeighbours(nodeToDistribute));
 
-        List<Node> neighbours = new ArrayList<>(parent.getNeighbours(node));
-
-        nodes.add(neighbours.get(0));
-        nodes.add(node);
-        nodes.add(neighbours.get(1));
+        // insert in the middle
+        neighbours.add(1, nodeToDistribute);
 
         // call the distribution method with 3 nodes
-        return distributeNodes(nodes);
+        return distributeNodes(neighbours);
     }
 
     /**
