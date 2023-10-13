@@ -21,7 +21,7 @@ class OsmChangesetParserTest {
 
     private static final String BEGIN =
         "<osm version=\"0.6\" generator=\"OpenStreetMap server\" copyright=\"OpenStreetMap and contributors\" " +
-                "attribution=\"http://www.openstreetmap.org/copyright\" license=\"http://opendatacommons.org/licenses/odbl/1-0/\">" +
+                "attribution=\"https://www.openstreetmap.org/copyright\" license=\"https://opendatacommons.org/licenses/odbl/1-0/\">" +
             "<changeset id=\"36749147\" user=\"kesler\" uid=\"13908\" created_at=\"2016-01-22T21:55:37Z\" "+
                 "closed_at=\"2016-01-22T21:56:39Z\"  open=\"false\" min_lat=\"36.6649211\" min_lon=\"55.377015\" max_lat=\"38.1490357\" " +
                 "max_lon=\"60.3766983\" comments_count=\"2\" changes_count=\"9\">" +
@@ -33,7 +33,7 @@ class OsmChangesetParserTest {
         "<comment date=\"2016-09-13T13:28:20Z\" uid=\"1733149\" user=\"Jean Passepartout\">" +
             "<text>" +
                 "Hi keeler, Thank you for contributing to OpenStreetMap. " +
-                "I noticed you added this way: http://www.openstreetmap.org/way/363580576, " +
+                "I noticed you added this way: https://www.openstreetmap.org/way/363580576, " +
                 "but it is a duplicate of another way, with a different name. "+
                 "Could you review and fix this? Please let me know if you need any help. " +
                 "Thank you and Happy Mapping! Jean Passepartout" +
@@ -62,7 +62,7 @@ class OsmChangesetParserTest {
      */
     @Test
     void testParseWithoutDiscussion() throws IllegalDataException {
-        // http://api.openstreetmap.org/api/0.6/changeset/36749147
+        // https://api.openstreetmap.org/api/0.6/changeset/36749147
         Changeset cs = parse(BEGIN + END).iterator().next();
         assertEquals(2, cs.getCommentsCount());
         assertEquals(9, cs.getChangesCount());
@@ -75,7 +75,7 @@ class OsmChangesetParserTest {
      */
     @Test
     void testParseWithDiscussion() throws IllegalDataException {
-        // http://api.openstreetmap.org/api/0.6/changeset/36749147?include_discussion=true
+        // https://api.openstreetmap.org/api/0.6/changeset/36749147?include_discussion=true
         Changeset cs = parse(BEGIN + DISCUSSION + END).iterator().next();
         assertEquals(2, cs.getCommentsCount());
         assertEquals(9, cs.getChangesCount());
