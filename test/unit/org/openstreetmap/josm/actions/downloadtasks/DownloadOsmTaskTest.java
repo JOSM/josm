@@ -25,12 +25,12 @@ class DownloadOsmTaskTest extends AbstractDownloadTaskTestParent {
         DownloadOsmTask task = new DownloadOsmTask();
         assertFalse(task.acceptsUrl(null));
         assertFalse(task.acceptsUrl(""));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/node/100"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/way/100"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/relation/100"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/nodes?nodes=101,102,103"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/ways?ways=101,102,103"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/relations?relations=101,102,103"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/node/100"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/way/100"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/relation/100"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/nodes?nodes=101,102,103"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/ways?ways=101,102,103"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/relations?relations=101,102,103"));
         assertTrue(task.acceptsUrl(getRemoteFileUrl()));
     }
 
