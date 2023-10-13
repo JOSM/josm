@@ -67,8 +67,8 @@ class NoteTest {
                 "<osm version=\"0.6\" generator=\"OpenStreetMap server\">\n" +
                 "<note lon=\"68.86415\" lat=\"36.7232991\">\n"+
                 "  <id>4</id>\n"+
-                "  <url>http://api.openstreetmap.org/api/0.6/notes/4</url>\n"+
-                "  <reopen_url>http://api.openstreetmap.org/api/0.6/notes/4/reopen</reopen_url>\n"+
+                "  <url>https://api.openstreetmap.org/api/0.6/notes/4</url>\n"+
+                "  <reopen_url>https://api.openstreetmap.org/api/0.6/notes/4/reopen</reopen_url>\n"+
                 "  <date_created>2013-04-24 08:07:02 UTC</date_created>\n"+
                 "  <status>closed</status>\n"+
                 "  <date_closed>2013-04-24 08:08:51 UTC</date_closed>\n"+
@@ -77,7 +77,7 @@ class NoteTest {
                 "      <date>2013-04-24 08:07:02 UTC</date>\n"+
                 "      <uid>1626</uid>\n"+
                 "      <user>FredB</user>\n"+
-                "      <user_url>http://www.openstreetmap.org/user/FredB</user_url>\n"+
+                "      <user_url>https://www.openstreetmap.org/user/FredB</user_url>\n"+
                 "      <action>opened</action>\n"+
                 "      <text>test</text>\n"+
                 "      <html>&lt;p&gt;test&lt;/p&gt;</html>\n"+
@@ -86,7 +86,7 @@ class NoteTest {
                 "      <date>2013-04-24 08:08:51 UTC</date>\n"+
                 "      <uid>1626</uid>\n"+
                 "      <user>FredB</user>\n"+
-                "      <user_url>http://www.openstreetmap.org/user/FredB</user_url>\n"+
+                "      <user_url>https://www.openstreetmap.org/user/FredB</user_url>\n"+
                 "      <action>closed</action>\n"+
                 "      <text></text>\n"+
                 "      <html>&lt;p&gt;&lt;/p&gt;</html>\n"+
@@ -95,9 +95,9 @@ class NoteTest {
                 "</note>\n"+
                 "<note lon=\"23.2663071\" lat=\"50.7173607\">\n" +
                 "  <id>1396945</id>\n" +
-                "  <url>https://www.openstreetmap.org/api/0.6/notes/1396945</url>\n" +
-                "  <comment_url>https://www.openstreetmap.org/api/0.6/notes/1396945/comment</comment_url>\n" +
-                "  <close_url>https://www.openstreetmap.org/api/0.6/notes/1396945/close</close_url>\n" +
+                "  <url>https://api.openstreetmap.org/api/0.6/notes/1396945</url>\n" +
+                "  <comment_url>https://api.openstreetmap.org/api/0.6/notes/1396945/comment</comment_url>\n" +
+                "  <close_url>https://api.openstreetmap.org/api/0.6/notes/1396945/close</close_url>\n" +
                 "  <date_created>2018-05-17 15:41:06 UTC</date_created>\n" +
                 "  <status>open</status>\n" +
                 "  <comments>\n" +
