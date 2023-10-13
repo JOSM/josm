@@ -25,10 +25,10 @@ class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
         DownloadNotesTask task = new DownloadNotesTask();
         assertFalse(task.acceptsUrl(null));
         assertFalse(task.acceptsUrl(""));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/notes?bbox=-0.65094,51.312159,0.374908,51.669148"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/notes.json?bbox=-0.65094,51.312159,0.374908,51.669148"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/notes.xml?bbox=-0.65094,51.312159,0.374908,51.669148"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/notes.gpx?bbox=-0.65094,51.312159,0.374908,51.669148"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/notes?bbox=-0.65094,51.312159,0.374908,51.669148"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/notes.json?bbox=-0.65094,51.312159,0.374908,51.669148"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/notes.xml?bbox=-0.65094,51.312159,0.374908,51.669148"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/notes.gpx?bbox=-0.65094,51.312159,0.374908,51.669148"));
         assertTrue(task.acceptsUrl(getRemoteFileUrl()));
     }
 
