@@ -564,7 +564,8 @@ class UrlValidatorTest {
             new ResultPair("", true),
             new ResultPair("/test1/file", true),
             new ResultPair("/..//file", false),
-            new ResultPair("/test1//file", false)
+            new ResultPair("/test1//file", false),
+            new ResultPair("/projekte-und-themen/eulen-falken-und-deren-nistkästen/trafotürme", true)
     };
 
     //Test allow2slash, noFragment
