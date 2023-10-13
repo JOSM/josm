@@ -25,14 +25,14 @@ class DownloadGpsTaskTest extends AbstractDownloadTaskTestParent {
         DownloadGpsTask task = new DownloadGpsTask();
         assertFalse(task.acceptsUrl(null));
         assertFalse(task.acceptsUrl(""));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/trackpoints?bbox=0,51.5,0.25,51.75"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/trackpoints?bbox=0,51.5,0.25,51.75&page=0"));
-        assertTrue(task.acceptsUrl("http://api.openstreetmap.org/trace/5000/data"));
-        assertTrue(task.acceptsUrl("http://www.openstreetmap.org/trace/5000/data"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/trackpoints?bbox=0,51.5,0.25,51.75"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/api/0.6/trackpoints?bbox=0,51.5,0.25,51.75&page=0"));
+        assertTrue(task.acceptsUrl("https://api.openstreetmap.org/trace/5000/data"));
+        assertTrue(task.acceptsUrl("https://www.openstreetmap.org/trace/5000/data"));
         assertTrue(task.acceptsUrl("http://www.trackmyjourney.co.uk/exportgpx.php?session=S6rZR2Bh6GwX1wpB0C&trk=79292"));
         assertTrue(task.acceptsUrl("https://www.openstreetmap.org/user/simon04/traces/750057"));
         assertTrue(task.acceptsUrl("https://www.openstreetmap.org/edit?gpx=750057"));
-        assertTrue(task.acceptsUrl("http://www.openstreetmap.org/edit?gpx=2277313#map=14/-20.7321/-40.5328"));
+        assertTrue(task.acceptsUrl("https://www.openstreetmap.org/edit?gpx=2277313#map=14/-20.7321/-40.5328"));
         assertTrue(task.acceptsUrl("https://tasks.hotosm.org/api/v1/project/4019/tasks_as_gpx?tasks=125&as_file=true"));
         assertTrue(task.acceptsUrl(getRemoteFileUrl()));
     }
