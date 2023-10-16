@@ -220,6 +220,12 @@ Build-Date: ${build.tstamp}
         <attribute name="release" default="${java.lang.version}"/>
         <element name="cp-elements" optional="true"/>
         <sequential>
+          <!-- RestrictedApiChecker was removed in error-prone 2.19 -->
+          <local name="errorProne2.10"/>
+          <property name="errorProne2.10" value="-Xep:RestrictedApiChecker:OFF" unless:set="isJava11"/>
+          <local name="errorProne2.22+"/>
+          <!-- LongDoubleConversion is disabled since SonarLint java:S1905 conflicts -->
+          <property name="errorProne2.22+" value="-Xep:LongDoubleConversion:OFF" if:set="isJava11"/>
           <javac sourcepath="@{sourcepath}" srcdir="@{srcdir}" fork="@{fork}"
             includes="@{includes}" excludes="@{excludes}" destdir="@{destdir}" release="@{release}"
             debug="@{debug}" includeantruntime="@{includeantruntime}" encoding="@{encoding}">
@@ -249,7 +255,7 @@ Build-Date: ${build.tstamp}
               <compilerarg value="-Xlint:unchecked"/>
               <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
               <compilerarg value="-XDignore.symbol.file"/>
-              <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsGetClass:OFF -Xep:UndefinedEquals:OFF -Xep:BadImport:OFF -Xep:AnnotateFormatMethod:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF -Xep:RestrictedApiChecker:OFF -Xep:InlineMeSuggester:OFF" unless:set="noErrorProne"/>
+              <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsGetClass:OFF -Xep:UndefinedEquals:OFF -Xep:BadImport:OFF -Xep:AnnotateFormatMethod:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF ${errorProne2.10} -Xep:InlineMeSuggester:OFF ${errorProne2.22+}" unless:set="noErrorProne"/>
               <compilerarg line="-Xmaxwarns 1000"/>
               <compilerarg value="-Xplugin:semanticdb -sourceroot:@{srcdir} -targetroot:${build.dir}/semanticdb" if:set="lsif" />
               <classpath>

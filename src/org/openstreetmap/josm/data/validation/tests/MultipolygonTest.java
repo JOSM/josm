@@ -601,9 +601,9 @@ public class MultipolygonTest extends Test {
      * @return map with crossing ways and the related segments
      */
     private static Map<List<Way>, List<WaySegment>> findIntersectingWays(Relation r, boolean findSharedWaySegments) {
-        /** All way segments, grouped by cells */
+        /* All way segments, grouped by cells */
         final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);
-        /** The detected crossing ways */
+        /* The detected crossing ways */
         final Map<List<Way>, List<WaySegment>> crossingWays = new HashMap<>(50);
 
         for (Way w: r.getMemberPrimitives(Way.class)) {

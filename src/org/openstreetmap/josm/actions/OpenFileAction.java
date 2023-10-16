@@ -274,7 +274,7 @@ public class OpenFileAction extends DiskAccessAction {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             if (Utils.isEmpty(files)) return;
 
-            /**
+            /*
              * Find the importer with the chosen file filter
              */
             FileImporter chosenImporter = null;
@@ -285,7 +285,7 @@ public class OpenFileAction extends DiskAccessAction {
                     }
                 }
             }
-            /**
+            /*
              * If the filter hasn't been changed in the dialog, chosenImporter is null now.
              * When the filter has been set explicitly to AllFormatsImporter, treat this the same.
              */

@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSource> {
     private static final String PREFERENCE_PREFIX = "imagery.wms";
-    /**
+    /*
      * Registers all setting properties
      */
     static {
@@ -147,9 +147,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
     }
 
     private Projection chooseProjection(Projection requested) {
-        if (serverProjections.contains(requested.toCode())) {
-            return requested;
-        } else {
+        if (!serverProjections.contains(requested.toCode())) {
             LatLon center = MainApplication.isDisplayingMapView() ?
                     requested.eastNorth2latlon(MainApplication.getMap().mapView.getCenter()) : null;
             Projection firstNonNullproj = null;
@@ -172,8 +170,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
                 return selectProjection(firstNonNullproj);
             }
             Logging.warn(tr("Unable to find supported projection for layer {0}. Using {1}.", getName(), requested.toCode()));
-            return requested;
         }
+        return requested;
     }
 
     private Projection selectProjection(Projection proj) {

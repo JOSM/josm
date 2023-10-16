@@ -1,10 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.imagery;
 
-/**
- * Load all tiles.
- * @since 11950 (extracted from {@link AbstractTileSourceLayer})
- */
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;

@@ -231,14 +231,12 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     }
 
     private static String getBboxstr(double x1, double x2, double x3, double x4) {
-        return new StringBuilder(64)
-                .append(LATLON_FORMAT.format(x1))
-                .append(',')
-                .append(LATLON_FORMAT.format(x2))
-                .append(',')
-                .append(LATLON_FORMAT.format(x3))
-                .append(',')
-                .append(LATLON_FORMAT.format(x4))
-                .toString();
+        return LATLON_FORMAT.format(x1) +
+                ',' +
+                LATLON_FORMAT.format(x2) +
+                ',' +
+                LATLON_FORMAT.format(x3) +
+                ',' +
+                LATLON_FORMAT.format(x4);
     }
 }

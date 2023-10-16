@@ -27,13 +27,13 @@ import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Global shortcut class.
- *
+ * <p>
  * Note: This class represents a single shortcut, contains the factory to obtain
  *       shortcut objects from, manages shortcuts and shortcut collisions, and
  *       finally manages loading and saving shortcuts to/from the preferences.
- *
+ * <p>
  * Action authors: You only need the {@link #registerShortcut} factory. Ignore everything else.
- *
+ * <p>
  * All: Use only public methods that are also marked to be used. The others are
  *      public so the shortcut preferences can use them.
  * @since 1084
@@ -432,6 +432,11 @@ public final class Shortcut {
     }
 
     // shutdown handling
+
+    /**
+     * Save shortcuts to preferences
+     * @return {@code true} if preferences were changed
+     */
     public static boolean savePrefs() {
         return shortcuts.stream()
                 .map(Shortcut::save)
@@ -484,7 +489,7 @@ public final class Shortcut {
         for (Character c : characters) {
             Integer code = (int) c;
             result.add(registerShortcut(
-                    new StringBuilder(shortText).append(" (").append(i).append(')').toString(), longText,
+                    shortText + " (" + i + ')', longText,
                     // Add extended keyCode if not a regular one
                     regularKeyCodes.containsKey(code) ? regularKeyCodes.get(code) :
                         isDeadKey(code) ? code : c | KeyboardUtils.EXTENDED_KEYCODE_FLAG,
@@ -500,7 +505,7 @@ public final class Shortcut {
 
     /**
      * Register a shortcut.
-     *
+     * <p>
      * Here you get your shortcuts from. The parameters are:
      *
      * @param shortText an ID. re-use a {@code "system:*"} ID if possible, else use something unique.
@@ -622,10 +627,10 @@ public final class Shortcut {
 
     /**
      * Returns the tooltip text plus the {@linkplain #getKeyText(KeyStroke) key stroke text}.
-     *
+     * <p>
      * Tooltips are usually not system dependent, unless the
      * JVM is too dumb to provide correct names for all the keys.
-     *
+     * <p>
      * Some LAFs don't understand HTML, such as the OSX LAFs.
      *
      * @param tooltip Tooltip text to display

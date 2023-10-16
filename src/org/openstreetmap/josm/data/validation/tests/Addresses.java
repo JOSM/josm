@@ -427,7 +427,7 @@ public class Addresses extends Test {
     private void checkIfObsolete(Relation r) {
         if (r.isIncomplete())
             return;
-        /** array of country codes for which the test should be performed. For now, only Germany */
+        /* array of country codes for which the test should be performed. For now, only Germany */
         String[] countryCodes = {"DE"};
         TagMap neededtagsForHouse = new TagMap();
         for (Entry<String, String> tag : r.getKeys().entrySet()) {

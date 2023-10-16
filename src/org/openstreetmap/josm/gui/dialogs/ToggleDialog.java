@@ -255,9 +255,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         this.name = name;
         this.preferenceClass = prefClass;
 
-        /** Use the full width of the parent element */
+        /* Use the full width of the parent element */
         setPreferredSize(new Dimension(0, preferredHeight));
-        /** Override any minimum sizes of child elements so the user can resize freely */
+        /* Override any minimum sizes of child elements so the user can resize freely */
         setMinimumSize(new Dimension(0, 0));
         this.preferredHeight = Config.getPref().getInt(preferencePrefix+".preferredHeight", preferredHeight);
         toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, helpTopic());
@@ -267,7 +267,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         isCollapsed = Config.getPref().getBoolean(preferencePrefix+".minimized", false);
         buttonHiding = propButtonHiding.get();
 
-        /** show the minimize button */
+        /* show the minimize button */
         titleBar = new TitleBar(name, iconName);
         add(titleBar, BorderLayout.NORTH);
 
@@ -292,7 +292,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     /**
      * The action to toggle the visibility state of this toggle dialog.
-     *
+     * <p>
      * Emits {@link PropertyChangeEvent}s for the property <code>selected</code>:
      * <ul>
      *   <li>true, if the dialog is currently visible</li>
@@ -381,7 +381,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @Override
     public void buttonHidden() {
-        if ((Boolean) toggleAction.getValue("selected")) {
+        if (Boolean.TRUE.equals(toggleAction.getValue("selected"))) {
             toggleAction.actionPerformed(null);
         }
     }
@@ -596,9 +596,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
             // show the help button
             addButton(new JButton(ImageProvider.get("help", ImageProvider.ImageSizes.SMALLICON)),
-                    tr("Open help for this panel"), e -> {
-                HelpBrowser.setUrlForHelpTopic(helpTopic());
-            });
+                    tr("Open help for this panel"), e -> HelpBrowser.setUrlForHelpTopic(helpTopic()));
 
             // show the sticky button
             addButton(new JButton(ImageProvider.get("misc", "sticky")), tr("Undock the panel"), e -> {
@@ -966,13 +964,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 final JPanel buttonRowPanel = new JPanel(Config.getPref().getBoolean("dialog.align.left", false)
                         ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1, buttonRow.size()));
                 buttonsPanel.add(buttonRowPanel);
-                for (SideButton button : buttonRow) {
-                    buttonRowPanel.add(button);
-                    javax.swing.Action action = button.getAction();
+                for (SideButton sideButton : buttonRow) {
+                    buttonRowPanel.add(sideButton);
+                    javax.swing.Action action = sideButton.getAction();
                     if (action != null) {
                         buttonActions.add(action);
                     } else {
-                        Logging.warn("Button " + button + " doesn't have action defined");
+                        Logging.warn("Button " + sideButton + " doesn't have action defined");
                         Logging.error(new Exception());
                     }
                 }

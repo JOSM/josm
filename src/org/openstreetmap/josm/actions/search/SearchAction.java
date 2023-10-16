@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -65,10 +66,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
-    private static AutoCompComboBoxModel<SearchSetting> model = new AutoCompComboBoxModel<>();
+    private static final AutoCompComboBoxModel<SearchSetting> model = new AutoCompComboBoxModel<>();
 
     /** preferences reader/writer with automatic transmogrification to and from String */
-    private static AutoCompComboBoxModel<SearchSetting>.Preferences prefs = model.prefs(
+    private static final JosmComboBoxModel<SearchSetting>.Preferences prefs = model.prefs(
             SearchSetting::readFromString, SearchSetting::writeToString);
 
     static {
@@ -490,6 +491,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     @Override
     public List<ActionParameter<?>> getActionParameters() {
-        return Collections.<ActionParameter<?>>singletonList(new SearchSettingsActionParameter(SEARCH_EXPRESSION));
+        return Collections.singletonList(new SearchSettingsActionParameter(SEARCH_EXPRESSION));
     }
 }

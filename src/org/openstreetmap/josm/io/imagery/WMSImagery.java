@@ -312,11 +312,12 @@ public class WMSImagery {
 
     /**
      * Returns URL for accessing GetMap service. String will contain following parameters:
-     * * {proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})
-     * * {width} - that needs to be replaced with width of the tile
-     * * {height} - that needs to be replaces with height of the tile
-     * * {bbox} - that needs to be replaced with area that should be fetched (in {proj} coordinates)
-     *
+     * <ul>
+     *   <li>{proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})</li>
+     *   <li>{width} - that needs to be replaced with width of the tile</li>
+     *   <li>{height} - that needs to be replaces with height of the tile</li>
+     *   <li>{bbox} - that needs to be replaced with area that should be fetched (in {proj} coordinates)</li>
+     * </ul>
      * Format of the response will be calculated using {@link #getPreferredFormat()}
      *
      * @param selectedLayers list of DefaultLayer selection of layers to be shown
@@ -332,11 +333,12 @@ public class WMSImagery {
 
     /**
      * Returns URL for accessing GetMap service. String will contain following parameters:
-     * * {proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})
-     * * {width} - that needs to be replaced with width of the tile
-     * * {height} - that needs to be replaces with height of the tile
-     * * {bbox} - that needs to be replaced with area that should be fetched (in {proj} coordinates)
-     *
+     * <ul>
+     *   <li>{proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})</li>
+     *   <li>{width} - that needs to be replaced with width of the tile</li>
+     *   <li>{height} - that needs to be replaces with height of the tile</li>
+     *   <li>{bbox} - that needs to be replaced with area that should be fetched (in {proj} coordinates)</li>
+     * </ul>
      * Format of the response will be calculated using {@link #getPreferredFormat()}
      *
      * @param selectedLayers selected layers as subset of the tree returned by {@link #getLayers()}
@@ -410,7 +412,7 @@ public class WMSImagery {
     private boolean tagEquals(QName a, QName b) {
         boolean ret = a.equals(b);
         if (ret) {
-            return ret;
+            return true;
         }
 
         if (belowWMS130()) {
@@ -487,8 +489,8 @@ public class WMSImagery {
     }
 
     private void parseRequest(XMLStreamReader reader) throws XMLStreamException {
-        String mode = "";
-        String getMapUrl = "";
+        String mode;
+        String newGetMapUrl = "";
         if (GetCapabilitiesParseHelper.moveReaderToTag(reader, this::tagEquals, QN_GETMAP)) {
             for (int event = reader.getEventType();
                     reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && tagEquals(QN_GETMAP, reader.getName()));
@@ -505,16 +507,16 @@ public class WMSImagery {
                             this::tagEquals, QN_HTTP, QN_GET)) {
                         mode = reader.getName().getLocalPart();
                         if (GetCapabilitiesParseHelper.moveReaderToTag(reader, this::tagEquals, QN_ONLINE_RESOURCE)) {
-                            getMapUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
+                            newGetMapUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
                         }
                         // TODO should we handle also POST?
-                        if ("GET".equalsIgnoreCase(mode) && getMapUrl != null && !getMapUrl.isEmpty()) {
+                        if ("GET".equalsIgnoreCase(mode) && newGetMapUrl != null && !newGetMapUrl.isEmpty()) {
                             try {
-                                String query = new URL(getMapUrl).getQuery();
+                                String query = new URL(newGetMapUrl).getQuery();
                                 if (query == null) {
-                                    this.getMapUrl = getMapUrl + "?";
+                                    this.getMapUrl = newGetMapUrl + "?";
                                 } else {
-                                    this.getMapUrl = getMapUrl;
+                                    this.getMapUrl = newGetMapUrl;
                                 }
                             } catch (MalformedURLException e) {
                                 throw new XMLStreamException(e);
@@ -580,7 +582,7 @@ public class WMSImagery {
 
     private void parseAndAddStyle(XMLStreamReader reader, LayerDetails ld) throws XMLStreamException {
         String name = null;
-        String title = null;
+        String styleTitle = null;
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && tagEquals(QN_STYLE, reader.getName()));
                 event = reader.next()) {
@@ -589,14 +591,14 @@ public class WMSImagery {
                     name = reader.getElementText();
                 }
                 if (tagEquals(QN_TITLE, reader.getName())) {
-                    title = reader.getElementText();
+                    styleTitle = reader.getElementText();
                 }
             }
         }
         if (name == null) {
             name = "";
         }
-        ld.addStyle(name, title);
+        ld.addStyle(name, styleTitle);
     }
 
     private Bounds parseExGeographic(XMLStreamReader reader) throws XMLStreamException {
@@ -664,8 +666,8 @@ public class WMSImagery {
     }
 
     private static String normalizeUrl(String serviceUrlStr) throws MalformedURLException {
-        URL getCapabilitiesUrl = null;
-        String ret = null;
+        URL getCapabilitiesUrl;
+        String ret;
 
         if (!Pattern.compile(".*GetCapabilities.*", Pattern.CASE_INSENSITIVE).matcher(serviceUrlStr).matches()) {
             // If the url doesn't already have GetCapabilities, add it in

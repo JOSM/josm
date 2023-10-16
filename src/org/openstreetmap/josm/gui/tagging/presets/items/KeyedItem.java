@@ -241,7 +241,7 @@ public abstract class KeyedItem extends TextItem {
         case KEY_REQUIRED:
             return tags.containsKey(key);
         case KEY_VALUE:
-            return tags.containsKey(key) && getValues().contains(tags.get(key)) ? Boolean.TRUE : null;
+            return (tags.containsKey(key) && getValues().contains(tags.get(key))) ? Boolean.TRUE : null;
         case KEY_VALUE_REQUIRED:
             return tags.containsKey(key) && getValues().contains(tags.get(key));
         default:

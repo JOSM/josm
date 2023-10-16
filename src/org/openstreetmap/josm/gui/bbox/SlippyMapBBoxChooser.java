@@ -12,6 +12,7 @@ import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -146,7 +147,7 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
         new SlippyMapController(this, this);
     }
 
-    private static LinkedHashMap<String, TileSource> getAllTileSources() {
+    private static Map<String, TileSource> getAllTileSources() {
         // using a LinkedHashMap of <id, TileSource> to retain ordering but provide deduplication
         return providers.stream().flatMap(
             provider -> provider.getTileSources().stream()
@@ -365,7 +366,7 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
      * @since 6364
      */
     public final void refreshTileSources() {
-        final LinkedHashMap<String, TileSource> newTileSources = getAllTileSources();
+        final Map<String, TileSource> newTileSources = getAllTileSources();
         final TileSource currentTileSource = this.getTileController().getTileSource();
 
         // re-add the currently active TileSource to prevent inconsistent display of menu

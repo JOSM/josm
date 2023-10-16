@@ -239,7 +239,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private void setupColors() {
         hdopAlpha = Config.getPref().getInt("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);
-        /** Colors (without custom alpha channel, if given) for HDOP painting. **/
+        /* Colors (without custom alpha channel, if given) for HDOP painting. */
         hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP"));
         qualityScale = ColorScale.createFixedScale(rtkLibQualityColors).addTitle(tr("Quality")).addColorBarTitles(rtkLibQualityNames);
         fixScale = ColorScale.createFixedScale(gpsFixQualityColors).addTitle(tr("GPS fix")).addColorBarTitles(gpsFixQualityNames);
@@ -768,9 +768,14 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      * @param visibleSegments segments visible in the current scope of mv
      */
     private void drawArrows(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
-        /****************************************************************
-         ********** STEP 3b - DRAW NICE ARROWS **************************
-         ****************************************************************/
+        drawArrows3b(g, mv, visibleSegments);
+        drawArrows3c(g, mv, visibleSegments);
+    }
+
+    /****************************************************************
+     ********** STEP 3b - DRAW NICE ARROWS **************************
+     ****************************************************************/
+    private void drawArrows3b(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
         if (lines && arrows && !arrowsFast) {
             Point old = null;
             Point oldA = null; // last arrow painted
@@ -797,10 +802,12 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 }
             } // end for trkpnt
         }
+    }
 
-        /****************************************************************
-         ********** STEP 3c - DRAW FAST ARROWS **************************
-         ****************************************************************/
+    /****************************************************************
+     ********** STEP 3c - DRAW FAST ARROWS **************************
+     ****************************************************************/
+    private void drawArrows3c(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
         if (lines && arrows && arrowsFast) {
             Point old = null;
             Point oldA = null; // last arrow painted
@@ -835,11 +842,17 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      * @param visibleSegments segments visible in the current scope of mv
      */
     private void drawPoints(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
-        /****************************************************************
-         ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
-         ****************************************************************/
+        drawPointsStep3d(g, mv, visibleSegments);
+        drawPointsStep3e(g, mv, visibleSegments);
+        drawPointsStep3f(g, mv, visibleSegments);
+    }
+
+    /****************************************************************
+     ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
+     ****************************************************************/
+    private void drawPointsStep3d(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
         if (large || hdopCircle) {
-            final int halfSize = largesize/2;
+            final int halfSize = largesize / 2;
             for (WayPoint trkPnt : visibleSegments) {
                 LatLon c = trkPnt.getCoor();
                 if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
@@ -854,13 +867,13 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                         hdop = 0;
                     }
                     Color customColoringTransparent = hdopAlpha < 0 ? trkPnt.customColoring :
-                        new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (hdopAlpha << 24), true);
+                            new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (hdopAlpha << 24), true);
                     g.setColor(customColoringTransparent);
                     // hdop circles
                     int hdopp = mv.getPoint(new LatLon(
                             trkPnt.getCoor().lat(),
-                            trkPnt.getCoor().lon() + 2d*6*hdop*360/40000000d)).x - screen.x;
-                    g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
+                            trkPnt.getCoor().lon() + 2d * 6 * hdop * 360 / 40000000d)).x - screen.x;
+                    g.drawArc(screen.x - hdopp / 2, screen.y - hdopp / 2, hdopp, hdopp, 0, 360);
                 }
                 if (large) {
                     // color the large GPS points like the gps lines
@@ -869,21 +882,23 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                             g.setColor(colorCacheTransparent);
                         } else {
                             Color customColoringTransparent = largePointAlpha < 0 ? trkPnt.customColoring :
-                                new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (largePointAlpha << 24), true);
+                                    new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (largePointAlpha << 24), true);
 
                             g.setColor(customColoringTransparent);
                             colorCache = trkPnt.customColoring;
                             colorCacheTransparent = customColoringTransparent;
                         }
                     }
-                    g.fillRect(screen.x-halfSize, screen.y-halfSize, largesize, largesize);
+                    g.fillRect(screen.x - halfSize, screen.y - halfSize, largesize, largesize);
                 }
             } // end for trkpnt
         } // end if large || hdopcircle
+    }
 
-        /****************************************************************
-         ********** STEP 3e - DRAW SMALL POINTS FOR LINES ***************
-         ****************************************************************/
+    /****************************************************************
+     ********** STEP 3e - DRAW SMALL POINTS FOR LINES ***************
+     ****************************************************************/
+    private void drawPointsStep3e(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
         if (!large && lines) {
             g.setColor(neutralColor);
             for (WayPoint trkPnt : visibleSegments) {
@@ -898,10 +913,12 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 }
             } // end for trkpnt
         } // end if large
+    }
 
-        /****************************************************************
-         ********** STEP 3f - DRAW SMALL POINTS INSTEAD OF LINES ********
-         ****************************************************************/
+    /****************************************************************
+     ********** STEP 3f - DRAW SMALL POINTS INSTEAD OF LINES ********
+     ****************************************************************/
+    private void drawPointsStep3f(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
         if (!large && !lines) {
             g.setColor(neutralColor);
             for (WayPoint trkPnt : visibleSegments) {
@@ -1307,10 +1324,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     lastPixelX = 0; lastPixelColor = thePixelColor - 1;
                 }
 
-                boolean bDrawIt = false;
-
                 // when one of segment is mapped to black
-                bDrawIt = bDrawIt || (lastPixelColor == 0) || (thePixelColor == 0);
+                boolean bDrawIt = (lastPixelColor == 0) || (thePixelColor == 0);
 
                 // different color
                 bDrawIt = bDrawIt || (Math.abs(lastPixelColor-thePixelColor) > 0);

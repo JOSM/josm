@@ -75,13 +75,11 @@ public class NodePair {
 
     @Override
     public String toString() {
-        return new StringBuilder()
-        .append('[')
-        .append(a.getId())
-        .append(',')
-        .append(b.getId())
-        .append(']')
-        .toString();
+        return "[" +
+                a.getId() +
+                ',' +
+                b.getId() +
+                ']';
     }
 
     /**

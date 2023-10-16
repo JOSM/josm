@@ -119,6 +119,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     private class UpdateImageThread extends Thread {
         private boolean restart;
 
+        @SuppressWarnings("DoNotCall") // we are calling `run` from the thread we want it to be running on (aka recursive)
         @Override
         public void run() {
             updateProcessedImage();

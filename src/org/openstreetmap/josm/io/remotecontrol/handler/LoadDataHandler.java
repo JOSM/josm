@@ -81,7 +81,7 @@ public class LoadDataHandler extends RequestHandler {
     protected void validateRequest() throws RequestHandlerBadRequestException {
         validateDownloadParams();
         this.data = args.get("data");
-        /**
+        /*
          * Holds the mime type. Currently only OSM_MIME_TYPE is supported
          * But it could be extended to text/csv, application/gpx+xml, ... or even binary encoded data
          */

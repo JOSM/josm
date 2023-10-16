@@ -30,7 +30,7 @@
         <dependency org="com.github.spotbugs" name="spotbugs" rev="4.7.3" conf="spotbugs->default"/>
         <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.7.3" conf="spotbugs->default"/>
         <!-- errorprone->default -->
-        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.10.0" conf="errorprone->default"/>
+        <dependency org="com.google.errorprone" name="error_prone_core" rev="${versions.error_prone}" conf="errorprone->default"/>
         <!-- errorprone->default -->
         <dependency org="com.google.errorprone" name="javac" rev="9+181-r4173-1" conf="errorprone_javac->default"/>
         <!-- animal->default -->

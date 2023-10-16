@@ -39,8 +39,8 @@ public class OsmHistoryReader {
         protected String getCurrentPosition() {
             if (locator == null)
                 return "";
-            return new StringBuilder().append('(').append(locator.getLineNumber())
-                                      .append(',').append(locator.getColumnNumber()).append(')').toString();
+            return "(" + locator.getLineNumber() +
+                    ',' + locator.getColumnNumber() + ')';
         }
 
         @Override

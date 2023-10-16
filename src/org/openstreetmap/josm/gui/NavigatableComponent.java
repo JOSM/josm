@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -208,14 +209,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     // The only events that may move/resize this map view are window movements or changes to the map view size.
     // We can clean this up more by only recalculating the state on repaint.
-    private final transient HierarchyListener hierarchyListener = e -> {
+    private final transient HierarchyListener hierarchyListenerNavigatableComponent = e -> {
         long interestingFlags = HierarchyEvent.ANCESTOR_MOVED | HierarchyEvent.SHOWING_CHANGED;
         if ((e.getChangeFlags() & interestingFlags) != 0) {
             updateLocationState();
         }
     };
 
-    private final transient ComponentAdapter componentListener = new ComponentAdapter() {
+    private final transient ComponentAdapter componentListenerNavigatableComponent = new ComponentAdapter() {
         @Override
         public void componentShown(ComponentEvent e) {
             updateLocationState();
@@ -253,16 +254,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
     @Override
     public void addNotify() {
         updateLocationState();
-        addHierarchyListener(hierarchyListener);
-        addComponentListener(componentListener);
+        addHierarchyListener(hierarchyListenerNavigatableComponent);
+        addComponentListener(componentListenerNavigatableComponent);
         addPrimitiveHoverMouseListeners();
         super.addNotify();
     }
 
     @Override
     public void removeNotify() {
-        removeHierarchyListener(hierarchyListener);
-        removeComponentListener(componentListener);
+        removeHierarchyListener(hierarchyListenerNavigatableComponent);
+        removeComponentListener(componentListenerNavigatableComponent);
         removePrimitiveHoverMouseListeners();
         super.removeNotify();
     }
@@ -289,7 +290,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Replies the layer which scale is set to.
-     * @return the current scale layer (may be null)
+     * @return the current scale layer (may be {@code null})
      */
     public NativeScaleLayer getNativeScaleLayer() {
         return nativeScaleLayer;
@@ -323,7 +324,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (nativeScaleLayer != null) {
             ScaleList scaleList = nativeScaleLayer.getNativeScales();
             if (scaleList != null) {
-                if (PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
+                if (Boolean.TRUE.equals(PROP_ZOOM_INTERMEDIATE_STEPS.get())) {
                     scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
                 }
                 Scale s = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
@@ -365,7 +366,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (nativeScaleLayer != null) {
             ScaleList scaleList = nativeScaleLayer.getNativeScales();
             if (scaleList != null) {
-                if (PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
+                if (Boolean.TRUE.equals(PROP_ZOOM_INTERMEDIATE_STEPS.get())) {
                     scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
                 }
                 Scale snapscale = scaleList.getSnapScale(scale, PROP_ZOOM_RATIO.get(), floor);
@@ -477,7 +478,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Returns the current center of the viewport.
-     *
+     * <p>
      * (Use {@link #zoomTo(EastNorth)} to the change the center.)
      *
      * @return the current center of the viewport
@@ -488,7 +489,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Returns the current scale.
-     *
+     * <p>
      * In east/north units per pixel.
      *
      * @return the current scale
@@ -589,7 +590,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Return the point on the screen where this Coordinate would be.
-     *
+     * <p>
      * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
      * @param latlon The point, where this geopoint would be drawn.
      * @return The point on screen where "point" would be drawn, relative to the own top/left.
@@ -604,7 +605,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Return the point on the screen where this Coordinate would be.
-     *
+     * <p>
      * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
      * @param latlon The point, where this geopoint would be drawn.
      * @return The point on screen where "point" would be drawn, relative to the own top/left.
@@ -615,7 +616,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Return the point on the screen where this Node would be.
-     *
+     * <p>
      * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
      * @param n The node, where this geopoint would be drawn.
      * @return The point on screen where "node" would be drawn, relative to the own top/left.
@@ -826,9 +827,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             try {
                 for (int i = 0; i < frames && !doStop; i++) {
                     final EastNorth z = oldCenter.interpolate(finalNewCenter, (1.0+i) / frames);
-                    GuiHelper.runInEDTAndWait(() -> {
-                        zoomTo(z);
-                    });
+                    GuiHelper.runInEDTAndWait(() -> zoomTo(z));
                     Thread.sleep(sleepTime);
                 }
             } catch (InterruptedException ex) {
@@ -1108,8 +1107,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 if (minDistSq == null) {
                     if (!nlist.isEmpty()) {
                         minDistSq = distSq;
-                        nearestList = new ArrayList<>();
-                        nearestList.addAll(nlist);
+                        nearestList = new ArrayList<>(nlist);
                     }
                 } else {
                     if (distSq-minDistSq < 16) {
@@ -1140,16 +1138,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The *result* depends on the current map selection state IF use_selected is true.
-     *
+     * <p>
      * If more than one node within node.snap-distance pixels is found,
      * the nearest node selected is returned IF use_selected is true.
-     *
+     * <p>
      * Else the nearest new/id=0 node within about the same distance
      * as the true nearest node is returned.
-     *
+     * <p>
      * If no such node is found either, the true nearest node to p is returned.
-     *
-     * Finally, if a node is not found at all, null is returned.
+     * <p>
+     * Finally, if a node is not found at all, {@code null} is returned.
      *
      * @param p the screen point
      * @param predicate this parameter imposes a condition on the returned object, e.g.
@@ -1164,18 +1162,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The *result* depends on the current map selection state IF use_selected is true
-     *
+     * <p>
      * If more than one node within node.snap-distance pixels is found,
      * the nearest node selected is returned IF use_selected is true.
-     *
+     * <p>
      * If there are no selected nodes near that point, the node that is related to some of the preferredRefs
-     *
+     * <p>
      * Else the nearest new/id=0 node within about the same distance
      * as the true nearest node is returned.
-     *
+     * <p>
      * If no such node is found either, the true nearest node to p is returned.
-     *
-     * Finally, if a node is not found at all, null is returned.
+     * <p>
+     * Finally, if a node is not found at all, {@code null} is returned.
      *
      * @param p the screen point
      * @param predicate this parameter imposes a condition on the returned object, e.g.
@@ -1288,11 +1286,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     /* perpendicular distance squared
                      * loose some precision to account for possible deviations in the calculation above
                      * e.g. if identical (A and B) come about reversed in another way, values may differ
-                     * -- zero out least significant 32 dual digits of mantissa..
+                     * -- zero out least significant 32 dual digits of mantissa.
                      */
                     double perDistSq = Double.longBitsToDouble(
                             Double.doubleToLongBits(a - (a - b + c) * (a - b + c) / 4 / c)
-                            >> 32 << 32); // resolution in numbers with large exponent not needed here..
+                            >> 32 << 32); // resolution in numbers with large exponent not needed here.
 
                     if (perDistSq < snapDistanceSq && a < c + snapDistanceSq && b < c + snapDistanceSq) {
                         nearestMap.computeIfAbsent(perDistSq, k -> new LinkedList<>()).add(new WaySegment(w, i));
@@ -1461,7 +1459,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         List<Way> nearestList = getNearestWaySegmentsImpl(p, predicate).values().stream()
                 .flatMap(Collection::stream)
                 .filter(ws -> wset.add(ws.getWay()))
-                .map(ws -> ws.getWay())
+                .map(IWaySegment::getWay)
                 .collect(Collectors.toList());
         if (ignore != null) {
             nearestList.removeAll(ignore);
@@ -1503,13 +1501,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     *
+     * <p>
      * First, nodes will be searched. If there are nodes within BBox found,
      * return a collection of those nodes only.
-     *
+     * <p>
      * If no nodes are found, search for nearest ways. If there are ways
      * within BBox found, return a collection of those ways only.
-     *
+     * <p>
      * If nothing is found, return an empty collection.
      *
      * @param p The point on screen.
@@ -1573,18 +1571,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The *result* depends on the current map selection state IF use_selected is true.
-     *
+     * <p>
      * IF use_selected is true, use {@link #getNearestNode(Point, Predicate)} to find
      * the nearest, selected node.  If not found, try {@link #getNearestWaySegment(Point, Predicate)}
      * to find the nearest selected way.
-     *
+     * <p>
      * IF use_selected is false, or if no selected primitive was found, do the following.
-     *
+     * <p>
      * If the nearest node found is within 4px of p, simply take it.
      * Else, find the nearest way segment. Then, if p is closer to its
      * middle than to the node, take the way segment, else take the node.
-     *
-     * Finally, if no nearest primitive is found at all, return null.
+     * <p>
+     * Finally, if no nearest primitive is found at all, return {@code null}.
      *
      * @param p The point on screen.
      * @param predicate the returned object has to fulfill certain properties.
@@ -1636,7 +1634,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * if r = 0 returns a, if r=1 returns b,
-     * if r = 0.5 returns center between a and b, etc..
+     * if r = 0.5 returns center between a and b, etc.
      *
      * @param r scale value
      * @param a root of vector
@@ -1672,7 +1670,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         List<OsmPrimitive> nearestList = getNearestWaySegmentsImpl(p, predicate).values().stream()
                 .flatMap(Collection::stream)
                 .filter(ws -> wset.add(ws.getWay()))
-                .map(ws -> ws.getWay())
+                .map(IWaySegment::getWay)
                 .collect(Collectors.toList());
 
         // add nearby nodes
@@ -1723,17 +1721,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * Return a ID which is unique as long as viewport dimensions are the same
+     * Return an ID which is unique as long as viewport dimensions are the same
      * @return A unique ID, as long as viewport dimensions are the same
      */
     public int getViewID() {
         EastNorth center = getCenter();
-        String x = new StringBuilder().append(center.east())
-                          .append('_').append(center.north())
-                          .append('_').append(getScale())
-                          .append('_').append(getWidth())
-                          .append('_').append(getHeight())
-                          .append('_').append(getProjection()).toString();
+        String x = String.valueOf(center.east()) +
+                '_' + center.north() +
+                '_' + getScale() +
+                '_' + getWidth() +
+                '_' + getHeight() +
+                '_' + getProjection();
         CRC32 id = new CRC32();
         id.update(x.getBytes(StandardCharsets.UTF_8));
         return (int) id.getValue();

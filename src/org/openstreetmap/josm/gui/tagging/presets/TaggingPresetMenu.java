@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.Logging;
  * Used, to create the nested directory structure in the preset main menu entry.
  */
 public class TaggingPresetMenu extends TaggingPreset {
+    /** The menu to show users */
     public JMenu menu; // set by TaggingPresets
 
     private static class PresetTextComparator implements Comparator<JMenuItem>, Serializable {
@@ -72,7 +73,7 @@ public class TaggingPresetMenu extends TaggingPreset {
     @Override
     public void setDisplayName() {
         putValue(Action.NAME, getName());
-        /** Tooltips should be shown for the toolbar buttons, but not in the menu. */
+        /* Tooltips should be shown for the toolbar buttons, but not in the menu. */
         putValue(OPTIONAL_TOOLTIP_TEXT, group != null ?
                 tr("Preset group {1} / {0}", getLocaleName(), group.getName()) :
                     tr("Preset group {0}", getLocaleName()));

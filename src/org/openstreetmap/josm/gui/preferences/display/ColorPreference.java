@@ -215,7 +215,7 @@ public class ColorPreference extends ExtensibleTabPreferenceSetting implements L
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             if (columnIndex == 1 && aValue instanceof Color) {
-                data.get(rowIndex).info.setValue((Color) aValue);
+                getEntry(rowIndex).info.setValue((Color) aValue);
                 fireTableCellUpdated(rowIndex, columnIndex);
             }
         }

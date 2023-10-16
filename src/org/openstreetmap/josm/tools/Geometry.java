@@ -88,7 +88,7 @@ public final class Geometry {
      * Will find all intersection and add nodes there for list of given ways.
      * Handles self-intersections too.
      * And makes commands to add the intersection points to ways.
-     *
+     * <p>
      * Prerequisite: no two nodes have the same coordinates.
      *
      * @param ways  a list of ways to test
@@ -243,7 +243,7 @@ public final class Geometry {
 
     /**
      * Tests if given point is to the right side of path consisting of 3 points.
-     *
+     * <p>
      * (Imagine the path is continued beyond the endpoints, so you get two rays
      * starting from lineP2 and going through lineP1 and lineP3 respectively
      * which divide the plane into two parts. The test returns true, if testPoint
@@ -531,7 +531,7 @@ public final class Geometry {
 
     /**
      * This method tests if secondNode is clockwise to first node.
-     *
+     * <p>
      * The line through the two points commonNode and firstNode divides the
      * plane into two parts. The test returns true, if secondNode lies in
      * the part that is to the right when traveling in the direction from
@@ -563,7 +563,7 @@ public final class Geometry {
      * @since 6841
      */
     public static Area getArea(List<? extends INode> polygon) {
-        Path2D path = new Path2D.Double();
+        Path2D path = new Path2D.Double(Path2D.WIND_NON_ZERO, polygon.size());
 
         boolean begin = true;
         for (INode n : polygon) {
@@ -841,12 +841,14 @@ public final class Geometry {
 
     /**
      * Determines whether a way is oriented clockwise.
-     *
+     * <p>
      * Internals: Assuming a closed non-looping way, compute twice the area
      * of the polygon using the formula {@code 2 * area = sum (X[n] * Y[n+1] - X[n+1] * Y[n])}.
      * If the area is negative the way is ordered in a clockwise direction.
-     *
-     * See http://paulbourke.net/geometry/polyarea/
+     * <p>
+     * See <a href="https://web.archive.org/web/20120722100030/http://paulbourke.net/geometry/polyarea/">
+     *     https://paulbourke.net/geometry/polyarea/
+     *     </a>
      *
      * @param w the way to be checked.
      * @return true if and only if way is oriented clockwise.
@@ -993,7 +995,7 @@ public final class Geometry {
 
     /**
      * Compute the center of the circle closest to different nodes.
-     *
+     * <p>
      * Ensure exact center computation in case nodes are already aligned in circle.
      * This is done by least square method.
      * Let be a_i x + b_i y + c_i = 0 equations of bisectors of each edges.
@@ -1012,7 +1014,7 @@ public final class Geometry {
     public static EastNorth getCenter(List<? extends INode> nodes) {
         int nc = nodes.size();
         if (nc < 3) return null;
-        /**
+        /*
          * Equation of each bisector ax + by + c = 0
          */
         double[] a = new double[nc];
@@ -1159,7 +1161,7 @@ public final class Geometry {
         List<IPrimitive> res = new ArrayList<>();
         if (!polygon.isClosed() || polygon.getNodesCount() <= 3)
             return res;
-        /** polygon area in east north space, calculated only when really needed */
+        /* polygon area in east north space, calculated only when really needed */
         Area polygonArea = null;
         for (IPrimitive p : primitives) {
             if (p instanceof INode) {
@@ -1282,7 +1284,7 @@ public final class Geometry {
 
     /**
      * Calculate area and perimeter length of a polygon.
-     *
+     * <p>
      * Uses current projection; units are that of the projected coordinates.
      *
      * @param nodes the list of nodes representing the polygon
@@ -1326,9 +1328,9 @@ public final class Geometry {
     /**
      * Get the closest primitive to {@code osm} from the collection of
      * OsmPrimitive {@code primitives}
-     *
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1350,9 +1352,9 @@ public final class Geometry {
     /**
      * Get the closest primitives to {@code osm} from the collection of
      * OsmPrimitive {@code primitives}
-     *
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1385,12 +1387,12 @@ public final class Geometry {
     /**
      * Get the furthest primitive to {@code osm} from the collection of
      * OsmPrimitive {@code primitives}
-     *
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * It does NOT give the furthest primitive based off of the furthest
      * part of that primitive
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1411,12 +1413,12 @@ public final class Geometry {
     /**
      * Get the furthest primitives to {@code osm} from the collection of
      * OsmPrimitive {@code primitives}
-     *
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * It does NOT give the furthest primitive based off of the furthest
      * part of that primitive
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1453,7 +1455,7 @@ public final class Geometry {
      * @return The distance between the primitives in meters
      * (or the unit of the current projection, see {@link Projection}).
      * May return {@link Double#NaN} if one of the primitives is incomplete.
-     *
+     * <p>
      * Note: The complexity is O(n*m), where (n,m) are the number of child
      * objects the {@link OsmPrimitive}s have.
      * @since 15035

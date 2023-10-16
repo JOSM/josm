@@ -764,7 +764,7 @@ public abstract class SourceEditor extends JPanel {
 
     private static void prepareFileChooser(String url, AbstractFileChooser fc) {
         if (Utils.isBlank(url)) return;
-        URL sourceUrl = null;
+        URL sourceUrl;
         try {
             sourceUrl = new URL(url);
         } catch (MalformedURLException e) {
@@ -815,7 +815,7 @@ public abstract class SourceEditor extends JPanel {
             tfURL = new JosmTextField(60);
             p.add(new JLabel(tr("URL / File:")), GBC.std().insets(15, 0, 5, 0));
             p.add(tfURL, GBC.std().insets(0, 0, 5, 5));
-            JButton fileChooser = new JButton(new LaunchFileChooserAction());
+            JButton fileChooser = new JButton(new LaunchFileChooserSourceTypeAction());
             fileChooser.setMargin(new Insets(0, 0, 0, 0));
             p.add(fileChooser, GBC.eol().insets(0, 0, 5, 5));
 
@@ -847,8 +847,8 @@ public abstract class SourceEditor extends JPanel {
             updateOkButtonState();
         }
 
-        class LaunchFileChooserAction extends AbstractAction {
-            LaunchFileChooserAction() {
+        class LaunchFileChooserSourceTypeAction extends AbstractAction {
+            LaunchFileChooserSourceTypeAction() {
                 new ImageProvider("open").getResource().attachImageIcon(this);
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
             }
@@ -1534,7 +1534,7 @@ public abstract class SourceEditor extends JPanel {
             gc.fill = GridBagConstraints.BOTH;
             gc.weightx = 0.0;
             gc.weighty = 1.0;
-            add(new JButton(new LaunchFileChooserAction()));
+            add(new JButton(new LaunchFileChooserEditCellAction()));
 
             tfFileName.addFocusListener(
                     new FocusAdapter() {
@@ -1621,8 +1621,8 @@ public abstract class SourceEditor extends JPanel {
             return this;
         }
 
-        class LaunchFileChooserAction extends AbstractAction {
-            LaunchFileChooserAction() {
+        class LaunchFileChooserEditCellAction extends AbstractAction {
+            LaunchFileChooserEditCellAction() {
                 putValue(NAME, "...");
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
             }

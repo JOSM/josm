@@ -22,9 +22,9 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * WMTS layer based on AbstractTileSourceLayer. Overrides few methods to align WMTS to Tile based computations
  * but most magic is done within WMTSTileSource class.
- *
+ * <p>
  * Full specification of the protocol available at:
- * http://www.opengeospatial.org/standards/wmts
+ * <a href="https://www.ogc.org/standard/wmts/">OpenGIS Web Map Tile Service Implementation Standard</a>
  *
  * @author Wiktor NiesiobÄ™dzki
  *
@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> implements NativeScaleLayer {
     private static final String PREFERENCE_PREFIX = "imagery.wmts";
 
-    /**
+    /*
      * Registers all setting properties
      */
     static {

@@ -166,7 +166,7 @@ public final class TaggingPresetReader {
      * @throws SAXException if any XML error occurs
      */
     public static Collection<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
-        return readAll(in, validate, new HashSetWithLast<TaggingPreset>());
+        return readAll(in, validate, new HashSetWithLast<>());
     }
 
     /**
@@ -180,18 +180,18 @@ public final class TaggingPresetReader {
     static Collection<TaggingPreset> readAll(Reader in, boolean validate, HashSetWithLast<TaggingPreset> all) throws SAXException {
         XmlObjectParser parser = buildParser();
 
-        /** to detect end of {@code <checkgroup>} */
+        /* to detect end of {@code <checkgroup>} */
         CheckGroup lastcheckgroup = null;
-        /** to detect end of {@code <group>} */
+        /* to detect end of {@code <group>} */
         TaggingPresetMenu lastmenu = null;
-        /** to detect end of reused {@code <group>} */
+        /* to detect end of reused {@code <group>} */
         TaggingPresetMenu lastmenuOriginal = null;
         Roles lastrole = null;
         final List<Check> checks = new LinkedList<>();
         final List<PresetListEntry> listEntries = new LinkedList<>();
         final Map<String, List<Object>> byId = new HashMap<>();
         final Deque<String> lastIds = new ArrayDeque<>();
-        /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
+        /* lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
         final Deque<Iterator<Object>> lastIdIterators = new ArrayDeque<>();
 
         if (validate) {
@@ -350,7 +350,7 @@ public final class TaggingPresetReader {
      * @throws IOException if any I/O error occurs
      */
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
-        return readAll(source, validate, new HashSetWithLast<TaggingPreset>());
+        return readAll(source, validate, new HashSetWithLast<>());
     }
 
     /**

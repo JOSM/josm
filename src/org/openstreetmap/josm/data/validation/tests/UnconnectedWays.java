@@ -460,7 +460,7 @@ public abstract class UnconnectedWays extends Test {
          * @param parent the previous parent way
          * @return true if a reasonable connection was found
          */
-        private boolean isConnectedTo(Node node, LinkedHashSet<Node> visited, double len, Way parent) {
+        private boolean isConnectedTo(Node node, Set<Node> visited, double len, Way parent) {
             if (len > maxLen) {
                 return false;
             }
@@ -479,7 +479,7 @@ public abstract class UnconnectedWays extends Test {
             }
             if (visited != null) {
                 visited.add(node);
-                List<Way> wantedParents = node.getParentWays().stream().filter(pw -> isWantedWay(pw))
+                List<Way> wantedParents = node.getParentWays().stream().filter(UnconnectedWays.this::isWantedWay)
                         .collect(Collectors.toList());
                 if (wantedParents.size() > 1 && wantedParents.indexOf(parent) != wantedParents.size() - 1) {
                     // we want to find a different way. so move known way to the end of the list

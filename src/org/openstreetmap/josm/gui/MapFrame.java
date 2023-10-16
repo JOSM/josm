@@ -214,12 +214,12 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         dialogsPanel = new DialogsPanel(splitPane);
         splitPane.setRightComponent(dialogsPanel);
 
-        /**
+        /*
          * All additional space goes to the mapView
          */
         splitPane.setResizeWeight(1.0);
 
-        /**
+        /*
          * Some beautifications.
          */
         splitPane.setDividerSize(5);
@@ -514,7 +514,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     public void fillPanel(Container panel) {
         panel.add(this, BorderLayout.CENTER);
 
-        /**
+        /*
          * sideToolBar: add map modes icons
          */
         if (Config.getPref().getBoolean("sidetoolbar.mapmodes.visible", true)) {
@@ -525,7 +525,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             sideToolBar.add(listAllMapModesAction.createButton());
         }
 
-        /**
+        /*
          * sideToolBar: add toggle dialogs icons
          */
         if (Config.getPref().getBoolean("sidetoolbar.toggledialogs.visible", true)) {
@@ -537,30 +537,29 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             sideToolBar.add(listAllDialogsAction.createButton());
         }
 
-        /**
+        /*
          * sideToolBar: add dynamic popup menu
          */
         sideToolBar.setComponentPopupMenu(new SideToolbarPopupMenu());
         ((JToolBar) sideToolBar).setFloatable(false);
         sideToolBar.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
 
-        /**
+        /*
          * sideToolBar: decide scroll- and visibility
          */
         if (Config.getPref().getBoolean("sidetoolbar.scrollable", true)) {
-            final ScrollViewport svp = new ScrollViewport(sideToolBar, ScrollViewport.VERTICAL_DIRECTION);
-            sideToolBar = svp;
+            sideToolBar = new ScrollViewport(sideToolBar, ScrollViewport.VERTICAL_DIRECTION);
         }
         sideToolBar.setVisible(SIDE_TOOLBAR_VISIBLE.get());
         sidetoolbarPreferencesChangedListener = e -> sideToolBar.setVisible(e.getProperty().get());
         SIDE_TOOLBAR_VISIBLE.addListener(sidetoolbarPreferencesChangedListener);
 
-        /**
+        /*
          * sideToolBar: add it to the panel
          */
         panel.add(sideToolBar, BorderLayout.WEST);
 
-        /**
+        /*
          * statusLine: add to panel
          */
         if (statusLine != null && Config.getPref().getBoolean("statusline.visible", true)) {

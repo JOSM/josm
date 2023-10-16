@@ -315,6 +315,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      *
      * @return list of history entries
      */
+    // This needs to return something like a Sequenced Collection (Java 21)
+    @SuppressWarnings({"NonApiType", "squid:S1319"})
     public LinkedList<Collection<? extends OsmPrimitive>> getSelectionHistory() {
         return selectionHistory;
     }

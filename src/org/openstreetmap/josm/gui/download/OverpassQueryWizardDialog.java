@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.dialogs.SearchDialog;
 import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassWizardCallbacks;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBoxModel;
+import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SearchCompilerQueryWizard;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -28,7 +29,7 @@ import org.openstreetmap.josm.tools.Utils;
 public final class OverpassQueryWizardDialog extends SearchDialog {
 
     private static final ListProperty OVERPASS_WIZARD_HISTORY =
-            new ListProperty("download.overpass.wizard", new ArrayList<String>());
+            new ListProperty("download.overpass.wizard", new ArrayList<>());
     private final OverpassWizardCallbacks callbacks;
 
     // dialog buttons
@@ -36,10 +37,10 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
     private static final int BUILD_AN_EXECUTE_QUERY = 1;
     private static final int CANCEL = 2;
 
-    private AutoCompComboBoxModel<SearchSetting> model;
+    private final AutoCompComboBoxModel<SearchSetting> model;
 
     /** preferences reader/writer with automatic transmogrification to and from String */
-    private AutoCompComboBoxModel<SearchSetting>.Preferences prefs;
+    private final JosmComboBoxModel<SearchSetting>.Preferences prefs;
 
     /**
      * Create a new {@link OverpassQueryWizardDialog}
