@@ -3,6 +3,7 @@ package org.openstreetmap.josm.testutils.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @BasicPreferences // Needed for nodes
 @Projection // Needed for getEastNorth
+@Inherited
 @ExtendWith(Territories.TerritoriesExtension.class)
 public @interface Territories {
     /**
@@ -62,27 +64,35 @@ public @interface Territories {
         private static Initialize last = Initialize.NONE;
 
         @Override
-        public void beforeAll(ExtensionContext context) throws Exception {
+        public void beforeAll(ExtensionContext context) {
             this.beforeEach(context);
         }
 
         @Override
-        public void beforeEach(ExtensionContext context) throws Exception {
+        public void beforeEach(ExtensionContext context) {
             Optional<Territories> annotation = AnnotationSupport.findAnnotation(context.getElement(),
                     Territories.class);
             if (annotation.isPresent()) {
                 Initialize current = annotation.get().value();
-                if (current.ordinal() <= last.ordinal()) {
-                    return;
-                }
-                last = current;
-                // Avoid potential race conditions if tests are parallelized
-                synchronized (TerritoriesExtension.class) {
-                    if (current == Initialize.INTERNAL) {
-                        org.openstreetmap.josm.tools.Territories.initializeInternalData();
-                    } else if (current == Initialize.ALL) {
-                        org.openstreetmap.josm.tools.Territories.initialize();
-                    }
+                setup(current);
+            }
+        }
+
+        /**
+         * Set up the test
+         * @param current The current level to initialize {@link org.openstreetmap.josm.tools.Territories} to
+         */
+        public static void setup(Initialize current) {
+            if (current.ordinal() <= last.ordinal()) {
+                return;
+            }
+            last = current;
+            // Avoid potential race conditions if tests are parallelized
+            synchronized (TerritoriesExtension.class) {
+                if (current == Initialize.INTERNAL) {
+                    org.openstreetmap.josm.tools.Territories.initializeInternalData();
+                } else if (current == Initialize.ALL) {
+                    org.openstreetmap.josm.tools.Territories.initialize();
                 }
             }
         }

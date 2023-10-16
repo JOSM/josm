@@ -5,26 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link WMSLayer} class.
  */
+@Main
+@Projection
 class WMSLayerTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection();
-
     /**
      * Unit test of {@link WMSLayer#WMSLayer}.
      */
@@ -45,6 +37,7 @@ class WMSLayerTest {
      */
     @Test
     void testTicket13828() {
-        assertThrows(IllegalArgumentException.class, () -> new WMSLayer(new ImageryInfo("TMS", "http://203.159.29.217/try2/{z}/{x}/{y}.png")));
+        final ImageryInfo info = new ImageryInfo("TMS", "http://203.159.29.217/try2/{z}/{x}/{y}.png");
+        assertThrows(IllegalArgumentException.class, () -> new WMSLayer(info));
     }
 }

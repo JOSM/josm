@@ -12,7 +12,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,17 +24,18 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.PrimitiveHoverListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
 /**
  * Unit tests of {@link PropertiesDialog} class.
  */
-@BasicPreferences
+@BasicPreferences(true)
+@Main
+@Projection
 class PropertiesDialogTest {
-    @RegisterExtension
-    static JOSMTestRules rules = new JOSMTestRules().main().projection();
 
     private static String createSearchSetting(List<OsmPrimitive> sel, boolean sameType) {
         return PropertiesDialog.createSearchSetting("foo", sel, sameType).text;

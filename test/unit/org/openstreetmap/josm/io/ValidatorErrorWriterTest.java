@@ -6,34 +6,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.RightAngleBuildingTest;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link ValidatorErrorWriter}
  */
+@BasicPreferences
 class ValidatorErrorWriterTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     @Test
     void testEmpty() throws IOException {
         doTest(Collections.emptyList(), "");
@@ -42,9 +31,9 @@ class ValidatorErrorWriterTest {
     @Test
     void testErrors() throws IOException {
         Locale.setDefault(Locale.ENGLISH);
-        doTest(Arrays.asList(TestError.builder(new RightAngleBuildingTest(), Severity.OTHER, 3701)
-                .message("Building with an almost square angle")
-                .primitives(new Node(LatLon.NORTH_POLE)).build()),
+        doTest(Collections.singletonList(TestError.builder(new RightAngleBuildingTest(), Severity.OTHER, 3701)
+                        .message("Building with an almost square angle")
+                        .primitives(new Node(LatLon.NORTH_POLE)).build()),
                   "  <analyser timestamp='\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3,9}Z' name='Almost right angle buildings'>"
                 + "    <class id='1' level='3'>"
                 + "      <classtext lang='en' title='Building with an almost square angle'/>"

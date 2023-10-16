@@ -13,8 +13,8 @@ import java.util.Collection;
 
 import javax.swing.JList;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -25,32 +25,24 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link DrawAction}.
  */
+@Main
+@Projection
+@Timeout(20)
 class DrawActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().timeout(20000);
-
     /**
      * Non regression test case for bug #12011.
      * Add a new node in the middle of way then undo. The rendering of the node, selected, must not cause any crash in PrimitiveRenderer.
      * @throws SecurityException see {@link Class#getDeclaredField} for details
-     * @throws NoSuchFieldException see {@link Class#getDeclaredField} for details
-     * @throws IllegalAccessException see {@link Field#set} for details
      * @throws IllegalArgumentException see {@link Field#set} for details
      */
     @Test
-    void testTicket12011() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+    void testTicket12011() throws IllegalArgumentException, SecurityException {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
         MainApplication.getLayerManager().addLayer(layer);
@@ -66,7 +58,7 @@ class DrawActionTest {
         dataSet.addPrimitive(n2);
 
         Way w = new Way();
-        w.setNodes(Arrays.asList(new Node[] {n1, n2}));
+        w.setNodes(Arrays.asList(n1, n2));
         dataSet.addPrimitive(w);
 
         try {

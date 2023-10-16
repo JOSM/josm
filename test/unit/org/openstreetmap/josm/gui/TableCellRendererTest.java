@@ -14,31 +14,29 @@ import java.util.logging.Level;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.ReflectionUtils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Checks if all classes implementing the {@link TableCellRenderer} interface do
  * accept a null value as second parameter for
  * {@link TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable,
  * java.lang.Object, boolean, boolean, int, int)}.
- *
+ * <p>
  * For unknown reason java sometimes call getTableCellRendererComponent method
  * with value = null. Every implementation of {@code getTableCellRendererComponent}
  * must fail gracefully when null is passed as value parameter.
- *
+ * <p>
  * This test scans the classpath for classes implementing {@code TableCellRenderer},
  * creates an instance and calls {@code getTableCellRendererComponent} with null
  * value to check if a NPE is thrown.
  *
  * @see <a href="https://josm.openstreetmap.de/ticket/6301">#6301</a>
  */
+@Main
 class TableCellRendererTest {
 
     // list of classes that cannot be easily tested and are verified either manually or another unit tests
@@ -48,20 +46,10 @@ class TableCellRendererTest {
     );
 
     /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main();
-
-    /**
      * Unit test of all table cell renderers against null values.
-     * @throws NoSuchMethodException no default constructor - to fix this, add a default constructor to the class
-     *                               or add the class to the SKIP_TEST list above
-     * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    void testTableCellRenderer() throws ReflectiveOperationException {
+    void testTableCellRenderer() {
         Set<Class<? extends TableCellRenderer>> renderers = TestUtils.getJosmSubtypes(TableCellRenderer.class);
         assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken
         JTable tbl = new JTable(2, 2);

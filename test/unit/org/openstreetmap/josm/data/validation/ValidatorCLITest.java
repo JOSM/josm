@@ -24,12 +24,6 @@ import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,15 +43,23 @@ import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.AnnotationUtils;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.testutils.annotations.ThreadSync;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import mockit.Mock;
+import mockit.MockUp;
 
 /**
  * Test class for {@link ValidatorCLI}
  * @author Taylor Smock
  */
 @BasicPreferences
+@Territories
 class ValidatorCLITest {
     @RegisterExtension
     ThreadSync.ThreadSyncExtension threadSync = new ThreadSync.ThreadSyncExtension();

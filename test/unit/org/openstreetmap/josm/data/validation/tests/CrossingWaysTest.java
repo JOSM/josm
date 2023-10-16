@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -24,22 +23,15 @@ import org.openstreetmap.josm.data.validation.tests.CrossingWays.Boundaries;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.SelfCrossing;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.Ways;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit test of {@link CrossingWays}.
  */
+@BasicPreferences
+@Projection
 class CrossingWaysTest {
-
-    /**
-     * Setup test
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rule = new JOSMTestRules().preferences().projection();
-
     private static Way newUsableWay(String tags) {
         return TestUtils.newWay(tags, new Node(LatLon.NORTH_POLE), new Node(LatLon.ZERO));
     }

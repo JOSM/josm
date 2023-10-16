@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -26,22 +25,18 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Geometry;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link JoinNodeWayAction}.
  */
+@BasicPreferences
+@Main
+@Projection
 final class JoinNodeWayActionTest {
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences();
-
     private void setupMapView(DataSet ds) {
         // setup a reasonable size for the edit window
         MainApplication.getMap().mapView.setBounds(new Rectangle(1345, 939));
@@ -59,10 +54,9 @@ final class JoinNodeWayActionTest {
     /**
      * Test case: Move node onto two almost overlapping ways
      * see #18189 moveontoway.osm
-     * @throws Exception if an error occurs
      */
     @Test
-    void testTicket18189() throws Exception {
+    void testTicket18189() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
         MainApplication.getLayerManager().addLayer(layer);

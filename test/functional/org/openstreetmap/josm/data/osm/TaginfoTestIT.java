@@ -9,44 +9,34 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonValue;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.TagChecker;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.HttpClient;
-import org.xml.sax.SAXException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 
 /**
  * Various integration tests with Taginfo.
  */
+@BasicPreferences
+@Timeout(20)
 class TaginfoTestIT {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20000);
-
     /**
      * Checks that popular tags are known (i.e included in internal presets, or deprecated, or explicitely ignored)
-     * @throws SAXException if any XML parsing error occurs
      * @throws IOException if any I/O error occurs
      * @throws ParseException if any MapCSS parsing error occurs
      */
     @Test
-    void testCheckPopularTags() throws SAXException, IOException, ParseException {
+    void testCheckPopularTags() throws IOException, ParseException {
         TaggingPresets.readFromPreferences();
         new TagChecker().initialize();
         MapCSSTagChecker mapCssTagChecker = new MapCSSTagChecker();

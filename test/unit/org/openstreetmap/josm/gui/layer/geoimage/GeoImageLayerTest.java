@@ -5,23 +5,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.Main;
 
 /**
  * Unit tests of {@link GeoImageLayer} class.
  */
 // Basic preferences are needed for OSM primitives
 @BasicPreferences
+@Main
 class GeoImageLayerTest {
-    @RegisterExtension
-    static JOSMTestRules josmTestRules = new JOSMTestRules().main();
-
     /**
      * Test that {@link GeoImageLayer#mergeFrom} throws IAE for invalid arguments
      */

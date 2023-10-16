@@ -3,20 +3,20 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Tests how fast {@link MapCSSStyleSource} finds the right style candidates for one object.
  * @author Michael Zangl
  */
+@Projection
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 class MapCSSStyleSourceFilterTest {
 
@@ -79,14 +79,6 @@ class MapCSSStyleSourceFilterTest {
     }
 
     private static final int APPLY_CALLS = 100000;
-
-    /**
-     * Prepare the test.
-     */
-    @BeforeAll
-    public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init(true);
-    }
 
     /**
      * Time how long it takes to evaluate [key=value] rules

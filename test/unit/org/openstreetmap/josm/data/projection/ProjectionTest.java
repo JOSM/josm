@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 
 /**
  * Unit tests for class {@link Projection}.
@@ -29,6 +30,7 @@ class ProjectionTest {
     /**
      * Tests that projections are numerically stable in their definition bounds (round trip error &lt; 1e-5)
      */
+    @ProjectionNadGrids
     @Test
     void testProjections() {
         error = false;

@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.openstreetmap.josm.TestUtils;
@@ -31,24 +30,16 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Logging;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link KeyCondition}.
  */
+@Projection
 class KeyConditionTest {
 
     private DataSet ds;
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
 
     /**
      * Setup test
@@ -165,7 +156,7 @@ class KeyConditionTest {
      * Ensure that we are accounting for all necessary {@link ConditionFactory.KeyMatchType} are accounted for.
      * If this fails, and the key should not be fully matched against (i.e., it is a regex), please modify
      * {@link MapCSSRuleIndex#findAnyRequiredKey}.
-     *
+     * <p>
      * Non-regression test for JOSM #22073.
      */
     @ParameterizedTest

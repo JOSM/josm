@@ -28,17 +28,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonStructure;
-import jakarta.json.JsonValue;
 
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -48,25 +41,29 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Test class for {@link MapboxVectorStyle}
  * @author Taylor Smock
  */
-public class MapboxVectorStyleTest {
+// Needed for osm primitives (we really just need to initialize the config)
+// OSM primitives are called when we load style sources
+@BasicPreferences
+class MapboxVectorStyleTest {
     /** Used to store sprite files (specifically, sprite{,@2x}.{png,json}) */
     @TempDir
     File spritesDirectory;
-
-    // Needed for osm primitives (we really just need to initialize the config)
-    // OSM primitives are called when we load style sources
-    @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules();
 
     /** The base information */
     private static final String BASE_STYLE = "'{'\"version\":8,\"name\":\"test_style\",\"owner\":\"josm test\",\"id\":\"{0}\",{1}'}'";
@@ -86,11 +83,11 @@ public class MapboxVectorStyleTest {
     @Test
     void testVersionChecks() {
         assertThrows(NullPointerException.class, () -> new MapboxVectorStyle(JsonValue.EMPTY_JSON_OBJECT));
-        IllegalArgumentException badVersion = assertThrows(IllegalArgumentException.class,
-          () -> new MapboxVectorStyle(Json.createObjectBuilder().add("version", 7).build()));
+        final JsonObject style7 = Json.createObjectBuilder().add("version", 7).build();
+        IllegalArgumentException badVersion = assertThrows(IllegalArgumentException.class, () -> new MapboxVectorStyle(style7));
         assertEquals("Vector Tile Style Version not understood: version 7 (json: {\"version\":7})", badVersion.getMessage());
-        badVersion = assertThrows(IllegalArgumentException.class,
-          () -> new MapboxVectorStyle(Json.createObjectBuilder().add("version", 9).build()));
+        final JsonObject style9 = Json.createObjectBuilder().add("version", 9).build();
+        badVersion = assertThrows(IllegalArgumentException.class, () -> new MapboxVectorStyle(style9));
         assertEquals("Vector Tile Style Version not understood: version 9 (json: {\"version\":9})", badVersion.getMessage());
         assertDoesNotThrow(() -> new MapboxVectorStyle(Json.createObjectBuilder().add("version", 8).build()));
     }

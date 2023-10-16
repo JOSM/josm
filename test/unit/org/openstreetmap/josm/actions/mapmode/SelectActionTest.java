@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.SelectActionCursor;
@@ -25,7 +24,8 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
@@ -34,6 +34,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SelectAction}.
  */
+@Main
+@Projection
 class SelectActionTest {
 
     boolean nodesMerged;
@@ -53,13 +55,6 @@ class SelectActionTest {
             nodesMerged = true;
         }
     }
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     /**
      * Test case: Move a two nodes way near a third node.

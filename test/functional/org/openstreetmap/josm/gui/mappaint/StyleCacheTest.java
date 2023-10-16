@@ -9,13 +9,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.IdentityHashMap;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -26,15 +28,21 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Pair;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test {@link StyleCache}.
  */
+@BasicPreferences
+@Main
+@org.openstreetmap.josm.testutils.annotations.MapPaintStyles
+@Projection
+@Timeout(60)
 class StyleCacheTest {
 
     private static final int IMG_WIDTH = 1400;
@@ -46,12 +54,13 @@ class StyleCacheTest {
     private static DataSet dsCity;
     private static DataSet dsCity2;
 
-    /**
-     * The test rules used for this test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().preferences().projection().mapStyles().timeout(60000);
+    @BeforeAll
+    static void beforeAll() throws IllegalDataException, IOException {
+        try (InputStream in = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"))) {
+            dsCity = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+        }
+        dsCity2 = new DataSet(dsCity);
+    }
 
     /**
      * Load the test data that is required.
@@ -60,10 +69,6 @@ class StyleCacheTest {
     @BeforeEach
     public void load() throws Exception {
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        try (InputStream in = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"))) {
-            dsCity = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
-        }
-        dsCity2 = new DataSet(dsCity);
     }
 
     /**
@@ -96,11 +101,11 @@ class StyleCacheTest {
     /**
      * Verifies, that the intern pool is not growing when repeatedly rendering the
      * same set of primitives (and clearing the calculated styles each time).
-     *
+     * <p>
      * If it grows, this is an indication that the {@code equals} and {@code hashCode}
      * implementation is broken and two identical objects are not recognized as equal
      * or produce different hash codes.
-     *
+     * <p>
      * The opposite problem (different objects are mistaken as equal) has more visible
      * consequences for the user (wrong rendering on the map) and is not recognized by
      * this test.
@@ -134,7 +139,7 @@ class StyleCacheTest {
     /**
      * Verifies, that the number of {@code StyleElementList} instances stored
      * for all the rendered primitives is actually low (as intended).
-     *
+     * <p>
      * Two primitives with the same style should share one {@code StyleElementList}
      * instance for the cached style elements. This is verified by counting all
      * the instances using {@code A == B} identity.

@@ -11,24 +11,21 @@ import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.data.osm.Filter;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
 /**
  * Test class for {@link FilterDialog}
  */
-@BasicPreferences
+@BasicPreferences(true)
+@Main
 class FilterDialogTest {
     private static final List<Filter> FILTERS = Stream.of("type:node", "type:way", "type:relation")
             .map(Filter::readFromString).map(Filter::new).collect(Collectors.toList());
-
-    @RegisterExtension
-    static JOSMTestRules josmTestRules = new JOSMTestRules().main();
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})

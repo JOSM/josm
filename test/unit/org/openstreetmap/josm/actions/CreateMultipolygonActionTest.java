@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -29,24 +28,21 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MapPaintStyles;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit test of {@link CreateMultipolygonAction}
  */
+@BasicPreferences
+@Main
+@MapPaintStyles
+@Projection
 class CreateMultipolygonActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences().mapStyles();
-
     private static Map<String, String> getRefToRoleMap(Relation relation) {
         Map<String, String> refToRole = new TreeMap<>();
         String ref = relation.get("ref");

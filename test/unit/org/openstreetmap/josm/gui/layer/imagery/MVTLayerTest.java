@@ -15,7 +15,6 @@ import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -33,18 +32,18 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.FakeGraphics;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.Main;
 
 /**
  * Test class for {@link MVTLayer}
  */
 @BasicPreferences
+@HTTP
+@Main
+@org.openstreetmap.josm.testutils.annotations.Projection
 class MVTLayerTest {
-    // Needed for setting HTTP factory and the main window/mapview
-    @RegisterExtension
-    JOSMTestRules josmTestRules = new JOSMTestRules().main().projection();
-
     MVTLayer testLayer;
 
     @BeforeEach
@@ -55,22 +54,22 @@ class MVTLayerTest {
     }
 
     @Test
-    void getTileLoaderClass() {
+    void testGetTileLoaderClass() {
         assertEquals(MapboxVectorCachedTileLoader.class, this.testLayer.getTileLoaderClass());
     }
 
     @Test
-    void getCacheName() {
+    void testGetCacheName() {
         assertEquals("MVT", this.testLayer.getCacheName());
     }
 
     @Test
-    void getCache() {
+    void testGetCache() {
         assertNotNull(MVTLayer.getCache());
     }
 
     @Test
-    void getNativeProjections() {
+    void testGetNativeProjections() {
         assertArrayEquals(Collections.singleton(MVTFile.DEFAULT_PROJECTION).toArray(), this.testLayer.getNativeProjections().toArray());
     }
 
@@ -81,7 +80,7 @@ class MVTLayerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"EPSG:3857" /* WGS 84 */, "EPSG:4326" /* Mercator (default) */, "EPSG:32612" /* UTM 12 N */})
-    void ensureDifferentProjectionsAreFetched(final String projectionCode) throws ReflectiveOperationException {
+    void testEnsureDifferentProjectionsAreFetched(final String projectionCode) throws ReflectiveOperationException {
         final Projection originalProjection = ProjectionRegistry.getProjection();
         try {
             ProjectionRegistry.setProjection(Projections.getProjectionByCode(projectionCode));
@@ -103,18 +102,18 @@ class MVTLayerTest {
     }
 
     @Test
-    void getTileSource() {
+    void testGetTileSource() {
         assertEquals(this.testLayer.getInfo().getUrl(), this.testLayer.getTileSource().getBaseUrl());
     }
 
     @Test
-    void createTile() {
+    void testCreateTile() {
         assertNotNull(this.testLayer.createTile(this.testLayer.getTileSource(), 3251, 6258, 14));
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void getMenuEntries(final boolean isExpert) {
+    void testGetMenuEntries(final boolean isExpert) {
         ExpertToggleAction.getInstance().setExpert(isExpert);
         // For now, just ensure that nothing throws on implementation
         MainApplication.getLayerManager().addLayer(this.testLayer);
@@ -122,12 +121,12 @@ class MVTLayerTest {
     }
 
     @Test
-    void getData() {
+    void testGetData() {
         assertNotNull(this.testLayer.getData());
     }
 
     @Test
-    void finishedLoading() throws ReflectiveOperationException {
+    void testFinishedLoading() throws ReflectiveOperationException {
         final MVTTile mvtTile = (MVTTile) this.testLayer.createTile(this.testLayer.getTileSource(), 3248, 6258, 14);
         final FinishedLoading finishedLoading = new FinishedLoading();
         mvtTile.addTileLoaderFinisher(finishedLoading);

@@ -9,24 +9,14 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 
 /**
  * Unit tests of {@link LanguageInfo}.
  */
+@I18n("ca@valencia")
 class LanguageInfoTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().i18n("ca@valencia");
-
     private static final Locale EN_NZ = new Locale("en", "NZ");
     private static final Locale DE_DE = Locale.GERMANY;
     private static final Locale PT_BR = new Locale("pt", "BR");

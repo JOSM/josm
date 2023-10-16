@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -434,6 +435,7 @@ public class ImageryPreferenceTestIT {
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
+    @Disabled("Takes a long time")
     void testImageryEntryValidity(String id, ImageryInfo info) {
         checkEntry(info);
         assertTrue(errors.isEmpty(), format(id, errors));
