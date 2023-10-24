@@ -259,6 +259,7 @@ class FunctionsTest {
 
     /**
      * Non-regression test for #23238: NPE when env.osm is null
+     * @see #testNonRegression23238JOSMSearch()
      */
     @ParameterizedTest
     @MethodSource("getFunctions")
@@ -286,5 +287,15 @@ class FunctionsTest {
             }
             assertDoesNotThrow(() -> function.invoke(null, args));
         }
+    }
+
+    /**
+     * Non-regression test for #23238: NPE when env.osm is null and {@link Functions#JOSM_search(Environment, String)}
+     * has a non-empty search string.
+     * @see #testNonRegression23238(Method)
+     */
+    @Test
+    void testNonRegression23238JOSMSearch() {
+        assertDoesNotThrow(() -> Functions.JOSM_search(new Environment(), "foobar"));
     }
 }

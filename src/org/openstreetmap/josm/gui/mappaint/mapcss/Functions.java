@@ -628,7 +628,7 @@ public final class Functions {
      * @return {@code true} if the object has a tag with the given key, {@code false} otherwise
      */
     public static boolean has_tag_key(final Environment env, String key) {
-        return env.osm != null ? env.osm.hasKey(key) : false;
+        return env.osm != null && env.osm.hasKey(key);
     }
 
     /**
@@ -851,6 +851,9 @@ public final class Functions {
      * @see SearchCompiler
      */
     public static Boolean JOSM_search(final Environment env, String searchStr) {
+        if (env.osm == null) {
+            return null;
+        }
         Match m;
         try {
             m = SearchCompiler.compile(searchStr);
