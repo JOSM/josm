@@ -12,14 +12,14 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.openstreetmap.josm.data.imagery.street_level.Projections;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.imagery.CameraPlane;
 import org.openstreetmap.josm.gui.util.imagery.Vector3D;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A class for showing 360 images that use the equirectangular projection

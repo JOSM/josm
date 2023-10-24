@@ -27,9 +27,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -58,6 +55,9 @@ import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
  * Implements a google-like search.
  * <br>
@@ -84,12 +84,31 @@ public class SearchCompiler {
 
     private final boolean caseSensitive;
     private final boolean regexSearch;
-    private static final String rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
-    private static final String rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
+    private static final String REGEX_ERROR_MESSAGE = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
+    private static final String REGEX_ERROR_MESSAGE_NO_POSITION = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
+    private static final String RANGE_OF_NUMBERS_EXPECTED = marktr("Range of numbers expected");
     private final PushbackTokenizer tokenizer;
     private static final Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
     private static final Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
     private static final Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
+
+    // Common literals
+    private static final String AREA_SIZE = "areasize";
+    private static final String CHANGESET = "changeset";
+    private static final String CLOSED = "closed";
+    private static final String DELETED = "deleted";
+    private static final String INCOMPLETE = "incomplete";
+    private static final String IN_DOWNLOADED_AREA = "indownloadedarea";
+    private static final String ALL_IN_DOWNLOADED_AREA = "all" + IN_DOWNLOADED_AREA;
+    private static final String MEMBERS = "members";
+    private static final String MODIFIED = "modified";
+    private static final String NODES = "nodes";
+    private static final String SELECTED = "selected";
+    private static final String TIMESTAMP = "timestamp";
+    private static final String UNTAGGED = "untagged";
+    private static final String VERSION = "version";
+    private static final String WAYS = "ways";
+    private static final String WAY_LENGTH = "waylength";
 
     static {
         addMatchFactory(new CoreSimpleMatchFactory());
@@ -133,31 +152,31 @@ public class SearchCompiler {
      * The core factory for "simple" {@link Match} objects
      */
     public static class CoreSimpleMatchFactory implements SimpleMatchFactory {
-        private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
-                "changeset", "nodes", "ways", "members", "tags", "areasize", "waylength", "modified", "deleted", "selected",
-                "incomplete", "untagged", "closed", "new", "indownloadedarea",
-                "allindownloadedarea", "timestamp", "nth", "nth%", "hasRole", "preset");
+        private final Collection<String> keywords = Arrays.asList("id", VERSION, "type", "user", "role",
+                CHANGESET, NODES, WAYS, MEMBERS, "tags", AREA_SIZE, WAY_LENGTH, MODIFIED, DELETED, SELECTED,
+                INCOMPLETE, UNTAGGED, CLOSED, "new", IN_DOWNLOADED_AREA,
+                ALL_IN_DOWNLOADED_AREA, TIMESTAMP, "nth", "nth%", "hasRole", "preset");
 
         @Override
         public Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError {
             switch(keyword) {
-            case "modified":
+            case MODIFIED:
                 return new Modified();
-            case "deleted":
+            case DELETED:
                 return new Deleted();
-            case "selected":
+            case SELECTED:
                 return new Selected();
-            case "incomplete":
+            case INCOMPLETE:
                 return new Incomplete();
-            case "untagged":
+            case UNTAGGED:
                 return new Untagged();
-            case "closed":
+            case CLOSED:
                 return new Closed();
             case "new":
                 return new New();
-            case "indownloadedarea":
+            case IN_DOWNLOADED_AREA:
                 return new InDataSourceArea(false);
-            case "allindownloadedarea":
+            case ALL_IN_DOWNLOADED_AREA:
                 return new InDataSourceArea(true);
             default:
                 if (tokenizer != null) {
@@ -173,7 +192,7 @@ public class SearchCompiler {
             switch (keyword) {
                 case "id":
                     return new Id(tokenizer);
-                case "version":
+                case VERSION:
                     return new Version(tokenizer);
                 case "type":
                     return new ExactType(tokenizer.readTextOrNumber());
@@ -183,19 +202,19 @@ public class SearchCompiler {
                     return new UserMatch(tokenizer.readTextOrNumber());
                 case "role":
                     return new RoleMatch(tokenizer.readTextOrNumber());
-                case "changeset":
+                case CHANGESET:
                     return new ChangesetId(tokenizer);
-                case "nodes":
+                case NODES:
                     return new NodeCountRange(tokenizer);
-                case "ways":
+                case WAYS:
                     return new WayCountRange(tokenizer);
-                case "members":
+                case MEMBERS:
                     return new MemberCountRange(tokenizer);
                 case "tags":
                     return new TagCountRange(tokenizer);
-                case "areasize":
+                case AREA_SIZE:
                     return new AreaSize(tokenizer);
-                case "waylength":
+                case WAY_LENGTH:
                     return new WayLength(tokenizer);
                 case "nth":
                     return new Nth(tokenizer, false);
@@ -203,7 +222,7 @@ public class SearchCompiler {
                     return new Nth(tokenizer, true);
                 case "hasRole":
                     return new HasRole(tokenizer);
-                case "timestamp":
+                case TIMESTAMP:
                     // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
                     String rangeS = ' ' + tokenizer.readTextOrNumber() + ' ';
                     String[] rangeA = rangeS.split("/", -1);
@@ -369,11 +388,11 @@ public class SearchCompiler {
             try {
                 return Pattern.compile(regex, flags);
             } catch (PatternSyntaxException e) {
-                throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
+                throw new SearchParseError(tr(REGEX_ERROR_MESSAGE, e.getPattern(), e.getIndex(), e.getMessage()), e);
             } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
                 // StringIndexOutOfBoundsException caught because of https://bugs.openjdk.java.net/browse/JI-9044959
                 // See #13870: To remove after we switch to a version of Java which resolves this bug
-                throw new SearchParseError(tr(rxErrorMsgNoPos, regex, e.getMessage()), e);
+                throw new SearchParseError(tr(REGEX_ERROR_MESSAGE_NO_POSITION, regex, e.getMessage()), e);
             }
         }
     }
@@ -706,7 +725,7 @@ public class SearchCompiler {
 
         @Override
         protected String getString() {
-            return "changeset";
+            return CHANGESET;
         }
     }
 
@@ -729,7 +748,7 @@ public class SearchCompiler {
 
         @Override
         protected String getString() {
-            return "version";
+            return VERSION;
         }
     }
 
@@ -782,7 +801,7 @@ public class SearchCompiler {
 
         private String getMv(Tagged osm) {
             String mv;
-            if ("timestamp".equals(key) && osm instanceof OsmPrimitive) {
+            if (TIMESTAMP.equals(key) && osm instanceof OsmPrimitive) {
                 mv = ((OsmPrimitive) osm).getInstant().toString();
             } else {
                 mv = osm.get(key);
@@ -1428,7 +1447,7 @@ public class SearchCompiler {
         }
 
         NodeCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
-            this(tokenizer.readRange(tr("Range of numbers expected")));
+            this(tokenizer.readRange(tr(RANGE_OF_NUMBERS_EXPECTED)));
         }
 
         @Override
@@ -1444,7 +1463,7 @@ public class SearchCompiler {
 
         @Override
         protected String getString() {
-            return "nodes";
+            return NODES;
         }
     }
 
@@ -1457,7 +1476,7 @@ public class SearchCompiler {
         }
 
         WayCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
-            this(tokenizer.readRange(tr("Range of numbers expected")));
+            this(tokenizer.readRange(tr(RANGE_OF_NUMBERS_EXPECTED)));
         }
 
         @Override
@@ -1486,7 +1505,7 @@ public class SearchCompiler {
         }
 
         MemberCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
-            this(tokenizer.readRange(tr("Range of numbers expected")));
+            this(tokenizer.readRange(tr(RANGE_OF_NUMBERS_EXPECTED)));
         }
 
         @Override
@@ -1501,7 +1520,7 @@ public class SearchCompiler {
 
         @Override
         protected String getString() {
-            return "members";
+            return MEMBERS;
         }
     }
 
@@ -1514,7 +1533,7 @@ public class SearchCompiler {
         }
 
         TagCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
-            this(tokenizer.readRange(tr("Range of numbers expected")));
+            this(tokenizer.readRange(tr(RANGE_OF_NUMBERS_EXPECTED)));
         }
 
         @Override
@@ -1565,7 +1584,7 @@ public class SearchCompiler {
 
         @Override
         protected String getString() {
-            return "timestamp";
+            return TIMESTAMP;
         }
     }
 
@@ -1626,7 +1645,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "modified";
+            return MODIFIED;
         }
     }
 
@@ -1641,7 +1660,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "deleted";
+            return DELETED;
         }
     }
 
@@ -1656,7 +1675,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "selected";
+            return SELECTED;
         }
     }
 
@@ -1673,7 +1692,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "incomplete";
+            return INCOMPLETE;
         }
     }
 
@@ -1690,7 +1709,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "untagged";
+            return UNTAGGED;
         }
     }
 
@@ -1705,7 +1724,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "closed";
+            return CLOSED;
         }
     }
 
@@ -1766,7 +1785,7 @@ public class SearchCompiler {
         }
 
         AreaSize(PushbackTokenizer tokenizer) throws SearchParseError {
-            this(tokenizer.readRange(tr("Range of numbers expected")));
+            this(tokenizer.readRange(tr(RANGE_OF_NUMBERS_EXPECTED)));
         }
 
         @Override
@@ -1777,7 +1796,7 @@ public class SearchCompiler {
 
         @Override
         protected String getString() {
-            return "areasize";
+            return AREA_SIZE;
         }
     }
 
@@ -1791,7 +1810,7 @@ public class SearchCompiler {
         }
 
         WayLength(PushbackTokenizer tokenizer) throws SearchParseError {
-            this(tokenizer.readRange(tr("Range of numbers expected")));
+            this(tokenizer.readRange(tr(RANGE_OF_NUMBERS_EXPECTED)));
         }
 
         @Override
@@ -1804,7 +1823,7 @@ public class SearchCompiler {
 
         @Override
         protected String getString() {
-            return "waylength";
+            return WAY_LENGTH;
         }
     }
 
@@ -1877,7 +1896,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return all ? "allindownloadedarea" : "indownloadedarea";
+            return all ? ALL_IN_DOWNLOADED_AREA : IN_DOWNLOADED_AREA;
         }
     }
 

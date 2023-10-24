@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A map note. It always has at least one comment since a comment is required to create a note on osm.org.

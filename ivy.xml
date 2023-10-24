@@ -29,6 +29,8 @@
         <dependency conf="runtimeOnly->default" org="org.eclipse.parsson" name="parsson" rev="1.1.4"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-jcs3-core" rev="3.1"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-compress" rev="1.23.0"/>
+        <dependency conf="api->default" org="jakarta.annotation" name="jakarta.annotation-api" rev="2.1.1" />
+        <!-- jsr305 has some source files with non-free CC-BY-2.5 license. Remove after 2024-06-01 to give plugins time to migrate. See #23220 for details -->
         <dependency conf="api->default" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
         <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.9"/>
         <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
@@ -46,6 +48,8 @@
         <dependency conf="sources->sources" org="org.eclipse.parsson" name="parsson" rev="1.1.4"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-jcs3-core" rev="3.1"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-compress" rev="1.23.0"/>
+        <dependency conf="sources->sources" org="jakarta.annotation" name="jakarta.annotation-api" rev="2.1.1" />
+        <!-- jsr305 has some source files with non-free CC-BY-2.5 license. Remove after 2024-06-01 to give plugins time to migrate. See #23220 for details -->
         <dependency conf="sources->sources" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.9"/>
         <dependency conf="sources->sources" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>

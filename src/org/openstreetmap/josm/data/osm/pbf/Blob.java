@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A "Blob" of data from an OSM PBF file. It, in turn, contains additional data in PBF format, which may be compressed.
