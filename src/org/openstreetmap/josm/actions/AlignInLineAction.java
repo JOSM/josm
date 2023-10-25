@@ -81,11 +81,11 @@ public final class AlignInLineAction extends JosmAction {
     }
 
     /**
-     * Return 2 nodes making up the line along which provided nodes must be aligned.
+     * Return two nodes making up the line along which provided nodes must be aligned.
      *
      * @param nodes Nodes to be aligned.
-     * @return A array of two nodes.
-     * @throws IllegalArgumentException if nodes is empty
+     * @return An array of two nodes.
+     * @throws IllegalArgumentException if nodes parameter is empty
      */
     private static Node[] nodePairFurthestApart(List<Node> nodes) {
         // Detect if selected nodes are on the same way.
@@ -104,16 +104,16 @@ public final class AlignInLineAction extends JosmAction {
             throw new IllegalArgumentException();
         }
 
-        // Nodes belongs to multiple ways, return most distant nodes.
+        // Nodes belong to multiple ways, return the most distant nodes.
         if (waysRef.size() != 1)
-            return nodeFurthestAppart(nodes);
+            return nodeFurthestApart(nodes);
 
         // All nodes are part of the same way. See #9605.
         Way way = waysRef.iterator().next();
 
         if (way.isClosed()) {
             // Align these nodes on the line passing through the most distant nodes.
-            return nodeFurthestAppart(nodes);
+            return nodeFurthestApart(nodes);
         }
 
         Node nodea = null;
@@ -143,9 +143,9 @@ public final class AlignInLineAction extends JosmAction {
      * @param nodes List of nodes to analyze.
      * @return An array containing the two most distant nodes.
      */
-    private static Node[] nodeFurthestAppart(List<Node> nodes) {
+    private static Node[] nodeFurthestApart(List<Node> nodes) {
         Node node1 = null, node2 = null;
-        double minSqDistance = 0;
+        double minSqDistance = Double.NEGATIVE_INFINITY;
         int nb;
 
         nb = nodes.size();
@@ -190,7 +190,7 @@ public final class AlignInLineAction extends JosmAction {
      * Builds "align in line" command depending on the selected objects.
      * @param ds data set in which the command operates
      * @return the resulting command to execute to perform action
-     * @throws InvalidSelection if a polygon is selected, or if a node is used by 3 or more ways
+     * @throws InvalidSelection if a polygon is selected, or if a node is used by three or more ways
      * @since 13108
      */
     public Command buildCommand(DataSet ds) throws InvalidSelection {
@@ -226,7 +226,7 @@ public final class AlignInLineAction extends JosmAction {
     }
 
     /**
-     * Align nodes in case 3 or more nodes are selected.
+     * Align nodes in case three or more nodes are selected.
      *
      * @param nodes Nodes to be aligned.
      * @return Command that perform action.
