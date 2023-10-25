@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.Geometry.nodePairFurthestApart;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -78,91 +79,6 @@ public final class AlignInLineAction extends JosmAction {
         InvalidSelection(String msg) {
             super(msg);
         }
-    }
-
-    /**
-     * Return two nodes making up the line along which provided nodes must be aligned.
-     *
-     * @param nodes Nodes to be aligned.
-     * @return An array of two nodes.
-     * @throws IllegalArgumentException if nodes parameter is empty
-     */
-    private static Node[] nodePairFurthestApart(List<Node> nodes) {
-        // Detect if selected nodes are on the same way.
-
-        // Get ways passing though all selected nodes.
-        Set<Way> waysRef = null;
-        for (Node n: nodes) {
-            Collection<Way> ref = n.getParentWays();
-            if (waysRef == null)
-                waysRef = new HashSet<>(ref);
-            else
-                waysRef.retainAll(ref);
-        }
-
-        if (waysRef == null) {
-            throw new IllegalArgumentException();
-        }
-
-        // Nodes belong to multiple ways, return the most distant nodes.
-        if (waysRef.size() != 1)
-            return nodeFurthestApart(nodes);
-
-        // All nodes are part of the same way. See #9605.
-        Way way = waysRef.iterator().next();
-
-        if (way.isClosed()) {
-            // Align these nodes on the line passing through the most distant nodes.
-            return nodeFurthestApart(nodes);
-        }
-
-        Node nodea = null;
-        Node nodeb = null;
-
-        // The way is open, align nodes on the line passing through the extremity nodes (most distant in the way
-        // sequence). See #9605#comment:3.
-        Set<Node> remainNodes = new HashSet<>(nodes);
-        for (Node n : way.getNodes()) {
-            if (!remainNodes.contains(n))
-                continue;
-            if (nodea == null)
-                nodea = n;
-            if (remainNodes.size() == 1) {
-                nodeb = remainNodes.iterator().next();
-                break;
-            }
-            remainNodes.remove(n);
-        }
-
-        return new Node[] {nodea, nodeb};
-    }
-
-    /**
-     * Return the two nodes the most distant from the provided list.
-     *
-     * @param nodes List of nodes to analyze.
-     * @return An array containing the two most distant nodes.
-     */
-    private static Node[] nodeFurthestApart(List<Node> nodes) {
-        Node node1 = null, node2 = null;
-        double minSqDistance = Double.NEGATIVE_INFINITY;
-        int nb;
-
-        nb = nodes.size();
-        for (int i = 0; i < nb - 1; i++) {
-            Node n = nodes.get(i);
-            for (int j = i + 1; j < nb; j++) {
-                Node m = nodes.get(j);
-                double sqDist = n.getEastNorth().distanceSq(m.getEastNorth());
-                if (sqDist > minSqDistance) {
-                    node1 = n;
-                    node2 = m;
-                    minSqDistance = sqDist;
-                }
-            }
-        }
-
-        return new Node[] {node1, node2};
     }
 
     /**
