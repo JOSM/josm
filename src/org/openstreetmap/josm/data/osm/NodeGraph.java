@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A directed or undirected graph of nodes. Nodes are connected via edges represented by NodePair instances.
@@ -218,7 +219,7 @@ public class NodeGraph {
      * @since xxx
      */
     public Map<Node, List<Node>> createMap() {
-        final Map<Node, List<Node>> result = new HashMap<>((int) (edges.size() / 0.75) + 1);
+        final Map<Node, List<Node>> result = new HashMap<>(Utils.hashMapInitialCapacity(edges.size()));
 
         for (NodePair edge : edges) {
             result.computeIfAbsent(edge.getA(), k -> new ArrayList<>()).add(edge.getB());
