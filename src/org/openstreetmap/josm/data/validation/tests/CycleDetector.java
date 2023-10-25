@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +25,9 @@ import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.algos.Tarjan;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Test for detecting <a href="https://en.wikipedia.org/wiki/Cycle_(graph_theory)">cycles</a> in a directed graph,
@@ -218,147 +216,5 @@ public class CycleDetector extends Test {
             }
         }
         return graph;
-    }
-
-
-
-    /**
-     * Tarjan's strongly connected components algorithm for JOSM.
-     *
-     * @see <a href="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm">
-     * Tarjan's strongly connected components algorithm</a>
-     */
-    public static final class Tarjan {
-
-        /**
-         * Used to remember visited nodes and its metadata. Key is used for storing
-         * the unique ID of the nodes instead of the full data to save space.
-         */
-        private final Map<Long, TarjanHelper> registry;
-
-        /** Used to store the graph data as a map. */
-        private final Map<Node, List<Node>> graphMap;
-
-        /** Used to store strongly connected components. */
-        private final Collection<List<Node>> scc = new HashSet<>();
-
-        /** Used on algorithm runtime to keep track discovery progress. */
-        private final Deque<Node> stack = new ArrayDeque<>();
-
-        /** Used on algorithm runtime to keep track discovery progress. */
-        private int index = 0;
-
-        public Tarjan(NodeGraph graph) {
-            graphMap = graph.createMap();
-
-            this.registry = new HashMap<>((int) (graph.getEdges().size() / 0.75) + 1);
-        }
-
-        /**
-         * Returns the strongly connected components in the current graph.
-         *
-         * @return the strongly connected components in the current graph
-         */
-        public Collection<List<Node>> getSCC() {
-            for (Node node : graphMap.keySet()) {
-                if (!registry.containsKey(node.getUniqueId())) {
-                    strongConnect(node);
-                }
-            }
-            return scc;
-        }
-
-        /**
-         * Returns the graph data as a map.
-         * @see NodeGraph#createMap()
-         * @return the graph data as a map
-         */
-        public Map<Node, List<Node>> getGraphMap() {
-            return graphMap;
-        }
-
-        /**
-         * Calculates strongly connected components available from the given node, in an iterative fashion.
-         *
-         * @param u0 the node to generate strongly connected components from
-         */
-        private void strongConnect(final Node u0) {
-            final Deque<Pair<Node, Integer>> work = new ArrayDeque<>();
-            work.push(new Pair<>(u0, 0));
-            boolean recurse;
-
-            while (!work.isEmpty()) {
-                Pair<Node, Integer> popped = work.remove();
-                Node u = popped.a;
-                int j = popped.b;
-
-                if (j == 0) {
-                    index++;
-                    registry.put(u.getUniqueId(), new TarjanHelper(index));
-                    stack.push(u);
-                }
-
-                recurse = false;
-                List<Node> successors = getSuccessors(u);
-
-                for (int i = j; i < successors.size(); i++) {
-                    Node v = successors.get(i);
-                    if (!registry.containsKey(v.getUniqueId())) {
-                        work.push(new Pair<>(u, i + 1));
-                        work.push(new Pair<>(v, 0));
-                        recurse = true;
-                        break;
-                    } else if (stack.contains(v)) {
-                        TarjanHelper uHelper = registry.get(u.getUniqueId());
-                        TarjanHelper vHelper = registry.get(v.getUniqueId());
-                        uHelper.lowlink = Math.min(uHelper.lowlink, vHelper.index);
-                    }
-                }
-
-                if (!recurse) {
-                    TarjanHelper uHelper = registry.get(u.getUniqueId());
-                    if (uHelper.lowlink == uHelper.index) {
-                        List<Node> currentSCC = new ArrayList<>();
-                        Node v;
-                        do {
-                            v = stack.remove();
-                            currentSCC.add(v);
-                        } while (!v.equals(u));
-                        scc.add(currentSCC);
-                    }
-                    if (!work.isEmpty()) {
-                        Node v = u;
-                        Pair<Node, Integer> peeked = work.peek();
-                        u = peeked.a;
-                        TarjanHelper vHelper = registry.get(v.getUniqueId());
-                        uHelper = registry.get(u.getUniqueId());
-                        uHelper.lowlink = Math.min(uHelper.lowlink, vHelper.lowlink);
-                    }
-                }
-            }
-        }
-
-        /**
-         * Returns the next direct successors from the graph of the given node.
-         *
-         * @param node a node to start search from
-         * @return direct successors of the node or an empty list, if it's a terminal node
-         */
-        private List<Node> getSuccessors(Node node) {
-            return graphMap.getOrDefault(node, Collections.emptyList());
-        }
-
-        /**
-         * Helper class for storing the Tarjan algorithm runtime metadata.
-         */
-        private static class TarjanHelper {
-            private final int index;
-            private int lowlink;
-
-            private TarjanHelper(int index) {
-                this.index = index;
-                this.lowlink = index;
-            }
-        }
     }
 }
