@@ -92,8 +92,5 @@ if $SIGNAPP; then
     ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip
 
     echo "Uploading to Apple"
-    # Note: --primary-bundle-id was never parsed server side, apparently. See https://developer.apple.com/documentation/technotes/tn3147-migrating-to-the-latest-notarization-tool#Submit-a-file
-    # Keep altool as a backup until 2023-11-01, when it will no longer be able to notarize apps.
-    xcrun notarytool submit --apple-id "$APPLE_ID" --password "$APPLE_ID_PW" --wait app/JOSM.zip || \
-    xcrun altool --notarize-app -f app/JOSM.zip -p "$APPLE_ID_PW" -u "$APPLE_ID" --primary-bundle-id de.openstreetmap.josm
+    xcrun notarytool submit --apple-id "$APPLE_ID" --password "$APPLE_ID_PW" --team-id "$APPLE_ID_TEAM" --wait app/JOSM.zip
 fi
