@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,7 +50,9 @@ public final class DistributeAction extends JosmAction {
      * Select method according to user selection.
      * Case 1: One Way (no self-crossing) and at most 2 nodes contains by this way:
      *     Distribute nodes keeping order along the way
-     * Case 2: Other
+     * Case 2: One Node part of at least one way, not a start or end node
+     *     Distribute the selected node relative to neighbors
+     * Case 3: Other
      *     Distribute nodes
      */
     @Override
@@ -59,8 +62,8 @@ public final class DistributeAction extends JosmAction {
 
         // Collect user selected objects
         Collection<OsmPrimitive> selected = getLayerManager().getEditDataSet().getSelected();
-        Collection<Way> ways = new LinkedList<>();
-        Collection<Node> nodes = new HashSet<>();
+        List<Way> ways = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
         for (OsmPrimitive osm : selected) {
             if (osm instanceof Node) {
                 nodes.add((Node) osm);
@@ -81,13 +84,15 @@ public final class DistributeAction extends JosmAction {
             cmds = distributeWay(ways, nodes);
         } else if (checkDistributeNodes(ways, nodes)) {
             cmds = distributeNodes(nodes);
+        } else if (checkDistributeNode(nodes)){
+            cmds = distributeNode(nodes);
         } else {
             new Notification(
-                             tr("Please select :\n" +
-                                "* One no self-crossing way with at most two of its nodes;\n" +
-                                "* Three nodes."))
+                             tr("Please select:<ul>" +
+                                "<li>One no self-crossing way with at most two of its nodes;</li>" +
+                                "<li>One node in the middle of a way;</li>" +
+                                "<li>Three nodes.</li></ul>"))
                 .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                .setDuration(Notification.TIME_SHORT)
                 .show();
             return;
         }
@@ -185,6 +190,46 @@ public final class DistributeAction extends JosmAction {
     }
 
     /**
+     * Test if single node oriented algorithm applies to the selection.
+     * @param nodes The selected node. Collection type and naming kept for compatibility with similar methods.
+     * @return true in this case
+     */
+    private static boolean checkDistributeNode(List<Node> nodes) {
+        if (nodes.size() == 1) {
+            Node node = nodes.get(0);
+            int goodWays = 0;
+            for (Way way : node.getParentWays()) {
+                // the algorithm is applicable only if there is one way which:
+                //  - is open and the selected node is a middle node, or
+                //  - is closed and has at least 4 nodes (as 3 doesn't make sense and error-prone)
+                if (!way.isFirstLastNode(node) || (way.isClosed() && way.getRealNodesCount() > 3))
+                    goodWays++;
+            }
+            return goodWays == 1;
+        }
+        return false;
+    }
+
+    /**
+     * Distribute a single node relative to way neighbours.
+     * @see DistributeAction#distributeNodes(Collection)
+     * @param nodes a single node in a collection to distribute
+     * @return Commands to execute to perform action
+     */
+    private static Collection<Command> distributeNode(List<Node> nodes) {
+        final Node nodeToDistribute = nodes.get(0);
+        Way parent = nodeToDistribute.getParentWays().get(0);
+
+        List<Node> neighbours = new ArrayList<>(parent.getNeighbours(nodeToDistribute));
+
+        // insert in the middle
+        neighbours.add(1, nodeToDistribute);
+
+        // call the distribution method with 3 nodes
+        return distributeNodes(neighbours);
+    }
+
+    /**
      * Test if nodes oriented algorithm applies to the selection.
      * @param ways Selected ways
      * @param nodes Selected nodes
@@ -197,7 +242,7 @@ public final class DistributeAction extends JosmAction {
     /**
      * Distribute nodes when only nodes are selected.
      * The general algorithm here is to find the two selected nodes
-     * that are furthest apart, and then to distribute all other selected
+     * that are the furthest apart, and then to distribute all other selected
      * nodes along the straight line between these nodes.
      * @param nodes nodes to distribute
      * @return Commands to execute to perform action
@@ -241,7 +286,7 @@ public final class DistributeAction extends JosmAction {
         // A list of commands to do
         Collection<Command> cmds = new LinkedList<>();
 
-        // Amount of nodes between A and B plus 1
+        // Number of nodes between A and B plus 1
         int num = nodes.size()+1;
 
         // Current number of node
