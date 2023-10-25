@@ -140,6 +140,7 @@ jobs:
           CERT_MACOS_P12: ${{ secrets.CERT_MACOS_P12 }}
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
+          APPLE_ID_TEAM: ${{ secrets.APPLE_ID_TEAM }}
         run: |
           if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip ]; then
             curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-x64_bin-jmods.zip
