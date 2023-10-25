@@ -97,6 +97,7 @@ class DistributeActionTest {
     @Test
     void testNodesAlignment() {
         Way way = new Way();
+        // TODO: make it less restricted in range
         final int totalNodeCount = 11;  // should be in range [2,180]!
         final int innerNodeCount = totalNodeCount - 2;
         final int lastLon = totalNodeCount - 1;
