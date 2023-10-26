@@ -52,9 +52,9 @@ class DistributeActionTest {
     @Test
     void testWholeWayAlignment() {
         Way way = new Way();
-        final int totalNodeCount = 11;  // should be in range [2,180]!
+        final int totalNodeCount = 1200;  // should be at least three
         final int innerNodeCount = totalNodeCount - 2;
-        final int lastLon = totalNodeCount - 1;
+        final int lonLimit = 10;
 
         // add first node
         Node n = new Node(new LatLon(LatLon.ZERO));
@@ -63,13 +63,14 @@ class DistributeActionTest {
 
         // add interim nodes
         for (int i = 0; i < innerNodeCount; i++) {
-            n = new Node(new LatLon(0, getRandomDoubleInRange(0, lastLon)));
+            // 0.001 subtracted to avoid cases where the random double == lonLimit
+            n = new Node(new LatLon(0, getRandomDoubleInRange(0, lonLimit - 0.001)));
             ds.addPrimitive(n);
             way.addNode(n);
         }
 
         // add last node
-        n = new Node(new LatLon(0, lastLon));
+        n = new Node(new LatLon(0, lonLimit));
         ds.addPrimitive(n);
         way.addNode(n);
         ds.addPrimitive(way);
@@ -86,21 +87,17 @@ class DistributeActionTest {
         new DistributeAction().actionPerformed(null);
 
         for (int i = 0; i < totalNodeCount; i++) {
-            assertEquals(
-                    (double) (1 / lastLon) + i,
-                    way.getNode(i).lon(),
-                    1e-7
-            );
+            double evenGapNthNode = ((double) lonLimit / (totalNodeCount - 1)) * i;
+            assertEquals(evenGapNthNode, way.getNode(i).lon(), 1e-7);
         }
     }
 
     @Test
     void testNodesAlignment() {
         Way way = new Way();
-        // TODO: make it less restricted in range
-        final int totalNodeCount = 11;  // should be in range [2,180]!
+        final int totalNodeCount = 1100;  // should be at least three
         final int innerNodeCount = totalNodeCount - 2;
-        final int lastLon = totalNodeCount - 1;
+        final int lonLimit = 10;
 
         // add first node
         Node n = new Node(new LatLon(LatLon.ZERO));
@@ -109,13 +106,14 @@ class DistributeActionTest {
 
         // add interim nodes
         for (int i = 0; i < innerNodeCount; i++) {
-            n = new Node(new LatLon(0, getRandomDoubleInRange(0, lastLon)));
+            // 0.001 subtracted to avoid cases where the random double == lonLimit
+            n = new Node(new LatLon(0, getRandomDoubleInRange(0, lonLimit - 0.001)));
             ds.addPrimitive(n);
             way.addNode(n);
         }
 
         // add last node
-        n = new Node(new LatLon(0, lastLon));
+        n = new Node(new LatLon(0, lonLimit));
         ds.addPrimitive(n);
         way.addNode(n);
         ds.addPrimitive(way);
@@ -135,11 +133,8 @@ class DistributeActionTest {
         //  the two *furthest nodes* are selected as alignment base, then they evenly ordered along a virtual way.
         //  Test expectation: the *end nodes* of a virtual way are distribution basis.
         for (int i = 0; i < totalNodeCount; i++) {
-            assertEquals(
-                    (double) (1 / lastLon) + i,
-                    way.getNode(i).lon(),
-                    1e-7
-            );
+            double evenGapNthNode = ((double) lonLimit / (totalNodeCount - 1)) * i;
+            assertEquals(evenGapNthNode, way.getNode(i).lon(), 1e-7);
         }
     }
 
@@ -147,7 +142,7 @@ class DistributeActionTest {
     void testSingleNodeAlignment() {
         Way way = new Way();
         final int totalNodeCount = 11;  // should be in range [3,180]!
-        final int lastLon = totalNodeCount - 1;
+        final int lonLimit = totalNodeCount - 1;
 
         Node n;
         Node selectedNode = null;
@@ -165,7 +160,7 @@ class DistributeActionTest {
         }
 
         // add last node
-        n = new Node(new LatLon(0, lastLon));
+        n = new Node(new LatLon(0, lonLimit));
         ds.addPrimitive(n);
         way.addNode(n);
         ds.addPrimitive(way);
@@ -182,14 +177,18 @@ class DistributeActionTest {
         new DistributeAction().actionPerformed(null);
 
         for (int i = 0; i < totalNodeCount; i++) {
-            assertEquals(
-                    (double) (1 / lastLon) + i,
-                    way.getNode(i).lon(),
-                    1e-7
-            );
+            double evenGapNthNode = ((double) lonLimit / (totalNodeCount - 1)) * i;
+            assertEquals(evenGapNthNode, way.getNode(i).lon(), 1e-7);
         }
     }
 
+
+    /**
+     * @param min range lower value
+     * @param max range upper value
+     * @return a single double in the given range
+     * @throws IllegalArgumentException if min {@code >=} max
+     */
     private static double getRandomDoubleInRange(double min, double max) {
         if (min >= max) {
             throw new IllegalArgumentException("Invalid range. Max must be greater than min.");
