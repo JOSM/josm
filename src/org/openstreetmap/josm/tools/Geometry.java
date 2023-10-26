@@ -86,10 +86,10 @@ public final class Geometry {
     public static final double INTERSECTION_EPS_EAST_NORTH = 1e-4;
 
     /**
-     * Will find all intersection and add nodes there for list of given ways.
+     * Will find all intersections and add nodes there for list of given ways.
      * Handles self-intersections too.
      * And makes commands to add the intersection points to ways.
-     *
+     * <p>
      * Prerequisite: no two nodes have the same coordinates.
      *
      * @param ways  a list of ways to test
@@ -244,7 +244,7 @@ public final class Geometry {
 
     /**
      * Tests if given point is to the right side of path consisting of 3 points.
-     *
+     * <p>
      * (Imagine the path is continued beyond the endpoints, so you get two rays
      * starting from lineP2 and going through lineP1 and lineP3 respectively
      * which divide the plane into two parts. The test returns true, if testPoint
@@ -532,7 +532,7 @@ public final class Geometry {
 
     /**
      * This method tests if secondNode is clockwise to first node.
-     *
+     * <p>
      * The line through the two points commonNode and firstNode divides the
      * plane into two parts. The test returns true, if secondNode lies in
      * the part that is to the right when traveling in the direction from
@@ -842,11 +842,11 @@ public final class Geometry {
 
     /**
      * Determines whether a way is oriented clockwise.
-     *
+     * <p>
      * Internals: Assuming a closed non-looping way, compute twice the area
      * of the polygon using the formula {@code 2 * area = sum (X[n] * Y[n+1] - X[n+1] * Y[n])}.
-     * If the area is negative the way is ordered in a clockwise direction.
-     *
+     * If the area is negative, the way is ordered in a clockwise direction.
+     * <p>
      * See http://paulbourke.net/geometry/polyarea/
      *
      * @param w the way to be checked.
@@ -994,10 +994,10 @@ public final class Geometry {
 
     /**
      * Compute the center of the circle closest to different nodes.
-     *
-     * Ensure exact center computation in case nodes are already aligned in circle.
+     * <p>
+     * Ensure exact center computations in case nodes are already aligned in circle.
      * This is done by least square method.
-     * Let be a_i x + b_i y + c_i = 0 equations of bisectors of each edges.
+     * Let be a_i x + b_i y + c_i = 0 equations of bisectors of each edge.
      * Center must be intersection of all bisectors.
      * <pre>
      *          [ a1  b1  ]         [ -c1 ]
@@ -1013,12 +1013,12 @@ public final class Geometry {
     public static EastNorth getCenter(List<? extends INode> nodes) {
         int nc = nodes.size();
         if (nc < 3) return null;
-        /**
-         * Equation of each bisector ax + by + c = 0
-         */
+
+        // Equation of each bisector ax + by + c = 0
         double[] a = new double[nc];
         double[] b = new double[nc];
         double[] c = new double[nc];
+
         // Compute equation of bisector
         for (int i = 0; i < nc; i++) {
             EastNorth pt1 = nodes.get(i).getEastNorth();
@@ -1282,8 +1282,8 @@ public final class Geometry {
     }
 
     /**
-     * Calculate area and perimeter length of a polygon.
-     *
+     * Calculate the area and perimeter length of a polygon.
+     * <p>
      * Uses current projection; units are that of the projected coordinates.
      *
      * @param nodes the list of nodes representing the polygon
@@ -1294,7 +1294,7 @@ public final class Geometry {
     }
 
     /**
-     * Calculate area and perimeter length of a polygon in the given projection.
+     * Calculate the area and perimeter length of a polygon in the given projection.
      *
      * @param nodes the list of nodes representing the polygon
      * @param projection the projection to use for the calculation, {@code null} defaults to {@link ProjectionRegistry#getProjection()}
@@ -1326,10 +1326,10 @@ public final class Geometry {
 
     /**
      * Get the closest primitive to {@code osm} from the collection of
-     * OsmPrimitive {@code primitives}
-     *
+     * OsmPrimitive {@code primitives}.
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1350,10 +1350,10 @@ public final class Geometry {
 
     /**
      * Get the closest primitives to {@code osm} from the collection of
-     * OsmPrimitive {@code primitives}
-     *
+     * OsmPrimitive {@code primitives}.
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1385,13 +1385,13 @@ public final class Geometry {
 
     /**
      * Get the furthest primitive to {@code osm} from the collection of
-     * OsmPrimitive {@code primitives}
-     *
+     * OsmPrimitive {@code primitives}.
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * It does NOT give the furthest primitive based off of the furthest
      * part of that primitive
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1411,13 +1411,13 @@ public final class Geometry {
 
     /**
      * Get the furthest primitives to {@code osm} from the collection of
-     * OsmPrimitive {@code primitives}
-     *
+     * OsmPrimitive {@code primitives}.
+     * <p>
      * The {@code primitives} should be fully downloaded to ensure accuracy.
-     *
+     * <p>
      * It does NOT give the furthest primitive based off of the furthest
      * part of that primitive
-     *
+     * <p>
      * Note: The complexity of this method is O(n*m), where n is the number of
      * children {@code osm} has plus 1, m is the number of children the
      * collection of primitives have plus the number of primitives in the
@@ -1432,8 +1432,9 @@ public final class Geometry {
     public static <T extends OsmPrimitive> Collection<T> getFurthestPrimitives(OsmPrimitive osm, Collection<T> primitives) {
         double furthestDistance = Double.NEGATIVE_INFINITY;
         TreeSet<T> furthest = new TreeSet<>();
+        double distance;
         for (T primitive : primitives) {
-            double distance = getDistance(osm, primitive);
+            distance = getDistance(osm, primitive);
             if (Double.isNaN(distance)) continue;
             int comp = Double.compare(distance, furthestDistance);
             if (comp > 0) {
@@ -1454,7 +1455,7 @@ public final class Geometry {
      * @return The distance between the primitives in meters
      * (or the unit of the current projection, see {@link Projection}).
      * May return {@link Double#NaN} if one of the primitives is incomplete.
-     *
+     * <p>
      * Note: The complexity is O(n*m), where (n,m) are the number of child
      * objects the {@link OsmPrimitive}s have.
      * @since 15035
@@ -1732,11 +1733,11 @@ public final class Geometry {
     }
 
     /**
-     * Calculate closest distance between a line segment s1-s2 and a point p
+     * Calculate the closest distance between a line segment s1-s2 and a point p
      * @param s1 start of segment
      * @param s2 end of segment
      * @param p the point
-     * @return the square of the euclidean distance from p to the closest point on the segment
+     * @return the square of the Euclidean distance from p to the closest point on the segment
      */
     private static double getSegmentNodeDistSq(EastNorth s1, EastNorth s2, EastNorth p) {
         EastNorth c1 = closestPointTo(s1, s2, p, true);

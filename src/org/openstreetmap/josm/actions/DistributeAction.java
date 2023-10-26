@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.Geometry.getFurthestPrimitive;
+import static org.openstreetmap.josm.tools.Geometry.nodeFurthestApart;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -84,7 +86,7 @@ public final class DistributeAction extends JosmAction {
             cmds = distributeWay(ways, nodes);
         } else if (checkDistributeNodes(ways, nodes)) {
             cmds = distributeNodes(nodes);
-        } else if (checkDistributeNode(nodes)){
+        } else if (checkDistributeNode(nodes)) {
             cmds = distributeNode(nodes);
         } else {
             new Notification(
@@ -251,23 +253,9 @@ public final class DistributeAction extends JosmAction {
     private static Collection<Command> distributeNodes(Collection<Node> nodes) {
         // Find from the selected nodes two that are the furthest apart.
         // Let's call them A and B.
-        double distance = Double.NEGATIVE_INFINITY;
-
-        Node nodea = null;
-        Node nodeb = null;
-
-        Collection<Node> itnodes = new LinkedList<>(nodes);
-        for (Node n : nodes) {
-            itnodes.remove(n);
-            for (Node m : itnodes) {
-                double dist = Math.sqrt(n.getEastNorth().distance(m.getEastNorth()));
-                if (dist > distance) {
-                    nodea = n;
-                    nodeb = m;
-                    distance = dist;
-                }
-            }
-        }
+        Node[] furthestApart = nodeFurthestApart(new ArrayList<>(nodes));
+        Node nodea = furthestApart[0];
+        Node nodeb = furthestApart[1];
 
         if (nodea == null || nodeb == null) {
             throw new IllegalArgumentException();
@@ -293,17 +281,9 @@ public final class DistributeAction extends JosmAction {
         int pos = 0;
         while (!nodes.isEmpty()) {
             pos++;
-            Node s = null;
 
             // Find the node that is furthest from B (i.e. closest to A)
-            distance = Double.NEGATIVE_INFINITY;
-            for (Node n : nodes) {
-                double dist = Math.sqrt(nodeb.getEastNorth().distance(n.getEastNorth()));
-                if (dist > distance) {
-                    s = n;
-                    distance = dist;
-                }
-            }
+            Node s = getFurthestPrimitive(nodeb, nodes);
 
             if (s != null) {
                 // First move the node to A's position, then move it towards B

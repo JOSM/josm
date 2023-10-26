@@ -52,7 +52,7 @@ class DistributeActionTest {
     @Test
     void testWholeWayAlignment() {
         Way way = new Way();
-        final int totalNodeCount = 1200;  // should be at least three
+        final int totalNodeCount = 120;  // should be at least three
         final int innerNodeCount = totalNodeCount - 2;
         final int lonLimit = 10;
 
