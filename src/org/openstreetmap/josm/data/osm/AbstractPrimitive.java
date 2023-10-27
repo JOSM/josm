@@ -836,7 +836,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
             List<String> l = new LinkedList<>(Arrays.asList(
-                "source", "source_ref", "source:", "comment",
+                "source", "source_ref", "source:", "comment", "import",
                 "watch", "watch:", "description", "attribution", GpxConstants.GPX_PREFIX));
             l.addAll(getDiscardableKeys());
             l.addAll(getWorkInProgressKeys());
