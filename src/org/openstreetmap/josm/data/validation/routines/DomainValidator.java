@@ -473,7 +473,6 @@ public final class DomainValidator extends AbstractValidator {
         "cba", // cba COMMONWEALTH BANK OF AUSTRALIA
         "cbn", // cbn The Christian Broadcasting Network, Inc.
         "cbre", // cbre CBRE, Inc.
-        "cbs", // cbs CBS Domains Inc.
         "center", // center Tin Mill, LLC
         "ceo", // ceo CEOTLD Pty Ltd
         "cern", // cern European Organization for Nuclear Research (&quot;CERN&quot;)
