@@ -254,22 +254,22 @@ public final class DistributeAction extends JosmAction {
         // Find from the selected nodes two that are the furthest apart.
         // Let's call them A and B.
         Node[] furthestApart = nodeFurthestApart(new ArrayList<>(nodes));
-        Node nodea = furthestApart[0];
-        Node nodeb = furthestApart[1];
+        Node nodeA = furthestApart[0];
+        Node nodeB = furthestApart[1];
 
-        if (nodea == null || nodeb == null) {
+        if (nodeA == null || nodeB == null) {
             throw new IllegalArgumentException();
         }
 
         // Remove the nodes A and B from the list of nodes to move
-        nodes.remove(nodea);
-        nodes.remove(nodeb);
+        nodes.remove(nodeA);
+        nodes.remove(nodeB);
 
         // Find out co-ords of A and B
-        double ax = nodea.getEastNorth().east();
-        double ay = nodea.getEastNorth().north();
-        double bx = nodeb.getEastNorth().east();
-        double by = nodeb.getEastNorth().north();
+        double ax = nodeA.getEastNorth().east();
+        double ay = nodeA.getEastNorth().north();
+        double bx = nodeB.getEastNorth().east();
+        double by = nodeB.getEastNorth().north();
 
         // A list of commands to do
         Collection<Command> cmds = new LinkedList<>();
@@ -283,7 +283,7 @@ public final class DistributeAction extends JosmAction {
             pos++;
 
             // Find the node that is furthest from B (i.e. closest to A)
-            Node s = getFurthestPrimitive(nodeb, nodes);
+            Node s = getFurthestPrimitive(nodeB, nodes);
 
             if (s != null) {
                 // First move the node to A's position, then move it towards B
