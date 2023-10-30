@@ -4,8 +4,8 @@ package org.openstreetmap.josm.data.preferences.sources;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,9 +72,6 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
         }
         Config.getPref().putList("mappaint.style.known-defaults", new ArrayList<>(knownDefaults));
 
-        // XML style is not bundled anymore
-        list.removeIf(se -> "resource://styles/standard/elemstyles.xml".equals(se.url));
-
         return changed;
     }
 
@@ -86,14 +83,7 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
         defJosmMapcss.icon = new ImageProvider("logo").getResource();
         defJosmMapcss.title = tr("JOSM default (MapCSS)");
         defJosmMapcss.description = tr("Internal style to be used as base for runtime switchable overlay styles");
-        ExtendedSourceEntry defPL2 = new ExtendedSourceEntry(type, "potlatch2.mapcss", "resource://styles/standard/potlatch2.mapcss");
-        defPL2.active = false;
-        defPL2.name = "standard";
-        defPL2.icon = new ImageProvider("dialogs/mappaint", "pl2_small").getResource();
-        defPL2.title = tr("Potlatch 2");
-        defPL2.description = tr("the main Potlatch 2 style");
-
-        return Arrays.asList(defJosmMapcss, defPL2);
+        return Collections.singletonList(defJosmMapcss);
     }
 
     @Override

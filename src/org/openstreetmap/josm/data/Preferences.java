@@ -900,6 +900,7 @@ public class Preferences extends AbstractPreferences {
             putBoolean("preferences.reset.draw.rawgps.lines", true);
             putInt("draw.rawgps.lines", -1);
         }
+        updateMapPaintKnownDefaults();
         if (modifiedDefault) {
             try {
                 saveDefaults();
@@ -909,6 +910,42 @@ public class Preferences extends AbstractPreferences {
             }
             modifiedDefault = false;
         }
+    }
+
+    /**
+     * Update the known defaults for the map paintstyles.
+     * This should be removed sometime after 2024-06-01.
+     */
+    private void updateMapPaintKnownDefaults() {
+        final String url = "url";
+        final String active = "active";
+        final String potlatch2 = "resource://styles/standard/potlatch2.mapcss";
+        final String remotePotlatch2 = "https://josm.openstreetmap.de/josmfile?page=Styles/Potlatch2&zip=1";
+
+        // Remove potlatch2 from the known defaults
+        final List<String> knownDefaults = new ArrayList<>(getList("mappaint.style.known-defaults"));
+        // See #18866: Potlatch 2 internal theme removed in favor of remote theme by Stereo
+        knownDefaults.removeIf(potlatch2::equals);
+
+        // Moved from MapPaintPrefHelper for consistency
+        // XML style is not bundled anymore
+        knownDefaults.removeIf("resource://styles/standard/elemstyles.xml"::equals);
+        putList("mappaint.style.known-defaults", knownDefaults);
+
+        // Replace potlatch2 in the current style entries, but only if it is enabled. Otherwise, remove it.
+        final List<Map<String, String>> styleEntries = new ArrayList<>(getListOfMaps("mappaint.style.entries"));
+        final boolean potlatchEnabled = styleEntries.stream().filter(map -> potlatch2.equals(map.get(url)))
+                .anyMatch(map -> Boolean.parseBoolean(map.get(active)));
+        final boolean remotePotlatch2Present = styleEntries.stream().anyMatch(map -> remotePotlatch2.equals(map.get(url)));
+        // Remove potlatch2 if it is not enabled _or_ the remote potlatch2 version is present
+        styleEntries.removeIf(map -> (!potlatchEnabled || remotePotlatch2Present) && potlatch2.equals(map.get(url)));
+        styleEntries.replaceAll(HashMap::new); // The maps are initially immutable.
+        for (Map<String, String> map : styleEntries) {
+            if (potlatch2.equals(map.get(url))) {
+                map.put(url, remotePotlatch2);
+            }
+        }
+        putListOfMaps("mappaint.style.entries", styleEntries);
     }
 
     /**

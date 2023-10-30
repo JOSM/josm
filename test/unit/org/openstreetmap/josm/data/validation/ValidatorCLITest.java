@@ -87,7 +87,7 @@ class ValidatorCLITest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"resources/styles/standard/elemstyles.mapcss", "resources/styles/standard/potlatch2.mapcss"})
+    @ValueSource(strings = "resources/styles/standard/elemstyles.mapcss")
     void testInternalMapcss(final String resourceLocation) {
         validatorCLI.processArguments(new String[]{"--input", resourceLocation});
         assertEquals(2, this.handler.logRecordList.size());
