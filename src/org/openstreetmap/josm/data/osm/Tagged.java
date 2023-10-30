@@ -192,7 +192,7 @@ public interface Tagged {
                 return false;
             }
         }
-        return true;
+        return actual != null;
     }
 
     /**
