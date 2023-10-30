@@ -424,7 +424,7 @@ public class SimplifyWayAction extends JosmAction {
 
     /**
      * Builds the simplified list of nodes for a way segment given by a lower index <code>from</code>
-     * and an upper index <code>to</code>
+     * and an upper index <code>to</code>. Uses the Douglas-Peucker-Algorithm.
      *
      * @param wnew the way to simplify
      * @param from the lower index
