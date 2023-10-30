@@ -76,7 +76,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
      * filter mechanism (i.e.&nbsp;FLAG_DISABLED is set).
      * Then it indicates, whether it is completely hidden or
      * just shown in gray color.
-     *
+     * <p>
      * When the primitive is not disabled, this flag should be
      * unset as well (for efficient access).
      */
@@ -520,10 +520,10 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
 
     @Override
     public void visitKeys(KeyValueVisitor visitor) {
-        String[] keys = this.keys;
-        if (keys != null) {
-            for (int i = 0; i < keys.length; i += 2) {
-                visitor.visitKeyValue(this, keys[i], keys[i + 1]);
+        String[] tKeys = this.keys;
+        if (tKeys != null) {
+            for (int i = 0; i < tKeys.length; i += 2) {
+                visitor.visitKeyValue(this, tKeys[i], tKeys[i + 1]);
             }
         }
     }
@@ -753,17 +753,17 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
 
     @Override
     public final Collection<String> keySet() {
-        String[] keys = this.keys;
-        if (keys == null) {
+        String[] tKeys = this.keys;
+        if (tKeys == null) {
             return Collections.emptySet();
         }
-        if (keys.length == 2) {
-            return Collections.singleton(keys[0]);
+        if (tKeys.length == 2) {
+            return Collections.singleton(tKeys[0]);
         }
 
-        final Set<String> result = new HashSet<>(Utils.hashMapInitialCapacity(keys.length / 2));
-        for (int i = 0; i < keys.length; i += 2) {
-            result.add(keys[i]);
+        final Set<String> result = new HashSet<>(Utils.hashMapInitialCapacity(tKeys.length / 2));
+        for (int i = 0; i < tKeys.length; i += 2) {
+            result.add(tKeys[i]);
         }
         return result;
     }
@@ -809,7 +809,14 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
      * @since 11587
      */
     public boolean hasKey(String... keys) {
-        return keys != null && Arrays.stream(keys).anyMatch(this::hasKey);
+        if (keys != null) {
+            for (String key : keys) {
+                if (this.hasKey(key)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

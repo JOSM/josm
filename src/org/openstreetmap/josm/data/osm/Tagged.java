@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -146,7 +145,13 @@ public interface Tagged {
      * @since 13668
      */
     default boolean hasTag(String key, String... values) {
-        return hasTag(key, Arrays.asList(values));
+        final String actualValue = get(key);
+        for (String value : values) {
+            if (Objects.equals(value, actualValue)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -181,7 +186,13 @@ public interface Tagged {
      * @since 13668
      */
     default boolean hasTagDifferent(String key, String... values) {
-        return hasTagDifferent(key, Arrays.asList(values));
+        final String actual = get(key);
+        for (String value : values) {
+            if (Objects.equals(actual, value)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
