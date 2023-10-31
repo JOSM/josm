@@ -645,8 +645,8 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
                 newKeys[index++] = tag.getKey();
                 newKeys[index++] = tag.getValue();
             }
-            keys = newKeys;
         }
+        keys = newKeys;
         keysChangedImpl(originalKeys);
     }
 
