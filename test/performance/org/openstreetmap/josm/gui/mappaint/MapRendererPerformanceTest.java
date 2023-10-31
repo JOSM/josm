@@ -124,7 +124,7 @@ public class MapRendererPerformanceTest {
         filterStyle = MapPaintStyles.addStyle(se);
         List<StyleSource> sources = MapPaintStyles.getStyles().getStyleSources();
         filterStyleIdx = sources.indexOf(filterStyle);
-        assertEquals(2, filterStyleIdx);
+        assertEquals(1, filterStyleIdx);
 
         assertEquals(Feature.values().length, filterStyle.settings.size());
         for (StyleSetting set : filterStyle.settings) {
