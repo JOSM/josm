@@ -12,10 +12,8 @@ import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
@@ -61,7 +59,7 @@ class MainLayerManagerTest extends LayerManagerTest {
 
     protected static class LoggingHandler extends Handler {
 
-        private List<LogRecord> records = new ArrayList<>();
+        private final List<LogRecord> records = new ArrayList<>();
 
         @Override
         public void publish(LogRecord record) {
@@ -78,11 +76,6 @@ class MainLayerManagerTest extends LayerManagerTest {
             return records;
         }
 
-    }
-
-    @BeforeAll
-    public static void setUpClass() {
-        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Override
@@ -152,8 +145,8 @@ class MainLayerManagerTest extends LayerManagerTest {
 
         CapturingActiveLayerChangeListener listener2 = new CapturingActiveLayerChangeListener();
         layerManagerWithActive.addAndFireActiveLayerChangeListener(listener2);
-        assertSame(listener2.lastEvent.getPreviousActiveLayer(), null);
-        assertSame(listener2.lastEvent.getPreviousDataLayer(), null);
+        assertNull(listener2.lastEvent.getPreviousActiveLayer());
+        assertNull(listener2.lastEvent.getPreviousDataLayer());
 
         layerManagerWithActive.setActiveLayer(layer1);
         assertSame(listener2.lastEvent.getPreviousActiveLayer(), layer2);

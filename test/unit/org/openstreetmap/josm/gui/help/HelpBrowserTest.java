@@ -9,15 +9,14 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformManager;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
@@ -25,18 +24,13 @@ import mockit.Mocked;
 /**
  * Unit tests of {@link HelpBrowser} class.
  */
+@FullPreferences
+@HTTPS
 class HelpBrowserTest {
 
     static final String URL_1 = "https://josm.openstreetmap.de/wiki/Help";
     static final String URL_2 = "https://josm.openstreetmap.de/wiki/Introduction";
     static final String URL_3 = "https://josm.openstreetmap.de/javadoc";
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static JOSMTestRules test = new JOSMTestRules().preferences().https();
 
     static IHelpBrowser newHelpBrowser() {
         return new IHelpBrowser() {

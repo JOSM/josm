@@ -34,12 +34,10 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import mockit.Mock;
-import mockit.MockUp;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
@@ -56,26 +54,28 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.OsmApi;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.bugreport.BugReportQueue;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.openstreetmap.josm.tools.bugreport.BugReportQueue;
+import mockit.Mock;
+import mockit.MockUp;
 
 /**
  * Unit tests of {@link MainApplication} class.
  */
+@HTTPS
+@Main
+@OsmApi(OsmApi.APIType.DEV)
+@Projection
+@Timeout(20)
 public class MainApplicationTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().https().devAPI().timeout(20000);
-
     /**
      * Make sure {@link MainApplication#contentPanePrivate} is initialized.
      */
@@ -248,7 +248,7 @@ public class MainApplicationTest {
     @Test
     void testPostConstructorProcessCmdLineEmpty() {
         // Check the method accepts no arguments
-        MainApplication.postConstructorProcessCmdLine(new ProgramArguments());
+        assertDoesNotThrow(() -> MainApplication.postConstructorProcessCmdLine(new ProgramArguments()));
     }
 
     private static void doTestPostConstructorProcessCmdLine(String download, String downloadGps, boolean gpx) {

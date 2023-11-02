@@ -64,7 +64,7 @@ public @interface JosmDefaults {
 
         @Override
         public void afterEach(ExtensionContext context) throws Exception {
-            MemoryManagerTest.resetState(false);
+            MemoryManagerTest.resetState(AnnotationUtils.findFirstParentAnnotation(context, MemoryManagerLeaks.class).isPresent());
 
             Window[] windows = Window.getWindows();
             if (windows.length != 0) {

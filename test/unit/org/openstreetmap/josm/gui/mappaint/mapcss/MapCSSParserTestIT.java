@@ -3,24 +3,16 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Integration tests of {@link MapCSSParser}.
  */
+@HTTPS
+@Projection
 class MapCSSParserTestIT {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().projection();
-
     /**
      * Checks Kothic stylesheets
      */

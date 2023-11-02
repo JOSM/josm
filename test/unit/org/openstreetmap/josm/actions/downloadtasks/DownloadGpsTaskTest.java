@@ -9,12 +9,10 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 
 /**
  * Unit tests for class {@link DownloadGpsTask}.
  */
-@BasicWiremock
 class DownloadGpsTaskTest extends AbstractDownloadTaskTestParent {
 
     /**

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
@@ -40,8 +39,8 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
@@ -49,12 +48,11 @@ import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Integration tests of {@link PluginHandler} class.
  */
 @BasicPreferences
+@HTTPS
 @Main
 @Projection
 @Territories
@@ -62,12 +60,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class PluginHandlerTestIT {
 
     private static final List<String> errorsToIgnore = new ArrayList<>();
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https();
 
     /**
      * Setup test

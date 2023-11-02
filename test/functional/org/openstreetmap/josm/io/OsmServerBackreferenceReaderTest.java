@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Locale;
@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -42,6 +41,8 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.TestUser;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -51,6 +52,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 1806
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
+@org.openstreetmap.josm.testutils.annotations.OsmApi(org.openstreetmap.josm.testutils.annotations.OsmApi.APIType.DEV)
+@TestUser
 class OsmServerBackreferenceReaderTest {
     private static final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
 
@@ -75,7 +78,7 @@ class OsmServerBackreferenceReaderTest {
             if (("relation-" + i).equals(r.get("name"))) return r;
         }
         fail("Cannot find relation "+i);
-        return null;
+        throw new JosmRuntimeException("Cannot reach this point due to fail() above");
     }
 
     protected static void populateTestDataSetWithNodes(DataSet ds) {
@@ -165,8 +168,6 @@ class OsmServerBackreferenceReaderTest {
         }
         logger.info("initializing ...");
 
-        JOSMFixture.createFunctionalTestFixture().init();
-
         Config.getPref().put("osm-server.auth-method", "basic");
 
         // don't use atomic upload, the test API server can't cope with large diff uploads
@@ -196,7 +197,7 @@ class OsmServerBackreferenceReaderTest {
 
         try (
             PrintWriter pw = new PrintWriter(
-                    new OutputStreamWriter(new FileOutputStream(dataSetCacheOutputFile), StandardCharsets.UTF_8)
+                    new OutputStreamWriter(Files.newOutputStream(dataSetCacheOutputFile.toPath()), StandardCharsets.UTF_8)
         )) {
             logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
             try (OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion())) {

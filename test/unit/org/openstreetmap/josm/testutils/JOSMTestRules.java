@@ -57,13 +57,13 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreferenceTestIT;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.JosmDefaults;
 import org.openstreetmap.josm.testutils.annotations.MapPaintStyles;
 import org.openstreetmap.josm.testutils.annotations.TaggingPresets;
@@ -135,6 +135,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      * Set a timeout for all tests in this class. Local method timeouts may only reduce this timeout.
      * @param millis The timeout duration in milliseconds.
      * @return this instance, for easy chaining
+     * @see org.junit.jupiter.api.Timeout
      */
     public JOSMTestRules timeout(int millis) {
         timeout = isDebugMode() ? -1 : millis;
@@ -144,6 +145,8 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Enable the use of default preferences.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.BasicPreferences
+     * @see org.openstreetmap.josm.testutils.annotations.FullPreferences
      */
     public JOSMTestRules preferences() {
         josmHome();
@@ -163,6 +166,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Enables the i18n module for this test in english.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.I18n
      */
     public JOSMTestRules i18n() {
         return i18n("en");
@@ -172,6 +176,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      * Enables the i18n module for this test.
      * @param language The language to use.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.I18n
      */
     public JOSMTestRules i18n(String language) {
         i18n = language;
@@ -182,6 +187,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      * Mock this test's assumed JOSM version (as reported by {@link Version}).
      * @param revisionProperties mock contents of JOSM's {@code REVISION} properties file
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.AssumeRevision
      */
     public JOSMTestRules assumeRevision(final String revisionProperties) {
         this.assumeRevisionString = revisionProperties;
@@ -191,6 +197,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Enable the dev.openstreetmap.org API for this test.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.OsmApi.APIType#DEV
      */
     public JOSMTestRules devAPI() {
         preferences();
@@ -201,6 +208,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Use the {@link FakeOsmApi} for testing.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.OsmApi.APIType#FAKE
      */
     public JOSMTestRules fakeAPI() {
         useAPI = APIType.FAKE;
@@ -210,6 +218,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Set up default projection (Mercator)
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.Projection
      */
     public JOSMTestRules projection() {
         useProjection = true;
@@ -219,6 +228,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Set up loading of NTV2 grit shift files to support projections that need them.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids
      */
     public JOSMTestRules projectionNadGrids() {
         useProjectionNadGrids = true;
@@ -228,6 +238,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Set up HTTPS certificates
      * @return this instance, for easy chaining
+     * @see HTTPS
      */
     public JOSMTestRules https() {
         useHttps = true;
@@ -246,6 +257,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Allow the memory manager to contain items after execution of the test cases.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.MemoryManagerLeaks
      */
     public JOSMTestRules memoryManagerLeaks() {
         allowMemoryManagerLeaks = true;
@@ -255,6 +267,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Use map styles in this test.
      * @return this instance, for easy chaining
+     * @see MapPaintStyles
      * @since 11777
      */
     public JOSMTestRules mapStyles() {
@@ -266,6 +279,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Use presets in this test.
      * @return this instance, for easy chaining
+     * @see TaggingPresets
      * @since 12568
      */
     public JOSMTestRules presets() {
@@ -277,6 +291,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Use boundaries dataset in this test.
      * @return this instance, for easy chaining
+     * @see Territories
      * @since 12545
      */
     public JOSMTestRules territories() {
@@ -299,6 +314,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Force metric measurement system.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.MeasurementSystem
      * @since 15400
      */
     public JOSMTestRules metricSystem() {
@@ -309,6 +325,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     /**
      * Re-raise AssertionErrors thrown in the EDT where they would have normally been swallowed.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.AssertionsInEDT
      */
     public JOSMTestRules assertionsInEDT() {
         return this.assertionsInEDT(EDTAssertionMocker::new);
@@ -319,6 +336,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      * @param edtAssertionMockingRunnable Runnable for initializing this functionality
      *
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.AssertionsInEDT
      */
     public JOSMTestRules assertionsInEDT(final Runnable edtAssertionMockingRunnable) {
         this.edtAssertionMockingRunnable = edtAssertionMockingRunnable;
@@ -329,6 +347,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      * Replace imagery sources with a default set of mock tile sources
      *
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.FakeImagery
      */
     public JOSMTestRules fakeImagery() {
         return this.fakeImagery(
@@ -349,6 +368,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      * @param tileSourceRule Tile source rule
      *
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.FakeImagery
      */
     public JOSMTestRules fakeImagery(TileSourceRule tileSourceRule) {
         this.preferences();
@@ -360,6 +380,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      * Use the {@code Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
      *         global variables in this test.
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.Main
      * @since 12557
      */
     public JOSMTestRules main() {
@@ -378,6 +399,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      *        of {@link org.openstreetmap.josm.gui.NavigatableComponent}, null to skip.
      *
      * @return this instance, for easy chaining
+     * @see org.openstreetmap.josm.testutils.annotations.AssertionsInEDT
      */
     public JOSMTestRules main(
         final Runnable mapViewStateMockingRunnable,
@@ -560,7 +582,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
 
         if (useHttps) {
             try {
-                CertificateAmendment.addMissingCertificates();
+                new HTTPS.HTTPSExtension().beforeEach(null);
             } catch (IOException | GeneralSecurityException ex) {
                 throw new JosmRuntimeException(ex);
             }

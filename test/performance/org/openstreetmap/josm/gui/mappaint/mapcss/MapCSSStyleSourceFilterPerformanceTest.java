@@ -18,7 +18,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
  */
 @Projection
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
-class MapCSSStyleSourceFilterTest {
+class MapCSSStyleSourceFilterPerformanceTest {
 
     private static final int TEST_RULE_COUNT = 10000;
 
