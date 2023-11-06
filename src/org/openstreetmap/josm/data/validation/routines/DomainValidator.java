@@ -822,7 +822,6 @@ public final class DomainValidator extends AbstractValidator {
         "kia", // kia KIA MOTORS CORPORATION
         "kids", // kids DotKids Foundation Limited
         "kim", // kim Afilias Limited
-        "kinder", // kinder Ferrero Trading Lux S.A.
         "kindle", // kindle Amazon Registry Service, Inc.
         "kitchen", // kitchen Just Goodbye, LLC
         "kiwi", // kiwi DOT KIWI LIMITED
@@ -1094,7 +1093,6 @@ public final class DomainValidator extends AbstractValidator {
         "ril", // ril Reliance Industries Limited
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
         "rip", // rip United TLD Holdco Ltd.
-        "rocher", // rocher Ferrero Trading Lux S.A.
         "rocks", // rocks United TLD Holdco, LTD.
         "rodeo", // rodeo Top Level Domain Holdings Limited
         "rogers", // rogers Rogers Communications Canada Inc.
