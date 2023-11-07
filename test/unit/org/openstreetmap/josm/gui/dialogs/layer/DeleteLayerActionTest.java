@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -21,6 +22,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
@@ -119,6 +121,47 @@ class DeleteLayerActionTest {
         deleteLayerAction.actionPerformed(null);
         assertSame(model.getLayerManager().getActiveLayer(), model.getLayer(7));
         assertEquals("testActiveLayer2", Objects.requireNonNull(model.getLayer(7)).getName());
+        assertAll(model.getLayers().stream().map(layer -> () -> assertNotSame(toRemove, layer)));
+    }
+
+    @Test
+    void testRemoveBottomActiveWithBackgroundLayer() {
+        GeoImageLayer geoImageLayer = new GeoImageLayer(Collections.emptyList(), null, "imageLayer");
+        OsmDataLayer osmDataLayer1 = new OsmDataLayer(new DataSet(), "dataLayer1", null);
+        OsmDataLayer osmDataLayer2 = new OsmDataLayer(new DataSet(), "dataLayer2", null);
+
+        // remove all the layers added in BeforeEach()
+        for (Layer l : MainApplication.getLayerManager().getLayers()) {
+            MainApplication.getLayerManager().removeLayer(l);
+        }
+        MainApplication.getLayerManager().addLayer(geoImageLayer);
+        MainApplication.getLayerManager().addLayer(osmDataLayer1);
+        MainApplication.getLayerManager().addLayer(osmDataLayer2);
+
+        model.getLayerManager().setActiveLayer(osmDataLayer1);
+        model.setSelectedLayer(osmDataLayer1);
+
+        deleteLayerAction.actionPerformed(null);
+
+        assertSame(model.getLayerManager().getActiveLayer(), model.getLayer(0));
+        assertEquals("dataLayer2", Objects.requireNonNull(model.getLayerManager().getActiveLayer().getName()));
+        assertAll(model.getLayers().stream().map(layer -> () -> assertNotSame(osmDataLayer1, layer)));
+    }
+
+    @Test
+    void testRemoveBottomActiveAllHidden() {
+        hideRange(0, 9);
+        final Layer toRemove = model.getLayer(9);
+        assertNotNull(toRemove);
+        assertFalse(toRemove.isVisible());
+        assertEquals(0, model.getLayers().stream().filter(Layer::isVisible).count());
+
+        model.getLayerManager().setActiveLayer(toRemove);
+        model.setSelectedLayer(toRemove);
+        deleteLayerAction.actionPerformed(null);
+
+        assertSame(model.getLayerManager().getActiveLayer(), model.getLayer(8));
+        assertEquals("testActiveLayer1", Objects.requireNonNull(model.getLayer(8)).getName());
         assertAll(model.getLayers().stream().map(layer -> () -> assertNotSame(toRemove, layer)));
     }
 

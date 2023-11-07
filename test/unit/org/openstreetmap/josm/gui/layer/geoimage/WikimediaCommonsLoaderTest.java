@@ -10,12 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URL;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-import org.openstreetmap.josm.tools.Http1Client;
-import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.Main;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 
@@ -23,11 +23,14 @@ import com.github.tomakehurst.wiremock.WireMockServer;
  * Unit test of {@link WikimediaCommonsLoader}
  */
 @BasicPreferences
+@HTTP
+@Main
 class WikimediaCommonsLoaderTest {
-
-    @BeforeAll
-    static void beforeAll() {
-        HttpClient.setFactory(Http1Client::new);
+    @AfterEach
+    void tearDown() {
+        if (ImageViewerDialog.hasInstance()) {
+            ImageViewerDialog.getInstance().destroy();
+        }
     }
 
     /**

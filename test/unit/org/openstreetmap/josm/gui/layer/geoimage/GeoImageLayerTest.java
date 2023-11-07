@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -18,6 +19,13 @@ import org.openstreetmap.josm.testutils.annotations.Main;
 @BasicPreferences
 @Main
 class GeoImageLayerTest {
+    @AfterEach
+    void tearDown() {
+        if (ImageViewerDialog.hasInstance()) {
+            ImageViewerDialog.getInstance().destroy();
+        }
+    }
+
     /**
      * Test that {@link GeoImageLayer#mergeFrom} throws IAE for invalid arguments
      */

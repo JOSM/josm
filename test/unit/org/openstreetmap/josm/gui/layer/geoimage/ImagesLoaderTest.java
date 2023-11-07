@@ -15,11 +15,15 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link ImagesLoader} class.
  */
 @BasicPreferences
+@Main
+@Projection
 class ImagesLoaderTest {
     /**
      * Unit test of {@link ImagesLoader} class.

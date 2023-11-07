@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -357,30 +358,50 @@ public class MainLayerManager extends LayerManager {
     }
 
     /**
-     * Determines the next active data layer according to the following
-     * rules:
-     * <ul>
-     *   <li>if there is at least one {@link OsmDataLayer} the first one
-     *     becomes active</li>
-     *   <li>otherwise, the top most layer of any type becomes active</li>
-     * </ul>
+     * Determines the next active data layer.
+     * <p>
+     * The layer becomes active, which has the next highest index (closer to bottom) relative to {@code except} parameter
+     * in the following order:
+     * <ol>
+     *     <li>{@link OsmDataLayer} and visible, or if there is none</li>
+     *     <li>{@link OsmDataLayer} and hidden, or if there is none</li>
+     *     <li>any type</li>
+     * </ol>
      *
      * @param except A layer to ignore.
      * @return the next active data layer
      */
     private Layer suggestNextActiveLayer(Layer except) {
         List<Layer> layersList = new ArrayList<>(getLayers());
-        layersList.remove(except);
-        // First look for data layer
-        for (Layer layer : layersList) {
+
+        // construct a new list with decreasing priority
+        int indexOfExcept = layersList.indexOf(except);
+        List<Layer> remainingLayers = new ArrayList<>(layersList.subList(indexOfExcept, layersList.size()));
+        List<Layer> previousLayers = new ArrayList<>(layersList.subList(0, indexOfExcept));
+        Collections.reverse(previousLayers);
+        remainingLayers.addAll(previousLayers);
+        remainingLayers.remove(except);
+
+        // First look for visible data layer
+        for (Layer layer : remainingLayers) {
+            if (layer instanceof OsmDataLayer && layer.isVisible()) {
+                return layer;
+            }
+        }
+
+        // Then any data layer
+        for (Layer layer : remainingLayers) {
             if (layer instanceof OsmDataLayer) {
                 return layer;
             }
         }
 
         // Then any layer
-        if (!layersList.isEmpty())
-            return layersList.get(0);
+        for (Layer layer : layersList) {
+            if (layer != except) {
+                return layer;
+            }
+        }
 
         // and then give up
         return null;
