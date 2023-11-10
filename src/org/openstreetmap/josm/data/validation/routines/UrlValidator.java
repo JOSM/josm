@@ -164,7 +164,7 @@ public class UrlValidator extends AbstractValidator {
     private static final int PARSE_AUTHORITY_EXTRA = 4;
 
     private static final String PATH_REGEX = "^(/[-\\w:@&?=+,.!/~*'%$_;()]*)?$";
-    private static final Pattern PATH_PATTERN = Pattern.compile(PATH_REGEX, Pattern.UNICODE_CHARACTER_CLASS);
+    private static final Pattern PATH_PATTERN = Pattern.compile(PATH_REGEX);
 
     private static final String QUERY_REGEX = "^(.*)$";
     private static final Pattern QUERY_PATTERN = Pattern.compile(QUERY_REGEX);
