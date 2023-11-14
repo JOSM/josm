@@ -1261,7 +1261,7 @@
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" values_context="trail_visibility" values_sort="false" />
                 <checkgroup columns="2">
                     <check key="segregated" text="Segregated" />
-                    <check key="informal" text="Informal" disable_off="true" />
+                    <check key="informal" text="Informal" />
                 </checkgroup>
                 <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,permit,private,no" values_sort="false" />
                 <reference ref="wheelchair" />
@@ -1645,6 +1645,19 @@
             <key key="junction" value="yes" />
             <text key="name" text="Name" />
         </item> <!-- Named Junction -->
+        <item name="Trailhead" icon="presets/landmark/trailhead.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:highway=trailhead" />
+            <key key="highway" value="trailhead" />
+            <reference ref="name_operator"/>
+            <optional>
+                <reference ref="fee" />
+                <text key="website" text="Website" />
+                <check key="drinking_water" text="Drinking Water" />
+                <check key="toilets" text="Toilets" />
+                <check key="bin" text="Waste Basket/Trash Can" />
+            </optional>
+            <preset_link preset_name="Access Restrictions" />
+        </item> <!-- Trailhead -->
         <separator/>
         <item name="Elevator" icon="presets/service/elevator.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=elevator" />
@@ -4991,6 +5004,36 @@
             <combo key="post_box:type" text="Type" values="pillar,lamp,wall,meter" values_context="post_box" />
             <check key="drive_through" text="Drive through" />
         </item> <!-- Post Box -->
+        <item name="Private Mailbox" icon="presets/service/letter_box.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:amenity=letter_box" />
+            <space />
+            <key key="amenity" value="letter_box" />
+            <!-- post:<*> keys were copied from Address, with the addr: replaced by post: -->
+            <optional>
+                <reference ref="support"/>
+                <text key="post:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
+                <text key="post:street" text="Street name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
+                <text key="post:city" text="City name" use_last_as_default="force" match="key" />
+                <text key="post:postcode" text="Post code" use_last_as_default="force" match="key" />
+                <combo key="post:country" text="Country code" values_from="java.util.Locale#getISOCountries" use_last_as_default="force" match="key" values_context="country codes" />
+            </optional>
+            <optional text="Optional tag only for address without post:street">
+                <text key="post:place" text="Place name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
+            </optional>
+            <optional text="Optional tags for specific countries">
+                <text key="post:unit" text="Unit/Suite" match="key" />
+                <text key="post:housename" text="House name" match="key" alternative_autocomplete_keys="name" />
+                <text key="post:hamlet" text="Hamlet" match="key" />
+                <text key="post:suburb" text="Suburb" use_last_as_default="force" match="key" />
+                <text key="post:subdistrict" text="Subdistrict" use_last_as_default="force" match="key" />
+                <text key="post:district" text="District" use_last_as_default="force" match="key" />
+                <text key="post:province" text="Province" use_last_as_default="force" match="key" />
+                <!-- US States as defined in ISO 3166-2 -->
+                <combo key="post:state" text="State" text_context="addr:" values="AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,DC,AS,GU,MP,PR,UM,VI" use_last_as_default="force" match="key" />
+            </optional>
+            <preset_link preset_name="Post Box" text="Similar but different tags:" />
+            <preset_link preset_name="Post Office" text="Similar but different tags:" />
+        </item> <!-- Private Mailbox -->
         <item name="Telephone" icon="presets/service/telephone.svg" type="node" preset_name_label="true">
             <link wiki="Tag:amenity=telephone" />
             <space />
@@ -5225,6 +5268,7 @@
             <key key="leisure" value="stadium" />
             <text key="name" text="Name" />
             <reference ref="sport" />
+            <check key="building" text="Stadium Building" value_on="stadium" disable_off="true" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Stadium -->
         <item name="Sports Centre" icon="presets/sport/sports_centre.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5798,7 +5842,7 @@
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,pavilion,parking,public,retail,riding_hall,roof,ruins,school,service,shed,silo,sports_centre,sports_hall,stable,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,boathouse,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,digester,farm_auxiliary,fire_station,garage,garages,gasometer,gatehouse,grandstand,greenhouse,hangar,hospital,industrial,kindergarten,kiosk,manufacture,monastery,mosque,office,pavilion,parking,public,retail,riding_hall,roof,ruins,school,service,shed,silo,sports_centre,sports_hall,stable,stadium,storage_tank,sty,supermarket,synagogue,temple,tent,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <reference ref="name_operator" />
                 <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
