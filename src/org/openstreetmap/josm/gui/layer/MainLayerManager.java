@@ -382,19 +382,21 @@ public class MainLayerManager extends LayerManager {
         remainingLayers.addAll(previousLayers);
         remainingLayers.remove(except);
 
-        // First look for visible data layer
+        // First look for visible data layer (and store first data layer for later)
+        Layer osmlayer = null;
         for (Layer layer : remainingLayers) {
-            if (layer instanceof OsmDataLayer && layer.isVisible()) {
-                return layer;
+            if (layer instanceof OsmDataLayer) {
+                if (layer.isVisible()) {
+                    return layer;
+                } else if (osmlayer == null) {
+                    osmlayer = layer;
+                }
             }
         }
 
         // Then any data layer
-        for (Layer layer : remainingLayers) {
-            if (layer instanceof OsmDataLayer) {
-                return layer;
-            }
-        }
+        if (osmlayer != null)
+            return osmlayer;
 
         // Then any layer
         for (Layer layer : layersList) {
