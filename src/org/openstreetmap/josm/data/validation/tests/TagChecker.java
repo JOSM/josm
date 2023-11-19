@@ -770,7 +770,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     private static boolean hasAcceptedPrimaryTagForMultipolygon(OsmPrimitive p) {
         if (p.hasKey("landuse", "amenity", "building", "building:part", "area:highway", "shop", "place", "boundary",
                 "landform", "piste:type", "sport", "golf", "landcover", "aeroway", "office", "healthcare", "craft", "room")
-                || p.hasTagDifferent("natural", "tree", "peek", "saddle", "tree_row")
+                || p.hasTagDifferent("natural", "tree", "peak", "saddle", "tree_row")
                 || p.hasTagDifferent("man_made", "survey_point", "mast", "flagpole", "manhole", "watertap")
                 || p.hasTagDifferent("highway", "crossing", "bus_stop", "turning_circle", "street_lamp",
                         "traffic_signals", "stop", "milestone", "mini_roundabout", "motorway_junction", "passing_place",
