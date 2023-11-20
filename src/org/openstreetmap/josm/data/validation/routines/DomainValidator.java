@@ -609,7 +609,6 @@ public final class DomainValidator extends AbstractValidator {
         "erni", // erni ERNI Group Holding AG
         "esq", // esq Charleston Road Registry Inc.
         "estate", // estate Trixy Park, LLC
-        "etisalat", // etisalat Emirates Telecommunications Corporation (trading as Etisalat)
         "eurovision", // eurovision European Broadcasting Union (EBU)
         "eus", // eus Puntueus Fundazioa
         "events", // events Pioneer Maple, LLC
@@ -1403,7 +1402,6 @@ public final class DomainValidator extends AbstractValidator {
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
         "xn--mgba7c0bbn0a", // العليان Crescent Holding GmbH
-        "xn--mgbaakc7dvf", // اتصالات Emirates Telecommunications Corporation (trading as Etisalat)
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbah1a3hjkrd", // موريتانيا Université de Nouakchott Al Aasriya
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
