@@ -1292,7 +1292,6 @@ public final class DomainValidator extends AbstractValidator {
         "vivo", // vivo Telefonica Brasil S.A.
         "vlaanderen", // vlaanderen DNS.be vzw
         "vodka", // vodka Top Level Domain Holdings Limited
-        "volkswagen", // volkswagen Volkswagen Group of America Inc.
         "volvo", // volvo Volvo Holding Sverige Aktiebolag
         "vote", // vote Monolith Registry LLC
         "voting", // voting Valuetainment Corp.
