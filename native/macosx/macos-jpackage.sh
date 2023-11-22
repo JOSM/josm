@@ -11,7 +11,6 @@ set -Eeo pipefail
 # Don't show one time passwords
 set +x
 
-APPLE_ID="thomas.skowron@fossgis.de"
 IMPORT_AND_UNLOCK_KEYCHAIN=${IMPORT_AND_UNLOCK_KEYCHAIN:-1}
 
 if [ -z "${1-}" ]
@@ -24,9 +23,9 @@ echo "Building JOSM.app"
 
 mkdir app
 
-if [ -z "$CERT_MACOS_P12" ] || [ -z "$CERT_MACOS_PW" ] || [ -z "$APPLE_ID_PW" ] || [ -z "$APPLE_ID_TEAM" ]
+if [ -z "$CERT_MACOS_P12" ] || [ -z "$CERT_MACOS_PW" ] || [ -z "$APPLE_ID_PW" ] || [ -z "$APPLE_ID_TEAM" ]  || [ -z "$APPLE_ID" ]
 then
-    echo "CERT_MACOS_P12, CERT_MACOS_PW, APPLE_ID_PW, or APPLE_ID_TEAM are not set in the environment."
+    echo "CERT_MACOS_P12, CERT_MACOS_PW, APPLE_ID, APPLE_ID_PW, or APPLE_ID_TEAM are not set in the environment."
     echo "A JOSM.app will be created but not signed nor notarized."
     SIGNAPP=false
     KEYCHAINPATH=false
