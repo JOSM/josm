@@ -139,6 +139,7 @@ jobs:
         env:
           CERT_MACOS_P12: ${{ secrets.CERT_MACOS_P12 }}
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
           APPLE_ID_TEAM: ${{ secrets.APPLE_ID_TEAM }}
         run: |
