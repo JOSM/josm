@@ -2853,6 +2853,7 @@
             <text key="operator" text="Operator (CPO)" />
             <reference ref="oh" />
             <text key="capacity" text="Simultaneously usable charging spots" default="" delete_if_empty="true" />
+            <text key="level" text="Floor level, if applicable (ground = 0)" default="" delete_if_empty="true" />
             <label text="Surroundings and Fees:" />
             <checkgroup columns="3">
                 <check key="covered" text="Covered" default="" delete_if_empty="true" />
