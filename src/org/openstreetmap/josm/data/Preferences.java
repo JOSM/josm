@@ -945,7 +945,7 @@ public class Preferences extends AbstractPreferences {
                 map.put(url, remotePotlatch2);
             }
         }
-        putListOfMaps("mappaint.style.entries", styleEntries);
+        putListOfMaps("mappaint.style.entries", styleEntries.isEmpty() ? null : styleEntries);
     }
 
     /**
