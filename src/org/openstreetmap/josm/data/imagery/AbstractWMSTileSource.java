@@ -8,7 +8,6 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import org.openstreetmap.gui.jmapviewer.Projected;
-import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
@@ -104,16 +103,6 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     }
 
     @Override
-    public ICoordinate tileXYToLatLon(Tile tile) {
-        return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
-    }
-
-    @Override
-    public ICoordinate tileXYToLatLon(TileXY xy, int zoom) {
-        return tileXYToLatLon(xy.getXIndex(), xy.getYIndex(), zoom);
-    }
-
-    @Override
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
         return CoordinateConversion.llToCoor(tileProjection.eastNorth2latlon(getTileEastNorth(x, y, zoom)));
     }
@@ -130,11 +119,6 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     public TileXY latLonToTileXY(double lat, double lon, int zoom) {
         EastNorth enPoint = tileProjection.latlon2eastNorth(new LatLon(lat, lon));
         return eastNorthToTileXY(enPoint, zoom);
-    }
-
-    @Override
-    public TileXY latLonToTileXY(ICoordinate point, int zoom) {
-        return latLonToTileXY(point.getLat(), point.getLon(), zoom);
     }
 
     @Override
@@ -165,16 +149,6 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
                 (int) Math.round((point.east() - anchorPosition.east()) / scale),
                 (int) Math.round((anchorPosition.north() - point.north()) / scale)
                 );
-    }
-
-    @Override
-    public Point latLonToXY(ICoordinate point, int zoom) {
-        return latLonToXY(point.getLat(), point.getLon(), zoom);
-    }
-
-    @Override
-    public ICoordinate xyToLatLon(Point point, int zoom) {
-        return xyToLatLon(point.x, point.y, zoom);
     }
 
     @Override

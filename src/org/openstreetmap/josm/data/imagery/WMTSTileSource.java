@@ -930,16 +930,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     @Override
-    public ICoordinate tileXYToLatLon(Tile tile) {
-        return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
-    }
-
-    @Override
-    public ICoordinate tileXYToLatLon(TileXY xy, int zoom) {
-        return tileXYToLatLon(xy.getXIndex(), xy.getYIndex(), zoom);
-    }
-
-    @Override
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
         TileMatrix matrix = getTileMatrix(zoom);
         if (matrix == null) {
@@ -966,11 +956,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     @Override
-    public TileXY latLonToTileXY(ICoordinate point, int zoom) {
-        return latLonToTileXY(point.getLat(), point.getLon(), zoom);
-    }
-
-    @Override
     public int getTileXMax(int zoom) {
         return getTileXMax(zoom, tileProjection);
     }
@@ -992,16 +977,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                     (int) Math.round((point.east() - matrix.topLeftCorner.east()) / scale),
                     (int) Math.round((matrix.topLeftCorner.north() - point.north()) / scale)
                 );
-    }
-
-    @Override
-    public Point latLonToXY(ICoordinate point, int zoom) {
-        return latLonToXY(point.getLat(), point.getLon(), zoom);
-    }
-
-    @Override
-    public Coordinate xyToLatLon(Point point, int zoom) {
-        return xyToLatLon(point.x, point.y, zoom);
     }
 
     @Override
