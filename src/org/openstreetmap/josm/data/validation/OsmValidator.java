@@ -114,50 +114,50 @@ public final class OsmValidator {
     private static final Class<Test>[] CORE_TEST_CLASSES = new Class[] {// NOPMD
         /* FIXME - unique error numbers for tests aren't properly unique - ignoring will not work as expected */
         /* Error codes are class.getName().hashCode() + "_" + oldCode. There should almost never be a collision. */
-        DuplicateNode.class,                                // ID     1 ..    99
-        OverlappingWays.class,                              // ID   101 ..   199
-        UntaggedNode.class,                                 // ID   201 ..   299
-        UntaggedWay.class,                                  // ID   301 ..   399
-        SelfIntersectingWay.class,                          // ID   401 ..   499
-        DuplicatedWayNodes.class,                           // ID   501 ..   599
-        CrossingWays.Ways.class,                            // ID   601 ..   699
-        CrossingWays.Boundaries.class,                      // ID   601 ..   699
-        CrossingWays.SelfCrossing.class,                    // ID   601 ..   699
-        SimilarNamedWays.class,                             // ID   701 ..   799
-        Coastlines.class,                                   // ID   901 ..   999
-        WronglyOrderedWays.class,                           // ID  1001 ..  1099
-        UnclosedWays.class,                                 // ID  1101 ..  1199
-        TagChecker.class,                                   // ID  1201 ..  1299
-        UnconnectedWays.UnconnectedHighways.class,          // ID  1301 ..  1399
-        UnconnectedWays.UnconnectedRailways.class,          // ID  1301 ..  1399
-        UnconnectedWays.UnconnectedWaterways.class,         // ID  1301 ..  1399
-        UnconnectedWays.UnconnectedNaturalOrLanduse.class,  // ID  1301 ..  1399
-        UnconnectedWays.UnconnectedPower.class,             // ID  1301 ..  1399
-        DuplicateWay.class,                                 // ID  1401 ..  1499
-        NameMismatch.class,                                 // ID  1501 ..  1599
-        MultipolygonTest.class,                             // ID  1601 ..  1699
-        RelationChecker.class,                              // ID  1701 ..  1799
-        TurnrestrictionTest.class,                          // ID  1801 ..  1899
-        DuplicateRelation.class,                            // ID  1901 ..  1999
-        WayConnectedToArea.class,                           // ID  2301 ..  2399
-        PowerLines.class,                                   // ID  2501 ..  2599
-        Addresses.class,                                    // ID  2601 ..  2699
-        Highways.class,                                     // ID  2701 ..  2799
-        BarriersEntrances.class,                            // ID  2801 ..  2899
-        OpeningHourTest.class,                              // ID  2901 ..  2999
-        MapCSSTagChecker.class,                             // ID  3000 ..  3099
-        Lanes.class,                                        // ID  3100 ..  3199
-        ConditionalKeys.class,                              // ID  3200 ..  3299
-        InternetTags.class,                                 // ID  3300 ..  3399
-        ApiCapabilitiesTest.class,                          // ID  3400 ..  3499
-        LongSegment.class,                                  // ID  3500 ..  3599
-        PublicTransportRouteTest.class,                     // ID  3600 ..  3699
-        // ID  3700 ..  3799 is automatically removed since it clashed with pt_assistant.
-        SharpAngles.class,                                  // ID  3800 ..  3899
-        ConnectivityRelations.class,                        // ID  3900 ..  3999
-        DirectionNodes.class,                               // ID  4000 ..  4099
-        RightAngleBuildingTest.class,                       // ID  4100 ..  4199
-        CycleDetector.class,                                // ID  4200 ..  4299
+        DuplicateNode.class, // ID    1 ..   99
+        OverlappingWays.class, // ID  101 ..  199
+        UntaggedNode.class, // ID  201 ..  299
+        UntaggedWay.class, // ID  301 ..  399
+        SelfIntersectingWay.class, // ID  401 ..  499
+        DuplicatedWayNodes.class, // ID  501 ..  599
+        CrossingWays.Ways.class, // ID  601 ..  699
+        CrossingWays.Boundaries.class, // ID  601 ..  699
+        CrossingWays.SelfCrossing.class, // ID  601 ..  699
+        SimilarNamedWays.class, // ID  701 ..  799
+        Coastlines.class, // ID  901 ..  999
+        WronglyOrderedWays.class, // ID 1001 .. 1099
+        UnclosedWays.class, // ID 1101 .. 1199
+        TagChecker.class, // ID 1201 .. 1299
+        UnconnectedWays.UnconnectedHighways.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedRailways.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedWaterways.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedNaturalOrLanduse.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedPower.class, // ID 1301 .. 1399
+        DuplicateWay.class, // ID 1401 .. 1499
+        NameMismatch.class, // ID  1501 ..  1599
+        MultipolygonTest.class, // ID  1601 ..  1699
+        RelationChecker.class, // ID  1701 ..  1799
+        TurnrestrictionTest.class, // ID  1801 ..  1899
+        DuplicateRelation.class, // ID 1901 .. 1999
+        WayConnectedToArea.class, // ID 2301 .. 2399
+        PowerLines.class, // ID 2501 .. 2599
+        Addresses.class, // ID 2601 .. 2699
+        Highways.class, // ID 2701 .. 2799
+        BarriersEntrances.class, // ID 2801 .. 2899
+        OpeningHourTest.class, // 2901 .. 2999
+        MapCSSTagChecker.class, // 3000 .. 3099
+        Lanes.class, // 3100 .. 3199
+        ConditionalKeys.class, // 3200 .. 3299
+        InternetTags.class, // 3300 .. 3399
+        ApiCapabilitiesTest.class, // 3400 .. 3499
+        LongSegment.class, // 3500 .. 3599
+        PublicTransportRouteTest.class, // 3600 .. 3699
+        // 3700 .. 3799 is automatically removed since it clashed with pt_assistant.
+        SharpAngles.class, // 3800 .. 3899
+        ConnectivityRelations.class, // 3900 .. 3999
+        DirectionNodes.class, // 4000 .. 4099
+        RightAngleBuildingTest.class, // 4100 .. 4199
+        CycleDetector.class, // 4200 .. 4299
     };
 
     /**
