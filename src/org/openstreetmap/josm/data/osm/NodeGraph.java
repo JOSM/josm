@@ -184,7 +184,7 @@ public class NodeGraph {
      * Add a list of node pairs.
      * @param pairs collection of node pairs
      */
-    public void add(Collection<NodePair> pairs) {
+    public void add(Iterable<NodePair> pairs) {
         for (NodePair pair : pairs) {
             add(pair);
         }
@@ -194,15 +194,15 @@ public class NodeGraph {
      * Return the edges containing the node pairs of the graph.
      * @return the edges containing the node pairs of the graph
      */
-    public Set<NodePair> getEdges() {
-        return edges;
+    public Collection<NodePair> getEdges() {
+        return Collections.unmodifiableSet(edges);
     }
 
     /**
      * Return the graph's nodes.
      * @return the graph's nodes
      */
-    public Set<Node> getNodes() {
+    public Collection<Node> getNodes() {
         Set<Node> nodes = new LinkedHashSet<>(2 * edges.size());
         for (NodePair pair : edges) {
             nodes.add(pair.getA());
@@ -391,7 +391,7 @@ public class NodeGraph {
      * @return {@code true} if it is connected
      */
     private boolean isConnected() {
-        Set<Node> nodes = getNodes();
+        Collection<Node> nodes = getNodes();
         if (nodes.isEmpty())
             return false;
         Deque<Node> toVisit = new ArrayDeque<>();

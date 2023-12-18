@@ -16,13 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Tarjan's strongly connected components algorithm for JOSM.
  *
+ * @author gaben
  * @see <a href="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm">
  * Tarjan's strongly connected components algorithm</a>
- * @author gaben
  * @since xxx
  */
 public final class Tarjan {
@@ -67,8 +66,8 @@ public final class Tarjan {
 
     /**
      * Returns the graph data as a map.
-     * @see NodeGraph#createMap()
      * @return the graph data as a map
+     * @see NodeGraph#createMap()
      */
     public Map<Node, List<Node>> getGraphMap() {
         return graphMap;
@@ -148,7 +147,7 @@ public final class Tarjan {
     /**
      * Helper class for storing the Tarjan algorithm runtime metadata.
      */
-    private static class TarjanHelper {
+    private static final class TarjanHelper {
         private final int index;
         private int lowlink;
 
