@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2023101900, Last Updated Thu Oct 19 07:07:01 2023 UTC
+        // Taken from Version 2023121800, Last Updated Mon Dec 18 07:07:01 2023 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -1120,7 +1120,6 @@ public final class DomainValidator extends AbstractValidator {
         "saxo", // saxo Saxo Bank A/S
         "sbi", // sbi STATE BANK OF INDIA
         "sbs", // sbs SPECIAL BROADCASTING SERVICE CORPORATION
-        "sca", // sca SVENSKA CELLULOSA AKTIEBOLAGET SCA (publ)
         "scb", // scb The Siam Commercial Bank Public Company Limited (&quot;SCB&quot;)
         "schaeffler", // schaeffler Schaeffler Technologies AG &amp; Co. KG
         "schmidt", // schmidt SALM S.A.S.
