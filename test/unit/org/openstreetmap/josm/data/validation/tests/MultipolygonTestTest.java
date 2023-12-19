@@ -7,28 +7,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.InputStream;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MapPaintStyles;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.TaggingPresets;
 
 /**
  * JUnit Test of Multipolygon validation test.
  */
+@BasicPreferences
+@Main
+@MapPaintStyles
+@Projection
+@TaggingPresets
 class MultipolygonTestTest {
-
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().mapStyles().presets().main().preferences();
-
     /**
      * Test all error cases manually created in multipolygon.osm.
      * @throws Exception in case of error

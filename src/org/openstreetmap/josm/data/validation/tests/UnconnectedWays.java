@@ -52,6 +52,10 @@ import org.openstreetmap.josm.tools.Logging;
  * @author frsantos
  */
 public abstract class UnconnectedWays extends Test {
+    private static final String POWER = "power";
+    private static final String PLATFORM = "platform";
+    private static final String PLATFORM_EDGE = "platform_edge";
+    private static final String CONSTRUCTION = "construction";
     private final int code;
     private final boolean isHighwayTest;
 
@@ -101,7 +105,7 @@ public abstract class UnconnectedWays extends Test {
                     || n.hasTag("amenity", "parking_entrance", "ferry_terminal")
                     || n.isKeyTrue("noexit")
                     || n.hasKey("entrance", "barrier")
-                    || n.getParentWays().stream().anyMatch(p -> isBuilding(p) || p.hasTag(RAILWAY, "platform", "platform_edge"));
+                    || n.getParentWays().stream().anyMatch(p -> isBuilding(p) || p.hasTag(RAILWAY, PLATFORM, PLATFORM_EDGE));
         }
     }
 
@@ -119,10 +123,10 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            if (p.hasTag(RAILWAY, "construction") && p.hasKey("construction"))
-                return p.hasTagDifferent("construction", "platform", "platform_edge", "service_station", "station");
+            if (p.hasTag(RAILWAY, CONSTRUCTION) && p.hasKey(CONSTRUCTION))
+                return p.hasTagDifferent(CONSTRUCTION, PLATFORM, PLATFORM_EDGE, "service_station", "station");
             return p.hasTagDifferent(RAILWAY, "proposed", "planned", "abandoned", "razed", "disused", "no",
-                    "platform", "platform_edge", "service_station", "station");
+                    PLATFORM, PLATFORM_EDGE, "service_station", "station");
         }
 
         @Override
@@ -196,12 +200,13 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            return p.hasTag("power", "line", "minor_line", "cable");
+            return p.hasTag(POWER, "line", "minor_line", "cable");
         }
 
         @Override
         protected boolean ignoreUnconnectedEndNode(Node n) {
-            return n.hasTag("power", "terminal") || n.hasTag("location:transition", "yes");
+            return n.hasTag(POWER, "terminal") || n.hasTag("location:transition", "yes")
+                    || n.hasTag("line_management", "transition", "termination");
         }
     }
 
@@ -269,11 +274,11 @@ public abstract class UnconnectedWays extends Test {
                 map.clear();
                 return map;
             }
-            if (s.w.hasTag(HIGHWAY, "platform"))
+            if (s.w.hasTag(HIGHWAY, PLATFORM))
                 continue;
             for (Node endnode : s.nearbyNodes(mindist)) {
                 Way parentWay = getWantedParentWay(endnode);
-                if (parentWay != null && !parentWay.hasTag(HIGHWAY, "platform")
+                if (parentWay != null && !parentWay.hasTag(HIGHWAY, PLATFORM)
                         && Objects.equals(OsmUtils.getLayer(s.w), OsmUtils.getLayer(parentWay))
                         // to handle intersections of 't' shapes and similar
                         && !s.isConnectedTo(endnode) && !s.obstacleBetween(endnode)) {
@@ -295,7 +300,7 @@ public abstract class UnconnectedWays extends Test {
             if (!s.concernsArea) {
                 for (Node endnode : s.nearbyNodes(mindist)) {
                     if (!s.isConnectedTo(endnode)) {
-                        if (s.w.hasTag("power")) {
+                        if (s.w.hasTag(POWER)) {
                             boolean badConnection = false;
                             Way otherWay = getWantedParentWay(endnode);
                             if (otherWay != null) {
@@ -460,7 +465,7 @@ public abstract class UnconnectedWays extends Test {
          * @param parent the previous parent way
          * @return true if a reasonable connection was found
          */
-        private boolean isConnectedTo(Node node, LinkedHashSet<Node> visited, double len, Way parent) {
+        private boolean isConnectedTo(Node node, Set<Node> visited, double len, Way parent) {
             if (len > maxLen) {
                 return false;
             }
@@ -479,7 +484,7 @@ public abstract class UnconnectedWays extends Test {
             }
             if (visited != null) {
                 visited.add(node);
-                List<Way> wantedParents = node.getParentWays().stream().filter(pw -> isWantedWay(pw))
+                List<Way> wantedParents = node.getParentWays().stream().filter(UnconnectedWays.this::isWantedWay)
                         .collect(Collectors.toList());
                 if (wantedParents.size() > 1 && wantedParents.indexOf(parent) != wantedParents.size() - 1) {
                     // we want to find a different way. so move known way to the end of the list

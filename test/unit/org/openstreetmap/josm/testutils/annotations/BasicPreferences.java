@@ -27,7 +27,12 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Allow tests to use JOSM preferences (see {@link JOSMTestRules#preferences()}).
- * This is often enough for basic tests.
+ * This is often enough for basic tests. There are two modes:
+ * <ul>
+ *     <li>Between test classes (usually enough) if annotated at the class level ({@link ElementType#TYPE})</li>
+ *     <li>Between test methods if annotated at the method level ({@link ElementType#METHOD})</li>
+ *     <li>Between test method if annotated at the class level <i>and</i> the annotated value is {@code true}</li>
+ * </ul>
  *
  * @author Taylor Smock
  * @see FullPreferences
@@ -39,6 +44,11 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @Inherited
 @ExtendWith(BasicPreferences.BasicPreferencesExtension.class)
 public @interface BasicPreferences {
+    /**
+     * Clear preferences between tests
+     * @return {@code true} if the preferences should be cleared between tests
+     */
+    boolean value() default false;
 
     /**
      * Initialize basic preferences. This is often more than enough for basic tests.
@@ -79,7 +89,8 @@ public @interface BasicPreferences {
 
         @Override
         public void beforeEach(ExtensionContext context) throws Exception {
-            if (AnnotationSupport.isAnnotated(context.getElement(), BasicPreferences.class) || Config.getPref() == null) {
+            if (AnnotationSupport.isAnnotated(context.getElement(), BasicPreferences.class) || Config.getPref() == null
+            || AnnotationUtils.findFirstParentAnnotation(context, BasicPreferences.class).map(BasicPreferences::value).orElse(false)) {
                 this.beforeAll(context);
             }
         }

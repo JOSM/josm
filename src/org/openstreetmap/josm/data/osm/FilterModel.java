@@ -439,7 +439,7 @@ public class FilterModel implements SortableModel<Filter> {
                 }
             }
 
-            for (OsmPrimitive ref: p.getReferrers()) {
+            for (OsmPrimitive ref: p.getReferrers(true)) {
                 stack.push(ref);
             }
         }

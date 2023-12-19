@@ -14,18 +14,18 @@ import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTTile;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorTileSource;
 import org.openstreetmap.josm.gui.layer.imagery.MVTLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * A test for {@link VectorDataSet}
  */
+@Projection
 class VectorDataSetTest {
     /**
      * Make some methods available for this test class
@@ -62,9 +62,6 @@ class VectorDataSetTest {
             return this.finishedLoading;
         }
     }
-
-    @RegisterExtension
-    JOSMTestRules rule = new JOSMTestRules().projection();
 
     /**
      * Load arbitrary tiles

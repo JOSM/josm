@@ -60,7 +60,7 @@ public final class ReflectionUtils {
         }, exclusions);
     }
 
-    private static <T extends Object> T findCaller(Function<StackTraceElement, T> getter, Collection<T> exclusions) {
+    private static <T> T findCaller(Function<StackTraceElement, T> getter, Collection<T> exclusions) {
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         for (int i = 3; i < stack.length; i++) {
             T t = getter.apply(stack[i]);

@@ -27,15 +27,11 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.awaitility.Awaitility;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
-import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -51,31 +47,25 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.ImagePatternMatching;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.FakeImagery;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.MeasurementSystem;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link MinimapDialog} class.
  */
-public class MinimapDialogTest {
-
-    /**
-     * Setup tests
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeImagery();
-
-    @Before
-    public void beforeAll() {
-        // Needed since testShowDownloadedAreaLayerSwitching expects the measurement to be imperial
-        SystemOfMeasurement.setSystemOfMeasurement(SystemOfMeasurement.IMPERIAL);
-    }
-
+@FakeImagery
+@Main
+@Projection
+// Needed since testShowDownloadedAreaLayerSwitching expects the measurement to be imperial
+@MeasurementSystem("Imperial")
+class MinimapDialogTest {
     /**
      * Unit test of {@link MinimapDialog} class.
      */
     @Test
-    public void testMinimapDialog() {
+    void testMinimapDialog() {
         MinimapDialog dlg = new MinimapDialog();
         dlg.showDialog();
         assertTrue(dlg.isVisible());
@@ -205,7 +195,7 @@ public class MinimapDialogTest {
      * Tests to switch imagery source.
      */
     @Test
-    public void testSourceSwitching() {
+    void testSourceSwitching() {
         // relevant prefs starting out empty, should choose the first source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -251,7 +241,7 @@ public class MinimapDialogTest {
      * Tests that the apparently-selected TileSource survives the tile sources being refreshed.
      */
     @Test
-    public void testRefreshSourcesRetainsSelection() {
+    void testRefreshSourcesRetainsSelection() {
         // relevant prefs starting out empty, should choose the first source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -288,7 +278,7 @@ public class MinimapDialogTest {
      * selected in the source menu even after the tile sources have been refreshed.
      */
     @Test
-    public void testRemovedSourceStillSelected() {
+    void testRemovedSourceStillSelected() {
         // relevant prefs starting out empty, should choose the first source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -320,7 +310,7 @@ public class MinimapDialogTest {
      * Tests the tile source list includes sources only present in the LayerManager
      */
     @Test
-    public void testTileSourcesFromCurrentLayers() {
+    void testTileSourcesFromCurrentLayers() {
         // relevant prefs starting out empty, should choose the first (ImageryLayerInfo) source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
@@ -453,7 +443,7 @@ public class MinimapDialogTest {
      * Tests minimap obeys a saved "mapstyle" preference on startup.
      */
     @Test
-    public void testSourcePrefObeyed() {
+    void testSourcePrefObeyed() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
 
         this.setUpMiniMap();
@@ -479,7 +469,7 @@ public class MinimapDialogTest {
      * Tests minimap handles an unrecognized "mapstyle" preference on startup
      */
     @Test
-    public void testSourcePrefInvalid() {
+    void testSourcePrefInvalid() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Hooloovoo Tiles");
 
         this.setUpMiniMap();
@@ -500,7 +490,7 @@ public class MinimapDialogTest {
      * test viewport marker rectangle matches the mapView's aspect ratio
      */
     @Test
-    public void testViewportAspectRatio() {
+    void testViewportAspectRatio() {
         // Add a test layer to the layer manager to get the MapFrame & MapView
         MainApplication.getLayerManager().addLayer(new TestLayer());
 
@@ -639,7 +629,7 @@ public class MinimapDialogTest {
      * test downloaded area is shown shaded
      */
     @Test
-    public void testShowDownloadedArea() {
+    void testShowDownloadedArea() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
         Config.getPref().putBoolean("slippy_map_chooser.show_downloaded_area", false);
 
@@ -797,7 +787,7 @@ public class MinimapDialogTest {
      * test display of downloaded area follows active layer switching
      */
     @Test
-    public void testShowDownloadedAreaLayerSwitching() {
+    void testShowDownloadedAreaLayerSwitching() {
         Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
         Config.getPref().putBoolean("slippy_map_chooser.show_downloaded_area", true);
 

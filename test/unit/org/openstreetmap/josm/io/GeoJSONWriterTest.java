@@ -9,28 +9,19 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link GeoJSONWriter} class.
  */
+@Projection
 class GeoJSONWriterTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test for Point
      */

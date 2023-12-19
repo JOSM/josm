@@ -188,8 +188,15 @@ class ImageProviderTest {
     }
 
     private static File getReferenceFile(String reference) {
-        // Java 8 renders SVG images differently, thus, use separate reference files
-        final String javaSuffix = Utils.getJavaVersion() == 8 ? "-java8" : "";
+        // Java 8 and Java 21 render SVG images differently, thus, use separate reference files
+        final String javaSuffix;
+        switch (Utils.getJavaVersion()) {
+            case 8: javaSuffix = "-java8";
+            break;
+            case 21: javaSuffix = "-java21";
+            break;
+            default: javaSuffix = "";
+        }
         return new File(TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName() + javaSuffix + "/" + reference + ".png");
     }
 

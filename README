@@ -102,7 +102,6 @@ This is an overview of the files and directories in the JOSM code repository:
   - images/                 images, which are not for distribution, but may be useful later (e.g. high
                             resolution and vector versions)
   - styles/                 files needed for map style maintenance
-    - potlatch2/README      infos on how to update the Potlatch 2 style from upstream sources
 - README                    this file
 - resources/                resource files that will be included in the JOSM jar file
   - data/                   data files that will be included in the JOSM jar file

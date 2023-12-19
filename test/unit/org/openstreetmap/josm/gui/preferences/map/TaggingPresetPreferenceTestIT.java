@@ -14,9 +14,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
@@ -27,27 +28,19 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetsTest;
 import org.openstreetmap.josm.gui.tagging.presets.items.Link;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Integration tests of {@link TaggingPresetPreference} class.
  */
+@HTTPS
+@Timeout(value = 20, unit = TimeUnit.MINUTES)
 class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*120).parameters();
-
     /**
      * Setup test
      * @throws IOException in case of I/O error
@@ -77,11 +70,10 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
      * @param displayName displayed name
      * @param url URL
      * @param source source entry to test
-     * @throws Exception in case of error
      */
     @ParameterizedTest(name = "{0} - {1}")
     @MethodSource("data")
-    void testPresetsValidity(String displayName, String url, ExtendedSourceEntry source) throws Exception {
+    void testPresetsValidity(String displayName, String url, ExtendedSourceEntry source) {
         assumeFalse(isIgnoredSubstring(source, source.url));
         List<String> ignoredErrors = new ArrayList<>();
         Set<String> errors = new HashSet<>();

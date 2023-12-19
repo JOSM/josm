@@ -10,33 +10,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.OsmApi;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link AddImageryLayerAction}.
  */
-@BasicWiremock
 @BasicPreferences
+@BasicWiremock
+@OsmApi(OsmApi.APIType.FAKE)
+@Projection
 final class AddImageryLayerActionTest {
-    /**
-     * We need prefs for this. We need platform for actions and the OSM API for checking blacklist.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().fakeAPI().projection();
-
     /**
      * HTTP mock.
      */

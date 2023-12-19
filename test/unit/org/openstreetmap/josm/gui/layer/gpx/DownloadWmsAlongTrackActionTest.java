@@ -10,38 +10,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Collections;
 
 import org.awaitility.Awaitility;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.MergeLayerActionTest.MergeLayerExtendedDialogMocker;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayerTest;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadWmsAlongTrackAction.PrecacheWmsTask;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.TileSourceRule;
+import org.openstreetmap.josm.testutils.annotations.FakeImagery;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link DownloadWmsAlongTrackAction} class.
  */
-public class DownloadWmsAlongTrackActionTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().fakeImagery().timeout(20000);
+@FakeImagery
+@Main
+@Projection
+@Timeout(20)
+class DownloadWmsAlongTrackActionTest {
 
     /**
      * Test action without layer.
      */
     @Test
-    public void testNoLayer() {
+    void testNoLayer() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
             Collections.singletonMap("There are no imagery layers.", 0)
@@ -60,15 +56,13 @@ public class DownloadWmsAlongTrackActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTMSLayer() throws Exception {
+    void testTMSLayer(FakeImagery.FakeImageryWireMockExtension fakeImageryWireMockExtension) throws Exception {
         TestUtils.assumeWorkingJMockit();
         final MergeLayerExtendedDialogMocker edMocker = new MergeLayerExtendedDialogMocker();
         edMocker.getMockResultMap().put("Please select the imagery layer.", "Download");
 
-        final TileSourceRule tileSourceRule = this.test.getTileSourceRule();
-
         final TMSLayer layer = new TMSLayer(
-            tileSourceRule.getSourcesList().get(0).getImageryInfo(tileSourceRule.port())
+                fakeImageryWireMockExtension.getSourcesList().get(0).getImageryInfo(fakeImageryWireMockExtension.getRuntimeInfo().getHttpPort())
         );
         try {
             MainApplication.getLayerManager().addLayer(layer);

@@ -15,8 +15,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import org.apache.commons.compress.utils.CountingInputStream;
 import org.openstreetmap.josm.data.Bounds;

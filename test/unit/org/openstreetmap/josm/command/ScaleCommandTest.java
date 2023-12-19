@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -19,23 +19,18 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests of {@link ScaleCommand} class.
  */
+@BasicPreferences
+@Projection
 class ScaleCommandTest {
-
-    /**
-     * We need prefs for nodes.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
     private CommandTestData testData;
 
     /**
@@ -99,7 +94,7 @@ class ScaleCommandTest {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
-        ScaleCommand command = new ScaleCommand(Arrays.asList(testData.existingNode),
+        ScaleCommand command = new ScaleCommand(Collections.singletonList(testData.existingNode),
                 new EastNorth(0, 0));
         // intentionally empty
         command.fillModifiedData(modified, deleted, added);
@@ -113,7 +108,7 @@ class ScaleCommandTest {
      */
     @Test
     void testGetParticipatingPrimitives() {
-        ScaleCommand command = new ScaleCommand(Arrays.asList(testData.existingNode), new EastNorth(0, 0));
+        ScaleCommand command = new ScaleCommand(Collections.singletonList(testData.existingNode), new EastNorth(0, 0));
         command.executeCommand();
         assertArrayEquals(new Object[] {testData.existingNode }, command.getParticipatingPrimitives().toArray());
     }
@@ -124,7 +119,7 @@ class ScaleCommandTest {
     @Test
     void testDescription() {
         assertEquals("Scale 1 node",
-                new ScaleCommand(Arrays.asList(testData.existingNode), new EastNorth(0, 0))
+                new ScaleCommand(Collections.singletonList(testData.existingNode), new EastNorth(0, 0))
                         .getDescriptionText());
         assertEquals("Scale 2 nodes",
                 new ScaleCommand(Arrays.asList(testData.existingNode, testData.existingNode2), new EastNorth(0, 0))

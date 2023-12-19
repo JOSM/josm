@@ -5,10 +5,10 @@ import java.awt.Component;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 
-import javax.annotation.Nullable;
-
 import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
+
+import jakarta.annotation.Nullable;
 
 /**
  * A CredentialsAgent manages two credentials:

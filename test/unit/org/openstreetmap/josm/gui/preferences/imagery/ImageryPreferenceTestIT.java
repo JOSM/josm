@@ -28,7 +28,8 @@ import javax.imageio.ImageIO;
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -64,30 +65,27 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.imagery.ApiKeyProvider;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Integration tests of {@link ImageryPreference} class.
  */
+@HTTPS
+@I18n
+@org.openstreetmap.josm.testutils.annotations.Projection
+@ProjectionNadGrids
+@Timeout(value = 40, unit = TimeUnit.MINUTES)
 public class ImageryPreferenceTestIT {
 
     private static final String ERROR_SEP = " -> ";
     private static final LatLon GREENWICH = new LatLon(51.47810, -0.00170);
     private static final int DEFAULT_ZOOM = 12;
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static JOSMTestRules test = new JOSMTestRules().https().i18n().preferences().projection().projectionNadGrids()
-                                                   .timeout((int) TimeUnit.MINUTES.toMillis(40));
 
     /** Entry to test */
     private final Map<String, Map<ImageryInfo, List<String>>> errors = synchronizedMap(new TreeMap<>());
@@ -434,6 +432,7 @@ public class ImageryPreferenceTestIT {
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
+    @Disabled("Takes a long time")
     void testImageryEntryValidity(String id, ImageryInfo info) {
         checkEntry(info);
         assertTrue(errors.isEmpty(), format(id, errors));

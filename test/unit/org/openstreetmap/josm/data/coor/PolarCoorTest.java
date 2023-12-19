@@ -6,26 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DecimalFormat;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Test the {@link PolarCoor} class.
  */
+@Projection
 class PolarCoorTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     /**
      * Test {@link PolarCoor#PolarCoor}
      */

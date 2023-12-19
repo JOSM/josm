@@ -457,7 +457,7 @@ public abstract class CrossingWays extends Test {
 
                     List<Way> prims = Arrays.asList(es1.getWay(), es2.getWay());
                     if ((highlight = crossingWays.get(prims)) == null) {
-                        highlight = new ArrayList<>();
+                        highlight = new ArrayList<>(2);
                         highlight.add(es1);
                         highlight.add(es2);
                         crossingWays.put(prims, highlight);

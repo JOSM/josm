@@ -85,7 +85,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
     /**
       * creation date of the source (in the form YYYY-MM-DD;YYYY-MM-DD, where
       * DD and MM as well as a second date are optional).
-      *
+      * <p>
       * Also used as time filter for WMS time={time} parameter (such as Sentinel-2)
       * @since 11570
       */
@@ -105,7 +105,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
     protected T category;
     /** category of the imagery (input string, not saved, copied or used otherwise except for error checks) */
     protected String categoryOriginalString;
-    /** when adding a field, also adapt the:
+    /* when adding a field, also adapt the:
      * {@link #ImageryPreferenceEntry ImageryPreferenceEntry object}
      * {@link #ImageryPreferenceEntry#ImageryPreferenceEntry(ImageryInfo) ImageryPreferenceEntry constructor}
      * {@link #ImageryInfo(ImageryPreferenceEntry) ImageryInfo constructor}
@@ -148,7 +148,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
     /**
      * Check if this object equals another SourceInfo with respect to the properties
      * that get written to the preference file.
-     *
+     * <p>
      * This should be overridden and called in subclasses.
      *
      * @param other the SourceInfo object to compare to
@@ -218,13 +218,12 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
     @Override
     public String toString() {
         // Used in imagery preferences filtering, so must be efficient
-        return new StringBuilder(name)
-                .append('[').append(countryCode)
+        return name +
+                '[' + countryCode +
                 // appending the localized country in toString() allows us to filter imagery preferences table with it!
-                .append("] ('").append(getLocalizedCountry(countryCode)).append(')')
-                .append(" - ").append(url)
-                .append(" - ").append(sourceType)
-                .toString();
+                "] ('" + getLocalizedCountry(countryCode) + ')' +
+                " - " + url +
+                " - " + sourceType;
     }
 
     @Override

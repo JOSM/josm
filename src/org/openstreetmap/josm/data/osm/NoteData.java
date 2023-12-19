@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
@@ -51,6 +53,8 @@ public class NoteData implements Data {
     private Comparator<Note> comparator = Note.DEFAULT_COMPARATOR;
 
     private final ListenerList<NoteDataUpdateListener> listeners = ListenerList.create();
+
+    private final Set<DataSource> dataSourceSet = new HashSet<>();
 
     /**
      * Construct a new note container without notes
@@ -139,6 +143,7 @@ public class NoteData implements Data {
     public synchronized void mergeFrom(NoteData from) {
         if (this != from) {
             addNotes(from.noteList);
+            from.getDataSources().forEach(this::addDataSource);
         }
     }
 
@@ -314,6 +319,16 @@ public class NoteData implements Data {
 
     @Override
     public Collection<DataSource> getDataSources() {
-        return Collections.emptyList(); // Notes don't currently store data sources
+        return Collections.unmodifiableSet(this.dataSourceSet);
+    }
+
+    /**
+     * Adds a new data source.
+     * @param source data source to add
+     * @return {@code true} if the collection changed as a result of the call
+     * @since 18868
+     */
+    public synchronized boolean addDataSource(DataSource source) {
+        return this.dataSourceSet.add(source);
     }
 }

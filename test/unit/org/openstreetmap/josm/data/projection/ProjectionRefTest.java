@@ -36,12 +36,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.PlatformManager;
 
@@ -56,12 +56,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * the full path of the executable). Make sure the required *.gsb grid files
  * can be accessed, i.e. copy them from <code>nodist/data/projection</code> to <code>/usr/share/proj</code> or
  * wherever cs2cs expects them to be placed.
- *
+ * <p>
  * The input parameter for the external library is <em>not</em> the projection code
  * (e.g. "EPSG:25828"), but the entire definition, (e.g. "+proj=utm +zone=28 +ellps=GRS80 +nadgrids=null").
  * This means the test does not verify our definitions, but the correctness
  * of the algorithm, given a certain definition.
  */
+@ProjectionNadGrids
+@Timeout(90)
 class ProjectionRefTest {
 
     private static final String CS2CS_EXE = "cs2cs";
@@ -85,13 +87,6 @@ class ProjectionRefTest {
 
     static boolean debug;
     static List<String> forcedCodes;
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projectionNadGrids().timeout(90_000);
 
     /**
      * Program entry point.

@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType
 import static org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction.NONE;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -44,9 +44,7 @@ public class WayConnectionTypeCalculator {
      */
     public List<WayConnectionType> updateLinks(Relation r, List<RelationMember> members) {
         this.members = members;
-        final List<WayConnectionType> con = members.stream()
-                .map(ignore -> (WayConnectionType) null)
-                .collect(Collectors.toList());
+        final List<WayConnectionType> con = new ArrayList<>(Collections.nCopies(members.size(), null));
 
         firstGroupIdx = 0;
 
@@ -164,7 +162,7 @@ public class WayConnectionTypeCalculator {
         return wct;
     }
 
-    private boolean isSuperRoute(Relation r) {
+    private static boolean isSuperRoute(Relation r) {
         return r != null && r.hasTag("type", "superroute");
     }
 
@@ -225,7 +223,7 @@ public class WayConnectionTypeCalculator {
         if (RelationSortUtils.isOneway(m)) {
             if (RelationSortUtils.isBackward(m) != reversed) return BACKWARD;
             else return FORWARD;
-        } else { /** guess the direction and see if it fits with the next member */
+        } else { /* guess the direction and see if it fits with the next member */
             if (determineDirection(i, FORWARD, i+1) != NONE) return FORWARD;
             if (determineDirection(i, BACKWARD, i+1) != NONE) return BACKWARD;
         }
@@ -331,9 +329,9 @@ public class WayConnectionTypeCalculator {
     /**
      * Determines the direction of way {@code k} with respect to the way {@code ref_i}.
      * The way {@code ref_i} is assumed to have the direction {@code ref_direction} and to be the predecessor of {@code k}.
-     *
+     * <p>
      * If both ways are not linked in any way, NONE is returned.
-     *
+     * <p>
      * Else the direction is given as follows:
      * Let the relation be a route of oneway streets, and someone travels them in the given order.
      * Direction is FORWARD if it is legal and BACKWARD if it is illegal to do so for the given way.
@@ -362,7 +360,7 @@ public class WayConnectionTypeCalculator {
         if (wayRef == null || way == null)
             return NONE;
 
-        /** the list of nodes the way k can dock to */
+        /* the list of nodes the way k can dock to */
         List<Node> refNodes = new ArrayList<>();
 
         switch (refDirection) {
@@ -418,7 +416,7 @@ public class WayConnectionTypeCalculator {
         members = null;
     }
 
-    private boolean isConnected(Way way1, Way way2) {
+    private static boolean isConnected(Way way1, Way way2) {
         return way1 != null && way2 != null && way1.isUsable() && way2.isUsable()
                 && (way1.isFirstLastNode(way2.firstNode()) || way1.isFirstLastNode(way2.lastNode()));
     }

@@ -3,14 +3,14 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.GraphicsEnvironment;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.AddPrimitivesCommand;
 import org.openstreetmap.josm.data.UserIdentityManager;
@@ -21,9 +21,9 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.OsmApi;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
@@ -39,6 +39,7 @@ import mockit.MockUp;
  */
 @BasicPreferences
 @Main
+@OsmApi(OsmApi.APIType.FAKE)
 @Projection
 // Territories is needed due to test pollution. One of the listeners
 // that may get registered on SelectionEventManager requires
@@ -46,16 +47,11 @@ import mockit.MockUp;
 // avoid the NPE.
 @Territories(Territories.Initialize.ALL)
 class UploadActionTest {
-    // Only needed for layer cleanup. And user identity cleanup. And ensuring that data isn't accidentally uploaded.
-    // Note that the setUp method can be replaced by the @Territories extension, when that is merged.
-    @RegisterExtension
-    static JOSMTestRules josmTestRules = new JOSMTestRules().fakeAPI();
-
     /**
      * Non-regression test for JOSM #21476.
      */
     @Test
-    void testNonRegression21476() {
+    void testNonRegression21476() throws ExecutionException, InterruptedException, TimeoutException {
         TestUtils.assumeWorkingJMockit();
         Logging.clearLastErrorAndWarnings();
         new WindowMocker();
@@ -83,8 +79,6 @@ class UploadActionTest {
                 // sync worker
             }).get(1, TimeUnit.SECONDS);
             assertTrue(Logging.getLastErrorAndWarnings().isEmpty());
-        } catch (Exception exception) {
-            fail(exception);
         } finally {
             Logging.clearLastErrorAndWarnings();
         }
@@ -108,7 +102,7 @@ class UploadActionTest {
         @Mock
         public final boolean isCanceled(final Invocation invocation) {
             if (!GraphicsEnvironment.isHeadless()) {
-                return invocation.proceed();
+                return Boolean.TRUE.equals(invocation.proceed());
             }
             return true;
         }

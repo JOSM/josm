@@ -7,22 +7,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
 
 /**
  * Unit tests of {@link ImageMarker} class.
  */
 @BasicPreferences
+@Main
 class ImageMarkerTest {
-    @RegisterExtension
-    static JOSMTestRules josmTestRules = new JOSMTestRules().main();
+    @AfterEach
+    void tearDown() {
+        if (ImageViewerDialog.hasInstance()) {
+            ImageViewerDialog.getInstance().destroy();
+        }
+    }
 
     /**
      * Unit test of {@link ImageMarker#ImageMarker}.

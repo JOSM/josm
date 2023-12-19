@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 import javax.swing.JCheckBoxMenuItem;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,16 +24,15 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Test class for {@link DrawSnapHelper}
  */
+@Main
+@org.openstreetmap.josm.testutils.annotations.Projection
 class DrawSnapHelperTest {
-    @RegisterExtension
-    static JOSMTestRules rule = new JOSMTestRules().projection().main();
-
     static Stream<Arguments> testNonRegression13097() {
         return Stream.of(
                 Arguments.of(Projections.getProjectionByCode("EPSG:4326")), // WGS84 Geographic

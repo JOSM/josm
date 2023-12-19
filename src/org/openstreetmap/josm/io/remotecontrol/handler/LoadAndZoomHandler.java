@@ -195,7 +195,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             throw new RequestHandlerErrorException(ex);
         }
 
-        /**
+        /*
          * deselect objects if parameter addtags given
          */
         if (args.containsKey("addtags") && !isKeepingCurrentSelection) {

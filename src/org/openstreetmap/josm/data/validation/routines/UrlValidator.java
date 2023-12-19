@@ -131,13 +131,13 @@ public class UrlValidator extends AbstractValidator {
     /**
      * Protocol scheme (e.g. http, ftp, https).
      */
-    private static final String SCHEME_REGEX = "^\\p{Alpha}[\\p{Alnum}\\+\\-\\.]*";
+    private static final String SCHEME_REGEX = "^\\p{Alpha}[\\p{Alnum}+\\-.]*";
     private static final Pattern SCHEME_PATTERN = Pattern.compile(SCHEME_REGEX);
 
     // Drop numeric, and  "+-." for now
     // TODO does not allow for optional userinfo.
     // Validation of character set is done by isValidAuthority
-    private static final String AUTHORITY_CHARS_REGEX = "\\p{Alnum}\\-\\."; // allows for IPV4 but not IPV6
+    private static final String AUTHORITY_CHARS_REGEX = "\\p{Alnum}-\\."; // allows for IPV4 but not IPV6
     private static final String IPV6_REGEX = "[0-9a-fA-F:]+"; // do this as separate match because : could cause ambiguity with port prefix
 
     // userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
@@ -150,7 +150,7 @@ public class UrlValidator extends AbstractValidator {
             USERINFO_CHARS_REGEX + "+:" + // At least one character for the name
             USERINFO_CHARS_REGEX + "*@"; // password may be absent
     private static final String AUTHORITY_REGEX =
-            "(?:\\[("+IPV6_REGEX+")\\]|(?:(?:"+USERINFO_FIELD_REGEX+")?([" + AUTHORITY_CHARS_REGEX + "]*)))(:\\d*)?(.*)?";
+            "(?:\\[("+IPV6_REGEX+")]|(?:(?:"+USERINFO_FIELD_REGEX+")?([" + AUTHORITY_CHARS_REGEX + "]*)))(:\\d*)?(.*)?";
     //             1                          e.g. user:pass@          2                                   3       4
     private static final Pattern AUTHORITY_PATTERN = Pattern.compile(AUTHORITY_REGEX);
 
@@ -163,7 +163,7 @@ public class UrlValidator extends AbstractValidator {
      */
     private static final int PARSE_AUTHORITY_EXTRA = 4;
 
-    private static final String PATH_REGEX = "^(/[-\\w:@&?=+,.!/~*'%$_;\\(\\)]*)?$";
+    private static final String PATH_REGEX = "^(/[-\\w:@&?=+,.!/~*'%$_;()]*)?$";
     private static final Pattern PATH_PATTERN = Pattern.compile(PATH_REGEX);
 
     private static final String QUERY_REGEX = "^(.*)$";

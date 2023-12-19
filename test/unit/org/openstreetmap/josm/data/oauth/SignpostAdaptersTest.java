@@ -11,27 +11,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.oauth.SignpostAdapters.HttpRequest;
 import org.openstreetmap.josm.data.oauth.SignpostAdapters.HttpResponse;
 import org.openstreetmap.josm.data.oauth.SignpostAdapters.OAuthConsumer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.tools.HttpClient;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link SignpostAdapters}.
  */
+@HTTPS
 class SignpostAdaptersTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https();
 
     private static HttpClient newClient() throws MalformedURLException {
         return HttpClient.create(new URL("https://www.openstreetmap.org"));

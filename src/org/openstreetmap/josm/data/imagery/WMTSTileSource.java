@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -230,7 +231,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
         /**
          * Get title of the layer for user display.
-         *
+         * <p>
          * This is either the content of the Title element (if available) or
          * the layer identifier (as fallback)
          * @return title of the layer for user display
@@ -506,7 +507,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
     private static Collection<Layer> parseContents(XMLStreamReader reader) throws XMLStreamException {
-        Map<String, TileMatrixSet> matrixSetById = new ConcurrentHashMap<>();
+        Map<String, TileMatrixSet> matrixSetById = new HashMap<>();
         Collection<Layer> layers = new ArrayList<>();
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == END_ELEMENT && QN_CONTENTS.equals(reader.getName()));
@@ -899,10 +900,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 .replace("{TileMatrix}", tileMatrix.identifier)
                 .replace("{TileRow}", Integer.toString(tiley))
                 .replace("{TileCol}", Integer.toString(tilex))
-                .replaceAll("(?i)\\{style\\}", this.currentLayer.style);
+                .replaceAll("(?i)\\{style}", this.currentLayer.style);
 
         for (Dimension d : currentLayer.dimensions) {
-            url = url.replaceAll("(?i)\\{"+d.identifier+"\\}", d.defaultValue);
+            url = url.replaceAll("(?i)\\{"+d.identifier+"}", d.defaultValue);
         }
 
         return url;
@@ -926,16 +927,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     @Override
     public double getDistance(double lat1, double lon1, double lat2, double lon2) {
         throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public ICoordinate tileXYToLatLon(Tile tile) {
-        return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
-    }
-
-    @Override
-    public ICoordinate tileXYToLatLon(TileXY xy, int zoom) {
-        return tileXYToLatLon(xy.getXIndex(), xy.getYIndex(), zoom);
     }
 
     @Override
@@ -965,11 +956,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     @Override
-    public TileXY latLonToTileXY(ICoordinate point, int zoom) {
-        return latLonToTileXY(point.getLat(), point.getLon(), zoom);
-    }
-
-    @Override
     public int getTileXMax(int zoom) {
         return getTileXMax(zoom, tileProjection);
     }
@@ -991,16 +977,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                     (int) Math.round((point.east() - matrix.topLeftCorner.east()) / scale),
                     (int) Math.round((matrix.topLeftCorner.north() - point.north()) / scale)
                 );
-    }
-
-    @Override
-    public Point latLonToXY(ICoordinate point, int zoom) {
-        return latLonToXY(point.getLat(), point.getLon(), zoom);
-    }
-
-    @Override
-    public Coordinate xyToLatLon(Point point, int zoom) {
-        return xyToLatLon(point.x, point.y, zoom);
     }
 
     @Override

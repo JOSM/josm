@@ -14,14 +14,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
+import org.openstreetmap.josm.tools.Utils;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-
-import org.openstreetmap.josm.gui.mappaint.StyleKeys;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Mapbox style layers
@@ -58,7 +58,6 @@ public class Layers {
         SKY
     }
 
-    private static final String EMPTY_STRING = "";
     private static final char SEMI_COLON = ';';
     private static final Pattern CURLY_BRACES = Pattern.compile("(\\{(.*?)})");
     private static final String PAINT = "paint";
@@ -147,13 +146,13 @@ public class Layers {
                     this.paintProperties = parsePaintBackground(paintObject);
                     break;
                 default:
-                    this.paintProperties = EMPTY_STRING;
+                    this.paintProperties = "";
                 }
             } else {
-                this.paintProperties = EMPTY_STRING;
+                this.paintProperties = "";
             }
         } else {
-            this.paintProperties = EMPTY_STRING;
+            this.paintProperties = "";
         }
         this.sourceLayer = layerInfo.getString("source-layer", null);
     }
@@ -357,7 +356,7 @@ public class Layers {
         // text-field
         if (layoutObject.containsKey("text-field")) {
             sb.append(StyleKeys.TEXT).append(':')
-              .append(layoutObject.getString("text-field").replace("}", EMPTY_STRING).replace("{", EMPTY_STRING))
+              .append(layoutObject.getString("text-field").replace("}", "").replace("{", ""))
               .append(SEMI_COLON);
         }
         // text-font
@@ -460,7 +459,7 @@ public class Layers {
     @Override
     public String toString() {
         if (this.filter.toString().isEmpty() && this.paintProperties.isEmpty()) {
-            return EMPTY_STRING;
+            return "";
         } else if (this.type == Type.BACKGROUND) {
             // AFAIK, paint has no zoom levels, and doesn't accept a layer
             return "canvas{" + this.paintProperties + "}";
@@ -476,7 +475,7 @@ public class Layers {
         } else if (this.minZoom > Integer.MIN_VALUE) {
             zoomSelector = MessageFormat.format("|z{0}-{1}", this.minZoom, this.maxZoom);
         } else {
-            zoomSelector = EMPTY_STRING;
+            zoomSelector = "";
         }
         final String commonData = zoomSelector + this.filter.toString() + "::" + this.id + "{" + this.paintProperties + "}";
 

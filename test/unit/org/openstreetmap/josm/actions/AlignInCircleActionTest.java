@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.AlignInCircleAction.InvalidSelection;
 import org.openstreetmap.josm.command.Command;
@@ -29,24 +28,14 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.opentest4j.AssertionFailedError;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link AlignInLineAction}.
  */
+@Projection
 final class AlignInCircleActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
-
     /**
      * Test case: way with several nodes selected
      * @throws Exception if an error occurs
@@ -64,19 +53,17 @@ final class AlignInCircleActionTest {
             }
         }
         assertNotNull(roundabout);
-        if (roundabout != null) {
-            ds.setSelected(roundabout);
-            Command c = AlignInCircleAction.buildCommand(ds);
-            c.executeCommand();
-            Way expected = (Way) ds2.getPrimitiveById(roundabout);
-            assertNotNull(expected);
-            assertEquals(expected, roundabout);
-            assertEquals(expected.getNodesCount(), roundabout.getNodesCount());
-            for (Node n1 : roundabout.getNodes()) {
-                Node n2 = (Node) ds2.getPrimitiveById(n1);
-                assertEquals(n1.lat(), n2.lat(), 1e-5);
-                assertEquals(n1.lon(), n2.lon(), 1e-5);
-            }
+        ds.setSelected(roundabout);
+        Command c = AlignInCircleAction.buildCommand(ds);
+        c.executeCommand();
+        Way expected = (Way) ds2.getPrimitiveById(roundabout);
+        assertNotNull(expected);
+        assertEquals(expected, roundabout);
+        assertEquals(expected.getNodesCount(), roundabout.getNodesCount());
+        for (Node n1 : roundabout.getNodes()) {
+            Node n2 = (Node) ds2.getPrimitiveById(n1);
+            assertEquals(n1.lat(), n2.lat(), 1e-5);
+            assertEquals(n1.lon(), n2.lon(), 1e-5);
         }
     }
 
@@ -97,10 +84,8 @@ final class AlignInCircleActionTest {
             }
         }
         assertNotNull(roundabout);
-        if (roundabout != null) {
-            ds.setSelected(roundabout);
-            assertNull(AlignInCircleAction.buildCommand(ds));
-        }
+        ds.setSelected(roundabout);
+        assertNull(AlignInCircleAction.buildCommand(ds));
     }
 
     /**
@@ -120,20 +105,18 @@ final class AlignInCircleActionTest {
             }
         }
         assertNotNull(circularWay);
-        if (circularWay != null) {
-            ds.setSelected(circularWay.getNodes());
-            Command c = AlignInCircleAction.buildCommand(ds);
-            assertNotNull(c);
-            c.executeCommand();
-            Way expected = (Way) ds2.getPrimitiveById(circularWay);
-            assertNotNull(expected);
-            assertEquals(expected, circularWay);
-            assertEquals(expected.getNodesCount(), circularWay.getNodesCount());
-            for (Node n1 : circularWay.getNodes()) {
-                Node n2 = (Node) ds2.getPrimitiveById(n1);
-                assertEquals(n1.lat(), n2.lat(), 1e-5);
-                assertEquals(n1.lon(), n2.lon(), 1e-5);
-            }
+        ds.setSelected(circularWay.getNodes());
+        Command c = AlignInCircleAction.buildCommand(ds);
+        assertNotNull(c);
+        c.executeCommand();
+        Way expected = (Way) ds2.getPrimitiveById(circularWay);
+        assertNotNull(expected);
+        assertEquals(expected, circularWay);
+        assertEquals(expected.getNodesCount(), circularWay.getNodesCount());
+        for (Node n1 : circularWay.getNodes()) {
+            Node n2 = (Node) ds2.getPrimitiveById(n1);
+            assertEquals(n1.lat(), n2.lat(), 1e-5);
+            assertEquals(n1.lon(), n2.lon(), 1e-5);
         }
     }
 

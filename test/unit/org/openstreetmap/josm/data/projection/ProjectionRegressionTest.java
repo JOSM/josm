@@ -24,6 +24,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Platform;
 import org.openstreetmap.josm.tools.Utils;
@@ -137,6 +138,7 @@ class ProjectionRegressionTest {
      * Non-regression unit test.
      * @throws IOException if any I/O error occurs
      */
+    @ProjectionNadGrids
     @Test
     void testNonRegression() throws IOException {
         // Disable on Github Windows runners + Java 8, minor differences appeared around 2021-07-20

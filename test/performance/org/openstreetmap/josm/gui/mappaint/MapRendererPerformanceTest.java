@@ -18,6 +18,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -25,8 +26,7 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.JOSMFixture;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
@@ -43,13 +43,21 @@ import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Performance test of map renderer.
  */
+@BasicPreferences
+@Main
+@Projection
+@Territories
+@Timeout(value = 15, unit = TimeUnit.MINUTES)
 public class MapRendererPerformanceTest {
 
     private static final boolean DUMP_IMAGE = false; // dump images to file for debugging purpose
@@ -81,20 +89,11 @@ public class MapRendererPerformanceTest {
     private static final EnumMap<Feature, BooleanStyleSetting> filters = new EnumMap<>(Feature.class);
 
     /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().preferences().timeout(15 * 60 * 1000);
-
-    /**
      * Initializes test environment.
      * @throws Exception if any error occurs
      */
     @BeforeAll
     public static void load() throws Exception {
-        JOSMFixture.createPerformanceTestFixture().init(true);
-
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         g = (Graphics2D) img.getGraphics();
         g.setClip(0, 0, IMG_WIDTH, IMG_HEIGHT);
@@ -125,7 +124,7 @@ public class MapRendererPerformanceTest {
         filterStyle = MapPaintStyles.addStyle(se);
         List<StyleSource> sources = MapPaintStyles.getStyles().getStyleSources();
         filterStyleIdx = sources.indexOf(filterStyle);
-        assertEquals(2, filterStyleIdx);
+        assertEquals(1, filterStyleIdx);
 
         assertEquals(Feature.values().length, filterStyle.settings.size());
         for (StyleSetting set : filterStyle.settings) {

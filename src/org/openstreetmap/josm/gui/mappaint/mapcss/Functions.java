@@ -42,10 +42,10 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.RotationAngle;
+import org.openstreetmap.josm.tools.RotationAngle.WayDirectionRotationAngle;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.RotationAngle.WayDirectionRotationAngle;
 
 /**
  * List of functions that can be used in MapCSS expressions.
@@ -410,6 +410,9 @@ public final class Functions {
      * @since 15315
      */
     public static List<String> tag_regex(final Environment env, String keyRegex, String flags) {
+        if (env.osm == null) {
+            return Collections.emptyList();
+        }
         int f = parse_regex_flags(flags);
         Pattern compiled = Pattern.compile(keyRegex, f);
         return env.osm.getKeys().entrySet().stream()
@@ -625,7 +628,7 @@ public final class Functions {
      * @return {@code true} if the object has a tag with the given key, {@code false} otherwise
      */
     public static boolean has_tag_key(final Environment env, String key) {
-        return env.osm.hasKey(key);
+        return env.osm != null && env.osm.hasKey(key);
     }
 
     /**
@@ -848,6 +851,9 @@ public final class Functions {
      * @see SearchCompiler
      */
     public static Boolean JOSM_search(final Environment env, String searchStr) {
+        if (env.osm == null) {
+            return null;
+        }
         Match m;
         try {
             m = SearchCompiler.compile(searchStr);
@@ -940,7 +946,7 @@ public final class Functions {
      * @see IPrimitive#getUniqueId()
      */
     public static long osm_id(final Environment env) {
-        return env.osm.getUniqueId();
+        return env.osm != null ? env.osm.getUniqueId() : 0;
     }
 
     /**
@@ -951,7 +957,7 @@ public final class Functions {
      * @since 15246
      */
     public static String osm_user_name(final Environment env) {
-        return env.osm.getUser().getName();
+        return env.osm != null ? env.osm.getUser().getName() : null;
     }
 
     /**
@@ -962,7 +968,7 @@ public final class Functions {
      * @since 15246
      */
     public static long osm_user_id(final Environment env) {
-        return env.osm.getUser().getId();
+        return env.osm != null ? env.osm.getUser().getId() : 0;
     }
 
     /**
@@ -973,7 +979,7 @@ public final class Functions {
      * @since 15246
      */
     public static int osm_version(final Environment env) {
-        return env.osm.getVersion();
+        return env.osm != null ? env.osm.getVersion() : 0;
     }
 
     /**
@@ -984,7 +990,7 @@ public final class Functions {
      * @since 15246
      */
     public static int osm_changeset_id(final Environment env) {
-        return env.osm.getChangesetId();
+        return env.osm != null ? env.osm.getChangesetId() : 0;
     }
 
     /**
@@ -995,7 +1001,7 @@ public final class Functions {
      * @since 15246
      */
     public static int osm_timestamp(final Environment env) {
-        return env.osm.getRawTimestamp();
+        return env.osm != null ? env.osm.getRawTimestamp() : 0;
     }
 
     /**
@@ -1196,7 +1202,11 @@ public final class Functions {
      * @since 7193
      */
     public static boolean is_right_hand_traffic(Environment env) {
-        return RightAndLefthandTraffic.isRightHandTraffic(center(env));
+        final LatLon center = center(env);
+        if (center != null) {
+            return RightAndLefthandTraffic.isRightHandTraffic(center);
+        }
+        return false;
     }
 
     /**
@@ -1260,7 +1270,7 @@ public final class Functions {
      * @return number of tags
      */
     public static int number_of_tags(Environment env) {
-        return env.osm.getNumKeys();
+        return env.osm != null ? env.osm.getNumKeys() : 0;
     }
 
     /**
@@ -1270,7 +1280,7 @@ public final class Functions {
      * @return the value of the setting (calculated when the style is loaded)
      */
     public static Object setting(Environment env, String key) {
-        return env.source.settingValues.get(key);
+        return env.source != null ? env.source.settingValues.get(key) : null;
     }
 
     /**
@@ -1280,7 +1290,12 @@ public final class Functions {
      * @since 11247
      */
     public static LatLon center(Environment env) {
-        return env.osm instanceof Node ? ((Node) env.osm).getCoor() : env.osm.getBBox().getCenter();
+        if (env.osm instanceof ILatLon) {
+            return new LatLon(((ILatLon) env.osm).lat(), ((ILatLon) env.osm).lon());
+        } else if (env.osm != null) {
+            return env.osm.getBBox().getCenter();
+        }
+        return null;
     }
 
     /**
@@ -1315,7 +1330,11 @@ public final class Functions {
      * @since 12514
      */
     public static boolean at(Environment env, double lat, double lon) {
-        return new LatLon(lat, lon).equalsEpsilon(center(env), ILatLon.MAX_SERVER_PRECISION);
+        final ILatLon center = center(env);
+        if (center != null) {
+            return new LatLon(lat, lon).equalsEpsilon(center, ILatLon.MAX_SERVER_PRECISION);
+        }
+        return false;
     }
 
     /**

@@ -313,7 +313,7 @@ public class ImageryReader implements Closeable {
                 break;
             default: // Do nothing
             }
-            /**
+            /*
              * Did not recognize the element, so the new state is UNKNOWN.
              * This includes the case where we are already inside an unknown
              * element, i.e. we do not try to understand the inner content

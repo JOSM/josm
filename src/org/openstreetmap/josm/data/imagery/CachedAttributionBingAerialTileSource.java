@@ -33,7 +33,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
      * @param info ImageryInfo description of this tile source
      */
     public CachedAttributionBingAerialTileSource(ImageryInfo info) {
-        super(info);
+        this(info, null);
     }
 
     /**
@@ -45,6 +45,12 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
     public CachedAttributionBingAerialTileSource(TileSourceInfo info, Runnable attributionDownloadedTask) {
         super(info);
         this.attributionDownloadedTask = attributionDownloadedTask;
+        // See #23227 and https://github.com/openstreetmap/iD/issues/9153#issuecomment-1781569820
+        // Of specific note:
+        // > Due to increased usage of Bing Maps imagery APIs, we decided to separate the free usage of the API
+        // > (for OSM editors) from the paid usage of the API.
+        // We aren't paying for access, so we should solely use the AerialOSM layer.
+        super.setLayer("AerialOSM");
     }
 
     class BingAttributionData extends CacheCustomContent<IOException> {

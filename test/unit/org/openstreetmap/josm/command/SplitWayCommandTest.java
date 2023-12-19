@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -37,22 +36,17 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionTypeCalculator;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link SplitWayCommand}.
  */
+@BasicPreferences
+@Main
+@Projection
 final class SplitWayCommandTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
-
     /**
      * Unit test of {@link SplitWayCommand#findVias}.
      */
@@ -302,7 +296,7 @@ final class SplitWayCommandTest {
 
     /**
      * Non-regression test for issue #17400 (Warn when splitting way in not fully downloaded region)
-     *
+     * <p>
      * Bus route 190 gets broken when the split occurs, because the two new way parts are inserted in the relation in
      * the wrong order.
      *
@@ -347,11 +341,11 @@ final class SplitWayCommandTest {
 
     /**
      * Non-regression test for issue #18863 (Asking for download of missing members when not needed)
-     *
+     * <p>
      * A split on node 4518025255 caused the 'download missing members?' dialog to pop up for relation 68745 (CB 2),
      * even though the way members next to the split way were already downloaded. This happened because this relation
      * does not have its members connected at all.
-     *
+     * <p>
      * This split should not trigger any download action at all.
      *
      * @throws IOException if any I/O error occurs

@@ -355,7 +355,9 @@ public class ValidatorCLI implements CLIModule {
         Config.setUrlsProvider(JosmUrls.getInstance());
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("epsg:3857".toUpperCase(Locale.ROOT)));
 
-        Territories.initializeInternalData();
+        if (Territories.getKnownIso3166Codes().isEmpty()) {
+            Territories.initializeInternalData();
+        }
         OsmValidator.initialize();
         MapPaintStyles.readFromPreferences();
     }

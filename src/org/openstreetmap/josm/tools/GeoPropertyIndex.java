@@ -1,16 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.util.Collection;
+
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 
 /**
  * Fast index to look up properties of the earth surface.
- *
+ * <p>
  * It is expected that there is a relatively slow method to look up the property
  * for a certain coordinate and that there are larger areas with a uniform
  * property.
- *
+ * <p>
  * This index tries to find rectangles with uniform property and caches them.
  * Rectangles are subdivided, if there are different properties within.
  * (Up to a maximum level, when the slow method is used again.)
@@ -79,70 +82,107 @@ public class GeoPropertyIndex<T> {
         public T get(LatLon ll) {
             if (isInside(ll))
                 return getBounded(ll);
-            if (DEBUG) System.err.print("up["+level+"]");
+            if (DEBUG) Logging.trace("up[{0}]", level);
             return parent != null ? parent.get(ll) : null;
         }
 
         private T getBounded(LatLon ll) {
-            if (DEBUG) System.err.print("GPLevel["+level+"]"+bbox+" ");
+            if (DEBUG) Logging.trace("GPLevel[{0}]{1}", level, bbox);
             if (!isInside(ll)) {
                 throw new AssertionError("Point "+ll+" should be inside "+bbox);
             }
             if (val != null) {
-                if (DEBUG) System.err.println(" hit! "+val);
+                if (DEBUG) Logging.trace("GPLevel[{0}]{1} hit! {2}", level, bbox, val);
                 owner.lastLevelUsed = this;
                 return val;
             }
             if (level >= owner.maxLevel) {
-                if (DEBUG) System.err.println(" max level reached !");
+                if (DEBUG) Logging.trace("GPLevel[{0}]{1} max level reached !", level, bbox);
                 return owner.geoProp.get(ll);
             }
 
-            if (children == null) {
-                @SuppressWarnings("unchecked")
-                GPLevel<T>[] tmp = new GPLevel[4];
-                this.children = tmp;
-            }
+            GPLevel<T>[] currentChildren = this.getChildren();
 
             LatLon center = bbox.getCenter();
             for (int idx = 0; idx < 4; idx++) {
                 BBox testBBox = null;
-                if (children[idx] != null)
-                    testBBox = children[idx].bbox;
+                if (currentChildren[idx] != null)
+                    testBBox = currentChildren[idx].bbox;
 
                 if (testBBox == null) {
-                    double lon1, lat1;
-                    switch (idx) {
-                        case 0:
-                            lon1 = bbox.getTopLeftLon();
-                            lat1 = bbox.getBottomRightLat();
-                            break;
-                        case 1:
-                            lon1 = bbox.getTopLeftLon();
-                            lat1 = bbox.getTopLeftLat();
-                            break;
-                        case 2:
-                            lon1 = bbox.getBottomRightLon();
-                            lat1 = bbox.getBottomRightLat();
-                            break;
-                        case 3:
-                            lon1 = bbox.getBottomRightLon();
-                            lat1 = bbox.getTopLeftLat();
-                            break;
-                        default:
-                            throw new AssertionError();
-                    }
-                    testBBox = new BBox(lon1, lat1, center.lon(), center.lat());
+                    testBBox = generateTestBBox(idx, center.lon(), center.lat());
                 }
                 if (isInside(testBBox, ll)) {
-                    if (children[idx] == null) {
-                        if (DEBUG) System.err.println(" - new with idx "+idx);
-                        children[idx] = new GPLevel<>(level + 1, testBBox, this, owner);
-                    }
-                    return children[idx].getBounded(ll);
+                    generateChild(currentChildren, testBBox, idx);
+                    return currentChildren[idx].getBounded(ll);
                 }
             }
             throw new AssertionError("Point "+ll+" should be inside one of the children of "+bbox);
+        }
+
+        /**
+         * Generate the bbox for the specified index in the {@link #getChildren()} array
+         * @param idx The index in the {@link #getChildren()} array
+         * @param lon2 The longitude of the center of the previous level
+         * @param lat2 The latitude of the center of the previous level
+         * @return The test bbox for the specified index in the {@link #getChildren()} array
+         */
+        private BBox generateTestBBox(int idx, double lon2, double lat2) {
+            double lon1;
+            double lat1;
+            switch (idx) {
+                case 0:
+                    lon1 = bbox.getTopLeftLon();
+                    lat1 = bbox.getBottomRightLat();
+                    break;
+                case 1:
+                    lon1 = bbox.getTopLeftLon();
+                    lat1 = bbox.getTopLeftLat();
+                    break;
+                case 2:
+                    lon1 = bbox.getBottomRightLon();
+                    lat1 = bbox.getBottomRightLat();
+                    break;
+                case 3:
+                    lon1 = bbox.getBottomRightLon();
+                    lat1 = bbox.getTopLeftLat();
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+            return new BBox(lon1, lat1, lon2, lat2);
+        }
+
+        /**
+         * Safely generate the child in a multi-threaded environment
+         * @param currentChildren The children array to check
+         * @param testBBox The current bbox (will be used to create the new {@link GPLevel})
+         * @param idx The index in the child array
+         */
+        private synchronized void generateChild(GPLevel<T>[] currentChildren, BBox testBBox, int idx) {
+            if (currentChildren[idx] == null) {
+                if (DEBUG) Logging.trace("GPLevel[{0}]{1} - new with idx {2}", level, bbox, idx);
+                currentChildren[idx] = new GPLevel<>(level + 1, testBBox, this, owner);
+            }
+        }
+
+        /**
+         * Get the children array safely in a multi-threaded environment.
+         * If this ends up being a performance issue, look up the "immutable" double-checked locking idiom.
+         * Just be certain you have a good test when checking the performance differences.
+         * See #23309/#23036. The issue there is that {@link Territories#getRegionalTaginfoUrls(LatLon)}
+         * uses a {@link Collection#parallelStream}.
+         * @return The children array (sw, nw, se, ne)
+         */
+        private synchronized GPLevel<T>[] getChildren() {
+            GPLevel<T>[] currentChildren = this.children;
+            if (currentChildren == null) {
+                @SuppressWarnings("unchecked")
+                GPLevel<T>[] tmp = new GPLevel[4];
+                currentChildren = tmp;
+                this.children = currentChildren;
+            }
+            return currentChildren;
         }
 
         /**
@@ -152,7 +192,7 @@ public class GeoPropertyIndex<T> {
          * @param ll the coordinates of the point
          * @return true, if it is inside of the box
          */
-        boolean isInside(LatLon ll) {
+        boolean isInside(ILatLon ll) {
             return isInside(bbox, ll);
         }
 
@@ -164,7 +204,7 @@ public class GeoPropertyIndex<T> {
          * @param ll the coordinates of the point
          * @return true, if it is inside of the box
          */
-        boolean isInside(BBox bbox, LatLon ll) {
+        boolean isInside(BBox bbox, ILatLon ll) {
             return bbox.getTopLeftLon() <= ll.lon() &&
                     (ll.lon() < bbox.getBottomRightLon() || (ll.lon() == 180.0 && bbox.getBottomRightLon() == 180.0)) &&
                     bbox.getBottomRightLat() <= ll.lat() &&

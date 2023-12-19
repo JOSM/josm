@@ -310,30 +310,28 @@ public class NTV2SubGrid implements Serializable {
      * @return textual details about the sub grid
      */
     public String getDetails() {
-        return new StringBuilder(256)
-            .append("Sub Grid : ")
-            .append(subGridName)
-            .append("\nParent   : ")
-            .append(parentSubGridName)
-            .append("\nCreated  : ")
-            .append(created)
-            .append("\nUpdated  : ")
-            .append(updated)
-            .append("\nMin Lat  : ")
-            .append(minLat)
-            .append("\nMax Lat  : ")
-            .append(maxLat)
-            .append("\nMin Lon  : ")
-            .append(minLon)
-            .append("\nMax Lon  : ")
-            .append(maxLon)
-            .append("\nLat Intvl: ")
-            .append(latInterval)
-            .append("\nLon Intvl: ")
-            .append(lonInterval)
-            .append("\nNode Cnt : ")
-            .append(nodeCount)
-            .toString();
+        return "Sub Grid : " +
+                subGridName +
+                "\nParent   : " +
+                parentSubGridName +
+                "\nCreated  : " +
+                created +
+                "\nUpdated  : " +
+                updated +
+                "\nMin Lat  : " +
+                minLat +
+                "\nMax Lat  : " +
+                maxLat +
+                "\nMin Lon  : " +
+                minLon +
+                "\nMax Lon  : " +
+                maxLon +
+                "\nLat Intvl: " +
+                latInterval +
+                "\nLon Intvl: " +
+                lonInterval +
+                "\nNode Cnt : " +
+                nodeCount;
     }
 
     /**

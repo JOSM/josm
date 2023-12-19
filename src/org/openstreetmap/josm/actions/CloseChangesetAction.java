@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 
 /**
  * User action to close open changesets.
- *
+ * <p>
  * The list of open changesets will be downloaded from the server and presented
  * to the user.
  */
@@ -109,11 +109,12 @@ public class CloseChangesetAction extends JosmAction {
         @Override
         protected void finish() {
             SwingUtilities.invokeLater(() -> {
-                            if (lastException != null) {
-                                ExceptionDialogUtil.explainException(lastException);
+                            Exception exception = getLastException();
+                            if (exception != null) {
+                                ExceptionDialogUtil.explainException(exception);
                             }
                             ChangesetCache.getInstance().update(changesets);
-                            if (!canceled && lastException == null) {
+                            if (!isCanceled() && exception == null) {
                                 onPostDownloadOpenChangesets();
                             }
                         });

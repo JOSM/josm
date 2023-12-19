@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,8 +29,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.testutils.FakeOsmApi;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.OsmApi;
 import org.openstreetmap.josm.tools.Logging;
 
 import mockit.Mock;
@@ -42,10 +41,8 @@ import mockit.MockUp;
  * @author Taylor Smock
  */
 @BasicPreferences
+@OsmApi(OsmApi.APIType.FAKE)
 class UploadNotesTaskTest {
-    @RegisterExtension
-    static JOSMTestRules josmTestRules = new JOSMTestRules().fakeAPI();
-
     static Stream<Arguments> testUpload() {
         final NoteData commonData = new NoteData();
         for (int i = 0; i < 12; i++) {

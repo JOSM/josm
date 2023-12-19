@@ -8,12 +8,12 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
@@ -119,7 +119,7 @@ public class CacheSettingsPanel extends JPanel {
      */
     public static String[][] getCacheStats(CacheAccess<String, BufferedImageCacheEntry> cache) {
         Set<String> keySet = cache.getCacheControl().getKeySet();
-        Map<String, int[]> temp = new ConcurrentHashMap<>(); // use int[] as a Object reference to int, gives better performance
+        Map<String, int[]> temp = new HashMap<>(); // use int[] as a Object reference to int, gives better performance
         for (String key: keySet) {
             String[] keyParts = key.split(":", 2);
             if (keyParts.length == 2) {

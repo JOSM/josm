@@ -17,10 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -28,26 +24,24 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
 import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
 import org.openstreetmap.josm.testutils.annotations.FullPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
+
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 
 /**
  * Test parts of {@link PluginHandler} class when the reported JOSM version is too old for the plugin.
  */
 @AssumeRevision("Revision: 6000\n")
 @FullPreferences
+@Main
 class PluginHandlerJOSMTooOldTest {
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static JOSMTestRules test = new JOSMTestRules().main();
-
     /**
      * Plugin server mock.
      */

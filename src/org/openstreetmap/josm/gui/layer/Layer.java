@@ -35,14 +35,14 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A layer encapsulates the gui component of one dataset and its representation.
- *
+ * <p>
  * Some layers may display data directly imported from OSM server. Other only
  * display background images. Some can be edited, some not. Some are static and
  * other changes dynamically (auto-updated).
- *
+ * <p>
  * Layers can be visible or not. Most actions the user can do applies only on
  * selected layers. The available actions depend on the selected layers too.
- *
+ * <p>
  * All layers are managed by the MapView. They are displayed in a list to the
  * right of the screen.
  *
@@ -174,12 +174,12 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
 
     /**
      * Initialization code, that depends on Main.map.mapView.
-     *
+     * <p>
      * It is always called in the event dispatching thread.
      * Note that Main.map is null as long as no layer has been added, so do
      * not execute code in the constructor, that assumes Main.map.mapView is
      * not null.
-     *
+     * <p>
      * If you need to execute code when this layer is added to the map view, use
      * {@link #attachToMapView(org.openstreetmap.josm.gui.layer.MapViewPaintable.MapViewEvent)}
      */
@@ -269,7 +269,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * Returns list of actions. Action can implement LayerAction interface when it needs to be represented by other
      * menu component than JMenuItem or when it supports multiple layers. Actions that support multiple layers should also
      * have correct equals implementation.
-     *
+     * <p>
      * Use {@link SeparatorLayerAction#INSTANCE} instead of new JSeparator
      * @return menu actions for this layer
      */
@@ -277,8 +277,8 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
 
     /**
      * Called, when the layer is removed from the mapview and is going to be destroyed.
-     *
-     * This is because the Layer constructor can not add itself safely as listener
+     * <p>
+     * This is because the Layer constructor cannot add itself safely as a listener
      * to the layerlist dialog, because there may be no such dialog yet (loaded
      * via command line parameter).
      */
@@ -302,7 +302,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
 
     /**
      * Sets the associated file for this layer.
-     *
+     * <p>
      * The associated file might be the one that the user opened.
      * @param file The file, may be <code>null</code>
      */
@@ -353,9 +353,9 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
-     * Replies true if this layer was renamed by user
+     * Replies true if user renamed this layer
      *
-     * @return true if this layer was renamed by user
+     * @return true if user renamed this layer
      */
     public boolean isRenamed() {
         return renamed;
@@ -483,16 +483,15 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
-     * fires a property change for the property {@link #FILTER_STATE_PROP}.
+     * Fires a property change for the property {@link #FILTER_STATE_PROP}.
      */
     protected void fireFilterStateChanged() {
         propertyChangeSupport.firePropertyChange(FILTER_STATE_PROP, null, null);
     }
 
     /**
-     * allows to check whether a projection is supported or not
+     * Allows to check whether a projection is supported or not.
      * @param proj projection
-     *
      * @return True if projection is supported for this layer
      */
     public boolean isProjectionSupported(Projection proj) {
@@ -609,7 +608,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
-     * Replies the savable state of this layer (i.e if it can be saved through a "File-&gt;Save" dialog).
+     * Replies the savable state of this layer (i.e., if it can be saved through a "File-&gt;Save" dialog).
      * @return true if this layer can be saved to a file
      * @since 5459
      */
@@ -627,8 +626,9 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
-     * Creates a new "Save" dialog for this layer and makes it visible.<br>
-     * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
+     * Creates a new "Save" dialog for this layer and makes it visible.
+     * <p>
+     * When the user has chosen a file, checks the file extension, and confirms overwriting if needed.
      * @return The output {@code File}
      * @see SaveActionBase#createAndOpenSaveFileChooser
      * @since 5459
@@ -674,6 +674,6 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [name=" + name + ", associatedFile=" + associatedFile + ']';
+        return getClass().getSimpleName() + " [name=" + name + ", associatedFile=" + associatedFile + ", visible=" + visible + ']';
     }
 }

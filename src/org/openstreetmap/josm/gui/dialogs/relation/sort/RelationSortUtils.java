@@ -46,8 +46,8 @@ final class RelationSortUtils {
                 INode n2 = w.getNode(1);
                 INode n3 = w.getNode(2);
                 if (n1 != null && n2 != null && n3 != null && w.isClosed()) {
-                    /** do some simple determinant / cross product test on the first 3 nodes
-                        to see, if the roundabout goes clock wise or ccw */
+                    /* do some simple determinant / cross product test on the first 3 nodes
+                       to see, if the roundabout goes clock wise or ccw */
                     EastNorth en1 = n1.getEastNorth();
                     EastNorth en2 = n2.getEastNorth();
                     EastNorth en3 = n3.getEastNorth();

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,27 +17,18 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Expectations;
 import mockit.Mocked;
 
 /**
  * Unit tests of {@link PlatformHookWindows} class.
  */
+@HTTPS
 class PlatformHookWindowsTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().https();
-
     static PlatformHookWindows hook;
 
     /**
@@ -52,7 +44,9 @@ class PlatformHookWindowsTest {
      */
     @Test
     void testStartupHook() {
-        hook.startupHook((a, b, c, d) -> System.out.println("java callback"), u -> System.out.println("webstart callback"));
+        final PlatformHook.JavaExpirationCallback javaCallback = (a, b, c, d) -> System.out.println("java callback");
+        final PlatformHook.WebStartMigrationCallback webstartCallback = u -> System.out.println("webstart callback");
+        assertDoesNotThrow(() -> hook.startupHook(javaCallback, webstartCallback));
     }
 
     /**
@@ -78,7 +72,7 @@ class PlatformHookWindowsTest {
      */
     @Test
     void testAfterPrefStartupHook() {
-        hook.afterPrefStartupHook();
+        assertDoesNotThrow(hook::afterPrefStartupHook);
     }
 
     /**
@@ -95,7 +89,7 @@ class PlatformHookWindowsTest {
             mockDesktop.browse(withNotNull()); times = 1;
         }};
 
-        hook.openUrl(Config.getUrls().getJOSMWebsite());
+        assertDoesNotThrow(() -> hook.openUrl(Config.getUrls().getJOSMWebsite()));
     }
 
     /**
@@ -121,7 +115,7 @@ class PlatformHookWindowsTest {
             anyRuntime.exec((String[]) withNotNull()); result = null; times = 0;
         }};
 
-        hook.openUrl(Config.getUrls().getJOSMWebsite());
+        assertDoesNotThrow(() -> hook.openUrl(Config.getUrls().getJOSMWebsite()));
     }
 
     /**
@@ -195,6 +189,6 @@ class PlatformHookWindowsTest {
      */
     @Test
     void testInitSystemShortcuts() {
-        hook.initSystemShortcuts();
+        assertDoesNotThrow(hook::initSystemShortcuts);
     }
 }

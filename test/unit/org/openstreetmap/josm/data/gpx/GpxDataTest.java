@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
@@ -31,27 +30,19 @@ import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.GpxReaderTest;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.date.Interval;
 import org.xml.sax.SAXException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link GpxData}.
  */
+@Projection
 class GpxDataTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     private GpxData data;
 
     /**
@@ -338,8 +329,8 @@ class GpxDataTest {
         p1.setInstant(Instant.ofEpochMilli(100020));
         p2.setInstant(Instant.ofEpochMilli(200020));
 
-        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p2)), Collections.emptyMap()));
-        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p1)), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Collections.singletonList(Collections.singletonList(p2)), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Collections.singletonList(Collections.singletonList(p1)), Collections.emptyMap()));
 
         List<IGpxTrack> tracks = data.getOrderedTracks();
         assertEquals(2, tracks.size());
@@ -363,8 +354,8 @@ class GpxDataTest {
         p1.setInstant(Instant.ofEpochMilli(200020));
         p2.setInstant(Instant.ofEpochMilli(100020));
         p4.setInstant(Instant.ofEpochMilli(500020));
-        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p1, p2)), Collections.emptyMap()));
-        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p3, p4, p5)), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Collections.singletonList(Arrays.asList(p1, p2)), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Collections.singletonList(Arrays.asList(p3, p4, p5)), Collections.emptyMap()));
 
         Interval times = data.getMinMaxTimeForAllTracks().orElse(null);
         assertEquals("1970-01-01T00:01:40.020Z/1970-01-01T00:08:20.020Z", times.toString());
@@ -382,7 +373,7 @@ class GpxDataTest {
                 .map(ProjectionRegistry.getProjection()::eastNorth2latlon)
                 .map(WayPoint::new)
                 .collect(Collectors.toList());
-        data.addTrack(new GpxTrack(Arrays.asList(points), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Collections.singletonList(points), Collections.emptyMap()));
 
         WayPoint closeToMiddle = data.nearestPointOnTrack(new EastNorth(10, 0), 10);
         assertEquals(points.get(1), closeToMiddle);
@@ -405,7 +396,7 @@ class GpxDataTest {
     void testGetDataSources() {
         DataSource ds = new DataSource(new Bounds(0, 0, 1, 1), "test");
         data.dataSources.add(ds);
-        assertEquals(new ArrayList<>(Arrays.asList(ds)), new ArrayList<>(data.getDataSources()));
+        assertEquals(new ArrayList<>(Collections.singletonList(ds)), new ArrayList<>(data.getDataSources()));
     }
 
     /**
@@ -428,7 +419,7 @@ class GpxDataTest {
         Bounds bounds = new Bounds(0, 0, 1, 1);
         DataSource ds = new DataSource(bounds, "test");
         data.dataSources.add(ds);
-        assertEquals(Arrays.asList(bounds), data.getDataSourceBounds());
+        assertEquals(Collections.singletonList(bounds), data.getDataSourceBounds());
     }
 
     /**

@@ -245,7 +245,7 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * This hepler class implements algorithm traversing trough connected ways.
+     * This helper class implements algorithm traversing through connected ways.
      * Assumes you are going in clockwise orientation.
      * @author viesturs
      */

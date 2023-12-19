@@ -199,7 +199,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (!isVisible()) return;
             if (e.getButton() == MouseEvent.BUTTON3) {
                 Component component = e.getComponent();
-                if (POPUP_MENU_ENABLED.get() && component.isShowing()) {
+                if (Boolean.TRUE.equals(POPUP_MENU_ENABLED.get()) && component.isShowing()) {
                     new TileSourceLayerPopup(e.getX(), e.getY()).show(component, e.getX(), e.getY());
                 }
             } else if (e.getButton() == MouseEvent.BUTTON1) {
@@ -421,7 +421,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         private static String getSizeString(int size) {
-            return new StringBuilder().append(size).append('x').append(size).toString();
+            return Integer.toString(size) + 'x' + size;
         }
 
         @Override
@@ -451,9 +451,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 content.add(Arrays.asList(tr("Tile size"),
                         getSizeString(tile.getTileSource().getTileSize())));
                 content.add(Arrays.asList(tr("Tile display size"),
-                        new StringBuilder().append(displaySize.getWidth())
-                                .append('x')
-                                .append(displaySize.getHeight()).toString()));
+                        Double.toString(displaySize.getWidth()) +
+                                'x' +
+                                displaySize.getHeight()));
                 if (layer.coordinateConverter.requiresReprojection()) {
                     content.add(Arrays.asList(tr("Reprojection"),
                             tile.getTileSource().getServerCRS() +
@@ -560,7 +560,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         event.getMapView().addMouseListener(adapter);
         MapView.addZoomChangeListener(this);
 
-        if (this instanceof NativeScaleLayer && NavigatableComponent.PROP_ZOOM_SCALE_FOLLOW_NATIVE_RES_AT_LOAD.get()) {
+        if (this instanceof NativeScaleLayer && Boolean.TRUE.equals(NavigatableComponent.PROP_ZOOM_SCALE_FOLLOW_NATIVE_RES_AT_LOAD.get())) {
             event.getMapView().setNativeScaleLayer((NativeScaleLayer) this);
         }
 
@@ -639,35 +639,40 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (tileSource != null) {
             tileSize = tileSource.getTileSize();
         }
-        /**
+        /*
          * As we can see part of the tile at the top and at the bottom, use Math.ceil(...) + 1 to accommodate for that
          */
         int maxYtiles = (int) Math.ceil((double) height / tileSize + 1);
         int maxXtiles = (int) Math.ceil((double) width / tileSize + 1);
         int visibleTiles = maxXtiles * maxYtiles;
-        /**
-         * Take into account ZOOM_OFFSET to calculate real number of tiles and multiply by 7, to cover all tiles, that might be
-         * accessed when looking for tiles outside current zoom level.
-         *
-         * Currently we use otherZooms = {1, 2, -1, -2, -3, -4, -5}
-         *
-         * The value should be sum(2^x for x in (-5 to 2)) - 1
-         * -1 to exclude current zoom level
-         *
-         * Check call to tryLoadFromDifferentZoom
-         * @see #tryLoadFromDifferentZoom(Graphics2D, int, List<Tile>,int)
-         * @see #drawInViewArea((Graphics2D, MapView, ProjectionBounds)
-         *
-         * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
-         * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
-         * @see #overloadTiles()
-         */
-        int ret = (int) Math.ceil(
-                Math.pow(2d, ZOOM_OFFSET.get()) * // use offset to decide, how many tiles are visible
-                visibleTiles * 7 + // 7 to cover tiles from other zooms as described above
-                ((maxYtiles + 2) * (maxXtiles +2))); // to add as many tiles as they will be accessed on current zoom level
+
+        int ret = calculateRealTiles(visibleTiles, maxXtiles, maxYtiles);
         Logging.info("AbstractTileSourceLayer: estimated visible tiles: {0}, estimated cache size: {1}", visibleTiles, ret);
         return ret;
+    }
+
+    /**
+     * Take into account ZOOM_OFFSET to calculate real number of tiles and multiply by 7, to cover all tiles, that might be
+     * accessed when looking for tiles outside current zoom level.
+     * <p>
+     * Currently we use otherZooms = {1, 2, -1, -2, -3, -4, -5}
+     * <p>
+     * The value should be sum(2^x for x in (-5 to 2)) - 1
+     * -1 to exclude current zoom level
+     * <p>
+     * Check call to tryLoadFromDifferentZoom
+     * @see #tryLoadFromDifferentZoom(Graphics2D, int, List, int)
+     * @see #drawInViewArea(Graphics2D, MapView, ProjectionBounds)
+     *
+     * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
+     * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
+     * @see TileSet#overloadTiles()
+     */
+    private static int calculateRealTiles(int visibleTiles, int maxXtiles, int maxYtiles) {
+        return (int) Math.ceil(
+                Math.pow(2d, ZOOM_OFFSET.get()) * // use offset to decide, how many tiles are visible
+                        visibleTiles * 7 + // 7 to cover tiles from other zooms as described above
+                        ((maxYtiles + 2) * (maxXtiles +2))); // to add as many tiles as they will be accessed on current zoom level
     }
 
     @Override
@@ -1324,7 +1329,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * Extend tile loading corridor, so that no flickering happens when panning
          */
         private void overloadTiles() {
-            /**
+            /*
              * consult calculation in estimateTileCacheSize() before changing values here.
              *
              *  @see #estimateTileCacheSize()
@@ -1595,7 +1600,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             ts.overloadTiles();
         }
         if (getDisplaySettings().isAutoZoom()) {
-            /**
+            /*
              * consult calculation in estimateTileCacheSize() before changing values here.
              *
              *  @see #estimateTileCacheSize()
@@ -1946,7 +1951,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     /**
      * Calculates tiles, that needs to be downloaded to cache, gets a current tile loader and creates a task to download
      * all of the tiles. Buffer contains at least one tile.
-     *
+     * <p>
      * To prevent accidental clear of the queue, new download executor is created with separate queue
      *
      * @param progressMonitor progress monitor for download task

@@ -34,13 +34,10 @@ public class RelationMemberListMergeModel extends AbstractListMergeModel<Relatio
         // the table model for merged entries is different because it supports
         // editing cells in the first column
         //
-        mergedEntriesTableModel = this.new EntriesTableModel(ListRole.MERGED_ENTRIES) {
+        mergedEntriesTableModel = new EntriesTableModel(ListRole.MERGED_ENTRIES) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                switch(column) {
-                case 1: return true;
-                default: return false;
-                }
+                return column == 1;
             }
         };
     }

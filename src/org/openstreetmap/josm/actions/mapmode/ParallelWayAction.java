@@ -55,35 +55,30 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * MapMode for making parallel ways.
- *
+ * <p>
  * All calculations are done in projected coordinates.
- *
+ * <p>
  * TODO:
+ * <p>
  * == Functionality ==
- *
- * 1. Use selected nodes as split points for the selected ways.
- *
+ * <ol>
+ * <li>Use selected nodes as split points for the selected ways.
+ * <p>
  * The ways containing the selected nodes will be split and only the "inner"
- * parts will be copied
- *
- * 2. Enter exact offset
- *
- * 3. Improve snapping
- *
- * 4. Visual cues could be better
- *
- * 5. (long term) Parallelize and adjust offsets of existing ways
- *
+ * parts will be copied</li>
+ * <li>Enter exact offset</li>
+ * <li>Improve snapping</li>
+ * <li>Visual cues could be better</li>
+ * <li>(long term) Parallelize and adjust offsets of existing ways</li>
+ * </ol>
  * == Code quality ==
- *
- * a) The mode, flags, and modifiers might be updated more than necessary.
- *
- * Not a performance problem, but better if they where more centralized
- *
- * b) Extract generic MapMode services into a super class and/or utility class
- *
- * c) Maybe better to simply draw our own source way highlighting?
- *
+ * <ol type="a">
+ * <li>The mode, flags, and modifiers might be updated more than necessary.
+ * <p>
+ * Not a performance problem, but better if they where more centralized</li>
+ * <li>Extract generic MapMode services into a super class and/or utility class</li>
+ * <li>Maybe better to simply draw our own source way highlighting?</li>
+ * </ol>
  * Current code doesn't not take into account that ways might been highlighted
  * by other than us. Don't think that situation should ever happen though.
  *
@@ -351,7 +346,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        // WTF.. the event passed here doesn't have button info?
+        // WTF... the event passed here doesn't have button info?
         // Since we get this event from other buttons too, we must check that
         // _BUTTON1_ is down.
         if (!mouseIsDown)
@@ -455,7 +450,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         if (shift) {
             modifiers.add(Modifier.SHIFT);
         }
-        return spec.entrySet().stream().allMatch(entry -> modifiers.contains(entry.getKey()) == entry.getValue().booleanValue());
+        return spec.entrySet().stream().allMatch(entry -> modifiers.contains(entry.getKey()) == entry.getValue());
     }
 
     private boolean isModifiersValidForDragMode() {
@@ -464,11 +459,11 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     }
 
     private void updateFlagsOnlyChangeableOnPress() {
-        copyTags = COPY_TAGS_DEFAULT.get().booleanValue() != matchesCurrentModifiers(COPY_TAGS_MODIFIER_COMBO);
+        copyTags = COPY_TAGS_DEFAULT.get() != matchesCurrentModifiers(COPY_TAGS_MODIFIER_COMBO);
     }
 
     private void updateFlagsChangeableAlways() {
-        snap = SNAP_DEFAULT.get().booleanValue() != matchesCurrentModifiers(SNAP_MODIFIER_COMBO);
+        snap = SNAP_DEFAULT.get() != matchesCurrentModifiers(SNAP_MODIFIER_COMBO);
     }
 
     // We keep the source ways and the selection in sync so the user can see the source way's tags
@@ -553,7 +548,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     private static class KeyboardModifiersProperty extends AbstractToStringProperty<Map<Modifier, Boolean>> {
 
         KeyboardModifiersProperty(String key, String defaultValue) {
-            super(key, createFromString(defaultValue));
+            this(key, createFromString(defaultValue));
         }
 
         KeyboardModifiersProperty(String key, Map<Modifier, Boolean> defaultValue) {

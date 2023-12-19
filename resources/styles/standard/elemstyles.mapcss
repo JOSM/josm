@@ -860,6 +860,13 @@ node[highway=rest_area] {
     icon-image: "presets/vehicle/rest_area.svg";
     set icon_z17;
 }
+area[highway=trailhead] {
+    fill-color: services#c0c0c0;
+}
+node[highway=trailhead] {
+    icon-image: "presets/landmark/trailhead.svg";
+    set icon_z17;
+}
 node[ford=stepping_stones],
 node[ford?] {
     icon-image: "presets/vehicle/ford.svg";
@@ -3316,6 +3323,10 @@ node[amenity=post_office] {
 }
 node[amenity=post_box] {
     icon-image: "presets/service/post_box.svg";
+    set icon_z17;
+}
+node[amenity=letter_box] {
+    icon-image: "presets/service/letter_box.svg";
     set icon_z17;
 }
 node[amenity=studio] {

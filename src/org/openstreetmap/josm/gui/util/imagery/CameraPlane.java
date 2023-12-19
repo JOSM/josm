@@ -10,7 +10,10 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferInt;
 import java.util.stream.IntStream;
-import javax.annotation.Nullable;
+
+import org.openstreetmap.josm.tools.Logging;
+
+import jakarta.annotation.Nullable;
 
 /**
  * The plane that the camera appears on and rotates around.
@@ -128,6 +131,7 @@ public class CameraPlane {
         try {
             res = rotate(vectors[x][y]);
         } catch (Exception e) {
+            Logging.trace(e);
             res = Vector3D.DEFAULT_VECTOR_3D;
         }
         return res;
@@ -149,7 +153,7 @@ public class CameraPlane {
      *
      * @param p Point within current plane.
      */
-    public void setRotation(final Point p) {
+    public synchronized void setRotation(final Point p) {
         setRotation(getVector3D(p));
     }
 
@@ -180,7 +184,7 @@ public class CameraPlane {
      *
      * @param vec vector pointing new view position.
      */
-    public void setRotation(Vector3D vec) {
+    public synchronized void setRotation(Vector3D vec) {
         setRotation(vec.getPolarAngle(), vec.getAzimuthalAngle());
     }
 

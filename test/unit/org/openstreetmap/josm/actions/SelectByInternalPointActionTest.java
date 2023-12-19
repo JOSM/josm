@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -17,23 +16,19 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link SelectByInternalPointAction}.
  */
+@BasicPreferences
+@Main
+@Projection
 final class SelectByInternalPointActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection().main();
-
     /**
      * Tests that {@code SelectByInternalPointAction} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs

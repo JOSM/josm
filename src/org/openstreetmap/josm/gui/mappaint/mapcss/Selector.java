@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * MapCSS selector.
- *
+ * <p>
  * A rule has two parts, a selector and a declaration block
  * e.g.
  * <pre>
@@ -54,7 +54,7 @@ import org.openstreetmap.josm.tools.Utils;
  * </pre>
  *
  * The selector decides, if the declaration block gets applied or not.
- *
+ * <p>
  * All implementing classes of Selector are immutable.
  */
 public interface Selector {
@@ -354,7 +354,7 @@ public interface Selector {
 
             private Map<List<Way>, List<WaySegment>> findCrossings(IPrimitive area,
                     Map<Point2D, List<WaySegment>> cellSegments) {
-                /** The detected crossing ways */
+                /* The detected crossing ways */
                 Map<List<Way>, List<WaySegment>> crossingWays = new HashMap<>(50);
                 if (area instanceof Way) {
                     CrossingWays.findIntersectingWay((Way) area, cellSegments, crossingWays, false);

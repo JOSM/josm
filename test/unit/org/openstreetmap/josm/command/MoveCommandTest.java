@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -24,22 +23,20 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests of {@link MoveCommand} class.
  */
+@BasicPreferences
+@I18n
+@Projection
 class MoveCommandTest {
-    /**
-     * We need prefs for nodes.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().i18n().projection();
     private CommandTestDataWithRelation testData;
 
     /**
@@ -59,7 +56,7 @@ class MoveCommandTest {
         LatLon destLatLon = ProjectionRegistry.getProjection().eastNorth2latlon(offset);
         EastNorth start = new EastNorth(2, 0);
 
-        Set<OsmPrimitive> nodeAsCollection = Collections.<OsmPrimitive>singleton(testData.existingNode);
+        Set<OsmPrimitive> nodeAsCollection = Collections.singleton(testData.existingNode);
         assertEquals(1, nodeAsCollection.size());
         checkCommandAfterConstructor(new MoveCommand(nodeAsCollection, offset));
         checkCommandAfterConstructor(new MoveCommand(testData.existingNode, destLatLon));
@@ -220,7 +217,7 @@ class MoveCommandTest {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
-        new MoveCommand(Arrays.<OsmPrimitive>asList(testData.existingNode), 1, 2).fillModifiedData(modified,
+        new MoveCommand(Collections.singletonList(testData.existingNode), 1, 2).fillModifiedData(modified,
                 deleted, added);
         assertArrayEquals(new Object[] {testData.existingNode }, modified.toArray());
         assertArrayEquals(new Object[] {}, deleted.toArray());
@@ -232,12 +229,12 @@ class MoveCommandTest {
      */
     @Test
     void testGetParticipatingPrimitives() {
-        MoveCommand command = new MoveCommand(Arrays.<OsmPrimitive>asList(testData.existingNode), 1, 2);
+        MoveCommand command = new MoveCommand(Collections.singletonList(testData.existingNode), 1, 2);
         command.executeCommand();
         assertArrayEquals(new Object[] {testData.existingNode}, command.getParticipatingPrimitives().toArray());
 
         MoveCommand command2 = new MoveCommand(
-                Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingWay), 1, 2);
+                Arrays.asList(testData.existingNode, testData.existingWay), 1, 2);
         command2.executeCommand();
         assertArrayEquals(new Object[] {testData.existingNode, testData.existingNode2},
                 command2.getParticipatingPrimitives().toArray());
@@ -250,9 +247,9 @@ class MoveCommandTest {
     void testDescription() {
         Node node = TestUtils.addFakeDataSet(new Node(LatLon.ZERO));
         node.put("name", "xy");
-        List<OsmPrimitive> nodeList = Arrays.<OsmPrimitive>asList(node);
+        List<OsmPrimitive> nodeList = Collections.singletonList(node);
         assertTrue(new MoveCommand(nodeList, 1, 2).getDescriptionText().matches("Move 1 node"));
-        List<OsmPrimitive> nodes = Arrays.<OsmPrimitive>asList(node, testData.existingNode, testData.existingNode2);
+        List<OsmPrimitive> nodes = Arrays.asList(node, testData.existingNode, testData.existingNode2);
         assertTrue(new MoveCommand(nodes, 1, 2).getDescriptionText().matches("Move 3 nodes"));
     }
 

@@ -5,34 +5,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.AssertionsInEDT;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link PluginPreference} class.
  */
+@AssertionsInEDT
+@BasicPreferences
 public class PluginPreferenceTest {
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT();
-
     /**
      * Unit test of {@link PluginPreference#PluginPreference}.
      */
@@ -59,14 +51,14 @@ public class PluginPreferenceTest {
     void testBuildDownloadSummary() throws Exception {
         final PluginInformation dummy = getDummyPluginInformation();
         assertEquals("", PluginPreference.buildDownloadSummary(
-                new PluginDownloadTask(NullProgressMonitor.INSTANCE, Collections.<PluginInformation>emptyList(), "")));
+                new PluginDownloadTask(NullProgressMonitor.INSTANCE, Collections.emptyList(), "")));
         assertEquals("", PluginPreference.buildDownloadSummary(
-                new PluginDownloadTask(NullProgressMonitor.INSTANCE, Arrays.asList(dummy), "")));
+                new PluginDownloadTask(NullProgressMonitor.INSTANCE, Collections.singletonList(dummy), "")));
         assertEquals("The following plugin has been downloaded <strong>successfully</strong>:<ul><li>dummy_plugin (31772)</li></ul>"+
                      "Downloading the following plugin has <strong>failed</strong>:<ul><li>dummy_plugin</li></ul>"+
                      "<br>Error message(untranslated): test",
                 PluginPreference.buildDownloadSummary(
-                        new PluginDownloadTask(NullProgressMonitor.INSTANCE, Arrays.asList(dummy), "") {
+                        new PluginDownloadTask(NullProgressMonitor.INSTANCE, Collections.singletonList(dummy), "") {
                     @Override
                     public Collection<PluginInformation> getFailedPlugins() {
                         return Collections.singleton(dummy);

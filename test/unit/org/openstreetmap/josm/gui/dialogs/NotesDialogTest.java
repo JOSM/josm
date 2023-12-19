@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -35,18 +34,19 @@ import org.openstreetmap.josm.gui.dialogs.NotesDialog.NoteRenderer;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 
 /**
  * Unit tests of {@link NotesDialog}
  */
 @BasicPreferences
+/* Only needed for {@link #testTicket21558} */
+@Main
+@Projection
 class NotesDialogTest {
-    /** Only needed for {@link #testTicket21558} */
-    @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules().main().projection();
     private Note createMultiLineNote() {
         Note note = new Note(LatLon.ZERO);
         note.setCreatedAt(Instant.now());

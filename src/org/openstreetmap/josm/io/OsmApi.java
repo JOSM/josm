@@ -306,9 +306,9 @@ public class OsmApi extends OsmConnection {
      * @return XML string
      */
     protected final String toXml(IPrimitive o, boolean addBody) {
-        StringWriter swriter = new StringWriter();
-        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
-            swriter.getBuffer().setLength(0);
+        StringWriter stringWriter = new StringWriter();
+        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(stringWriter), true, version)) {
+            stringWriter.getBuffer().setLength(0);
             osmWriter.setWithBody(addBody);
             osmWriter.setChangeset(changeset);
             osmWriter.header();
@@ -318,7 +318,7 @@ public class OsmApi extends OsmConnection {
         } catch (IOException e) {
             Logging.warn(e);
         }
-        return swriter.toString();
+        return stringWriter.toString();
     }
 
     /**
@@ -327,9 +327,9 @@ public class OsmApi extends OsmConnection {
      * @return XML string
      */
     protected final String toXml(Changeset s) {
-        StringWriter swriter = new StringWriter();
-        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
-            swriter.getBuffer().setLength(0);
+        StringWriter stringWriter = new StringWriter();
+        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(stringWriter), true, version)) {
+            stringWriter.getBuffer().setLength(0);
             osmWriter.header();
             osmWriter.visit(s);
             osmWriter.footer();
@@ -337,7 +337,7 @@ public class OsmApi extends OsmConnection {
         } catch (IOException e) {
             Logging.warn(e);
         }
-        return swriter.toString();
+        return stringWriter.toString();
     }
 
     private static String getBaseUrl(String serverUrl, String version) {
@@ -347,7 +347,7 @@ public class OsmApi extends OsmConnection {
         }
         rv.append('/');
         // this works around a ruby (or lighttpd) bug where two consecutive slashes in
-        // an URL will cause a "404 not found" response.
+        // a URL will cause a "404 not found" response.
         int p;
         while ((p = rv.indexOf("//", rv.indexOf("://")+2)) > -1) {
             rv.delete(p, p + 1);
@@ -455,7 +455,7 @@ public class OsmApi extends OsmConnection {
     /**
      * Creates a new changeset based on the keys in <code>changeset</code>. If this
      * method succeeds, changeset.getId() replies the id the server assigned to the new changeset
-     *
+     * <p>
      * The changeset must not be null, but its key/value-pairs may be empty.
      *
      * @param changeset the changeset toe be created. Must not be null.
@@ -740,7 +740,7 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Generic method for sending requests to the OSM API.
-     *
+     * <p>
      * This method will automatically re-try any requests that are answered with a 5xx
      * error code, or that resulted in a timeout exception from the TCP layer.
      *
@@ -850,8 +850,6 @@ public class OsmApi extends OsmConnection {
                 throw new OsmTransferException(e);
             } catch (IOException e) {
                 throw new OsmTransferException(e);
-            } catch (OsmTransferException e) {
-                throw e;
             }
         }
     }
@@ -921,13 +919,12 @@ public class OsmApi extends OsmConnection {
      */
     public Note createNote(LatLon latlon, String text, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
-        String noteUrl = new StringBuilder()
-            .append("notes?lat=")
-            .append(latlon.lat())
-            .append("&lon=")
-            .append(latlon.lon())
-            .append("&text=")
-            .append(Utils.encodeUrl(text)).toString();
+        String noteUrl = "notes?lat=" +
+                latlon.lat() +
+                "&lon=" +
+                latlon.lon() +
+                "&text=" +
+                Utils.encodeUrl(text);
 
         return parseSingleNote(sendPostRequest(noteUrl, null, monitor));
     }

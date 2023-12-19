@@ -552,9 +552,8 @@ public class Bounds implements IBounds {
      * @return The string encoded bounds
      */
     public String encodeAsString(String separator) {
-        return new StringBuilder()
-          .append(minLat).append(separator).append(minLon).append(separator)
-          .append(maxLat).append(separator).append(maxLon).toString();
+        return minLat + separator + minLon + separator +
+                maxLat + separator + maxLon;
     }
 
     /**

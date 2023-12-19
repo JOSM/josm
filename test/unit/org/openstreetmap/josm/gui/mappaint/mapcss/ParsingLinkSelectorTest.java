@@ -3,26 +3,16 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@code ParsingLinkSelector}.
  */
+@Projection
 class ParsingLinkSelectorTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     @Test
-    public void parseEmptyChildSelector() {
+    void testParseEmptyChildSelector() {
         String css = "relation > way {}";
         MapCSSStyleSource source = new MapCSSStyleSource(css);
         source.loadStyleSource();
@@ -30,7 +20,7 @@ class ParsingLinkSelectorTest {
     }
 
     @Test
-    public void parseEmptyParentSelector() {
+    void testParseEmptyParentSelector() {
         String css = "way < relation {}";
         MapCSSStyleSource source = new MapCSSStyleSource(css);
         source.loadStyleSource();
@@ -38,7 +28,7 @@ class ParsingLinkSelectorTest {
     }
 
     @Test
-    public void parseChildSelectorWithKeyValueCondition() {
+    void testParseChildSelectorWithKeyValueCondition() {
         String css = "relation >[role=\"my_role\"] way {}";
         MapCSSStyleSource source = new MapCSSStyleSource(css);
         source.loadStyleSource();
@@ -46,7 +36,7 @@ class ParsingLinkSelectorTest {
     }
 
     @Test
-    public void parseChildSelectorWithKeyCondition() {
+    void testParseChildSelectorWithKeyCondition() {
         String css = "relation >[\"my_role\"] way{}";
         MapCSSStyleSource source = new MapCSSStyleSource(css);
         source.loadStyleSource();

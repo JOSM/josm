@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2023080900, Last Updated Wed Aug  9 07:07:01 2023 UTC
+        // Taken from Version 2023121800, Last Updated Mon Dec 18 07:07:01 2023 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -473,7 +473,6 @@ public final class DomainValidator extends AbstractValidator {
         "cba", // cba COMMONWEALTH BANK OF AUSTRALIA
         "cbn", // cbn The Christian Broadcasting Network, Inc.
         "cbre", // cbre CBRE, Inc.
-        "cbs", // cbs CBS Domains Inc.
         "center", // center Tin Mill, LLC
         "ceo", // ceo CEOTLD Pty Ltd
         "cern", // cern European Organization for Nuclear Research (&quot;CERN&quot;)
@@ -496,7 +495,6 @@ public final class DomainValidator extends AbstractValidator {
         "citi", // citi Citigroup Inc.
         "citic", // citic CITIC Group Corporation
         "city", // city Snow Sky, LLC
-        "cityeats", // cityeats Lifestyle Domain Holdings, Inc.
         "claims", // claims Black Corner, LLC
         "cleaning", // cleaning Fox Shadow, LLC
         "click", // click Uniregistry, Corp.
@@ -611,7 +609,6 @@ public final class DomainValidator extends AbstractValidator {
         "erni", // erni ERNI Group Holding AG
         "esq", // esq Charleston Road Registry Inc.
         "estate", // estate Trixy Park, LLC
-        "etisalat", // etisalat Emirates Telecommunications Corporation (trading as Etisalat)
         "eurovision", // eurovision European Broadcasting Union (EBU)
         "eus", // eus Puntueus Fundazioa
         "events", // events Pioneer Maple, LLC
@@ -667,7 +664,6 @@ public final class DomainValidator extends AbstractValidator {
         "fresenius", // fresenius Fresenius Immobilien-Verwaltungs-GmbH
         "frl", // frl FRLregistry B.V.
         "frogans", // frogans OP3FT
-        "frontdoor", // frontdoor Lifestyle Domain Holdings, Inc.
         "frontier", // frontier Frontier Communications Corporation
         "ftr", // ftr Frontier Communications Corporation
         "fujitsu", // fujitsu Fujitsu Limited
@@ -825,7 +821,6 @@ public final class DomainValidator extends AbstractValidator {
         "kia", // kia KIA MOTORS CORPORATION
         "kids", // kids DotKids Foundation Limited
         "kim", // kim Afilias Limited
-        "kinder", // kinder Ferrero Trading Lux S.A.
         "kindle", // kindle Amazon Registry Service, Inc.
         "kitchen", // kitchen Just Goodbye, LLC
         "kiwi", // kiwi DOT KIWI LIMITED
@@ -1097,7 +1092,6 @@ public final class DomainValidator extends AbstractValidator {
         "ril", // ril Reliance Industries Limited
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
         "rip", // rip United TLD Holdco Ltd.
-        "rocher", // rocher Ferrero Trading Lux S.A.
         "rocks", // rocks United TLD Holdco, LTD.
         "rodeo", // rodeo Top Level Domain Holdings Limited
         "rogers", // rogers Rogers Communications Canada Inc.
@@ -1126,7 +1120,6 @@ public final class DomainValidator extends AbstractValidator {
         "saxo", // saxo Saxo Bank A/S
         "sbi", // sbi STATE BANK OF INDIA
         "sbs", // sbs SPECIAL BROADCASTING SERVICE CORPORATION
-        "sca", // sca SVENSKA CELLULOSA AKTIEBOLAGET SCA (publ)
         "scb", // scb The Siam Commercial Bank Public Company Limited (&quot;SCB&quot;)
         "schaeffler", // schaeffler Schaeffler Technologies AG &amp; Co. KG
         "schmidt", // schmidt SALM S.A.S.
@@ -1160,7 +1153,6 @@ public final class DomainValidator extends AbstractValidator {
         "shopping", // shopping Over Keep, LLC
         "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
         "show", // show Snow Beach, LLC
-        "showtime", // showtime CBS Domains Inc.
         "silk", // silk Amazon Registry Service, Inc.
         "sina", // sina Sina Corporation
         "singles", // singles Fern Madison, LLC
@@ -1299,7 +1291,6 @@ public final class DomainValidator extends AbstractValidator {
         "vivo", // vivo Telefonica Brasil S.A.
         "vlaanderen", // vlaanderen DNS.be vzw
         "vodka", // vodka Top Level Domain Holdings Limited
-        "volkswagen", // volkswagen Volkswagen Group of America Inc.
         "volvo", // volvo Volvo Holding Sverige Aktiebolag
         "vote", // vote Monolith Registry LLC
         "voting", // voting Valuetainment Corp.
@@ -1409,7 +1400,6 @@ public final class DomainValidator extends AbstractValidator {
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
         "xn--mgba7c0bbn0a", // العليان Crescent Holding GmbH
-        "xn--mgbaakc7dvf", // اتصالات Emirates Telecommunications Corporation (trading as Etisalat)
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbah1a3hjkrd", // موريتانيا Université de Nouakchott Al Aasriya
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation

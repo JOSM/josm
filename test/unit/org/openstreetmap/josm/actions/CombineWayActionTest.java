@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.NodePair;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.annotations.ResetUniquePrimitiveIdCounters;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -113,6 +114,7 @@ class CombineWayActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
+    @ResetUniquePrimitiveIdCounters
     void testTicket18367NeedsSplit() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18367, "split-and-reverse.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);

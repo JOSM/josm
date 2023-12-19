@@ -568,6 +568,7 @@ public class PowerLines extends Test {
         }
 
         /**
+         * Get the detected segments
          * @return the detected segments
          */
         List<SegmentInfo> getSegments() {

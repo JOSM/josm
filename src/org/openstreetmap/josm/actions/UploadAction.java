@@ -72,27 +72,27 @@ public class UploadAction extends AbstractUploadAction {
     private static final String IS_ASYNC_UPLOAD_ENABLED = "asynchronous.upload";
 
     static {
-        /**
+        /*
          * Calls validator before upload.
          */
         UPLOAD_HOOKS.add(new ValidateUploadHook());
 
-        /**
+        /*
          * Fixes database errors
          */
         UPLOAD_HOOKS.add(new FixDataHook());
 
-        /**
+        /*
          * Checks server capabilities before upload.
          */
         UPLOAD_HOOKS.add(new ApiPreconditionCheckerHook());
 
-        /**
+        /*
          * Adjusts the upload order of new relations
          */
         UPLOAD_HOOKS.add(new RelationUploadOrderHook());
 
-        /**
+        /*
          * Removes discardable tags like created_by on modified objects
          */
         LATE_UPLOAD_HOOKS.add(new DiscardTagsHook());

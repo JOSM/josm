@@ -60,7 +60,7 @@ public class PurgeCommand extends Command {
     }
 
     private void init(Collection<OsmPrimitive> toPurge, Collection<OsmPrimitive> makeIncomplete) {
-        /**
+        /*
          * The topological sort is to avoid missing way nodes and missing
          * relation members when adding primitives back to the dataset on undo.
          *
@@ -159,7 +159,7 @@ public class PurgeCommand extends Command {
         // Nodes not deleted in the first pass
         Set<OsmPrimitive> remainingNodes = new HashSet<>(in.size());
 
-        /**
+        /*
          *  First add nodes that have no way referrer.
          */
         outer:
@@ -179,7 +179,7 @@ public class PurgeCommand extends Command {
                 }
             }
 
-        /**
+        /*
          * Then add all ways, each preceded by its (remaining) nodes.
          */
         for (Iterator<OsmPrimitive> it = in.iterator(); it.hasNext();) {

@@ -268,7 +268,7 @@ public final class ShowStatusReportAction extends JosmAction {
      * @return map that maps shortened name to full directory path
      */
     static Map<String, String> getAnonimicDirectorySymbolMap() {
-        /** maps the anonymized name to the actual used path */
+        /* maps the anonymized name to the actual used path */
         Map<String, String> map = new LinkedHashMap<>();
         map.put(PlatformManager.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}", getSystemEnv("JAVA_HOME"));
         map.put("<java.home>", getSystemProperty("java.home"));

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -83,7 +84,7 @@ public abstract class HttpClient {
 
     static {
         try {
-            CookieHandler.setDefault(new CookieManager());
+            CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
         } catch (SecurityException e) {
             Logging.log(Logging.LEVEL_ERROR, "Unable to set default cookie handler", e);
         }
@@ -132,6 +133,19 @@ public abstract class HttpClient {
      * @since 9179
      */
     public final Response connect(ProgressMonitor progressMonitor) throws IOException {
+        return connect(progressMonitor, null, null);
+    }
+
+    /**
+     * Opens the HTTP connection.
+     * @param progressMonitor progress monitor
+     * @param authRedirectLocation The location where we will be redirected for authentication
+     * @param authRequestProperty The authorization header to set when being redirected to the auth location
+     * @return HTTP response
+     * @throws IOException if any I/O error occurs
+     * @since 18913
+     */
+    public final Response connect(ProgressMonitor progressMonitor, String authRedirectLocation, String authRequestProperty) throws IOException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
@@ -183,8 +197,10 @@ public abstract class HttpClient {
                     url = new URL(url, redirectLocation);
                     maxRedirects--;
                     logRequest(tr("Download redirected to ''{0}''", redirectLocation));
-                    // Fix JOSM #21935: Avoid leaking `Authorization` header on redirects.
-                    if (!Objects.equals(oldUrl.getHost(), this.url.getHost()) && this.getRequestHeader("Authorization") != null) {
+                    if (authRedirectLocation != null && authRequestProperty != null && redirectLocation.startsWith(authRedirectLocation)) {
+                        setHeader("Authorization", authRequestProperty);
+                    } else if (!Objects.equals(oldUrl.getHost(), this.url.getHost()) && this.getRequestHeader("Authorization") != null) {
+                        // Fix JOSM #21935: Avoid leaking `Authorization` header on redirects.
                         logRequest(tr("Download redirected to different host (''{0}'' -> ''{1}''), removing authorization headers",
                                 oldUrl.getHost(), url.getHost()));
                         this.headers.remove("Authorization");

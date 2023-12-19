@@ -2,20 +2,28 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.openstreetmap.josm.data.osm.OsmPrimitiveType.NODE;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -29,10 +37,13 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.MapPaintStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 
 /**
  * Unit tests of {@link Functions}.
@@ -60,6 +71,22 @@ class FunctionsTest {
         Environment build() {
             return new Environment(osm);
         }
+    }
+
+    private static Method[] FUNCTIONS;
+
+    static Stream<Method> getFunctions() {
+        if (FUNCTIONS == null) {
+            FUNCTIONS = Stream.of(Functions.class.getDeclaredMethods())
+                    .filter(m -> Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers()))
+                    .toArray(Method[]::new);
+        }
+        return Stream.of(FUNCTIONS);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        FUNCTIONS = null;
     }
 
     /**
@@ -171,6 +198,7 @@ class FunctionsTest {
     /**
      * Unit test of {@link Functions#JOSM_pref}, color handling
      */
+    @MapPaintStyles
     @Test
     void testPrefColor() {
         String key = "Functions.JOSM_pref";
@@ -227,5 +255,47 @@ class FunctionsTest {
                 () -> assertSame(relation2, typeSomethingReferrers.get(0)));
 
         assertTrue(Functions.parent_osm_primitives(env, "type2").isEmpty());
+    }
+
+    /**
+     * Non-regression test for #23238: NPE when env.osm is null
+     * @see #testNonRegression23238JOSMSearch()
+     */
+    @ParameterizedTest
+    @MethodSource("getFunctions")
+    @Territories // needed for inside, outside, is_right_hand_traffic
+    void testNonRegression23238(Method function) {
+        if (function.getParameterCount() >= 1 && function.getParameterTypes()[0].isAssignableFrom(Environment.class)
+         && !function.getParameterTypes()[0].equals(Object.class)) {
+            Environment nullOsmEnvironment = new Environment();
+            nullOsmEnvironment.mc = new MultiCascade();
+            Object[] args = new Object[function.getParameterCount()];
+            args[0] = nullOsmEnvironment;
+            for (int i = 1; i < function.getParameterCount(); i++) {
+                final Class<?> type = function.getParameterTypes()[i];
+                if (String.class.isAssignableFrom(type)) {
+                    args[i] = "";
+                } else if (String[].class.isAssignableFrom(type)) {
+                    args[i] = new String[] {"{0}", ""}; // join and tr require at least 2 arguments
+                } else if (Double.class.isAssignableFrom(type) || double.class.isAssignableFrom(type)) {
+                    args[i] = 0d;
+                } else if (Object.class.isAssignableFrom(type)) {
+                    args[i] = new Object[0];
+                } else {
+                    fail(type.getCanonicalName());
+                }
+            }
+            assertDoesNotThrow(() -> function.invoke(null, args));
+        }
+    }
+
+    /**
+     * Non-regression test for #23238: NPE when env.osm is null and {@link Functions#JOSM_search(Environment, String)}
+     * has a non-empty search string.
+     * @see #testNonRegression23238(Method)
+     */
+    @Test
+    void testNonRegression23238JOSMSearch() {
+        assertDoesNotThrow(() -> Functions.JOSM_search(new Environment(), "foobar"));
     }
 }

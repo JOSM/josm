@@ -7,35 +7,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link MergeNodesAction}.
  */
+@Projection
 class MergeNodesActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
     /**
      * Unit test of {@link MergeNodesAction#selectTargetLocationNode} - empty list
      */
     @Test
     void testSelectTargetLocationNodeEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> MergeNodesAction.selectTargetLocationNode(Collections.emptyList()));
+        final List<Node> noNodes = Collections.emptyList();
+        assertThrows(IllegalArgumentException.class, () -> MergeNodesAction.selectTargetLocationNode(noNodes));
     }
 
     /**
@@ -44,7 +36,8 @@ class MergeNodesActionTest {
     @Test
     void testSelectTargetLocationNodeInvalidMode() {
         Config.getPref().putInt("merge-nodes.mode", -1);
-        assertThrows(IllegalStateException.class, () -> MergeNodesAction.selectTargetLocationNode(Arrays.asList(new Node(0), new Node(1))));
+        final List<Node> nodes = Arrays.asList(new Node(0), new Node(1));
+        assertThrows(IllegalStateException.class, () -> MergeNodesAction.selectTargetLocationNode(nodes));
     }
 
     /**
@@ -61,7 +54,7 @@ class MergeNodesActionTest {
 
         Config.getPref().putInt("merge-nodes.mode", 2);
         assertEquals(LatLon.NORTH_POLE, MergeNodesAction.selectTargetLocationNode(
-                Arrays.asList(new Node(LatLon.NORTH_POLE))).getCoor());
+                Collections.singletonList(new Node(LatLon.NORTH_POLE))).getCoor());
     }
 
     /**
@@ -73,6 +66,6 @@ class MergeNodesActionTest {
         DataSet ds = new DataSet();
         Node n1 = new Node(1);
         ds.addPrimitive(n1);
-        assertEquals(1, MergeNodesAction.selectTargetNode(Arrays.asList(n1)).getId());
+        assertEquals(1, MergeNodesAction.selectTargetNode(Collections.singletonList(n1)).getId());
     }
 }

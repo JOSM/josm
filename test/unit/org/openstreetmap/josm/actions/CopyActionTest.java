@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -25,13 +24,18 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.OsmApi;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link CopyAction}.
  */
+@BasicPreferences
+@Main
+@OsmApi(OsmApi.APIType.FAKE)
+@Projection
 class CopyActionTest {
     private static final class CapturingCopyAction extends CopyAction {
         private boolean warningShown;
@@ -41,13 +45,6 @@ class CopyActionTest {
             warningShown = true;
         }
     }
-
-    /**
-     * We need prefs for this.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI().main().projection();
 
     /**
      * Test that copy action copies the selected primitive

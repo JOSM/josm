@@ -564,7 +564,9 @@ class UrlValidatorTest {
             new ResultPair("", true),
             new ResultPair("/test1/file", true),
             new ResultPair("/..//file", false),
-            new ResultPair("/test1//file", false)
+            new ResultPair("/test1//file", false),
+            // non-ascii characters are invalid for URIs. See https://datatracker.ietf.org/doc/html/rfc3986#section-1.2.1
+            new ResultPair("/projekte-und-themen/eulen-falken-und-deren-nistkästen/trafotürme", false)
     };
 
     //Test allow2slash, noFragment

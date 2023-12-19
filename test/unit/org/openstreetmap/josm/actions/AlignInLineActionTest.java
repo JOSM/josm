@@ -1,14 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.actions.AlignInLineAction.InvalidSelection;
 import org.openstreetmap.josm.actions.AlignInLineAction.Line;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -17,22 +16,15 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests for class {@link AlignInLineAction}.
  */
+@Main
+@Projection
 final class AlignInLineActionTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection();
-
     /** Class under test. */
     private static AlignInLineAction action;
 
@@ -49,8 +41,8 @@ final class AlignInLineActionTest {
     /**
      * Test case: only nodes selected, part of an open way: align these nodes on the line passing through the extremity
      * nodes (the most distant in the way sequence, not the most euclidean-distant). See
-     * https://josm.openstreetmap.de/ticket/9605#comment:3. Note that in this test, after alignment, way is overlapping
-     * itself.
+     * <a href="https://josm.openstreetmap.de/ticket/9605#comment:3">comment:3:ticket:9605</a>.
+     * Note that in this test, after alignment, way is overlapping itself.
      * @throws InvalidSelection never
      */
     @Test
@@ -210,11 +202,11 @@ final class AlignInLineActionTest {
      */
     @Test
     void testLineDifferentCoordinates() throws InvalidSelection {
-        assertNotNull(new Line(new Node(new EastNorth(0, 1)),
+        assertDoesNotThrow(() -> new Line(new Node(new EastNorth(0, 1)),
                                new Node(new EastNorth(0, 2))));
-        assertNotNull(new Line(new Node(new EastNorth(0, 1)),
+        assertDoesNotThrow(() -> new Line(new Node(new EastNorth(0, 1)),
                                new Node(new EastNorth(1, 1))));
-        assertNotNull(new Line(new Node(new EastNorth(0, 1)),
+        assertDoesNotThrow(() -> new Line(new Node(new EastNorth(0, 1)),
                                new Node(new EastNorth(0+1e-150, 1+1e-150))));
     }
 

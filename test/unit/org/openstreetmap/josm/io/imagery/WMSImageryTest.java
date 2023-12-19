@@ -11,30 +11,22 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Unit tests of {@link WMSImagery} class.
  */
+@BasicPreferences(true)
 @BasicWiremock
+@Projection
 class WMSImageryTest {
-
-    /**
-     * Setup test
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    JOSMTestRules test = new JOSMTestRules().projection();
-
     @BasicWiremock
     WireMockServer tileServer;
 

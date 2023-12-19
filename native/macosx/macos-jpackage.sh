@@ -11,7 +11,6 @@ set -Eeo pipefail
 # Don't show one time passwords
 set +x
 
-APPLE_ID="thomas.skowron@fossgis.de"
 IMPORT_AND_UNLOCK_KEYCHAIN=${IMPORT_AND_UNLOCK_KEYCHAIN:-1}
 
 if [ -z "${1-}" ]
@@ -24,9 +23,9 @@ echo "Building JOSM.app"
 
 mkdir app
 
-if [ -z "$CERT_MACOS_P12" ] || [ -z "$CERT_MACOS_PW" ] || [ -z "$APPLE_ID_PW" ]
+if [ -z "$CERT_MACOS_P12" ] || [ -z "$CERT_MACOS_PW" ] || [ -z "$APPLE_ID_PW" ] || [ -z "$APPLE_ID_TEAM" ]  || [ -z "$APPLE_ID" ]
 then
-    echo "CERT_MACOS_P12, CERT_MACOS_PW and APPLE_ID_PW are not set in the environment."
+    echo "CERT_MACOS_P12, CERT_MACOS_PW, APPLE_ID, APPLE_ID_PW, or APPLE_ID_TEAM are not set in the environment."
     echo "A JOSM.app will be created but not signed nor notarized."
     SIGNAPP=false
     KEYCHAINPATH=false
@@ -54,6 +53,8 @@ fi
 set -u
 
 echo "Building and signing app"
+# We specifically need the options to not be quoted -- we _want_ the word splitting.
+# shellcheck disable=SC2086
 jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/macosx/JOSM.icns --type app-image --dest app \
@@ -92,8 +93,5 @@ if $SIGNAPP; then
     ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip
 
     echo "Uploading to Apple"
-    # Note: --primary-bundle-id was never parsed server side, apparently. See https://developer.apple.com/documentation/technotes/tn3147-migrating-to-the-latest-notarization-tool#Submit-a-file
-    # Keep altool as a backup until 2023-11-01, when it will no longer be able to notarize apps.
-    xcrun notarytool submit --apple-id "$APPLE_ID" --password "$APPLE_ID_PW" --wait app/JOSM.zip || \
-    xcrun altool --notarize-app -f app/JOSM.zip -p "$APPLE_ID_PW" -u "$APPLE_ID" --primary-bundle-id de.openstreetmap.josm
+    xcrun notarytool submit --apple-id "$APPLE_ID" --password "$APPLE_ID_PW" --team-id "$APPLE_ID_TEAM" --wait app/JOSM.zip
 fi

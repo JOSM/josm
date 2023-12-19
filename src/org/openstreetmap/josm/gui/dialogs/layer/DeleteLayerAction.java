@@ -5,9 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
@@ -47,38 +45,11 @@ public final class DeleteLayerAction extends AbstractAction implements IEnabledS
             return;
         if (!SaveLayersDialog.saveUnsavedModifications(selectedLayers, SaveLayersDialog.Reason.DELETE))
             return;
-        final Map<Integer, Layer> layerMap = model.selectedIndices().filter(i -> model.getLayer(i) != null)
-                .collect(HashMap::new, (map, value) -> map.put(value, model.getLayer(value)), HashMap::putAll);
         for (Layer l: selectedLayers) {
             if (model.getLayerManager().containsLayer(l)) {
                 // it may happen that this call removes other layers.
                 // this is why we need to check if every layer is still in the list of selected layers.
                 model.getLayerManager().removeLayer(l);
-            }
-        }
-        // Set the next active layer to the next visible layer
-        if (layerMap.size() == 1) {
-            final int selected = Math.min(layerMap.keySet().iterator().next(), model.getRowCount() - 1);
-            int currentLayerIndex = selected;
-            Layer layer = model.getLayer(currentLayerIndex);
-            // If the user has the last layer selected, we need to wrap around.
-            boolean reversed = false;
-            while (layer != null && !layer.isVisible() && currentLayerIndex < model.getRowCount() && currentLayerIndex >= 0) {
-                if (reversed) {
-                    currentLayerIndex--;
-                } else {
-                    currentLayerIndex++;
-                }
-                if (currentLayerIndex == model.getRowCount()) {
-                    reversed = true;
-                    currentLayerIndex = selected;
-                }
-                layer = model.getLayer(currentLayerIndex);
-            }
-            if (layer != null) {
-                model.getLayerManager().setActiveLayer(layer);
-                // Reset the selection
-                model.getSelectionModel().setSelectionInterval(selected, selected);
             }
         }
     }
