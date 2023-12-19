@@ -42,7 +42,7 @@ public final class Tarjan {
     private final Deque<Node> stack = new ArrayDeque<>();
 
     /** Used on algorithm runtime to keep track discovery progress. */
-    private int index = 0;
+    private int index;
 
     public Tarjan(NodeGraph graph) {
         graphMap = graph.createMap();
