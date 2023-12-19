@@ -92,7 +92,7 @@
   </rule>
   <rule ref="category/java/codestyle.xml/MethodNamingConventions">
     <properties>
-        <property name="violationSuppressXPath" value="//MethodDeclaration/../../..[@SimpleName='Functions' or @SimpleName='PseudoClasses' or @SimpleName='Role' or @SimpleName='TaggingPreset']"/>
+        <property name="violationSuppressXPath" value="//MethodDeclaration/../../..[@SimpleName='Functions' or @SimpleName='PseudoClasses' or @SimpleName='Role' or @SimpleName='TaggingPreset' or @SimpleName='RegionSpecific']"/>
     </properties>
   </rule>
   <rule ref="category/java/codestyle.xml/FieldNamingConventions">

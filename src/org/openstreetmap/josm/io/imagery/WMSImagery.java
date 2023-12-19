@@ -164,7 +164,7 @@ public class WMSImagery {
      * @throws IOException when connection error when fetching get capabilities document
      * @throws WMSGetCapabilitiesException when there are errors when parsing get capabilities document
      * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
-     * @since xxx
+     * @since 18780
      */
     public WMSImagery(String url, Map<String, String> headers, ProgressMonitor monitor)
             throws IOException, WMSGetCapabilitiesException {

@@ -79,7 +79,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
      * @param apiUrl the API URL. Must not be null.
      * @param parameters the OAuth parameters. Must not be null.
      * @param accessToken the Access Token. Must not be null.
-     * @since xxx
+     * @since 18764
      */
     public TestAccessTokenTask(Component parent, String apiUrl, IOAuthParameters parameters, IOAuthToken accessToken) {
         super(parent, tr("Testing OAuth Access Token"), false /* don't ignore exceptions */);

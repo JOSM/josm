@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemTest;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.Main;
@@ -22,15 +23,21 @@ import org.openstreetmap.josm.testutils.annotations.Main;
 @BasicPreferences
 @I18n("de")
 @Main
-class ComboTest {
+class ComboTest implements TaggingPresetItemTest {
+    @Override
+    public Combo getInstance() {
+        return new Combo();
+    }
+
     /**
-     * Unit test for {@link Combo#addToPanel}.
+     * Unit test for {@link Check#addToPanel}.
      */
+    @Override
     @Test
-    void testAddToPanel() {
+    public void testAddToPanel() {
         JPanel p = new JPanel();
         assertEquals(0, p.getComponentCount());
-        assertTrue(new Combo().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
+        assertTrue(getInstance().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
         assertTrue(p.getComponentCount() > 0);
     }
 
@@ -39,7 +46,7 @@ class ComboTest {
      */
     @Test
     void testUseLastAsDefault() {
-        Combo combo = new Combo();
+        final Combo combo = getInstance();
         combo.key = "addr:country";
         combo.values_from = "java.util.Locale#getISOCountries";
         OsmPrimitive way = OsmUtils.createPrimitive("way");
@@ -118,7 +125,7 @@ class ComboTest {
 
     @Test
     void testColor() {
-        Combo combo = new Combo();
+        final Combo combo = getInstance();
         combo.key = "colour";
         combo.values = "red;green;blue;black";
         combo.values_context = "color";

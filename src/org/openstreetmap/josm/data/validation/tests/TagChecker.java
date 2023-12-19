@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -37,8 +38,10 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -62,13 +65,19 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
+import org.openstreetmap.josm.gui.tagging.presets.items.ComboMultiSelect;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
+import org.openstreetmap.josm.gui.tagging.presets.items.PresetListEntry;
+import org.openstreetmap.josm.gui.tagging.presets.items.RegionSpecific;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -131,6 +140,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to check presets
      */
     public static final String PREF_CHECK_PRESETS_TYPES = PREFIX + ".checkPresetsTypes";
+    public static final String PREF_CHECK_REGIONS = PREFIX + ".checkPresetsRegions";
 
     /**
      * The preference key for source files
@@ -159,6 +169,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to search for presets - used before upload
      */
     public static final String PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD = PREF_CHECK_PRESETS_TYPES + BEFORE_UPLOAD;
+    public static final String PREF_CHECK_REGIONS_BEFORE_UPLOAD = PREF_CHECK_REGIONS + BEFORE_UPLOAD;
 
     /**
      * The preference key for the list of tag keys that are allowed to be the same on a multipolygon and an outer way
@@ -175,18 +186,21 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected boolean checkComplex;
     protected boolean checkFixmes;
     protected boolean checkPresetsTypes;
+    protected boolean checkRegions;
 
     protected JCheckBox prefCheckKeys;
     protected JCheckBox prefCheckValues;
     protected JCheckBox prefCheckComplex;
     protected JCheckBox prefCheckFixmes;
     protected JCheckBox prefCheckPresetsTypes;
+    protected JCheckBox prefCheckRegions;
 
     protected JCheckBox prefCheckKeysBeforeUpload;
     protected JCheckBox prefCheckValuesBeforeUpload;
     protected JCheckBox prefCheckComplexBeforeUpload;
     protected JCheckBox prefCheckFixmesBeforeUpload;
     protected JCheckBox prefCheckPresetsTypesBeforeUpload;
+    protected JCheckBox prefCheckRegionsBeforeUpload;
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final int EMPTY_VALUES                     = 1200;
@@ -210,6 +224,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected static final int MULTIPOLYGON_INCOMPLETE          = 1219;
     protected static final int MULTIPOLYGON_MAYBE_NO_AREA       = 1220;
     protected static final int MULTIPOLYGON_SAME_TAG_ON_OUTER   = 1221;
+    protected static final int INVALID_REGION                   = 1222;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected EditableList sourcesList;
@@ -559,7 +574,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * @param key key
      * @return {@code true} if the given key is in internal presets
      * @since 9023
-     * @deprecated Use {@link TaggingPresets#isKeyInPresets(String)} instead
+     * @deprecated since 18281 -- use {@link TaggingPresets#isKeyInPresets(String)} instead
      */
     @Deprecated
     public static boolean isKeyInPresets(String key) {
@@ -652,42 +667,192 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         }
 
         if (p instanceof Relation && p.hasTag("type", "multipolygon")) {
-        checkMultipolygonTags(p);
+            checkMultipolygonTags(p);
         }
 
-        if (checkPresetsTypes) {
-            TagMap tags = p.getKeys();
-            TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
-            EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
-
-            Collection<TaggingPreset> matchingPresets = presetIndex.entrySet().stream()
+        final Collection<TaggingPreset> matchingPresets;
+        TagMap tags;
+        if (checkPresetsTypes || checkRegions) {
+            tags = p.getKeys();
+            matchingPresets = presetIndex.entrySet().stream()
                     .filter(e -> TaggingPresetItem.matches(e.getValue(), tags))
                     .map(Entry::getKey)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-            Collection<TaggingPreset> matchingPresetsOK = matchingPresets.stream().filter(
-                    tp -> tp.typeMatches(presetTypes)).collect(Collectors.toList());
-            Collection<TaggingPreset> matchingPresetsKO = matchingPresets.stream().filter(
-                    tp -> !tp.typeMatches(presetTypes)).collect(Collectors.toList());
+        } else {
+            matchingPresets = null;
+            tags = null;
+        }
 
-            for (TaggingPreset tp : matchingPresetsKO) {
-                // Potential error, unless matching tags are all known by a supported preset
-                Map<String, String> matchingTags = tp.data.stream()
+        if (checkPresetsTypes) {
+            checkPresetsTypes(p, matchingPresets, tags);
+        }
+
+        if (checkRegions) {
+            checkRegions(p, matchingPresets);
+        }
+    }
+
+    /**
+     * Check that the primitive matches the preset types for the preset
+     * @param p The primitive to check
+     * @param matchingPresets The presets to go through
+     * @param tags Tags from the primitive to check
+     */
+    private void checkPresetsTypes(OsmPrimitive p, Collection<TaggingPreset> matchingPresets, Map<String, String> tags) {
+        TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
+        EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
+
+        Collection<TaggingPreset> matchingPresetsOK = matchingPresets.stream().filter(
+                tp -> tp.typeMatches(presetTypes)).collect(Collectors.toList());
+        Collection<TaggingPreset> matchingPresetsKO = matchingPresets.stream().filter(
+                tp -> !tp.typeMatches(presetTypes)).collect(Collectors.toList());
+
+        for (TaggingPreset tp : matchingPresetsKO) {
+            // Potential error, unless matching tags are all known by a supported preset
+            Map<String, String> matchingTags = tp.data.stream()
                     .filter(i -> Boolean.TRUE.equals(i.matches(tags)))
                     .filter(i -> i instanceof KeyedItem).map(i -> ((KeyedItem) i).key)
                     .collect(Collectors.toMap(k -> k, tags::get));
-                if (matchingPresetsOK.stream().noneMatch(
-                        tp2 -> matchingTags.entrySet().stream().allMatch(
-                                e -> tp2.data.stream().anyMatch(
-                                        i -> i instanceof KeyedItem && ((KeyedItem) i).key.equals(e.getKey()))))) {
-                    errors.add(TestError.builder(this, Severity.OTHER, INVALID_PRESETS_TYPE)
-                            .message(tr("Object type not in preset"),
-                                    marktr("Object type {0} is not supported by tagging preset: {1}"),
-                                    tr(presetType.getName()), tp.getLocaleName())
+            if (matchingPresetsOK.stream().noneMatch(
+                    tp2 -> matchingTags.entrySet().stream().allMatch(
+                            e -> tp2.data.stream().anyMatch(
+                                    i -> i instanceof KeyedItem && ((KeyedItem) i).key.equals(e.getKey()))))) {
+                errors.add(TestError.builder(this, Severity.OTHER, INVALID_PRESETS_TYPE)
+                        .message(tr("Object type not in preset"),
+                                marktr("Object type {0} is not supported by tagging preset: {1}"),
+                                tr(presetType.getName()), tp.getLocaleName())
+                        .primitives(p)
+                        .build());
+            }
+        }
+    }
+
+    /**
+     * Check that the preset is valid for the region the primitive is in
+     * @param p The primitive to check
+     * @param matchingPresets The presets to check against
+     */
+    private void checkRegions(OsmPrimitive p, Collection<TaggingPreset> matchingPresets) {
+        LatLon center;
+        if (p instanceof Node) {
+            center = ((Node) p).getCoor();
+        } else {
+            center = p.getBBox().getCenter();
+        }
+        for (TaggingPreset preset : matchingPresets) {
+            if (preset.regions() != null) {
+                boolean isInRegion = false; //true if the object is in an applicable region
+                for (String region : preset.regions()) {
+                    if (Territories.isIso3166Code(region, center)) { //check if center of the object is in a region
+                        isInRegion = true;
+                    }
+                }
+                if (isInRegion == preset.exclude_regions()) {
+                    errors.add(TestError.builder(this, Severity.WARNING, INVALID_REGION)
+                            .message(tr("Invalid region for this preset"),
+                                    marktr("Preset {0} should not be applied in this region"),
+                                    preset.getLocaleName())
                             .primitives(p)
                             .build());
                 }
             }
+            // Check the tags
+            tagCheck(preset, p, center, preset.data);
         }
+    }
+
+    /**
+     * Perform the checks against a given preset value
+     * @param preset The originating preset (used for error creation)
+     * @param p The originating primitive (used for error creation)
+     * @param center The center of the primitive or other location of the primitive to check
+     * @param tagInformation The sub items for the preset
+     */
+    private void tagCheck(TaggingPreset preset, OsmPrimitive p, LatLon center, List<? extends TaggingPresetItem> tagInformation) {
+        for (TaggingPresetItem item : tagInformation) {
+            if (item instanceof CheckGroup) {
+                tagCheckReal(preset, p, center, ((CheckGroup) item).checks);
+            } else if (item instanceof ComboMultiSelect) {
+                tagCheckReal(preset, p, center, ((ComboMultiSelect) item).presetListEntries());
+            }
+            if (item instanceof RegionSpecific && ((RegionSpecific) item).regions() != null) {
+                tagCheckReal(preset, p, center, (RegionSpecific) item);
+            }
+        }
+    }
+
+    /**
+     * Perform the checks against a given preset value
+     * @param preset The originating preset (used for error creation)
+     * @param p The originating primitive (used for error creation)
+     * @param center The center of the primitive or other location of the primitive to check
+     * @param data The data for the region specific information
+     */
+    private void tagCheckReal(TaggingPreset preset, OsmPrimitive p, LatLon center, List<? extends RegionSpecific> data) {
+        for (RegionSpecific regionSpecific : data) {
+            if (regionSpecific.regions() != null) {
+                tagCheckReal(preset, p, center, regionSpecific);
+            }
+        }
+    }
+
+    /**
+     * Perform the checks against a given preset value
+     * @param preset The originating preset (used for error creation)
+     * @param p The originating primitive (used for error creation)
+     * @param center The center of the primitive or other location of the primitive to check
+     * @param data The data for the region specific information
+     */
+    private void tagCheckReal(TaggingPreset preset, OsmPrimitive p, LatLon center, RegionSpecific data) {
+        // First, check if we aren't in the region for the tag
+        if (latLonInRegions(center, data.regions()) == data.exclude_regions()) {
+            final String key;
+            final String value;
+            if (data instanceof PresetListEntry) {
+                key = ((PresetListEntry) data).cms.key;
+                value = ((PresetListEntry) data).value;
+            } else if (data instanceof KeyedItem) {
+                key = ((KeyedItem) data).key;
+                if (data instanceof Key) {
+                    value = ((Key) data).value;
+                } else {
+                    value = null;
+                }
+            } else {
+                throw new JosmRuntimeException("Unknown implementor for RegionSpecific");
+            }
+            if (p.hasTag(key) && (value == null || value.equals(p.get(key)))) {
+                final TestError.Builder builder = TestError.builder(this, Severity.WARNING, INVALID_REGION)
+                        .primitives(p);
+                if (value == null) {
+                    builder.message(tr("Invalid region for this preset"),
+                            marktr("Preset {0} should not have the key {1}"),
+                            preset.getLocaleName(), key);
+                } else {
+                    builder.message(tr("Invalid region for this preset"),
+                            marktr("Preset {0} should not have the tag {1}={2}"),
+                            preset.getLocaleName(), key, value);
+                }
+                errors.add(builder.build());
+            }
+        }
+    }
+
+    /**
+     * Check if the specified latlon is inside any of the specified regions
+     * @param latLon The {@link LatLon} to check
+     * @param regions The regions to see if the {@link LatLon} is in
+     * @return {@code true} if the coordinate is inside any of the regions
+     */
+    private static boolean latLonInRegions(LatLon latLon, Collection<String> regions) {
+        if (regions != null) {
+            for (String region : regions) {
+                if (Territories.isIso3166Code(region, latLon)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static final Collection<String> NO_AREA_KEYS = Arrays.asList("name", "area", "ref", "access", "operator");
@@ -915,7 +1080,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             fixedKey = prettifiedKey;
         }
 
-        if (!Utils.isEmpty(fixedKey) && !fixedKey.equals(key)) {
+        if (!Utils.isEmpty(fixedKey) && !Objects.equals(fixedKey, key)) {
             final String proposedKey = fixedKey;
             // misspelled preset key
             final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)
@@ -1100,6 +1265,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (isBeforeUpload) {
             checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
         }
+
+        checkRegions = includeOtherSeverity && Config.getPref().getBoolean(PREF_CHECK_REGIONS, true);
+        if (isBeforeUpload) {
+            checkRegions = checkRegions && Config.getPref().getBoolean(PREF_CHECK_REGIONS_BEFORE_UPLOAD, true);
+        }
         deprecatedChecker = OsmValidator.getTest(MapCSSTagChecker.class);
         ignoreForOuterMPSameTagCheck.addAll(Config.getPref().getList(PREF_KEYS_IGNORE_OUTER_MP_SAME_TAG, Collections.emptyList()));
     }
@@ -1112,7 +1282,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
     @Override
     public void visit(Collection<OsmPrimitive> selection) {
-        if (checkKeys || checkValues || checkComplex || checkFixmes || checkPresetsTypes) {
+        if (checkKeys || checkValues || checkComplex || checkFixmes || checkPresetsTypes || checkRegions) {
             super.visit(selection);
         }
     }
@@ -1177,6 +1347,14 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         prefCheckPresetsTypesBeforeUpload = new JCheckBox();
         prefCheckPresetsTypesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckPresetsTypesBeforeUpload, a);
+
+        prefCheckRegions = new JCheckBox(tr("Check for regions."), Config.getPref().getBoolean(PREF_CHECK_REGIONS, true));
+        prefCheckRegions.setToolTipText(tr("Validate that objects are in the correct region."));
+        testPanel.add(prefCheckRegions, GBC.std().insets(20, 0, 0, 0));
+
+        prefCheckRegionsBeforeUpload = new JCheckBox();
+        prefCheckRegionsBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_REGIONS_BEFORE_UPLOAD, true));
+        testPanel.add(prefCheckRegionsBeforeUpload, a);
     }
 
     /**
@@ -1199,11 +1377,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         Config.getPref().putBoolean(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES, prefCheckPresetsTypes.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_REGIONS, prefCheckRegions.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, prefCheckPresetsTypesBeforeUpload.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_REGIONS_BEFORE_UPLOAD, prefCheckRegionsBeforeUpload.isSelected());
         return Config.getPref().putList(PREF_SOURCES, sourcesList.getItems());
     }
 

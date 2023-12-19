@@ -1465,7 +1465,7 @@
                     <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
                     <list_entry value="no" />
                 </combo>
-                <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+                <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" regions="GB" />
                 <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
                 <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
                 <check key="crossing:island" text="With island" />
@@ -1516,7 +1516,7 @@
                 <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
             </combo>
             <reference ref="crossing_markings" />
-            <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
+            <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" regions="GB" />
             <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
@@ -7308,10 +7308,10 @@
                 <list_entry value="war_memorial" short_description="A building, monument, statue or other edifice celebrating a victory or commemorating those who died or were injured in a war." />
                 <list_entry value="sculpture" short_description="A non figurative sculpture which does not match any of the other categories." />
                 <list_entry value="cross" short_description="A cross-shaped memorial." />
-                <list_entry value="blue_plaque" short_description="A blue plaque commemorating a historical link to that location. (UK)" />
+                <list_entry value="blue_plaque" short_description="A blue plaque commemorating a historical link to that location. (UK)" regions="GB" />
                 <list_entry value="obelisk" short_description="An obelisk." />
                 <list_entry value="ghost_bike" short_description="A bicycle painted white permanently placed as memorial for a victim of a road accident (usually cyclists)." />
-                <list_entry value="stolperstein" short_description="10cm × 10cm brass plaque commemorating victims of Nazi persecution. (EU,RU)" />
+                <list_entry value="stolperstein" short_description="10cm × 10cm brass plaque commemorating victims of Nazi persecution. (EU,RU)" regions="EU,RU" />
                 <list_entry value="bench" short_description="A bench placed in memory of someone or something; usually has a plaque, and sometimes a statue sitting on (part of) it." />
             </combo>
             <optional>
@@ -8261,7 +8261,7 @@
             <check key="payment:girocard" text="Girocard" match="keyvalue" />
             <check key="payment:laser" text="Laser" match="keyvalue" />
             <check key="payment:maestro" text="Maestro" match="keyvalue" />
-            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" />
+            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" region="CH" />
             <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
             <check key="payment:visa_electron" text="Visa Electron" match="keyvalue" />
         </checkgroup>
@@ -8280,12 +8280,12 @@
         <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" />
-            <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" />
-            <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" />
-            <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" />
-            <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" />
-            <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" />
+            <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" regions="FI" />
+            <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" regions="DE" />
+            <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" regions="PT" />
+            <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" regions="LU" />
+            <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" regions="IT" />
+            <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" regions="ES" />
         </checkgroup>
         <space />
         <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="yes,no" match="keyvalue" />
@@ -9968,11 +9968,11 @@
             <optional>
                 <text key="destination" text="Name of river/lake/sea/ocean it runs into" />
                 <text key="ref" text="Reference" />
-                <text key="ref:sandre" text="Reference Sandre (FR)" />
-                <text key="ref:fgkz" text="Reference FGKZ (DE)" />
-                <text key="ref:regine" text="Reference REGINE (NO)" />
-                <text key="ref:gnis" text="Reference GNIS (USA)" />
-                <text key="ref:gnbc" text="Reference GNBC (CA)" />
+                <text key="ref:sandre" text="Reference Sandre (FR)" regions="FR" />
+                <text key="ref:fgkz" text="Reference FGKZ (DE)" regions="DE" />
+                <text key="ref:regine" text="Reference REGINE (NO)" regions="NO" />
+                <text key="ref:gnis" text="Reference GNIS (USA)" regions="US" />
+                <text key="ref:gnbc" text="Reference GNBC (CA)" regions="CA" />
                 <reference ref="wikipedia_wikidata" />
             </optional>
             <roles>

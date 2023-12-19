@@ -5,6 +5,7 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import javax.swing.ImageIcon;
@@ -20,7 +21,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Used for controls that offer a list of items to choose from like {@link Combo} and
  * {@link MultiSelect}.
  */
-public class PresetListEntry implements Comparable<PresetListEntry> {
+public class PresetListEntry implements Comparable<PresetListEntry>, RegionSpecific {
     /** Used to display an entry matching several different values. */
     protected static final PresetListEntry ENTRY_DIFFERENT = new PresetListEntry(KeyedItem.DIFFERENT, null);
     /** Used to display an empty entry used to clear values. */
@@ -47,13 +48,23 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
     /** The localized version of {@link #short_description}. */
     public String locale_short_description; // NOSONAR
 
+    /**
+     * List of regions the entry is applicable for.
+     */
+    private Collection<String> regions;
+
+    /**
+     * If true, invert the meaning of regions.
+     */
+    private boolean excludeRegions;
+
     private String cachedDisplayValue;
     private String cachedShortDescription;
     private ImageIcon cachedIcon;
 
     /**
      * Constructs a new {@code PresetListEntry}, uninitialized.
-     *
+     * <p>
      * Public default constructor is needed by {@link org.openstreetmap.josm.tools.XmlObjectParser.Parser#startElement}
      */
     public PresetListEntry() {
@@ -73,7 +84,7 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
 
     /**
      * Returns the contents displayed in the dropdown list.
-     *
+     * <p>
      * This is the contents that would be displayed in the current view plus a short description to
      * aid the user. The whole content is wrapped to {@code width}.
      *
@@ -161,6 +172,26 @@ public class PresetListEntry implements Comparable<PresetListEntry> {
             return tr("Sets the key ''{0}'' to the value ''{1}''.", key, value);
         }
         return tr("Clears the key ''{0}''.", key);
+    }
+
+    @Override
+    public Collection<String> regions() {
+        return this.regions;
+    }
+
+    @Override
+    public void realSetRegions(Collection<String> regions) {
+        this.regions = regions;
+    }
+
+    @Override
+    public boolean exclude_regions() {
+        return this.excludeRegions;
+    }
+
+    @Override
+    public void setExclude_regions(boolean excludeRegions) {
+        this.excludeRegions = excludeRegions;
     }
 
     // toString is mainly used to initialize the Editor

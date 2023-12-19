@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collection;
 
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -24,11 +25,17 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @BasicPreferences
+@Territories
 @ExtendWith(TaggingPresets.TaggingPresetsExtension.class)
 public @interface TaggingPresets {
 
-    class TaggingPresetsExtension implements BeforeEachCallback {
+    class TaggingPresetsExtension implements BeforeEachCallback, BeforeAllCallback {
         private static int expectedHashcode = 0;
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) throws Exception {
+            setup();
+        }
 
         @Override
         public void beforeEach(ExtensionContext extensionContext) {
@@ -36,7 +43,7 @@ public @interface TaggingPresets {
         }
 
         /**
-         * Setup the tagging presets
+         * Set up the tagging presets
          */
         public static synchronized void setup() {
             final Collection<TaggingPreset> oldPresets = org.openstreetmap.josm.gui.tagging.presets.TaggingPresets.getTaggingPresets();

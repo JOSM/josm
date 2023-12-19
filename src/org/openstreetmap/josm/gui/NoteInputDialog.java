@@ -52,7 +52,7 @@ public class NoteInputDialog extends ExtendedDialog {
      * @param message Translated message to display to the user as input prompt
      * @param icon Icon to display in the action button
      * @param text Default text of the note's comment
-     * @since xxx
+     * @since 18839
      */
     public void showNoteDialog(String message, Icon icon, String text) {
         textArea.setText(text);

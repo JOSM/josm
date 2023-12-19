@@ -228,6 +228,27 @@ class TagCheckerTest {
         assertFalse(errors.get(0).isFixable());
     }
 
+    @Test
+    void testRegionKey() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=crossing crossing_ref=zebra"));
+        assertEquals(1, errors.size());
+        assertEquals("Invalid region for this preset", errors.get(0).getMessage());
+        assertEquals("Preset Pedestrian Crossing should not have the key crossing_ref", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
+
+    }
+
+    @Test
+    void testRegionTag() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("relation type=waterway ref:gnis=123456"));
+        assertEquals(1, errors.size());
+        assertEquals("Invalid region for this preset", errors.get(0).getMessage());
+        assertEquals("Preset Waterway should not have the key ref:gnis", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
+    }
+
     /**
      * Key in presets but not in ignored.cfg. Caused a NPE with r14727.
      * @throws IOException if any I/O error occurs

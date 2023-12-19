@@ -106,6 +106,7 @@
         <complexContent>
             <extension base="tns:group-parent">
                 <attributeGroup ref="tns:attributes.name" />
+                <attributeGroup ref="tns:attributes.regions"/>
             </extension>
         </complexContent>
     </complexType>
@@ -121,7 +122,7 @@
     <complexType name="item">
         <annotation>
             <documentation>
-                Every item is one annotation set to select from. name is required, type and preset_name_label are recommended, icon and name_template are optional attributes.
+                Every item is one annotation set to select from. name is required, type and preset_name_label are recommended and icon, name_template, regions and exclude_regions are optional attributes.
             </documentation>
         </annotation>
         <sequence>
@@ -134,6 +135,7 @@
         </sequence>
         <attributeGroup ref="tns:attributes.name" />
         <attributeGroup ref="tns:attributes.icon" />
+        <attributeGroup ref="tns:attributes.regions"/>
         <attribute name="type" type="string">
             <annotation>
                 <documentation><![CDATA[
@@ -364,7 +366,7 @@
     <complexType name="list_entry">
         <annotation>
             <documentation><![CDATA[
-                Used in <combo/> and <multiselect/>. More information see short_descriptions below. The attributes are value, display_value, short_description, icon and icon_size.
+                Used in <combo/> and <multiselect/>. More information see short_descriptions below. The attributes are value, display_value, short_description, icon, icon_size, regions, and exclude_regions.
             ]]></documentation>
         </annotation>
         <attribute name="value" type="string" use="required" />
@@ -378,6 +380,7 @@
             </annotation>
         </attribute>
         <attributeGroup ref="tns:attributes.icon" />
+        <attributeGroup ref="tns:attributes.regions"/>
         <anyAttribute processContents="skip" />
     </complexType>
 
@@ -489,6 +492,7 @@
         </attribute>
         <attribute name="match" type="tns:match" />
         <attributeGroup ref="tns:attributes.icon" />
+        <attributeGroup ref="tns:attributes.regions"/>
 
         <attribute name="name" use="prohibited" />
         <attribute name="type" use="prohibited" />
@@ -558,7 +562,7 @@
     <complexType name="role">
         <annotation>
             <documentation>
-                To specify possible roles of members in relations. The key attribute is required, text, requisite, count, type and member_expression are optional.
+                To specify possible roles of members in relations. The key attribute is required, text, requisite, count, type, member_expression, regions, and exclude_regions are optional.
             </documentation>
         </annotation>
         <attribute name="key" type="string">
@@ -574,6 +578,7 @@
         <attribute name="count" type="integer" />
         <attribute name="member_expression" type="string" />
         <attribute name="regexp" type="boolean" />
+        <attributeGroup ref="tns:attributes.regions"/>
         <anyAttribute processContents="skip" />
     </complexType>
 
@@ -725,6 +730,23 @@
                 <documentation><![CDATA[
                     The length of a <text /> or <combo /> box (number of characters allowed).
                 ]]></documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
+
+    <attributeGroup name="attributes.regions">
+        <attribute name="regions" type="string">
+            <annotation>
+                <documentation>
+                    Comma separated list of countries this preset group or item is applicable for. If not specified, the preset is applicable for all countries.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="exclude_regions" type="boolean">
+            <annotation>
+                <documentation>
+                    If true, invert the meaning of regions.
+                </documentation>
             </annotation>
         </attribute>
     </attributeGroup>

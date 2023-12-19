@@ -10,6 +10,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -309,7 +310,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             addListEntry(e);
         }
 
-        if (values_sort && TaggingPresets.SORT_MENU.get()) {
+        if (values_sort && Boolean.TRUE.equals(TaggingPresets.SORT_MENU.get())) {
             presetListEntries.sort((a, b) -> AlphanumComparator.getInstance().compare(a.getDisplayValue(), b.getDisplayValue()));
         }
     }
@@ -340,7 +341,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             // at least one primitive has a value for this key (but not all have the same one)
             initialValue = DIFFERENT;
             originalValue = initialValue;
-        } else if (!usage.hadKeys() || isForceUseLastAsDefault() || PROP_FILL_DEFAULT.get()) {
+        } else if (!usage.hadKeys() || isForceUseLastAsDefault() || Boolean.TRUE.equals(PROP_FILL_DEFAULT.get())) {
             // at this point no primitive had any value for this key
             if (!support.isPresetInitiallyMatches() && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
                 initialValue = LAST_VALUES.get(key);
@@ -400,6 +401,14 @@ public abstract class ComboMultiSelect extends KeyedItem {
      */
     protected boolean isForceUseLastAsDefault() {
         return use_last_as_default == 2;
+    }
+
+    /**
+     * Get the entries for this {@link ComboMultiSelect} object
+     * @return The {@link PresetListEntry} values for this object
+     */
+    public List<PresetListEntry> presetListEntries() {
+        return Collections.unmodifiableList(this.presetListEntries);
     }
 
     /**
