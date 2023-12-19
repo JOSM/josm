@@ -2901,47 +2901,51 @@
             <link wiki="Tag:amenity=charging_station" />
             <space />
             <key key="amenity" value="charging_station" />
-            <reference ref="name_ref_operator" />
+            <reference ref="name_ref"/>
+            <text key="network" text="Charging Network (Mobility Service Provider)" />
+            <text key="operator" text="Operator (Charge Point Operator)" />
             <reference ref="oh" />
-            <reference ref="fee" />
-            <space />
-            <combo key="voltage" text="Voltage" values="230,400"/>
-            <combo key="amperage" text="Amperage" values="16,32" />
-            <combo key="capacity" text="Capacity" values="1,2,3,4,5,6" />
-            <space />
-            <label text="Types of vehicles which can be charged:" />
-            <checkgroup columns="4">
-                <check key="bicycle" text="Bicycle" />
-                <check key="scooter" text="Scooter" />
-                <check key="motorcycle" text="Motorcycle" />
-                <check key="motorcar" text="Motorcar" />
-                <check key="truck" text="Truck" />
+            <text key="capacity" text="Simultaneously usable charging spots" default="" delete_if_empty="true" />
+            <text key="level" text="Storey" default="" delete_if_empty="true" />
+            <label text="Surroundings and Fees:" />
+            <checkgroup columns="3">
+                <check key="covered" text="Covered" default="" delete_if_empty="true" />
+                <check key="fee" text="Charging fee" default="on" delete_if_empty="true" />
+                <check key="parking:fee" text="Parking fee" default="" delete_if_empty="true" />
             </checkgroup>
+            <label text="Types of vehicles which can be charged:" />
+            <checkgroup columns="3">
+                <check key="motorcar" text="Cars" default="on" delete_if_empty="true" />
+                <check key="motorcycle" text="Motorcycles" default="on" delete_if_empty="true" />
+                <check key="hgv" text="Trucks (HGV)" default="" delete_if_empty="true" />
+            </checkgroup>
+            <label text="(Note: For most charging stations, check 'Cars' and 'Motorcycles'. Check 'Trucks' only if there is sufficient space.)" />
             <space />
             <label text="Number of Sockets:" />
-            <combo key="socket:type1" text="SAE J1772 (IEC Type 1)" values="1,2,3,4,5,6" />
-            <combo key="socket:type1_combo" text="SAE J1772 Combo (DC)" values="1,2,3,4,5,6" />
-            <combo key="socket:type2" text="IEC Type 2 (Mennekes)" values="1,2,3,4,5,6" />
-            <combo key="socket:type2_combo" text="IEC Type 2 Combo (DC)" values="1,2,3,4,5,6" />
-            <combo key="socket:type3" text="Type 3 (SCAME)" values="1,2,3,4,5,6" />
-            <combo key="socket:chademo" text="CHAdeMO" values="1,2,3,4,5,6" />
-            <combo key="socket:tesla_supercharger" text="Tesla Supercharger" values="1,2,3,4,5,6" />
-            <combo key="socket:schuko" text="Schuko" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_blue" text="CEE blue" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_red_16a" text="CEE red 16A" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_red_32a" text="CEE red 32A" values="1,2,3,4,5,6" />
-            <combo key="socket:nema_5_15" text="NEMA 5-15" values="1,2,3,4,5,6" />
-            <combo key="socket:nema_5_20" text="NEMA 5-20" values="1,2,3,4,5,6" />
+            <text key="socket:type1" text="IEC Type 1" default="" delete_if_empty="true" />
+            <text key="socket:type2" text="IEC Type 2 (Mennekes) socket only" default="" delete_if_empty="true" />
+            <text key="socket:type2_cable" text="IEC Type 2 (Mennekes) with cable" default="" delete_if_empty="true" />
+            <text key="socket:type2_combo" text="IEC Type 2 Combo (CCS)" default="" delete_if_empty="true" />
+            <text key="socket:chademo" text="CHAdeMO" default="" delete_if_empty="true" />
+            <text key="socket:tesla_supercharger" text="Tesla Supercharger" default="" delete_if_empty="true" />
+            <text key="socket:schuko" text="Schuko" default="" delete_if_empty="true" />
             <space />
-            <label text="Authentication:" />
-            <checkgroup columns="4">
-                <check key="authentication:none" text="None" />
-                <check key="authentication:phone_call" text="Phone call" />
-                <check key="authentication:short_message" text="Short message" />
-                <check key="authentication:nfc" text="NFC" />
+            <label text="Charging Power (e.g. '22 kW'):" />
+            <text key="socket:type1:output" text="IEC Type 1" default="" delete_if_empty="true" />
+            <text key="socket:type2:output" text="IEC Type 2 (Mennekes) socket only" default="" delete_if_empty="true" />
+            <text key="socket:type2_cable:output" text="IEC Type 2 (Mennekes) with cable" default="" delete_if_empty="true" />
+            <text key="socket:type2_combo:output" text="IEC Type 2 Combo (CCS)" default="" delete_if_empty="true" />
+            <text key="socket:chademo:output" text="CHAdeMO" default="" delete_if_empty="true" />
+            <text key="socket:tesla_supercharger:output" text="Tesla Supercharger" default="" delete_if_empty="true" />
+            <text key="socket:schuko:output" text="Schuko" default="" delete_if_empty="true" />
+            <space />
+            <label text="Unlocking (Authentication):" />
+            <checkgroup columns="3">
+                <check key="authentication:app" text="Unlock through App" />
+                <check key="authentication:contactless" text="Unlock through RFID/NFC" />
+                <check key="authentication:none" text="Usable without registration" />
             </checkgroup>
-            <combo key="authentication:membership_card" text="Membership card" values="yes" />
-            <preset_link preset_name="Payment Methods" />
+            <preset_link preset_name="Payment Methods" text="Edit Payment Methods (only if usable without registration)" />
         </item> <!-- Charging Station -->
         <item name="Wash" icon="presets/vehicle/car_wash.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=car_wash" />
