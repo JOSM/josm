@@ -29,26 +29,10 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 12463 (extracted from CombineWayAction)
  */
 public class NodeGraph {
-    private final Set<NodePair> edges;
-    private final Map<Node, List<NodePair>> successors = new LinkedHashMap<>();
-    private final Map<Node, List<NodePair>> predecessors = new LinkedHashMap<>();
-    private int numUndirectedEdges;
-
-    /**
-     * The number of edges that were added.
-     */
-    private int addedEdges;
-
-    /**
-     * Constructs a new {@code NodeGraph}.
-     */
-    public NodeGraph() {
-        edges = new LinkedHashSet<>();
-    }
 
     /**
      * Builds a list of pair of nodes from the given way.
-     * @param way      way
+     * @param way way
      * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.
      *                 if {@code false} each pair of nodes will occur twice (the pair and its inverse copy)
      * @return a list of pair of nodes from the given way
@@ -66,7 +50,7 @@ public class NodeGraph {
 
     /**
      * Builds a list of pair of nodes from the given ways.
-     * @param ways     ways
+     * @param ways ways
      * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.<p>
      *                 if {@code false} each pair of nodes will occur twice (the pair and its inverse copy)
      * @return a list of pair of nodes from the given ways
@@ -171,45 +155,12 @@ public class NodeGraph {
         return graph;
     }
 
-    /**
-     * Add a node pair.
-     * @param pair node pair
-     */
-    public void add(NodePair pair) {
-        addedEdges++;
-        edges.add(pair);
-    }
-
-    /**
-     * Add a list of node pairs.
-     * @param pairs collection of node pairs
-     */
-    public void add(Iterable<NodePair> pairs) {
-        for (NodePair pair : pairs) {
-            add(pair);
-        }
-    }
-
-    /**
-     * Return the edges containing the node pairs of the graph.
-     * @return the edges containing the node pairs of the graph
-     */
-    public Collection<NodePair> getEdges() {
-        return Collections.unmodifiableSet(edges);
-    }
-
-    /**
-     * Return the graph's nodes.
-     * @return the graph's nodes
-     */
-    public Collection<Node> getNodes() {
-        Set<Node> nodes = new LinkedHashSet<>(2 * edges.size());
-        for (NodePair pair : edges) {
-            nodes.add(pair.getA());
-            nodes.add(pair.getB());
-        }
-        return nodes;
-    }
+    private final Set<NodePair> edges;
+    private int numUndirectedEdges;
+    /** The number of edges that were added. */
+    private int addedEdges;
+    private final Map<Node, List<NodePair>> successors = new LinkedHashMap<>();
+    private final Map<Node, List<NodePair>> predecessors = new LinkedHashMap<>();
 
     /**
      * Constructs a lookup table from the existing edges in the graph to enable efficient querying.
@@ -282,6 +233,40 @@ public class NodeGraph {
     }
 
     /**
+     * Constructs a new {@code NodeGraph}.
+     */
+    public NodeGraph() {
+        edges = new LinkedHashSet<>();
+    }
+
+    /**
+     * Add a node pair.
+     * @param pair node pair
+     */
+    public void add(NodePair pair) {
+        addedEdges++;
+        edges.add(pair);
+    }
+
+    /**
+     * Add a list of node pairs.
+     * @param pairs collection of node pairs
+     */
+    public void add(Iterable<NodePair> pairs) {
+        for (NodePair pair : pairs) {
+            add(pair);
+        }
+    }
+
+    /**
+     * Return the edges containing the node pairs of the graph.
+     * @return the edges containing the node pairs of the graph
+     */
+    public Collection<NodePair> getEdges() {
+        return Collections.unmodifiableSet(edges);
+    }
+
+    /**
      * Return the terminal nodes of the graph.
      * @return the terminal nodes of the graph
      */
@@ -304,6 +289,19 @@ public class NodeGraph {
         return Optional.ofNullable(successors.get(node)).orElseGet(Collections::emptyList);
     }
 
+    /**
+     * Return the graph's nodes.
+     * @return the graph's nodes
+     */
+    public Collection<Node> getNodes() {
+        Set<Node> nodes = new LinkedHashSet<>(2 * edges.size());
+        for (NodePair pair : edges) {
+            nodes.add(pair.getA());
+            nodes.add(pair.getB());
+        }
+        return nodes;
+    }
+
     protected boolean isSpanningWay(Collection<NodePair> way) {
         return numUndirectedEdges == way.size();
     }
@@ -317,6 +315,7 @@ public class NodeGraph {
      * Tries to find a spanning path starting from node {@code startNode}.
      * <p>
      * Traverses the path in depth-first order.
+     *
      * @param startNode the start node
      * @return the spanning path; empty list if no path is found
      */
@@ -347,7 +346,7 @@ public class NodeGraph {
      * the segment of a way) exactly once.<p>
      * <b>Note that duplicated edges are removed first!</b>
      *
-     * @return the path; {@code null} if no path was found
+     * @return the path; {@code null}, if no path was found
      */
     public List<Node> buildSpanningPath() {
         prepare();
