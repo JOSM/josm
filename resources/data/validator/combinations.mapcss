@@ -666,27 +666,6 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
   group: tr("suspicious tag combination");
 }
 
-/* #13144, #15536 */
-*[unisex=yes][female=yes][male!=yes][shop=hairdresser],
-*[unisex=yes][male=yes][female!=yes][shop=hairdresser] {
-  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
-  group: tr("suspicious tag combination");
-}
-*[unisex=yes][female=yes][male=yes][shop=hairdresser] {
-  throwWarning: tr("{0} together with {1} and {2}. Remove {1} and {2}", "{0.tag}", "{1.tag}", "{2.tag}");
-  group: tr("suspicious tag combination");
-  fixRemove: "female";
-  fixRemove: "male";
-}
-*[female=yes][male=yes][!unisex][shop=hairdresser] {
-  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
-  suggestAlternative: "unisex=yes";
-  group: tr("suspicious tag combination");
-  fixRemove: "female";
-  fixRemove: "male";
-  fixAdd: "unisex=yes";
-}
-
 /* {0.key} without {1.tag} see #13138, #14468 */
 way[water][natural!~/water|bay|strait/][water!=intermittent][amenity!=lavoir]!:closed, /* water=intermittent is deprecated and has an own warning */
 area[water][natural!~/water|bay|strait/][water!=intermittent][amenity!=lavoir]:closed {
