@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class CycleDetector extends Test {
                 if (possibleCycle.size() > 1) {
                     errors.add(
                         TestError.builder(this, Severity.ERROR, CYCLE_DETECTED)
-                            .message(tr("Cycle in directional waterway network"))
+                            .message(trc("graph theory", "Cycle in directional waterway network"))
                             .primitives(possibleCycle)
                             .highlightWaySegments(createSegments(graphMap, possibleCycle))
                             .build()
@@ -106,8 +107,9 @@ public class CycleDetector extends Test {
 
     /**
      * Creates WaySegments from Nodes for the error highlight function.
+     *
      * @param graphMap the complete graph data
-     * @param nodes nodes to build the way segments from
+     * @param nodes    nodes to build the way segments from
      * @return WaySegments from the Nodes
      */
     private static Collection<WaySegment> createSegments(Map<Node, List<Node>> graphMap, Collection<Node> nodes) {
@@ -147,6 +149,7 @@ public class CycleDetector extends Test {
 
     /**
      * Returns the way index of a node. Only the first occurrence is considered in case it's a closed way.
+     *
      * @param w parent way
      * @param n the node to look up
      * @return {@code >=0} if the node is found or<br>{@code -1} if node not part of the way

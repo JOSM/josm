@@ -43,6 +43,11 @@ public final class Tarjan {
     /** Used on algorithm runtime to keep track discovery progress. */
     private int index;
 
+    /**
+     * Initialize the Tarjan's algorithm.
+     *
+     * @param graph graph data in NodeGraph object format
+     */
     public Tarjan(NodeGraph graph) {
         graphMap = graph.createMap();
 
