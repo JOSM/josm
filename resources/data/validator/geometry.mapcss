@@ -198,7 +198,10 @@ area[building][building!~/no|entrance/] ⧉ area[building][building!~/no|entranc
 }
 
 /* Overlapping areas (spatial test) */
-area[natural =~ /^(water|wetland|coastline)$/], area[waterway=riverbank], area[landuse=reservoir] {
+area[natural =~ /^(water|wetland)$/],
+area[natural=coastline]:clockwise,
+area[waterway=riverbank],
+area[landuse=reservoir] {
   set water_area;
 }
 
@@ -210,10 +213,12 @@ area:closed[landuse=reservoir]                        ⧉ area:closed.water_area
 }
 
 /* Water area inside water area (spatial test) */
-area:closed[natural =~ /^(water|wetland|coastline)$/] ⊆  area:closed.water_area,
+area:closed[natural =~ /^(water|wetland)$/]           ⊆  area:closed.water_area,
+area:closed[natural=coastline]:clockwise              ⊆  area:closed.water_area,
 area:closed[waterway=riverbank]                       ⊆  area:closed.water_area,
 area:closed[landuse=reservoir]                        ⊆  area:closed.water_area,
-area:closed[natural =~ /^(water|wetland|coastline)$/] ⊇  area:closed.water_area,
+area:closed[natural =~ /^(water|wetland)$/]           ⊇  area:closed.water_area,
+area:closed[natural=coastline]:clockwise              ⊇  area:closed.water_area,
 area:closed[waterway=riverbank]                       ⊇  area:closed.water_area,
 area:closed[landuse=reservoir]                        ⊇  area:closed.water_area {
   throwWarning: tr("Water area inside water area");

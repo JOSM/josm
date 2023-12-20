@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -40,6 +42,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
@@ -446,4 +449,32 @@ class MapCSSTagCheckerTest {
         assertEquals("12.12", p.get("ele"));
     }
 
+    /**
+     * A water area inside a coastline, where the coastline way is oriented away from the water area
+     * (the water area is not inside the ocean).
+     */
+    @Test
+    void testTicket23308() {
+        final MapCSSTagChecker test = new MapCSSTagChecker();
+        final Way innerWay = TestUtils.newWay("natural=water",
+                new Node(new LatLon(32.775, -117.238)),
+                new Node(new LatLon(32.774, -117.238)),
+                new Node(new LatLon(32.774, -117.237)),
+                new Node(new LatLon(32.775, -117.237)));
+        final Way outerWay = TestUtils.newWay("natural=coastline",
+                new Node(new LatLon(32.779, -117.232)),
+                new Node(new LatLon(32.777, -117.241)),
+                new Node(new LatLon(32.771, -117.240)),
+                new Node(new LatLon(32.771, -117.235)));
+        final DataSet ds = new DataSet();
+        ds.addPrimitiveRecursive(innerWay);
+        ds.addPrimitiveRecursive(outerWay);
+        innerWay.addNode(innerWay.firstNode());
+        outerWay.addNode(outerWay.firstNode());
+        assertDoesNotThrow(test::initialize);
+        test.startTest(NullProgressMonitor.INSTANCE);
+        test.visit(ds.allPrimitives());
+        test.endTest();
+        assertTrue(test.getErrors().isEmpty());
+    }
 }
