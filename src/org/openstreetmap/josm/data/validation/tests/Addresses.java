@@ -19,6 +19,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -30,10 +33,14 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
@@ -70,7 +77,17 @@ public class Addresses extends Test {
     protected static final String ADDR_HOUSE_NAME    = "addr:housename";
     protected static final String ADDR_POSTCODE      = "addr:postcode";
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
+    protected static final String NAME_TAG           = "name";
+    private static final String HOUSE                = "house";
+    private static final String STREET               = "street";
     // CHECKSTYLE.ON: SingleSpaceSeparator
+
+    private static final BooleanProperty PREF_INCLUDE_BLDG_POI =
+            new BooleanProperty(ValidatorPrefHelper.PREFIX + "." + OpeningHourTest.class.getSimpleName() + "." + "includebuildingpois", false);
+    private final JCheckBox checkboxIncludeBldgPOI = new JCheckBox(
+            /* I18n: Label text for checkbox choosing to validate addresses for all types of objects, not just plain addresses */
+            tr("Include POIs like amenities, offices, and buildings in duplicate address detection"));
+    private boolean includeBldgAndPOI;
 
     private Map<String, Collection<OsmPrimitive>> knownAddresses;
     private Set<String> ignoredAddresses;
@@ -79,6 +96,7 @@ public class Addresses extends Test {
      * Constructor
      */
     public Addresses() {
+        /* I18n: Label text for checkbox choosing to validate addresses */
         super(tr("Addresses"), tr("Checks for errors in addresses and associatedStreet relations."));
     }
 
@@ -141,7 +159,7 @@ public class Addresses extends Test {
      * @param p OsmPrimitive that has an address
      */
     private void collectAddress(OsmPrimitive p) {
-        if (!isPOI(p)) {
+        if (includeBldgAndPOI || !isPOI(p)) {
             for (String simplifiedAddress : getSimplifiedAddresses(p)) {
                 if (!ignoredAddresses.contains(simplifiedAddress)) {
                     knownAddresses.computeIfAbsent(simplifiedAddress, x -> new ArrayList<>()).add(p);
@@ -154,7 +172,7 @@ public class Addresses extends Test {
         knownAddresses = new HashMap<>();
         ignoredAddresses = new HashSet<>();
         for (OsmPrimitive p : primitive.getDataSet().allNonDeletedPrimitives()) {
-            if (p instanceof Node && p.hasKey(ADDR_UNIT, ADDR_FLATS)) {
+            if ((includeBldgAndPOI || p instanceof Node) && p.hasKey(ADDR_UNIT, ADDR_FLATS)) {
                 for (OsmPrimitive r : p.getReferrers()) {
                     if (hasAddress(r)) {
                         // ignore addresses of buildings that are connected to addr:unit nodes
@@ -176,6 +194,12 @@ public class Addresses extends Test {
     }
 
     @Override
+    public void startTest(ProgressMonitor progressMonitor) {
+        super.startTest(progressMonitor);
+        this.includeBldgAndPOI = PREF_INCLUDE_BLDG_POI.get();
+    }
+
+    @Override
     public void endTest() {
         knownAddresses = null;
         ignoredAddresses = null;
@@ -186,7 +210,7 @@ public class Addresses extends Test {
         if (knownAddresses == null) {
             initAddressMap(p);
         }
-        if (!isPOI(p) && hasAddress(p)) {
+        if ((includeBldgAndPOI || !isPOI(p)) && hasAddress(p)) {
             List<TestError> result = new ArrayList<>();
             for (String simplifiedAddress : getSimplifiedAddresses(p)) {
                 if (!ignoredAddresses.contains(simplifiedAddress) && knownAddresses.containsKey(simplifiedAddress)) {
@@ -198,6 +222,8 @@ public class Addresses extends Test {
                         Severity severityLevel;
                         String city1 = p.get(ADDR_CITY);
                         String city2 = p2.get(ADDR_CITY);
+                        String name1 = p.get(NAME_TAG);
+                        String name2 = p2.get(NAME_TAG);
                         double distance = getDistance(p, p2);
                         if (city1 != null && city2 != null) {
                             if (city1.equals(city2)) {
@@ -234,6 +260,10 @@ public class Addresses extends Test {
                                     severityLevel = Severity.OTHER;
                                 }
                             }
+                        }
+                        if (severityLevel == Severity.WARNING && !Objects.equals(name1, name2)) {
+                            // since multiple objects can exist at one address, a different name tag isn't very concerning
+                            severityLevel = Severity.OTHER;
                         }
                         result.add(TestError.builder(this, severityLevel, DUPLICATE_HOUSE_NUMBER)
                                 .message(tr("Duplicate house numbers"), marktr("''{0}'' ({1}m)"), simplifiedAddress, (int) distance)
@@ -301,7 +331,7 @@ public class Addresses extends Test {
             for (RelationMember m : r.getMembers()) {
                 String role = m.getRole();
                 OsmPrimitive p = m.getMember();
-                if ("house".equals(role)) {
+                if (HOUSE.equals(role)) {
                     houses.add(p);
                     String number = p.get(ADDR_HOUSE_NUMBER);
                     if (number != null) {
@@ -315,7 +345,7 @@ public class Addresses extends Test {
                         }
                         wrongStreetNames.add(p);
                     }
-                } else if ("street".equals(role)) {
+                } else if (STREET.equals(role)) {
                     if (p instanceof Way) {
                         street.add((Way) p);
                     }
@@ -456,12 +486,12 @@ public class Addresses extends Test {
             String role = m.getRole();
             if ("".equals(role)) {
                 if (m.isWay() && m.getMember().hasKey("highway")) {
-                    role = "street";
+                    role = STREET;
                 } else if (m.getMember().hasTag("building"))
-                    role = "house";
+                    role = HOUSE;
             }
             switch (role) {
-            case "house":
+            case HOUSE:
             case "addr:houselink":
             case "address":
                 if (!m.getMember().hasTag(ADDR_STREET) || !m.getMember().hasTag(ADDR_HOUSE_NUMBER))
@@ -471,7 +501,7 @@ public class Addresses extends Test {
                         return;
                 }
                 break;
-            case "street":
+            case STREET:
                 if (!m.getMember().hasTag("name") && r.hasTag("name"))
                     return;
                 break;
@@ -520,6 +550,21 @@ public class Addresses extends Test {
         if (!(testError.getTester() instanceof Addresses))
             return false;
         return testError.getCode() == OBSOLETE_RELATION;
+    }
+
+    @Override
+    public void addGui(JPanel testPanel) {
+        super.addGui(testPanel);
+        checkboxIncludeBldgPOI.setSelected(PREF_INCLUDE_BLDG_POI.get());
+        testPanel.add(checkboxIncludeBldgPOI, GBC.eol().insets(20, 0, 0, 0));
+    }
+
+    @Override
+    public boolean ok() {
+        super.ok();
+        PREF_INCLUDE_BLDG_POI.put(checkboxIncludeBldgPOI.isSelected());
+        includeBldgAndPOI = PREF_INCLUDE_BLDG_POI.get();
+        return false;
     }
 
 }
