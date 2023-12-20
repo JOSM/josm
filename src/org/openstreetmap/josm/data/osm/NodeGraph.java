@@ -51,7 +51,7 @@ public class NodeGraph {
     /**
      * Builds a list of pair of nodes from the given ways.
      * @param ways ways
-     * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.<p>
+     * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.<br>
      *                 if {@code false} each pair of nodes will occur twice (the pair and its inverse copy)
      * @return a list of pair of nodes from the given ways
      */
