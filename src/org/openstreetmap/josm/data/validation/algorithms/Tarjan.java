@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +34,8 @@ public final class Tarjan {
     /** Used to store the graph data as a map. */
     private final Map<Node, List<Node>> graphMap;
 
-    /** Used to store strongly connected components. */
-    private final Collection<List<Node>> scc = new HashSet<>();
+    /** Used to store strongly connected components. NOTE: single nodes are not stored to save memory. */
+    private final Collection<List<Node>> scc = new ArrayList<>();
 
     /** Used on algorithm runtime to keep track discovery progress. */
     private final Deque<Node> stack = new ArrayDeque<>();
@@ -51,7 +50,7 @@ public final class Tarjan {
     }
 
     /**
-     * Returns the strongly connected components in the current graph.
+     * Returns the strongly connected components in the current graph. Single nodes are ignored to save memory.
      *
      * @return the strongly connected components in the current graph
      */
@@ -66,6 +65,7 @@ public final class Tarjan {
 
     /**
      * Returns the graph data as a map.
+     *
      * @return the graph data as a map
      * @see NodeGraph#createMap()
      */
@@ -120,7 +120,11 @@ public final class Tarjan {
                         v = stack.remove();
                         currentSCC.add(v);
                     } while (!v.equals(u));
-                    scc.add(currentSCC);
+
+                    // store the component only if it makes a cycle, otherwise it's a waste of memory
+                    if (currentSCC.size() > 1) {
+                        scc.add(currentSCC);
+                    }
                 }
                 if (!work.isEmpty()) {
                     Node v = u;

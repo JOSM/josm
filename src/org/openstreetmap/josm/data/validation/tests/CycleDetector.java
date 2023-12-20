@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeGraph;
-import org.openstreetmap.josm.data.osm.NodePair;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -28,6 +27,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.algorithms.Tarjan;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Test for detecting <a href="https://en.wikipedia.org/wiki/Cycle_(graph_theory)">cycles</a> in a directed graph,
@@ -42,8 +42,8 @@ public class CycleDetector extends Test {
     /** All waterways for cycle detection */
     private final Set<Way> usableWaterways = new HashSet<>();
 
-    /** Already visited primitives */
-    private final Set<Way> visitedWays = new HashSet<>();
+    /** Already visited primitive unique IDs */
+    private final Set<Long> visitedWays = new HashSet<>();
 
     /** Currently used directional waterways from the OSM wiki */
     private List<String> directionalWaterways;
@@ -111,23 +111,23 @@ public class CycleDetector extends Test {
      * @return WaySegments from the Nodes
      */
     private static Collection<WaySegment> createSegments(Map<Node, List<Node>> graphMap, Collection<Node> nodes) {
-        List<NodePair> pairs = new ArrayList<>();
+        List<Pair<Node, Node>> pairs = new ArrayList<>();
 
         // build new graph exclusively from SCC nodes
         for (Node node : nodes) {
             for (Node successor : graphMap.get(node)) {
                 // check for outbound nodes
                 if (nodes.contains(successor)) {
-                    pairs.add(new NodePair(node, successor));
+                    pairs.add(new Pair<>(node, successor));
                 }
             }
         }
 
         Collection<WaySegment> segments = new ArrayList<>();
 
-        for (NodePair pair : pairs) {
-            final Node n = pair.getA();
-            final Node m = pair.getB();
+        for (Pair<Node, Node> pair : pairs) {
+            final Node n = pair.a;
+            final Node m = pair.b;
 
             if (n != null && m != null && !n.equals(m)) {
                 List<Way> intersect = new ArrayList<>(n.getParentWays());
@@ -187,7 +187,7 @@ public class CycleDetector extends Test {
      * @return a collection of ways which belongs to the same graph
      */
     private Collection<Way> buildGraph(Way way) {
-        if (visitedWays.contains(way))
+        if (visitedWays.contains(way.getUniqueId()))
             return Collections.emptySet();
 
         final Set<Way> graph = new HashSet<>();
@@ -196,19 +196,19 @@ public class CycleDetector extends Test {
 
         while (!queue.isEmpty()) {
             Way currentWay = queue.poll();
-            visitedWays.add(currentWay);
+            visitedWays.add(currentWay.getUniqueId());
 
             for (Node node : currentWay.getNodes()) {
                 Collection<Way> referrers = node.referrers(Way.class)
                     .filter(this::isPrimitiveUsable)
                     .filter(candidate -> candidate != currentWay)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
                 if (!referrers.isEmpty()) {
                     for (Way referrer : referrers) {
-                        if (!visitedWays.contains(referrer)) {
+                        if (!visitedWays.contains(referrer.getUniqueId())) {
                             queue.offer(referrer);
-                            visitedWays.add(referrer);
+                            visitedWays.add(referrer.getUniqueId());
                         }
                     }
                     graph.addAll(referrers);
