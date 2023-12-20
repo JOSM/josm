@@ -3109,8 +3109,7 @@
             <space />
             <key key="amenity" value="bicycle_wash" />
             <optional>
-            <text key="name" text="Name" />
-            <text key="operator" text="Operator" />
+            <reference ref="name_operator" />
             <text key="manufacturer" text="Manufacturer" />
             <reference ref="oh" />
             <check key="self_service" text="Self Service" />
