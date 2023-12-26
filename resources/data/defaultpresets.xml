@@ -8265,7 +8265,7 @@
             <check key="payment:girocard" text="Girocard" match="keyvalue" />
             <check key="payment:laser" text="Laser" match="keyvalue" />
             <check key="payment:maestro" text="Maestro" match="keyvalue" />
-            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" region="CH" />
+            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" regions="CH" />
             <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
             <check key="payment:visa_electron" text="Visa Electron" match="keyvalue" />
         </checkgroup>
