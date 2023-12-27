@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -9,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Shape;
@@ -178,6 +180,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public static final IntegerProperty ZOOM_OFFSET = new IntegerProperty(PREFERENCE_PREFIX + ".zoom_offset", 0);
 
     private static final BooleanProperty POPUP_MENU_ENABLED = new BooleanProperty(PREFERENCE_PREFIX + ".popupmenu", true);
+    private static final String ERROR_STRING = marktr("Error");
 
     /*
      *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)
@@ -342,7 +345,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         for (List<String> entry: content) {
             panel.add(new JLabel(entry.get(0) + ':'), GBC.std());
             panel.add(GBC.glue(5, 0), GBC.std());
-            panel.add(createTextField(entry.get(1)), GBC.eol().fill(GBC.HORIZONTAL));
+            panel.add(createTextField(entry.get(1)), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         }
         return panel;
     }
@@ -468,11 +471,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 content.add(Arrays.asList(tr("Status"), tr(tile.getStatus())));
                 content.add(Arrays.asList(tr("Loaded"), tr(Boolean.toString(tile.isLoaded()))));
                 content.add(Arrays.asList(tr("Loading"), tr(Boolean.toString(tile.isLoading()))));
-                content.add(Arrays.asList(tr("Error"), tr(Boolean.toString(tile.hasError()))));
+                content.add(Arrays.asList(tr(ERROR_STRING), tr(Boolean.toString(tile.hasError()))));
                 for (List<String> entry: content) {
                     panel.add(new JLabel(entry.get(0) + ':'), GBC.std());
                     panel.add(GBC.glue(5, 0), GBC.std());
-                    panel.add(layer.createTextField(entry.get(1)), GBC.eol().fill(GBC.HORIZONTAL));
+                    panel.add(layer.createTextField(entry.get(1)), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
                 }
 
                 for (Entry<String, String> e: tile.getMetadata().entrySet()) {
@@ -482,7 +485,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
                         value = Instant.ofEpochMilli(Long.parseLong(value)).toString();
                     }
-                    panel.add(layer.createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
+                    panel.add(layer.createTextField(value), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
                 }
                 ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
@@ -558,7 +561,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         initializeIfRequired();
 
         event.getMapView().addMouseListener(adapter);
-        MapView.addZoomChangeListener(this);
+        NavigatableComponent.addZoomChangeListener(this);
 
         if (this instanceof NativeScaleLayer && Boolean.TRUE.equals(NavigatableComponent.PROP_ZOOM_SCALE_FOLLOW_NATIVE_RES_AT_LOAD.get())) {
             event.getMapView().setNativeScaleLayer((NativeScaleLayer) this);
@@ -1205,8 +1208,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 } catch (IllegalArgumentException e) {
                     Logging.debug(e);
                 }
-                if (!errorMessage.startsWith("Error") && !errorMessage.startsWith(tr("Error"))) {
-                    errorMessage = tr("Error") + ": " + errorMessage;
+                if (!errorMessage.startsWith(ERROR_STRING) && !errorMessage.startsWith(tr(ERROR_STRING))) {
+                    errorMessage = tr(ERROR_STRING) + ": " + errorMessage;
                 }
                 myDrawString(g, errorMessage, x + 2, texty);
             }
@@ -1263,7 +1266,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         private boolean tooLarge() {
-            return tileCache == null || size() > tileCache.getCacheSize();
+            try {
+                return tileCache == null || size() > tileCache.getCacheSize();
+            } catch (ArithmeticException arithmeticException) {
+                Logging.trace(arithmeticException);
+                return true;
+            }
         }
 
         /**
@@ -1423,7 +1431,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     if (info == null) {
                         List<Tile> allTiles = this.allExistingTiles();
                         TileSetInfo newInfo = new TileSetInfo();
-                        newInfo.hasLoadingTiles = allTiles.size() < this.size();
+                        try {
+                            newInfo.hasLoadingTiles = allTiles.size() < this.size();
+                        } catch (ArithmeticException arithmeticException) {
+                            Logging.trace(arithmeticException);
+                            newInfo.hasLoadingTiles = false;
+                        }
                         newInfo.hasAllLoadedTiles = true;
                         for (Tile t : allTiles) {
                             if ("no-tile".equals(t.getValue("tile-info"))) {
@@ -1449,7 +1462,18 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         @Override
         public String toString() {
-            return getClass().getName() + ": zoom: " + zoom + " X(" + minX + ", " + maxX + ") Y(" + minY + ", " + maxY + ") size: " + size();
+            int size;
+            try {
+                size = size();
+            } catch (ArithmeticException arithmeticException) {
+                Logging.trace(arithmeticException);
+                size = Integer.MIN_VALUE;
+            }
+            return getClass().getName()
+                    + ": zoom: " + zoom
+                    + " X(" + minX + ", " + maxX
+                    + ") Y(" + minY + ", " + maxY
+                    + ") size: " + (size >= 0 ? size : "Integer Overflow");
         }
     }
 
@@ -1472,7 +1496,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     protected TileSet getTileSet(ProjectionBounds bounds, int zoom) {
         if (zoom == 0)
             return new TileSet();
-        TileXY t1, t2;
+        TileXY t1;
+        TileXY t2;
         IProjected topLeftUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMin());
         IProjected botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
         if (coordinateConverter.requiresReprojection()) {
@@ -1495,7 +1520,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     private class DeepTileSet {
         private final ProjectionBounds bounds;
-        private final int minZoom, maxZoom;
+        private final int minZoom;
+        private final int maxZoom;
         private final TileSet[] tileSets;
 
         @SuppressWarnings("unchecked")
@@ -1992,7 +2018,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     @Override
     public synchronized void destroy() {
         super.destroy();
-        MapView.removeZoomChangeListener(this);
+        NavigatableComponent.removeZoomChangeListener(this);
         adjustAction.destroy();
         if (tileLoader instanceof TMSCachedTileLoader) {
             ((TMSCachedTileLoader) tileLoader).shutdown();
@@ -2052,7 +2078,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         @Override
         public void detachFromMapView(MapViewEvent event) {
             event.getMapView().removeMouseListener(adapter);
-            MapView.removeZoomChangeListener(AbstractTileSourceLayer.this);
+            NavigatableComponent.removeZoomChangeListener(AbstractTileSourceLayer.this);
             super.detachFromMapView(event);
             if (memory != null) {
                 memory.free();
