@@ -3,4 +3,4 @@
 /**
  * General purpose algorithm classes for OSM data validation.
  */
-package org.openstreetmap.josm.data.validation.algorithms;
+package org.openstreetmap.josm.data.algorithms;

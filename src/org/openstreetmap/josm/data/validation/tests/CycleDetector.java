@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.algorithms.Tarjan;
+import org.openstreetmap.josm.data.algorithms.Tarjan;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Pair;
