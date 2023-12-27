@@ -75,13 +75,13 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A layer holding markers.
- *
+ * <p>
  * Markers are GPS points with a name and, optionally, a symbol code attached;
  * marker layers can be created from waypoints when importing raw GPS data,
  * but they may also come from other sources.
- *
+ * <p>
  * The symbol code is for future use.
- *
+ * <p>
  * The data is read only.
  */
 public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLayer {
@@ -94,7 +94,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
     public GpxLayer fromLayer;
     private Marker currentMarker;
     public AudioMarker syncAudioMarker;
-    private Color color, realcolor;
+    private Color color;
+    private Color realcolor;
     final int markerSize = new IntegerProperty("draw.rawgps.markers.size", 4).get();
     final BasicStroke markerStroke = new StrokeProperty("draw.rawgps.markers.stroke", "1").get();
 
@@ -522,7 +523,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
     @Override
     public List<? extends IImageEntry<?>> getSelection() {
         if (this.currentMarker instanceof ImageMarker) {
-            return Collections.singletonList(((ImageMarker) this.currentMarker).getRemoteEntry());
+            final RemoteEntry remoteEntry = ((ImageMarker) this.currentMarker).getRemoteEntry();
+            if (remoteEntry != null) {
+                return Collections.singletonList(remoteEntry);
+            }
         }
         return Collections.emptyList();
     }

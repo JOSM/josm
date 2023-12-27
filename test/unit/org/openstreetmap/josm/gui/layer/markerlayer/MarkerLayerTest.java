@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -90,5 +92,16 @@ class MarkerLayerTest {
                 MainApplication.getMap().mapView.playHeadMarker = null;
             }
         }
+    }
+
+    /**
+     * Ensure that if a file is unable to be read, we return an empty list instead of a list with {@code null} in it.
+     */
+    @Test
+    void testNonRegression23316() throws MalformedURLException {
+        MarkerLayer layer = new MarkerLayer(new GpxData(), null, null, null);
+        layer.setCurrentMarker(new ImageMarker(LatLon.ZERO, URI.create("file:/not_a_real_file_123456789.jpg").toURL(),
+                layer, 0, 0));
+        assertEquals(Collections.emptyList(), layer.getSelection());
     }
 }
