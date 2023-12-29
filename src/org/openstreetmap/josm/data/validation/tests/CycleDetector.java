@@ -8,7 +8,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -174,10 +173,14 @@ public class CycleDetector extends Test {
         Collection<Collection<Way>> graphs = new ArrayList<>();
 
         for (Way waterway : usableWaterways) {
+            if (visitedWays.contains(waterway.getUniqueId())) {
+                continue;
+            }
             Collection<Way> graph = buildGraph(waterway);
 
-            if (!graph.isEmpty())
+            if (!graph.isEmpty()) {
                 graphs.add(graph);
+            }
         }
 
         return graphs;
@@ -190,9 +193,6 @@ public class CycleDetector extends Test {
      * @return a collection of ways which belongs to the same graph
      */
     private Collection<Way> buildGraph(Way way) {
-        if (visitedWays.contains(way.getUniqueId()))
-            return Collections.emptySet();
-
         final Set<Way> graph = new HashSet<>();
         Queue<Way> queue = new ArrayDeque<>();
         queue.offer(way);
