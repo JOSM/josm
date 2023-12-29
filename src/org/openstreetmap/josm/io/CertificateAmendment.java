@@ -173,11 +173,6 @@ public final class CertificateAmendment {
                 "CA_Disig_Root_R2.pem",
                 "e23d4a036d7b70e9f595b1422079d2b91edfbb1fb651a0633eaa8a9dc5f80703",
                 "https://eidas.disig.sk"),
-        // #17062 - Government of Taiwan - for https://data.gov.tw/license - https://grca.nat.gov.tw/GRCAeng/index.html (expires 2032)
-        new NativeCertAmend(Arrays.asList("TW Government Root Certification Authority", "Government Root Certification Authority"),
-                "Taiwan_GRCA.pem",
-                "7600295eefe85b9e1fd624db76062aaaae59818a54d2774cd4c0b2c01131e1b3",
-                "https://grca.nat.gov.tw"),
         // #17668 - used by city of Budapest - for https://terinfo.ujbuda.hu - https://e-szigno.hu/ (expires 2029)
         new NativeCertAmend(Collections.singleton("MicroSec e-Szigno Root CA 2009"),
                 "Microsec_e-Szigno_Root_CA_2009.pem",
