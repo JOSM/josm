@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.animation;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Christmas animation extension. Copied from Icedtea-Web.
@@ -13,26 +14,28 @@ import java.util.List;
  */
 public class ChristmasExtension implements AnimationExtension {
 
-    private final List<Star> stars = new ArrayList<>(50);
+    private final List<IAnimObject> objs = new ArrayList<>(50);
 
     @Override
     public void paint(Graphics g) {
-        stars.forEach(s -> s.paint(g));
+        objs.forEach(o -> o.paint(g));
     }
 
     @Override
     public void animate() {
-        stars.forEach(Star::animate);
+        objs.forEach(IAnimObject::animate);
     }
 
     @Override
     public final void adjustForSize(int w, int h) {
+        Random seed = new Random();
         int count = w / (2 * (Star.averageStarWidth + 1));
-        while (stars.size() > count) {
-            stars.remove(stars.size() - 1);
+        while (objs.size() > count) {
+            objs.remove(objs.size() - 1);
         }
-        while (stars.size() < count) {
-            stars.add(new Star(w, h));
+        objs.forEach(o -> o.setExtend(w, h));
+        while (objs.size() < count) {
+            objs.add(seed.nextInt(5) > 0 ? new Star(w, h) : new DropImage(w, h));
         }
     }
 }

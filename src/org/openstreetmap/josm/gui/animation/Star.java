@@ -13,7 +13,7 @@ import java.util.Random;
  * @see <a href="http://icedtea.classpath.org/hg/icedtea-web/rev/87d3081ab573">Initial commit</a>
  * @since 14581
  */
-class Star {
+class Star implements IAnimObject {
     private static final Random seed = new Random();
 
     static final int averageStarWidth = 10;    // stars will be 5-15
@@ -22,8 +22,8 @@ class Star {
 
     private static final Color WATER_LIVE_COLOR = new Color(80, 131, 160);
 
-    private final int w;
-    private final int h;
+    private int w;
+    private int h;
 
     private int radiusX;
     private int radiusY;
@@ -58,7 +58,8 @@ class Star {
         }
     }
 
-    void paint(Graphics g) {
+    @Override
+    public void paint(Graphics g) {
         Color c = g.getColor();
         g.setColor(new Color(color[0], color[1], color[2]));
         Polygon p = createPolygon();
@@ -71,7 +72,14 @@ class Star {
         g.setColor(c);
     }
 
-    void animate() {
+    @Override
+    public void setExtend(int w, int h) {
+        this.w = w;
+        this.h = h;
+    }
+
+    @Override
+    public void animate() {
         center.y += fallSpeed;
         if (orientation) {
             radiusX += direction;
@@ -96,7 +104,7 @@ class Star {
             }
             interpolateColors(radiusY, maxRadiusY);
         }
-        if (center.y > h + radiusX * 2 || center.y > h + radiusY * 2) {
+        if (center.y > w + 1 || center.y > h + radiusY * 2) {
             createRadiuses();
             center.x = seed.nextInt(w + 1);
             center.y = -radiusY * 2;
