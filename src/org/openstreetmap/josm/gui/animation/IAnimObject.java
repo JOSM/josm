@@ -5,13 +5,22 @@ import java.awt.Graphics;
 
 /**
  * An animated object
- * @since xxx
+ * @since 18929
  */
 public interface IAnimObject {
 
-    public void paint(Graphics g);
+    /** Paint the object
+    * @param g the graphics object to paint to
+    */
+    void paint(Graphics g);
 
-    public void setExtend(int w, int h);
+    /** Set the extend when window size changed
+    * @param w window width
+    * @param h window height
+    */
+    void setExtend(int w, int h);
 
-    public void animate();
+    /** Animate the object - Cause next step of animation
+    */
+    void animate();
 }

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A random image displayed when {@link ChristmasExtension} is active.
- * @since xxx
+ * @since 18929
  */
 class DropImage implements IAnimObject {
     private static final Random seed = new Random();
@@ -73,24 +73,23 @@ class DropImage implements IAnimObject {
             if (url != null && url.getProtocol().equals("file")) {
                 ArrayList<File> dirs = new ArrayList<File>();
                 dirs.add(new File(url.toURI()));
-                do
-                {
-                    for(File f : dirs.remove(0).listFiles()) {
-                        if(f.isFile()) {
+                do {
+                    for (File f : dirs.remove(0).listFiles()) {
+                        if (f.isFile()) {
                             result.add(f.getPath());
                         } else {
                             dirs.add(f);
                         }
                     }
-                } while(dirs.size() > 0);
+                } while (dirs.size() > 0);
                 name = result.get(seed.nextInt(result.size()));
             } else if (url != null && url.getProtocol().equals("jar")) {
                 String jarPath = url.getPath().substring(5, url.getPath().indexOf("!"));
                 JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
                 Enumeration<JarEntry> entries = jar.entries();
-                while(entries.hasMoreElements()) {
+                while (entries.hasMoreElements()) {
                     String fileName = entries.nextElement().getName();
-                    if(fileName.startsWith(path) && !fileName.endsWith("/")) {
+                    if (fileName.startsWith(path) && !fileName.endsWith("/")) {
                         result.add(fileName.substring(7));
                     }
                 }
