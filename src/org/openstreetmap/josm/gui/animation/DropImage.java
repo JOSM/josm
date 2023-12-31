@@ -67,11 +67,11 @@ class DropImage implements IAnimObject {
         int size = 15 + seed.nextInt(5);
         String name = "logo";
         try {
-            ArrayList<String> result = new ArrayList<String>();
+            ArrayList<String> result = new ArrayList<>();
             String path = "images/presets/";
             URL url = DropImage.class.getClassLoader().getResource(path);
             if (url != null && url.getProtocol().equals("file")) {
-                ArrayList<File> dirs = new ArrayList<File>();
+                ArrayList<File> dirs = new ArrayList<>();
                 dirs.add(new File(url.toURI()));
                 do {
                     for (File f : dirs.remove(0).listFiles()) {
@@ -81,16 +81,17 @@ class DropImage implements IAnimObject {
                             dirs.add(f);
                         }
                     }
-                } while (dirs.size() > 0);
+                } while (!dirs.isEmpty());
                 name = result.get(seed.nextInt(result.size()));
             } else if (url != null && url.getProtocol().equals("jar")) {
                 String jarPath = url.getPath().substring(5, url.getPath().indexOf("!"));
-                JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-                Enumeration<JarEntry> entries = jar.entries();
-                while (entries.hasMoreElements()) {
-                    String fileName = entries.nextElement().getName();
-                    if (fileName.startsWith(path) && !fileName.endsWith("/")) {
-                        result.add(fileName.substring(7));
+                try (JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {
+                    Enumeration<JarEntry> entries = jar.entries();
+                    while (entries.hasMoreElements()) {
+                        String fileName = entries.nextElement().getName();
+                        if (fileName.startsWith(path) && !fileName.endsWith("/")) {
+                            result.add(fileName.substring(7));
+                        }
                     }
                 }
                 name = result.get(seed.nextInt(result.size()));
