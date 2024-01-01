@@ -14,6 +14,7 @@ import java.util.Random;
  */
 public class ChristmasExtension implements AnimationExtension {
 
+    private static final Random seed = new Random();
     private final List<IAnimObject> objs = new ArrayList<>(50);
 
     @Override
@@ -28,7 +29,6 @@ public class ChristmasExtension implements AnimationExtension {
 
     @Override
     public final void adjustForSize(int w, int h) {
-        Random seed = new Random();
         int count = w / (2 * (Star.averageStarWidth + 1));
         while (objs.size() > count) {
             objs.remove(objs.size() - 1);

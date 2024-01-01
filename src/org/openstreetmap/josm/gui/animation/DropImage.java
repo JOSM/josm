@@ -74,11 +74,14 @@ class DropImage implements IAnimObject {
                 ArrayList<File> dirs = new ArrayList<>();
                 dirs.add(new File(url.toURI()));
                 do {
-                    for (File f : dirs.remove(0).listFiles()) {
-                        if (f.isFile()) {
-                            result.add(f.getPath());
-                        } else {
-                            dirs.add(f);
+                    File[] files = dirs.remove(0).listFiles();
+                    if (files != null) {
+                        for (File f : files) {
+                            if (f.isFile()) {
+                                result.add(f.getPath());
+                            } else {
+                                dirs.add(f);
+                            }
                         }
                     }
                 } while (!dirs.isEmpty());
@@ -96,9 +99,10 @@ class DropImage implements IAnimObject {
                 }
                 name = result.get(seed.nextInt(result.size()));
             }
+            return new ImageProvider(name).setMaxSize(new Dimension(size, size)).get().getImage();
         } catch (Exception ex) {
             Logging.log(Logging.LEVEL_DEBUG, ex);
         }
-        return new ImageProvider(name).setMaxSize(new Dimension(size, size)).get().getImage();
+        return new ImageProvider("logo").setMaxSize(new Dimension(size, size)).get().getImage();
     }
 }
