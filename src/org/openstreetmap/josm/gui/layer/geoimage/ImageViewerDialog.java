@@ -179,7 +179,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         // model update, then the image will change instead of remaining the same.
         this.layers.getModel().addChangeListener(l -> {
             // We need to check to see whether or not the worker is shut down. See #22922 for details.
-            if (!MainApplication.worker.isShutdown()) {
+            if (!MainApplication.worker.isShutdown() && this.isDialogShowing()) {
                 MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
                     Component selected = this.layers.getSelectedComponent();
                     if (selected instanceof MoveImgDisplayPanel) {
@@ -188,6 +188,15 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 }));
             }
         });
+    }
+
+    @Override
+    public void showNotify() {
+        super.showNotify();
+        Component selected = this.layers.getSelectedComponent();
+        if (selected instanceof MoveImgDisplayPanel) {
+            ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
+        }
     }
 
     @Override
@@ -929,7 +938,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
         if (!isDialogShowing()) {
             setIsDocked(false); // always open a detached window when an image is clicked and dialog is closed
-            showDialog();
+            unfurlDialog();
         } else if (isDocked && isCollapsed) {
             expand();
             dialogsPanel.reconstruct(DialogsPanel.Action.COLLAPSED_TO_DEFAULT, this);
