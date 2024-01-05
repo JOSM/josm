@@ -2797,6 +2797,10 @@
             <space />
             <key key="aerialway" value="station" />
             <reference ref="name_ref_operator" />
+            <text key="ele" text="Elevation (meters)" length="10" />
+            <reference ref="oh" />
+            <text key="aerialway:station" text="The position of an aerialway station" />
+            <text key="aerialway:access" text="Entry, Exit, Both or No" />
         </item> <!-- Station -->
         <item name="Pylon" icon="presets/transport/aerialway/pylon.svg" type="node" preset_name_label="true">
             <link wiki="Tag:aerialway=pylon" />
