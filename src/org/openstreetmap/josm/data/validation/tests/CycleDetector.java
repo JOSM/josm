@@ -15,9 +15,11 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeGraph;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
@@ -69,26 +71,39 @@ public class CycleDetector extends Test {
     public void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
         directionalWaterways = Config.getPref().getList(PREFIX + ".directionalWaterways",
-            Arrays.asList("river", "stream", "tidal_channel", "drain", "ditch", "fish_pass", "fairway"));
+                Arrays.asList("river", "stream", "tidal_channel", "drain", "ditch", "fish_pass", "fairway"));
     }
 
     @Override
     public void endTest() {
+        final QuadBuckets<Way> quadBuckets = new QuadBuckets<>();
+        quadBuckets.addAll(usableWaterways);
+
         for (Collection<Way> graph : getGraphs()) {
             NodeGraph nodeGraph = NodeGraph.createDirectedGraphFromWays(graph);
             Tarjan tarjan = new Tarjan(nodeGraph);
             Collection<List<Node>> scc = tarjan.getSCC();
-            Map<Node, List<Node>> graphMap = tarjan.getGraphMap();
 
-            for (Collection<Node> possibleCycle : scc) {
+            for (List<Node> possibleCycle : scc) {
                 // there is a cycle in the graph if a strongly connected component has more than one node
                 if (possibleCycle.size() > 1) {
+                    // build bbox to locate the issue
+                    BBox bBox = new BBox();
+                    possibleCycle.forEach(node -> bBox.addPrimitive(node, 0));
+                    // find ways within this bbox
+                    List<Way> waysWithinErrorBbox = quadBuckets.search(bBox);
+                    List<Way> toReport = waysWithinErrorBbox.stream()
+                            .filter(w -> possibleCycle.stream()
+                                    .anyMatch(w.getNodes()::contains))
+                            .collect(Collectors.toList());
+
+                    Map<Node, List<Node>> graphMap = tarjan.getGraphMap();
                     errors.add(
-                        TestError.builder(this, Severity.ERROR, CYCLE_DETECTED)
-                            .message(trc("graph theory", "Cycle in directional waterway network"))
-                            .primitives(possibleCycle)
-                            .highlightWaySegments(createSegments(graphMap, possibleCycle))
-                            .build()
+                            TestError.builder(this, Severity.ERROR, CYCLE_DETECTED)
+                                    .message(trc("graph theory", "Cycle in directional waterway network"))
+                                    .primitives(toReport)
+                                    .highlightWaySegments(createSegments(graphMap, possibleCycle))
+                                    .build()
                     );
                 }
             }
@@ -203,9 +218,9 @@ public class CycleDetector extends Test {
 
             for (Node node : currentWay.getNodes()) {
                 Collection<Way> referrers = node.referrers(Way.class)
-                    .filter(this::isPrimitiveUsable)
-                    .filter(candidate -> candidate != currentWay)
-                    .collect(Collectors.toList());
+                        .filter(this::isPrimitiveUsable)
+                        .filter(candidate -> candidate != currentWay)
+                        .collect(Collectors.toList());
 
                 if (!referrers.isEmpty()) {
                     for (Way referrer : referrers) {
