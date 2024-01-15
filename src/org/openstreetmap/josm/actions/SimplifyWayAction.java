@@ -340,12 +340,21 @@ public class SimplifyWayAction extends JosmAction {
      * @since 16566 (private)
      */
     private static SequenceCommand buildSimplifyWaysCommand(List<Way> ways, double threshold) {
-        Collection<Command> allCommands = ways.stream()
-                .map(way -> createSimplifyCommand(way, threshold))
+        List<Command> allCommands = ways.stream()
+                .map(way -> createSimplifyCommand(way, threshold, false))
                 .filter(Objects::nonNull)
                 .collect(StreamUtils.toUnmodifiableList());
         if (allCommands.isEmpty())
             return null;
+        final List<OsmPrimitive> deletedPrimitives = allCommands.stream()
+                .map(Command::getChildren)
+                .flatMap(Collection::stream)
+                .filter(DeleteCommand.class::isInstance)
+                .map(DeleteCommand.class::cast)
+                .map(DeleteCommand::getParticipatingPrimitives)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        allCommands.get(0).getAffectedDataSet().clearSelection(deletedPrimitives);
         return new SequenceCommand(
                 trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
                 allCommands);
@@ -371,6 +380,18 @@ public class SimplifyWayAction extends JosmAction {
      * @since 15419
      */
     public static SequenceCommand createSimplifyCommand(Way w, double threshold) {
+        return createSimplifyCommand(w, threshold, true);
+    }
+
+    /**
+     * Creates the SequenceCommand to simplify a way with a given threshold.
+     *
+     * @param w the way to simplify
+     * @param threshold the max error threshold
+     * @param deselect {@code true} if we want to deselect the deleted nodes
+     * @return The sequence of commands to run
+     */
+    private static SequenceCommand createSimplifyCommand(Way w, double threshold, boolean deselect) {
         int lower = 0;
         int i = 0;
 
@@ -417,7 +438,9 @@ public class SimplifyWayAction extends JosmAction {
         Collection<Command> cmds = new LinkedList<>();
         cmds.add(new ChangeNodesCommand(w, newNodes));
         cmds.add(new DeleteCommand(w.getDataSet(), delNodes));
-        w.getDataSet().clearSelection(delNodes);
+        if (deselect) {
+            w.getDataSet().clearSelection(delNodes);
+        }
         return new SequenceCommand(
                 trn("Simplify Way (remove {0} node)", "Simplify Way (remove {0} nodes)", delNodes.size(), delNodes.size()), cmds);
     }
