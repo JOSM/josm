@@ -62,6 +62,7 @@ jobs:
           path: |
             test/report/*.txt
             test/report/TEST*.xml
+            hs_err*
 
   publish-test-results:
     name: "Publish Unit Tests Results"
