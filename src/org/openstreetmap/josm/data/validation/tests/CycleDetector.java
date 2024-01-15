@@ -84,6 +84,11 @@ public class CycleDetector extends Test {
             Tarjan tarjan = new Tarjan(nodeGraph);
             Collection<List<Node>> scc = tarjan.getSCC();
 
+            // for partial selection, we need to manually add the rest of graph members to the lookup object
+            if (partialSelection) {
+                quadBuckets.addAll(graph);
+            }
+
             for (List<Node> possibleCycle : scc) {
                 // there is a cycle in the graph if a strongly connected component has more than one node
                 if (possibleCycle.size() > 1) {
@@ -93,8 +98,7 @@ public class CycleDetector extends Test {
                     // find ways within this bbox
                     List<Way> waysWithinErrorBbox = quadBuckets.search(bBox);
                     List<Way> toReport = waysWithinErrorBbox.stream()
-                            .filter(w -> possibleCycle.stream()
-                                    .anyMatch(w.getNodes()::contains))
+                            .filter(w -> possibleCycle.stream().filter(w.getNodes()::contains).count() > 1)
                             .collect(Collectors.toList());
 
                     Map<Node, List<Node>> graphMap = tarjan.getGraphMap();
