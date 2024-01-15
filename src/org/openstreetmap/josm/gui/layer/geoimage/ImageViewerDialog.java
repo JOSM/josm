@@ -150,7 +150,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 if (map != null && map.getToggleDialog(ImageViewerDialog.class) != null) {
                     map.removeToggleDialog(dialog);
                 }
-                dialog.destroy();
+                if (!dialog.isDestroyed()) {
+                    dialog.destroy();
+                }
             }
         }
         dialog = null;
@@ -423,6 +425,12 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         toggleAction.destroy();
         cancelLoadingImage();
         super.destroy();
+        // Ensure that this dialog is removed from memory
+        destroyInstance();
+    }
+
+    private boolean isDestroyed() {
+        return dialogsPanel == null;
     }
 
     /**
