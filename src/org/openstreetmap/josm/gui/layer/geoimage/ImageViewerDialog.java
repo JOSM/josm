@@ -146,8 +146,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static void destroyInstance() {
         MapFrame map = MainApplication.getMap();
         synchronized (ImageViewerDialog.class) {
-            if (dialog != null && map != null && map.getToggleDialog(ImageViewerDialog.class) != null) {
-                map.removeToggleDialog(dialog);
+            if (dialog != null) {
+                if (map != null && map.getToggleDialog(ImageViewerDialog.class) != null) {
+                    map.removeToggleDialog(dialog);
+                }
+                dialog.destroy();
             }
         }
         dialog = null;
@@ -180,12 +183,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         this.layers.getModel().addChangeListener(l -> {
             // We need to check to see whether or not the worker is shut down. See #22922 for details.
             if (!MainApplication.worker.isShutdown() && this.isDialogShowing()) {
-                MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
-                    Component selected = this.layers.getSelectedComponent();
-                    if (selected instanceof MoveImgDisplayPanel) {
-                        ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
-                    }
-                }));
+                MainApplication.worker.execute(() -> GuiHelper.runInEDT(this::showNotify));
             }
         });
     }
@@ -302,6 +300,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 .filter(IGeoImageLayer.class::isInstance).map(IGeoImageLayer.class::cast).collect(Collectors.toList());
         if (geoImageLayers.isEmpty()) {
             this.layers.setVisible(false);
+            hideNotify();
+            if (hasInstance())
+                destroyInstance();
         } else {
             this.layers.setVisible(true);
             if (changed) {
@@ -314,6 +315,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             } else if (selected != null && !selected.layer.containsImage(this.currentEntry)) {
                 this.getImageTabs().filter(m -> m.layer.containsImage(this.currentEntry)).mapToInt(this.layers::indexOfComponent).findFirst()
                         .ifPresent(this.layers::setSelectedIndex);
+            } else if (selected == null) {
+                updateTitle();
             }
             this.layers.invalidate();
         }
@@ -351,6 +354,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         if (index >= 0) {
                             removeImageTab(((MoveImgDisplayPanel<?>) layers.getComponentAt(index)).layer);
                             getImageTabs().forEach(m -> m.setVisible(m.isVisible()));
+                            showNotify();
                             return;
                         }
                         source = source.getParent();
@@ -416,9 +420,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         imageRemoveAction.destroy();
         imageRemoveFromDiskAction.destroy();
         imageZoomAction.destroy();
+        toggleAction.destroy();
         cancelLoadingImage();
         super.destroy();
-        destroyInstance();
     }
 
     /**
@@ -1065,7 +1069,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         if (btnCollapse != null) {
             btnCollapse.setVisible(!isDocked);
         }
-        this.updateLayers(true);
     }
 
     /**
