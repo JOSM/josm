@@ -146,13 +146,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static void destroyInstance() {
         MapFrame map = MainApplication.getMap();
         synchronized (ImageViewerDialog.class) {
-            if (dialog != null) {
-                if (map != null && map.getToggleDialog(ImageViewerDialog.class) != null) {
-                    map.removeToggleDialog(dialog);
-                }
-                if (!dialog.isDestroyed()) {
-                    dialog.destroy();
-                }
+            if (dialog != null && map != null && map.getToggleDialog(ImageViewerDialog.class) != null) {
+                map.removeToggleDialog(dialog);
             }
         }
         dialog = null;
@@ -302,9 +297,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 .filter(IGeoImageLayer.class::isInstance).map(IGeoImageLayer.class::cast).collect(Collectors.toList());
         if (geoImageLayers.isEmpty()) {
             this.layers.setVisible(false);
-            hideNotify();
-            if (hasInstance())
-                destroyInstance();
         } else {
             this.layers.setVisible(true);
             if (changed) {
@@ -427,10 +419,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         super.destroy();
         // Ensure that this dialog is removed from memory
         destroyInstance();
-    }
-
-    private boolean isDestroyed() {
-        return this.titleBar == null;
     }
 
     /**
@@ -1127,6 +1115,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             displayImages(null);
         }
         this.updateLayers(true);
+        if (!layers.isVisible()) {
+            hideNotify();
+            destroy();
+        }
     }
 
     @Override
