@@ -430,7 +430,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     }
 
     private boolean isDestroyed() {
-        return dialogsPanel == null;
+        return this.titleBar == null;
     }
 
     /**
