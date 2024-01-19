@@ -15,6 +15,10 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Mediawiki;
@@ -65,12 +69,14 @@ public class WikimediaCommonsLoader extends PleaseWaitRunnable {
      * Load images from Wikimedia Commons
      * @since 18021
      */
-    public static class WikimediaCommonsLoadImagesAction extends JosmAction {
+    public static class WikimediaCommonsLoadImagesAction extends JosmAction implements LayerChangeListener {
         /**
          * Constructs a new {@code WikimediaCommonsLoadImagesAction}
          */
         public WikimediaCommonsLoadImagesAction() {
-            super(tr("Load images from Wikimedia Commons"), "wikimedia_commons", null, null, false);
+            super(tr("Load images from Wikimedia Commons"), "wikimedia_commons", null, null, false, false);
+            MainApplication.getLayerManager().addLayerChangeListener(this);
+            initEnabledState();
         }
 
         @Override
@@ -82,6 +88,28 @@ public class WikimediaCommonsLoader extends PleaseWaitRunnable {
         @Override
         protected void updateEnabledState() {
             setEnabled(MainApplication.isDisplayingMapView());
+        }
+
+        @Override
+        public void layerAdded(LayerAddEvent e) {
+            updateEnabledState();
+        }
+
+        @Override
+        public void layerRemoving(LayerRemoveEvent e) {
+            if (e.isLastLayer())
+                setEnabled(false);
+        }
+
+        @Override
+        public void layerOrderChanged(LayerOrderChangeEvent e) {
+            // not used
+        }
+
+        @Override
+        public void destroy() {
+            MainApplication.getLayerManager().removeLayerChangeListener(this);
+            super.destroy();
         }
     }
 }
