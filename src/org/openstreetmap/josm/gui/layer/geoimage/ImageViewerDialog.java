@@ -980,6 +980,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private void updateButtonsNonNullEntry(IImageEntry<?> entry, boolean imageChanged) {
         if (imageChanged) {
             cancelLoadingImage();
+            // don't show unwanted image
+            imgDisplay.setImage(null);
             // Set only if the image is new to preserve zoom and position if the same image is redisplayed
             // (e.g. to update the OSD).
             imgLoadingFuture = imgDisplay.setImage(entry);
