@@ -194,13 +194,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
     }
 
-    @Override
-    public void hideNotify() {
-        super.hideNotify();
-        this.currentEntry = null;
-        this.imgDisplay.setImage(null);
-    }
-
     private static JButton createButton(AbstractAction action, Dimension buttonDim) {
         JButton btn = new JButton(action);
         btn.setPreferredSize(buttonDim);
