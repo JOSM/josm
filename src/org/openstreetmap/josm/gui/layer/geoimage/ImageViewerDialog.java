@@ -914,6 +914,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                     .filter(IGeoImageLayer.class::isInstance).map(IGeoImageLayer.class::cast).collect(Collectors.toList());
         if (!Config.getPref().getBoolean("geoimage.viewer.show.tabs", true)) {
             updateRequired = true;
+            layers.removeAll();
             // Clear the selected images in other geoimage layers
             this.getImageTabs().map(m -> m.layer).filter(IGeoImageLayer.class::isInstance).map(IGeoImageLayer.class::cast)
                     .filter(l -> !Objects.equals(entries, l.getSelection()))
