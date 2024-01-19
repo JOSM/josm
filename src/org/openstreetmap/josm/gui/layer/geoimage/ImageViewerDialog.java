@@ -410,6 +410,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         toggleAction.destroy();
         cancelLoadingImage();
         super.destroy();
+        // make sure that Image Display is destroyed here, it might not be a component
+        imgDisplay.destroy();
         // Ensure that this dialog is removed from memory
         destroyInstance();
     }
