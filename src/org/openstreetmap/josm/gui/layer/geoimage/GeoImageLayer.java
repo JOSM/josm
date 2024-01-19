@@ -743,12 +743,11 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
         mapModeListener = (oldMapMode, newMapMode) -> {
             MapView mapView = MainApplication.getMap().mapView;
+            mapView.removeMouseListener(mouseAdapter);
+            mapView.removeMouseMotionListener(mouseMotionAdapter);
             if (newMapMode == null || isSupportedMapMode(newMapMode)) {
                 mapView.addMouseListener(mouseAdapter);
                 mapView.addMouseMotionListener(mouseMotionAdapter);
-            } else {
-                mapView.removeMouseListener(mouseAdapter);
-                mapView.removeMouseMotionListener(mouseMotionAdapter);
             }
         };
 
