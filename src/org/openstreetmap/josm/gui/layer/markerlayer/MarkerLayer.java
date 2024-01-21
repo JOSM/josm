@@ -100,6 +100,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
     final BasicStroke markerStroke = new StrokeProperty("draw.rawgps.markers.stroke", "1").get();
 
     private final ListenerList<IGeoImageLayer.ImageChangeListener> imageChangeListenerListenerList = ListenerList.create();
+    private MarkerMouseAdapter mouseAdapter;
+    private MapView mapView;
 
     /**
      * The default color that is used for drawing markers.
@@ -192,12 +194,19 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
         fromLayer = null;
         data.forEach(Marker::destroy);
         data.clear();
+        if (mouseAdapter != null && mapView != null)
+            mapView.removeMouseListener(mouseAdapter);
         super.destroy();
     }
 
     @Override
     public LayerPainter attachToMapView(MapViewEvent event) {
-        event.getMapView().addMouseListener(new MarkerMouseAdapter());
+        if (mapView != null) {
+            Logging.warn("MarkerLayer was already attached to a MapView");
+        }
+        mapView = event.getMapView();
+        mouseAdapter = new MarkerMouseAdapter();
+        mapView.addMouseListener(mouseAdapter);
 
         if (event.getMapView().playHeadMarker == null) {
             event.getMapView().playHeadMarker = PlayHeadMarker.create();
