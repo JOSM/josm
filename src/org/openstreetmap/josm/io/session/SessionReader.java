@@ -647,6 +647,8 @@ public class SessionReader {
                 }
 
             }
+            if (progressMonitor.isCanceled())
+                return;
             progressMonitor.worked(1);
         }
 
