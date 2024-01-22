@@ -21,9 +21,9 @@ import org.openstreetmap.josm.tools.Pair;
  *
  * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
-final class ImproveWayAccuracyHelper {
+class ImproveWayAccuracyHelper {
 
-    private ImproveWayAccuracyHelper() {
+    protected ImproveWayAccuracyHelper() {
         // Hide default constructor for utils classes
     }
 
@@ -69,8 +69,8 @@ final class ImproveWayAccuracyHelper {
 
         EastNorth pEN = mv.getEastNorth(p.x, p.y);
 
-        Double bestDistance = Double.MAX_VALUE;
-        Double currentDistance;
+        double bestDistance = Double.MAX_VALUE;
+        double currentDistance;
         List<Pair<Node, Node>> wpps = w.getNodePairs(false);
 
         Node result = null;
@@ -125,10 +125,10 @@ final class ImproveWayAccuracyHelper {
 
         EastNorth pEN = mv.getEastNorth(p.x, p.y);
 
-        Double currentDistance;
-        Double currentAngle;
-        Double bestDistance = Double.MAX_VALUE;
-        Double bestAngle = 0.0;
+        double currentDistance;
+        double currentAngle;
+        double bestDistance = Double.MAX_VALUE;
+        double bestAngle = 0.0;
 
         int candidate = -1;
 

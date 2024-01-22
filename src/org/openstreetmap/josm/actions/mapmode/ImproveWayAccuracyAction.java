@@ -74,53 +74,56 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ImproveWayAccuracyAction extends MapMode implements DataSelectionListener, DataSetListener, ModifierExListener {
 
-    private static final String CROSSHAIR = /* ICON(cursor/)*/ "crosshair";
+    protected static final String CROSSHAIR = /* ICON(cursor/)*/ "crosshair";
 
-    enum State {
+    protected enum State {
         SELECTING, IMPROVING
     }
 
-    private State state;
+    protected State state;
 
-    private MapView mv;
+    protected MapView mv;
 
-    private static final long serialVersionUID = 42L;
+    protected static final long serialVersionUID = 42L;
 
-    private transient Way targetWay;
-    private transient Node candidateNode;
-    private transient WaySegment candidateSegment;
+    protected transient Way targetWay;
+    protected transient Node candidateNode;
+    protected transient WaySegment candidateSegment;
 
-    private Point mousePos;
-    private boolean dragging;
+    protected Point mousePos;
+    protected boolean dragging;
 
-    private final Cursor cursorSelect = ImageProvider.getCursor(/* ICON(cursor/)*/ "normal", /* ICON(cursor/modifier/)*/ "mode");
-    private final Cursor cursorSelectHover = ImageProvider.getCursor(/* ICON(cursor/)*/ "hand", /* ICON(cursor/modifier/)*/ "mode");
-    private final Cursor cursorImprove = ImageProvider.getCursor(CROSSHAIR, null);
-    private final Cursor cursorImproveAdd = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "addnode");
-    private final Cursor cursorImproveDelete = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "delete_node");
-    private final Cursor cursorImproveAddLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "add_node_lock");
-    private final Cursor cursorImproveLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "lock");
+    protected Node endpoint1 = null;
+    protected Node endpoint2 = null;
 
-    private Color guideColor;
+    protected final Cursor cursorSelect = ImageProvider.getCursor(/* ICON(cursor/)*/ "normal", /* ICON(cursor/modifier/)*/ "mode");
+    protected final Cursor cursorSelectHover = ImageProvider.getCursor(/* ICON(cursor/)*/ "hand", /* ICON(cursor/modifier/)*/ "mode");
+    protected final Cursor cursorImprove = ImageProvider.getCursor(CROSSHAIR, null);
+    protected final Cursor cursorImproveAdd = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "addnode");
+    protected final Cursor cursorImproveDelete = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "delete_node");
+    protected final Cursor cursorImproveAddLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "add_node_lock");
+    protected final Cursor cursorImproveLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "lock");
 
-    private static final CachingProperty<BasicStroke> SELECT_TARGET_WAY_STROKE
+    protected Color guideColor;
+
+    protected static final CachingProperty<BasicStroke> SELECT_TARGET_WAY_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.select-target", "2").cached();
-    private static final CachingProperty<BasicStroke> MOVE_NODE_STROKE
+    protected static final CachingProperty<BasicStroke> MOVE_NODE_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.move-node", "1 6").cached();
-    private static final CachingProperty<BasicStroke> MOVE_NODE_INTERSECTING_STROKE
+    protected static final CachingProperty<BasicStroke> MOVE_NODE_INTERSECTING_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.move-node-intersecting", "1 2 6").cached();
-    private static final CachingProperty<BasicStroke> ADD_NODE_STROKE
+    protected static final CachingProperty<BasicStroke> ADD_NODE_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.add-node", "1").cached();
-    private static final CachingProperty<BasicStroke> DELETE_NODE_STROKE
+    protected static final CachingProperty<BasicStroke> DELETE_NODE_STROKE
             = new StrokeProperty("improvewayaccuracy.stroke.delete-node", "1").cached();
-    private static final CachingProperty<Integer> DOT_SIZE
+    protected static final CachingProperty<Integer> DOT_SIZE
             = new IntegerProperty("improvewayaccuracy.dot-size", 6).cached();
 
-    private boolean selectionChangedBlocked;
+    protected boolean selectionChangedBlocked;
 
     protected String oldModeHelpText;
 
-    private final transient AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
+    protected final transient AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             ImproveWayAccuracyAction.this.paint(g, mv, bbox);
@@ -139,6 +142,10 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 KeyEvent.VK_W, Shortcut.DIRECT), Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         readPreferences();
+    }
+
+    protected ImproveWayAccuracyAction(String name, String iconName, String tooltip, Shortcut shortcut, Cursor cursor) {
+        super(name, iconName, tooltip, shortcut, cursor);
     }
 
     // -------------------------------------------------------------------------
@@ -267,87 +274,90 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             // Drawing preview lines and highlighting the node
             // that is going to be moved.
             // Non-native highlighting is used here as well.
-
-            // Finding endpoints
-            Node p1 = null;
-            Node p2 = null;
-            if (ctrl && candidateSegment != null) {
-                g.setStroke(ADD_NODE_STROKE.get());
-                try {
-                    p1 = candidateSegment.getFirstNode();
-                    p2 = candidateSegment.getSecondNode();
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    Logging.error(e);
-                }
-            } else if (!alt && !ctrl && candidateNode != null) {
-                g.setStroke(MOVE_NODE_STROKE.get());
-                List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
-                for (Pair<Node, Node> wpp : wpps) {
-                    if (wpp.a == candidateNode) {
-                        p1 = wpp.b;
-                    }
-                    if (wpp.b == candidateNode) {
-                        p2 = wpp.a;
-                    }
-                    if (p1 != null && p2 != null) {
-                        break;
-                    }
-                }
-            } else if (alt && !ctrl && candidateNode != null) {
-                g.setStroke(DELETE_NODE_STROKE.get());
-                List<Node> nodes = targetWay.getNodes();
-                int index = nodes.indexOf(candidateNode);
-
-                // Only draw line if node is not first and/or last
-                if (index > 0 && index < (nodes.size() - 1)) {
-                    p1 = nodes.get(index - 1);
-                    p2 = nodes.get(index + 1);
-                } else if (targetWay.isClosed()) {
-                    p1 = targetWay.getNode(1);
-                    p2 = targetWay.getNode(nodes.size() - 2);
-                }
-                // TODO: indicate what part that will be deleted? (for end nodes)
-            }
-
-
-            // Drawing preview lines
             MapViewPath b = new MapViewPath(mv);
-            if (alt && !ctrl) {
-                // In delete mode
-                if (p1 != null && p2 != null) {
-                    b.moveTo(p1);
-                    b.lineTo(p2);
-                }
-            } else {
-                // In add or move mode
-                if (p1 != null) {
-                    b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p1);
-                }
-                if (p2 != null) {
-                    b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p2);
-                }
-            }
-            g.draw(b.computeClippedLine(g.getStroke()));
-
-            // Highlighting candidateNode
-            if (candidateNode != null) {
-                p1 = candidateNode;
-                g.fill(new MapViewPath(mv).shapeAround(p1, SymbolShape.SQUARE, DOT_SIZE.get()));
-            }
-
-            if (!alt && !ctrl && candidateNode != null) {
-                b.reset();
-                drawIntersectingWayHelperLines(mv, b);
-                g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
-                g.draw(b.computeClippedLine(g.getStroke()));
-            }
-
+            findEndpoints(g);
+            drawPreviewLines(g, b);
+            highlightCandidateNode(g, mv, b);
         }
     }
 
-    protected void drawIntersectingWayHelperLines(MapView mv, MapViewPath b) {
+    protected void findEndpoints(Graphics2D g) {
+        endpoint1 = null;
+        endpoint2 = null;
+        if (ctrl && candidateSegment != null) {
+            g.setStroke(ADD_NODE_STROKE.get());
+            try {
+                endpoint1 = candidateSegment.getFirstNode();
+                endpoint2 = candidateSegment.getSecondNode();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Logging.error(e);
+            }
+        } else if (!alt && !ctrl && candidateNode != null) {
+            g.setStroke(MOVE_NODE_STROKE.get());
+            List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
+            for (Pair<Node, Node> wpp : wpps) {
+                if (wpp.a == candidateNode) {
+                    endpoint1 = wpp.b;
+                }
+                if (wpp.b == candidateNode) {
+                    endpoint2 = wpp.a;
+                }
+                if (endpoint1 != null && endpoint2 != null) {
+                    break;
+                }
+            }
+        } else if (alt && !ctrl && candidateNode != null) {
+            g.setStroke(DELETE_NODE_STROKE.get());
+            List<Node> nodes = targetWay.getNodes();
+            int index = nodes.indexOf(candidateNode);
+
+            // Only draw line if node is not first and/or last
+            if (index > 0 && index < (nodes.size() - 1)) {
+                endpoint1 = nodes.get(index - 1);
+                endpoint2 = nodes.get(index + 1);
+            } else if (targetWay.isClosed()) {
+                endpoint1 = targetWay.getNode(1);
+                endpoint2 = targetWay.getNode(nodes.size() - 2);
+            }
+            // TODO: indicate what part that will be deleted? (for end nodes)
+        }
+    }
+
+    protected void drawPreviewLines(Graphics2D g, MapViewPath b) {
+        if (alt && !ctrl) {
+            // In delete mode
+            if (endpoint1 != null && endpoint2 != null) {
+                b.moveTo(endpoint1);
+                b.lineTo(endpoint2);
+            }
+        } else {
+            // In add or move mode
+            if (endpoint1 != null) {
+                b.moveTo(mousePos.x, mousePos.y);
+                b.lineTo(endpoint1);
+            }
+            if (endpoint2 != null) {
+                b.moveTo(mousePos.x, mousePos.y);
+                b.lineTo(endpoint2);
+            }
+        }
+        g.draw(b.computeClippedLine(g.getStroke()));
+    }
+
+    protected void highlightCandidateNode(Graphics2D g, MapView mv, MapViewPath b) {
+        if (candidateNode != null) {
+            g.fill(new MapViewPath(mv).shapeAround(candidateNode, SymbolShape.SQUARE, DOT_SIZE.get()));
+        }
+
+        if (!alt && !ctrl && candidateNode != null) {
+            b.reset();
+            drawIntersectingWayHelperLines(b);
+            g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
+            g.draw(b.computeClippedLine(g.getStroke()));
+        }
+    }
+
+    protected void drawIntersectingWayHelperLines(MapViewPath b) {
         for (final OsmPrimitive referrer : candidateNode.getReferrers()) {
             if (!(referrer instanceof Way) || targetWay.equals(referrer)) {
                 continue;
@@ -404,8 +414,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             return;
         }
 
-        mousePos = e.getPoint();
-
+        updateMousePosition(e);
         updateKeyModifiers(e);
         updateCursorDependentObjectsIfNeeded();
         updateCursor();
@@ -422,7 +431,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
 
         DataSet ds = getLayerManager().getEditDataSet();
         updateKeyModifiers(e);
-        mousePos = e.getPoint();
+        updateMousePosition(e);
 
         if (state == State.SELECTING) {
             if (targetWay != null) {
@@ -537,10 +546,19 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
     // -------------------------------------------------------------------------
     // Custom methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Sets mouse position based on mouse event;
+     * this method allows extending classes to override position
+     */
+    protected void updateMousePosition(MouseEvent e) {
+        mousePos = e.getPoint();
+    }
+
     /**
      * Sets new cursor depending on state, mouse position
      */
-    private void updateCursor() {
+    protected void updateCursor() {
         if (!isEnabled()) {
             mv.setNewCursor(null, this);
             return;
@@ -640,7 +658,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
      * state if a single way or node is selected. Extracts a way by a node in
      * the second case.
      */
-    private void updateStateByCurrentSelection() {
+    protected void updateStateByCurrentSelection() {
         final List<Node> nodeList = new ArrayList<>();
         final List<Way> wayList = new ArrayList<>();
         final DataSet ds = getLayerManager().getEditDataSet();
