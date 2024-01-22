@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import jakarta.json.JsonObject;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.cli.CLIModule;
@@ -63,6 +62,8 @@ import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.json.JsonObject;
 
 /**
  * Add a validate command to the JOSM command line interface.
@@ -355,9 +356,7 @@ public class ValidatorCLI implements CLIModule {
         Config.setUrlsProvider(JosmUrls.getInstance());
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("epsg:3857".toUpperCase(Locale.ROOT)));
 
-        if (Territories.getKnownIso3166Codes().isEmpty()) {
-            Territories.initializeInternalData();
-        }
+        Territories.initializeInternalData(); // There is no current way to check to see if territories is already initialized
         OsmValidator.initialize();
         MapPaintStyles.readFromPreferences();
     }
