@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -587,12 +588,10 @@ public class ValidatorDialog extends ToggleDialog
      * @param newSelection The new selection
      */
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
-        if (!Config.getPref().getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false))
-            return;
-        if (newSelection.isEmpty()) {
+        if (newSelection.isEmpty() || !Config.getPref().getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false))
             tree.setFilter(null);
-        }
-        tree.setFilter(new HashSet<>(newSelection));
+        else
+            tree.setFilter(new HashSet<>(newSelection));
     }
 
     @Override
@@ -730,4 +729,16 @@ public class ValidatorDialog extends ToggleDialog
             ignoreForNowAction.destroy();
         }
     }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        super.preferenceChanged(e);
+        // see #23430: update selection so that filters are applied
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+        if (ds != null) {
+            updateSelection(ds.getAllSelected());
+        }
+
+    }
+
 }
