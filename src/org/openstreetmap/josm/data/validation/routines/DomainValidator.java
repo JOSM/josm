@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2023121800, Last Updated Mon Dec 18 07:07:01 2023 UTC
+        // Taken from Version 2024012300, Last Updated Tue Jan 23 07:07:01 2024 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -375,7 +375,6 @@ public final class DomainValidator extends AbstractValidator {
         "baby", // baby Johnson &amp; Johnson Services, Inc.
         "baidu", // baidu Baidu, Inc.
         "banamex", // banamex Citigroup Inc.
-        "bananarepublic", // bananarepublic The Gap, Inc.
         "band", // band United TLD Holdco, Ltd
         "bank", // bank fTLD Registry Services, LLC
         "bar", // bar Punto 2012 Sociedad Anonima Promotora de Inversion de Capital Variable
@@ -983,7 +982,6 @@ public final class DomainValidator extends AbstractValidator {
         "okinawa", // okinawa BusinessRalliart inc.
         "olayan", // olayan Crescent Holding GmbH
         "olayangroup", // olayangroup Crescent Holding GmbH
-        "oldnavy", // oldnavy The Gap, Inc.
         "ollo", // ollo Dish DBS Corporation
         "omega", // omega The Swatch Group Ltd
         "one", // one One.com A/S
