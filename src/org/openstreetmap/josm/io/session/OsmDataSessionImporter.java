@@ -22,7 +22,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
 import org.openstreetmap.josm.tools.Utils;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -32,8 +31,6 @@ import org.w3c.dom.NodeList;
  * @since 4685
  */
 public class OsmDataSessionImporter implements SessionLayerImporter {
-
-    private static Attr x2;
 
     @Override
     public Layer load(Element elem, ImportSupport support, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
