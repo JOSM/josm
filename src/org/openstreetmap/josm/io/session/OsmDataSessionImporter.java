@@ -22,13 +22,18 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
 import org.openstreetmap.josm.tools.Utils;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Session importer for {@link OsmDataLayer}.
  * @since 4685
  */
 public class OsmDataSessionImporter implements SessionLayerImporter {
+
+    private static Attr x2;
 
     @Override
     public Layer load(Element elem, ImportSupport support, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
@@ -67,6 +72,13 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
      */
     public static String extractFileName(Element elem, ImportSupport support) throws IllegalDataException {
         try {
+            // see #23427: try first to avoid possibly very slow XPath call
+            NodeList x = elem.getElementsByTagName("file");
+            if (x.getLength() > 0 && x.item(0).getNodeType() == Node.ELEMENT_NODE) {
+                String fileStr = x.item(0).getTextContent();
+                if (!Utils.isEmpty(fileStr))
+                    return fileStr;
+            }
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
             XPathExpression fileExp = xpath.compile("file/text()");
