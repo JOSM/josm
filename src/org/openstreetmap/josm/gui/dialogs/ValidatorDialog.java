@@ -588,7 +588,13 @@ public class ValidatorDialog extends ToggleDialog
      * @param newSelection The new selection
      */
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
-        if (newSelection.isEmpty() || !Config.getPref().getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false))
+        if (!Config.getPref().getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false)) {
+            if (tree.getFilter() != null)
+                tree.setFilter(null);
+            return;
+        }
+
+        if (newSelection.isEmpty())
             tree.setFilter(null);
         else
             tree.setFilter(new HashSet<>(newSelection));
@@ -738,7 +744,6 @@ public class ValidatorDialog extends ToggleDialog
         if (ds != null) {
             updateSelection(ds.getAllSelected());
         }
-
     }
 
 }
