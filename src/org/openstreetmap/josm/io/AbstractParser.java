@@ -4,6 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -30,6 +32,7 @@ public abstract class AbstractParser extends DefaultHandler {
     protected Locator locator;
     /** if true, replace user information in input by anonymous user */
     protected boolean useAnonymousUser;
+    private Map<RelationMemberData, RelationMemberData> memberCache = new HashMap<>();
 
     @Override
     public void setDocumentLocator(Locator locator) {
@@ -181,7 +184,11 @@ public abstract class AbstractParser extends DefaultHandler {
         }
         String role = getMandatoryAttributeString(atts, "role");
         RelationMemberData member = new RelationMemberData(role, type, ref);
-        ((HistoryRelation) currentPrimitive).addMember(member);
+        // see #20405: cache equal instances of members
+        RelationMemberData cachedMember = memberCache .putIfAbsent(member, member);
+        if (cachedMember == null)
+            cachedMember = member;
+        ((HistoryRelation) currentPrimitive).addMember(cachedMember);
     }
 
     protected final boolean doStartElement(String qName, Attributes atts) throws SAXException {
