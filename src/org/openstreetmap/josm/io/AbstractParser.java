@@ -185,9 +185,7 @@ public abstract class AbstractParser extends DefaultHandler {
         String role = getMandatoryAttributeString(atts, "role");
         RelationMemberData member = new RelationMemberData(role, type, ref);
         // see #20405: cache equal instances of members
-        RelationMemberData cachedMember = memberCache .putIfAbsent(member, member);
-        if (cachedMember == null)
-            cachedMember = member;
+        RelationMemberData cachedMember = memberCache.computeIfAbsent(member, m -> m);
         ((HistoryRelation) currentPrimitive).addMember(cachedMember);
     }
 
