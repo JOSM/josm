@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @BasicPreferences
 @Main
 @Projection
+@I18n
 class MarkerLayerTest {
     /**
      * Setup tests

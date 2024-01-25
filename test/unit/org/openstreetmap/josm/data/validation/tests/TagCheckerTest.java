@@ -19,11 +19,13 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.TaggingPresets;
 
 /**
  * JUnit Test of {@link TagChecker}.
  */
+@I18n
 @TaggingPresets
 class TagCheckerTest {
     List<TestError> test(OsmPrimitive primitive) throws IOException {
