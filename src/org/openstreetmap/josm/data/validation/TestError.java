@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -62,6 +63,8 @@ public class TestError implements Comparable<TestError> {
     private final int uniqueCode;
     /** If this error is selected */
     private boolean selected;
+    /** If all relevant primitives are known*/
+    private boolean incompletePrimitives;
     /** Supplying a command to fix the error */
     private final Supplier<Command> fixingCommand;
 
@@ -80,6 +83,7 @@ public class TestError implements Comparable<TestError> {
         private Collection<? extends OsmPrimitive> primitives;
         private Collection<?> highlighted;
         private Supplier<Command> fixingCommand;
+        private boolean incompletePrimitives;
 
         Builder(Test tester, Severity severity, int code) {
             this.tester = tester;
@@ -218,6 +222,16 @@ public class TestError implements Comparable<TestError> {
         }
 
         /**
+         * Sets a flag that the list of primitives may be incomplete. See #23397
+         *
+         * @return {@code this}
+         */
+        public Builder imcompletePrimitives() {
+            this.incompletePrimitives = true;
+            return this;
+        }
+
+        /**
          * Sets a supplier to obtain a command to fix the error.
          *
          * @param fixingCommand the fix supplier. Can be null
@@ -276,6 +290,7 @@ public class TestError implements Comparable<TestError> {
         this.code = builder.code;
         this.uniqueCode = builder.uniqueCode;
         this.fixingCommand = builder.fixingCommand;
+        this.incompletePrimitives = builder.incompletePrimitives;
     }
 
     /**
@@ -666,4 +681,20 @@ public class TestError implements Comparable<TestError> {
                 ", code=" + code + ", message=" + message + ']';
     }
 
+    /**
+     * Check if any of the primitives in this error occurs in the given set of primitives.
+     * @param given the set of primitives
+     * @return true if any of the primitives in this error occurs in the given set of primitives, else false
+     * @since 18960
+     */
+    public boolean isConcerned(Set<? extends OsmPrimitive> given) {
+        if (incompletePrimitives)
+            return true;
+        for (OsmPrimitive p : getPrimitives()) {
+            if (given.contains(p)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

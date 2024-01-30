@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -17,7 +18,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.ValidationTask;
-import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
@@ -45,9 +45,9 @@ public class ValidateUploadHook implements UploadHook {
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
         AtomicBoolean returnCode = new AtomicBoolean();
-        AggregatePrimitivesVisitor v = new AggregatePrimitivesVisitor();
-        v.visit(apiDataSet.getPrimitivesToAdd());
-        Collection<OsmPrimitive> visited = v.visit(apiDataSet.getPrimitivesToUpdate());
+        Collection<OsmPrimitive> toCheck = new HashSet<>();
+        toCheck.addAll(apiDataSet.getPrimitivesToAdd());
+        toCheck.addAll(apiDataSet.getPrimitivesToUpdate());
         OsmValidator.initializeTests();
         new ValidationTask(errors -> {
             if (errors.stream().allMatch(TestError::isIgnored)) {
@@ -58,7 +58,7 @@ public class ValidateUploadHook implements UploadHook {
                 // of the progress monitor.
                 GuiHelper.runInEDTAndWait(() -> returnCode.set(displayErrorScreen(errors)));
             }
-        }, null, OsmValidator.getEnabledTests(true), visited, null, true).run();
+        }, null, OsmValidator.getEnabledTests(true), toCheck, null, true).run();
 
         return returnCode.get();
     }
