@@ -135,10 +135,13 @@ public class ValidationTask extends PleaseWaitRunnable {
             this.errors.removeIf(error -> error.getSeverity().getLevel() >= Severity.OTHER.getLevel());
         }
 
-        if (!GraphicsEnvironment.isHeadless() && MainApplication.getMap() != null && (!beforeUpload || !errors.isEmpty())) {
+        if (!GraphicsEnvironment.isHeadless() && MainApplication.getMap() != null) {
+            MapFrame map = MainApplication.getMap();
             // update GUI on Swing EDT
             GuiHelper.runInEDT(() -> {
-                MapFrame map = MainApplication.getMap();
+                // see #23440 why this is inside the EDT
+                if (!map.validatorDialog.isShowing() && errors.isEmpty() && beforeUpload)
+                    return;
                 map.validatorDialog.unfurlDialog();
                 map.validatorDialog.tree.setErrors(errors);
                 //FIXME: nicer way to find / invalidate the corresponding error layer
