@@ -31,6 +31,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -268,82 +269,117 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             // that is going to be moved.
             // Non-native highlighting is used here as well.
 
-            // Finding endpoints
-            Node p1 = null;
-            Node p2 = null;
             if (ctrl && candidateSegment != null) {
-                g.setStroke(ADD_NODE_STROKE.get());
-                try {
-                    p1 = candidateSegment.getFirstNode();
-                    p2 = candidateSegment.getSecondNode();
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    Logging.error(e);
-                }
+                paintAddNodeStroke(g);
             } else if (!alt && !ctrl && candidateNode != null) {
-                g.setStroke(MOVE_NODE_STROKE.get());
-                List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
-                for (Pair<Node, Node> wpp : wpps) {
-                    if (wpp.a == candidateNode) {
-                        p1 = wpp.b;
-                    }
-                    if (wpp.b == candidateNode) {
-                        p2 = wpp.a;
-                    }
-                    if (p1 != null && p2 != null) {
-                        break;
-                    }
-                }
+                paintMoveNodeStroke(g);
             } else if (alt && !ctrl && candidateNode != null) {
-                g.setStroke(DELETE_NODE_STROKE.get());
-                List<Node> nodes = targetWay.getNodes();
-                int index = nodes.indexOf(candidateNode);
-
-                // Only draw line if node is not first and/or last
-                if (index > 0 && index < (nodes.size() - 1)) {
-                    p1 = nodes.get(index - 1);
-                    p2 = nodes.get(index + 1);
-                } else if (targetWay.isClosed()) {
-                    p1 = targetWay.getNode(1);
-                    p2 = targetWay.getNode(nodes.size() - 2);
-                }
-                // TODO: indicate what part that will be deleted? (for end nodes)
+                paintDeleteStroke(g);
             }
+        }
+    }
 
+    /**
+     * Paint the add stroke for {@link State#IMPROVING}
+     * @param g The graphics
+     */
+    private void paintAddNodeStroke(Graphics2D g) {
+        g.setStroke(ADD_NODE_STROKE.get());
+        ILatLon p1 = null;
+        ILatLon p2 = null;
+        try {
+            p1 = candidateSegment.getFirstNode();
+            p2 = candidateSegment.getSecondNode();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            Logging.error(e);
+        }
+        paintImprovingPreviewLines(g, p1, p2);
+    }
 
-            // Drawing preview lines
-            MapViewPath b = new MapViewPath(mv);
-            if (alt && !ctrl) {
-                // In delete mode
-                if (p1 != null && p2 != null) {
-                    b.moveTo(p1);
-                    b.lineTo(p2);
-                }
-            } else {
-                // In add or move mode
-                if (p1 != null) {
-                    b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p1);
-                }
-                if (p2 != null) {
-                    b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p2);
-                }
+    /**
+     * Paint the move stroke for {@link State#IMPROVING}
+     * @param g The graphics
+     */
+    private void paintMoveNodeStroke(Graphics2D g) {
+        g.setStroke(MOVE_NODE_STROKE.get());
+        List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
+        ILatLon p1 = null;
+        ILatLon p2 = null;
+        for (Pair<Node, Node> wpp : wpps) {
+            if (wpp.a == candidateNode) {
+                p1 = wpp.b;
             }
+            if (wpp.b == candidateNode) {
+                p2 = wpp.a;
+            }
+            if (p1 != null && p2 != null) {
+                break;
+            }
+        }
+        paintImprovingPreviewLines(g, p1, p2);
+    }
+
+    /**
+     * Paint the delete stroke for {@link State#IMPROVING}
+     * @param g The graphics
+     */
+    private void paintDeleteStroke(Graphics2D g) {
+        g.setStroke(DELETE_NODE_STROKE.get());
+        List<Node> nodes = targetWay.getNodes();
+        int index = nodes.indexOf(candidateNode);
+        ILatLon p1 = null;
+        ILatLon p2 = null;
+        // Only draw line if node is not first and/or last
+        if (index > 0 && index < (nodes.size() - 1)) {
+            p1 = nodes.get(index - 1);
+            p2 = nodes.get(index + 1);
+        } else if (targetWay.isClosed()) {
+            p1 = targetWay.getNode(1);
+            p2 = targetWay.getNode(nodes.size() - 2);
+        }
+        paintImprovingPreviewLines(g, p1, p2);
+        // TODO: indicate what part that will be deleted? (for end nodes)
+    }
+
+    /**
+     * Paint the preview lines for {@link State#IMPROVING}
+     * @param g The graphics
+     * @param p1 The first endpoint
+     * @param p2 The second endpoint
+     */
+    private void paintImprovingPreviewLines(Graphics2D g, ILatLon p1, ILatLon p2) {
+        // Drawing preview lines
+        MapViewPath b = new MapViewPath(mv);
+        if (alt && !ctrl) {
+            // In delete mode
+            if (p1 != null && p2 != null) {
+                b.moveTo(p1);
+                b.lineTo(p2);
+            }
+        } else {
+            // In add or move mode
+            if (p1 != null) {
+                b.moveTo(mousePos.x, mousePos.y);
+                b.lineTo(p1);
+            }
+            if (p2 != null) {
+                b.moveTo(mousePos.x, mousePos.y);
+                b.lineTo(p2);
+            }
+        }
+        g.draw(b.computeClippedLine(g.getStroke()));
+
+        // Highlighting candidateNode
+        if (candidateNode != null) {
+            p1 = candidateNode;
+            g.fill(new MapViewPath(mv).shapeAround(p1, SymbolShape.SQUARE, DOT_SIZE.get()));
+        }
+
+        if (!alt && !ctrl && candidateNode != null) {
+            b.reset();
+            drawIntersectingWayHelperLines(mv, b);
+            g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
             g.draw(b.computeClippedLine(g.getStroke()));
-
-            // Highlighting candidateNode
-            if (candidateNode != null) {
-                p1 = candidateNode;
-                g.fill(new MapViewPath(mv).shapeAround(p1, SymbolShape.SQUARE, DOT_SIZE.get()));
-            }
-
-            if (!alt && !ctrl && candidateNode != null) {
-                b.reset();
-                drawIntersectingWayHelperLines(mv, b);
-                g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
-                g.draw(b.computeClippedLine(g.getStroke()));
-            }
-
         }
     }
 
@@ -439,80 +475,11 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             }
 
             if (ctrl && !alt && candidateSegment != null) {
-                // Add a new node to the highlighted segment.
-                Collection<WaySegment> virtualSegments = new LinkedList<>();
-
-                // Check if other ways have the same segment.
-                // We have to make sure that we add the new node to all of them.
-                Set<Way> commonParentWays = new HashSet<>(candidateSegment.getFirstNode().getParentWays());
-                commonParentWays.retainAll(candidateSegment.getSecondNode().getParentWays());
-                for (Way w : commonParentWays) {
-                    for (int i = 0; i < w.getNodesCount() - 1; i++) {
-                        WaySegment testWS = new WaySegment(w, i);
-                        if (testWS.isSimilar(candidateSegment)) {
-                            virtualSegments.add(testWS);
-                        }
-                    }
-                }
-
-                Collection<Command> virtualCmds = new LinkedList<>();
-                // Create the new node
-                Node virtualNode = new Node(mv.getEastNorth(mousePos.x, mousePos.y));
-                virtualCmds.add(new AddCommand(ds, virtualNode));
-
-                // Adding the node to all segments found
-                for (WaySegment virtualSegment : virtualSegments) {
-                    Way w = virtualSegment.getWay();
-                    List<Node> modNodes = w.getNodes();
-                    modNodes.add(virtualSegment.getUpperIndex(), virtualNode);
-                    virtualCmds.add(new ChangeNodesCommand(w, modNodes));
-                }
-
-                // Finishing the sequence command
-                String text = trn("Add a new node to way",
-                        "Add a new node to {0} ways",
-                        virtualSegments.size(), virtualSegments.size());
-
-                UndoRedoHandler.getInstance().add(new SequenceCommand(text, virtualCmds));
-
+                addNode(ds);
             } else if (alt && !ctrl && candidateNode != null) {
-                // Deleting the highlighted node
-
-                //check to see if node is in use by more than one object
-                long referrersCount = candidateNode.referrers(OsmPrimitive.class).count();
-                long referrerWayCount = candidateNode.referrers(Way.class).count();
-                if (referrersCount != 1 || referrerWayCount != 1) {
-                    // detach node from way
-                    final List<Node> nodes = targetWay.getNodes();
-                    nodes.remove(candidateNode);
-                    if (nodes.size() < 2) {
-                        final Command deleteCmd = DeleteCommand.delete(Collections.singleton(targetWay), true);
-                        if (deleteCmd != null) {
-                            UndoRedoHandler.getInstance().add(deleteCmd);
-                        }
-                    } else {
-                        UndoRedoHandler.getInstance().add(new ChangeNodesCommand(targetWay, nodes));
-                    }
-                } else if (candidateNode.isTagged()) {
-                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                            tr("Cannot delete node that has tags"),
-                            tr("Error"), JOptionPane.ERROR_MESSAGE);
-                } else {
-                    final Command deleteCmd = DeleteCommand.delete(Collections.singleton(candidateNode), true);
-                    if (deleteCmd != null) {
-                        UndoRedoHandler.getInstance().add(deleteCmd);
-                    }
-                }
-
+                deleteHighlightedNode();
             } else if (candidateNode != null) {
-                // Moving the highlighted node
-                EastNorth nodeEN = candidateNode.getEastNorth();
-                EastNorth cursorEN = mv.getEastNorth(mousePos.x, mousePos.y);
-
-                UndoRedoHandler.getInstance().add(
-                        new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
-
-                SelectAction.checkCommandForLargeDistance(UndoRedoHandler.getInstance().getLastCommand());
+                moveHighlightedNode();
             }
         }
 
@@ -520,6 +487,95 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
         updateCursor();
         updateStatusLine();
         temporaryLayer.invalidate();
+    }
+
+    /**
+     * Add a new node to the currently highlighted segment
+     * @param ds The dataset to add the node to
+     */
+    private void addNode(DataSet ds) {
+        // Add a new node to the highlighted segment.
+        Collection<WaySegment> virtualSegments = new LinkedList<>();
+
+        // Check if other ways have the same segment.
+        // We have to make sure that we add the new node to all of them.
+        Set<Way> commonParentWays = new HashSet<>(candidateSegment.getFirstNode().getParentWays());
+        commonParentWays.retainAll(candidateSegment.getSecondNode().getParentWays());
+        for (Way w : commonParentWays) {
+            for (int i = 0; i < w.getNodesCount() - 1; i++) {
+                WaySegment testWS = new WaySegment(w, i);
+                if (testWS.isSimilar(candidateSegment)) {
+                    virtualSegments.add(testWS);
+                }
+            }
+        }
+
+        Collection<Command> virtualCmds = new LinkedList<>();
+        // Create the new node
+        Node virtualNode = new Node(mv.getEastNorth(mousePos.x, mousePos.y));
+        virtualCmds.add(new AddCommand(ds, virtualNode));
+
+        // Adding the node to all segments found
+        for (WaySegment virtualSegment : virtualSegments) {
+            Way w = virtualSegment.getWay();
+            List<Node> modNodes = w.getNodes();
+            modNodes.add(virtualSegment.getUpperIndex(), virtualNode);
+            virtualCmds.add(new ChangeNodesCommand(w, modNodes));
+        }
+
+        // Finishing the sequence command
+        String text = trn("Add a new node to way",
+                "Add a new node to {0} ways",
+                virtualSegments.size(), virtualSegments.size());
+
+        UndoRedoHandler.getInstance().add(new SequenceCommand(text, virtualCmds));
+    }
+
+    /**
+     * Delete the highlighted node
+     */
+    private void deleteHighlightedNode() {
+        // Deleting the highlighted node
+
+        //check to see if node is in use by more than one object
+        long referrersCount = candidateNode.referrers(OsmPrimitive.class).count();
+        long referrerWayCount = candidateNode.referrers(Way.class).count();
+        if (referrersCount != 1 || referrerWayCount != 1) {
+            // detach node from way
+            final List<Node> nodes = targetWay.getNodes();
+            nodes.remove(candidateNode);
+            if (nodes.size() < 2) {
+                final Command deleteCmd = DeleteCommand.delete(Collections.singleton(targetWay), true);
+                if (deleteCmd != null) {
+                    UndoRedoHandler.getInstance().add(deleteCmd);
+                }
+            } else {
+                UndoRedoHandler.getInstance().add(new ChangeNodesCommand(targetWay, nodes));
+            }
+        } else if (candidateNode.isTagged()) {
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                    tr("Cannot delete node that has tags"),
+                    tr("Error"), JOptionPane.ERROR_MESSAGE);
+        } else {
+            final Command deleteCmd = DeleteCommand.delete(Collections.singleton(candidateNode), true);
+            if (deleteCmd != null) {
+                UndoRedoHandler.getInstance().add(deleteCmd);
+            }
+        }
+    }
+
+    /**
+     * Move the highlighted node
+     */
+    private void moveHighlightedNode() {
+        // Moving the highlighted node
+        EastNorth nodeEN = candidateNode.getEastNorth();
+        EastNorth cursorEN = mv.getEastNorth(mousePos.x, mousePos.y);
+
+        UndoRedoHandler.getInstance().add(
+                new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
+
+        SelectAction.checkCommandForLargeDistance(UndoRedoHandler.getInstance().getLastCommand());
     }
 
     @Override
@@ -550,19 +606,26 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             mv.setNewCursor(targetWay == null ? cursorSelect
                     : cursorSelectHover, this);
         } else if (state == State.IMPROVING) {
-            if (alt && !ctrl) {
-                mv.setNewCursor(cursorImproveDelete, this);
-            } else if (shift || dragging) {
-                if (ctrl) {
-                    mv.setNewCursor(cursorImproveAddLock, this);
-                } else {
-                    mv.setNewCursor(cursorImproveLock, this);
-                }
-            } else if (ctrl && !alt) {
-                mv.setNewCursor(cursorImproveAdd, this);
+            updateCursorImproving();
+        }
+    }
+
+    /**
+     * Update the mouse cursor for the {@link State#IMPROVING} mode
+     */
+    private void updateCursorImproving() {
+        if (alt && !ctrl) {
+            mv.setNewCursor(cursorImproveDelete, this);
+        } else if (shift || dragging) {
+            if (ctrl) {
+                mv.setNewCursor(cursorImproveAddLock, this);
             } else {
-                mv.setNewCursor(cursorImprove, this);
+                mv.setNewCursor(cursorImproveLock, this);
             }
+        } else if (ctrl && !alt) {
+            mv.setNewCursor(cursorImproveAdd, this);
+        } else {
+            mv.setNewCursor(cursorImprove, this);
         }
     }
 
@@ -641,38 +704,49 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
      * the second case.
      */
     private void updateStateByCurrentSelection() {
-        final List<Node> nodeList = new ArrayList<>();
-        final List<Way> wayList = new ArrayList<>();
         final DataSet ds = getLayerManager().getEditDataSet();
-        if (ds != null) {
-            final Collection<OsmPrimitive> sel = ds.getSelected();
-
-            // Collecting nodes and ways from the selection
-            for (OsmPrimitive p : sel) {
-                if (p instanceof Way) {
-                    wayList.add((Way) p);
-                }
-                if (p instanceof Node) {
-                    nodeList.add((Node) p);
-                }
-            }
-
-            if (wayList.size() == 1) {
-                // Starting improving the single selected way
-                startImproving(wayList.get(0));
-                return;
-            } else if (nodeList.size() == 1) {
-                // Starting improving the only way of the single selected node
-                List<OsmPrimitive> r = nodeList.get(0).getReferrers();
-                if (r.size() == 1 && (r.get(0) instanceof Way)) {
-                    startImproving((Way) r.get(0));
-                    return;
-                }
-            }
+        if (ds != null && selectWay(ds)) {
+            return;
         }
 
         // Starting selecting by default
         startSelecting();
+    }
+
+    /**
+     * Select the initial way
+     * @param ds The dataset to get the selection from
+     * @return {@code true} if a way was selected
+     */
+    private boolean selectWay(DataSet ds) {
+        final List<Node> nodeList = new ArrayList<>();
+        final List<Way> wayList = new ArrayList<>();
+        final Collection<OsmPrimitive> sel = ds.getSelected();
+
+        // Collecting nodes and ways from the selection
+        for (OsmPrimitive p : sel) {
+            if (p instanceof Way) {
+                wayList.add((Way) p);
+            }
+            if (p instanceof Node) {
+                nodeList.add((Node) p);
+            }
+        }
+
+        if (wayList.size() == 1) {
+            // Starting improving the single selected way
+            startImproving(wayList.get(0));
+            return true;
+        } else if (nodeList.size() == 1) {
+            // Starting improving the only way of the single selected node
+            List<OsmPrimitive> r = nodeList.get(0).getReferrers();
+            r.removeIf(osm -> !osm.isUsable());
+            if (r.size() == 1 && (r.get(0) instanceof Way)) {
+                startImproving((Way) r.get(0));
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
