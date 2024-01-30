@@ -43,7 +43,7 @@ final class ImproveWayAccuracyHelper {
         Node node = mv.getNearestNode(p, OsmPrimitive::isSelectable);
 
         if (node != null) {
-            Optional<Way> candidate = node.referrers(Way.class).findFirst();
+            Optional<Way> candidate = node.referrers(Way.class).filter(Way::isUsable).findFirst();
             if (candidate.isPresent()) {
                 return candidate.get();
             }
@@ -69,13 +69,12 @@ final class ImproveWayAccuracyHelper {
 
         EastNorth pEN = mv.getEastNorth(p.x, p.y);
 
-        Double bestDistance = Double.MAX_VALUE;
-        Double currentDistance;
+        double bestDistance = Double.MAX_VALUE;
+        double currentDistance;
         List<Pair<Node, Node>> wpps = w.getNodePairs(false);
 
         Node result = null;
 
-        mainLoop:
         for (Node n : w.getNodes()) {
             EastNorth nEN = n.getEastNorth();
 
@@ -86,17 +85,7 @@ final class ImproveWayAccuracyHelper {
 
             currentDistance = pEN.distance(nEN);
 
-            if (currentDistance < bestDistance) {
-                // Making sure this candidate is not behind any segment.
-                for (Pair<Node, Node> wpp : wpps) {
-                    if (!wpp.a.equals(n)
-                            && !wpp.b.equals(n)
-                            && Geometry.getSegmentSegmentIntersection(
-                            wpp.a.getEastNorth(), wpp.b.getEastNorth(),
-                            pEN, nEN) != null) {
-                        continue mainLoop;
-                    }
-                }
+            if (currentDistance < bestDistance && ensureCandidateIsNotBehindSegments(wpps, n, pEN, nEN)) {
                 result = n;
                 bestDistance = currentDistance;
             }
@@ -106,10 +95,33 @@ final class ImproveWayAccuracyHelper {
     }
 
     /**
+     * Check to see if a candidate node is underneath a way segment
+     *
+     * @param wpps The pairs of nodes to check for crossing way segments
+     * @param n The current node to check
+     * @param pEN The cursor east-north position
+     * @param nEN The node east-north position
+     * @return {@code true} if the candidate node is underneath a way segment
+     */
+    private static boolean ensureCandidateIsNotBehindSegments(Iterable<Pair<Node, Node>> wpps, Node n, EastNorth pEN, EastNorth nEN) {
+        // Making sure this candidate is not behind any segment.
+        for (Pair<Node, Node> wpp : wpps) {
+            if (!wpp.a.equals(n)
+                    && !wpp.b.equals(n)
+                    && Geometry.getSegmentSegmentIntersection(
+                    wpp.a.getEastNorth(), wpp.b.getEastNorth(),
+                    pEN, nEN) != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns the nearest way segment to cursor. The distance to segment ab is
      * the length of altitude from p to ab (say, c) or the minimum distance from
      * p to a or b if c is out of ab.
-     *
+     * <p>
      * The priority is given to segments where c is in ab. Otherwise, a segment
      * with the largest angle apb is chosen.
      *
@@ -125,10 +137,8 @@ final class ImproveWayAccuracyHelper {
 
         EastNorth pEN = mv.getEastNorth(p.x, p.y);
 
-        Double currentDistance;
-        Double currentAngle;
-        Double bestDistance = Double.MAX_VALUE;
-        Double bestAngle = 0.0;
+        double bestDistance = Double.MAX_VALUE;
+        double bestAngle = 0.0;
 
         int candidate = -1;
 
@@ -143,8 +153,9 @@ final class ImproveWayAccuracyHelper {
 
             // Finding intersection of the segment with its altitude from p
             EastNorth altitudeIntersection = Geometry.closestPointToSegment(a, b, pEN);
-            currentDistance = pEN.distance(altitudeIntersection);
+            final double currentDistance = pEN.distance(altitudeIntersection);
 
+            final double currentAngle;
             if (!altitudeIntersection.equals(a) && !altitudeIntersection.equals(b)) {
                 // If the segment intersects with the altitude from p,
                 // make an angle too big to let this candidate win any others

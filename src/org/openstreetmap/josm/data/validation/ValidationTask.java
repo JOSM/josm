@@ -111,6 +111,7 @@ public class ValidationTask extends PleaseWaitRunnable {
         return extendedSet;
 
     }
+
     protected ValidationTask(ProgressMonitor progressMonitor,
             Collection<Test> tests,
             Collection<OsmPrimitive> validatedPrimitives,

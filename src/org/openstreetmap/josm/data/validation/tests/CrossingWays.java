@@ -353,6 +353,7 @@ public abstract class CrossingWays extends Test {
         }
         return selection;
     }
+
     static boolean isCoastline(OsmPrimitive w) {
         return w.hasTag("natural", "water", "coastline") || w.hasTag(LANDUSE, "reservoir");
     }
