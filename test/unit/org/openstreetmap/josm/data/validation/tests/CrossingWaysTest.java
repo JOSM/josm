@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -16,12 +17,15 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.Boundaries;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.SelfCrossing;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.Ways;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
@@ -199,6 +203,7 @@ class CrossingWaysTest {
         crossingWays.visit(ds.allPrimitives());
         crossingWays.endTest();
 
+        assertEquals(109, crossingWays.getErrors().size());
         for (TestError e : crossingWays.getErrors()) {
             // we don't report self crossing ways in this test
             assertEquals(2, e.getPrimitives().size(), e.getPrimitives().toString());
@@ -219,4 +224,39 @@ class CrossingWaysTest {
         assertEquals(2, crossingBoundaries.getErrors().size());
     }
 
+    /**
+     * Check if partial selection find crossings with unselected objects.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testPartial() throws Exception {
+
+        DataSet ds = OsmReader.parseDataSet(
+                Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "crossingWays.osm")), null);
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
+
+        CrossingWays crossingWays = new CrossingWays.Ways();
+        List<OsmPrimitive> partialSelection = ds.getWays().stream().filter(w -> w.hasTag("testsel", "horizontal"))
+                .collect(Collectors.toList());
+
+        crossingWays.setPartialSelection(true);
+        crossingWays.startTest(null);
+        crossingWays.visit(partialSelection);
+        crossingWays.endTest();
+
+        assertEquals(109, crossingWays.getErrors().size());
+        for (TestError e : crossingWays.getErrors()) {
+            // we don't report self crossing ways in this test
+            assertEquals(2, e.getPrimitives().size(), e.getPrimitives().toString());
+            // see #20121: crossing water areas should not be reported
+            assertFalse(e.getPrimitives().stream().filter(Way.class::isInstance).allMatch(CrossingWays::isWaterArea));
+        }
+
+        CrossingWays crossingBoundaries = new CrossingWays.Boundaries();
+        crossingBoundaries.setPartialSelection(true);
+        crossingBoundaries.startTest(null);
+        crossingBoundaries.visit(ds.allPrimitives());
+        crossingBoundaries.endTest();
+        assertEquals(2, crossingBoundaries.getErrors().size());
+    }
 }

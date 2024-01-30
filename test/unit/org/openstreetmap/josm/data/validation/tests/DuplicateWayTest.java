@@ -34,11 +34,26 @@ class DuplicateWayTest {
 
     private static void doTest(int code, String tags1, String tags2, boolean fixable) {
         performTest(code, buildDataSet(tags1, tags2), fixable);
+        performPartialTest(code, buildDataSet(tags1, tags2), fixable);
     }
 
     private static void performTest(int code, DataSet ds, boolean fixable) {
+        TEST.setPartialSelection(false);
         TEST.startTest(NullProgressMonitor.INSTANCE);
         TEST.visit(ds.allPrimitives());
+        TEST.endTest();
+
+        assertEquals(1, TEST.getErrors().size());
+        TestError error = TEST.getErrors().iterator().next();
+        assertEquals(code, error.getCode());
+        assertEquals(fixable, error.isFixable());
+    }
+
+    private static void performPartialTest(int code, DataSet ds, boolean fixable) {
+        ds.setSelected(ds.getWays().iterator().next());
+        TEST.setPartialSelection(true);
+        TEST.startTest(NullProgressMonitor.INSTANCE);
+        TEST.visit(ds.getSelectedWays().iterator().next());
         TEST.endTest();
 
         assertEquals(1, TEST.getErrors().size());

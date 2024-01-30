@@ -316,22 +316,31 @@ public abstract class CrossingWays extends Test {
             selection = new HashSet<>();
             DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
             if (ds != null) {
-                for (Way w: waysToTest) {
-                    selection.addAll(ds.searchWays(w.getBBox()));
+                for (Way wt : waysToTest) {
+                    selection.addAll(ds.searchWays(wt.getBBox()).stream()
+                            .filter(w -> !w.isDeleted() && isPrimitiveUsable(w)).collect(Collectors.toList()));
+                    if (this instanceof CrossingWays.Boundaries) {
+                        List<Relation> relations = ds.searchRelations(wt.getBBox()).stream()
+                                .filter(p -> isPrimitiveUsable(p)).collect(Collectors.toList());
+                        for (Relation r: relations) {
+                            for (Way w : r.getMemberPrimitives(Way.class)) {
+                                if (!w.isIncomplete())
+                                    selection.add(w);
+                            }
+                        }
+                    }
                 }
             }
         }
         for (Way w : selection) {
-            if (!w.isDeleted() && isPrimitiveUsable(w)) {
-                testWay(w);
-            }
+            testWay(w);
         }
         // free storage
         cellSegments.clear();
         seenWays.clear();
-        waysToTest.clear();
         if (partialSelection)
             removeIrrelevantErrors(waysToTest);
+        waysToTest.clear();
         super.endTest();
     }
 
