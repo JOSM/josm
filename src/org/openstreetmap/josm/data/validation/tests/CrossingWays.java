@@ -309,32 +309,7 @@ public abstract class CrossingWays extends Test {
 
     @Override
     public void endTest() {
-        final Collection<Way> selection;
-        if (this instanceof SelfCrossing || !partialSelection) {
-            selection = waysToTest;
-        } else {
-            selection = new HashSet<>();
-            DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
-            if (ds != null) {
-                for (Way wt : waysToTest) {
-                    selection.addAll(ds.searchWays(wt.getBBox()).stream()
-                            .filter(w -> !w.isDeleted() && isPrimitiveUsable(w)).collect(Collectors.toList()));
-                    if (this instanceof CrossingWays.Boundaries) {
-                        List<Relation> relations = ds.searchRelations(wt.getBBox()).stream()
-                                .filter(p -> isPrimitiveUsable(p)).collect(Collectors.toList());
-                        for (Relation r: relations) {
-                            for (Way w : r.getMemberPrimitives(Way.class)) {
-                                if (!w.isIncomplete())
-                                    selection.add(w);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for (Way w : selection) {
-            testWay(w);
-        }
+        runTest();
         // free storage
         cellSegments.clear();
         seenWays.clear();
@@ -344,6 +319,40 @@ public abstract class CrossingWays extends Test {
         super.endTest();
     }
 
+    protected void runTest() {
+        final Collection<Way> selection;
+        if (this instanceof SelfCrossing || !partialSelection) {
+            selection = waysToTest;
+        } else {
+            selection = addNearbyObjects();
+        }
+        for (Way w : selection) {
+            testWay(w);
+        }
+
+    }
+
+    private Collection<Way> addNearbyObjects() {
+        final Collection<Way> selection = new HashSet<>();
+        DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
+        if (ds != null) {
+            for (Way wt : waysToTest) {
+                selection.addAll(ds.searchWays(wt.getBBox()).stream()
+                        .filter(w -> !w.isDeleted() && isPrimitiveUsable(w)).collect(Collectors.toList()));
+                if (this instanceof CrossingWays.Boundaries) {
+                    List<Relation> relations = ds.searchRelations(wt.getBBox()).stream()
+                            .filter(p -> isPrimitiveUsable(p)).collect(Collectors.toList());
+                    for (Relation r: relations) {
+                        for (Way w : r.getMemberPrimitives(Way.class)) {
+                            if (!w.isIncomplete())
+                                selection.add(w);
+                        }
+                    }
+                }
+            }
+        }
+        return selection;
+    }
     static boolean isCoastline(OsmPrimitive w) {
         return w.hasTag("natural", "water", "coastline") || w.hasTag(LANDUSE, "reservoir");
     }
@@ -520,7 +529,7 @@ public abstract class CrossingWays extends Test {
         CheckParameterUtil.ensureParameterNotNull(way, "way");
         SelfCrossing test = new SelfCrossing();
         test.visit(way);
-        test.endTest();
+        test.runTest();
         return !test.getErrors().isEmpty();
     }
 }
