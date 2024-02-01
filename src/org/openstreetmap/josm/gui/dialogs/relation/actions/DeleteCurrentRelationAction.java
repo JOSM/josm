@@ -39,8 +39,9 @@ public class DeleteCurrentRelationAction extends AbstractRelationEditorAction {
     }
 
     @Override
-    protected void updateEnabledState() {
-        setEnabled(getEditor().getRelationSnapshot() != null);
+    public void updateEnabledState() {
+        Relation r = getEditor().getRelation();
+        setEnabled(r != null && !r.isDeleted());
     }
 
     @Override
