@@ -156,10 +156,6 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      */
     private final CancelAction cancelAction;
     /**
-     * Action for performing the {@link DeleteCurrentRelationAction}
-     */
-    private final DeleteCurrentRelationAction deleteAction;
-    /**
      * A list of listeners that need to be notified on clipboard content changes.
      */
     private final ArrayList<FlavorListener> clipboardListeners = new ArrayList<>();
@@ -269,7 +265,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         // Action for performing the {@link DuplicateRelationAction}
         final DuplicateRelationAction duplicateAction = new DuplicateRelationAction(actionAccess);
         // Action for performing the {@link DeleteCurrentRelationAction}
-        deleteAction = new DeleteCurrentRelationAction(actionAccess);
+        final DeleteCurrentRelationAction deleteAction = new DeleteCurrentRelationAction(actionAccess);
 
         this.memberTableModel.addTableModelListener(applyAction);
         this.tagEditorPanel.getModel().addTableModelListener(applyAction);
@@ -409,7 +405,6 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     /**
      * builds the panel with the OK and the Cancel button
      * @param okAction OK action
-     * @param deleteAction Delete action
      * @param cancelAction Cancel action
      *
      * @return the panel with the OK and the Cancel button
@@ -1081,7 +1076,6 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
 
     @Override
     public void commandChanged(int queueSize, int redoSize) {
-        deleteAction.updateEnabledState();
         Relation r = getRelation();
         if (r != null && r.getDataSet() == null) {
             // see #19915

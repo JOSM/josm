@@ -8,7 +8,10 @@ import java.beans.PropertyChangeEvent;
 
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -35,13 +38,20 @@ public class DeleteCurrentRelationAction extends AbstractRelationEditorAction {
         Relation toDelete = getEditor().getRelation();
         if (toDelete == null)
             return;
+        if (toDelete.isDeleted()) {
+            // see #23447
+            OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
+            if (layer != null) {
+                RelationDialogManager.getRelationDialogManager().close(layer, toDelete);
+            }
+            return;
+        }
         DeleteAction.deleteRelation(getLayer(), toDelete);
     }
 
     @Override
-    public void updateEnabledState() {
-        Relation r = getEditor().getRelation();
-        setEnabled(r != null && !r.isDeleted());
+    protected void updateEnabledState() {
+        setEnabled(getEditor().getRelationSnapshot() != null);
     }
 
     @Override
