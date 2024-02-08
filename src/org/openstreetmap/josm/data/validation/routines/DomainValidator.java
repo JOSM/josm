@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2024012300, Last Updated Tue Jan 23 07:07:01 2024 UTC
+        // Taken from Version 2024020800, Last Updated Thu Feb  8 07:07:01 2024 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -509,7 +509,6 @@ public final class DomainValidator extends AbstractValidator {
         "college", // college XYZ.COM LLC
         "cologne", // cologne NetCologne Gesellschaft für Telekommunikation mbH
         "com", // com VeriSign Global Registry Services
-        "comcast", // comcast Comcast IP Holdings I, LLC
         "commbank", // commbank COMMONWEALTH BANK OF AUSTRALIA
         "community", // community Fox Orchard, LLC
         "company", // company Silver Avenue, LLC
@@ -1329,7 +1328,6 @@ public final class DomainValidator extends AbstractValidator {
         "wtf", // wtf Hidden Way, LLC
         "xbox", // xbox Microsoft Corporation
         "xerox", // xerox Xerox DNHC LLC
-        "xfinity", // xfinity Comcast IP Holdings I, LLC
         "xihuan", // xihuan QIHOO 360 TECHNOLOGY CO. LTD.
         "xin", // xin Elegant Leader Limited
         "xn--11b4c3d", // कॉम VeriSign Sarl
