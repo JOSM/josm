@@ -1617,11 +1617,6 @@ way[/^is_in:/] {
   suggestAlternative: "highway=steps + conveying=*";
   group: tr("deprecated tagging");
 }
-*[fenced] {
-  throwWarning: tr("{0} is deprecated", "{0.key}");
-  suggestAlternative: "barrier=fence";
-  group: tr("deprecated tagging");
-}
 *[historic_name][!old_name] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "old_name";
