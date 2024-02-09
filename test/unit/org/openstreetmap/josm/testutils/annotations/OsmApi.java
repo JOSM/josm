@@ -30,6 +30,10 @@ import org.openstreetmap.josm.testutils.FakeOsmApi;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface OsmApi {
     APIType value() default APIType.NONE;
+
+    /**
+     * The API type to set up
+     */
     enum APIType {
         /** Don't use any API */
         NONE,
@@ -39,6 +43,9 @@ public @interface OsmApi {
         DEV
     }
 
+    /**
+     * Set up {@link org.openstreetmap.josm.io.OsmApi} for testing
+     */
     class OsmApiExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
         @Override
         public void afterEach(ExtensionContext context) throws Exception {

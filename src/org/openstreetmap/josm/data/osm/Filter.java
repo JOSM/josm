@@ -92,10 +92,15 @@ public class Filter extends SearchSetting implements Comparable<Filter> {
         inverted = e.inverted;
     }
 
+    /**
+     * The class for storing and retrieving a filter from a preference entry
+     */
     public static class FilterPreferenceEntry {
+        /** See {@link Filter#version} */
         @WriteExplicitly
         @StructEntry public String version = "1";
 
+        /** See {@link Filter#text} */
         @StructEntry public String text;
 
         /**
@@ -110,10 +115,13 @@ public class Filter extends SearchSetting implements Comparable<Filter> {
         @WriteExplicitly
         @StructEntry public String mode = "add";
 
+        /** See {@link Filter#caseSensitive} */
         @StructEntry public boolean case_sensitive;
 
+        /** See {@link Filter#regexSearch} */
         @StructEntry public boolean regex_search;
 
+        /** See {@link Filter#mapCSSSearch} */
         @StructEntry public boolean mapCSS_search;
 
         /**

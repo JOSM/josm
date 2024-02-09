@@ -27,6 +27,9 @@ import org.openstreetmap.josm.tools.Utils;
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @ExtendWith(ProjectionNadGrids.NadGridsExtension.class)
 public @interface ProjectionNadGrids {
+    /**
+     * Set up the NAD grids for testing
+     */
     class NadGridsExtension implements BeforeEachCallback {
         @Override
         public void beforeEach(ExtensionContext extensionContext) throws Exception {

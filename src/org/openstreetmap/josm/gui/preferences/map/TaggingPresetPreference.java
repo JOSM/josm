@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.map;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -181,15 +182,21 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
         panel.add(sortMenu, GBC.eol().insets(5, 0, 5, 0));
 
         sources = new TaggingPresetSourceEditor();
-        panel.add(sources, GBC.eol().fill(GBC.BOTH));
+        panel.add(sources, GBC.eol().fill(GridBagConstraints.BOTH));
         PreferencePanel preferencePanel = gui.createPreferenceTab(this);
-        preferencePanel.add(panel, GBC.eol().fill(GBC.BOTH));
+        preferencePanel.add(panel, GBC.eol().fill(GridBagConstraints.BOTH));
         sources.deferLoading(gui, preferencePanel);
         gui.addValidationListener(validationListener);
     }
 
+    /**
+     * An editor for what preset source locations are used
+     */
     public static class TaggingPresetSourceEditor extends SourceEditor {
 
+        /**
+         * Create a new {@link TaggingPresetSourceEditor} with the default providers
+         */
         public TaggingPresetSourceEditor() {
             super(SourceType.TAGGING_PRESET, Config.getUrls().getJOSMWebsite()+"/presets", presetSourceProviders, true);
         }

@@ -21,6 +21,9 @@ import org.openstreetmap.josm.testutils.mockers.EDTAssertionMocker;
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(AssertionsInEDT.AssertionsExtension.class)
 public @interface AssertionsInEDT {
+    /**
+     * Check for assertions in the EDT
+     */
     class AssertionsExtension implements BeforeEachCallback {
         private Runnable edtAssertionMockingRunnable = EDTAssertionMocker::new;
         @Override

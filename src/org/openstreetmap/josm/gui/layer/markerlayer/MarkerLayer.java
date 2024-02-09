@@ -619,9 +619,16 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
         }
     }
 
+    /**
+     * Toggle visibility of the marker text and icons
+     */
     public static final class ShowHideMarkerText extends AbstractAction implements LayerAction {
         private final transient MarkerLayer layer;
 
+        /**
+         * Create a new {@link ShowHideMarkerText} action
+         * @param layer The layer to toggle the visible state of the marker text and icons
+         */
         public ShowHideMarkerText(MarkerLayer layer) {
             super(tr("Show Text/Icons"));
             new ImageProvider("dialogs", "showhide").getResource().attachImageIcon(this, true);

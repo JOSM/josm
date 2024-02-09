@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
@@ -239,6 +240,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         }
     }
 
+    /**
+     * Parse actions from a name
+     */
     public static class ActionParser {
         private final Map<String, Action> actions;
         private final StringBuilder result = new StringBuilder();
@@ -919,11 +923,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
 
             final JPanel left = new JPanel(new GridBagLayout());
             left.add(new JLabel(tr("Toolbar")), GBC.eol());
-            left.add(new JScrollPane(selectedList), GBC.std().fill(GBC.BOTH));
+            left.add(new JScrollPane(selectedList), GBC.std().fill(GridBagConstraints.BOTH));
 
             final JPanel right = new JPanel(new GridBagLayout());
             right.add(new JLabel(tr("Available")), GBC.eol());
-            right.add(new JScrollPane(actionsTree), GBC.eol().fill(GBC.BOTH));
+            right.add(new JScrollPane(actionsTree), GBC.eol().fill(GridBagConstraints.BOTH));
 
             final JPanel buttons = new JPanel(new GridLayout(6, 1));
             buttons.add(upButton);
@@ -977,13 +981,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             actionParametersPanel.add(new JLabel(tr("Action parameters")), GBC.eol().insets(0, 10, 0, 20));
             actionParametersTable.getColumnModel().getColumn(0).setHeaderValue(tr("Parameter name"));
             actionParametersTable.getColumnModel().getColumn(1).setHeaderValue(tr("Parameter value"));
-            actionParametersPanel.add(actionParametersTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
-            actionParametersPanel.add(actionParametersTable, GBC.eol().fill(GBC.BOTH).insets(0, 0, 0, 10));
+            actionParametersPanel.add(actionParametersTable.getTableHeader(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            actionParametersPanel.add(actionParametersTable, GBC.eol().fill(GridBagConstraints.BOTH).insets(0, 0, 0, 10));
             actionParametersPanel.setVisible(false);
 
             JPanel panel = gui.createPreferenceTab(this);
-            panel.add(p, GBC.eol().fill(GBC.BOTH));
-            panel.add(actionParametersPanel, GBC.eol().fill(GBC.HORIZONTAL));
+            panel.add(p, GBC.eol().fill(GridBagConstraints.BOTH));
+            panel.add(actionParametersPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             selected.removeAllElements();
             for (ActionDefinition actionDefinition: getDefinedActions()) {
                 selected.addElement(actionDefinition);
