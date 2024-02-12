@@ -74,9 +74,8 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
      * @return alphanum chunk found at given position
      */
     private static String getChunk(String s, int slength, int marker) {
-        StringBuilder chunk = new StringBuilder();
+        final int startMarker = marker;
         char c = s.charAt(marker);
-        chunk.append(c);
         marker++;
         if (Character.isDigit(c)) {
             while (marker < slength) {
@@ -84,7 +83,6 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
                 if (!Character.isDigit(c)) {
                     break;
                 }
-                chunk.append(c);
                 marker++;
             }
         } else {
@@ -93,11 +91,62 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
                 if (Character.isDigit(c)) {
                     break;
                 }
-                chunk.append(c);
                 marker++;
             }
         }
-        return chunk.toString();
+        return s.substring(startMarker, marker);
+    }
+
+    /**
+     * Check if a string is ASCII only
+     * @param string The string to check
+     * @param stringLength The length of the string (for performance reasons)
+     * @return {@code true} if the string only contains ascii characters
+     */
+    private static boolean isAscii(String string, int stringLength) {
+        for (int i = 0; i < stringLength; i++) {
+            char c = string.charAt(i);
+            if (c >= 128) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Compare two string chunks
+     * @param thisChunk The first chunk to compare
+     * @param thisChunkLength The length of the first chunk (for performance reasons)
+     * @param thatChunk The second chunk to compare
+     * @param thatChunkLength The length of the second chunk (for performance reasons)
+     * @return The {@link Comparator} result
+     */
+    private static int compareChunk(String thisChunk, int thisChunkLength, String thatChunk, int thatChunkLength) {
+        int result;
+        if (Character.isDigit(thisChunk.charAt(0)) && Character.isDigit(thatChunk.charAt(0))) {
+            // Simple chunk comparison by length.
+            result = thisChunkLength - thatChunkLength;
+            // If equal, the first different number counts
+            if (result == 0) {
+                for (int i = 0; i < thisChunkLength; i++) {
+                    result = thisChunk.charAt(i) - thatChunk.charAt(i);
+                    if (result != 0) {
+                        return result;
+                    }
+                }
+            }
+        } else {
+            // Check if both chunks are ascii only
+            if (isAscii(thisChunk, thisChunkLength) && isAscii(thatChunk, thatChunkLength)) {
+                return thisChunk.compareTo(thatChunk);
+            }
+            // Instantiate the collator
+            Collator compareOperator = Collator.getInstance();
+            // Compare regardless of accented letters
+            compareOperator.setStrength(Collator.SECONDARY);
+            result = compareOperator.compare(thisChunk, thatChunk);
+        }
+        return result;
     }
 
     @Override
@@ -116,34 +165,16 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
         int s2Length = s2.length();
 
         while (thisMarker < s1Length && thatMarker < s2Length) {
-            String thisChunk = getChunk(s1, s1Length, thisMarker);
-            thisMarker += thisChunk.length();
+            final String thisChunk = getChunk(s1, s1Length, thisMarker);
+            final int thisChunkLength = thisChunk.length();
+            thisMarker += thisChunkLength;
 
             String thatChunk = getChunk(s2, s2Length, thatMarker);
-            thatMarker += thatChunk.length();
+            final int thatChunkLength = thatChunk.length();
+            thatMarker += thatChunkLength;
 
             // If both chunks contain numeric characters, sort them numerically
-            int result;
-            if (Character.isDigit(thisChunk.charAt(0)) && Character.isDigit(thatChunk.charAt(0))) {
-                // Simple chunk comparison by length.
-                int thisChunkLength = thisChunk.length();
-                result = thisChunkLength - thatChunk.length();
-                // If equal, the first different number counts
-                if (result == 0) {
-                    for (int i = 0; i < thisChunkLength; i++) {
-                        result = thisChunk.charAt(i) - thatChunk.charAt(i);
-                        if (result != 0) {
-                            return result;
-                        }
-                    }
-                }
-            } else {
-                // Instantiate the collator
-                Collator compareOperator = Collator.getInstance();
-                // Compare regardless of accented letters
-                compareOperator.setStrength(Collator.SECONDARY);
-                result = compareOperator.compare(thisChunk, thatChunk);
-            }
+            int result = compareChunk(thisChunk, thisChunkLength, thatChunk, thatChunkLength);
 
             if (result != 0) {
                 return result;
