@@ -32,6 +32,9 @@ import org.openstreetmap.josm.tools.Utils;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface TestUser {
+    /**
+     * Initialize a user for tests
+     */
     class TestUserExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
         @Override
         public void afterEach(ExtensionContext context) throws Exception {

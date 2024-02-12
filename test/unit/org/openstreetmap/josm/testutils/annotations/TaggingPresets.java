@@ -31,6 +31,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @ExtendWith(TaggingPresets.TaggingPresetsExtension.class)
 public @interface TaggingPresets {
 
+    /**
+     * Reset the tagging presets between each test -- presets will be reset if they are changed.
+     */
     class TaggingPresetsExtension implements BeforeEachCallback, BeforeAllCallback {
         private static int expectedHashcode = 0;
         private static Locale lastLocale;

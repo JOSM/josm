@@ -44,6 +44,4 @@
   <suppress checks="HeaderCheck" files="ParallelScheduler\.java" />
   <suppress checks="FileLengthCheck" files="DomainValidator\.java" />
   <suppress checks="MissingDeprecatedCheck" files="package-info\.java" />
-  <suppress checks="org.openstreetmap.josm.TopLevelJavadocCheck" files="package-info\.java" />
-  <suppress checks="org.openstreetmap.josm.TopLevelJavadocCheck" files="[\\/]test[\\/]" />
 </suppressions>
