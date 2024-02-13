@@ -749,7 +749,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 }
                 if (isInRegion == preset.exclude_regions()) {
                     errors.add(TestError.builder(this, Severity.WARNING, INVALID_REGION)
-                            .message(tr("Invalid region for this preset"),
+                            .message(tr("Preset is invalid in this region"),
                                     marktr("Preset {0} should not be applied in this region"),
                                     preset.getLocaleName())
                             .primitives(p)
@@ -825,11 +825,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 final TestError.Builder builder = TestError.builder(this, Severity.WARNING, INVALID_REGION)
                         .primitives(p);
                 if (value == null) {
-                    builder.message(tr("Invalid region for this preset"),
+                    builder.message(tr("Key from a preset is invalid in this region"),
                             marktr("Preset {0} should not have the key {1}"),
                             preset.getLocaleName(), key);
                 } else {
-                    builder.message(tr("Invalid region for this preset"),
+                    builder.message(tr("Value from a preset is invalid in this region"),
                             marktr("Preset {0} should not have the tag {1}={2}"),
                             preset.getLocaleName(), key, value);
                 }
@@ -1266,7 +1266,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
         }
 
-        checkRegions = includeOtherSeverity && Config.getPref().getBoolean(PREF_CHECK_REGIONS, true);
+        checkRegions = Config.getPref().getBoolean(PREF_CHECK_REGIONS, true);
         if (isBeforeUpload) {
             checkRegions = checkRegions && Config.getPref().getBoolean(PREF_CHECK_REGIONS_BEFORE_UPLOAD, true);
         }
