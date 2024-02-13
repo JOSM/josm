@@ -35,6 +35,9 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
+
 /**
  * The Alphanum Algorithm is an improved sorting algorithm for strings
  * containing numbers: Instead of sorting numbers in ASCII order like a standard
@@ -182,7 +185,8 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
             }
         } else {
             // Check if both chunks are ascii only
-            if (isAscii(thisChunk, thisChunkLength) && isAscii(thatChunk, thatChunkLength)) {
+            // FIXME: re-enable once #23471 is fixed (the exception at startup keeps JOSM from finishing startup)
+            if (false && isAscii(thisChunk, thisChunkLength) && isAscii(thatChunk, thatChunkLength)) {
                 return Utils.clamp(compareString(thisChunk, thisChunkLength, thatChunk, thatChunkLength), -1, 1);
             }
             // Instantiate the collator
