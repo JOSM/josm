@@ -67,7 +67,7 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
         // We have 37 order overrides for symbols; ASCII tables has control characters through 31. 32-47 are symbols.
         // After the symbols, we have 0-9, and then aA-zZ.
         // The character order
-        final String order = " \r\t\n\f\u000b_,;:!?/.`^~'\"()[]{}@$*\\&#%+<=>|0123456789aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
+        final String order = " \r\t\n\f\u000b-_,;:!?/.`^~'\"()[]{}@$*\\&#%+<=>|0123456789aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
         for (int i = 0; i < order.length(); i++) {
             char c = order.charAt(i);
             ASCII_MAPPING[c] = (byte) (i + 1);
