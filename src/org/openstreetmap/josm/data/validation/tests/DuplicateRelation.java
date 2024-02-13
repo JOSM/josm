@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -35,6 +36,8 @@ import org.openstreetmap.josm.tools.MultiMap;
  * Tests if there are duplicate relations
  */
 public class DuplicateRelation extends Test {
+
+    private static final String DUPLICATED_RELATIONS = marktr("Duplicated relations");
 
     /**
      * Class to store one relation members and information about it
@@ -110,13 +113,13 @@ public class DuplicateRelation extends Test {
      */
     private static class RelationMembers {
         /** Set of member objects of the relation */
-        private final Set<RelMember> members;
+        private final List<RelMember> members;
 
         /** Store relation information
          * @param members The list of relation members
          */
         RelationMembers(List<RelationMember> members) {
-            this.members = new HashSet<>(members.size());
+            this.members = new ArrayList<>(members.size());
             for (RelationMember member : members) {
                 this.members.add(new RelMember(member));
             }
@@ -175,68 +178,216 @@ public class DuplicateRelation extends Test {
     /** Code number of relation with same members error */
     protected static final int SAME_RELATION = 1902;
 
-    /** MultiMap of all relations */
-    private MultiMap<RelationPair, OsmPrimitive> relations;
+    /** Code number of relation with same members error */
+    protected static final int IDENTICAL_MEMBERLIST = 1903;
 
-    /** MultiMap of all relations, regardless of keys */
-    private MultiMap<List<RelationMember>, OsmPrimitive> relationsNoKeys;
 
-    /** List of keys without useful information */
-    private final Set<String> ignoreKeys = new HashSet<>(AbstractPrimitive.getUninterestingKeys());
+    /** List of all initially visited testable relations*/
+    List<Relation> visited;
 
     /**
      * Default constructor
      */
     public DuplicateRelation() {
-        super(tr("Duplicated relations"),
+        super(tr(DUPLICATED_RELATIONS),
                 tr("This test checks that there are no relations with same tags and same members with same roles."));
     }
 
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        relations = new MultiMap<>(1000);
-        relationsNoKeys = new MultiMap<>(1000);
+        visited = new ArrayList<>();
+
     }
 
     @Override
     public void endTest() {
-        for (Set<OsmPrimitive> duplicated : relations.values()) {
+        if (!visited.isEmpty())
+            performChecks();
+        visited = null;
+        super.endTest();
+    }
+
+    private void performChecks() {
+        MultiMap<RelationPair, Relation> relations = new MultiMap<>(1000);
+        // MultiMap of all relations, regardless of keys
+        MultiMap<List<RelationMember>, Relation> sameMembers = new MultiMap<>(1000);
+
+        for (Relation r : visited) {
+            final List<RelationMember> rMembers = getSortedMembers(r);
+            sameMembers.put(rMembers, r);
+            addToRelations(relations, r, true);
+        }
+
+        if (partialSelection) {
+            // add data for relations which were not in the initial selection when
+            // they can be duplicates
+            DataSet ds = visited.iterator().next().getDataSet();
+            for (Relation r : ds.getRelations()) {
+                if (r.isDeleted() || r.getMembers().isEmpty() || visited.contains(r))
+                    continue;
+                final List<RelationMember> rMembers = getSortedMembers(r);
+                if (sameMembers.containsKey(rMembers))
+                    sameMembers.put(rMembers, r);
+
+                addToRelations(relations, r, false);
+            }
+        }
+
+        for (Set<Relation> duplicated : sameMembers.values()) {
+            if (duplicated.size() > 1) {
+                checkOrderAndTags(duplicated);
+            }
+        }
+
+        performGeometryTest(relations);
+    }
+
+    private void performGeometryTest(MultiMap<RelationPair, Relation> relations) {
+        // perform special test to find relations with different members but (possibly) same geometry
+        // this test is rather speculative and works only with complete members
+        for (Set<Relation> duplicated : relations.values()) {
             if (duplicated.size() > 1) {
                 TestError testError = TestError.builder(this, Severity.ERROR, DUPLICATE_RELATION)
-                        .message(tr("Duplicated relations"))
+                        .message(tr(DUPLICATED_RELATIONS))
                         .primitives(duplicated)
                         .build();
-                errors.add(testError);
+                if (errors.stream().noneMatch(e -> e.isSimilar(testError))) {
+                    errors.add(testError);
+                }
             }
         }
-        relations = null;
-        for (Set<OsmPrimitive> duplicated : relationsNoKeys.values()) {
-            if (duplicated.size() > 1) {
-                TestError testError = TestError.builder(this, Severity.OTHER, SAME_RELATION)
-                        .message(tr("Relations with same members"))
-                        .primitives(duplicated)
-                        .build();
-                errors.add(testError);
-            }
+    }
+
+    private static void addToRelations(MultiMap<RelationPair, Relation> relations, Relation r, boolean forceAdd) {
+        if (r.isUsable() && !r.hasIncompleteMembers()) {
+            RelationPair rKey = new RelationPair(r.getMembers(), cleanedKeys(r));
+            if (forceAdd || (!relations.isEmpty() && !relations.containsKey(rKey)))
+                relations.put(rKey, r);
         }
-        relationsNoKeys = null;
-        super.endTest();
     }
 
     @Override
     public void visit(Relation r) {
-        if (!r.isUsable() || r.hasIncompleteMembers() || "tmc".equals(r.get("type")) || "TMC".equals(r.get("type"))
-               || "destination_sign".equals(r.get("type")) || r.getMembers().isEmpty())
-            return;
-        List<RelationMember> rMembers = r.getMembers();
-        Map<String, String> rkeys = r.getKeys();
-        for (String key : ignoreKeys) {
-            rkeys.remove(key);
+        if (!r.isDeleted() && r.getMembersCount() > 0)
+            visited.add(r);
+    }
+
+    /**
+     * Check a list of relations which are guaranteed to have the same members, possibly in different order
+     * and possibly different tags.
+     * @param sameMembers the list of relations
+     */
+    private void checkOrderAndTags(Set<Relation> sameMembers) {
+        MultiMap<List<RelationMember>, Relation> sameOrder = new MultiMap<>();
+        MultiMap<Map<String, String>, Relation> sameKeys = new MultiMap<>();
+        for (Relation r : sameMembers) {
+            sameOrder.put(r.getMembers(), r);
+            sameKeys.put(cleanedKeys(r), r);
         }
-        RelationPair rKey = new RelationPair(rMembers, rkeys);
-        relations.put(rKey, r);
-        relationsNoKeys.put(rMembers, r);
+        for (Set<Relation> duplicated : sameKeys.values()) {
+            if (duplicated.size() > 1) {
+                reportDuplicateKeys(duplicated);
+            }
+        }
+        for (Set<Relation> duplicated : sameOrder.values()) {
+            if (duplicated.size() > 1) {
+                reportDuplicateMembers(duplicated);
+            }
+        }
+        List<Relation> primitives = sameMembers.stream().filter(r -> !ignoredType(r)).collect(Collectors.toList());
+        // report this collection if not already reported
+        if (primitives.size() > 1 && errors.stream().noneMatch(e -> e.getPrimitives().containsAll(primitives))) {
+            // same members, possibly different order
+            TestError testError = TestError.builder(this, Severity.OTHER, SAME_RELATION)
+                    .message(tr("Relations with same members"))
+                    .primitives(primitives)
+                    .build();
+            errors.add(testError);
+        }
+    }
+
+    /**
+     * Check collection of relations with the same keys and members, possibly in different order
+     * @param duplicated collection of relations, caller must make sure that they have the same keys and members
+     */
+    private void reportDuplicateKeys(Collection<Relation> duplicated) {
+        Relation first = duplicated.iterator().next();
+        if (memberOrderMatters(first)) {
+            List<Relation> toCheck = new ArrayList<>(duplicated);
+            while (toCheck.size() > 1) {
+                Relation ref = toCheck.iterator().next();
+                List<Relation> same = toCheck.stream()
+                        .filter(r -> r.getMembers().equals(ref.getMembers())).collect(Collectors.toList());
+                if (same.size() > 1) {
+                    // same members and keys, members in same order
+                    TestError testError = TestError.builder(this, Severity.ERROR, DUPLICATE_RELATION)
+                            .message(tr(DUPLICATED_RELATIONS))
+                            .primitives(same)
+                            .build();
+                    errors.add(testError);
+                }
+                toCheck.removeAll(same);
+            }
+        } else {
+            // same members and keys, possibly different order
+            TestError testError = TestError.builder(this, Severity.ERROR, DUPLICATE_RELATION)
+                    .message(tr(DUPLICATED_RELATIONS))
+                    .primitives(duplicated)
+                    .build();
+            errors.add(testError);
+        }
+    }
+
+    /**
+     * Report relations with the same member(s) in the same order, keys may be different
+     * @param duplicated collection of relations with identical member list
+     */
+    private void reportDuplicateMembers(Set<Relation> duplicated) {
+        List<Relation> primitives = duplicated.stream().filter(r -> !ignoredType(r)).collect(Collectors.toList());
+        if (primitives.size() > 1 && errors.stream().noneMatch(e -> e.getPrimitives().containsAll(primitives))) {
+            TestError testError = TestError.builder(this, Severity.OTHER, IDENTICAL_MEMBERLIST)
+                    .message(tr("Identical members"))
+                    .primitives(primitives)
+                    .build();
+            errors.add(testError);
+        }
+
+    }
+
+    private static boolean memberOrderMatters(Relation r) {
+        return r.hasTag("type", "route", "waterway"); // add more types?
+    }
+
+    private static boolean ignoredType(Relation r) {
+        return r.hasTag("type", "tmc", "TMC", "destination_sign"); // see r11783
+    }
+
+    /** return tags of a primitive after removing all discardable tags
+     *
+     * @param p the primitive
+     * @return map with cleaned tags
+     */
+    private static Map<String, String> cleanedKeys(OsmPrimitive p) {
+        Map<String, String> cleaned = p.getKeys();
+        for (String key : AbstractPrimitive.getDiscardableKeys()) {
+            cleaned.remove(key);
+        }
+        return cleaned;
+    }
+
+    /**
+     *  Order members of given relation by type, unique id, and role.
+     *  @param r the relation
+     * @return sorted list of members
+     */
+    private static List<RelationMember> getSortedMembers(Relation r) {
+        return r.getMembers().stream().sorted((m1, m2) -> {
+            int d = m1.getMember().compareTo(m2.getMember());
+            if (d != 0)
+                return d;
+            return m1.getRole().compareTo(m2.getRole());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -300,7 +451,7 @@ public class DuplicateRelation extends Test {
     @Override
     public boolean isFixable(TestError testError) {
         if (!(testError.getTester() instanceof DuplicateRelation)
-            || testError.getCode() == SAME_RELATION) return false;
+            || testError.getCode() != DUPLICATE_RELATION) return false;
 
         // We fix it only if there is no more than one relation that is relation member.
         Set<Relation> rels = testError.primitives(Relation.class)
