@@ -76,6 +76,8 @@
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
         <property name="dist-sources.jar" location="${dist.dir}/josm-custom-sources.jar"/>
+        <!-- When incrementing the minimum Java version, don't forget to update the Java versions users will update to
+             (PlatformHook#getJavaUrl, PlatformHook#startupSanityChecks and PlatformHook#warnSoonToBeUnsupportedJava) -->
         <property name="java.lang.version" value="8" />
         <property name="test.headless" value="true" />
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
@@ -299,12 +301,6 @@ Build-Date: ${build.tstamp}
         <call-javac-compile-mrjar release="11"/>
         <!-- Java 17 specific files (2021-09 LTS) -->
         <call-javac-compile-mrjar release="17"/>
-        <!-- Java 18 specific files -->
-        <call-javac-compile-mrjar release="18"/>
-        <!-- Java 19 specific files -->
-        <call-javac-compile-mrjar release="19"/>
-        <!-- Java 20 specific files -->
-        <call-javac-compile-mrjar release="20"/>
         <!-- Java 21 specific files (2023-09 LTS) -->
         <call-javac-compile-mrjar release="21"/>
     </target>

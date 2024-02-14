@@ -57,6 +57,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.RepaintManager;
@@ -129,6 +130,7 @@ import org.openstreetmap.josm.gui.util.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.widgets.TextContextualPopupMenu;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.CertificateAmendment;
@@ -403,6 +405,40 @@ public class MainApplication {
                 .append(tr("Would you like to <b>download OpenWebStart now</b>? (Please do!)"));
         askUpdate(tr("Outdated Java WebStart version"), tr("Update to OpenWebStart"), "askUpdateWebStart", /* ICON */"presets/transport/rocket", content, url);
         // CHECKSTYLE.ON: LineLength
+    }
+
+    /**
+     * Tells the user that a sanity check failed
+     * @param title The title of the message to show
+     * @param canContinue {@code true} if the failed sanity check(s) will not instantly kill JOSM when the user edits
+     * @param message The message parts to show the user (as a list)
+     */
+    public static void sanityCheckFailed(String title, boolean canContinue, String... message) {
+        final ExtendedDialog ed;
+        if (canContinue) {
+            ed = new ExtendedDialog(mainFrame, title, tr("Stop"), tr("Continue"));
+            ed.setButtonIcons("cancel", "ok");
+        } else {
+            ed = new ExtendedDialog(mainFrame, title, tr("Stop"));
+            ed.setButtonIcons("cancel");
+        }
+        ed.setDefaultButton(1).setCancelButton(1);
+        // Check if the dialog has not already been permanently hidden by user
+        if (!ed.toggleEnable("sanityCheckFailed").toggleCheckState() || !canContinue) {
+            final String content = Arrays.stream(message).collect(Collectors.joining("</li><li>",
+                    "<html><body><ul><li>", "</li></ul></body></html>"));
+            final JTextPane textField = new JTextPane();
+            textField.setContentType("text/html");
+            textField.setText(content);
+            TextContextualPopupMenu.enableMenuFor(textField, true);
+            ed.setMinimumSize(new Dimension(480, 300));
+            ed.setIcon(JOptionPane.WARNING_MESSAGE);
+            ed.setContent(textField);
+            ed.showDialog();
+        }
+        if (!canContinue || ed.getValue() <= 1) { // 0 == cancel (we want to stop) and 1 == stop
+            Lifecycle.exitJosm(true, -1);
+        }
     }
 
     /**
