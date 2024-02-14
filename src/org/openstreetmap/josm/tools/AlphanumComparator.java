@@ -35,9 +35,6 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
-
 /**
  * The Alphanum Algorithm is an improved sorting algorithm for strings
  * containing numbers: Instead of sorting numbers in ASCII order like a standard
@@ -51,13 +48,20 @@ import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
  *
  */
 public final class AlphanumComparator implements Comparator<String>, Serializable {
+    /** {@code true} to use the faster ASCII sorting algorithm. Set to {@code false} when testing compatibility. */
+    static boolean useFastASCIISort = true;
+    /**
+     * The sort order for the fast ASCII sort method.
+     */
+    static final String ASCII_SORT_ORDER =
+            " \r\t\n\f\u000b-_,;:!?/.`^~'\"()[]{}@$*\\&#%+<=>|0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     private static final long serialVersionUID = 1L;
 
     private static final AlphanumComparator INSTANCE = new AlphanumComparator();
     /**
      * A mapping from ASCII characters to the default {@link Collator} order.
-     * At writing, the default rules can be found in {@link sun.util.locale.provider.CollationRules#DEFAULTRULES}.
+     * At writing, the default rules can be found in CollationRules#DEFAULTRULES.
      */
     private static final byte[] ASCII_MAPPING = new byte[128];
     static {
@@ -70,9 +74,8 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
         // We have 37 order overrides for symbols; ASCII tables has control characters through 31. 32-47 are symbols.
         // After the symbols, we have 0-9, and then aA-zZ.
         // The character order
-        final String order = " \r\t\n\f\u000b-_,;:!?/.`^~'\"()[]{}@$*\\&#%+<=>|0123456789aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
-        for (int i = 0; i < order.length(); i++) {
-            char c = order.charAt(i);
+        for (int i = 0; i < ASCII_SORT_ORDER.length(); i++) {
+            char c = ASCII_SORT_ORDER.charAt(i);
             ASCII_MAPPING[c] = (byte) (i + 1);
         }
     }
@@ -100,15 +103,28 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
      * @return See {@link String#compareToIgnoreCase(String)} (e.g. {@code string1.compareToIgnoreCase(string2)}).
      */
     private static int compareString(String string1, int len1, String string2, int len2) {
-        int lim = Math.min(len1, len2);
-        int k = 0;
-        while (k < lim) {
-            final int c1 = ASCII_MAPPING[string1.charAt(k)];
-            final int c2 = ASCII_MAPPING[string2.charAt(k)];
+        int loc1 = 0;
+        int loc2 = 0;
+        while (loc1 < len1 && loc2 < len2) {
+            // Ignore control symbols
+            while (loc1 < len1 - 1 && string1.charAt(loc1) <= 32) {
+                loc1++;
+            }
+            while (loc2 < len2 - 1 && string2.charAt(loc2) <= 32) {
+                loc2++;
+            }
+            if (loc1 >= len1 || loc2 >= len2) break;
+
+            char lower1 = Character.toLowerCase(string1.charAt(loc1));
+            char lower2 = Character.toLowerCase(string2.charAt(loc2));
+
+            final int c1 = ASCII_MAPPING[lower1];
+            final int c2 = ASCII_MAPPING[lower2];
             if (c1 != c2) {
                 return c1 - c2;
             }
-            k++;
+            loc1++;
+            loc2++;
         }
         return len1 - len2;
     }
@@ -184,9 +200,8 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
                 }
             }
         } else {
-            // Check if both chunks are ascii only
-            // FIXME: re-enable once #23471 is fixed (the exception at startup keeps JOSM from finishing startup)
-            if (false && isAscii(thisChunk, thisChunkLength) && isAscii(thatChunk, thatChunkLength)) {
+            // Check if both chunks are ascii only; if so, use a much faster sorting algorithm.
+            if (useFastASCIISort && isAscii(thisChunk, thisChunkLength) && isAscii(thatChunk, thatChunkLength)) {
                 return Utils.clamp(compareString(thisChunk, thisChunkLength, thatChunk, thatChunkLength), -1, 1);
             }
             // Instantiate the collator
