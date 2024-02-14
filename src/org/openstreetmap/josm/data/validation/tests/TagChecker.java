@@ -1240,6 +1240,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
+        super.setShowElements(true);
         includeOtherSeverity = includeOtherSeverityChecks();
         checkKeys = Config.getPref().getBoolean(PREF_CHECK_KEYS, true);
         if (isBeforeUpload) {
