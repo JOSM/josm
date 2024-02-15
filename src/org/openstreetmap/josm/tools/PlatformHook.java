@@ -413,7 +413,7 @@ public interface PlatformHook {
         final List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
         final StringBuilder missingArguments = new StringBuilder();
         for (String arg : expectedJvmArguments) {
-            if (!vmArguments.contains(arg)) {
+            if (vmArguments.stream().noneMatch(s -> s.contains(arg))) {
                 if (missingArguments.length() > 0) {
                     missingArguments.append("<br>");
                 }

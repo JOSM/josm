@@ -417,7 +417,7 @@ public class MainApplication {
         final ExtendedDialog ed;
         if (canContinue) {
             ed = new ExtendedDialog(mainFrame, title, tr("Stop"), tr("Continue"));
-            ed.setButtonIcons("cancel", "ok");
+            ed.setButtonIcons("cancel", "apply");
         } else {
             ed = new ExtendedDialog(mainFrame, title, tr("Stop"));
             ed.setButtonIcons("cancel");
