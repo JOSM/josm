@@ -275,7 +275,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
     /**
      * Prepare the default decisions for the current model
      * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
-     * @since 11626
+     * @since 11627
      */
     void prepareDefaultTagDecisions(boolean fireEvent) {
         for (MultiValueResolutionDecision decision: decisions.values()) {
@@ -289,6 +289,23 @@ public class TagConflictResolverModel extends DefaultTableModel {
             // else: Do not suggest to keep all values in order to reduce the wrong usage of semicolon values, see #9104!
         }
         rebuild(fireEvent);
+    }
+
+    /**
+     * Prepare the default decisions for the current model.
+     * @param decidedKeys set of tag keys for which the first value should be used
+     * @since xxx
+     */
+    public void prepareDefaultTagDecisions(Set<String> decidedKeys) {
+        for (MultiValueResolutionDecision decision : decisions.values()) {
+            if (!decidedKeys.contains(decision.getKey()))
+                continue;
+            List<String> values = decision.getValues();
+            if (!values.isEmpty()) {
+                decision.keepOne(values.iterator().next());
+            }
+        }
+        rebuild(false);
     }
 
     /**
