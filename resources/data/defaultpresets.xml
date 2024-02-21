@@ -1588,6 +1588,10 @@
         <item name="Turning Circle" icon="presets/vehicle/turning_circle.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=turning_circle" />
             <key key="highway" value="turning_circle" />
+            <optional>
+                <link wiki="Key:turning_circle" />
+                <combo key="turning_circle" text="Type of Turning Circle" values="circle,oval,knuckle,hammer,square" values_sort="false" />
+            </optional>
         </item> <!-- Turning Circle -->
         <item name="Turning Loop" icon="presets/vehicle/turning_loop.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=turning_loop" />
