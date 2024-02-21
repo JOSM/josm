@@ -23,16 +23,14 @@ class OAuthParametersTest {
     @Test
     @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     void testCreateDefault() {
-        OAuthParameters def = OAuthParameters.createDefault();
+        IOAuthParameters def = OAuthParameters.createDefault();
         assertNotNull(def);
-        assertEquals(def, OAuthParameters.createDefault(Config.getUrls().getDefaultOsmApiUrl()));
-        OAuthParameters dev = OAuthParameters.createDefault("https://api06.dev.openstreetmap.org/api");
+        assertEquals(def, OAuthParameters.createDefault(Config.getUrls().getDefaultOsmApiUrl(), OAuthVersion.OAuth20));
+        IOAuthParameters dev = OAuthParameters.createDefault("https://api06.dev.openstreetmap.org/api", OAuthVersion.OAuth20);
         assertNotNull(dev);
         assertNotEquals(def, dev);
         Logging.setLogLevel(Logging.LEVEL_TRACE); // enable trace for line coverage
-        assertEquals(def, OAuthParameters.createDefault("wrong_url"));
-        OAuthParameters dev2 = new OAuthParameters(dev);
-        assertEquals(dev, dev2);
+        assertEquals(def, OAuthParameters.createDefault("wrong_url", OAuthVersion.OAuth20));
     }
 
     /**
@@ -41,6 +39,6 @@ class OAuthParametersTest {
     @Test
     void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
-        EqualsVerifier.forClass(OAuthParameters.class).usingGetClass().verify();
+        EqualsVerifier.forClass(OAuth20Parameters.class).usingGetClass().verify();
     }
 }

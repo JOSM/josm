@@ -6,7 +6,6 @@ import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 
 import org.openstreetmap.josm.data.oauth.IOAuthToken;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 
 import jakarta.annotation.Nullable;
 
@@ -64,8 +63,12 @@ public interface CredentialsAgent {
      *
      * @return the current OAuth Access Token to access the OSM server.
      * @throws CredentialsAgentException if something goes wrong
+     * @deprecated since 18991 -- OAuth 1.0 is being removed from the OSM API
      */
-    OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException;
+    @Deprecated
+    default IOAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
+        throw new CredentialsAgentException("Call to deprecated method");
+    }
 
     /**
      * Lookup the current OAuth Access Token to access the specified server. Replies null, if no
@@ -84,15 +87,19 @@ public interface CredentialsAgent {
      *
      * @param accessToken the access Token. null, to remove the Access Token.
      * @throws CredentialsAgentException if something goes wrong
+     * @deprecated since 18991 -- OAuth 1.0 is being removed from the OSM API
      */
-    void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException;
+    @Deprecated
+    default void storeOAuthAccessToken(IOAuthToken accessToken) throws CredentialsAgentException {
+        throw new CredentialsAgentException("Call to deprecated method");
+    }
 
     /**
      * Stores the OAuth Access Token <code>accessToken</code>.
      *
      * @param host The host the access token is for
      * @param accessToken the access Token. null, to remove the Access Token. This will remove all IOAuthTokens <i>not</i> managed by
-     *                    {@link #storeOAuthAccessToken(OAuthToken)}.
+     *                    {@link #storeOAuthAccessToken(IOAuthToken)}.
      * @throws CredentialsAgentException if something goes wrong
      * @since 18650
      */

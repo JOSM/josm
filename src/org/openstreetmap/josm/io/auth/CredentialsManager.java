@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.oauth.IOAuthToken;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -16,7 +15,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * CredentialManager is a factory for the single credential agent used.
- *
+ * <p>
  * Currently, it defaults to replying an instance of {@link JosmPreferencesCredentialAgent}.
  * @since 2641
  */
@@ -157,18 +156,8 @@ public class CredentialsManager implements CredentialsAgent {
     }
 
     @Override
-    public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
-        return delegate.lookupOAuthAccessToken();
-    }
-
-    @Override
     public IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException {
         return delegate.lookupOAuthAccessToken(host);
-    }
-
-    @Override
-    public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException {
-        delegate.storeOAuthAccessToken(accessToken);
     }
 
     @Override

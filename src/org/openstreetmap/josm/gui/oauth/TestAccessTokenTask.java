@@ -11,11 +11,9 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.data.oauth.IOAuthParameters;
 import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuth20Token;
-import org.openstreetmap.josm.data.oauth.OAuthParameters;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuthException;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -33,20 +31,15 @@ import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.exception.OAuthException;
-
 /**
  * Checks whether an OSM API server can be accessed with a specific Access Token.
- *
+ * <p>
  * It retrieves the user details for the user which is authorized to access the server with
  * this token.
  *
  */
 public class TestAccessTokenTask extends PleaseWaitRunnable {
-    private final OAuthToken tokenOAuth1;
     private final IOAuthToken tokenOAuth2;
-    private final IOAuthParameters oauthParameters;
     private boolean canceled;
     private final Component parent;
     private final String apiUrl;
@@ -57,38 +50,14 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
      *
      * @param parent the parent component relative to which the  {@link PleaseWaitRunnable}-Dialog is displayed
      * @param apiUrl the API URL. Must not be null.
-     * @param parameters the OAuth parameters. Must not be null.
      * @param accessToken the Access Token. Must not be null.
+     * @since 18991
      */
-    public TestAccessTokenTask(Component parent, String apiUrl, OAuthParameters parameters, OAuthToken accessToken) {
+    public TestAccessTokenTask(Component parent, String apiUrl, IOAuthToken accessToken) {
         super(parent, tr("Testing OAuth Access Token"), false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
-        CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         CheckParameterUtil.ensureParameterNotNull(accessToken, "accessToken");
-        this.tokenOAuth1 = accessToken;
-        this.tokenOAuth2 = null;
-        this.oauthParameters = parameters;
-        this.parent = parent;
-        this.apiUrl = apiUrl;
-    }
-
-    /**
-     * Create the task
-     *
-     * @param parent the parent component relative to which the  {@link PleaseWaitRunnable}-Dialog is displayed
-     * @param apiUrl the API URL. Must not be null.
-     * @param parameters the OAuth parameters. Must not be null.
-     * @param accessToken the Access Token. Must not be null.
-     * @since 18764
-     */
-    public TestAccessTokenTask(Component parent, String apiUrl, IOAuthParameters parameters, IOAuthToken accessToken) {
-        super(parent, tr("Testing OAuth Access Token"), false /* don't ignore exceptions */);
-        CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
-        CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
-        CheckParameterUtil.ensureParameterNotNull(accessToken, "accessToken");
-        this.tokenOAuth1 = null;
         this.tokenOAuth2 = accessToken;
-        this.oauthParameters = parameters;
         this.parent = parent;
         this.apiUrl = apiUrl;
     }
@@ -109,18 +78,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void sign(HttpClient con) throws OAuthException {
-        if (oauthParameters instanceof OAuthParameters) {
-            OAuthConsumer consumer = ((OAuthParameters) oauthParameters).buildConsumer();
-            consumer.setTokenWithSecret(tokenOAuth1.getKey(), tokenOAuth1.getSecret());
-            consumer.sign(con);
-        } else {
-            try {
-                this.tokenOAuth2.sign(con);
-            } catch (org.openstreetmap.josm.data.oauth.OAuthException e) {
-                // Adapt our OAuthException to the SignPost OAuth exception
-                throw new OAuthException(e) {};
-            }
-        }
+        this.tokenOAuth2.sign(con);
     }
 
     protected String normalizeApiUrl(String url) {
@@ -314,12 +272,9 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     private String getAuthKey() {
-        if (this.tokenOAuth1 != null) {
-            return this.tokenOAuth1.getKey();
-        }
         if (this.tokenOAuth2 instanceof OAuth20Token) {
             return ((OAuth20Token) this.tokenOAuth2).getBearerToken();
         }
-        throw new IllegalArgumentException("Only OAuth1 and OAuth2 tokens are understood: " + this.tokenOAuth2);
+        throw new IllegalArgumentException("Only OAuth2 tokens are understood: " + this.tokenOAuth2);
     }
 }

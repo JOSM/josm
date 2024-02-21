@@ -9,7 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -18,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.data.oauth.OAuth20Token;
+import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
@@ -50,17 +52,20 @@ public @interface TestUser {
         @Override
         public void beforeEach(ExtensionContext context) throws Exception {
             assumeTrue(TestUtils.areCredentialsProvided(),
-                    "OSM DEV API credentials not provided. Please define them with -Dosm.username and -Dosm.password");
-            final String username = Utils.getSystemProperty("osm.username");
-            final String password = Utils.getSystemProperty("osm.password");
-            assumeTrue(username != null && !username.isEmpty(), "Please add -Dosm.username for the OSM DEV API");
-            assumeTrue(password != null && !password.isEmpty(), "Please add -Dosm.password for the OSM DEV API");
-            Config.getPref().put("osm-server.auth-method", "basic");
+                    "OSM DEV API credentials not provided. Please define them with -Dosm.oauth2");
+            final String oauth2 = Utils.getSystemProperty("osm.oauth2");
+            Config.getPref().put("osm-server.auth-method", "oauth20");
 
             // don't use atomic upload, the test API server can't cope with large diff uploads
             Config.getPref().putBoolean("osm-server.atomic-upload", false);
-            CredentialsManager.getInstance().store(Authenticator.RequestorType.SERVER, org.openstreetmap.josm.io.OsmApi.getOsmApi().getHost(),
-                    new PasswordAuthentication(username, password.toCharArray()));
+            final String serverUrl = org.openstreetmap.josm.io.OsmApi.getOsmApi().getServerUrl();
+            final OAuth20Token token = new OAuth20Token(OAuthParameters.createDefault(),
+                    "{\"token_type\":\"bearer\", \"access_token\": \"" + oauth2 + "\"}");
+            OAuthAccessTokenHolder.getInstance().setAccessToken(serverUrl, token);
+            CredentialsManager.getInstance().storeOAuthAccessToken(serverUrl, token);
+            if (!UserIdentityManager.getInstance().isFullyIdentified()) {
+                UserIdentityManager.getInstance().initFromOAuth();
+            }
         }
     }
 }
