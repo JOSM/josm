@@ -14,12 +14,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
           fetch-depth: 256
 
     - name: Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/.ivy2/cache/
@@ -31,7 +31,7 @@ jobs:
         ant pmd
 
     - name: Upload report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: pmd-josm.xml
 
