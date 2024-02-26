@@ -437,6 +437,11 @@ public class MainApplication {
             ed.showDialog();
         }
         if (!canContinue || ed.getValue() <= 1) { // 0 == cancel (we want to stop) and 1 == stop
+            // Never store cancel/stop -- this would otherwise lead to the user never seeing the window again, and JOSM just stopping.
+            if (ConditionalOptionPaneUtil.getDialogReturnValue("sanityCheckFailed") != -1) {
+                Config.getPref().put("message.sanityCheckFailed", null);
+                Config.getPref().put("message.sanityCheckFailed.value", null);
+            }
             Lifecycle.exitJosm(true, -1);
         }
     }
