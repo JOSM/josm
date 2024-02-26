@@ -424,18 +424,17 @@ public class MainApplication {
         }
         ed.setDefaultButton(1).setCancelButton(1);
         // Check if the dialog has not already been permanently hidden by user
-        if (!ed.toggleEnable("sanityCheckFailed").toggleCheckState() || !canContinue) {
-            final String content = Arrays.stream(message).collect(Collectors.joining("</li><li>",
-                    "<html><body><ul><li>", "</li></ul></body></html>"));
-            final JTextPane textField = new JTextPane();
-            textField.setContentType("text/html");
-            textField.setText(content);
-            TextContextualPopupMenu.enableMenuFor(textField, true);
-            ed.setMinimumSize(new Dimension(480, 300));
-            ed.setIcon(JOptionPane.WARNING_MESSAGE);
-            ed.setContent(textField);
-            ed.showDialog();
-        }
+        ed.toggleEnable("sanityCheckFailed");
+        final String content = Arrays.stream(message).collect(Collectors.joining("</li><li>",
+                 "<html><body><ul><li>", "</li></ul></body></html>"));
+        final JTextPane textField = new JTextPane();
+        textField.setContentType("text/html");
+        textField.setText(content);
+        TextContextualPopupMenu.enableMenuFor(textField, true);
+        ed.setMinimumSize(new Dimension(480, 300));
+        ed.setIcon(JOptionPane.WARNING_MESSAGE);
+        ed.setContent(textField);
+        ed.showDialog(); // This won't show the dialog if the user has previously saved their response
         if (!canContinue || ed.getValue() <= 1) { // 0 == cancel (we want to stop) and 1 == stop
             // Never store cancel/stop -- this would otherwise lead to the user never seeing the window again, and JOSM just stopping.
             if (ConditionalOptionPaneUtil.getDialogReturnValue("sanityCheckFailed") != -1) {
