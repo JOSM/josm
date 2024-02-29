@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.validation.tests.TagChecker;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.tools.HttpClient;
 
 import jakarta.json.Json;
@@ -29,6 +30,7 @@ import jakarta.json.JsonValue;
  */
 @BasicPreferences
 @Timeout(20)
+@Territories
 class TaginfoTestIT {
     /**
      * Checks that popular tags are known (i.e included in internal presets, or deprecated, or explicitely ignored)
