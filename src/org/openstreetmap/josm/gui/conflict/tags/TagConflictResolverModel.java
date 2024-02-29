@@ -294,7 +294,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
     /**
      * Prepare the default decisions for the current model.
      * @param decidedKeys set of tag keys for which the first value should be used
-     * @since xxx
+     * @since 18988
      */
     public void prepareDefaultTagDecisions(Set<String> decidedKeys) {
         for (MultiValueResolutionDecision decision : decisions.values()) {
