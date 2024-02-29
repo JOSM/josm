@@ -46,6 +46,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MultipolygonTest extends Test {
 
+    private static final String OUTER = "outer";
+    private static final String INNER = "inner";
+
     /** Non-Way in multipolygon */
     public static final int WRONG_MEMBER_TYPE = 1601;
     /** No useful role for multipolygon member */
@@ -444,9 +447,18 @@ public class MultipolygonTest extends Test {
             return;
         }
         if (r == createdRelation) {
+            // see #23517: sort rings so that outer come first
+            list.sort((r1, r2) -> {
+                // outer first
+                int d = Integer.compare(r1.level % 2, r2.level % 2);
+                if (d != 0)
+                    return d;
+                // ring with more members first
+                return Integer.compare(r2.outerWay.getWayIds().size(), r1.outerWay.getWayIds().size());
+            });
             List<RelationMember> modMembers = new ArrayList<>();
             for (PolygonLevel pol : list) {
-                final String calculatedRole = (pol.level % 2 == 0) ? "outer" : "inner";
+                final String calculatedRole = (pol.level % 2 == 0) ? OUTER : INNER;
                 for (long wayId : pol.outerWay.getWayIds()) {
                     RelationMember member = wayMap.get(wayId);
                     modMembers.add(new RelationMember(calculatedRole, member.getMember()));
@@ -456,7 +468,7 @@ public class MultipolygonTest extends Test {
             return;
         }
         for (PolygonLevel pol : list) {
-            final String calculatedRole = (pol.level % 2 == 0) ? "outer" : "inner";
+            final String calculatedRole = (pol.level % 2 == 0) ? OUTER : INNER;
             for (long wayId : pol.outerWay.getWayIds()) {
                 RelationMember member = wayMap.get(wayId);
                 if (!calculatedRole.equals(member.getRole())) {
@@ -468,7 +480,7 @@ public class MultipolygonTest extends Test {
                             .primitives(Arrays.asList(r, member.getMember()))
                             .highlight(member.getMember())
                             .build());
-                    if (pol.level == 0 && "inner".equals(member.getRole())) {
+                    if (pol.level == 0 && INNER.equals(member.getRole())) {
                         // maybe only add this error if we found an outer ring with correct role(s) ?
                         errors.add(TestError.builder(this, Severity.ERROR, INNER_WAY_OUTSIDE)
                                 .message(tr("Multipolygon inner way is outside"))
@@ -569,7 +581,7 @@ public class MultipolygonTest extends Test {
      */
     private void findIntersectingWaysIncomplete(Relation r) {
         Set<OsmPrimitive> outerWays = r.getMembers().stream()
-                .filter(m -> m.getRole().isEmpty() || "outer".equals(m.getRole()))
+                .filter(m -> m.getRole().isEmpty() || OUTER.equals(m.getRole()))
                 .map(RelationMember::getMember)
                 .collect(Collectors.toSet());
         for (int loop = 0; loop < 2; loop++) {
@@ -643,9 +655,9 @@ public class MultipolygonTest extends Test {
         boolean hasUnexpectedWayRole = false;
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
-                if (rm.hasRole() && !rm.hasRole("inner", "outer"))
+                if (rm.hasRole() && !rm.hasRole(INNER, OUTER))
                     hasUnexpectedWayRole = true;
-                if (!rm.hasRole("inner", "outer") || !rm.hasRole()) {
+                if (!rm.hasRole(INNER, OUTER) || !rm.hasRole()) {
                     tmpErrors.add(TestError.builder(this, Severity.ERROR, WRONG_MEMBER_ROLE)
                             .message(tr("Role for multipolygon way member should be inner or outer"))
                             .primitives(Arrays.asList(r, rm.getMember()))
@@ -905,7 +917,7 @@ public class MultipolygonTest extends Test {
             }
             createdRelation = null; // makes sure that repeatCheck is only set once
         } while (repeatCheck);
-        errors.removeIf(e->e.getSeverity() == Severity.OTHER);
+        errors.removeIf(e -> e.getSeverity() == Severity.OTHER);
         return r;
     }
 
