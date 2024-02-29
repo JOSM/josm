@@ -701,7 +701,10 @@ public class ValidatorDialog extends ToggleDialog
         }
     }
 
-    private static void invalidateValidatorLayers() {
+    /**
+     * Invalidate the error layer
+     */
+    public static void invalidateValidatorLayers() {
         MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
     }
 

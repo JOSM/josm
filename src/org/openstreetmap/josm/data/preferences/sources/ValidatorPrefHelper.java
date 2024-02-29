@@ -71,6 +71,13 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
     public static final BooleanProperty PREF_REMOVE_IRRELEVANT = new BooleanProperty(PREFIX + ".partial.removeIrrelevant", true);
 
     /**
+     * See #23519
+     * The preferences key for the automatic unfurl of the validation result window
+     *
+     */
+    public static final BooleanProperty PREF_UNFURL = new BooleanProperty(PREFIX + ".force.unfurl.window", true);
+
+    /**
      * Constructs a new {@code PresetPrefHelper}.
      */
     public ValidatorPrefHelper() {

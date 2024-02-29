@@ -23,7 +23,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.ValidatorLayer;
+import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -142,10 +142,11 @@ public class ValidationTask extends PleaseWaitRunnable {
                 // see #23440 why this is inside the EDT
                 if (!map.validatorDialog.isShowing() && errors.isEmpty() && beforeUpload)
                     return;
-                map.validatorDialog.unfurlDialog();
+                if (Boolean.TRUE.equals(ValidatorPrefHelper.PREF_UNFURL.get()))
+                    map.validatorDialog.unfurlDialog();
                 map.validatorDialog.tree.setErrors(errors);
                 //FIXME: nicer way to find / invalidate the corresponding error layer
-                MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+                ValidatorDialog.invalidateValidatorLayers();
                 if (!errors.isEmpty()) {
                     OsmValidator.initializeErrorLayer();
                 }

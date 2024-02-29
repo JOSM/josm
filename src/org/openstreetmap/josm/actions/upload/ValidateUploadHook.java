@@ -21,7 +21,6 @@ import org.openstreetmap.josm.data.validation.ValidationTask;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
-import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.GBC;
@@ -105,13 +104,6 @@ public class ValidateUploadHook implements UploadHook {
         int rc = ed.showDialog().getValue();
         GuiHelper.destroyComponents(ed, false);
         ed.dispose();
-        if (rc != 1) {
-            OsmValidator.initializeTests();
-            OsmValidator.initializeErrorLayer();
-            MainApplication.getMap().validatorDialog.unfurlDialog();
-            MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
-            return false;
-        }
-        return true;
+        return rc == 1;
     }
 }
