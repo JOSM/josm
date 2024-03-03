@@ -142,7 +142,7 @@ public class ValidationTask extends PleaseWaitRunnable {
                 // see #23440 why this is inside the EDT
                 if (!map.validatorDialog.isShowing() && errors.isEmpty() && beforeUpload)
                     return;
-                if (Boolean.TRUE.equals(ValidatorPrefHelper.PREF_UNFURL.get()))
+                if (!map.validatorDialog.isShowing() || Boolean.TRUE.equals(ValidatorPrefHelper.PREF_UNFURL.get()))
                     map.validatorDialog.unfurlDialog();
                 map.validatorDialog.tree.setErrors(errors);
                 //FIXME: nicer way to find / invalidate the corresponding error layer
