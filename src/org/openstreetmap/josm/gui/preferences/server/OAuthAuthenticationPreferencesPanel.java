@@ -16,6 +16,7 @@ import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -317,15 +318,24 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         void updateEnabledState() {
             if (procedure == AuthorizationProcedure.MANUALLY) {
                 this.setEnabled(true);
-            } else if (Utils.isValidUrl(apiUrl) && DomainValidator.getInstance().isValid(URI.create(apiUrl).getHost())) {
-                // We want to avoid trying to make connection with an invalid URL
-                final String currentApiUrl = apiUrl;
-                MainApplication.worker.execute(() -> {
-                    final String clientId = OAuthParameters.createDefault(apiUrl, oAuthVersion).getClientId();
-                    if (Objects.equals(apiUrl, currentApiUrl)) {
-                        GuiHelper.runInEDT(() -> this.setEnabled(!Utils.isEmpty(clientId)));
-                    }
-                });
+            } else if (Utils.isValidUrl(apiUrl)) {
+                final URI apiURI;
+                try {
+                    apiURI = new URI(apiUrl);
+                } catch (URISyntaxException e) {
+                    Logging.trace(e);
+                    return;
+                }
+                if (DomainValidator.getInstance().isValid(apiURI.getHost())) {
+                    // We want to avoid trying to make connection with an invalid URL
+                    final String currentApiUrl = apiUrl;
+                    MainApplication.worker.execute(() -> {
+                        final String clientId = OAuthParameters.createDefault(apiUrl, oAuthVersion).getClientId();
+                        if (Objects.equals(apiUrl, currentApiUrl)) {
+                            GuiHelper.runInEDT(() -> this.setEnabled(!Utils.isEmpty(clientId)));
+                        }
+                    });
+                }
             }
         }
 
