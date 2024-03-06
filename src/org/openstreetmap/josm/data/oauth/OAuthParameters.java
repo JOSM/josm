@@ -196,18 +196,26 @@ public final class OAuthParameters {
      * @since 18650
      */
     public static IOAuthParameters createFromApiUrl(String apiUrl, OAuthVersion oAuthVersion) {
-        IOAuthParameters parameters = createDefault(apiUrl, oAuthVersion);
+        // We actually need the host
+        if (apiUrl.startsWith("https://") || apiUrl.startsWith("http://")) {
+            try {
+                apiUrl = new URI(apiUrl).getHost();
+            } catch (URISyntaxException syntaxException) {
+                Logging.trace(apiUrl);
+            }
+        }
         switch (oAuthVersion) {
             case OAuth20:
             case OAuth21: // Right now, OAuth 2.1 will work with our OAuth 2.0 implementation
-                OAuth20Parameters oAuth20Parameters = (OAuth20Parameters) parameters;
                 try {
                     IOAuthToken storedToken = CredentialsManager.getInstance().lookupOAuthAccessToken(apiUrl);
-                    return storedToken != null ? storedToken.getParameters() : oAuth20Parameters;
+                    if (storedToken != null) {
+                        return storedToken.getParameters();
+                    }
                 } catch (CredentialsAgentException e) {
                     Logging.trace(e);
                 }
-                return oAuth20Parameters;
+                return createDefault(apiUrl, oAuthVersion);
             default:
                 throw new IllegalArgumentException("Unknown OAuth version: " + oAuthVersion);
         }

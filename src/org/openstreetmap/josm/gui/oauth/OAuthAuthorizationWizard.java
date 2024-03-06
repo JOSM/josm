@@ -83,32 +83,37 @@ public class OAuthAuthorizationWizard extends JDialog {
     public void showDialog(Consumer<Optional<IOAuthToken>> callback) throws UserCancelException {
         if ((this.oAuthVersion == OAuthVersion.OAuth20 || this.oAuthVersion == OAuthVersion.OAuth21)
         && this.procedure == AuthorizationProcedure.FULLY_AUTOMATIC) {
-            authorize(true, callback, this.apiUrl, this.oAuthVersion);
+            authorize(true, callback, this.apiUrl, this.oAuthVersion, getOAuthParameters());
         } else {
             setVisible(true);
             if (isCanceled()) {
                 throw new UserCancelException();
             }
+            OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
+            holder.setAccessToken(apiUrl, getAccessToken());
+            holder.setSaveToPreferences(isSaveAccessTokenToPreferences());
         }
-        OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
-        holder.setAccessToken(apiUrl, getAccessToken());
-        holder.setSaveToPreferences(isSaveAccessTokenToPreferences());
     }
 
     /**
      * Perform the oauth dance
+     *
      * @param startRemoteControl {@code true} to start remote control if it is not already running
-     * @param callback The callback to use to notify that the OAuth dance succeeded
-     * @param apiUrl The API URL to get the token for
-     * @param oAuthVersion The OAuth version that the authorization dance is force
+     * @param callback           The callback to use to notify that the OAuth dance succeeded
+     * @param apiUrl             The API URL to get the token for
+     * @param oAuthVersion       The OAuth version that the authorization dance is force
+     * @param oAuthParameters    The OAuth parameters to use
      */
-    static void authorize(boolean startRemoteControl, Consumer<Optional<IOAuthToken>> callback, String apiUrl, OAuthVersion oAuthVersion) {
+    static void authorize(boolean startRemoteControl, Consumer<Optional<IOAuthToken>> callback, String apiUrl,
+                          OAuthVersion oAuthVersion, IOAuthParameters oAuthParameters) {
         final boolean remoteControlIsRunning = Boolean.TRUE.equals(RemoteControl.PROP_REMOTECONTROL_ENABLED.get());
         // TODO: Ask user if they want to start remote control?
         if (!remoteControlIsRunning && startRemoteControl) {
             RemoteControl.start();
         }
-        new OAuth20Authorization().authorize(OAuthParameters.createDefault(apiUrl, oAuthVersion), token -> {
+        new OAuth20Authorization().authorize(
+                Optional.ofNullable(oAuthParameters).orElseGet(() -> OAuthParameters.createDefault(apiUrl, oAuthVersion)),
+                token -> {
                     if (!remoteControlIsRunning) {
                         RemoteControl.stop();
                     }
@@ -252,21 +257,26 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Creates the wizard.
      *
-     * @param parent the component relative to which the dialog is displayed
-     * @param procedure the authorization procedure to use
-     * @param apiUrl the API URL. Must not be null.
-     * @param executor the executor used for running the HTTP requests for the authorization
-     * @param oAuthVersion The OAuth version this wizard is for
+     * @param parent             the component relative to which the dialog is displayed
+     * @param procedure          the authorization procedure to use
+     * @param apiUrl             the API URL. Must not be null.
+     * @param executor           the executor used for running the HTTP requests for the authorization
+     * @param oAuthVersion       The OAuth version this wizard is for
+     * @param advancedParameters The OAuth parameters to initialize the wizard with
      * @throws IllegalArgumentException if apiUrl is null
      */
     public OAuthAuthorizationWizard(Component parent, AuthorizationProcedure procedure, String apiUrl,
-                                    Executor executor, OAuthVersion oAuthVersion) {
+                                    Executor executor, OAuthVersion oAuthVersion, IOAuthParameters advancedParameters) {
         super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         this.procedure = Objects.requireNonNull(procedure, "procedure");
         this.apiUrl = Objects.requireNonNull(apiUrl, "apiUrl");
         this.executor = executor;
         this.oAuthVersion = oAuthVersion;
         build();
+        if (advancedParameters != null) {
+            pnlFullyAutomaticAuthorisationUI.getAdvancedPropertiesPanel().setAdvancedParameters(advancedParameters);
+            pnlManualAuthorisationUI.getAdvancedPropertiesPanel().setAdvancedParameters(advancedParameters);
+        }
     }
 
     /**
@@ -361,7 +371,7 @@ public class OAuthAuthorizationWizard extends JDialog {
                     MainApplication.getMainFrame(),
                     AuthorizationProcedure.FULLY_AUTOMATIC,
                     serverUrl.toString(), Utils.newDirectExecutor(),
-                    OAuthVersion.OAuth20);
+                    OAuthVersion.OAuth20, null);
             wizard.showDialog(null);
             return wizard;
         });

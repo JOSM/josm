@@ -380,7 +380,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                         setAccessToken(token.orElse(null));
                     });
                 }
-            }, getApiUrl(), getOAuthVersion());
+            }, getApiUrl(), getOAuthVersion(), getOAuthParameters());
             getProgressMonitor().worked(1);
         }
     }

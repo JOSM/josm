@@ -214,8 +214,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         return new OAuth20Parameters(
                 tfConsumerKey.getText(),
                 tfConsumerSecret.getText(),
-                tfAuthoriseURL.getText(),
                 tfAccessTokenURL.getText(),
+                tfAuthoriseURL.getText(),
+                apiUrl,
                 tfRequestTokenURL.getText()
                 );
     }
@@ -260,7 +261,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             if (useDefault) {
                 this.resetToDefaultSettings();
             } else {
-                setAdvancedParameters(OAuthParameters.createFromApiUrl(paramApiUrl, OAuthVersion.OAuth20));
+                // createFromApiUrl may make a network request
+                final IOAuthParameters parameters = OAuthParameters.createFromApiUrl(paramApiUrl, OAuthVersion.OAuth20);
+                GuiHelper.runInEDT(() -> setAdvancedParameters(parameters));
             }
             GuiHelper.runInEDT(() -> ilUseDefault.setEnabled(true));
         });

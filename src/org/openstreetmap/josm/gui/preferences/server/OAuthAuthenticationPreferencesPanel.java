@@ -330,7 +330,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
                     // We want to avoid trying to make connection with an invalid URL
                     final String currentApiUrl = apiUrl;
                     MainApplication.worker.execute(() -> {
-                        final String clientId = OAuthParameters.createDefault(apiUrl, oAuthVersion).getClientId();
+                        final String clientId = OAuthParameters.createFromApiUrl(apiUrl, oAuthVersion).getClientId();
                         if (Objects.equals(apiUrl, currentApiUrl)) {
                             GuiHelper.runInEDT(() -> this.setEnabled(!Utils.isEmpty(clientId)));
                         }
@@ -346,7 +346,9 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
                     procedure,
                     apiUrl,
                     MainApplication.worker,
-                    oAuthVersion);
+                    oAuthVersion,
+                    pnlAdvancedProperties.getAdvancedParameters()
+                    );
             try {
                 wizard.showDialog(token -> GuiHelper.runInEDT(OAuthAuthenticationPreferencesPanel.this::refreshView));
             } catch (UserCancelException userCancelException) {
@@ -406,7 +408,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            IOAuthToken token = OAuthAccessTokenHolder.getInstance().getAccessToken(OsmApi.getOsmApi().getBaseUrl(), OAuthVersion.OAuth20);
+            IOAuthToken token = OAuthAccessTokenHolder.getInstance().getAccessToken(apiUrl, OAuthVersion.OAuth20);
             TestAccessTokenTask task = new TestAccessTokenTask(
                     OAuthAuthenticationPreferencesPanel.this,
                     apiUrl,
