@@ -54,6 +54,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -183,6 +184,10 @@ public class MainApplication {
      * Command-line arguments used to run the application.
      */
     private static volatile List<String> commandLineArgs;
+    /**
+     * The preference key for the startup failure counter
+     */
+    private static final String PREF_STARTUP_FAILURE_COUNTER = "josm.startup.failure.count";
 
     /**
      * The main menu bar at top of screen.
@@ -877,6 +882,24 @@ public class MainApplication {
 
         checkIPv6();
 
+        // After IPv6 check since that may restart JOSM, must be after Preferences.main().init()
+        final int failures = prefs.getInt(PREF_STARTUP_FAILURE_COUNTER, 0);
+        // Always increment failures
+        prefs.putInt(PREF_STARTUP_FAILURE_COUNTER, failures + 1);
+        if (failures > 3) {
+            final int selection = JOptionPane.showOptionDialog(new JDialog(),
+                    tr("JOSM has failed to start up {0} times. Reset JOSM?", failures),
+                    tr("Reset JOSM?"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.ERROR_MESSAGE,
+                    null,
+                    null,
+                    null);
+            if (selection == JOptionPane.YES_OPTION) {
+                Preferences.main().init(true);
+            }
+        }
+
         processOffline(args);
 
         PlatformManager.getPlatform().afterPrefStartupHook();
@@ -1009,6 +1032,7 @@ public class MainApplication {
                 splash.dispose();
             }
             mainFrame.setVisible(true);
+            Config.getPref().put(PREF_STARTUP_FAILURE_COUNTER, null);
         });
 
         boolean maximized = Config.getPref().getBoolean("gui.maximized", false);
