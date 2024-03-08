@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import javax.swing.JLabel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
@@ -41,6 +42,7 @@ public class TagTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("Since"));
         col.setCellRenderer(renderer);
         col.setPreferredWidth(10);
+        col.setMaxWidth(new JLabel("v" + Long.MAX_VALUE).getMinimumSize().width); // See #23482
         addColumn(col);
     }
 }
