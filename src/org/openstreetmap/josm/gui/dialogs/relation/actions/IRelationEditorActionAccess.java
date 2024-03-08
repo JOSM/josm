@@ -71,7 +71,9 @@ public interface IRelationEditorActionAccess {
 
     /**
      * Get the changed relation
-     * @return The changed relation (note: will not be part of a dataset). This should never be {@code null}.
+     * @return The changed relation (note: will not be part of a dataset) or the
+     * value returned by {@code getEditor().getRelation()}. This should never be {@code null}.
+     * If called for a temporary use of the relation instance, make sure to cleanup a copy to avoid memory leaks, see #23527
      * @since 18413
      */
     default IRelation<?> getChangedRelation() {
@@ -94,6 +96,15 @@ public interface IRelationEditorActionAccess {
         getTagModel().applyToPrimitive(newRelation);
         getMemberTableModel().applyToRelation(newRelation);
         return newRelation;
+    }
+
+    /**
+     * Check if the changed relation would be useful.
+     * @return true if the saved relation has at least one tag and one member
+     * @since 19014
+     */
+    default boolean wouldRelationBeUseful() {
+        return (getTagModel().getRowCount() > 0 && getMemberTableModel().getRowCount() > 0);
     }
 
     /**
