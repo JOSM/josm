@@ -82,5 +82,33 @@
        height="1"
        x="15"
        y="3" />
+    <rect
+       style="fill:#ffdd55"
+       id="rect1"
+       width="6"
+       height="1"
+       x="5"
+       y="2" />
+    <rect
+       style="fill:#ffdd55"
+       id="rect2"
+       width="6"
+       height="1"
+       x="5"
+       y="4" />
+    <rect
+       style="fill:#ffdd55"
+       id="rect3"
+       width="6"
+       height="1"
+       x="5"
+       y="6" />
+    <rect
+       style="fill:#ffdd55"
+       id="rect4"
+       width="6"
+       height="1"
+       x="5"
+       y="0" />
   </g>
 </svg>

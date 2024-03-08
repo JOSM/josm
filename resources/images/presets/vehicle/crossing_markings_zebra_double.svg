@@ -24,8 +24,7 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     id="layer1">
+  <g id="layer1">
     <rect
        style="fill:#999999"
        id="rect3784"
@@ -36,21 +35,42 @@
     <rect
        style="fill:#ffffff"
        id="rect3786"
-       width="6"
+       width="2.5"
        height="1"
        x="5"
        y="1" />
     <rect
        style="fill:#ffffff"
+       id="rect3786-9"
+       width="2.5"
+       height="1"
+       x="8.5"
+       y="1" />
+    <rect
+       style="fill:#ffffff"
+       id="rect3786-9-7"
+       width="2.5"
+       height="1"
+       x="8.5"
+       y="3" />
+    <rect
+       style="fill:#ffffff"
+       id="rect3786-9-0"
+       width="2.5"
+       height="1"
+       x="8.5"
+       y="5" />
+    <rect
+       style="fill:#ffffff"
        id="rect3788"
-       width="6"
+       width="2.5"
        height="1"
        x="5"
        y="3" />
     <rect
        style="fill:#ffffff"
        id="rect3790"
-       width="6"
+       width="2.5"
        height="1"
        x="5"
        y="5" />
