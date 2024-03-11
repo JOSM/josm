@@ -743,9 +743,11 @@ public class ValidatorDialog extends ToggleDialog
     public void preferenceChanged(PreferenceChangeEvent e) {
         super.preferenceChanged(e);
         // see #23430: update selection so that filters are applied
-        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-        if (ds != null) {
-            updateSelection(ds.getAllSelected());
+        if (ValidatorPrefHelper.PREF_FILTER_BY_SELECTION.equals(e.getKey())) {
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds != null) {
+                updateSelection(ds.getAllSelected());
+            }
         }
     }
 
