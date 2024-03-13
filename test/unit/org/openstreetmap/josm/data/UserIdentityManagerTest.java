@@ -184,10 +184,10 @@ class UserIdentityManagerTest {
             new String[] {"osm-server.url", null, "osm-server.username", null},
             "Preferences include neither an url nor a user name => we have an anonymous user"),
           Arguments.of((Function<UserIdentityManager, Boolean>) UserIdentityManager::isAnonymous,
-            new String[] {"osm-server.url", "http://api.openstreetmap.org", "osm-server.username", null},
+            new String[] {"osm-server.url", "https://api.openstreetmap.org", "osm-server.username", null},
             "Preferences include neither an url nor a user name => we have an anonymous user"),
           Arguments.of((Function<UserIdentityManager, Boolean>) UserIdentityManager::isPartiallyIdentified,
-            new String[] {"osm-server.url", "http://api.openstreetmap.org", "osm-server.username", "test"},
+            new String[] {"osm-server.url", "https://api.openstreetmap.org", "osm-server.username", "test"},
             "Preferences include an user name => we have a partially identified user")
         );
     }
@@ -236,7 +236,7 @@ class UserIdentityManagerTest {
         try {
             im.setFullyIdentified("test1", newUserInfo());
 
-            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+            Config.getPref().put("osm-server.url", "https://api.openstreetmap.org");
             Config.getPref().put("osm-server.username", "test2");
 
             im.initFromPreferences();
@@ -262,7 +262,7 @@ class UserIdentityManagerTest {
         try {
             im.setFullyIdentified("test1", new UserInfo());
 
-            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+            Config.getPref().put("osm-server.url", "https://api.openstreetmap.org");
             Config.getPref().put("osm-server.username", "test1");
 
             im.initFromPreferences();
@@ -280,7 +280,7 @@ class UserIdentityManagerTest {
         // reset it
         im.setAnonymous();
 
-        Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+        Config.getPref().put("osm-server.url", "https://api.openstreetmap.org");
         assertTrue(im.isAnonymous());
 
         Config.getPref().put("osm-server.url", null);
@@ -289,7 +289,7 @@ class UserIdentityManagerTest {
         // reset it
         im.setPartiallyIdentified("test");
 
-        Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+        Config.getPref().put("osm-server.url", "https://api.openstreetmap.org");
         assertTrue(im.isPartiallyIdentified());
         assertEquals("test", im.getUserName());
 
@@ -299,7 +299,7 @@ class UserIdentityManagerTest {
         // reset it
         im.setFullyIdentified("test", newUserInfo());
 
-        Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+        Config.getPref().put("osm-server.url", "https://api.openstreetmap.org");
         assertTrue(im.isPartiallyIdentified());
         assertEquals("test", im.getUserName());
 
