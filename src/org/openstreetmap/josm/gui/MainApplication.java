@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
@@ -421,10 +422,10 @@ public class MainApplication {
     public static void sanityCheckFailed(String title, boolean canContinue, String... message) {
         final ExtendedDialog ed;
         if (canContinue) {
-            ed = new ExtendedDialog(mainFrame, title, tr("Stop"), tr("Continue"));
+            ed = new ExtendedDialog(mainFrame, title, trc("dialog", "Stop"), tr("Continue"));
             ed.setButtonIcons("cancel", "apply");
         } else {
-            ed = new ExtendedDialog(mainFrame, title, tr("Stop"));
+            ed = new ExtendedDialog(mainFrame, title, trc("dialog", "Stop"));
             ed.setButtonIcons("cancel");
         }
         ed.setDefaultButton(1).setCancelButton(1);
