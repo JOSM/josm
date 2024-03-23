@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.AutoAdjustingSplitPane;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -516,7 +518,11 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         tagModel.populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues(), false);
         relModel.populate(parentRelations, primitives, false);
-        tagModel.prepareDefaultTagDecisions(false);
+        if (Config.getPref().getBoolean("combine-conflict-precise", true)) {
+            tagModel.prepareDefaultTagDecisions(getResolvableKeys(tagsOfPrimitives.getKeys(), primitives));
+        } else {
+            tagModel.prepareDefaultTagDecisions(false);
+        }
         relModel.prepareDefaultRelationDecisions(false);
 
         if (tagModel.isResolvedCompletely() && relModel.isResolvedCompletely()) {
@@ -589,7 +595,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations, 20));
 
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
-                "combine_tags",
+                "combine_relation_member",
                 MainApplication.getMainFrame(),
                 "<html>" + msg + "</html>",
                 tr("Combine confirmation"),
@@ -640,6 +646,42 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 .map(x -> Utils.isEmpty(x) ? tr("<i>missing</i>") : x)
                 .collect(Collectors.joining(tr(", ")));
         return tr("{0} ({1})", key, values);
+    }
+
+    /**
+     * See #23305: Find those tag keys for which no conflict exists.
+     * @param keysToDecide the keys of tags which might be shown in the conflict dialog
+     * @param primitives the collection of primitives
+     * @return the keys which can be resolved using the only available value
+     */
+    private static Set<String> getResolvableKeys(Set<String> keysToDecide, Collection<? extends OsmPrimitive> primitives) {
+        Set<String> easyKeys = new HashSet<>();
+        // determine the number of objects which have any of the tags which require a decision
+        int countTagged = 0;
+        for (OsmPrimitive p : primitives) {
+            for (String key : keysToDecide) {
+                if (p.hasTag(key)) {
+                    ++countTagged;
+                    break;
+                }
+            }
+        }
+        for (String key : keysToDecide) {
+            Set<String> values = new HashSet<>();
+            int num = 0;
+            for (OsmPrimitive p : primitives) {
+                String val = p.get(key);
+                if (val != null) {
+                    num++;
+                    values.add(val);
+                }
+            }
+            if (values.size() == 1 && num == countTagged) {
+                // there is only one value and all tagged objects have that value -> easy to solve
+                easyKeys.add(key);
+            }
+        }
+        return easyKeys;
     }
 
     @Override

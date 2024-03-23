@@ -123,8 +123,15 @@ public final class JumpToMarkerActions {
         }
     }
 
+    /**
+     * Go to the next marker in a layer
+     */
     public static final class JumpToNextMarker extends JumpToMarker {
 
+        /**
+         * Create a new {@link JumpToNextMarker} action
+         * @param layer The layer to use when jumping to the next marker
+         */
         public JumpToNextMarker(JumpToMarkerLayer layer) {
             super(layer, Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
                     KeyEvent.VK_J, Shortcut.ALT_CTRL));
@@ -139,8 +146,15 @@ public final class JumpToMarkerActions {
         }
     }
 
+    /**
+     * Go to the previous marker in a layer
+     */
     public static final class JumpToPreviousMarker extends JumpToMarker {
 
+        /**
+         * Create a new {@link JumpToPreviousMarker} action
+         * @param layer The layer to use when jumping to the previous marker
+         */
         public JumpToPreviousMarker(JumpToMarkerLayer layer) {
             super(layer, Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}", tr("Previous marker")),
                     KeyEvent.VK_P, Shortcut.ALT_CTRL));

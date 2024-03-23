@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Logging {
+    /**
+     * Set up loggers for testing
+     */
     class LoggingExtension implements BeforeEachCallback {
 
         @Override

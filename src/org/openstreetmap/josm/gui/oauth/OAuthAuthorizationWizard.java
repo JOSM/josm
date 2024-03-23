@@ -19,22 +19,29 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
+import java.util.function.Consumer;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.openstreetmap.josm.data.oauth.IOAuthParameters;
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuth20Authorization;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
+import org.openstreetmap.josm.data.oauth.osm.OsmScopes;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -42,6 +49,8 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -58,26 +67,70 @@ public class OAuthAuthorizationWizard extends JDialog {
     private boolean canceled;
     private final AuthorizationProcedure procedure;
     private final String apiUrl;
+    private final OAuthVersion oAuthVersion;
 
     private FullyAutomaticAuthorizationUI pnlFullyAutomaticAuthorisationUI;
-    private SemiAutomaticAuthorizationUI pnlSemiAutomaticAuthorisationUI;
     private ManualAuthorizationUI pnlManualAuthorisationUI;
     private JScrollPane spAuthorisationProcedureUI;
     private final transient Executor executor;
 
     /**
-     * Launches the wizard, {@link OAuthAccessTokenHolder#setAccessToken(OAuthToken) sets the token}
+     * Launches the wizard, {@link OAuthAccessTokenHolder#setAccessToken(String, IOAuthToken)} sets the token
      * and {@link OAuthAccessTokenHolder#setSaveToPreferences(boolean) saves to preferences}.
+     * @param callback Callback to run when authorization is finished
      * @throws UserCancelException if user cancels the operation
      */
-    public void showDialog() throws UserCancelException {
-        setVisible(true);
-        if (isCanceled()) {
-            throw new UserCancelException();
+    public void showDialog(Consumer<Optional<IOAuthToken>> callback) throws UserCancelException {
+        if ((this.oAuthVersion == OAuthVersion.OAuth20 || this.oAuthVersion == OAuthVersion.OAuth21)
+        && this.procedure == AuthorizationProcedure.FULLY_AUTOMATIC) {
+            authorize(true, callback, this.apiUrl, this.oAuthVersion, getOAuthParameters());
+        } else {
+            setVisible(true);
+            if (isCanceled()) {
+                throw new UserCancelException();
+            }
+            OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
+            holder.setAccessToken(apiUrl, getAccessToken());
+            holder.setSaveToPreferences(isSaveAccessTokenToPreferences());
         }
-        OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
-        holder.setAccessToken(getAccessToken());
-        holder.setSaveToPreferences(isSaveAccessTokenToPreferences());
+    }
+
+    /**
+     * Perform the oauth dance
+     *
+     * @param startRemoteControl {@code true} to start remote control if it is not already running
+     * @param callback           The callback to use to notify that the OAuth dance succeeded
+     * @param apiUrl             The API URL to get the token for
+     * @param oAuthVersion       The OAuth version that the authorization dance is force
+     * @param oAuthParameters    The OAuth parameters to use
+     */
+    static void authorize(boolean startRemoteControl, Consumer<Optional<IOAuthToken>> callback, String apiUrl,
+                          OAuthVersion oAuthVersion, IOAuthParameters oAuthParameters) {
+        final boolean remoteControlIsRunning = Boolean.TRUE.equals(RemoteControl.PROP_REMOTECONTROL_ENABLED.get());
+        // TODO: Ask user if they want to start remote control?
+        if (!remoteControlIsRunning && startRemoteControl) {
+            RemoteControl.start();
+        }
+        new OAuth20Authorization().authorize(
+                Optional.ofNullable(oAuthParameters).orElseGet(() -> OAuthParameters.createDefault(apiUrl, oAuthVersion)),
+                token -> {
+                    if (!remoteControlIsRunning) {
+                        RemoteControl.stop();
+                    }
+                    OAuthAccessTokenHolder.getInstance().setAccessToken(apiUrl, token.orElse(null));
+                    OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
+                    if (!token.isPresent()) {
+                        GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.getMainPanel(),
+                                tr("Authentication failed, please check browser for details."),
+                                tr("OAuth Authentication Failed"),
+                                JOptionPane.ERROR_MESSAGE));
+                    }
+                    if (callback != null) {
+                        callback.accept(token);
+                    }
+                }, OsmScopes.read_gpx, OsmScopes.write_gpx,
+                OsmScopes.read_prefs, OsmScopes.write_prefs,
+                OsmScopes.write_api, OsmScopes.write_notes);
     }
 
     /**
@@ -90,7 +143,6 @@ public class OAuthAuthorizationWizard extends JDialog {
 
         AcceptAccessTokenAction actAcceptAccessToken = new AcceptAccessTokenAction();
         pnlFullyAutomaticAuthorisationUI.addPropertyChangeListener(actAcceptAccessToken);
-        pnlSemiAutomaticAuthorisationUI.addPropertyChangeListener(actAcceptAccessToken);
         pnlManualAuthorisationUI.addPropertyChangeListener(actAcceptAccessToken);
 
         pnl.add(new JButton(actAcceptAccessToken));
@@ -153,14 +205,12 @@ public class OAuthAuthorizationWizard extends JDialog {
             spAuthorisationProcedureUI.getViewport().setView(pnlFullyAutomaticAuthorisationUI);
             pnlFullyAutomaticAuthorisationUI.revalidate();
             break;
-        case SEMI_AUTOMATIC:
-            spAuthorisationProcedureUI.getViewport().setView(pnlSemiAutomaticAuthorisationUI);
-            pnlSemiAutomaticAuthorisationUI.revalidate();
-            break;
         case MANUALLY:
             spAuthorisationProcedureUI.getViewport().setView(pnlManualAuthorisationUI);
             pnlManualAuthorisationUI.revalidate();
             break;
+        default:
+            throw new UnsupportedOperationException("Unsupported auth type: " + procedure);
         }
         validate();
         repaint();
@@ -176,9 +226,8 @@ public class OAuthAuthorizationWizard extends JDialog {
         setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
         this.setMinimumSize(new Dimension(500, 300));
 
-        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl, executor);
-        pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl, executor);
-        pnlManualAuthorisationUI = new ManualAuthorizationUI(apiUrl, executor);
+        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl, executor, oAuthVersion);
+        pnlManualAuthorisationUI = new ManualAuthorizationUI(apiUrl, executor, oAuthVersion);
 
         spAuthorisationProcedureUI = GuiHelper.embedInVerticalScrollPane(new JPanel());
         spAuthorisationProcedureUI.getVerticalScrollBar().addComponentListener(
@@ -208,18 +257,26 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Creates the wizard.
      *
-     * @param parent the component relative to which the dialog is displayed
-     * @param procedure the authorization procedure to use
-     * @param apiUrl the API URL. Must not be null.
-     * @param executor the executor used for running the HTTP requests for the authorization
+     * @param parent             the component relative to which the dialog is displayed
+     * @param procedure          the authorization procedure to use
+     * @param apiUrl             the API URL. Must not be null.
+     * @param executor           the executor used for running the HTTP requests for the authorization
+     * @param oAuthVersion       The OAuth version this wizard is for
+     * @param advancedParameters The OAuth parameters to initialize the wizard with
      * @throws IllegalArgumentException if apiUrl is null
      */
-    public OAuthAuthorizationWizard(Component parent, AuthorizationProcedure procedure, String apiUrl, Executor executor) {
+    public OAuthAuthorizationWizard(Component parent, AuthorizationProcedure procedure, String apiUrl,
+                                    Executor executor, OAuthVersion oAuthVersion, IOAuthParameters advancedParameters) {
         super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         this.procedure = Objects.requireNonNull(procedure, "procedure");
         this.apiUrl = Objects.requireNonNull(apiUrl, "apiUrl");
         this.executor = executor;
+        this.oAuthVersion = oAuthVersion;
         build();
+        if (advancedParameters != null) {
+            pnlFullyAutomaticAuthorisationUI.getAdvancedPropertiesPanel().setAdvancedParameters(advancedParameters);
+            pnlManualAuthorisationUI.getAdvancedPropertiesPanel().setAdvancedParameters(advancedParameters);
+        }
     }
 
     /**
@@ -235,7 +292,6 @@ public class OAuthAuthorizationWizard extends JDialog {
         switch(procedure) {
         case FULLY_AUTOMATIC: return pnlFullyAutomaticAuthorisationUI;
         case MANUALLY: return pnlManualAuthorisationUI;
-        case SEMI_AUTOMATIC: return pnlSemiAutomaticAuthorisationUI;
         default: return null;
         }
     }
@@ -245,7 +301,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      *
      * @return the access token. May be null if the wizard was canceled.
      */
-    public OAuthToken getAccessToken() {
+    public IOAuthToken getAccessToken() {
         return getCurrentAuthorisationUI().getAccessToken();
     }
 
@@ -254,8 +310,8 @@ public class OAuthAuthorizationWizard extends JDialog {
      *
      * @return the current OAuth parameters.
      */
-    public OAuthParameters getOAuthParameters() {
-        return (OAuthParameters) getCurrentAuthorisationUI().getOAuthParameters();
+    public IOAuthParameters getOAuthParameters() {
+        return getCurrentAuthorisationUI().getOAuthParameters();
     }
 
     /**
@@ -275,7 +331,6 @@ public class OAuthAuthorizationWizard extends JDialog {
      */
     public void initFromPreferences() {
         pnlFullyAutomaticAuthorisationUI.initialize(apiUrl);
-        pnlSemiAutomaticAuthorisationUI.initialize(apiUrl);
         pnlManualAuthorisationUI.initialize(apiUrl);
     }
 
@@ -315,8 +370,9 @@ public class OAuthAuthorizationWizard extends JDialog {
             final OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     MainApplication.getMainFrame(),
                     AuthorizationProcedure.FULLY_AUTOMATIC,
-                    serverUrl.toExternalForm(), Utils.newDirectExecutor());
-            wizard.showDialog();
+                    serverUrl.toString(), Utils.newDirectExecutor(),
+                    OAuthVersion.OAuth20, null);
+            wizard.showDialog(null);
             return wizard;
         });
         // exception handling differs from implementation at GuiHelper.runInEDTAndWait()
@@ -367,7 +423,12 @@ public class OAuthAuthorizationWizard extends JDialog {
             setVisible(false);
         }
 
-        public final void updateEnabledState(OAuthToken token) {
+        /**
+         * Update the enabled state
+         * @param token The token to use
+         * @since 18991
+         */
+        public final void updateEnabledState(IOAuthToken token) {
             setEnabled(token != null);
         }
 
@@ -375,7 +436,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         public void propertyChange(PropertyChangeEvent evt) {
             if (!evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;
-            updateEnabledState((OAuthToken) evt.getNewValue());
+            updateEnabledState((IOAuthToken) evt.getNewValue());
         }
     }
 

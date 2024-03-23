@@ -41,6 +41,9 @@ public @interface MeasurementSystem {
      */
     String value() default "Metric";
 
+    /**
+     * Set up the system of measurement
+     */
     class SystemOfMeasurementExtension implements BeforeEachCallback {
         @Override
         public void beforeEach(ExtensionContext extensionContext) throws Exception {

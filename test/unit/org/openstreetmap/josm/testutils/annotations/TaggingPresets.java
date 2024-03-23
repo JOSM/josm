@@ -7,6 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collection;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -29,8 +31,12 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @ExtendWith(TaggingPresets.TaggingPresetsExtension.class)
 public @interface TaggingPresets {
 
+    /**
+     * Reset the tagging presets between each test -- presets will be reset if they are changed.
+     */
     class TaggingPresetsExtension implements BeforeEachCallback, BeforeAllCallback {
         private static int expectedHashcode = 0;
+        private static Locale lastLocale;
 
         @Override
         public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -47,9 +53,10 @@ public @interface TaggingPresets {
          */
         public static synchronized void setup() {
             final Collection<TaggingPreset> oldPresets = org.openstreetmap.josm.gui.tagging.presets.TaggingPresets.getTaggingPresets();
-            if (oldPresets.isEmpty() || expectedHashcode != oldPresets.hashCode()) {
+            if (oldPresets.isEmpty() || expectedHashcode != oldPresets.hashCode() || !Objects.equals(lastLocale, Locale.getDefault())) {
                 org.openstreetmap.josm.gui.tagging.presets.TaggingPresets.readFromPreferences();
                 expectedHashcode = org.openstreetmap.josm.gui.tagging.presets.TaggingPresets.getTaggingPresets().hashCode();
+                lastLocale = Locale.getDefault();
             }
         }
     }

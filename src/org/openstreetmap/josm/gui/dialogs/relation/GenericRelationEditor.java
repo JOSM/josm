@@ -55,7 +55,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
-import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -405,6 +404,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     /**
      * builds the panel with the OK and the Cancel button
      * @param okAction OK action
+     * @param deleteAction  Delete action
      * @param cancelAction Cancel action
      *
      * @return the panel with the OK and the Cancel button
@@ -421,7 +421,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         pnl.add(new JButton(new ContextSensitiveHelpAction(ht("/Dialog/RelationEditor"))));
         // Keep users from saving invalid relations -- a relation MUST have at least a tag with the key "type"
         // AND must contain at least one other OSM object.
-        final TableModelListener listener = l -> updateOkPanel(this.actionAccess.getChangedRelation(), okButton, deleteButton);
+        final TableModelListener listener = l -> updateOkPanel(okButton, deleteButton);
         listener.tableChanged(null);
         this.memberTableModel.addTableModelListener(listener);
         this.tagEditorPanel.getModel().addTableModelListener(listener);
@@ -429,15 +429,15 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     }
 
     /**
-     * Update the OK panel area
-     * @param newRelation What the new relation would "look" like if it were to be saved now
+     * Update the OK panel area with a temporary relation that looks if it were to be saved now.
      * @param okButton The OK button
      * @param deleteButton The delete button
      */
-    private void updateOkPanel(IRelation<?> newRelation, JButton okButton, JButton deleteButton) {
-        okButton.setVisible(newRelation.isUseful() || this.getRelationSnapshot() == null);
-        deleteButton.setVisible(!newRelation.isUseful() && this.getRelationSnapshot() != null);
-        if (this.getRelationSnapshot() == null && !newRelation.isUseful()) {
+    private void updateOkPanel(JButton okButton, JButton deleteButton) {
+        boolean useful = this.actionAccess.wouldRelationBeUseful();
+        okButton.setVisible(useful || this.getRelationSnapshot() == null);
+        deleteButton.setVisible(!useful && this.getRelationSnapshot() != null);
+        if (this.getRelationSnapshot() == null && !useful) {
             okButton.setText(tr("Delete"));
         } else {
             okButton.setText(tr("OK"));

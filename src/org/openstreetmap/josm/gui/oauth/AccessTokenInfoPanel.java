@@ -11,18 +11,19 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuth20Token;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
- * Displays the key and the secret of an OAuth Access Token.
- * @since 2746
+ * Displays the key of an OAuth Access Token.
+ * @since 2746 (modified for OAuth 2 in 18991)
  */
 public class AccessTokenInfoPanel extends JPanel {
 
     private final JosmTextField tfAccessTokenKey = new JosmTextField(null, null, 0, false);
-    private final JosmTextField tfAccessTokenSecret = new JosmTextField(null, null, 0, false);
     private final JCheckBox cbSaveAccessTokenInPreferences = new JCheckBox(tr("Save Access Token in preferences"));
 
     /**
@@ -55,11 +56,7 @@ public class AccessTokenInfoPanel extends JPanel {
         gc.insets = new Insets(0, 0, 3, 3);
         add(new JLabel(tr("Access Token Secret:")), gc);
 
-        gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAccessTokenSecret, gc);
-        tfAccessTokenSecret.setEditable(false);
-
         // the checkbox
         gc.gridx = 0;
         gc.gridy = 2;
@@ -86,14 +83,16 @@ public class AccessTokenInfoPanel extends JPanel {
      *
      * @param token the access  token. If null, the content in the info panel is cleared
      */
-    public void setAccessToken(OAuthToken token) {
+    public void setAccessToken(IOAuthToken token) {
         if (token == null) {
             tfAccessTokenKey.setText("");
-            tfAccessTokenSecret.setText("");
             return;
         }
-        tfAccessTokenKey.setText(token.getKey());
-        tfAccessTokenSecret.setText(token.getSecret());
+        if (token instanceof OAuth20Token) {
+            tfAccessTokenKey.setText(((OAuth20Token) token).getBearerToken());
+        } else {
+            throw new JosmRuntimeException("Unknown token type: " + token.getClass());
+        }
     }
 
     public void setSaveToPreferences(boolean saveToPreferences) {

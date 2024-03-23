@@ -650,20 +650,20 @@
     </chunk>
     <chunk id="crossing_markings">
         <multiselect key="crossing:markings" text="Markings" values_sort="false" values_context="crossing:markings">
-            <list_entry value="no" />
-            <list_entry value="yes" />
-            <list_entry value="surface" />
-            <list_entry value="lines" />
-            <list_entry value="lines:paired" />
-            <list_entry value="dashes" />
-            <list_entry value="dots" />
-            <list_entry value="zebra" />
-            <list_entry value="zebra:double" />
-            <list_entry value="zebra:paired" />
-            <list_entry value="zebra:bicolour" />
-            <list_entry value="ladder" />
-            <list_entry value="ladder:skewed" />
-            <list_entry value="ladder:paired" />
+            <list_entry value="no" icon="presets/vehicle/crossing_unmarked.svg" />
+            <list_entry value="yes" icon="presets/vehicle/crossing.svg" />
+            <list_entry value="surface" icon="presets/vehicle/crossing_markings_surface.svg" />
+            <list_entry value="lines" icon="presets/vehicle/crossing_markings_lines.svg" />
+            <list_entry value="lines:paired" icon="presets/vehicle/crossing_markings_lines_paired.svg" />
+            <list_entry value="dashes" icon="presets/vehicle/crossing_markings_dashes.svg" />
+            <list_entry value="dots" icon="presets/vehicle/crossing_markings_dots.svg" />
+            <list_entry value="zebra" icon="presets/vehicle/crossing_ref_zebra.svg" />
+            <list_entry value="zebra:double" icon="presets/vehicle/crossing_markings_zebra_double.svg" />
+            <list_entry value="zebra:paired" icon="presets/vehicle/crossing_markings_zebra_paired.svg" />
+            <list_entry value="zebra:bicolour" icon="presets/vehicle/crossing_markings_zebra_bicolour.svg" />
+            <list_entry value="ladder" icon="presets/vehicle/crossing_markings_ladder.svg" />
+            <list_entry value="ladder:skewed" icon="presets/vehicle/crossing_markings_ladder_skewed.svg" />
+            <list_entry value="ladder:paired" icon="presets/vehicle/crossing_markings_ladder_paired.svg" />
             <list_entry value="pictograms" />
         </multiselect>
     </chunk>
@@ -1588,6 +1588,10 @@
         <item name="Turning Circle" icon="presets/vehicle/turning_circle.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=turning_circle" />
             <key key="highway" value="turning_circle" />
+            <optional>
+                <link wiki="Key:turning_circle" />
+                <combo key="turning_circle" text="Type of Turning Circle" values="circle,oval,knuckle,hammer,square" values_sort="false" />
+            </optional>
         </item> <!-- Turning Circle -->
         <item name="Turning Loop" icon="presets/vehicle/turning_loop.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=turning_loop" />
@@ -8278,7 +8282,7 @@
             <check key="payment:girocard" text="Girocard" match="keyvalue" />
             <check key="payment:laser" text="Laser" match="keyvalue" />
             <check key="payment:maestro" text="Maestro" match="keyvalue" />
-            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" region="CH" />
+            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" regions="CH" />
             <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
             <check key="payment:visa_electron" text="Visa Electron" match="keyvalue" />
         </checkgroup>
@@ -9997,6 +10001,7 @@
                 <role key="main_stream" text="waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank" />
                 <role key="side_stream" text="branch waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank" />
                 <role key="spring" text="spring of waterway" requisite="optional" type="node" />
+                <role key="mouth" text="place where waterway ends" requisite="optional" type="node" />
             </roles>
         </item> <!-- Waterway -->
         <item name="Bridge" icon="presets/transport/bridge/bridge.svg" type="relation" preset_name_label="true">

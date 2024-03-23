@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
@@ -119,25 +120,31 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
             this.setLayout(new GridBagLayout());
             JPanel p2 = new JPanel(new GridBagLayout());
-            p2.add(cbInput, GBC.std().fill(GBC.HORIZONTAL).insets(0, 20, 5, 5));
+            p2.add(cbInput, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(0, 20, 5, 5));
             p2.add(btnCheck, GBC.eol().insets(0, 20, 0, 5));
-            this.add(p2, GBC.eol().fill(GBC.HORIZONTAL));
+            this.add(p2, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p2 = new JPanel(new GridBagLayout());
-            p2.add(valStatus, GBC.std().anchor(GBC.WEST).weight(0.0001, 0));
-            p2.add(errorsPanel, GBC.eol().fill(GBC.HORIZONTAL));
-            this.add(p2, GBC.eol().fill(GBC.HORIZONTAL));
+            p2.add(valStatus, GBC.std().anchor(GridBagConstraints.WEST).weight(0.0001, 0));
+            p2.add(errorsPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            this.add(p2, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p2 = new JPanel(new GridBagLayout());
             p2.add(btnInfo, GBC.std().insets(0, 20, 0, 0));
-            p2.add(GBC.glue(1, 0), GBC.eol().fill(GBC.HORIZONTAL));
-            this.add(p2, GBC.eol().fill(GBC.HORIZONTAL));
+            p2.add(GBC.glue(1, 0), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            this.add(p2, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         }
 
+        /**
+         * Remember the current input
+         */
         public void rememberHistory() {
             cbInput.addCurrentItemToHistory();
             cbInput.getModel().prefs().save("projection.custom.value.history");
         }
     }
 
+    /**
+     * A dialog for the available parameters of the custom projection
+     */
     public static class ParameterInfoDialog extends ExtendedDialog {
 
         /**
@@ -211,9 +218,9 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             throw new IllegalArgumentException("Unsupported panel: "+panel);
         }
         PreferencePanel prefPanel = (PreferencePanel) panel;
-        String pref = prefPanel.cbInput.getEditorComponent().getText();
+        String savePreferences = prefPanel.cbInput.getEditorComponent().getText();
         prefPanel.rememberHistory();
-        return Collections.singleton(pref);
+        return Collections.singleton(savePreferences);
     }
 
     @Override

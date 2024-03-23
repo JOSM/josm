@@ -75,13 +75,13 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A layer holding markers.
- *
+ * <p>
  * Markers are GPS points with a name and, optionally, a symbol code attached;
  * marker layers can be created from waypoints when importing raw GPS data,
  * but they may also come from other sources.
- *
+ * <p>
  * The symbol code is for future use.
- *
+ * <p>
  * The data is read only.
  */
 public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLayer {
@@ -94,11 +94,14 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
     public GpxLayer fromLayer;
     private Marker currentMarker;
     public AudioMarker syncAudioMarker;
-    private Color color, realcolor;
+    private Color color;
+    private Color realcolor;
     final int markerSize = new IntegerProperty("draw.rawgps.markers.size", 4).get();
     final BasicStroke markerStroke = new StrokeProperty("draw.rawgps.markers.stroke", "1").get();
 
     private final ListenerList<IGeoImageLayer.ImageChangeListener> imageChangeListenerListenerList = ListenerList.create();
+    private MarkerMouseAdapter mouseAdapter;
+    private MapView mapView;
 
     /**
      * The default color that is used for drawing markers.
@@ -191,12 +194,19 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
         fromLayer = null;
         data.forEach(Marker::destroy);
         data.clear();
+        if (mouseAdapter != null && mapView != null)
+            mapView.removeMouseListener(mouseAdapter);
         super.destroy();
     }
 
     @Override
     public LayerPainter attachToMapView(MapViewEvent event) {
-        event.getMapView().addMouseListener(new MarkerMouseAdapter());
+        if (mapView != null) {
+            Logging.warn("MarkerLayer was already attached to a MapView");
+        }
+        mapView = event.getMapView();
+        mouseAdapter = new MarkerMouseAdapter();
+        mapView.addMouseListener(mouseAdapter);
 
         if (event.getMapView().playHeadMarker == null) {
             event.getMapView().playHeadMarker = PlayHeadMarker.create();
@@ -522,7 +532,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
     @Override
     public List<? extends IImageEntry<?>> getSelection() {
         if (this.currentMarker instanceof ImageMarker) {
-            return Collections.singletonList(((ImageMarker) this.currentMarker).getRemoteEntry());
+            final RemoteEntry remoteEntry = ((ImageMarker) this.currentMarker).getRemoteEntry();
+            if (remoteEntry != null) {
+                return Collections.singletonList(remoteEntry);
+            }
         }
         return Collections.emptyList();
     }
@@ -606,9 +619,16 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer, IGeoImageLa
         }
     }
 
+    /**
+     * Toggle visibility of the marker text and icons
+     */
     public static final class ShowHideMarkerText extends AbstractAction implements LayerAction {
         private final transient MarkerLayer layer;
 
+        /**
+         * Create a new {@link ShowHideMarkerText} action
+         * @param layer The layer to toggle the visible state of the marker text and icons
+         */
         public ShowHideMarkerText(MarkerLayer layer) {
             super(tr("Show Text/Icons"));
             new ImageProvider("dialogs", "showhide").getResource().attachImageIcon(this, true);

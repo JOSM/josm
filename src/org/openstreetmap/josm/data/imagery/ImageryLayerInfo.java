@@ -166,6 +166,8 @@ public class ImageryLayerInfo {
                 reader = new ImageryReader(source);
                 reader.setFastFail(fastFail);
                 Collection<ImageryInfo> result = reader.parse();
+                // See #23485 (remove invalid source entries)
+                result.removeIf(info -> !info.isValid());
                 newLayers.addAll(result);
             } catch (IOException ex) {
                 loadError = true;

@@ -1,4 +1,5 @@
 // License: GPL. For details, see LICENSE file.
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -37,14 +38,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
-
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -65,6 +58,14 @@ import org.openstreetmap.josm.tools.OptionParser.OptionCount;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 
 /**
  * Compare and analyse the differences of the editor layer index and the JOSM imagery list.
@@ -499,6 +500,9 @@ public class SyncEditorLayerIndex {
         }
 
         for (ImageryInfo e : josmEntries) {
+            if (!e.isValid()) {
+                myprintln("~~~ JOSM-Entry missing fields (" + String.join(", ", e.getMissingFields()) + "): " + getDescription(e));
+            }
             if (isBlank(getUrl(e))) {
                 myprintln("~~~ JOSM-Entry without URL: " + getDescription(e));
                 continue;

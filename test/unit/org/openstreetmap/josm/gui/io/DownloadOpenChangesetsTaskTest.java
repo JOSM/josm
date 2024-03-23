@@ -8,17 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.net.URL;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.OsmApi;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
@@ -63,14 +62,6 @@ class DownloadOpenChangesetsTaskTest {
     }
 
     /**
-     * These tests were written with {@link org.openstreetmap.josm.data.oauth.OAuthVersion#OAuth10a} as the default auth method.
-     */
-    @BeforeEach
-    void setup() {
-        Config.getPref().put("osm-server.auth-method", "oauth");
-    }
-
-    /**
      * Test of {@link DownloadOpenChangesetsTask} class when anonymous.
      */
     @Test
@@ -79,14 +70,12 @@ class DownloadOpenChangesetsTaskTest {
         if (GraphicsEnvironment.isHeadless()) {
             new WindowMocker();
         }
-        final OAuthWizardMocker oaWizardMocker = new OAuthWizardMocker();
-        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            Collections.singletonMap(
-                "<html>Could not retrieve the list of your open changesets because<br>JOSM does not know "
+        final Map<String, Object> optionPaneMock = new HashMap<>(2);
+        optionPaneMock.put("<html>Could not retrieve the list of your open changesets because<br>JOSM does not know "
                 + "your identity.<br>You have either chosen to work anonymously or you are not "
-                + "entitled<br>to know the identity of the user on whose behalf you are working.</html>", JOptionPane.OK_OPTION
-            )
-        );
+                + "entitled<br>to know the identity of the user on whose behalf you are working.</html>", JOptionPane.OK_OPTION);
+        optionPaneMock.put("Obtain OAuth 2.0 token for authentication?", JOptionPane.NO_OPTION);
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(optionPaneMock);
 
         DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(new JPanel());
         assertNull(task.getChangesets());
@@ -95,12 +84,14 @@ class DownloadOpenChangesetsTaskTest {
         task.run();
         assertNull(task.getChangesets());
 
-        assertEquals(1, jopsMocker.getInvocationLog().size());
-        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(2, jopsMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(1);
         assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
         assertEquals("Missing user identity", invocationLogEntry[2]);
 
-        assertTrue(oaWizardMocker.called);
+        invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(JOptionPane.NO_OPTION, (int) invocationLogEntry[0]);
+        assertEquals("Obtain authentication to OSM servers", invocationLogEntry[2]);
     }
 
     /**
@@ -112,10 +103,10 @@ class DownloadOpenChangesetsTaskTest {
         if (GraphicsEnvironment.isHeadless()) {
             new WindowMocker();
         }
-        final OAuthWizardMocker oaWizardMocker = new OAuthWizardMocker();
-        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            Collections.singletonMap("There are no open changesets", JOptionPane.OK_OPTION)
-        );
+        final Map<String, Object> optionPaneMock = new HashMap<>(2);
+        optionPaneMock.put("There are no open changesets", JOptionPane.OK_OPTION);
+        optionPaneMock.put("Obtain OAuth 2.0 token for authentication?", JOptionPane.NO_OPTION);
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(optionPaneMock);
 
         DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(new JPanel());
         UserIdentityManager.getInstance().setPartiallyIdentified(System.getProperty("osm.username", "josm_test"));
@@ -123,11 +114,13 @@ class DownloadOpenChangesetsTaskTest {
         task.run();
         assertNotNull(task.getChangesets());
 
-        assertEquals(1, jopsMocker.getInvocationLog().size());
-        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(2, jopsMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(1);
         assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
         assertEquals("No open changesets", invocationLogEntry[2]);
 
-        assertTrue(oaWizardMocker.called);
+        invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(JOptionPane.NO_OPTION, (int) invocationLogEntry[0]);
+        assertEquals("Obtain authentication to OSM servers", invocationLogEntry[2]);
     }
 }

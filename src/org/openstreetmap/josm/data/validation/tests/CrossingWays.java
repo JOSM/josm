@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -81,6 +84,7 @@ public abstract class CrossingWays extends Test {
     private final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);
     /** The already detected ways in error */
     private final Map<List<Way>, List<WaySegment>> seenWays = new HashMap<>(50);
+    private final Set<Way> waysToTest = new HashSet<>();
 
     protected final int code;
 
@@ -305,9 +309,49 @@ public abstract class CrossingWays extends Test {
 
     @Override
     public void endTest() {
-        super.endTest();
+        runTest();
+        // free storage
         cellSegments.clear();
         seenWays.clear();
+        if (partialSelection)
+            removeIrrelevantErrors(waysToTest);
+        waysToTest.clear();
+        super.endTest();
+    }
+
+    protected void runTest() {
+        final Collection<Way> selection;
+        if (this instanceof SelfCrossing || !partialSelection) {
+            selection = waysToTest;
+        } else {
+            selection = addNearbyObjects();
+        }
+        for (Way w : selection) {
+            testWay(w);
+        }
+
+    }
+
+    private Collection<Way> addNearbyObjects() {
+        final Collection<Way> selection = new HashSet<>();
+        DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
+        if (ds != null) {
+            for (Way wt : waysToTest) {
+                selection.addAll(ds.searchWays(wt.getBBox()).stream()
+                        .filter(w -> !w.isDeleted() && isPrimitiveUsable(w)).collect(Collectors.toList()));
+                if (this instanceof CrossingWays.Boundaries) {
+                    List<Relation> relations = ds.searchRelations(wt.getBBox()).stream()
+                            .filter(p -> isPrimitiveUsable(p)).collect(Collectors.toList());
+                    for (Relation r: relations) {
+                        for (Way w : r.getMemberPrimitives(Way.class)) {
+                            if (!w.isIncomplete())
+                                selection.add(w);
+                        }
+                    }
+                }
+            }
+        }
+        return selection;
     }
 
     static boolean isCoastline(OsmPrimitive w) {
@@ -344,6 +388,10 @@ public abstract class CrossingWays extends Test {
 
     @Override
     public void visit(Way w) {
+        waysToTest.add(w);
+    }
+
+    private void testWay(Way w) {
         boolean findSelfCrossingOnly = this instanceof SelfCrossing;
         if (findSelfCrossingOnly) {
             // free memory, we are not interested in previous ways
@@ -482,6 +530,7 @@ public abstract class CrossingWays extends Test {
         CheckParameterUtil.ensureParameterNotNull(way, "way");
         SelfCrossing test = new SelfCrossing();
         test.visit(way);
+        test.runTest();
         return !test.getErrors().isEmpty();
     }
 }

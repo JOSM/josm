@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -587,12 +588,16 @@ public class ValidatorDialog extends ToggleDialog
      * @param newSelection The new selection
      */
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
-        if (!Config.getPref().getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false))
+        if (!Config.getPref().getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false)) {
+            if (tree.getFilter() != null)
+                tree.setFilter(null);
             return;
-        if (newSelection.isEmpty()) {
-            tree.setFilter(null);
         }
-        tree.setFilter(new HashSet<>(newSelection));
+
+        if (newSelection.isEmpty())
+            tree.setFilter(null);
+        else
+            tree.setFilter(new HashSet<>(newSelection));
     }
 
     @Override
@@ -696,7 +701,10 @@ public class ValidatorDialog extends ToggleDialog
         }
     }
 
-    private static void invalidateValidatorLayers() {
+    /**
+     * Invalidate the error layer
+     */
+    public static void invalidateValidatorLayers() {
         MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
     }
 
@@ -730,4 +738,17 @@ public class ValidatorDialog extends ToggleDialog
             ignoreForNowAction.destroy();
         }
     }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        super.preferenceChanged(e);
+        // see #23430: update selection so that filters are applied
+        if (ValidatorPrefHelper.PREF_FILTER_BY_SELECTION.equals(e.getKey())) {
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds != null) {
+                updateSelection(ds.getAllSelected());
+            }
+        }
+    }
+
 }

@@ -30,6 +30,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @BasicPreferences
 @ExtendWith(HTTPS.HTTPSExtension.class)
 public @interface HTTPS {
+    /**
+     * Initialize HTTPS support
+     */
     class HTTPSExtension implements BeforeEachCallback {
         private static boolean initialized;
         @Override

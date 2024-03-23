@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.xml.sax.SAXException;
 
 /**
@@ -76,6 +77,7 @@ class TaggingPresetReaderTest {
      * @throws SAXException if any XML error occurs
      * @throws IOException if any I/O error occurs
      */
+    @Territories
     @Test
     void testReadDefaultPresets() throws SAXException, IOException {
         String presetfile = "resource://data/defaultpresets.xml";

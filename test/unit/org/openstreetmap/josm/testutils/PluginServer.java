@@ -24,7 +24,13 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.tools.Logging;
 
+/**
+ * Serve "remote" test plugins for tests
+ */
 public class PluginServer {
+    /**
+     * A holder class for a "remote" plugin for tests
+     */
     public static class RemotePlugin {
         private final File srcJar;
         private final Map<String, String> attrOverrides;
@@ -225,6 +231,9 @@ public class PluginServer {
         return new PluginServerRule(ruleOptions, failOnUnmatchedRequests);
     }
 
+    /**
+     * A wiremock server rule for serving plugins
+     */
     public class PluginServerRule extends WireMockExtension {
         public PluginServerRule(Options ruleOptions, boolean failOnUnmatchedRequests) {
             super(extensionOptions().options(ruleOptions).failOnUnmatchedRequests(failOnUnmatchedRequests));

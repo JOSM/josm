@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,7 @@ public class DuplicateWay extends Test {
 
     /** Set of known hashcodes for list of coordinates **/
     private Set<Integer> knownHashCodes;
+    private List<Way> waysToCheck;
 
     /**
      * Constructor
@@ -115,6 +117,7 @@ public class DuplicateWay extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
+        waysToCheck = new ArrayList<>();
         ways = new MultiMap<>(1000);
         waysNoTags = new MultiMap<>(1000);
         knownHashCodes = new HashSet<>(1000);
@@ -122,7 +125,22 @@ public class DuplicateWay extends Test {
 
     @Override
     public void endTest() {
-        super.endTest();
+        if (partialSelection && !waysToCheck.isEmpty()) {
+            // make sure that we have the error candidates even if not selected
+            Set<Way> extended = new LinkedHashSet<>(waysToCheck);
+            for (Way w : waysToCheck) {
+                // select a node, anyone can be used but a middle node is less likely to have many parent ways
+                final Node n = w.getNode(w.getNodesCount()/2);
+                // check the ways which might be in the same position
+                for (Way other : n.getParentWays()) {
+                    if (other != w && !other.isDeleted() && other.isUsable()
+                            && other.getNodesCount() == w.getNodesCount())
+                        extended.add(other);
+                }
+            }
+            extended.forEach(this::checkWay);
+        }
+
         for (Set<OsmPrimitive> duplicated : ways.values()) {
             if (duplicated.size() > 1) {
                 TestError testError = TestError.builder(this, Severity.ERROR, DUPLICATE_WAY)
@@ -165,6 +183,8 @@ public class DuplicateWay extends Test {
         ways = null;
         waysNoTags = null;
         knownHashCodes = null;
+        waysToCheck = null;
+        super.endTest();
     }
 
     /**
@@ -181,6 +201,13 @@ public class DuplicateWay extends Test {
     public void visit(Way w) {
         if (!w.isUsable())
             return;
+        if (partialSelection)
+            waysToCheck.add(w);
+        else
+            checkWay(w);
+    }
+
+    private void checkWay(Way w) {
         List<LatLon> wLat = getOrderedNodes(w);
         // If this way has not direction-dependant keys, make sure the list is ordered the same for all ways (fix #8015)
         if (!w.hasDirectionKeys()) {

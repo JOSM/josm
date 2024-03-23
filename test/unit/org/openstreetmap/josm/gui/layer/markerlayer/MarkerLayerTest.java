@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +23,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
@@ -30,6 +33,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @BasicPreferences
 @Main
 @Projection
+@I18n
 class MarkerLayerTest {
     /**
      * Setup tests
@@ -90,5 +94,16 @@ class MarkerLayerTest {
                 MainApplication.getMap().mapView.playHeadMarker = null;
             }
         }
+    }
+
+    /**
+     * Ensure that if a file is unable to be read, we return an empty list instead of a list with {@code null} in it.
+     */
+    @Test
+    void testNonRegression23316() throws MalformedURLException {
+        MarkerLayer layer = new MarkerLayer(new GpxData(), null, null, null);
+        layer.setCurrentMarker(new ImageMarker(LatLon.ZERO, URI.create("file:/not_a_real_file_123456789.jpg").toURL(),
+                layer, 0, 0));
+        assertEquals(Collections.emptyList(), layer.getSelection());
     }
 }

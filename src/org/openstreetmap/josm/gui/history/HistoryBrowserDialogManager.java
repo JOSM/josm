@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
 
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
@@ -147,6 +148,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
             HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
             placeOnScreen(dialog);
             dialog.setVisible(true);
+            dialog.getHistoryBrowser().stateChanged(new ChangeEvent(this));
             dialogs.put(h.getId(), dialog);
         }
     }

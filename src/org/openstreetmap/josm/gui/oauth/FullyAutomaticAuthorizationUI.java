@@ -12,8 +12,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.net.Authenticator.RequestorType;
-import java.net.PasswordAuthentication;
 import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
@@ -23,47 +21,29 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.openstreetmap.josm.data.oauth.OAuthParameters;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.preferences.server.UserNameValidator;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.gui.widgets.DefaultTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
-import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.io.auth.CredentialsAgent;
-import org.openstreetmap.josm.io.auth.CredentialsAgentException;
-import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
- * This is an UI which supports a JOSM user to get an OAuth Access Token in a fully
+ * This is a UI which supports a JOSM user to get an OAuth Access Token in a fully
  * automatic process.
  *
  * @since 2746
  */
 public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
-
-    private final JosmTextField tfUserName = new JosmTextField();
-    private final JosmPasswordField tfPassword = new JosmPasswordField();
-    private transient UserNameValidator valUserName;
-    private transient PasswordValidator valPassword;
     private final AccessTokenInfoPanel pnlAccessTokenInfo = new AccessTokenInfoPanel();
     private OsmPrivilegesPanel pnlOsmPrivileges;
     private JPanel pnlPropertiesPanel;
@@ -104,7 +84,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         pnlMessage.setText("<html><body><p class=\"warning-body\">"
                 + tr("Please enter your OSM user name and password. The password will <strong>not</strong> be saved "
                         + "in clear text in the JOSM preferences and it will be submitted to the OSM server <strong>only once</strong>. "
-                        + "Subsequent data upload requests don''t use your password any more.").replaceAll("\\. ", ".<br>")
+                        + "Subsequent data upload requests don''t use your password any more.").replace(". ", ".<br>")
                         + "</p>"
                         + "</body></html>");
         pnl.add(pnlMessage, gc);
@@ -118,13 +98,6 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         gc.insets = new Insets(0, 0, 3, 3);
         pnl.add(new JLabel(tr("Username: ")), gc);
 
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(tfUserName, gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfUserName);
-        valUserName = new UserNameValidator(tfUserName);
-        valUserName.validate();
-
         // the password input field
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
@@ -133,14 +106,8 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         gc.weightx = 0.0;
         pnl.add(new JLabel(tr("Password:")), gc);
 
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(tfPassword, gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfPassword);
-        valPassword = new PasswordValidator(tfPassword);
-        valPassword.validate();
-
         // filler - grab remaining space
+        gc.gridx = 1;
         gc.gridy = 4;
         gc.gridwidth = 2;
         gc.fill = GridBagConstraints.BOTH;
@@ -167,30 +134,6 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     }
 
     /**
-     * Initializes the panel with values from the preferences
-     * @param paramApiUrl the API URL
-     */
-    @Override
-    public void initialize(String paramApiUrl) {
-        super.initialize(paramApiUrl);
-        CredentialsAgent cm = CredentialsManager.getInstance();
-        try {
-            PasswordAuthentication pa = cm.lookup(RequestorType.SERVER, OsmApi.getOsmApi().getHost());
-            if (pa == null) {
-                tfUserName.setText("");
-                tfPassword.setText("");
-            } else {
-                tfUserName.setText(pa.getUserName() == null ? "" : pa.getUserName());
-                tfPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
-            }
-        } catch (CredentialsAgentException e) {
-            Logging.error(e);
-            tfUserName.setText("");
-            tfPassword.setText("");
-        }
-    }
-
-    /**
      * Builds the panel with the action button  for starting the authorisation
      *
      * @return constructed button panel
@@ -199,8 +142,6 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         RunAuthorisationAction runAuthorisationAction = new RunAuthorisationAction();
-        tfPassword.getDocument().addDocumentListener(runAuthorisationAction);
-        tfUserName.getDocument().addDocumentListener(runAuthorisationAction);
         pnl.add(new JButton(runAuthorisationAction));
         return pnl;
     }
@@ -288,22 +229,27 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         repaint();
     }
 
-    protected String getOsmUserName() {
-        return tfUserName.getText();
-    }
-
-    protected String getOsmPassword() {
-        return String.valueOf(tfPassword.getPassword());
+    /**
+     * Constructs a new {@code FullyAutomaticAuthorizationUI} for the given API URL.
+     * @param apiUrl The OSM API URL
+     * @param executor the executor used for running the HTTP requests for the authorization
+     * @since 5422
+     * @deprecated since 18991
+     */
+    @Deprecated
+    public FullyAutomaticAuthorizationUI(String apiUrl, Executor executor) {
+        this(apiUrl, executor, OAuthVersion.OAuth10a);
     }
 
     /**
      * Constructs a new {@code FullyAutomaticAuthorizationUI} for the given API URL.
      * @param apiUrl The OSM API URL
      * @param executor the executor used for running the HTTP requests for the authorization
-     * @since 5422
+     * @param oAuthVersion The OAuth version to use for this UI
+     * @since 18991
      */
-    public FullyAutomaticAuthorizationUI(String apiUrl, Executor executor) {
-        super(apiUrl);
+    public FullyAutomaticAuthorizationUI(String apiUrl, Executor executor, OAuthVersion oAuthVersion) {
+        super(apiUrl, oAuthVersion);
         this.executor = executor;
         build();
     }
@@ -314,7 +260,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     }
 
     @Override
-    protected void setAccessToken(OAuthToken accessToken) {
+    protected void setAccessToken(IOAuthToken accessToken) {
         super.setAccessToken(accessToken);
         pnlAccessTokenInfo.setAccessToken(accessToken);
     }
@@ -322,36 +268,16 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Starts the authorisation process
      */
-    class RunAuthorisationAction extends AbstractAction implements DocumentListener {
+    class RunAuthorisationAction extends AbstractAction {
         RunAuthorisationAction() {
             putValue(NAME, tr("Authorize now"));
             new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to redirect you to the authorization form on the JOSM web site"));
-            updateEnabledState();
         }
 
         @Override
         public void actionPerformed(ActionEvent evt) {
             executor.execute(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorizationUI.this));
-        }
-
-        protected final void updateEnabledState() {
-            setEnabled(valPassword.isValid() && valUserName.isValid());
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            updateEnabledState();
         }
     }
 
@@ -385,15 +311,8 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             executor.execute(new TestAccessTokenTask(
                     FullyAutomaticAuthorizationUI.this,
                     getApiUrl(),
-                    (OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters(),
                     getAccessToken()
             ));
-        }
-    }
-
-    static class PasswordValidator extends DefaultTextComponentValidator {
-        PasswordValidator(JTextComponent tc) {
-            super(tc, tr("Please enter your OSM password"), tr("The password cannot be empty. Please enter your OSM password"));
         }
     }
 
@@ -438,25 +357,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                             + "a valid login URL from the OAuth Authorize Endpoint URL ''{0}''.<br><br>"
                             + "Please check your advanced setting and try again."
                             + "</html>",
-                            ((OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters()).getAuthoriseUrl()),
-                    tr("OAuth authorization failed"),
-                    JOptionPane.ERROR_MESSAGE,
-                    HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
-            );
-        }
-
-        protected void alertLoginFailed() {
-            final String loginUrl = ((OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters()).getOsmLoginUrl();
-            HelpAwareOptionPane.showOptionDialog(
-                    FullyAutomaticAuthorizationUI.this,
-                    tr("<html>"
-                            + "The automatic process for retrieving an OAuth Access Token<br>"
-                            + "from the OSM server failed. JOSM failed to log into {0}<br>"
-                            + "for user {1}.<br><br>"
-                            + "Please check username and password and try again."
-                            +"</html>",
-                            loginUrl,
-                            Utils.escapeReservedCharactersHTML(getOsmUserName())),
+                            getAdvancedPropertiesPanel().getAdvancedParameters().getAuthorizationUrl()),
                     tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
@@ -464,50 +365,23 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         }
 
         protected void handleException(final OsmOAuthAuthorizationException e) {
-            Runnable r = () -> {
-                if (e instanceof OsmLoginFailedException) {
-                    alertLoginFailed();
-                } else {
-                    alertAuthorisationFailed();
-                }
-            };
             Logging.error(e);
-            GuiHelper.runInEDT(r);
+            GuiHelper.runInEDT(this::alertAuthorisationFailed);
         }
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            try {
-                getProgressMonitor().setTicksCount(3);
-                OsmOAuthAuthorizationClient authClient = new OsmOAuthAuthorizationClient(
-                        (OAuthParameters) getAdvancedPropertiesPanel().getAdvancedParameters()
-                );
-                OAuthToken requestToken = authClient.getRequestToken(
-                        getProgressMonitor().createSubTaskMonitor(1, false)
-                );
-                getProgressMonitor().worked(1);
-                if (canceled) return;
-                authClient.authorise(
-                        requestToken,
-                        getOsmUserName(),
-                        getOsmPassword(),
-                        pnlOsmPrivileges.getPrivileges(),
-                        getProgressMonitor().createSubTaskMonitor(1, false)
-                );
-                getProgressMonitor().worked(1);
-                if (canceled) return;
-                final OAuthToken accessToken = authClient.getAccessToken(
-                        getProgressMonitor().createSubTaskMonitor(1, false)
-                );
-                getProgressMonitor().worked(1);
-                if (canceled) return;
-                GuiHelper.runInEDT(() -> {
-                    prepareUIForResultDisplay();
-                    setAccessToken(accessToken);
-                });
-            } catch (final OsmOAuthAuthorizationException e) {
-                handleException(e);
-            }
+            getProgressMonitor().setTicksCount(2);
+            OAuthAuthorizationWizard.authorize(true, token -> {
+                if (!canceled) {
+                    getProgressMonitor().worked(1);
+                    GuiHelper.runInEDT(() -> {
+                        prepareUIForResultDisplay();
+                        setAccessToken(token.orElse(null));
+                    });
+                }
+            }, getApiUrl(), getOAuthVersion(), getOAuthParameters());
+            getProgressMonitor().worked(1);
         }
     }
 }

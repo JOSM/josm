@@ -121,10 +121,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     continue;
                 }
                 AbstractModifiableLayer odl = (AbstractModifiableLayer) l;
-                if (odl.isModified() &&
-                        ((!odl.isSavable() && !odl.isUploadable()) ||
-                                odl.requiresSaveToFile() ||
-                                odl.requiresUploadToServer())) {
+                if (odl.isModified() && (
+                        (odl.isSavable() && odl.requiresSaveToFile()) ||
+                        (odl.isUploadable() && odl.requiresUploadToServer() && !odl.isUploadDiscouraged()))) {
                     layersWithUnsavedChanges.add(odl);
                 }
             }

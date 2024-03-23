@@ -31,6 +31,7 @@ JOSM Checkstyle rules
       <property name="checkFirstSentence" value="false"/>
       <property name="checkHtml" value="false"/>
     </module>
+    <module name="MissingJavadocType"/>
     <module name="NonEmptyAtclauseDescription"/>
     <module name="AtclauseOrder"/>
     <module name="AvoidStarImport"/>
@@ -95,7 +96,6 @@ JOSM Checkstyle rules
     <module name="OuterTypeFilename"/>
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
-    <module name="org.openstreetmap.josm.TopLevelJavadocCheck"/>
     <module name="SuppressionCommentFilter">
       <property name="offCommentFormat" value="CHECKSTYLE\.OFF\: ([\w\|]+)"/>
       <property name="onCommentFormat" value="CHECKSTYLE\.ON\: ([\w\|]+)"/>

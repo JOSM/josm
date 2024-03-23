@@ -19,9 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
@@ -38,6 +35,10 @@ import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 
 /**
  * Class that stores info about an image background layer.
@@ -204,6 +205,8 @@ public class ImageryInfo extends
             super(asString, separator);
         }
     }
+
+    private static final String[] EMPTY_STRING = new String[0];
 
     private double pixelPerDegree;
     /** maximum zoom level for TMS imagery */
@@ -566,7 +569,7 @@ public class ImageryInfo extends
     /**
      * Check if this object equals another ImageryInfo with respect to the properties
      * that get written to the preference file.
-     *
+     * <p>
      * The field {@link #pixelPerDegree} is ignored.
      *
      * @param other the ImageryInfo object to compare to
@@ -961,6 +964,49 @@ public class ImageryInfo extends
             }
             return getOriginalName();
         }
+    }
+
+    /**
+     * Check to see if this info is valid (the XSD is overly permissive due to limitations of the XSD syntax).
+     * @return {@code true} if this info is valid
+     * @see ImageryInfo#getMissingFields()
+     * @since 18989
+     */
+    public boolean isValid() {
+        return this.getName() != null &&
+                this.getId() != null &&
+                this.getSourceType() != null &&
+                this.getUrl() != null &&
+                this.getImageryCategory() != null;
+    }
+
+    /**
+     * Get the missing fields for this info
+     * @return The missing fields, or an empty array
+     * @see ImageryInfo#isValid()
+     * @since 18989
+     */
+    public String[] getMissingFields() {
+        if (this.isValid()) {
+            return EMPTY_STRING;
+        }
+        List<String> missingFields = new ArrayList<>();
+        if (this.getName() == null) {
+            missingFields.add("name");
+        }
+        if (this.getId() == null) {
+            missingFields.add("id");
+        }
+        if (this.getSourceType() == null) {
+            missingFields.add("type");
+        }
+        if (this.getUrl() == null) {
+            missingFields.add("url");
+        }
+        if (this.getImageryCategory() == null) {
+            missingFields.add("category");
+        }
+        return missingFields.toArray(new String[0]);
     }
 
     /**

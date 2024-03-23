@@ -63,8 +63,10 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     @Override
-    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback) {
+    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback,
+            SanityCheckCallback sanityCheckCallback) {
         checkWebStartMigration(webStartCallback);
+        PlatformHook.super.startupHook(javaCallback, webStartCallback, sanityCheckCallback);
     }
 
     @Override

@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -22,7 +24,7 @@ import org.openstreetmap.josm.tools.Destroyable;
  *
  * @since 1709
  */
-public class HistoryBrowser extends JPanel implements Destroyable {
+public class HistoryBrowser extends JPanel implements Destroyable, ChangeListener {
 
     /** the model */
     private transient HistoryBrowserModel model;
@@ -115,6 +117,7 @@ public class HistoryBrowser extends JPanel implements Destroyable {
     public void populate(History history) {
         boolean samePrimitive = model.isSamePrimitive(history); // needs to be before setHistory
         model.setHistory(history);
+        model.addChangeListener(this);
         if (samePrimitive) {
             // no need to rebuild the UI
             return;
@@ -159,6 +162,7 @@ public class HistoryBrowser extends JPanel implements Destroyable {
     public void destroy() {
         if (model != null) {
             model.unlinkAsListener();
+            model.removeChangeListener(this);
             model = null;
         }
         Stream.of(tagInfoViewer, nodeListViewer, relationMemberListViewer, coordinateInfoViewer)
@@ -167,5 +171,10 @@ public class HistoryBrowser extends JPanel implements Destroyable {
         nodeListViewer = null;
         relationMemberListViewer = null;
         coordinateInfoViewer = null;
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        tagInfoViewer.adjustWidths();
     }
 }

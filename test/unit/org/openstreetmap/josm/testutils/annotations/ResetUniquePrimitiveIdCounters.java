@@ -36,6 +36,10 @@ import org.openstreetmap.josm.spi.preferences.MemoryPreferences;
 @BasicPreferences
 @ExtendWith(ResetUniquePrimitiveIdCounters.Reset.class)
 public @interface ResetUniquePrimitiveIdCounters {
+    /**
+     * Reset the id counters for {@link Node}, {@link Way}, and {@link Relation}
+     * {@link org.openstreetmap.josm.data.osm.AbstractPrimitive#getIdGenerator} calls.
+     */
     class Reset implements BeforeEachCallback {
         private static AtomicLong[] ID_COUNTERS;
 

@@ -20,12 +20,10 @@ import javax.swing.JPanel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuth20Exception;
 import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Token;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
@@ -46,7 +44,7 @@ class OAuthAuthenticationPreferencesPanelTest {
         }
         List<Exception> exceptionList = new ArrayList<>();
         try {
-            CredentialsManager.getInstance().storeOAuthAccessToken(null);
+            CredentialsManager.getInstance().storeOAuthAccessToken(OsmApi.getOsmApi().getServerUrl(), null);
         } catch (CredentialsAgentException exception) {
             exceptionList.add(exception);
         }
@@ -60,7 +58,7 @@ class OAuthAuthenticationPreferencesPanelTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = OAuthVersion.class, names = {"OAuth10a", "OAuth20"})
+    @EnumSource(value = OAuthVersion.class, names = "OAuth20")
     void testRemoveToken(OAuthVersion oAuthVersion) throws ReflectiveOperationException, CredentialsAgentException, OAuth20Exception {
         final OAuthAuthenticationPreferencesPanel panel = new OAuthAuthenticationPreferencesPanel(oAuthVersion);
         final Field pnlNotYetAuthorised = OAuthAuthenticationPreferencesPanel.class.getDeclaredField("pnlNotYetAuthorised");
@@ -75,8 +73,8 @@ class OAuthAuthenticationPreferencesPanelTest {
         panel.initFromPreferences();
         assertSame(pnlAlreadyAuthorised.get(panel), holder.getComponent(0), "Authentication should now be set");
         assertNotNull(getAuthorization(oAuthVersion));
-        final JPanel buttons = (JPanel) ((JPanel) pnlAlreadyAuthorised.get(panel)).getComponent(6);
-        final JButton action = (JButton) buttons.getComponent(oAuthVersion == OAuthVersion.OAuth10a ? 2 : 1);
+        final JPanel buttons = (JPanel) ((JPanel) pnlAlreadyAuthorised.get(panel)).getComponent(5);
+        final JButton action = (JButton) buttons.getComponent(2);
         assertEquals(tr("Remove token"), action.getText(), "The selected button should be for removing the token");
         action.getAction().actionPerformed(null);
         panel.saveToPreferences(); // Save to preferences should make the removal permanent
@@ -96,9 +94,6 @@ class OAuthAuthenticationPreferencesPanelTest {
      */
     private static void addAuthorization(OAuthVersion oAuthVersion) throws CredentialsAgentException, OAuth20Exception {
         switch (oAuthVersion) {
-            case OAuth10a:
-                CredentialsManager.getInstance().storeOAuthAccessToken(new OAuthToken("fake_key", "fake_secret"));
-                break;
             case OAuth20:
             case OAuth21:
                 CredentialsManager.getInstance().storeOAuthAccessToken(OsmApi.getOsmApi().getHost(),
@@ -116,17 +111,9 @@ class OAuthAuthenticationPreferencesPanelTest {
      */
     private static Object getAuthorization(OAuthVersion oAuthVersion) {
         OAuthAccessTokenHolder.getInstance().clear();
-        OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getHost(), (IOAuthToken) null);
+        OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), null);
         OAuthAccessTokenHolder.getInstance().init(CredentialsManager.getInstance());
         // Ensure that we are not saving authorization data
-        switch (oAuthVersion) {
-            case OAuth10a:
-                return OAuthAccessTokenHolder.getInstance().getAccessToken();
-            case OAuth20:
-            case OAuth21:
-                return OAuthAccessTokenHolder.getInstance().getAccessToken(OsmApi.getOsmApi().getHost(), oAuthVersion);
-            default:
-                throw new AssertionError("OAuth version not understood");
-        }
+        return OAuthAccessTokenHolder.getInstance().getAccessToken(OsmApi.getOsmApi().getServerUrl(), oAuthVersion);
     }
 }

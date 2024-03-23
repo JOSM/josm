@@ -83,6 +83,8 @@ public class FollowLineAction extends JosmAction {
         if (follower.lastNode().equals(last)) {
             prev = follower.getNode(follower.getNodesCount() - 2);
             reversed = false;
+        } else if (!follower.firstNode().equals(last)) {
+            return; // see #23442
         }
         List<OsmPrimitive> referrers = last.getReferrers();
         if (referrers.size() < 2) return; // There's nothing to follow
