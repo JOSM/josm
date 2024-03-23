@@ -116,6 +116,8 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     private UpdateImageThread updateImageThreadInstance;
 
+    private boolean destroyed;
+
     private class UpdateImageThread extends Thread {
         private boolean restart;
 
@@ -619,13 +621,16 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     @Override
     public void destroy() {
-        removeMouseListener(imgMouseListener);
-        removeMouseWheelListener(imgMouseListener);
-        removeMouseMotionListener(imgMouseListener);
-        Config.getPref().removePreferenceChangeListener(this);
-        if (imageProcessor instanceof ImageryFilterSettings) {
-            ((ImageryFilterSettings) imageProcessor).removeFilterChangeListener(this);
+        if (!destroyed) {
+            removeMouseListener(imgMouseListener);
+            removeMouseWheelListener(imgMouseListener);
+            removeMouseMotionListener(imgMouseListener);
+            Config.getPref().removePreferenceChangeListener(this);
+            if (imageProcessor instanceof ImageryFilterSettings) {
+                ((ImageryFilterSettings) imageProcessor).removeFilterChangeListener(this);
+            }
         }
+        destroyed = true;
     }
 
     /**

@@ -693,14 +693,22 @@ public final class Geometry {
      * @since 15938
      */
     public static Pair<PolygonIntersection, Area> polygonIntersectionResult(Area a1, Area a2, double eps) {
+        // Simple intersect check (if their bounds don't intersect, don't bother going further; there will be no intersection)
+        // This avoids the more expensive Area#intersect call some of the time (decreases CPU and memory allocation by ~95%)
+        // in Mesa County, CO geometry validator test runs.
+        final Rectangle2D a12d = a1.getBounds2D();
+        final Rectangle2D a22d = a2.getBounds2D();
+        if (!a12d.intersects(a22d) || !a1.intersects(a22d) || !a2.intersects(a12d)) {
+            return new Pair<>(PolygonIntersection.OUTSIDE, new Area());
+        }
         Area inter = new Area(a1);
         inter.intersect(a2);
 
         if (inter.isEmpty() || !checkIntersection(inter, eps)) {
             return new Pair<>(PolygonIntersection.OUTSIDE, inter);
-        } else if (a2.getBounds2D().contains(a1.getBounds2D()) && inter.equals(a1)) {
+        } else if (a22d.contains(a12d) && inter.equals(a1)) {
             return new Pair<>(PolygonIntersection.FIRST_INSIDE_SECOND, inter);
-        } else if (a1.getBounds2D().contains(a2.getBounds2D()) && inter.equals(a2)) {
+        } else if (a12d.contains(a22d) && inter.equals(a2)) {
             return new Pair<>(PolygonIntersection.SECOND_INSIDE_FIRST, inter);
         } else {
             return new Pair<>(PolygonIntersection.CROSSING, inter);

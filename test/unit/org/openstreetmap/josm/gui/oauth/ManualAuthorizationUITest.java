@@ -1,9 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.oauth;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
@@ -17,6 +18,6 @@ class ManualAuthorizationUITest {
      */
     @Test
     void testManualAuthorizationUI() {
-        assertNotNull(new ManualAuthorizationUI("", MainApplication.worker));
+        assertDoesNotThrow(() -> new ManualAuthorizationUI("", MainApplication.worker, OAuthVersion.OAuth20));
     }
 }

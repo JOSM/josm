@@ -151,7 +151,7 @@ public class WikiReader {
             }
         }
         if (b.indexOf("      Describe ") >= 0
-        || b.indexOf(" does not exist. You can create it here.</p>") >= 0)
+        || b.indexOf(" does not exist. You can create it here.") >= 0)
             return "";
         if (b.length() == 0)
             b = full;

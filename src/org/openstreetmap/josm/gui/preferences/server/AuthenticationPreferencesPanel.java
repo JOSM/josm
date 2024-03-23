@@ -38,16 +38,12 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
 
     /** indicates whether we use basic authentication */
     private final JRadioButton rbBasicAuthentication = new JRadioButton();
-    /** indicates whether we use OAuth 1.0a as authentication scheme */
-    private final JRadioButton rbOAuth = new JRadioButton();
     /** indicates whether we use OAuth 2.0 as authentication scheme */
     private final JRadioButton rbOAuth20 = new JRadioButton();
     /** the panel which contains the authentication parameters for the respective authentication scheme */
     private final JPanel pnlAuthenticationParameters = new JPanel(new BorderLayout());
     /** the panel for the basic authentication parameters */
     private BasicAuthenticationPreferencesPanel pnlBasicAuthPreferences;
-    /** the panel for the OAuth 1.0a authentication parameters */
-    private OAuthAuthenticationPreferencesPanel pnlOAuthPreferences;
     /** the panel for the OAuth 2.0 authentication parameters */
     private OAuthAuthenticationPreferencesPanel pnlOAuth20Preferences;
 
@@ -58,7 +54,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         final String authMethod = OsmApi.getAuthMethod();
         final boolean defaultApi = JosmUrls.getInstance().getDefaultOsmApiUrl().equals(apiUrl);
         rbBasicAuthentication.setEnabled(rbBasicAuthentication.isSelected() || "basic".equals(authMethod) || isExpert || !defaultApi);
-        rbOAuth.setEnabled(rbOAuth.isSelected() || "oauth".equals(authMethod) || isExpert || !defaultApi);
     };
 
     /**
@@ -84,15 +79,9 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         rbBasicAuthentication.setText(tr("Use Basic Authentication"));
         rbBasicAuthentication.setToolTipText(tr("Select to use HTTP basic authentication with your OSM username and password"));
         rbBasicAuthentication.addItemListener(authChangeListener);
-
-        //-- radio button for OAuth 1.0a
-        buttonPanel.add(rbOAuth);
-        rbOAuth.setText(tr("Use OAuth {0}", "1.0a"));
-        rbOAuth.setToolTipText(tr("Select to use OAuth {0} as authentication mechanism", "1.0a"));
-        rbOAuth.addItemListener(authChangeListener);
-
         //-- radio button for OAuth 2.0
         buttonPanel.add(rbOAuth20);
+        rbOAuth20.setSelected(true); // This must before adding the listener; otherwise, saveToPreferences is called prior to initFromPreferences
         rbOAuth20.setText(tr("Use OAuth {0}", "2.0"));
         rbOAuth20.setToolTipText(tr("Select to use OAuth {0} as authentication mechanism", "2.0"));
         rbOAuth20.addItemListener(authChangeListener);
@@ -101,7 +90,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         //-- radio button for OAuth
         ButtonGroup bg = new ButtonGroup();
         bg.add(rbBasicAuthentication);
-        bg.add(rbOAuth);
         bg.add(rbOAuth20);
 
         //-- add the panel which will hold the authentication parameters
@@ -118,12 +106,10 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
 
         //-- the two panels for authentication parameters
         pnlBasicAuthPreferences = new BasicAuthenticationPreferencesPanel();
-        pnlOAuthPreferences = new OAuthAuthenticationPreferencesPanel(OAuthVersion.OAuth10a);
         pnlOAuth20Preferences = new OAuthAuthenticationPreferencesPanel(OAuthVersion.OAuth20);
 
         ExpertToggleAction.addExpertModeChangeListener(expertModeChangeListener, true);
 
-        rbOAuth20.setSelected(true);
         pnlAuthenticationParameters.add(pnlOAuth20Preferences, BorderLayout.CENTER);
     }
 
@@ -132,23 +118,17 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
      */
     public final void initFromPreferences() {
         final String authMethod = OsmApi.getAuthMethod();
-        switch (authMethod) {
-            case "basic":
-                rbBasicAuthentication.setSelected(true);
-                break;
-            case "oauth":
-                rbOAuth.setSelected(true);
-                break;
-            case "oauth20":
-                rbOAuth20.setSelected(true);
-                break;
-            default:
-                Logging.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.",
-                        "osm-server.auth-method", authMethod));
-                rbBasicAuthentication.setSelected(true);
+        if ("basic".equals(authMethod)) {
+            rbBasicAuthentication.setSelected(true);
+        } else if ("oauth20".equals(authMethod)) {
+            rbOAuth20.setSelected(true);
+        } else {
+            Logging.warn(
+                    tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''OAuth 2.0 Authentication''.",
+                            "osm-server.auth-method", authMethod));
+            rbOAuth20.setSelected(true);
         }
         pnlBasicAuthPreferences.initFromPreferences();
-        pnlOAuthPreferences.initFromPreferences();
         pnlOAuth20Preferences.initFromPreferences();
     }
 
@@ -160,8 +140,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         String authMethod;
         if (rbBasicAuthentication.isSelected()) {
             authMethod = "basic";
-        } else if (rbOAuth.isSelected()) {
-            authMethod = "oauth";
         } else if (rbOAuth20.isSelected()) {
             authMethod = "oauth20";
         } else {
@@ -173,22 +151,19 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             pnlBasicAuthPreferences.saveToPreferences();
             OAuthAccessTokenHolder.getInstance().clear();
             OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
-        } else if ("oauth".equals(authMethod)) {
+        } else if ("oauth20".equals(authMethod)) {
+            // oauth20
             // clear the password in the preferences
             pnlBasicAuthPreferences.clearPassword();
-            pnlBasicAuthPreferences.saveToPreferences();
-            pnlOAuthPreferences.saveToPreferences();
-        } else { // oauth20
-            // clear the password in the preferences
-            pnlBasicAuthPreferences.clearPassword();
-            pnlBasicAuthPreferences.saveToPreferences();
             pnlOAuth20Preferences.saveToPreferences();
         }
         if (initUser) {
             if ("basic".equals(authMethod)) {
                 UserIdentityManager.getInstance().initFromPreferences();
-            } else {
+            } else if (OsmApi.isUsingOAuthAndOAuthSetUp(OsmApi.getOsmApi())) {
                 UserIdentityManager.getInstance().initFromOAuth();
+            } else {
+                UserIdentityManager.getInstance().setAnonymous();
             }
         }
         ExpertToggleAction.removeExpertModeChangeListener(this.expertModeChangeListener);
@@ -204,11 +179,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             if (rbBasicAuthentication.isSelected()) {
                 pnlAuthenticationParameters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
                 pnlBasicAuthPreferences.revalidate();
-            } else if (rbOAuth.isSelected()) {
-                pnlAuthenticationParameters.add(pnlOAuthPreferences, BorderLayout.CENTER);
-                pnlOAuthPreferences.saveToPreferences();
-                pnlOAuthPreferences.initFromPreferences();
-                pnlOAuthPreferences.revalidate();
             } else if (rbOAuth20.isSelected()) {
                 pnlAuthenticationParameters.add(pnlOAuth20Preferences, BorderLayout.CENTER);
                 pnlOAuth20Preferences.saveToPreferences();
@@ -221,9 +191,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (pnlOAuthPreferences != null) {
-            pnlOAuthPreferences.propertyChange(evt);
-        }
         if (pnlOAuth20Preferences != null) {
             pnlOAuth20Preferences.propertyChange(evt);
         }

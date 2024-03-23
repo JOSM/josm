@@ -45,15 +45,22 @@ public @interface I18n {
             String language = AnnotationUtils.findFirstParentAnnotation(context, I18n.class).map(I18n::value).orElse("en");
             if (!Locale.getDefault().equals(LanguageInfo.getLocale(language, false))) {
                 org.openstreetmap.josm.tools.I18n.set(language);
+                // We want to have a consistent "country", so we don't use a locale with a country code from the original locale.
+                // Unless someone specified it via the <lang>_<country> syntax.
+                if (!language.contains("_")) {
+                    Locale.setDefault(LanguageInfo.getLocale(language, false));
+                }
             }
         }
 
         @Override
         public void afterEach(ExtensionContext context) {
-            if (!Locale.ENGLISH.equals(Locale.getDefault())) {
+            Locale original = org.openstreetmap.josm.tools.I18n.getOriginalLocale();
+            if (original == null) {
                 org.openstreetmap.josm.tools.I18n.set("en");
-                org.openstreetmap.josm.tools.I18n.set(org.openstreetmap.josm.tools.I18n.getOriginalLocale().getLanguage());
-                Locale.setDefault(Locale.ENGLISH);
+            } else if (!original.equals(Locale.getDefault())) {
+                org.openstreetmap.josm.tools.I18n.set(original.getLanguage());
+                Locale.setDefault(original);
             }
         }
     }

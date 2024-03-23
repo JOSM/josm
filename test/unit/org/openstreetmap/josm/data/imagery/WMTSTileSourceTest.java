@@ -17,13 +17,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -46,6 +43,9 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.ReflectionUtils;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 /**
  * Unit tests for class {@link WMTSTileSource}.
@@ -275,9 +275,7 @@ class WMTSTileSourceTest {
     void testTwoTileSetsForOneProjection() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
-        ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
-                new DefaultLayer(ImageryType.WMTS, "Basemap_Imagery_2014", null, "default028mm")
-        }));
+        ontario.setDefaultLayers(Collections.singletonList(new DefaultLayer(ImageryType.WMTS, "Basemap_Imagery_2014", null, "default028mm")));
         WMTSTileSource testSource = new WMTSTileSource(ontario);
         testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
@@ -292,9 +290,9 @@ class WMTSTileSourceTest {
     void testTwoTileSetsForOneProjectionSecondLayer() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
-        ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
+        ontario.setDefaultLayers(Collections.singletonList(
                 new DefaultLayer(ImageryType.WMTS, "Basemap_Imagery_2014", null, "GoogleMapsCompatible")
-        }));
+        ));
         WMTSTileSource testSource = new WMTSTileSource(ontario);
         testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
@@ -392,6 +390,7 @@ class WMTSTileSourceTest {
                 "<name>Landsat</name>\n" +
                 "<id>landsat</id>\n" +
                 "<type>wmts</type>\n" +
+                "<category>photo</category>\n" +
                 "<url><![CDATA[" + tileServer.url("/getcapabilities.xml") + "]]></url>\n" +
                 "<default-layers>" +
                 "<layer name=\"GEOGRAPHICALGRIDSYSTEMS.MAPS\" />" +

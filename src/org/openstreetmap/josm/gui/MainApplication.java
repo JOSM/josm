@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
@@ -54,9 +55,11 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.RepaintManager;
@@ -129,6 +132,7 @@ import org.openstreetmap.josm.gui.util.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.widgets.TextContextualPopupMenu;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.CertificateAmendment;
@@ -181,6 +185,10 @@ public class MainApplication {
      * Command-line arguments used to run the application.
      */
     private static volatile List<String> commandLineArgs;
+    /**
+     * The preference key for the startup failure counter
+     */
+    private static final String PREF_STARTUP_FAILURE_COUNTER = "josm.startup.failure.count";
 
     /**
      * The main menu bar at top of screen.
@@ -403,6 +411,44 @@ public class MainApplication {
                 .append(tr("Would you like to <b>download OpenWebStart now</b>? (Please do!)"));
         askUpdate(tr("Outdated Java WebStart version"), tr("Update to OpenWebStart"), "askUpdateWebStart", /* ICON */"presets/transport/rocket", content, url);
         // CHECKSTYLE.ON: LineLength
+    }
+
+    /**
+     * Tells the user that a sanity check failed
+     * @param title The title of the message to show
+     * @param canContinue {@code true} if the failed sanity check(s) will not instantly kill JOSM when the user edits
+     * @param message The message parts to show the user (as a list)
+     */
+    public static void sanityCheckFailed(String title, boolean canContinue, String... message) {
+        final ExtendedDialog ed;
+        if (canContinue) {
+            ed = new ExtendedDialog(mainFrame, title, trc("dialog", "Stop"), tr("Continue"));
+            ed.setButtonIcons("cancel", "apply");
+        } else {
+            ed = new ExtendedDialog(mainFrame, title, trc("dialog", "Stop"));
+            ed.setButtonIcons("cancel");
+        }
+        ed.setDefaultButton(1).setCancelButton(1);
+        // Check if the dialog has not already been permanently hidden by user
+        ed.toggleEnable("sanityCheckFailed");
+        final String content = Arrays.stream(message).collect(Collectors.joining("</li><li>",
+                 "<html><body><ul><li>", "</li></ul></body></html>"));
+        final JTextPane textField = new JTextPane();
+        textField.setContentType("text/html");
+        textField.setText(content);
+        TextContextualPopupMenu.enableMenuFor(textField, true);
+        ed.setMinimumSize(new Dimension(480, 300));
+        ed.setIcon(JOptionPane.WARNING_MESSAGE);
+        ed.setContent(textField);
+        ed.showDialog(); // This won't show the dialog if the user has previously saved their response
+        if (!canContinue || ed.getValue() <= 1) { // 0 == cancel (we want to stop) and 1 == stop
+            // Never store cancel/stop -- this would otherwise lead to the user never seeing the window again, and JOSM just stopping.
+            if (ConditionalOptionPaneUtil.getDialogReturnValue("sanityCheckFailed") != -1) {
+                Config.getPref().put("message.sanityCheckFailed", null);
+                Config.getPref().put("message.sanityCheckFailed.value", null);
+            }
+            Lifecycle.exitJosm(true, -1);
+        }
     }
 
     /**
@@ -837,6 +883,24 @@ public class MainApplication {
 
         checkIPv6();
 
+        // After IPv6 check since that may restart JOSM, must be after Preferences.main().init()
+        final int failures = prefs.getInt(PREF_STARTUP_FAILURE_COUNTER, 0);
+        // Always increment failures
+        prefs.putInt(PREF_STARTUP_FAILURE_COUNTER, failures + 1);
+        if (failures > 3) {
+            final int selection = JOptionPane.showOptionDialog(new JDialog(),
+                    tr("JOSM has failed to start up {0} times. Reset JOSM?", failures),
+                    tr("Reset JOSM?"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.ERROR_MESSAGE,
+                    null,
+                    null,
+                    null);
+            if (selection == JOptionPane.YES_OPTION) {
+                Preferences.main().init(true);
+            }
+        }
+
         processOffline(args);
 
         PlatformManager.getPlatform().afterPrefStartupHook();
@@ -969,6 +1033,7 @@ public class MainApplication {
                 splash.dispose();
             }
             mainFrame.setVisible(true);
+            Config.getPref().put(PREF_STARTUP_FAILURE_COUNTER, null);
         });
 
         boolean maximized = Config.getPref().getBoolean("gui.maximized", false);

@@ -185,7 +185,7 @@ class OAuth20AuthorizationTest {
         final OAuth20Authorization authorization = new OAuth20Authorization();
         OAuth20Parameters parameters = (OAuth20Parameters) OAuthParameters.createDefault(OsmApi.getOsmApi().getBaseUrl(), OAuthVersion.OAuth20);
         RemoteControl.start();
-        authorization.authorize(new OAuth20Parameters(parameters.getClientId(), parameters.getClientSecret(),
+        authorization.authorize(new OAuth20Parameters(CLIENT_ID_VALUE, parameters.getClientSecret(),
                 wireMockRuntimeInfo.getHttpBaseUrl() + "/oauth2", wireMockRuntimeInfo.getHttpBaseUrl() + "/api",
                 parameters.getRedirectUri()), consumer::set, OsmScopes.read_gpx);
         assertEquals(1, OpenBrowserMocker.getCalledURIs().size());

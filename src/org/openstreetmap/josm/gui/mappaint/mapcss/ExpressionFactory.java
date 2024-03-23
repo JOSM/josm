@@ -39,13 +39,49 @@ public final class ExpressionFactory {
     @Retention(RetentionPolicy.RUNTIME)
     @interface NullableArguments {}
 
+    /**
+     * Represents a function that accepts three arguments and produces a result. This is a specialization of {@link Function}.
+     * This is a functional interface whose functional method is {@link #apply(Object, Object, Object)}.
+     * @param <T> The type of the first argument
+     * @param <U> The type of the second argument
+     * @param <V> The type of the third argument
+     * @param <R> The type of the result of the function
+     * @see Function
+     * @see BiFunction
+     */
     @FunctionalInterface
     public interface TriFunction<T, U, V, R> {
+        /**
+         * Call the function
+         * @param t The first argument
+         * @param u The second argument
+         * @param v The third argument
+         * @return The result of the function call
+         */
         R apply(T t, U u, V v);
     }
 
+    /**
+     * Represents a function that accepts four arguments and produces a result. This is a specialization of {@link Function}.
+     * This is a functional interface whose functional method is {@link #apply(Object, Object, Object, Object)}.
+     * @param <T> The type of the first argument
+     * @param <U> The type of the second argument
+     * @param <V> The type of the third argument
+     * @param <W> The type of the fourth argument
+     * @param <R> The type of the result of the function
+     * @see Function
+     * @see BiFunction
+     */
     @FunctionalInterface
     public interface QuadFunction<T, U, V, W, R> {
+        /**
+         * Call the function
+         * @param t The first argument
+         * @param u The second argument
+         * @param v The third argument
+         * @param w The fourth argument
+         * @return The result of the function call
+         */
         R apply(T t, U u, V v, W w);
     }
 

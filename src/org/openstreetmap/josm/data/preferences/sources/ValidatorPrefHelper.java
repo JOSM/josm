@@ -57,6 +57,27 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
     public static final String PREF_FILTER_BY_SELECTION = PREFIX + ".selectionFilter";
 
     /**
+     * See #23397
+     * The preferences key for the addition of parent objects for modified objects
+     */
+    public static final BooleanProperty PREF_ADD_PARENTS = new BooleanProperty(PREFIX + ".partial.add.parents", true);
+
+    /**
+     * See #23397
+     * The preferences key for the deletion of results which do not belong to the selection
+     * or the parents of modified objects.
+     *
+     */
+    public static final BooleanProperty PREF_REMOVE_IRRELEVANT = new BooleanProperty(PREFIX + ".partial.removeIrrelevant", true);
+
+    /**
+     * See #23519
+     * The preferences key for the automatic unfurl of the validation result window
+     *
+     */
+    public static final BooleanProperty PREF_UNFURL = new BooleanProperty(PREFIX + ".force.unfurl.window", true);
+
+    /**
      * Constructs a new {@code PresetPrefHelper}.
      */
     public ValidatorPrefHelper() {

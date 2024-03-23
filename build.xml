@@ -71,12 +71,13 @@
         <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="script-build.dir" location="${base.dir}/build2"/>
-        <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${resources.dir}/data/projection/custom-epsg"/>
         <property name="commons-lang3.jar" location="${tools.dir}/commons-lang3.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
         <property name="dist-sources.jar" location="${dist.dir}/josm-custom-sources.jar"/>
+        <!-- When incrementing the minimum Java version, don't forget to update the Java versions users will update to
+             (PlatformHook#getJavaUrl, PlatformHook#startupSanityChecks and PlatformHook#warnSoonToBeUnsupportedJava) -->
         <property name="java.lang.version" value="8" />
         <property name="test.headless" value="true" />
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
@@ -300,12 +301,6 @@ Build-Date: ${build.tstamp}
         <call-javac-compile-mrjar release="11"/>
         <!-- Java 17 specific files (2021-09 LTS) -->
         <call-javac-compile-mrjar release="17"/>
-        <!-- Java 18 specific files -->
-        <call-javac-compile-mrjar release="18"/>
-        <!-- Java 19 specific files -->
-        <call-javac-compile-mrjar release="19"/>
-        <!-- Java 20 specific files -->
-        <call-javac-compile-mrjar release="20"/>
         <!-- Java 21 specific files (2023-09 LTS) -->
         <call-javac-compile-mrjar release="21"/>
     </target>
@@ -362,7 +357,6 @@ Build-Date: ${build.tstamp}
         <delete dir="${build.dir}"/>
         <delete dir="${proj-build.dir}"/>
         <delete dir="${script-build.dir}"/>
-        <delete dir="${checkstyle-build.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${mapcss.dir}/parsergen"/>
         <delete file="${src.dir}/org/w3/_2001/xmlschema/Adapter1.java"/>
@@ -882,29 +876,21 @@ Build-Date: ${build.tstamp}
         <antcall target="imageryindex"/>
     </target>
 
-    <target name="checkstyle-compile" depends="init" description="Compile Checkstyle rules">
+    <target name="checkstyle-changed" depends="init" description="Run Checkstyle on SVN/Git-changed source files">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
-        <mkdir dir="${checkstyle-build.dir}"/>
-        <javac sourcepath="" srcdir="${checkstyle.dir}/src" failonerror="true"
-            destdir="${checkstyle-build.dir}" release="${java.lang.version}" debug="on"
-            includeantruntime="false"
-            encoding="UTF-8" classpathref="checkstyle.classpath">
-        </javac>
-    </target>
-    <target name="checkstyle-changed" depends="checkstyle-compile" description="Run Checkstyle on SVN/Git-changed source files">
         <exec append="false" osfamily="unix" executable="bash" failifexecutionfails="true">
             <arg value="-c"/>
-            <arg value="(git ls-files src test --modified 2>/dev/null || svn status -q --ignore-externals src test) | grep -o '\(src\|test\)/.*' | xargs java -cp '${toString:checkstyle.classpath}:${checkstyle-build.dir}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml | sed -e 's:\([^ ]*\) [^:]*/\([^:/]*.java\:[^:]*\):(\2)\1:'"/>
+            <arg value="(git ls-files src test --modified 2>/dev/null || svn status -q --ignore-externals src test) | grep -o '\(src\|test\)/.*' | xargs java -cp '${toString:checkstyle.classpath}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml | sed -e 's:\([^ ]*\) [^:]*/\([^:/]*.java\:[^:]*\):(\2)\1:'"/>
         </exec>
         <exec append="false" osfamily="windows" executable="powershell" failifexecutionfails="true">
             <arg value="/c"/>
-            <arg value="svn status -q --ignore-externals src test | ForEach-Object {java -cp '${toString:checkstyle.classpath};${checkstyle-build.dir}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml $_.split(' ')[7]}"/>
+            <arg value="svn status -q --ignore-externals src test | ForEach-Object {java -cp '${toString:checkstyle.classpath}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml $_.split(' ')[7]}"/>
         </exec>
     </target>
-    <target name="checkstyle" depends="checkstyle-compile" description="Run Checkstyle on the source files">
+    <target name="checkstyle" depends="init" description="Run Checkstyle on the source files">
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties">
             <classpath refid="checkstyle.classpath"/>
-            <classpath path="${checkstyle-build.dir}"/>
         </taskdef>
         <checkstyle config="${checkstyle.dir}/josm_checks.xml">
             <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"

@@ -68,7 +68,8 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     }
 
     @Override
-    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback) {
+    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback,
+            SanityCheckCallback sanityCheckCallback) {
         // Here we register callbacks for the menu entries in the system menu and file opening through double-click
         // https://openjdk.java.net/jeps/272
         // https://bugs.openjdk.java.net/browse/JDK-8048731
@@ -106,6 +107,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         warnSoonToBeUnsupportedJava(javaCallback);
         checkExpiredJava(javaCallback);
         checkWebStartMigration(webStartCallback);
+        PlatformHook.super.startupHook(javaCallback, webStartCallback, sanityCheckCallback);
     }
 
     @Override

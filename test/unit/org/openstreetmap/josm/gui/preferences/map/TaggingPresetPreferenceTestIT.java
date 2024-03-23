@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetsTest;
 import org.openstreetmap.josm.gui.tagging.presets.items.Link;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -39,6 +40,7 @@ import org.xml.sax.SAXException;
  * Integration tests of {@link TaggingPresetPreference} class.
  */
 @HTTPS
+@Territories
 @Timeout(value = 20, unit = TimeUnit.MINUTES)
 class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
     /**

@@ -19,11 +19,13 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassification;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassifications;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.xml.sax.SAXException;
 
 /**
  * Unit tests of {@link PresetClassifications} class.
  */
+@Territories
 class PresetClassificationsTest {
 
     static final PresetClassifications classifications = new PresetClassifications();

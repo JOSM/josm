@@ -102,6 +102,9 @@ public class JoinAreasAction extends JosmAction {
         }
     }
 
+    /**
+     * A record class to store how a multipolygon is constructed
+     */
     public static class Multipolygon {
         private final Way outerWay;
         private final List<Way> innerWays;
@@ -160,7 +163,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * HelperClass - saves a way and the "inside" side.
-     *
+     * <p>
      * insideToTheLeft: if true left side is "in", false -right side is "in".
      * Left and right are determined along the orientation of way.
      */
@@ -234,10 +237,19 @@ public class JoinAreasAction extends JosmAction {
         }
     }
 
+    /**
+     * A multipolygon with a list of inner ways and an assembled polygon for the outer way
+     */
     public static class AssembledMultipolygon {
+        /** The outer way of the multipolygon */
         public AssembledPolygon outerWay;
+        /** The inner polygons of the multipolygon */
         public List<AssembledPolygon> innerWays;
 
+        /**
+         * Create a new {@link AssembledMultipolygon}
+         * @param way The outer way
+         */
         public AssembledMultipolygon(AssembledPolygon way) {
             outerWay = way;
             innerWays = new ArrayList<>();
@@ -401,7 +413,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         /**
-         * Search for an other way coming to the same head node at left side from last way. #9951
+         * Search for another way coming to the same head node at left side from last way. #9951
          * @return left way or null if none found
          */
         public WayInPolygon leftComingWay() {
@@ -651,8 +663,7 @@ public class JoinAreasAction extends JosmAction {
         allStartingWays.addAll(outerStartingWays);
 
         //first remove nodes in the same coordinate
-        boolean removedDuplicates = false;
-        removedDuplicates |= removeDuplicateNodes(allStartingWays);
+        boolean removedDuplicates = removeDuplicateNodes(allStartingWays);
 
         if (removedDuplicates) {
             hasChanges = true;
@@ -1134,7 +1145,7 @@ public class JoinAreasAction extends JosmAction {
 
         if (chunks.size() > 1) {
             SplitWayCommand split = SplitWayCommand.splitWay(way, chunks,
-                    Collections.<OsmPrimitive>emptyList(), SplitWayCommand.Strategy.keepFirstChunk());
+                    Collections.emptyList(), SplitWayCommand.Strategy.keepFirstChunk());
 
             if (split != null) {
                 //execute the command, we need the results

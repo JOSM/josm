@@ -20,6 +20,9 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(Timezone.TimezoneExtension.class)
 public @interface Timezone {
+    /**
+     * Set the default timezone for tests (UTC)
+     */
     class TimezoneExtension implements BeforeEachCallback {
         @Override
         public void beforeEach(ExtensionContext context) {

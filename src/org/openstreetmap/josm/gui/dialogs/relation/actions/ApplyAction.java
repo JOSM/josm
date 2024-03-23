@@ -35,6 +35,6 @@ public class ApplyAction extends SavingAction {
 
     @Override
     public void updateEnabledState() {
-        setEnabled(this.editorAccess.getChangedRelation().isUseful() && isEditorDirty());
+        setEnabled(this.editorAccess.wouldRelationBeUseful() && isEditorDirty());
     }
 }

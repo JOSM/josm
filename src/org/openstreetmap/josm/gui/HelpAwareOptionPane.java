@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.util.WindowOnTopListener;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
@@ -352,6 +353,7 @@ public final class HelpAwareOptionPane {
         }
         if (dialog.isModal()) {
             dialog.setAlwaysOnTop(true);
+            dialog.addWindowFocusListener(new WindowOnTopListener());
         }
         dialog.setVisible(true);
     }

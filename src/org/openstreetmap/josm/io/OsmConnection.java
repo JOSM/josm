@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator.RequestorType;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -35,9 +34,6 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.exception.OAuthException;
-
 /**
  * Base class that handles common things like authentication for the reader and writer
  * to the osm server.
@@ -50,7 +46,6 @@ public class OsmConnection {
 
     protected boolean cancel;
     protected HttpClient activeConnection;
-    protected OAuthParameters oauthParameters;
     protected IOAuthParameters oAuth20Parameters;
 
     /**
@@ -145,57 +140,6 @@ public class OsmConnection {
     }
 
     /**
-     * Signs the connection with an OAuth authentication header
-     *
-     * @param connection the connection
-     *
-     * @throws MissingOAuthAccessTokenException if there is currently no OAuth Access Token configured
-     * @throws OsmTransferException if signing fails
-     */
-    protected void addOAuthAuthorizationHeader(HttpClient connection) throws OsmTransferException {
-        if (oauthParameters == null) {
-            oauthParameters = OAuthParameters.createFromApiUrl(OsmApi.getOsmApi().getServerUrl());
-        }
-        OAuthConsumer consumer = oauthParameters.buildConsumer();
-        OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
-        if (!holder.containsAccessToken()) {
-            obtainAccessToken(connection);
-        }
-        if (!holder.containsAccessToken()) { // check if wizard completed
-            throw new MissingOAuthAccessTokenException();
-        }
-        consumer.setTokenWithSecret(holder.getAccessTokenKey(), holder.getAccessTokenSecret());
-        try {
-            consumer.sign(connection);
-        } catch (OAuthException e) {
-            throw new OsmTransferException(tr("Failed to sign a HTTP connection with an OAuth Authentication header"), e);
-        }
-    }
-
-    /**
-     * Obtains an OAuth access token for the connection.
-     * Afterwards, the token is accessible via {@link OAuthAccessTokenHolder} / {@link CredentialsManager}.
-     * @param connection connection for which the access token should be obtained
-     * @throws MissingOAuthAccessTokenException if the process cannot be completed successfully
-     */
-    protected void obtainAccessToken(final HttpClient connection) throws MissingOAuthAccessTokenException {
-        try {
-            final URL apiUrl = new URL(OsmApi.getOsmApi().getServerUrl());
-            if (!Objects.equals(apiUrl.getHost(), connection.getURL().getHost())) {
-                throw new MissingOAuthAccessTokenException();
-            }
-            fetcher.obtainAccessToken(apiUrl);
-            OAuthAccessTokenHolder.getInstance().setSaveToPreferences(true);
-            OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
-        } catch (MalformedURLException | InvocationTargetException e) {
-            throw new MissingOAuthAccessTokenException(e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new MissingOAuthAccessTokenException(e);
-        }
-    }
-
-    /**
      * Obtains an OAuth access token for the connection.
      * Afterwards, the token is accessible via {@link OAuthAccessTokenHolder} / {@link CredentialsManager}.
      * @throws MissingOAuthAccessTokenException if the process cannot be completed successfully
@@ -220,7 +164,6 @@ public class OsmConnection {
                         RemoteControl.stop();
                     }
                     // Clean up old token/password
-                    OAuthAccessTokenHolder.getInstance().setAccessToken(null);
                     OAuthAccessTokenHolder.getInstance().setAccessToken(OsmApi.getOsmApi().getServerUrl(), authToken.orElse(null));
                     OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
                     done.countDown();
@@ -279,9 +222,6 @@ public class OsmConnection {
         switch (authMethod) {
             case "basic":
                 addBasicAuthorizationHeader(connection);
-                return;
-            case "oauth":
-                addOAuthAuthorizationHeader(connection);
                 return;
             case "oauth20":
                 addOAuth20AuthorizationHeader(connection);

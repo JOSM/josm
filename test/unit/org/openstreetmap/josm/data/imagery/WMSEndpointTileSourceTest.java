@@ -74,6 +74,7 @@ class WMSEndpointTileSourceTest implements TileSourceTest {
                 "<name>OSM Inspector: Geometry</name>\n" +
                 "<id>OSM_Inspector-Geometry</id>\n" +
                 "<type>wms_endpoint</type>\n" +
+                "<category>qa</category>\n" +
                 "<url><![CDATA[" + tileServer.url("/capabilities") + "]]></url>\n" +
                 "<icon>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAB5UlEQVQ4y4WTwWsTURDG" +
                 "fy8W1yYmXZOqtGJJFyGw6KF7CEigwYuS0kthrYUi4i0iORS9BU9hQdA/ILcixVBrwENKLz1FUBB0wWOwYFAqxUNYTZq6BfM8yC5d05iBObz3vfnmm3kz4sqDh/zP" +
@@ -124,6 +125,7 @@ class WMSEndpointTileSourceTest implements TileSourceTest {
                 "        <name lang=\"nb\">Norge i Bilder (historisk)</name>\n" +
                 "        <id>geovekst-nib-historic</id>\n" +
                 "        <type>wms_endpoint</type>\n" +
+                "        <category>photo</category>\n" +
                 "        <country-code>NO</country-code>\n" +
                 "        <description lang=\"en\">Historic Norwegian orthophotos and maps, courtesy of Geovekst and Norkart.</description>\n" +
                 "        <url><![CDATA[" + tileServer.url("/capabilities?SERVICE=WMS&REQUEST=GetCapabilities") + "]]></url>\n" +

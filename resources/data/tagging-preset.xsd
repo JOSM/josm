@@ -340,6 +340,7 @@
         </attribute>
         <attribute name="match" type="tns:match" />
         <attributeGroup ref="tns:attributes.length" />
+        <attributeGroup ref="tns:attributes.regions"/>
         <attribute name="alternative_autocomplete_keys" type="string">
             <annotation>
                 <documentation><![CDATA[
@@ -388,7 +389,7 @@
         <annotation>
             <documentation>
                 <p>
-                    Displays a multiple choice combo box. key and values are mandatory, text, default, editable, delimiter, values_from, display_values, short_descriptions, use_last_as_default, values_searchable, length, values_no_i18n, values_sort and match is optional.
+                    Displays a multiple choice combo box. key and values are mandatory, text, default, editable, delimiter, values_from, display_values, short_descriptions, use_last_as_default, values_searchable, length, values_no_i18n, values_sort, match, regions, and exclude_regions are optional.
                 </p>
                 <p>
                     If editable is "true" (default), combo boxes can be edited as if they were text fields (additional to the drop down menu). Non editable combo boxes can only contain one of the specified values.
@@ -416,6 +417,7 @@
         </attribute>
         <attribute name="match" type="tns:match" />
         <attributeGroup ref="tns:attributes.length" />
+        <attributeGroup ref="tns:attributes.regions"/>
 
         <attribute name="type" use="prohibited" />
         <attribute name="value" use="prohibited" />
@@ -434,6 +436,7 @@
         <attributeGroup ref="tns:attributes.text" />
         <attributeGroup ref="tns:attributes.icon" />
         <attributeGroup ref="tns:attributes.values" />
+        <attributeGroup ref="tns:attributes.regions"/>
         <attribute name="use_last_as_default" type="tns:last_default" />
         <attribute name="match" type="tns:match" />
 

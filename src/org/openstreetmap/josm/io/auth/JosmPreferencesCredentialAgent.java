@@ -17,7 +17,6 @@ import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuth20Exception;
 import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Token;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -102,22 +101,6 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         }
     }
 
-    /**
-     * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no
-     * Access Token is currently managed by this CredentialManager.
-     *
-     * @return the current OAuth Access Token to access the OSM server.
-     * @throws CredentialsAgentException if something goes wrong
-     */
-    @Override
-    public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
-        String accessTokenKey = Config.getPref().get("oauth.access-token.key", null);
-        String accessTokenSecret = Config.getPref().get("oauth.access-token.secret", null);
-        if (accessTokenKey == null && accessTokenSecret == null)
-            return null;
-        return new OAuthToken(accessTokenKey, accessTokenSecret);
-    }
-
     @Override
     public IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException {
         Set<String> keySet = new HashSet<>(Config.getPref().getKeySet());
@@ -140,23 +123,6 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             }
         }
         return null;
-    }
-
-    /**
-     * Stores the OAuth Access Token <code>accessToken</code>.
-     *
-     * @param accessToken the access Token. null, to remove the Access Token.
-     * @throws CredentialsAgentException if something goes wrong
-     */
-    @Override
-    public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException {
-        if (accessToken == null) {
-            Config.getPref().put("oauth.access-token.key", null);
-            Config.getPref().put("oauth.access-token.secret", null);
-        } else {
-            Config.getPref().put("oauth.access-token.key", accessToken.getKey());
-            Config.getPref().put("oauth.access-token.secret", accessToken.getSecret());
-        }
     }
 
     @Override

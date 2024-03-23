@@ -447,6 +447,9 @@ public class SessionReader {
         }
     }
 
+    /**
+     * A dependency of another layer
+     */
     public static class LayerDependency {
         private final Integer index;
         private final Layer layer;
@@ -647,6 +650,8 @@ public class SessionReader {
                 }
 
             }
+            if (progressMonitor.isCanceled())
+                return;
             progressMonitor.worked(1);
         }
 

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -168,6 +169,11 @@ class RelationEditorActionsTest extends AbstractRelationEditorActionTest {
         relationEditorAccess.getMemberTableModel().populate(relation);
         relationEditorAccess.getTagModel().initFromPrimitive(relation);
         relationEditorAccess.getEditor().reloadDataFromRelation();
-        assertDoesNotThrow(relationEditorAccess::getChangedRelation);
+
+        assertDoesNotThrow(() -> {
+            IRelation<?> tempRelation = relationEditorAccess.getChangedRelation();
+            if (tempRelation.getDataSet() == null)
+                tempRelation.setMembers(null); // see #19885
+        });
     }
 }

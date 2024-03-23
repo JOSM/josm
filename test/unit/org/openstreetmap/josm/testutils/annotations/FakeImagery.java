@@ -113,6 +113,9 @@ public @interface FakeImagery {
         }
     }
 
+    /**
+     * A wiremock extension for fake imagery
+     */
     class FakeImageryWireMockExtension extends WireMockExtension {
 
         private final boolean clearLayerList;
