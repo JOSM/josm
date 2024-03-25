@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-137726' action='modify' visible='true' lat='47.74161657891' lon='17.37769604149' />
+  <node id='-137727' action='modify' visible='true' lat='47.74160961975' lon='17.37612305842' />
+  <node id='-137728' action='modify' visible='true' lat='47.74043350867' lon='17.37611270985' />
+  <node id='-137731' action='modify' visible='true' lat='47.74043350867' lon='17.37771673864' />
+  <node id='-137732' action='modify' visible='true' lat='47.74071883984' lon='17.37897926452' />
+  <node id='-137733' action='modify' visible='true' lat='47.74045438662' lon='17.38021074469' />
+  <node id='-137734' action='modify' visible='true' lat='47.74011337916' lon='17.37895856738' />
+  <node id='-137735' action='modify' visible='true' lat='47.74163049723' lon='17.38024179041' />
+  <node id='-137736' action='modify' visible='true' lat='47.74119902778' lon='17.38124560197' />
+  <node id='-137737' action='modify' visible='true' lat='47.74161657891' lon='17.38222871639' />
+  <node id='-137738' action='modify' visible='true' lat='47.7420091937' lon='17.38123761625' />
+  <node id='-137746' action='modify' visible='true' lat='47.74044046799' lon='17.38222871639' />
+  <node id='-137759' action='modify' visible='true' lat='47.73993243552' lon='17.38222871639' />
+  <node id='-137760' action='modify' visible='true' lat='47.73994635429' lon='17.38319113367' />
+  <node id='-137761' action='modify' visible='true' lat='47.74046134593' lon='17.38319113367' />
+  <way id='-103300' action='modify' visible='true'>
+    <nd ref='-137726' />
+    <nd ref='-137727' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103301' action='modify' visible='true'>
+    <nd ref='-137727' />
+    <nd ref='-137728' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103302' action='modify' visible='true'>
+    <nd ref='-137728' />
+    <nd ref='-137726' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103305' action='modify' visible='true'>
+    <nd ref='-137731' />
+    <nd ref='-137728' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103306' action='modify' visible='true'>
+    <nd ref='-137731' />
+    <nd ref='-137726' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103307' action='modify' visible='true'>
+    <nd ref='-137733' />
+    <nd ref='-137732' />
+    <nd ref='-137731' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103309' action='modify' visible='true'>
+    <nd ref='-137731' />
+    <nd ref='-137734' />
+    <nd ref='-137733' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103311' action='modify' visible='true'>
+    <nd ref='-137733' />
+    <nd ref='-137735' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103312' action='modify' visible='true'>
+    <nd ref='-137735' />
+    <nd ref='-137726' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103313' action='modify' visible='true'>
+    <nd ref='-137735' />
+    <nd ref='-137736' />
+    <nd ref='-137737' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103315' action='modify' visible='true'>
+    <nd ref='-137737' />
+    <nd ref='-137738' />
+    <nd ref='-137735' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103324' action='modify' visible='true'>
+    <nd ref='-137746' />
+    <nd ref='-137733' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103325' action='modify' visible='true'>
+    <nd ref='-137746' />
+    <nd ref='-137737' />
+    <tag k='waterway' v='ditch' />
+  </way>
+  <way id='-103359' action='modify' visible='true'>
+    <nd ref='-137746' />
+    <nd ref='-137759' />
+    <nd ref='-137760' />
+    <nd ref='-137761' />
+    <nd ref='-137746' />
+    <tag k='waterway' v='ditch' />
+  </way>
+</osm>

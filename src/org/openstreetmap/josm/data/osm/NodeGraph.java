@@ -21,9 +21,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
- * A directed or undirected graph of nodes.
+ * A directed or undirected graph of nodes. Nodes are connected via edges represented by NodePair instances.
+ *
  * @since 12463 (extracted from CombineWayAction)
  */
 public class NodeGraph {
@@ -32,12 +34,12 @@ public class NodeGraph {
      * Builds a list of pair of nodes from the given way.
      * @param way way
      * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.
-     *                 if {@code false} each pair of nodes will occur twice (the pair and its inversed copy)
+     *                 if {@code false} each pair of nodes will occur twice (the pair and its inverse copy)
      * @return a list of pair of nodes from the given way
      */
     public static List<NodePair> buildNodePairs(Way way, boolean directed) {
         List<NodePair> pairs = new ArrayList<>();
-        for (Pair<Node, Node> pair: way.getNodePairs(false /* don't sort */)) {
+        for (Pair<Node, Node> pair : way.getNodePairs(false)) {
             pairs.add(new NodePair(pair));
             if (!directed) {
                 pairs.add(new NodePair(pair).swap());
@@ -49,26 +51,26 @@ public class NodeGraph {
     /**
      * Builds a list of pair of nodes from the given ways.
      * @param ways ways
-     * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.
-     *                 if {@code false} each pair of nodes will occur twice (the pair and its inversed copy)
+     * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.<br>
+     *                 if {@code false} each pair of nodes will occur twice (the pair and its inverse copy)
      * @return a list of pair of nodes from the given ways
      */
     public static List<NodePair> buildNodePairs(List<Way> ways, boolean directed) {
         List<NodePair> pairs = new ArrayList<>();
-        for (Way w: ways) {
+        for (Way w : ways) {
             pairs.addAll(buildNodePairs(w, directed));
         }
         return pairs;
     }
 
     /**
-     * Builds a new list of pair nodes without the duplicated pairs (including inversed copies).
+     * Builds a new list of pair nodes without the duplicated pairs (including inverse copies).
      * @param pairs existing list of pairs
      * @return a new list of pair nodes without the duplicated pairs
      */
     public static List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
         List<NodePair> cleaned = new ArrayList<>();
-        for (NodePair p: pairs) {
+        for (NodePair p : pairs) {
             if (!cleaned.contains(p) && !cleaned.contains(p.swap())) {
                 cleaned.add(p);
             }
@@ -76,18 +78,28 @@ public class NodeGraph {
         return cleaned;
     }
 
+    /**
+     * Create a directed graph from the given node pairs.
+     * @param pairs Node pairs to build the graph from
+     * @return node graph structure
+     */
     public static NodeGraph createDirectedGraphFromNodePairs(List<NodePair> pairs) {
         NodeGraph graph = new NodeGraph();
-        for (NodePair pair: pairs) {
+        for (NodePair pair : pairs) {
             graph.add(pair);
         }
         return graph;
     }
 
+    /**
+     * Create a directed graph from the given ways.
+     * @param ways ways to build the graph from
+     * @return node graph structure
+     */
     public static NodeGraph createDirectedGraphFromWays(Collection<Way> ways) {
         NodeGraph graph = new NodeGraph();
-        for (Way w: ways) {
-            graph.add(buildNodePairs(w, true /* directed */));
+        for (Way w : ways) {
+            graph.add(buildNodePairs(w, true));
         }
         return graph;
     }
@@ -99,7 +111,7 @@ public class NodeGraph {
      */
     public static NodeGraph createUndirectedGraphFromNodeList(List<NodePair> pairs) {
         NodeGraph graph = new NodeGraph();
-        for (NodePair pair: pairs) {
+        for (NodePair pair : pairs) {
             graph.add(pair);
             graph.add(pair.swap());
         }
@@ -108,41 +120,68 @@ public class NodeGraph {
 
     /**
      * Create an undirected graph from the given ways, but prevent reversing of all
-     * non-new ways by fix one direction.
+     * non-new ways by fixing one direction.
      * @param ways Ways to build the graph from
      * @return node graph structure
      * @since 8181
      */
     public static NodeGraph createUndirectedGraphFromNodeWays(Collection<Way> ways) {
         NodeGraph graph = new NodeGraph();
-        for (Way w: ways) {
-            graph.add(buildNodePairs(w, false /* undirected */));
+        for (Way w : ways) {
+            graph.add(buildNodePairs(w, false));
         }
         return graph;
     }
 
+    /**
+     * Create a nearly undirected graph from the given ways, but prevent reversing of all
+     * non-new ways by fixing one direction.
+     * The first new way gives the direction of the graph.
+     * @param ways Ways to build the graph from
+     * @return node graph structure
+     */
     public static NodeGraph createNearlyUndirectedGraphFromNodeWays(Collection<Way> ways) {
         boolean dir = true;
         NodeGraph graph = new NodeGraph();
-        for (Way w: ways) {
+        for (Way w : ways) {
             if (!w.isNew()) {
                 /* let the first non-new way give the direction (see #5880) */
                 graph.add(buildNodePairs(w, dir));
                 dir = false;
             } else {
-                graph.add(buildNodePairs(w, false /* undirected */));
+                graph.add(buildNodePairs(w, false));
             }
         }
         return graph;
     }
 
     private final Set<NodePair> edges;
-    private int numUndirectedEges;
-    /** counts the number of edges that were added */
+    private int numUndirectedEdges;
+    /** The number of edges that were added. */
     private int addedEdges;
     private final Map<Node, List<NodePair>> successors = new LinkedHashMap<>();
     private final Map<Node, List<NodePair>> predecessors = new LinkedHashMap<>();
 
+    /**
+     * Constructs a lookup table from the existing edges in the graph to enable efficient querying.
+     * This method creates a map where each node is associated with a list of nodes that are directly connected to it.
+     *
+     * @return A map representing the graph structure, where nodes are keys, and values are their direct successors.
+     * @since xxx
+     */
+    public Map<Node, List<Node>> createMap() {
+        final Map<Node, List<Node>> result = new HashMap<>(Utils.hashMapInitialCapacity(edges.size()));
+
+        for (NodePair edge : edges) {
+            result.computeIfAbsent(edge.getA(), k -> new ArrayList<>()).add(edge.getB());
+        }
+
+        return result;
+    }
+
+    /**
+     * See {@link #prepare()}
+     */
     protected void rememberSuccessor(NodePair pair) {
         List<NodePair> l = successors.computeIfAbsent(pair.getA(), k -> new ArrayList<>());
         if (!l.contains(pair)) {
@@ -150,6 +189,9 @@ public class NodeGraph {
         }
     }
 
+    /**
+     * See {@link #prepare()}
+     */
     protected void rememberPredecessors(NodePair pair) {
         List<NodePair> l = predecessors.computeIfAbsent(pair.getB(), k -> new ArrayList<>());
         if (!l.contains(pair)) {
@@ -157,6 +199,12 @@ public class NodeGraph {
         }
     }
 
+    /**
+     * Replies true if {@code n} is a terminal node of the graph. Internal variables should be initialized first.
+     * @param n Node to check
+     * @return {@code true} if it is a terminal node
+     * @see #prepare()
+     */
     protected boolean isTerminalNode(Node n) {
         if (successors.get(n) == null) return false;
         if (successors.get(n).size() != 1) return false;
@@ -174,14 +222,14 @@ public class NodeGraph {
         successors.clear();
         predecessors.clear();
 
-        for (NodePair pair: edges) {
+        for (NodePair pair : edges) {
             if (!undirectedEdges.contains(pair) && !undirectedEdges.contains(pair.swap())) {
                 undirectedEdges.add(pair);
             }
             rememberSuccessor(pair);
             rememberPredecessors(pair);
         }
-        numUndirectedEges = undirectedEdges.size();
+        numUndirectedEdges = undirectedEdges.size();
     }
 
     /**
@@ -202,14 +250,26 @@ public class NodeGraph {
 
     /**
      * Add a list of node pairs.
-     * @param pairs list of node pairs
+     * @param pairs collection of node pairs
      */
-    public void add(Collection<NodePair> pairs) {
-        for (NodePair pair: pairs) {
+    public void add(Iterable<NodePair> pairs) {
+        for (NodePair pair : pairs) {
             add(pair);
         }
     }
 
+    /**
+     * Return the edges containing the node pairs of the graph.
+     * @return the edges containing the node pairs of the graph
+     */
+    public Collection<NodePair> getEdges() {
+        return Collections.unmodifiableSet(edges);
+    }
+
+    /**
+     * Return the terminal nodes of the graph.
+     * @return the terminal nodes of the graph
+     */
     protected Set<Node> getTerminalNodes() {
         return getNodes().stream().filter(this::isTerminalNode).collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -229,9 +289,13 @@ public class NodeGraph {
         return Optional.ofNullable(successors.get(node)).orElseGet(Collections::emptyList);
     }
 
-    protected Set<Node> getNodes() {
+    /**
+     * Return the graph's nodes.
+     * @return the graph's nodes
+     */
+    public Collection<Node> getNodes() {
         Set<Node> nodes = new LinkedHashSet<>(2 * edges.size());
-        for (NodePair pair: edges) {
+        for (NodePair pair : edges) {
             nodes.add(pair.getA());
             nodes.add(pair.getB());
         }
@@ -239,7 +303,7 @@ public class NodeGraph {
     }
 
     protected boolean isSpanningWay(Collection<NodePair> way) {
-        return numUndirectedEges == way.size();
+        return numUndirectedEdges == way.size();
     }
 
     protected List<Node> buildPathFromNodePairs(Deque<NodePair> path) {
@@ -248,8 +312,8 @@ public class NodeGraph {
     }
 
     /**
-     * Tries to find a spanning path starting from node <code>startNode</code>.
-     *
+     * Tries to find a spanning path starting from node {@code startNode}.
+     * <p>
      * Traverses the path in depth-first order.
      *
      * @param startNode the start node
@@ -259,8 +323,7 @@ public class NodeGraph {
         if (startNode != null) {
             Deque<NodePair> path = new ArrayDeque<>();
             Set<NodePair> dupCheck = new HashSet<>();
-            Deque<NodePair> nextPairs = new ArrayDeque<>();
-            nextPairs.addAll(getOutboundPairs(startNode));
+            Deque<NodePair> nextPairs = new ArrayDeque<>(getOutboundPairs(startNode));
             while (!nextPairs.isEmpty()) {
                 NodePair cur = nextPairs.removeLast();
                 if (!dupCheck.contains(cur) && !dupCheck.contains(cur.swap())) {
@@ -280,17 +343,17 @@ public class NodeGraph {
 
     /**
      * Tries to find a path through the graph which visits each edge (i.e.
-     * the segment of a way) exactly once.
-     * <p><b>Note that duplicated edges are removed first!</b>
+     * the segment of a way) exactly once.<p>
+     * <b>Note that duplicated edges are removed first!</b>
      *
-     * @return the path; null, if no path was found
+     * @return the path; {@code null}, if no path was found
      */
     public List<Node> buildSpanningPath() {
         prepare();
-        if (numUndirectedEges > 0 && isConnected()) {
-            // try to find a path from each "terminal node", i.e. from a
-            // node which is connected by exactly one undirected edges (or
-            // two directed edges in opposite direction) to the graph. A
+        if (numUndirectedEdges > 0 && isConnected()) {
+            // Try to find a path from each "terminal node", i.e. from a
+            // node which is connected by exactly one undirected edge (or
+            // two directed edges in the opposite direction) to the graph. A
             // graph built up from way segments is likely to include such
             // nodes, unless the edges build one or more closed rings.
             // We order the nodes to start with the best candidates, but
@@ -324,10 +387,10 @@ public class NodeGraph {
 
     /**
      * Find out if the graph is connected.
-     * @return true if it is connected.
+     * @return {@code true} if it is connected
      */
     private boolean isConnected() {
-        Set<Node> nodes = getNodes();
+        Collection<Node> nodes = getNodes();
         if (nodes.isEmpty())
             return false;
         Deque<Node> toVisit = new ArrayDeque<>();
@@ -350,12 +413,12 @@ public class NodeGraph {
 
     /**
      * Sort the nodes by number of appearances in the edges.
-     * @return set of nodes which can be start nodes in a spanning way.
+     * @return set of nodes which can be start nodes in a spanning way
      */
     private Set<Node> getMostFrequentVisitedNodesFirst() {
         if (edges.isEmpty())
             return Collections.emptySet();
-        // count appearance of nodes in edges
+        // count the appearance of nodes in edges
         Map<Node, Integer> counters = new HashMap<>();
         for (NodePair pair : edges) {
             Integer c = counters.get(pair.getA());
