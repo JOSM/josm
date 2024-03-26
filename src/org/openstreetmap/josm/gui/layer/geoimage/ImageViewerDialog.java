@@ -229,8 +229,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnNext = createNavigationButton(imageNextAction, buttonDim);
         btnLast = createNavigationButton(imageLastAction, buttonDim);
 
+        centerView = Config.getPref().getBoolean("geoimage.viewer.centre.on.image", false);
         tbCentre = new JToggleButton(imageCenterViewAction);
-        tbCentre.setSelected(Config.getPref().getBoolean("geoimage.viewer.centre.on.image", false));
+        tbCentre.setSelected(centerView);
         tbCentre.setPreferredSize(buttonDim);
 
         JButton btnZoomBestFit = new JButton(imageZoomAction);
