@@ -292,23 +292,6 @@ public class TagConflictResolverModel extends DefaultTableModel {
     }
 
     /**
-     * Prepare the default decisions for the current model.
-     * @param decidedKeys set of tag keys for which the first value should be used
-     * @since 18988
-     */
-    public void prepareDefaultTagDecisions(Set<String> decidedKeys) {
-        for (MultiValueResolutionDecision decision : decisions.values()) {
-            if (!decidedKeys.contains(decision.getKey()))
-                continue;
-            List<String> values = decision.getValues();
-            if (!values.isEmpty()) {
-                decision.keepOne(values.iterator().next());
-            }
-        }
-        rebuild(false);
-    }
-
-    /**
      * Returns the set of keys in conflict.
      * @return the set of keys in conflict.
      * @since 6616
