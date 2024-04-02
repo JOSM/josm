@@ -142,4 +142,20 @@ class OsmPbfImporterTest {
         assertNotNull(dataSet.getPrimitiveById(9223372036854775806L, OsmPrimitiveType.WAY));
         assertNotNull(dataSet.getPrimitiveById(9223372036854775806L, OsmPrimitiveType.RELATION));
     }
+
+    /**
+     * Non-regression test for #23550: Error when deserializing PBF blob when generator writes the blob <i>then</i>
+     * the compression type.
+     */
+    @Test
+    void testNonRegression23550() {
+        final byte[] badData = HEADER_DATA.clone();
+        final byte[] sizeInfo = Arrays.copyOfRange(badData, 18, 21);
+        for (int i = 18; i < badData.length - sizeInfo.length; i++) {
+            badData[i] = badData[i + sizeInfo.length];
+        }
+        System.arraycopy(sizeInfo, 0, badData, badData.length - 3, 3);
+        // the data doesn't include any "real" data, but the problematic code path is exercised by the header parsing code.
+        assertDoesNotThrow(() -> importer.parseDataSet(new ByteArrayInputStream(badData), NullProgressMonitor.INSTANCE));
+    }
 }

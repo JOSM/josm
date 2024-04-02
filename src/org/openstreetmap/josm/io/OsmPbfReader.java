@@ -184,30 +184,38 @@ public final class OsmPbfReader extends AbstractReader {
         long start = cis.getBytesRead();
         int size = Integer.MIN_VALUE;
         Blob.CompressionType type = null;
-        ProtobufRecord current = null;
+        ProtobufRecord current;
+        // Needed since size and compression type + compression data may be in a different order
+        byte [] bytes = null;
         while (parser.hasNext() && cis.getBytesRead() - start < header.dataSize()) {
             current = new ProtobufRecord(baos, parser);
             switch (current.getField()) {
                 case 1:
                     type = Blob.CompressionType.raw;
+                    bytes = current.getBytes();
                     break;
                 case 2:
                     size = current.asUnsignedVarInt().intValue();
                     break;
                 case 3:
                     type = Blob.CompressionType.zlib;
+                    bytes = current.getBytes();
                     break;
                 case 4:
                     type = Blob.CompressionType.lzma;
+                    bytes = current.getBytes();
                     break;
                 case 5:
                     type = Blob.CompressionType.bzip2;
+                    bytes = current.getBytes();
                     break;
                 case 6:
                     type = Blob.CompressionType.lz4;
+                    bytes = current.getBytes();
                     break;
                 case 7:
                     type = Blob.CompressionType.zstd;
+                    bytes = current.getBytes();
                     break;
                 default:
                     throw new IllegalStateException("Unknown compression type: " + current.getField());
@@ -216,7 +224,7 @@ public final class OsmPbfReader extends AbstractReader {
         if (type == null) {
             throw new IllegalStateException("Compression type not found, pbf may be malformed");
         }
-        return new Blob(size, type, current.getBytes());
+        return new Blob(size, type, bytes);
     }
 
     /**
