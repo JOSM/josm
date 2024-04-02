@@ -9979,7 +9979,7 @@
                 <text key="ref:sandre" text="Reference Sandre (FR)" regions="FR" />
                 <text key="ref:fgkz" text="Reference FGKZ (DE)" regions="DE" />
                 <text key="ref:regine" text="Reference REGINE (NO)" regions="NO" />
-                <text key="ref:gnis" text="Reference GNIS (USA)" regions="US" />
+                <text key="gnis:feature_id" text="Reference GNIS (USA)" regions="US" />
                 <text key="ref:gnbc" text="Reference GNBC (CA)" regions="CA" />
                 <reference ref="wikipedia_wikidata" />
             </optional>

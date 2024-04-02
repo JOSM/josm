@@ -243,10 +243,10 @@ class TagCheckerTest {
 
     @Test
     void testRegionTag() throws IOException {
-        final List<TestError> errors = test(OsmUtils.createPrimitive("relation type=waterway ref:gnis=123456"));
+        final List<TestError> errors = test(OsmUtils.createPrimitive("relation type=waterway gnis:feature_id=123456"));
         assertEquals(1, errors.size());
         assertEquals("Key from a preset is invalid in this region", errors.get(0).getMessage());
-        assertEquals("Preset Waterway should not have the key ref:gnis", errors.get(0).getDescription());
+        assertEquals("Preset Waterway should not have the key gnis:feature_id", errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
     }
