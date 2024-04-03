@@ -1,6 +1,5 @@
 name: Java CI Build
 env:
-  junit_platform_version: '1.9.3'
   JAVAFX_VERSION: '17.0.7'
 on:
   push:
@@ -71,7 +70,7 @@ jobs:
       matrix:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
         java: [8, 11, 17, 21, 22, 23-ea]
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-14, windows-latest]
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -92,6 +91,14 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
+
+      - name: Setup x64 Java (Mac) ${{ matrix.java }}
+        if: ${{ runner.os == 'macos' && runner.arch == 'ARM64' && always() }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: ${{ matrix.java }}
+          architecture: x64
 
       - name: Install Ant
         uses: JOSM/JOSMPluginAction/actions/setup-ant@v2
@@ -155,12 +162,66 @@ jobs:
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
           APPLE_ID_TEAM: ${{ secrets.APPLE_ID_TEAM }}
         run: |
-          if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip ]; then
-            curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-x64_bin-jmods.zip
+          function build_arch() {
+            if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip ]; then
+              curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-${1}_bin-jmods.zip
+            fi
+            unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip
+            mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
+            ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
+            app/JOSM.zip app/JOSM_${1}.zip
+          }
+
+          function merge() {
+            if [ "$(command -v lipo)" ]; then
+              lipo -create -output "${1}" "${2}" "${3}"
+            elif [ "$(command -v llvm-lipo-15)" ]; then
+              llvm-lipo-15 -create -output "${1}" "${2}" "${3}"
+            fi
+          }
+
+          function copy() {
+            # Trim the root path
+            FILE="${1#*/}"
+            if [ ! -e "target/${FILE}" ]; then
+              # Only make directories if we aren't looking at the root files
+              if [[ "${FILE}" == *"/"* ]]; then mkdir -p "target/${FILE%/*}"; fi
+              if file "${1}" | grep -q 'Mach-O' ; then
+                merge "target/${FILE}" "x64/${FILE}" "aarch64/${FILE}"
+                if file "${1}" | grep -q 'executable'; then
+                  chmod 755 "target/${FILE}"
+                fi
+              else
+                cp -a "${1}" "target/${FILE}"
+              fi
+            fi
+          }
+
+          function directory_iterate() {
+            while IFS= read -r -d '' file
+            do
+              copy "${file}" &
+            done <   <(find "${1}" -type f,l -print0)
+            wait
+          }
+
+          if [ ${{ runner.arch }} == "ARM64" ]; then
+            build_arch aarch64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_x64" build_arch x64
+
+            unzip -d app/x64 app/JOSM_x64.zip
+            unzip -d app/aarch64 app/JOSM_aarch64.zip
+            mkdir app/target
+            cd app
+            directory_iterate aarch64
+            directory_iterate x64
+            cd target
+            zip JOSM.zip -r JOSM.app
+            mv JOSM.zip ..
+          else
+            build_arch x64
+            mv app/JOSM_x64.zip app/JOSM.zip
           fi
-          unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip
-          mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
-          ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Setup Windows PATH
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
