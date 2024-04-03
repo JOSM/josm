@@ -210,9 +210,9 @@ jobs:
             build_arch aarch64
             JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" build_arch x64
 
+            mkdir -p app/target
             unzip -d app/x64 app_x64/JOSM.zip
             unzip -d app/aarch64 app_aarch64/JOSM.zip
-            mkdir app/target
             cd app
             directory_iterate aarch64
             directory_iterate x64
