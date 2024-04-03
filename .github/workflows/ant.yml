@@ -170,7 +170,7 @@ jobs:
             mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
             ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
             if [ ! -f "app/JOSM.zip" ]; then ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip; fi
-            app/JOSM.zip app/JOSM_${1}.zip
+            mv app/JOSM.zip app/JOSM_${1}.zip
           }
 
           function merge() {
