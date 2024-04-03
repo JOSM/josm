@@ -162,6 +162,7 @@ jobs:
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
           APPLE_ID_TEAM: ${{ secrets.APPLE_ID_TEAM }}
         run: |
+          set -ex
           function build_arch() {
             if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip ]; then
               curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-${1}_bin-jmods.zip
