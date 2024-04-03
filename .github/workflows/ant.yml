@@ -208,7 +208,7 @@ jobs:
 
           if [ ${{ runner.arch }} == "ARM64" ]; then
             build_arch aarch64
-            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}:${PATH}" build_arch x64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}/bin:${PATH}" build_arch x64
 
             mkdir -p app/target
             unzip -d app/x64 app_x64/JOSM.zip
