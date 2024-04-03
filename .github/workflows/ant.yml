@@ -207,7 +207,7 @@ jobs:
           }
 
           if [ ${{ runner.arch }} == "ARM64" ]; then
-            build_arch aarch64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" build_arch aarch64
             JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}/bin:${PATH}" build_arch x64
 
             mkdir -p app/target
