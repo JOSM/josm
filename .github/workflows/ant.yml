@@ -217,7 +217,7 @@ jobs:
             directory_iterate aarch64
             directory_iterate x64
             cd target
-            zip JOSM.zip -r JOSM.app
+            ditto -c -k --zlibCompressionLevel 9 --keepParent JOSM.app JOSM.zip
             mv JOSM.zip ..
           else
             build_arch x64
