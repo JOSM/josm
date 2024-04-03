@@ -170,7 +170,7 @@ jobs:
             mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
             ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
             if [ ! -f "app/JOSM.zip" ]; then ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip; fi
-            mv app/JOSM.zip app/JOSM_${1}.zip
+            mv app app_${1}
           }
 
           function merge() {
@@ -210,8 +210,8 @@ jobs:
             build_arch aarch64
             JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" build_arch x64
 
-            unzip -d app/x64 app/JOSM_x64.zip
-            unzip -d app/aarch64 app/JOSM_aarch64.zip
+            unzip -d app/x64 app_x64/JOSM.zip
+            unzip -d app/aarch64 app_aarch64/JOSM.zip
             mkdir app/target
             cd app
             directory_iterate aarch64
