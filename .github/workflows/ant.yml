@@ -208,8 +208,7 @@ jobs:
 
           if [ ${{ runner.arch }} == "ARM64" ]; then
             build_arch aarch64
-            env | grep JAVA_HOME
-            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_x64}" build_arch x64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" build_arch x64
 
             unzip -d app/x64 app/JOSM_x64.zip
             unzip -d app/aarch64 app/JOSM_aarch64.zip
