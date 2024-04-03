@@ -163,10 +163,10 @@ jobs:
           APPLE_ID_TEAM: ${{ secrets.APPLE_ID_TEAM }}
         run: |
           function build_arch() {
-            if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${{ runner.arch }}-jmods.zip ]; then
-              curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${{ runner.arch }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-${1}_bin-jmods.zip
+            if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip ]; then
+              curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-${1}_bin-jmods.zip
             fi
-            unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${{ runner.arch }}-jmods.zip
+            unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip
             mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
             ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
             if [ ! -f "app/JOSM.zip" ]; then ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip; fi
@@ -207,8 +207,8 @@ jobs:
           }
 
           if [ ${{ runner.arch }} == "ARM64" ]; then
-            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" PATH="${JAVA_HOME_${{ matrix.java }}_ARM64}/bin:${PATH}" build_arch aarch64
-            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}/bin:${PATH}" build_arch x64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" PATH="${JAVA_HOME_${{ matrix.java }}_ARM64}/bin:${PATH}" build_arch aarch64 ARM64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}/bin:${PATH}" build_arch x64 X64
 
             mkdir -p app/target
             unzip -d app/x64 app_x64/JOSM.zip
