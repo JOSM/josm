@@ -265,6 +265,24 @@ jobs:
           path: app/JOSM.zip
           name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.zip
 
+      - name: Upload macOS app (x64)
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && runner.arch == 'ARM64' && !needs.createrelease.outputs.upload_url }}
+        uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: app_x64/JOSM.zip
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-x64.zip
+
+      - name: Upload macOS app (aarch64)
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && runner.arch == 'ARM64' && !needs.createrelease.outputs.upload_url }}
+        uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: app_aarch64/JOSM.zip
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-aarch64.zip
+
       - name: Upload Windows Installer executable
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
