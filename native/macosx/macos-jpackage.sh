@@ -110,9 +110,9 @@ function merge() {
 function copy() {
   # Trim the root path
   FILE="${1#*/}"
-  if [ ! -e "target/${FILE}" ]; then
+  if [ ! -e "${2}/${FILE}" ]; then
     # Only make directories if we aren't looking at the root files
-    if [[ "${FILE}" == *"/"* ]]; then mkdir -p "target/${FILE%/*}"; fi
+    if [[ "${FILE}" == *"/"* ]]; then mkdir -p "${2}/${FILE%/*}"; fi
     if file "${1}" | grep -q 'Mach-O' ; then
       merge "${2}/${FILE}" "${3}/${FILE}" "${4}/${FILE}"
       if file "${1}" | grep -q 'executable'; then
