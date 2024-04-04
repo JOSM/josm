@@ -116,10 +116,10 @@ function copy() {
     if file "${1}" | grep -q 'Mach-O' ; then
       merge "${2}/${FILE}" "${3}/${FILE}" "${4}/${FILE}"
       if file "${1}" | grep -q 'executable'; then
-        chmod 755 "target/${FILE}"
+        chmod 755 "${2}/${FILE}"
       fi
     else
-      cp -a "${1}" "target/${FILE}"
+      cp -a "${1}" "${2}/${FILE}"
     fi
   fi
 }
