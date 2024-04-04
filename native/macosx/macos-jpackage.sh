@@ -142,6 +142,7 @@ if [ -n "${2}" ]; then
   mv app/JOSM.app "app/JOSM_${first}.app"
   JAVA_HOME="${2}" do_jpackage "${1}"
   mv app/JOSM.app "app/JOSM_${second}.app"
+  mkdir app/JOSM.app
   (cd app
   directory_iterate "JOSM_${first}.app" "JOSM.app" "JOSM_${first}.app" "JOSM_${second}.app"
   directory_iterate "JOSM_${second}.app" "JOSM.app" "JOSM_${first}.app" "JOSM_${second}.app"
