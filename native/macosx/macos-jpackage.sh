@@ -105,6 +105,17 @@ function merge() {
   elif [ "$(command -v llvm-lipo-15)" ]; then
     llvm-lipo-15 -create -output "${1}" "${2}" "${3}"
   fi
+  if [ -n "${KEYCHAINPATH}" ]; then
+    codesign --remove-signature "${1}"
+    codesign --sign "FOSSGIS e.V." \
+      --force \
+      --keychain "${KEYCHAINPATH}" \
+      --timestamp \
+      --prefix "de.openstreetmap.josm" \
+      --identifier "de.openstreetmap.josm" \
+      --options runtime \
+      --verbose=4 "${1}"
+  fi
 }
 
 function copy() {
