@@ -162,66 +162,21 @@ jobs:
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
           APPLE_ID_TEAM: ${{ secrets.APPLE_ID_TEAM }}
         run: |
-          function build_arch() {
+          function setup_openjfx() {
             if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip ]; then
               curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-${1}_bin-jmods.zip
             fi
             unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip
             mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
-            ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
-            if [ ! -f "app/JOSM.zip" ]; then ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip; fi
-            mv app app_${1}
-          }
-
-          function merge() {
-            if [ "$(command -v lipo)" ]; then
-              lipo -create -output "${1}" "${2}" "${3}"
-            elif [ "$(command -v llvm-lipo-15)" ]; then
-              llvm-lipo-15 -create -output "${1}" "${2}" "${3}"
-            fi
-          }
-
-          function copy() {
-            # Trim the root path
-            FILE="${1#*/}"
-            if [ ! -e "target/${FILE}" ]; then
-              # Only make directories if we aren't looking at the root files
-              if [[ "${FILE}" == *"/"* ]]; then mkdir -p "target/${FILE%/*}"; fi
-              if file "${1}" | grep -q 'Mach-O' ; then
-                merge "target/${FILE}" "x64/${FILE}" "aarch64/${FILE}"
-                if file "${1}" | grep -q 'executable'; then
-                  chmod 755 "target/${FILE}"
-                fi
-              else
-                cp -a "${1}" "target/${FILE}"
-              fi
-            fi
-          }
-
-          function directory_iterate() {
-            while IFS= read -r -d '' file
-            do
-              copy "${file}" &
-            done <   <(find "${1}" -type f,l -print0)
-            wait
           }
 
           if [ ${{ runner.arch }} == "ARM64" ]; then
-            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" PATH="${JAVA_HOME_${{ matrix.java }}_ARM64}/bin:${PATH}" build_arch aarch64 ARM64
-            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}/bin:${PATH}" build_arch x64 X64
-
-            mkdir -p app/target
-            unzip -d app/x64 app_x64/JOSM.zip
-            unzip -d app/aarch64 app_aarch64/JOSM.zip
-            cd app
-            directory_iterate aarch64
-            directory_iterate x64
-            cd target
-            ditto -c -k --zlibCompressionLevel 9 --keepParent JOSM.app JOSM.zip
-            mv JOSM.zip ..
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" PATH="${JAVA_HOME_${{ matrix.java }}_ARM64}/bin:${PATH}" setup_openjfx aarch64 ARM64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}/bin:${PATH}" setup_openjfx x64 X64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }} "${JAVA_HOME_${{ matrix.java }}_X64}"
           else
-            build_arch x64
-            mv app/JOSM_x64.zip app/JOSM.zip
+            setup_openjfx x64 X64
+            ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
           fi
 
       - name: Setup Windows PATH
@@ -271,7 +226,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: app_x64/JOSM.zip
+          path: app/JOSM_${{ matrix.java }}_x86_64.zip
           name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-x64.zip
 
       - name: Upload macOS app (aarch64)
@@ -280,7 +235,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: app_aarch64/JOSM.zip
+          path: app/JOSM_${{ matrix.java }}_arm64.zip
           name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-aarch64.zip
 
       - name: Upload Windows Installer executable
