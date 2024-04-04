@@ -1,10 +1,9 @@
 name: Java CI Build
 env:
-  junit_platform_version: '1.9.3'
   JAVAFX_VERSION: '17.0.7'
 on:
   push:
-    branches: [master]
+    branches: [master, windows-installer]
 
 defaults:
   run:
@@ -59,6 +58,7 @@ jobs:
             JOSM release ${{ env.josm_release_tag }}
           draft: false
           prerelease: ${{ env.josm_prerelease }}
+        if: github.ref == 'refs/heads/master'
 
   build:
     needs: createrelease
@@ -69,7 +69,7 @@ jobs:
       fail-fast: false
       matrix:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
-        java: [8, 11, 17, 21, 22-ea]
+        java: [8, 11, 17, 21, 22]
         os: [ubuntu-latest, macos-latest, windows-latest]
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
@@ -92,8 +92,16 @@ jobs:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
 
+      - name: Setup x64 Java (Mac) ${{ matrix.java }}
+        if: ${{ runner.os == 'macos' && runner.arch == 'ARM64' && always() }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: ${{ matrix.java }}
+          architecture: x64
+
       - name: Install Ant
-        uses: JOSM/JOSMPluginAction/actions/setup-ant@v1
+        uses: JOSM/JOSMPluginAction/actions/setup-ant@v2
 
       - name: Optimise images
         if: ${{ runner.os == 'macos' && always() }}
@@ -113,18 +121,20 @@ jobs:
           SIGN_TSA: ${{ secrets.SIGN_TSA }}
         # Calls ant with -Dreleasebuild=true if we're a 'tested' build
         run: |
-          export SIGN_KEYSTORE=certificate.p12
-          echo "$SIGN_CERT" | base64 --decode > $SIGN_KEYSTORE
+          if [ ! -z "${SIGN_CERT}" ]; then
+            export SIGN_KEYSTORE=certificate.p12
+            echo "$SIGN_CERT" | base64 --decode > $SIGN_KEYSTORE
+          fi
           if [ "${{ needs.createrelease.outputs.josm_prerelease }}" == "true" ]; then
             ANT="ant"
           else
             ANT="ant -Dreleasebuild=true"
           fi
           $ANT dist
-          rm $SIGN_KEYSTORE
+          if [ ! -z "${SIGN_KEYSTORE}" ]; then rm $SIGN_KEYSTORE; fi
 
       - name: Upload jar
-        if: ${{ always() }}
+        if: ${{ always() && needs.createrelease.outputs.upload_url }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: actions/upload-release-asset@v1
@@ -133,6 +143,15 @@ jobs:
           asset_path: dist/josm-custom.jar
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
           asset_content_type: application/java-archive
+
+      - name: Upload jar
+        if: ${{ always() && !needs.createrelease.outputs.upload_url }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/josm-custom.jar
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
 
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() }}
@@ -143,12 +162,22 @@ jobs:
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
           APPLE_ID_TEAM: ${{ secrets.APPLE_ID_TEAM }}
         run: |
-          if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip ]; then
-            curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-x64_bin-jmods.zip
+          function setup_openjfx() {
+            if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip ]; then
+              curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-${1}_bin-jmods.zip
+            fi
+            unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}_${2}-jmods.zip
+            mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
+          }
+
+          if [ ${{ runner.arch }} == "ARM64" ]; then
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" PATH="${JAVA_HOME_${{ matrix.java }}_ARM64}/bin:${PATH}" setup_openjfx aarch64 ARM64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_X64}" PATH="${JAVA_HOME_${{ matrix.java }}_X64}/bin:${PATH}" setup_openjfx x64 X64
+            JAVA_HOME="${JAVA_HOME_${{ matrix.java }}_ARM64}" ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }} "${JAVA_HOME_${{ matrix.java }}_X64}"
+          else
+            setup_openjfx x64 X64
+            ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
           fi
-          unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip
-          mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
-          ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Setup Windows PATH
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
@@ -172,7 +201,7 @@ jobs:
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
-        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() }}
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -182,8 +211,35 @@ jobs:
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.zip
           asset_content_type: application/zip
 
+      - name: Upload macOS app
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && !needs.createrelease.outputs.upload_url }}
+        uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: app/JOSM.zip
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.zip
+
+      - name: Upload macOS app (x64)
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && runner.arch == 'ARM64' && !needs.createrelease.outputs.upload_url }}
+        uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: app/JOSM_${{ matrix.java }}_x86_64.zip
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-x64.zip
+
+      - name: Upload macOS app (aarch64)
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && runner.arch == 'ARM64' && !needs.createrelease.outputs.upload_url }}
+        uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: app/JOSM_${{ matrix.java }}_arm64.zip
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-aarch64.zip
+
       - name: Upload Windows Installer executable
-        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -193,8 +249,17 @@ jobs:
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.exe
           asset_content_type: application/vnd.microsoft.portable-executable
 
+      - name: Upload Windows Installer executable
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() && !needs.createrelease.outputs.upload_url }}
+        uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: app/JOSM.exe
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.exe
+
       - name: Upload Windows Installer package
-        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -203,3 +268,12 @@ jobs:
           asset_path: app/JOSM.msi
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.msi
           asset_content_type: application/x-ole-storage
+
+      - name: Upload Windows Installer package
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() && !needs.createrelease.outputs.upload_url }}
+        uses: actions/upload-artifact@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: app/JOSM.msi
+          name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.msi
