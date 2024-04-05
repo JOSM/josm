@@ -15,9 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 import org.apache.commons.compress.utils.CountingInputStream;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
@@ -30,6 +27,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.data.osm.pbf.Blob;
@@ -43,6 +41,9 @@ import org.openstreetmap.josm.data.protobuf.WireType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Read OSM data from an OSM PBF file
@@ -522,6 +523,8 @@ public final class OsmPbfReader extends AbstractReader {
             addTags(node, keys, values);
             if (info != null) {
                 setOsmPrimitiveData(primitiveBlockRecord, node, info);
+            } else {
+                ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
             }
             buildPrimitive(node);
         }
@@ -571,6 +574,7 @@ public final class OsmPbfReader extends AbstractReader {
                 }
             }
         }
+
         int keyValIndex = 0; // This index must not reset between nodes, and must always increment
         if (ids.length == lats.length && lats.length == lons.length && (denseInfo == null || denseInfo.length == lons.length)) {
             long id = 0;
@@ -578,13 +582,13 @@ public final class OsmPbfReader extends AbstractReader {
             long lon = 0;
             for (int i = 0; i < ids.length; i++) {
                 final NodeData node;
+                id += ids[i];
+                node = new NodeData(id);
                 if (denseInfo != null) {
                     Info info = denseInfo[i];
-                    id += ids[i];
-                    node = new NodeData(id);
                     setOsmPrimitiveData(primitiveBlockRecord, node, info);
                 } else {
-                    node = new NodeData(ids[i]);
+                    ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
                 }
                 lat += lats[i];
                 lon += lons[i];
@@ -678,6 +682,8 @@ public final class OsmPbfReader extends AbstractReader {
         addTags(wayData, keys, values);
         if (info != null) {
             setOsmPrimitiveData(primitiveBlockRecord, wayData, info);
+        } else {
+            ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
         }
         buildPrimitive(wayData);
     }
@@ -743,6 +749,8 @@ public final class OsmPbfReader extends AbstractReader {
         RelationData data = new RelationData(id);
         if (info != null) {
             setOsmPrimitiveData(primitiveBlockRecord, data, info);
+        } else {
+            ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
         }
         addTags(data, keys, values);
         OsmPrimitiveType[] valueTypes = OsmPrimitiveType.values();
@@ -795,7 +803,7 @@ public final class OsmPbfReader extends AbstractReader {
                         userSid = protobufRecord.asUnsignedVarInt().intValue();
                         break;
                     case 6:
-                        visible = protobufRecord.asUnsignedVarInt().byteValue() == 0;
+                        visible = protobufRecord.asUnsignedVarInt().byteValue() == 1;
                         break;
                     default: // Fall through, since the PBF format could be extended
                 }
@@ -946,18 +954,21 @@ public final class OsmPbfReader extends AbstractReader {
                 }
             }
         }
-        if (version.length == timestamp.length && timestamp.length == changeset.length && changeset.length == uid.length &&
-                uid.length == userSid.length && (visible == EMPTY_LONG || visible.length == userSid.length)) {
+        if (version.length > 0) {
             Info[] infos = new Info[version.length];
             long lastTimestamp = 0; // delta encoded
             long lastChangeset = 0; // delta encoded
             long lastUid = 0; // delta encoded,
             long lastUserSid = 0; // delta encoded, string id for username
             for (int i = 0; i < version.length; i++) {
-                lastTimestamp += timestamp[i];
-                lastChangeset += changeset[i];
-                lastUid += uid[i];
-                lastUserSid += userSid[i];
+                if (timestamp.length > i)
+                    lastTimestamp += timestamp[i];
+                if (changeset.length > i)
+                    lastChangeset += changeset[i];
+                if (uid.length > i && userSid.length > i) {
+                    lastUid += uid[i];
+                    lastUserSid += userSid[i];
+                }
                 infos[i] = new Info((int) version[i], lastTimestamp, lastChangeset, (int) lastUid, (int) lastUserSid,
                         visible == EMPTY_LONG || visible[i] == 1);
             }
