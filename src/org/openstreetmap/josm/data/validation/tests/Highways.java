@@ -310,7 +310,7 @@ public class Highways extends Test {
      */
     private void testDifferentLayers(Node connection) {
         List<Way> ways = connection.getParentWays();
-        ways.removeIf(w -> !w.hasTag("highway") || w.hasTag("highway", "steps"));
+        ways.removeIf(w -> !w.hasTag("highway") || w.hasTag("highway", "steps") || isSpecialArea(w));
         if (ways.size() < 2 || ways.stream().noneMatch(w -> w.hasKey("layer")))
             return;
         // check if connection has ways with different layers
@@ -335,6 +335,15 @@ public class Highways extends Test {
                 return;
             }
         }
+    }
+
+    /**
+     * Check if way is an area on a layer above or below 0.
+     * @param w the way
+     * @return true if way is an area on a layer above or below 0
+     */
+    private static boolean isSpecialArea(Way w) {
+        return w.hasAreaTags() && OsmUtils.getLayer(w) != null;
     }
 
     /**

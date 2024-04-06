@@ -71,6 +71,19 @@
   <node id='-81912' action='modify' lat='52.85123484621' lon='8.33142629932' />
   <node id='-81913' action='modify' lat='52.85184234363' lon='8.33096821625' />
   <node id='-81914' action='modify' lat='52.85308443243' lon='8.32968378727' />
+  <node id='-81916' action='modify' lat='52.85151466516' lon='8.33385008876' />
+  <node id='-81917' action='modify' lat='52.85192920272' lon='8.3345583381' />
+  <node id='-81918' action='modify' lat='52.85139622512' lon='8.33508135299' />
+  <node id='-81919' action='modify' lat='52.85229767723' lon='8.33551719874' />
+  <node id='-81941' action='modify' lat='52.85132713167' lon='8.33529383324' />
+  <node id='-81942' action='modify' lat='52.85174167102' lon='8.33600208258' />
+  <node id='-81943' action='modify' lat='52.85120869112' lon='8.33652509747' />
+  <node id='-81957' action='modify' lat='52.85216278631' lon='8.33610559595' />
+  <node id='-81983' action='modify' lat='52.85567653366' lon='8.33139515768' />
+  <node id='-81984' action='modify' lat='52.85540596408' lon='8.33237349066' />
+  <node id='-81985' action='modify' lat='52.85546909714' lon='8.32826598577' />
+  <node id='-81986' action='modify' lat='52.8556900621' lon='8.32931900066' />
+  <node id='-81995' action='modify' lat='52.85568346895' lon='8.33033082658' />
   <way id='-579' action='modify'>
     <nd ref='-25357' />
     <nd ref='-25377' />
@@ -278,5 +291,59 @@
     <tag k='highway' v='unclassified' />
     <tag k='layer' v='-1' />
     <tag k='tunnel' v='yes' />
+  </way>
+  <way id='-36866' action='modify'>
+    <nd ref='-81916' />
+    <nd ref='-81917' />
+    <nd ref='-81918' />
+    <nd ref='-81916' />
+    <tag k='area' v='yes' />
+    <tag k='highway' v='pedestrian' />
+    <tag k='layer' v='-1' />
+    <tag k='name' v='below' />
+  </way>
+  <way id='-36869' action='modify'>
+    <nd ref='-81917' />
+    <nd ref='-81919' />
+    <tag k='highway' v='path' />
+  </way>
+  <way id='-36917' action='modify'>
+    <nd ref='-81941' />
+    <nd ref='-81942' />
+    <nd ref='-81943' />
+    <nd ref='-81941' />
+    <tag k='area' v='yes' />
+    <tag k='highway' v='pedestrian' />
+    <tag k='name' v='normal' />
+  </way>
+  <way id='-36934' action='modify'>
+    <nd ref='-81957' />
+    <nd ref='-81942' />
+    <tag k='highway' v='footway' />
+    <tag k='layer' v='1' />
+  </way>
+  <way id='-37072' action='modify'>
+    <nd ref='-81983' />
+    <nd ref='-81984' />
+    <tag k='highway' v='unclassified' />
+  </way>
+  <way id='-37073' action='modify'>
+    <nd ref='-81985' />
+    <nd ref='-81986' />
+    <tag k='highway' v='unclassified' />
+  </way>
+  <way id='-37074' action='modify'>
+    <nd ref='-81986' />
+    <nd ref='-81995' />
+    <tag k='bridge' v='yes' />
+    <tag k='highway' v='unclassified' />
+    <tag k='layer' v='1' />
+  </way>
+  <way id='-37086' action='modify'>
+    <nd ref='-81995' />
+    <nd ref='-81983' />
+    <tag k='bridge' v='yes' />
+    <tag k='highway' v='unclassified' />
+    <tag k='layer' v='1' />
   </way>
 </osm>
