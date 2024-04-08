@@ -158,6 +158,7 @@ if [ -n "${2}" ]; then
         --prefix "de.openstreetmap.josm" \
         --identifier "${2}" \
         --options runtime \
+        --entitlements "$(dirname "${BASH_SOURCE[0]}")/josm.entitlements" \
         --verbose=4 "${1}"
     }
     do_codesign app/JOSM.app/Contents/runtime "com.oracle.java.de.openstreetmap.josm"
