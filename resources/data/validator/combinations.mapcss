@@ -541,8 +541,8 @@ way[highway][natural][natural!=ridge],
   fixRemove: "natural";
 }
 
-/* #9593, #11183, #12418, #12761, #17254, #19311  */
-*[sport][sport!=skiing][!building][!club][tourism != hotel][highway !~ /^(pedestrian|raceway)$/][!leisure][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(bar|dojo|pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports][attraction!=summer_toboggan] {
+/* #9593, #11183, #12418, #12761, #17254, #19311,#23604  */
+*[sport][sport!=skiing][!building][!"building:part"][!club][tourism != hotel][highway !~ /^(pedestrian|raceway)$/][!leisure][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(bar|dojo|pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports][attraction!=summer_toboggan] {
     throwWarning: tr("sport without physical feature");
     group: tr("missing tag");
     assertMatch: "node sport=tennis";
@@ -551,6 +551,7 @@ way[highway][natural][natural!=ridge],
     assertNoMatch: "node sport=skiing"; /* skiing has deprecated warning */
     assertNoMatch: "node sport=swimming tourism=hotel";
     assertNoMatch: "node sport=10pin amenity=restaurant";
+    assertNoMatch: "node sport=boxing building:part=yes";
 }
 
 /* {0.key} without {1.key} or {2.key} see #10140 */
