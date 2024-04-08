@@ -187,7 +187,7 @@ public final class OsmPbfReader extends AbstractReader {
         Blob.CompressionType type = null;
         ProtobufRecord current;
         // Needed since size and compression type + compression data may be in a different order
-        byte [] bytes = null;
+        byte[] bytes = null;
         while (parser.hasNext() && cis.getBytesRead() - start < header.dataSize()) {
             current = new ProtobufRecord(baos, parser);
             switch (current.getField()) {
