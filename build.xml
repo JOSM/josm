@@ -172,6 +172,8 @@ Build-Date: ${build.tstamp}
         <copy file="CONTRIBUTION" todir="${build.dir}"/>
         <copy file="README" todir="${build.dir}"/>
         <copy file="LICENSE" todir="${build.dir}"/>
+        <copy file="gpl-2.0.txt" todir="${build.dir}"/>
+        <copy file="gpl-3.0.txt" todir="${build.dir}"/>
         <!-- create josm-custom.jar -->
         <delete file="${dist.jar}"/>
         <jar destfile="${dist.jar}" basedir="${build.dir}" level="${clevel}">
