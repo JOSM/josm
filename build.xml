@@ -78,7 +78,7 @@
         <property name="dist-sources.jar" location="${dist.dir}/josm-custom-sources.jar"/>
         <!-- When incrementing the minimum Java version, don't forget to update the Java versions users will update to
              (PlatformHook#getJavaUrl, PlatformHook#startupSanityChecks and PlatformHook#warnSoonToBeUnsupportedJava) -->
-        <property name="java.lang.version" value="8" />
+        <property name="java.lang.version" value="11" />
         <property name="test.headless" value="true" />
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
         <property name="jacoco.inclbootstrapclasses" value="false" />
@@ -93,16 +93,15 @@
             <isset property="clevel"/>
         </condition>
         <!-- For Java specific stuff by version -->
-        <condition property="isJava9"><matches string="${ant.java.version}" pattern="(1.)?(9|[1-9][0-9])" /></condition>
-        <condition property="isJava10"><matches string="${ant.java.version}" pattern="[1-9][0-9]" /></condition>
-        <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]|[2-9][0-9]" /></condition>
-        <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]|[2-9][0-9]" /></condition>
+        <!-- <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]|[2-9][0-9]" /></condition> -->
         <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]|[2-9][0-9]" /></condition>
-        <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition>
+        <!-- <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition> -->
+        <!-- <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]|[2-9][0-9]" /></condition> -->
         <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]|[2-9][0-9]" /></condition>
-        <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
+        <!-- <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]|[2-9][0-9]" /></condition> -->
         <condition property="isJava19"><matches string="${ant.java.version}" pattern="19|[2-9][0-9]" /></condition>
-        <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition>
+        <!-- <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition> -->
         <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
         <!-- Disable jacoco on Java 19+, see https://github.com/jacoco/jacoco/pull/1282 -->
         <condition property="coverageByDefault">
@@ -110,9 +109,7 @@
                 <isset property="isJava19"/>
             </not>
         </condition>
-        <condition property="java.library.dir" value="jmods" else="lib">
-            <isset property="isJava9"/>
-        </condition>
+        <property name="java.library.dir" value="jmods" />
     </target>
     <target name="init-svn-revision-xml" if="svn.present" depends="init-properties"
             description="Initialize the REVISION.XML file from SVN information">
@@ -223,16 +220,9 @@ Build-Date: ${build.tstamp}
         <attribute name="release" default="${java.lang.version}"/>
         <element name="cp-elements" optional="true"/>
         <sequential>
-          <!-- RestrictedApiChecker was removed in error-prone 2.19 -->
-          <local name="errorProne2.10"/>
-          <property name="errorProne2.10" value="-Xep:RestrictedApiChecker:OFF" unless:set="isJava11"/>
-          <local name="errorProne2.22+"/>
-          <!-- LongDoubleConversion is disabled since SonarLint java:S1905 conflicts -->
-          <property name="errorProne2.22+" value="-Xep:LongDoubleConversion:OFF" if:set="isJava11"/>
           <javac sourcepath="@{sourcepath}" srcdir="@{srcdir}" fork="@{fork}"
             includes="@{includes}" excludes="@{excludes}" destdir="@{destdir}" release="@{release}"
             debug="@{debug}" includeantruntime="@{includeantruntime}" encoding="@{encoding}">
-              <compilerarg value="-J-Xbootclasspath/p:${toString:errorprone_javac.classpath}" unless:set="isJava9"/>
               <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
               <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
               <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
@@ -258,7 +248,7 @@ Build-Date: ${build.tstamp}
               <compilerarg value="-Xlint:unchecked"/>
               <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
               <compilerarg value="-XDignore.symbol.file"/>
-              <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsGetClass:OFF -Xep:UndefinedEquals:OFF -Xep:BadImport:OFF -Xep:AnnotateFormatMethod:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF ${errorProne2.10} -Xep:InlineMeSuggester:OFF ${errorProne2.22+}" unless:set="noErrorProne"/>
+              <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsGetClass:OFF -Xep:UndefinedEquals:OFF -Xep:BadImport:OFF -Xep:AnnotateFormatMethod:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF -Xep:InlineMeSuggester:OFF" unless:set="noErrorProne"/>
               <compilerarg line="-Xmaxwarns 1000"/>
               <compilerarg value="-Xplugin:semanticdb -sourceroot:@{srcdir} -targetroot:${build.dir}/semanticdb" if:set="lsif" />
               <classpath>
@@ -341,8 +331,7 @@ Build-Date: ${build.tstamp}
                 private="true"
                 linksource="true"
                 author="false">
-            <link href="https://docs.oracle.com/javase/8/docs/api" unless:set="isJava11" />
-            <link href="https://docs.oracle.com/en/java/javase/11/docs/api" if:set="isJava11" />
+            <link href="https://docs.oracle.com/en/java/javase/11/docs/api" />
             <doctitle><![CDATA[<h2>
                 <img src="https://josm.openstreetmap.de/svn/trunk/nodist/images/logo/header.png" style="vertical-align: middle;" alt="JOSM">
                 &mdash; Javadoc
@@ -350,9 +339,9 @@ Build-Date: ${build.tstamp}
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
             <!-- Disable HTML checking until we switch to Java13+, see https://bugs.openjdk.java.net/browse/JDK-8223552 -->
             <arg value="-Xdoclint:-html" if:set="isJava13" />
-            <arg value="-html5" if:set="isJava9" />
-            <arg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
-            <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
+            <arg value="-html5" />
+            <arg value="--add-exports" unless:set="noJavaFX" />
+            <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" unless:set="noJavaFX" />
         </javadoc>
     </target>
     <target name="clean" depends="init-properties" description="Delete all build files">
@@ -467,28 +456,24 @@ Build-Date: ${build.tstamp}
                         <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
                         <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
                         <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
-                        <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
-                        <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
-                        <jvmarg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
-                        <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
-                        <jvmarg value="--add-exports" if:set="isJava9" unless:set="isJava11" />
-                        <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" unless:set="isJava11" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.base/java.lang=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.base/java.nio=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.base/java.text=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.base/java.util=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.prefs/java.util.prefs=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-exports" unless:set="noJavaFX" />
+                        <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" unless:set="noJavaFX" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.base/java.io=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.base/java.nio=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.base/java.text=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.base/java.util=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.prefs/java.util.prefs=ALL-UNNAMED" />
                         <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                         <sysproperty key="josm.test.data" value="${test.dir}/data"/>
                         <sysproperty key="java.awt.headless" value="${test.headless}"/>
@@ -712,11 +697,7 @@ Build-Date: ${build.tstamp}
         <as:build-signatures destfile="${dir}/api.sig">
             <path>
                 <fileset file="${dist-optimized.jar}"/>
-                <fileset file="${java.home}/lib/rt.jar" unless:set="isJava9"/>
-                <fileset file="${java.home}/lib/jce.jar" unless:set="isJava9"/>
-                <fileset file="${java.home}/lib/ext/jfxrt.jar" unless:set="isJava9"/>
-                <fileset dir="${java.home}/jmods" if:set="isJava9"/>
-                <fileset dir="/usr/share/openjfx/lib" unless:set="isJava9"/>
+                <fileset dir="${java.home}/jmods" />
             </path>
         </as:build-signatures>
         <as:check-signature signature="${dir}/api.sig" failonerror="false">
