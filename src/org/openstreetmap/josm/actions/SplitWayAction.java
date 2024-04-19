@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -145,8 +146,8 @@ public class SplitWayAction extends JosmAction {
         }
 
         // Finally, applicableWays contains only one perfect way
-        final Way selectedWay = applicableWays.get(0);
-        final List<OsmPrimitive> sel = new ArrayList<>(ds.getSelectedRelations());
+        final var selectedWay = applicableWays.get(0);
+        final var sel = new ArrayList<OsmPrimitive>(ds.getSelectedRelations());
         sel.addAll(selectedWays);
         doSplitWayShowSegmentSelection(selectedWay, selectedNodes, sel);
     }
@@ -163,7 +164,7 @@ public class SplitWayAction extends JosmAction {
         final List<List<Node>> wayChunks = SplitWayCommand.buildSplitChunks(splitWay, splitNodes);
         if (wayChunks != null) {
             final List<Way> newWays = SplitWayCommand.createNewWaysFromChunks(splitWay, wayChunks);
-            final Way wayToKeep = SplitWayCommand.Strategy.keepLongestChunk().determineWayToKeep(newWays);
+            final var wayToKeep = SplitWayCommand.Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
             if (ExpertToggleAction.isExpert() && !splitWay.isNew()) {
                 final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(splitWay, newWays, wayToKeep, splitNodes, selection);
@@ -209,9 +210,9 @@ public class SplitWayAction extends JosmAction {
             configureList();
 
             setButtonIcons("ok", "cancel");
-            final JPanel pane = new JPanel(new GridBagLayout());
-            pane.add(new JLabel(getTitle()), GBC.eol().fill(GBC.HORIZONTAL));
-            pane.add(list, GBC.eop().fill(GBC.HORIZONTAL));
+            final var pane = new JPanel(new GridBagLayout());
+            pane.add(new JLabel(getTitle()), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            pane.add(list, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             setContent(pane);
             setDefaultCloseOperation(HIDE_ON_CLOSE);
         }
@@ -223,9 +224,9 @@ public class SplitWayAction extends JosmAction {
                 if (selected != null && MainApplication.isDisplayingMapView() && selected.getNodesCount() > 1) {
                     final Collection<WaySegment> segments = new ArrayList<>(selected.getNodesCount() - 1);
                     final Iterator<Node> it = selected.getNodes().iterator();
-                    Node previousNode = it.next();
+                    var previousNode = it.next();
                     while (it.hasNext()) {
-                        final Node node = it.next();
+                        final var node = it.next();
                         segments.add(WaySegment.forNodePair(selectedWay, previousNode, node));
                         previousNode = node;
                     }
@@ -236,7 +237,7 @@ public class SplitWayAction extends JosmAction {
         }
 
         protected void setHighlightedWaySegments(Collection<WaySegment> segments) {
-            DataSet ds = selectedWay.getDataSet();
+            final var ds = selectedWay.getDataSet();
             if (ds != null) {
                 ds.setHighlightedWaySegments(segments);
                 MainApplication.getMap().mapView.repaint();
@@ -246,7 +247,7 @@ public class SplitWayAction extends JosmAction {
         @Override
         public void setVisible(boolean visible) {
             super.setVisible(visible);
-            DataSet ds = selectedWay.getDataSet();
+            final var ds = selectedWay.getDataSet();
             if (visible) {
                 DISPLAY_COUNT.incrementAndGet();
                 list.setSelectedValue(wayToKeep, true);
@@ -275,7 +276,7 @@ public class SplitWayAction extends JosmAction {
             }
         }
 
-        private class SplitWayDataSetListener implements DataSetListener {
+        private final class SplitWayDataSetListener implements DataSetListener {
 
             @Override
             public void primitivesAdded(PrimitivesAddedEvent event) {
@@ -335,7 +336,7 @@ public class SplitWayAction extends JosmAction {
     static class SegmentListCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            final Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            final var c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             final String name = DefaultNameFormatter.getInstance().format((Way) value);
             // get rid of id from DefaultNameFormatter.decorateNameWithId()
             final String nameWithoutId = name
@@ -358,7 +359,7 @@ public class SplitWayAction extends JosmAction {
 
         // Special case - one of the selected ways touches (not cross) way that we want to split
         if (selectedNodes.size() == 1) {
-            Node n = selectedNodes.get(0);
+            final var n = selectedNodes.get(0);
             List<Way> referredWays = n.getParentWays();
             Way inTheMiddle = null;
             for (Way w: referredWays) {

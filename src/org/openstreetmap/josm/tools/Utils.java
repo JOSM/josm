@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Bidi;
@@ -152,8 +151,8 @@ public final class Utils {
      * @return The index of the first item or -1 if none was found.
      */
     public static <T> int indexOf(Iterable<? extends T> collection, Predicate<? super T> predicate) {
-        int i = 0;
-        for (T item : collection) {
+        var i = 0;
+        for (var item : collection) {
             if (predicate.test(item))
                 return i;
             i++;
@@ -185,7 +184,7 @@ public final class Utils {
     public static int mod(int a, int n) {
         if (n <= 0)
             throw new IllegalArgumentException("n must be <= 0 but is " + n);
-        int res = a % n;
+        var res = a % n;
         if (res < 0) {
             res += n;
         }
@@ -303,10 +302,10 @@ public final class Utils {
         if (!out.exists() && !out.mkdirs()) {
             Logging.warn("Unable to create directory "+out.getPath());
         }
-        File[] files = in.listFiles();
+        var files = in.listFiles();
         if (files != null) {
-            for (File f : files) {
-                File target = new File(out, f.getName());
+            for (var f : files) {
+                var target = new File(out, f.getName());
                 if (f.isDirectory()) {
                     copyDirectory(f, target);
                 } else {
@@ -324,9 +323,9 @@ public final class Utils {
      */
     public static boolean deleteDirectory(File path) {
         if (path.exists()) {
-            File[] files = path.listFiles();
+            var files = path.listFiles();
             if (files != null) {
-                for (File file : files) {
+                for (var file : files) {
                     if (file.isDirectory()) {
                         deleteDirectory(file);
                     } else {
@@ -371,7 +370,7 @@ public final class Utils {
      * @since 9296
      */
     public static boolean deleteFile(File file, String warnMsg) {
-        boolean result = file.delete();
+        var result = file.delete();
         if (!result) {
             Logging.warn(tr(warnMsg, file.getPath()));
         }
@@ -397,7 +396,7 @@ public final class Utils {
      * @since 9645
      */
     public static boolean mkDirs(File dir, String warnMsg) {
-        boolean result = dir.mkdirs();
+        var result = dir.mkdirs();
         if (!result) {
             Logging.warn(tr(warnMsg, dir.getPath()));
         }
@@ -497,8 +496,8 @@ public final class Utils {
         } catch (NoSuchAlgorithmException e) {
             throw new JosmRuntimeException(e);
         }
-        byte[] byteData = data.getBytes(StandardCharsets.UTF_8);
-        byte[] byteDigest = md.digest(byteData);
+        var byteData = data.getBytes(StandardCharsets.UTF_8);
+        var byteDigest = md.digest(byteData);
         return toHexString(byteDigest);
     }
 
@@ -517,13 +516,13 @@ public final class Utils {
             return "";
         }
 
-        final int len = bytes.length;
+        final var len = bytes.length;
         if (len == 0) {
             return "";
         }
 
-        char[] hexChars = new char[len * 2];
-        int j = 0;
+        var hexChars = new char[len * 2];
+        var j = 0;
         for (final int v : bytes) {
             hexChars[j++] = HEX_ARRAY[(v & 0xf0) >> 4];
             hexChars[j++] = HEX_ARRAY[v & 0xf];
@@ -541,25 +540,25 @@ public final class Utils {
      * @return the list of sorted objects
      */
     public static <T> List<T> topologicalSort(final MultiMap<T, T> dependencies) {
-        MultiMap<T, T> deps = new MultiMap<>();
-        for (T key : dependencies.keySet()) {
+        var deps = new MultiMap<T, T>();
+        for (var key : dependencies.keySet()) {
             deps.putVoid(key);
-            for (T val : dependencies.get(key)) {
+            for (var val : dependencies.get(key)) {
                 deps.putVoid(val);
                 deps.put(key, val);
             }
         }
 
-        int size = deps.size();
+        var size = deps.size();
         List<T> sorted = new ArrayList<>();
-        for (int i = 0; i < size; ++i) {
-            T parentless = deps.keySet().stream()
+        for (var i = 0; i < size; ++i) {
+            var parentless = deps.keySet().stream()
                     .filter(key -> deps.get(key).isEmpty())
                     .findFirst().orElse(null);
             if (parentless == null) throw new JosmRuntimeException("parentless");
             sorted.add(parentless);
             deps.remove(parentless);
-            for (T key : deps.keySet()) {
+            for (var key : deps.keySet()) {
                 deps.remove(key, parentless);
             }
         }
@@ -679,7 +678,7 @@ public final class Utils {
         if (isEmpty(map)) {
             return Collections.emptyMap();
         } else if (map.size() == 1) {
-            final Map.Entry<K, V> entry = map.entrySet().iterator().next();
+            final var entry = map.entrySet().iterator().next();
             return Collections.singletonMap(entry.getKey(), entry.getValue());
         } else if (mapOfEntries != null) {
             try {
@@ -795,16 +794,16 @@ public final class Utils {
             return str;
         }
 
-        int start = 0;
-        int end = str.length();
-        boolean leadingSkipChar = true;
+        var start = 0;
+        var end = str.length();
+        var leadingSkipChar = true;
         while (leadingSkipChar && start < end) {
             leadingSkipChar = isStrippedChar(str.charAt(start), skipChars);
             if (leadingSkipChar) {
                 start++;
             }
         }
-        boolean trailingSkipChar = true;
+        var trailingSkipChar = true;
         while (trailingSkipChar && end > start) {
             trailingSkipChar = isStrippedChar(str.charAt(end - 1), skipChars);
             if (trailingSkipChar) {
@@ -866,9 +865,9 @@ public final class Utils {
         if (Logging.isDebugEnabled()) {
             Logging.debug(String.join(" ", command));
         }
-        Path out = Files.createTempFile("josm_exec_" + command.get(0) + "_", ".txt");
+        var out = Files.createTempFile("josm_exec_" + command.get(0) + "_", ".txt");
         try {
-            Process p = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(out.toFile()).start();
+            var p = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(out.toFile()).start();
             if (!p.waitFor(timeout, unit) || p.exitValue() != 0) {
                 throw new ExecutionException(command.toString(), null);
             }
@@ -888,11 +887,11 @@ public final class Utils {
      * @since 6245
      */
     public static File getJosmTempDir() {
-        String tmpDir = getSystemProperty("java.io.tmpdir");
+        var tmpDir = getSystemProperty("java.io.tmpdir");
         if (tmpDir == null) {
             return null;
         }
-        File josmTmpDir = new File(tmpDir, "JOSM");
+        final var josmTmpDir = new File(tmpDir, "JOSM");
         if (!josmTmpDir.exists() && !josmTmpDir.mkdirs()) {
             Logging.warn("Unable to create temp directory " + josmTmpDir);
         }
@@ -920,15 +919,15 @@ public final class Utils {
         }
         // Is it less than 1 hour ?
         if (elapsedTime < MILLIS_OF_HOUR) {
-            final long min = elapsedTime / MILLIS_OF_MINUTE;
+            final var min = elapsedTime / MILLIS_OF_MINUTE;
             return String.format("%d %s %d %s", min, tr("min"), (elapsedTime - min * MILLIS_OF_MINUTE) / MILLIS_OF_SECOND, tr("s"));
         }
         // Is it less than 1 day ?
         if (elapsedTime < MILLIS_OF_DAY) {
-            final long hour = elapsedTime / MILLIS_OF_HOUR;
+            final var hour = elapsedTime / MILLIS_OF_HOUR;
             return String.format("%d %s %d %s", hour, tr("h"), (elapsedTime - hour * MILLIS_OF_HOUR) / MILLIS_OF_MINUTE, tr("min"));
         }
-        long days = elapsedTime / MILLIS_OF_DAY;
+        var days = elapsedTime / MILLIS_OF_DAY;
         return String.format("%d %s %d %s", days, trn("day", "days", days), (elapsedTime - days * MILLIS_OF_DAY) / MILLIS_OF_HOUR, tr("h"));
     }
 
@@ -943,7 +942,7 @@ public final class Utils {
         if (bytes < 0) {
             throw new IllegalArgumentException("bytes must be >= 0");
         }
-        int unitIndex = 0;
+        var unitIndex = 0;
         double value = bytes;
         while (value >= 1024 && unitIndex < SIZE_UNITS.length) {
             value /= 1024;
@@ -967,11 +966,11 @@ public final class Utils {
      */
     public static String getPositionListString(List<Integer> positionList) {
         Collections.sort(positionList);
-        final StringBuilder sb = new StringBuilder(32);
+        final var sb = new StringBuilder(32);
         sb.append(positionList.get(0));
-        int cnt = 0;
+        var cnt = 0;
         int last = positionList.get(0);
-        for (int i = 1; i < positionList.size(); ++i) {
+        for (var i = 1; i < positionList.size(); ++i) {
             int cur = positionList.get(i);
             if (cur == last + 1) {
                 ++cnt;
@@ -1030,9 +1029,9 @@ public final class Utils {
      * @since 6639
      */
     public static Throwable getRootCause(Throwable t) {
-        Throwable result = t;
+        var result = t;
         if (result != null) {
-            Throwable cause = result.getCause();
+            var cause = result.getCause();
             while (cause != null && !cause.equals(result)) {
                 result = cause;
                 cause = result.getCause();
@@ -1050,7 +1049,7 @@ public final class Utils {
      * @since 6717
      */
     public static <T> T[] addInArrayCopy(T[] array, T item) {
-        T[] biggerCopy = Arrays.copyOf(array, array.length + 1);
+        var biggerCopy = Arrays.copyOf(array, array.length + 1);
         biggerCopy[array.length] = item;
         return biggerCopy;
     }
@@ -1063,7 +1062,7 @@ public final class Utils {
      * @throws IllegalArgumentException if maxLength is less than the length of "..."
      */
     public static String shortenString(String s, int maxLength) {
-        final String ellipses = "...";
+        final var ellipses = "...";
         CheckParameterUtil.ensureThat(maxLength >= ellipses.length(), "maxLength is shorter than " + ellipses.length());
         if (s != null && s.length() > maxLength) {
             return s.substring(0, maxLength - ellipses.length()) + ellipses;
@@ -1101,7 +1100,7 @@ public final class Utils {
         } else {
             if (elements.size() > maxElements) {
                 final Collection<T> r = new ArrayList<>(maxElements);
-                final Iterator<T> it = elements.iterator();
+                final var it = elements.iterator();
                 while (r.size() < maxElements - 1) {
                     r.add(it.next());
                 }
@@ -1126,12 +1125,12 @@ public final class Utils {
         if (url == null || url.indexOf('?') == -1)
             return url;
 
-        String query = url.substring(url.indexOf('?') + 1);
+        final var query = url.substring(url.indexOf('?') + 1);
 
-        StringBuilder sb = new StringBuilder(url.substring(0, url.indexOf('?') + 1));
+        final var sb = new StringBuilder(url.substring(0, url.indexOf('?') + 1));
 
-        for (int i = 0; i < query.length(); i++) {
-            String c = query.substring(i, i + 1);
+        for (var i = 0; i < query.length(); i++) {
+            final var c = query.substring(i, i + 1);
             if (URL_CHARS.contains(c)) {
                 sb.append(c);
             } else {
@@ -1152,7 +1151,7 @@ public final class Utils {
      * @since 8304
      */
     public static String encodeUrl(String s) {
-        final String enc = StandardCharsets.UTF_8.name();
+        final var enc = StandardCharsets.UTF_8.name();
         try {
             return URLEncoder.encode(s, enc);
         } catch (UnsupportedEncodingException e) {
@@ -1172,7 +1171,7 @@ public final class Utils {
      * @since 8304
      */
     public static String decodeUrl(String s) {
-        final String enc = StandardCharsets.UTF_8.name();
+        final var enc = StandardCharsets.UTF_8.name();
         try {
             return URLDecoder.decode(s, enc);
         } catch (UnsupportedEncodingException e) {
@@ -1220,7 +1219,7 @@ public final class Utils {
             final AtomicLong count = new AtomicLong(0);
             @Override
             public Thread newThread(final Runnable runnable) {
-                final Thread thread = new Thread(runnable, String.format(Locale.ENGLISH, nameFormat, count.getAndIncrement()));
+                final var thread = new Thread(runnable, String.format(Locale.ENGLISH, nameFormat, count.getAndIncrement()));
                 thread.setPriority(threadPriority);
                 return thread;
             }
@@ -1298,7 +1297,7 @@ public final class Utils {
      */
     public static boolean isSimilar(String string1, String string2) {
         // check plain strings
-        int distance = getLevenshteinDistance(string1, string2);
+        var distance = getLevenshteinDistance(string1, string2);
 
         // check if only the case differs, so we don't consider large distance as different strings
         if (distance > 2 && string1.length() == string2.length()) {
@@ -1339,7 +1338,7 @@ public final class Utils {
             mean = Arrays.stream(values).average().orElse(0);
         }
 
-        for (double length : values) {
+        for (var length : values) {
             standardDeviation += Math.pow(length - mean, 2);
         }
 
@@ -1360,9 +1359,9 @@ public final class Utils {
             return EMPTY_INT_INT_ARRAY;
         }
         List<int[]> groups = new ArrayList<>();
-        int[] current = {Integer.MIN_VALUE, Integer.MIN_VALUE};
+        var current = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE};
         groups.add(current);
-        for (int row : integers) {
+        for (var row : integers) {
             if (current[0] == Integer.MIN_VALUE) {
                 current[0] = row;
                 current[1] = row;
@@ -1397,7 +1396,7 @@ public final class Utils {
      */
     @SuppressWarnings("ThreadPriorityCheck")
     public static ForkJoinPool newForkJoinPool(String pref, final String nameFormat, final int threadPriority) {
-        int noThreads = Config.getPref().getInt(pref, Runtime.getRuntime().availableProcessors());
+        final var noThreads = Config.getPref().getInt(pref, Runtime.getRuntime().availableProcessors());
         return new ForkJoinPool(noThreads, new ForkJoinPool.ForkJoinWorkerThreadFactory() {
             final AtomicLong count = new AtomicLong(0);
             @Override
@@ -1467,7 +1466,7 @@ public final class Utils {
     public static String updateSystemProperty(String key, String value) {
         if (value != null) {
             try {
-                String old = System.setProperty(key, value);
+                var old = System.setProperty(key, value);
                 if (Logging.isDebugEnabled() && !value.equals(old)) {
                     if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
                         Logging.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + '\'');
@@ -1493,7 +1492,7 @@ public final class Utils {
      * @since 8404
      */
     public static boolean hasExtension(String filename, String... extensions) {
-        String name = filename.toLowerCase(Locale.ENGLISH).replace("?format=raw", "");
+        var name = filename.toLowerCase(Locale.ENGLISH).replace("?format=raw", "");
         return Arrays.stream(extensions)
                 .anyMatch(ext -> name.endsWith('.' + ext.toLowerCase(Locale.ENGLISH)));
     }
@@ -1522,11 +1521,11 @@ public final class Utils {
         if (stream == null) {
             return new byte[0];
         }
-        try (ByteArrayOutputStream bout = new ByteArrayOutputStream(stream.available())) {
-            byte[] buffer = new byte[8192];
-            boolean finished = false;
+        try (stream; var bout = new ByteArrayOutputStream(stream.available())) {
+            final var buffer = new byte[8192];
+            var finished = false;
             do {
-                int read = stream.read(buffer);
+                var read = stream.read(buffer);
                 if (read >= 0) {
                     bout.write(buffer, 0, read);
                 } else {
@@ -1536,8 +1535,6 @@ public final class Utils {
             if (bout.size() == 0)
                 return new byte[0];
             return bout.toByteArray();
-        } finally {
-            stream.close();
         }
     }
 
@@ -1602,19 +1599,19 @@ public final class Utils {
      * @return a list of GlyphVectors
      */
     public static List<GlyphVector> getGlyphVectorsBidi(String string, Font font, FontRenderContext frc) {
-        List<GlyphVector> gvs = new ArrayList<>();
-        Bidi bidi = new Bidi(string, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
-        byte[] levels = new byte[bidi.getRunCount()];
-        DirectionString[] dirStrings = new DirectionString[levels.length];
-        for (int i = 0; i < levels.length; ++i) {
+        final var gvs = new ArrayList<GlyphVector>();
+        final var bidi = new Bidi(string, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+        final var levels = new byte[bidi.getRunCount()];
+        final var dirStrings = new DirectionString[levels.length];
+        for (var i = 0; i < levels.length; ++i) {
             levels[i] = (byte) bidi.getRunLevel(i);
-            String substr = string.substring(bidi.getRunStart(i), bidi.getRunLimit(i));
-            int dir = levels[i] % 2 == 0 ? Bidi.DIRECTION_LEFT_TO_RIGHT : Bidi.DIRECTION_RIGHT_TO_LEFT;
+            final var substr = string.substring(bidi.getRunStart(i), bidi.getRunLimit(i));
+            final var dir = levels[i] % 2 == 0 ? Bidi.DIRECTION_LEFT_TO_RIGHT : Bidi.DIRECTION_RIGHT_TO_LEFT;
             dirStrings[i] = new DirectionString(dir, substr);
         }
         Bidi.reorderVisually(levels, 0, dirStrings, 0, levels.length);
-        for (DirectionString dirString : dirStrings) {
-            char[] chars = dirString.str.toCharArray();
+        for (var dirString : dirStrings) {
+            var chars = dirString.str.toCharArray();
             gvs.add(font.layoutGlyphVector(frc, chars, 0, chars.length, dirString.direction));
         }
         return gvs;
@@ -1711,7 +1708,7 @@ public final class Utils {
      */
     public static int getJavaVersion() {
         // Switch to Runtime.version() once we move past Java 8
-        String version = Objects.requireNonNull(getSystemProperty("java.version"));
+        var version = Objects.requireNonNull(getSystemProperty("java.version"));
         if (version.startsWith("1.")) {
             version = version.substring(2);
         }
@@ -1720,8 +1717,8 @@ public final class Utils {
         // 9-ea
         // 9
         // 9.0.1
-        int dotPos = version.indexOf('.');
-        int dashPos = version.indexOf('-');
+        var dotPos = version.indexOf('.');
+        var dashPos = version.indexOf('-');
         return Integer.parseInt(version.substring(0,
                 dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : version.length()));
     }
@@ -1733,7 +1730,7 @@ public final class Utils {
      */
     public static int getJavaUpdate() {
         // Switch to Runtime.version() once we move past Java 8
-        String version = Objects.requireNonNull(getSystemProperty("java.version"));
+        var version = Objects.requireNonNull(getSystemProperty("java.version"));
         if (version.startsWith("1.")) {
             version = version.substring(2);
         }
@@ -1744,14 +1741,14 @@ public final class Utils {
         // 9.0.1
         // 17.0.4.1+1-LTS
         // $MAJOR.$MINOR.$SECURITY.$PATCH
-        int undePos = version.indexOf('_');
-        int dashPos = version.indexOf('-');
+        var undePos = version.indexOf('_');
+        var dashPos = version.indexOf('-');
         if (undePos > -1) {
             return Integer.parseInt(version.substring(undePos + 1,
                     dashPos > -1 ? dashPos : version.length()));
         }
-        int firstDotPos = version.indexOf('.');
-        int secondDotPos = version.indexOf('.', firstDotPos + 1);
+        var firstDotPos = version.indexOf('.');
+        var secondDotPos = version.indexOf('.', firstDotPos + 1);
         if (firstDotPos == secondDotPos) {
             return 0;
         }
@@ -1766,9 +1763,9 @@ public final class Utils {
      */
     public static int getJavaBuild() {
         // Switch to Runtime.version() once we move past Java 8
-        String version = Objects.requireNonNull(getSystemProperty("java.runtime.version"));
-        int bPos = version.indexOf('b');
-        int pPos = version.indexOf('+');
+        var version = Objects.requireNonNull(getSystemProperty("java.runtime.version"));
+        var bPos = version.indexOf('b');
+        var pPos = version.indexOf('+');
         try {
             return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1));
         } catch (NumberFormatException e) {
@@ -1785,7 +1782,7 @@ public final class Utils {
     public static Date getJavaExpirationDate() {
         try {
             Object value;
-            Class<?> c = Class.forName("com.sun.deploy.config.BuiltInProperties");
+            var c = Class.forName("com.sun.deploy.config.BuiltInProperties");
             try {
                 value = c.getDeclaredField("JRE_EXPIRATION_DATE").get(null);
             } catch (NoSuchFieldException e) {
@@ -1809,19 +1806,19 @@ public final class Utils {
      */
     public static String getJavaLatestVersion() {
         try {
-            String[] versions = HttpClient.create(
+            var versions = HttpClient.create(
                     new URL(Config.getPref().get(
                             "java.baseline.version.url",
                             Config.getUrls().getJOSMWebsite() + "/remote/oracle-java-update-baseline.version")))
                     .connect().fetchContent().split("\n", -1);
             if (getJavaVersion() <= 11 && isRunningWebStart()) { // OpenWebStart currently only has Java 11
-                for (String version : versions) {
+                for (var version : versions) {
                     if (version.startsWith("11")) {
                         return version;
                     }
                 }
             } else if (getJavaVersion() <= 17) {
-                for (String version : versions) {
+                for (var version : versions) {
                     if (version.startsWith("17")) { // Use current Java LTS
                         return version;
                     }
@@ -1944,7 +1941,7 @@ public final class Utils {
                 try {
                     return url.openStream();
                 } catch (FileNotFoundException | InvalidPathException e) {
-                    URL betterUrl = betterJarUrl(url);
+                    final var betterUrl = betterJarUrl(url);
                     if (betterUrl != null) {
                         try {
                             return betterUrl.openStream();
@@ -1981,15 +1978,15 @@ public final class Utils {
      */
     public static URL betterJarUrl(URL jarUrl, URL defaultUrl) throws IOException {
         // Workaround to https://bugs.openjdk.java.net/browse/JDK-4523159
-        String urlPath = jarUrl.getPath().replace("%20", " ");
+        var urlPath = jarUrl.getPath().replace("%20", " ");
         if (urlPath.startsWith("file:/") && urlPath.split("!", -1).length > 2) {
             // Locate jar file
-            int index = urlPath.lastIndexOf("!/");
-            Path jarFile = Paths.get(urlPath.substring("file:/".length(), index));
-            Path filename = jarFile.getFileName();
-            FileTime jarTime = Files.readAttributes(jarFile, BasicFileAttributes.class).lastModifiedTime();
+            var index = urlPath.lastIndexOf("!/");
+            final var jarFile = Paths.get(urlPath.substring("file:/".length(), index));
+            var filename = jarFile.getFileName();
+            var jarTime = Files.readAttributes(jarFile, BasicFileAttributes.class).lastModifiedTime();
             // Copy it to temp directory (hopefully free of exclamation mark) if needed (missing or older jar)
-            Path jarCopy = Paths.get(getSystemProperty("java.io.tmpdir")).resolve(filename);
+            final var jarCopy = Paths.get(getSystemProperty("java.io.tmpdir")).resolve(filename);
             if (!jarCopy.toFile().exists() ||
                     Files.readAttributes(jarCopy, BasicFileAttributes.class).lastModifiedTime().compareTo(jarTime) < 0) {
                 Files.copy(jarFile, jarCopy, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
@@ -2028,7 +2025,7 @@ public final class Utils {
             Logging.error("Cannot open {0}: {1}", path, e.getMessage());
             Logging.trace(e);
             try {
-                URL betterUrl = betterJarUrl(cl.getResource(path));
+                final var betterUrl = betterJarUrl(cl.getResource(path));
                 if (betterUrl != null) {
                     return betterUrl.openStream();
                 }

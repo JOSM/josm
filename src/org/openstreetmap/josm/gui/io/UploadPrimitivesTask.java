@@ -140,7 +140,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                 specs[0],
                 ht("/Action/Upload#ChangesetFull")
         );
-        switch(ret) {
+        switch (ret) {
         case 0: return MaxChangesetSizeExceededPolicy.AUTOMATICALLY_OPEN_NEW_CHANGESETS;
         case 1: return MaxChangesetSizeExceededPolicy.FILL_ONE_CHANGESET_AND_RETURN_TO_UPLOAD_DIALOG;
         case 2:
@@ -167,9 +167,9 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         if (strategy.getPolicy() == null || strategy.getPolicy() == MaxChangesetSizeExceededPolicy.ABORT) {
             strategy.setPolicy(promptUserForPolicy());
         }
-        switch(strategy.getPolicy()) {
+        switch (strategy.getPolicy()) {
         case AUTOMATICALLY_OPEN_NEW_CHANGESETS:
-            Changeset newChangeSet = new Changeset();
+            final var newChangeSet = new Changeset();
             newChangeSet.setKeys(changeset.getKeys());
             closeChangeset();
             this.changeset = newChangeSet;
@@ -279,7 +279,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                     if (writer != null) {
                         processedPrimitives.addAll(writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
                     }
-                    switch(e.getSource()) {
+                    switch (e.getSource()) {
                     case UPLOAD_DATA:
                         // Most likely the changeset is full. Try to recover and continue
                         // with a new changeset, but let the user decide first.
@@ -318,7 +318,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                 lastException = e;
             }
         } finally {
-            if (MessageNotifier.PROP_NOTIFIER_ENABLED.get()) {
+            if (Boolean.TRUE.equals(MessageNotifier.PROP_NOTIFIER_ENABLED.get())) {
                 MessageNotifier.start();
             }
         }
@@ -371,7 +371,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
             }
             if (uploadCanceled) return;
             if (lastException == null) {
-                HtmlPanel panel = new HtmlPanel(
+                final var panel = new HtmlPanel(
                         "<h3><a href=\"" + Config.getUrls().getBaseBrowseUrl() + "/changeset/" + changeset.getId() + "\">"
                                 + tr("Upload successful!") + "</a></h3>");
                 panel.enableClickableHyperlinks();
@@ -392,7 +392,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                     /* do nothing if unknown policy */
                     return;
                 if (e.getSource() == ChangesetClosedException.Source.UPLOAD_DATA) {
-                    switch(strategy.getPolicy()) {
+                    switch (strategy.getPolicy()) {
                     case ABORT:
                         break; /* do nothing - we return to map editing */
                     case AUTOMATICALLY_OPEN_NEW_CHANGESETS:

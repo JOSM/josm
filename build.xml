@@ -905,7 +905,7 @@ Build-Date: ${build.tstamp}
     <target name="pmd" depends="init" description="Run PMD on the source files">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
-        <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
+        <pmd cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
             <ruleset>${pmd.dir}/josm-ruleset.xml</ruleset>
             <formatter type="text" toConsole="true" />
@@ -917,6 +917,7 @@ Build-Date: ${build.tstamp}
                 <exclude name="org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/*.java" />
             </fileset>
             <fileset dir="${base.dir}/scripts" includes="**/*.java"/>
+            <relativizePathsWith><path path="${base.dir}"/></relativizePathsWith>
         </pmd>
     </target>
 

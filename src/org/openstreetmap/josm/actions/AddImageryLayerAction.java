@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.net.MalformedURLException;
 import java.nio.file.InvalidPathException;
 import java.time.Year;
 import java.time.ZoneOffset;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -25,8 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.LayerDetails;
@@ -61,11 +59,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     static class SelectWmsLayersDialog extends ExtendedDialog {
         SelectWmsLayersDialog(WMSLayerTree tree, JComboBox<String> formats) {
             super(MainApplication.getMainFrame(), tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
-            final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
+            final var scrollPane = new JScrollPane(tree.getLayerTree());
             scrollPane.setPreferredSize(new Dimension(400, 400));
-            final JPanel panel = new JPanel(new GridBagLayout());
+            final var panel = new JPanel(new GridBagLayout());
             panel.add(scrollPane, GBC.eol().fill());
-            panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+            panel.add(formats, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             setContent(panel);
         }
     }
@@ -83,7 +81,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         installAdapters();
 
         // change toolbar icon from if specified
-        String icon = info.getIcon();
+        var icon = info.getIcon();
         if (icon != null) {
             new ImageProvider(icon).setOptional(true).getResourceAsync(result -> {
                 if (result != null) {
@@ -102,10 +100,10 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     private static ImageryInfo convertImagery(ImageryInfo info) {
         try {
             if (info.getUrl() != null && info.getUrl().contains("{time}")) {
-                final String instant = Year.now(ZoneOffset.UTC).atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant().toString();
-                final String example = String.join("/", instant, instant);
-                final String initialSelectionValue = info.getDate() != null ? info.getDate() : example;
-                final String userDate = JOptionPane.showInputDialog(MainApplication.getMainFrame(),
+                final var instant = Year.now(ZoneOffset.UTC).atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant().toString();
+                final var example = String.join("/", instant, instant);
+                final var initialSelectionValue = info.getDate() != null ? info.getDate() : example;
+                final var userDate = JOptionPane.showInputDialog(MainApplication.getMainFrame(),
                         tr("Time filter for \"{0}\" such as \"{1}\"", info.getName(), example),
                         initialSelectionValue);
                 if (userDate == null) {
@@ -114,7 +112,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 info.setDate(userDate);
                 // TODO persist new {time} value (via ImageryLayerInfo.save?)
             }
-            switch(info.getImageryType()) {
+            switch (info.getImageryType()) {
             case WMS_ENDPOINT:
                 // convert to WMS type
                 if (Utils.isEmpty(info.getDefaultLayers())) {
@@ -125,12 +123,12 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             case WMTS:
                 // specify which layer to use
                 if (Utils.isEmpty(info.getDefaultLayers())) {
-                    WMTSTileSource tileSource = new WMTSTileSource(info);
-                    DefaultLayer layerId = tileSource.userSelectLayer();
+                    var tileSource = new WMTSTileSource(info);
+                    var layerId = tileSource.userSelectLayer();
                     if (layerId != null) {
-                        ImageryInfo copy = new ImageryInfo(info);
+                        var copy = new ImageryInfo(info);
                         copy.setDefaultLayers(Collections.singletonList(layerId));
-                        String layerName = tileSource.getLayers().stream()
+                        var layerName = tileSource.getLayers().stream()
                                 .filter(x -> x.getIdentifier().equals(layerId.getLayerName()))
                                 .map(Layer::getUserTitle)
                                 .findFirst()
@@ -164,7 +162,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         if (!isEnabled()) return;
         ImageryLayer layer = null;
         try {
-            final ImageryInfo infoToAdd = convertImagery(info);
+            final var infoToAdd = convertImagery(info);
             if (infoToAdd != null) {
                 layer = ImageryLayer.create(infoToAdd);
                 getLayerManager().addLayer(layer);
@@ -206,16 +204,16 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     }
 
     private static LayerSelection askToSelectLayers(WMSImagery wms) {
-        final WMSLayerTree tree = new WMSLayerTree();
+        final var tree = new WMSLayerTree();
 
-        Collection<String> wmsFormats = wms.getFormats();
-        final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[0]));
+        var wmsFormats = wms.getFormats();
+        final var formats = new JComboBox<String>(wmsFormats.toArray(new String[0]));
         formats.setSelectedItem(wms.getPreferredFormat());
         formats.setToolTipText(tr("Select image format for WMS layer"));
 
-        JCheckBox checkBounds = new JCheckBox(tr("Show only layers for current view"), true);
+        var checkBounds = new JCheckBox(tr("Show only layers for current view"), true);
         Runnable updateTree = () -> {
-            LatLon latLon = checkBounds.isSelected() && MainApplication.isDisplayingMapView()
+            var latLon = checkBounds.isSelected() && MainApplication.isDisplayingMapView()
                     ? MainApplication.getMap().mapView.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter())
                     : null;
             tree.setCheckBounds(latLon);
@@ -226,14 +224,14 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         updateTree.run();
 
         if (!GraphicsEnvironment.isHeadless()) {
-            ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
+            var dialog = new ExtendedDialog(MainApplication.getMainFrame(),
                     tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
-            final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
+            final var scrollPane = new JScrollPane(tree.getLayerTree());
             scrollPane.setPreferredSize(new Dimension(400, 400));
-            final JPanel panel = new JPanel(new GridBagLayout());
+            final var panel = new JPanel(new GridBagLayout());
             panel.add(scrollPane, GBC.eol().fill());
-            panel.add(checkBounds, GBC.eol().fill(GBC.HORIZONTAL));
-            panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+            panel.add(checkBounds, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            panel.add(formats, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             dialog.setContent(panel);
 
             if (dialog.showDialog().getValue() != 1) {
@@ -282,25 +280,25 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             throws IOException, WMSGetCapabilitiesException {
         CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT == info.getImageryType(), "wms_endpoint imagery type expected");
         // We need to get the URL with {apikey} replaced. See #22642.
-        final TemplatedWMSTileSource tileSource = new TemplatedWMSTileSource(info, ProjectionRegistry.getProjection());
-        final WMSImagery wms = new WMSImagery(tileSource.getBaseUrl(), info.getCustomHttpHeaders());
-        LayerSelection selection = choice.apply(wms);
+        final var tileSource = new TemplatedWMSTileSource(info, ProjectionRegistry.getProjection());
+        final var wms = new WMSImagery(tileSource.getBaseUrl(), info.getCustomHttpHeaders());
+        var selection = choice.apply(wms);
         if (selection == null) {
             return null;
         }
 
-        final String url = wms.buildGetMapUrl(
+        final var url = wms.buildGetMapUrl(
                 selection.layers.stream().map(LayerDetails::getName).collect(Collectors.toList()),
                 (List<String>) null,
                 selection.format,
                 selection.transparent
                 );
 
-        String selectedLayers = selection.layers.stream()
+        var selectedLayers = selection.layers.stream()
                 .map(LayerDetails::getName)
                 .collect(Collectors.joining(", "));
         // Use full copy of original Imagery info to copy all attributes. Only overwrite what's different
-        ImageryInfo ret = new ImageryInfo(info);
+        var ret = new ImageryInfo(info);
         ret.setUrl(url);
         ret.setImageryType(ImageryType.WMS);
         ret.setName(info.getName() + " - " + selectedLayers);

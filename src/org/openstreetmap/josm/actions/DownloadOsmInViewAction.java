@@ -36,8 +36,8 @@ public final class DownloadOsmInViewAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final Bounds bounds = MainApplication.getMap().mapView.getRealBounds();
-        DownloadOsmInViewTask task = new DownloadOsmInViewTask();
+        final var bounds = MainApplication.getMap().mapView.getRealBounds();
+        final var task = new DownloadOsmInViewTask();
         task.setZoomAfterDownload(false);
         Future<?> future = task.download(bounds);
         MainApplication.worker.submit(new PostDownloadHandler(task, future));
