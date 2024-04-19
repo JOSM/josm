@@ -157,7 +157,7 @@ public final class LanguageInfo {
      * Replies the OSM locale codes for the default locale.
      *
      * @return the OSM locale codes for the default locale
-     * @see #getOSMLocaleCode(String, Locale)
+     * @see #getOSMLocaleCodes(String, Locale)
      * @since 19045
      */
     public static String[] getOSMLocaleCodes(String prefix) {
