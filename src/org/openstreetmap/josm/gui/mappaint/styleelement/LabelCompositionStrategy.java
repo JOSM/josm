@@ -144,19 +144,7 @@ public interface LabelCompositionStrategy {
         /**
          * The list of default name tags from which a label candidate is derived.
          */
-        private static final String[] DEFAULT_NAME_TAGS = {
-            "name:" + LanguageInfo.getJOSMLocaleCode(),
-            "name",
-            "int_name",
-            "distance",
-            "railway:position",
-            "ref",
-            "operator",
-            "brand",
-            "addr:unit",
-            "addr:flats",
-            "addr:housenumber"
-        };
+        private static final String[] DEFAULT_NAME_TAGS = getDefaultNameTags();
 
         /**
          * The list of default name complement tags from which a label candidate is derived.
@@ -174,6 +162,24 @@ public interface LabelCompositionStrategy {
         public DeriveLabelFromNameTagsCompositionStrategy() {
             Config.getPref().addPreferenceChangeListener(this);
             initNameTagsFromPreferences();
+        }
+
+        /* Is joining an array really that complicated in Java? */
+        private static String[] getDefaultNameTags() {
+            ArrayList<String> tags = new ArrayList<String>(Arrays.asList(LanguageInfo.getOSMLocaleCodes("name:")));
+            tags.addAll(Arrays.asList(new String[]{
+                "name",
+                "int_name",
+                "distance",
+                "railway:position",
+                "ref",
+                "operator",
+                "brand",
+                "addr:unit",
+                "addr:flats",
+                "addr:housenumber"
+            }));
+            return tags.toArray(String[]::new);
         }
 
         private static List<String> buildNameTags(List<String> nameTags) {
