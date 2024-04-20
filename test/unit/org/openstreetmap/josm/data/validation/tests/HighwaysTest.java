@@ -114,4 +114,15 @@ class HighwaysTest {
             assertEquals(2, test.getErrors().size());
         }
     }
+
+    /**
+     * Test all error cases manually created in data.osm.
+     * @throws Exception in case of error
+     */
+    @Test
+    void testTicket9304() throws Exception {
+        final Highways test = new Highways();
+        ValidatorTestUtils.testSampleFile("nodist/data/9304-examples.osm", DataSet::getNodes, null, test);
+    }
+
 }

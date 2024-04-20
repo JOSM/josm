@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
@@ -377,6 +378,20 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
                         res.add(errorBuilder.primitives(p, (OsmPrimitive) c).build());
                     }
                 }
+            } else if (env.parent != null) {
+                boolean imcompletePrimitives = false;
+                if (matchingSelector instanceof Selector.ChildOrParentSelector) {
+                    Selector right = ((Selector.ChildOrParentSelector) matchingSelector).right;
+                    if (right.getConditions().stream().anyMatch(ClassCondition.class::isInstance)) {
+                        // see #23397
+                        // TODO: find a way to collect all and only those parent objects which triggered this error
+                        imcompletePrimitives = true;
+                    }
+                }
+                if (imcompletePrimitives)
+                    res.add(errorBuilder.primitives(p).highlight(p).imcompletePrimitives().build());
+                else
+                    res.add(errorBuilder.primitives(p, (OsmPrimitive) env.parent).highlight(p).build());
             } else {
                 res.add(errorBuilder.primitives(p).build());
             }

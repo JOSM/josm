@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,21 +19,22 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import mockit.Invocation;
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.openstreetmap.josm.command.AddPrimitivesCommand;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
+
+import mockit.Invocation;
+import mockit.Mock;
+import mockit.MockUp;
 
 /**
  * Unit tests of {@link SaveLayersDialog} class.
@@ -125,27 +129,36 @@ class SaveLayersDialogTest {
     /**
      * Non-regression test for #22817: No warning when deleting a layer with changes and discourages upload
      * @param policy The upload policy to test
+     * @throws IOException if an error occurs
+     * @throws IllegalDataException if an error occurs
      */
     @ParameterizedTest
     @EnumSource(value = UploadPolicy.class)
-    void testNonRegression22817(UploadPolicy policy) {
-        final OsmDataLayer osmDataLayer = new OsmDataLayer(new DataSet(), null, null);
+    void testNonRegression22817(UploadPolicy policy) throws IOException, IllegalDataException {
+        File file = new File(TestUtils.getRegressionDataFile(22817, "data.osm"));
+        InputStream is = new FileInputStream(file);
+        final OsmDataLayer osmDataLayer = new OsmDataLayer(OsmReader.parseDataSet(is, null), null, null);
+        osmDataLayer.onPostLoadFromFile();
         osmDataLayer.getDataSet().setUploadPolicy(policy);
-        // BLOCKED files don't have a way to become blocked via the UI, so they must be loaded from disk.
-        if (policy == UploadPolicy.BLOCKED) {
-            osmDataLayer.setAssociatedFile(new File("/dev/null"));
-        }
-        new AddPrimitivesCommand(Collections.singletonList(new Node(LatLon.ZERO).save()), Collections.emptyList(), osmDataLayer.getDataSet())
-                .executeCommand();
+        osmDataLayer.setAssociatedFile(file);
         assertTrue(osmDataLayer.getDataSet().isModified());
+        assertFalse(osmDataLayer.requiresSaveToFile());
+        assertTrue(osmDataLayer.getDataSet().requiresUploadToServer());
+        assertEquals(policy != UploadPolicy.BLOCKED, osmDataLayer.requiresUploadToServer());
+        assertEquals(policy != UploadPolicy.BLOCKED, osmDataLayer.isUploadable());
         new WindowMocker();
         // Needed since the *first call* is to check whether we are in a headless environment
         new GraphicsEnvironmentMock();
         // Needed since we need to mock out the UI
         SaveLayersDialogMock saveLayersDialogMock = new SaveLayersDialogMock();
-
         assertTrue(SaveLayersDialog.saveUnsavedModifications(Collections.singleton(osmDataLayer), SaveLayersDialog.Reason.DELETE));
-        assertEquals(1, saveLayersDialogMock.getUserActionCalled, "The user should have been asked for an action on the layer");
+        int res = saveLayersDialogMock.getUserActionCalled;
+        if (policy == UploadPolicy.NORMAL) {
+            assertEquals(1, res, "The user should have been asked for an action on the layer");
+        } else {
+            assertEquals(0, res, "The user should not have been asked for an action on the layer");
+
+        }
     }
 
     private static class GraphicsEnvironmentMock extends MockUp<GraphicsEnvironment> {

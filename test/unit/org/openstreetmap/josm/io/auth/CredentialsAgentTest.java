@@ -18,7 +18,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.data.oauth.OAuth20Exception;
 import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Token;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
@@ -73,18 +72,6 @@ public interface CredentialsAgentTest<T extends CredentialsAgent> {
             assertNull(agent.lookup(type, null));
         }
         assertNull(agent.lookup(null, null));
-    }
-
-    @Test
-    default void testLookUpAndStoreOAuth10() throws CredentialsAgentException {
-        final T agent = createAgent();
-        assertNull(agent.lookupOAuthAccessToken());
-        final OAuthToken token = new OAuthToken("foo", "bar");
-        agent.storeOAuthAccessToken(token);
-        final OAuthToken actual = agent.lookupOAuthAccessToken();
-        assertEquals(token, actual);
-        agent.storeOAuthAccessToken(null);
-        assertNull(agent.lookupOAuthAccessToken());
     }
 
     @ParameterizedTest

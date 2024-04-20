@@ -153,10 +153,12 @@ public class PlatformHookWindows implements PlatformHook {
     }
 
     @Override
-    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback) {
+    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback,
+            SanityCheckCallback sanityCheckCallback) {
         warnSoonToBeUnsupportedJava(javaCallback);
         checkExpiredJava(javaCallback);
         checkWebStartMigration(webStartCallback);
+        PlatformHook.super.startupHook(javaCallback, webStartCallback, sanityCheckCallback);
     }
 
     @Override
@@ -290,6 +292,17 @@ public class PlatformHookWindows implements PlatformHook {
     }
 
     /**
+     * Returns the Windows display version from registry (example: "22H2")
+     * @return the Windows display version from registry
+     * @throws IllegalAccessException if Java language access control is enforced and the underlying method is inaccessible
+     * @throws InvocationTargetException if the underlying method throws an exception
+     * @since 19041
+     */
+    public static String getDisplayVersion() throws IllegalAccessException, InvocationTargetException {
+        return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "DisplayVersion");
+    }
+
+    /**
      * Returns the Windows current build number from registry (example: "15063")
      * @return the Windows current build number from registry
      * @throws IllegalAccessException if Java language access control is enforced and the underlying method is inaccessible
@@ -304,9 +317,14 @@ public class PlatformHookWindows implements PlatformHook {
         StringBuilder sb = new StringBuilder();
         try {
             sb.append(getProductName());
-            String releaseId = getReleaseId();
-            if (releaseId != null) {
-                sb.append(' ').append(releaseId);
+            String displayVersion = getDisplayVersion();
+            if (displayVersion != null) {
+                sb.append(' ').append(displayVersion);
+            } else {
+                String releaseId = getReleaseId();
+                if (releaseId != null) {
+                    sb.append(' ').append(releaseId);
+                }
             }
             sb.append(" (").append(getCurrentBuild()).append(')');
         } catch (ReflectiveOperationException | JosmRuntimeException | NoClassDefFoundError e) {

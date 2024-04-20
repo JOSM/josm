@@ -293,21 +293,17 @@ public class VersionInfoPanel extends JPanel implements ChangeListener, Destroya
         }
 
         final Changeset oppCs = model != null ? model.getPointInTime(pointInTimeType.opposite()).getChangeset() : null;
-        updateText(cs, "comment", texChangesetComment, null, oppCs, texChangesetComment);
-        updateText(cs, "source", texChangesetSource, lblSource, oppCs, pnlChangesetSource);
-        updateText(cs, "imagery_used", texChangesetImageryUsed, lblImageryUsed, oppCs, pnlChangesetImageryUsed);
+        updateText(cs, "comment", texChangesetComment, oppCs, texChangesetComment);
+        updateText(cs, "source", texChangesetSource, oppCs, pnlChangesetSource);
+        updateText(cs, "imagery_used", texChangesetImageryUsed, oppCs, pnlChangesetImageryUsed);
     }
 
     private static String insertWbr(String s) {
         return Utils.escapeReservedCharactersHTML(s).replace("_", "_<wbr>");
     }
 
-    protected static void updateText(Changeset cs, String attr, JTextArea textArea, JLabel label, Changeset oppCs, JComponent container) {
+    protected static void updateText(Changeset cs, String attr, JTextArea textArea, Changeset oppCs, JComponent container) {
         final String text = cs != null ? cs.get(attr) : null;
-        // Update text, hide prefixing label if empty
-        if (label != null) {
-            label.setVisible(text != null && !Utils.isStripEmpty(text));
-        }
         textArea.setText(text);
         // Hide container if values of both versions are empty
         container.setVisible(text != null || (oppCs != null && oppCs.get(attr) != null));

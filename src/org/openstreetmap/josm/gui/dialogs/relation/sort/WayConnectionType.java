@@ -32,6 +32,9 @@ public class WayConnectionType {
      */
     public Direction direction;
 
+    /**
+     * The direction of the way connection
+     */
     public enum Direction {
         FORWARD, BACKWARD, ROUNDABOUT_LEFT, ROUNDABOUT_RIGHT, NONE;
 

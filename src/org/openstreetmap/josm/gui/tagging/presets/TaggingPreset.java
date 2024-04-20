@@ -67,6 +67,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Optional;
 import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Space;
+import org.openstreetmap.josm.gui.tagging.presets.items.RegionSpecific;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -88,7 +89,8 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  * @since 294
  */
-public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, AdaptableAction, Predicate<IPrimitive> {
+public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, AdaptableAction, Predicate<IPrimitive>,
+        RegionSpecific {
 
     /** The user pressed the "Apply" button */
     public static final int DIALOG_ANSWER_APPLY = 1;
@@ -141,6 +143,14 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * The types as preparsed collection.
      */
     public transient Set<TaggingPresetType> types;
+    /**
+     * List of regions the preset is applicable for.
+     */
+    private Collection<String> regions;
+    /**
+     * If true, invert the meaning of regions.
+     */
+    private boolean excludeRegions;
     /**
      * The list of preset items
      */
@@ -347,6 +357,26 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             Logging.error("Error while parsing" + filter + ": " + e.getMessage());
             throw new SAXException(e);
         }
+    }
+
+    @Override
+    public final Collection<String> regions() {
+        return this.regions != null || this.group == null ? this.regions : this.group.regions();
+    }
+
+    @Override
+    public final void realSetRegions(Collection<String> regions) {
+        this.regions = regions;
+    }
+
+    @Override
+    public final boolean exclude_regions() {
+        return this.excludeRegions;
+    }
+
+    @Override
+    public final void setExclude_regions(boolean excludeRegions) {
+        this.excludeRegions = excludeRegions;
     }
 
     private static class PresetPanel extends JPanel {

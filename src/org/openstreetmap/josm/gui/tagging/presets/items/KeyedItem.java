@@ -1,14 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.NoSuchElementException;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.swing.JPopupMenu;
@@ -24,12 +25,12 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 /**
  * Preset item associated to an OSM key.
  */
-public abstract class KeyedItem extends TextItem {
+public abstract class KeyedItem extends TextItem implements RegionSpecific {
 
     /** The constant value {@code "<different>"}. */
-    protected static final String DIFFERENT = "<different>";
+    protected static final String DIFFERENT = marktr("<different>");
     /** Translation of {@code "<different>"}. */
-    public static final String DIFFERENT_I18N = tr("<different>");
+    public static final String DIFFERENT_I18N = tr(DIFFERENT);
 
     /** True if the default value should also be set on primitives that already have tags.  */
     protected static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
@@ -51,6 +52,15 @@ public abstract class KeyedItem extends TextItem {
      * Default is "keyvalue!" for {@link Key} and "none" for {@link Text}, {@link Combo}, {@link MultiSelect} and {@link Check}.
      */
     public String match = getDefaultMatch().getValue(); // NOSONAR
+
+    /**
+     * List of regions the preset is applicable for.
+     */
+    private Collection<String> regions;
+    /**
+     * If true, invert the meaning of regions.
+     */
+    private boolean excludeRegions;
 
     /**
      * Enum denoting how a match (see {@link TaggingPresetItem#matches}) is performed.
@@ -258,6 +268,26 @@ public abstract class KeyedItem extends TextItem {
         popupMenu.add(taginfoAction.toTagHistoryAction());
         popupMenu.add(taginfoAction);
         return popupMenu;
+    }
+
+    @Override
+    public final Collection<String> regions() {
+        return this.regions;
+    }
+
+    @Override
+    public final void realSetRegions(Collection<String> regions) {
+        this.regions = regions;
+    }
+
+    @Override
+    public final boolean exclude_regions() {
+        return this.excludeRegions;
+    }
+
+    @Override
+    public final void setExclude_regions(boolean excludeRegions) {
+        this.excludeRegions = excludeRegions;
     }
 
     @Override

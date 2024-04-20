@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,9 +14,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
+import org.openstreetmap.josm.gui.util.WindowOnTopListener;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
@@ -42,6 +40,8 @@ public final class ConditionalOptionPaneUtil {
     private static final Map<String, Integer> immediateChoices = new HashMap<>();
     /** a set indication that (preference key) is or may be stored for the currently active bulk operation */
     private static final Set<String> immediateActive = new HashSet<>();
+    /** The prefix for config options */
+    private static final String CONFIG_PREFIX = "message.";
 
     /**
      * this is a static utility class only
@@ -60,7 +60,9 @@ public final class ConditionalOptionPaneUtil {
     public static int getDialogReturnValue(String prefKey) {
         return Utils.firstNonNull(immediateChoices.get(prefKey),
                 sessionChoices.get(prefKey),
-                !Config.getPref().getBoolean("message." + prefKey, true) ? Config.getPref().getInt("message." + prefKey + ".value", -1) : -1
+                !Config.getPref().getBoolean(CONFIG_PREFIX + prefKey, true)
+                        ? Config.getPref().getInt(CONFIG_PREFIX + prefKey + ".value", -1)
+                        : -1
         );
     }
 
@@ -227,8 +229,8 @@ public final class ConditionalOptionPaneUtil {
                     sessionChoices.put(prefKey, value);
                     break;
                 case PERMANENT:
-                    Config.getPref().putBoolean("message." + prefKey, false);
-                    Config.getPref().putInt("message." + prefKey + ".value", value);
+                    Config.getPref().putBoolean(CONFIG_PREFIX + prefKey, false);
+                    Config.getPref().putInt(CONFIG_PREFIX + prefKey + ".value", value);
                     break;
             }
         }
@@ -287,46 +289,23 @@ public final class ConditionalOptionPaneUtil {
             }
             add(cbStandard, GBC.eol());
 
-            this.addAncestorListener(new AncestorListener() {
-                boolean wasAlwaysOnTop;
-                @Override
-                public void ancestorAdded(AncestorEvent event) {
-                    if (event.getAncestor() instanceof Dialog) {
-                        Dialog dialog = (Dialog) event.getAncestor();
-                        wasAlwaysOnTop = dialog.isAlwaysOnTop();
-                        if (dialog.isVisible() && dialog.isModal()) {
-                            dialog.setAlwaysOnTop(true);
-                        }
-                    }
-                }
-
-                @Override
-                public void ancestorRemoved(AncestorEvent event) {
-                    if (event.getAncestor() instanceof Dialog) {
-                        Dialog dialog = (Dialog) event.getAncestor();
-                        if (dialog.isVisible() && dialog.isModal()) {
-                            dialog.setAlwaysOnTop(wasAlwaysOnTop);
-                        }
-                    }
-                }
-
-                @Override
-                public void ancestorMoved(AncestorEvent event) {
-                    // Do nothing
-                }
-            });
+            this.addAncestorListener(new WindowOnTopListener());
         }
 
         NotShowAgain getNotShowAgain() {
-            return cbStandard.isSelected()
-                    ? NotShowAgain.NO
-                    : cbShowImmediateDialog.isSelected()
-                    ? NotShowAgain.OPERATION
-                    : cbShowSessionDialog.isSelected()
-                    ? NotShowAgain.SESSION
-                    : cbShowPermanentDialog.isSelected()
-                    ? NotShowAgain.PERMANENT
-                    : null;
+            if (cbStandard.isSelected()) {
+                return NotShowAgain.NO;
+            }
+            if (cbShowImmediateDialog.isSelected()) {
+                return NotShowAgain.OPERATION;
+            }
+            if (cbShowSessionDialog.isSelected()) {
+                return NotShowAgain.SESSION;
+            }
+            if (cbShowPermanentDialog.isSelected()) {
+                return NotShowAgain.PERMANENT;
+            }
+            return null;
         }
     }
 }

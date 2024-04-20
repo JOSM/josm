@@ -1,27 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import javax.swing.JPanel;
-
-import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemTest;
 
 /**
  * Unit tests of {@link Roles} class.
  */
-class RolesTest {
-    /**
-     * Unit test for {@link Roles#addToPanel}.
-     */
-    @Test
-    void testAddToPanel() {
-        JPanel p = new JPanel();
-        assertEquals(0, p.getComponentCount());
-        assertFalse(new Roles().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
-        assertTrue(p.getComponentCount() > 0);
+class RolesTest implements TaggingPresetItemTest {
+    @Override
+    public TaggingPresetItem getInstance() {
+        return new Roles();
     }
 }

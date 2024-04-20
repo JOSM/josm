@@ -833,7 +833,52 @@ node[highway=crossing][crossing=unmarked] {
     icon-image: "presets/vehicle/crossing_unmarked.svg";
     set icon_z17;
 }
-node[highway=crossing][crossing_ref=zebra] {
+node[highway=crossing]["crossing:markings"=surface] {
+    icon-image: "presets/vehicle/crossing_markings_surface.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"=lines] {
+    icon-image: "presets/vehicle/crossing_markings_lines.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"="lines:paired"] {
+    icon-image: "presets/vehicle/crossing_markings_lines_paired.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"=dashes] {
+    icon-image: "presets/vehicle/crossing_markings_dashes.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"=dots] {
+    icon-image: "presets/vehicle/crossing_markings_dots.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"="zebra:double"] {
+    icon-image: "presets/vehicle/crossing_markings_zebra_double.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"="zebra:paired"] {
+    icon-image: "presets/vehicle/crossing_markings_zebra_paired.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"="zebra:bicolour"] {
+    icon-image: "presets/vehicle/crossing_markings_zebra_bicolour.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"=ladder] {
+    icon-image: "presets/vehicle/crossing_markings_ladder.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"="ladder:skewed"] {
+    icon-image: "presets/vehicle/crossing_markings_ladder_skewed.svg";
+    set icon_z17;
+}
+node[highway=crossing]["crossing:markings"="ladder:paired"] {
+    icon-image: "presets/vehicle/crossing_markings_ladder_paired.svg";
+    set icon_z17;
+}
+node[highway=crossing][crossing_ref=zebra],
+node[highway=crossing]["crossing:markings"=zebra] {
     icon-image: "presets/vehicle/crossing_ref_zebra.svg";
     set icon_z17;
 }
@@ -3040,6 +3085,7 @@ area[amenity=parking],
 area[amenity=motorcycle_parking],
 area[amenity=bicycle_rental],
 area[amenity=bicycle_repair_station],
+area[amenity=bicycle_wash],
 area[amenity=car_rental],
 area[amenity=car_pooling],
 area[amenity=car_sharing],
@@ -3092,6 +3138,10 @@ node[amenity=bicycle_rental] {
 }
 node[amenity=bicycle_repair_station] {
     icon-image: "presets/vehicle/bicycle_repair_station.svg";
+    set icon_z17;
+}
+node[amenity=bicycle_wash] {
+    icon-image: "presets/vehicle/bicycle_wash.svg";
     set icon_z17;
 }
 node[amenity=car_rental] {

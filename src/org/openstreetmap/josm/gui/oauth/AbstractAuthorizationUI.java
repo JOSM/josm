@@ -4,8 +4,8 @@ package org.openstreetmap.josm.gui.oauth;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.oauth.IOAuthParameters;
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -22,26 +22,23 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
     public static final String ACCESS_TOKEN_PROP = AbstractAuthorizationUI.class.getName() + ".accessToken";
 
     private String apiUrl;
-    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel(OAuthVersion.OAuth10a);
-    private transient OAuthToken accessToken;
-
-    /**
-     * Constructs a new {@code AbstractAuthorizationUI} without API URL.
-     * @since 10189
-     */
-    protected AbstractAuthorizationUI() {
-    }
+    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
+    private transient IOAuthToken accessToken;
 
     /**
      * Constructs a new {@code AbstractAuthorizationUI} for the given API URL.
-     * @param apiUrl The OSM API URL
-     * @since 5422
+     * @param apiUrl The OSM API URL (may be null)
+     * @param oAuthVersion The oauth version to use
+     * @since 18991
      */
-    protected AbstractAuthorizationUI(String apiUrl) {
-        setApiUrl(apiUrl);
+    protected AbstractAuthorizationUI(String apiUrl, OAuthVersion oAuthVersion) {
+        this.pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel(oAuthVersion);
+        if (apiUrl != null) {
+            setApiUrl(apiUrl);
+        }
     }
 
-    protected void fireAccessTokenChanged(OAuthToken oldValue, OAuthToken newValue) {
+    protected void fireAccessTokenChanged(IOAuthToken oldValue, IOAuthToken newValue) {
         firePropertyChange(ACCESS_TOKEN_PROP, oldValue, newValue);
     }
 
@@ -90,7 +87,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      *
      * @return the retrieved Access Token
      */
-    public OAuthToken getAccessToken() {
+    public IOAuthToken getAccessToken() {
         return accessToken;
     }
 
@@ -100,8 +97,8 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      *
      * @param accessToken the new access token. null, to clear the current access token
      */
-    protected void setAccessToken(OAuthToken accessToken) {
-        OAuthToken oldValue = this.accessToken;
+    protected void setAccessToken(IOAuthToken accessToken) {
+        IOAuthToken oldValue = this.accessToken;
         this.accessToken = accessToken;
         if (oldValue == null ^ this.accessToken == null) {
             fireAccessTokenChanged(oldValue, this.accessToken);
@@ -110,6 +107,15 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
         } else if (!Objects.equals(oldValue, this.accessToken)) {
             fireAccessTokenChanged(oldValue, this.accessToken);
         }
+    }
+
+    /**
+     * Get the OAuth version for this AuthorizationUI
+     * @return The OAuth version
+     * @since 18991
+     */
+    public OAuthVersion getOAuthVersion() {
+        return this.pnlAdvancedProperties.getAdvancedParameters().getOAuthVersion();
     }
 
     /**

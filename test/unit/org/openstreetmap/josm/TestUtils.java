@@ -658,10 +658,10 @@ public final class TestUtils {
 
     /**
      * Determines if OSM DEV_API credential have been provided. Required for functional tests.
-     * @return {@code true} if {@code osm.username} and {@code osm.password} have been defined on the command line
+     * @return {@code true} if {@code osm.oauth2} have been defined on the command line
      */
     public static boolean areCredentialsProvided() {
-        return Utils.getSystemProperty("osm.username") != null && Utils.getSystemProperty("osm.password") != null;
+        return Utils.getSystemProperty("osm.oauth2") != null;
     }
 
     /**

@@ -24,6 +24,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(LayerManager.LayerManagerExtension.class)
 public @interface LayerManager {
+    /**
+     * Clean the layer environment
+     */
     class LayerManagerExtension implements BeforeEachCallback, AfterEachCallback {
         @Override
         public void afterEach(ExtensionContext context) {

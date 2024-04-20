@@ -51,7 +51,7 @@ public class NoteReader {
      * SAX handler to read note information from its XML representation.
      * Reads both API style and planet dump style formats.
      */
-    private class Parser extends DefaultHandler {
+    private final class Parser extends DefaultHandler {
 
         private NoteParseMode parseMode;
         private final StringBuilder buffer = new StringBuilder();
@@ -72,7 +72,7 @@ public class NoteReader {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
             buffer.setLength(0);
-            switch(qName) {
+            switch (qName) {
             case "osm":
                 parseMode = NoteParseMode.API;
                 notes = new ArrayList<>(100);
@@ -91,7 +91,7 @@ public class NoteReader {
             }
 
             //The rest only applies for dump mode
-            switch(qName) {
+            switch (qName) {
             case "note":
                 thisNote = parseNoteFull(attrs);
                 break;
@@ -112,9 +112,11 @@ public class NoteReader {
                 notes.add(thisNote);
             }
             if ("comment".equals(qName)) {
-                User commentUser = User.createOsmUser(commentUid, commentUsername);
+                final User commentUser;
                 if (commentUid == 0) {
                     commentUser = User.getAnonymous();
+                } else {
+                    commentUser = User.createOsmUser(commentUid, commentUsername);
                 }
                 if (parseMode == NoteParseMode.API) {
                     commentIsNew = false;
@@ -176,8 +178,8 @@ public class NoteReader {
     }
 
     static LatLon parseLatLon(UnaryOperator<String> attrs) {
-        double lat = Double.parseDouble(attrs.apply("lat"));
-        double lon = Double.parseDouble(attrs.apply("lon"));
+        final var lat = Double.parseDouble(attrs.apply("lat"));
+        final var lon = Double.parseDouble(attrs.apply("lon"));
         return new LatLon(lat, lon);
     }
 
@@ -194,7 +196,7 @@ public class NoteReader {
     }
 
     static Note parseNoteFull(UnaryOperator<String> attrs) {
-        Note note = parseNoteBasic(attrs);
+        final var note = parseNoteBasic(attrs);
         String id = attrs.apply("id");
         if (id != null) {
             note.setId(Long.parseLong(id));

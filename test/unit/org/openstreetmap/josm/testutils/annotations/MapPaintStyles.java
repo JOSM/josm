@@ -25,6 +25,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 @BasicPreferences
 @ExtendWith(MapPaintStyles.MapPaintStylesExtension.class)
 public @interface MapPaintStyles {
+    /**
+     * Set up the default paintstyles
+     */
     class MapPaintStylesExtension implements BeforeEachCallback {
         private static int lastHashcode;
 

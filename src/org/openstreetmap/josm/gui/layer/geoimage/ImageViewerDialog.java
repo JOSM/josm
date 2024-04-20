@@ -179,15 +179,19 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         // model update, then the image will change instead of remaining the same.
         this.layers.getModel().addChangeListener(l -> {
             // We need to check to see whether or not the worker is shut down. See #22922 for details.
-            if (!MainApplication.worker.isShutdown()) {
-                MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
-                    Component selected = this.layers.getSelectedComponent();
-                    if (selected instanceof MoveImgDisplayPanel) {
-                        ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
-                    }
-                }));
+            if (!MainApplication.worker.isShutdown() && this.isDialogShowing()) {
+                MainApplication.worker.execute(() -> GuiHelper.runInEDT(this::showNotify));
             }
         });
+    }
+
+    @Override
+    public void showNotify() {
+        super.showNotify();
+        Component selected = this.layers.getSelectedComponent();
+        if (selected instanceof MoveImgDisplayPanel) {
+            ((MoveImgDisplayPanel<?>) selected).fireModelUpdate();
+        }
     }
 
     private static JButton createButton(AbstractAction action, Dimension buttonDim) {
@@ -225,8 +229,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnNext = createNavigationButton(imageNextAction, buttonDim);
         btnLast = createNavigationButton(imageLastAction, buttonDim);
 
+        centerView = Config.getPref().getBoolean("geoimage.viewer.centre.on.image", false);
         tbCentre = new JToggleButton(imageCenterViewAction);
-        tbCentre.setSelected(Config.getPref().getBoolean("geoimage.viewer.centre.on.image", false));
+        tbCentre.setSelected(centerView);
         tbCentre.setPreferredSize(buttonDim);
 
         JButton btnZoomBestFit = new JButton(imageZoomAction);
@@ -298,6 +303,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             } else if (selected != null && !selected.layer.containsImage(this.currentEntry)) {
                 this.getImageTabs().filter(m -> m.layer.containsImage(this.currentEntry)).mapToInt(this.layers::indexOfComponent).findFirst()
                         .ifPresent(this.layers::setSelectedIndex);
+            } else if (selected == null) {
+                updateTitle();
             }
             this.layers.invalidate();
         }
@@ -335,6 +342,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         if (index >= 0) {
                             removeImageTab(((MoveImgDisplayPanel<?>) layers.getComponentAt(index)).layer);
                             getImageTabs().forEach(m -> m.setVisible(m.isVisible()));
+                            showNotify();
                             return;
                         }
                         source = source.getParent();
@@ -400,8 +408,12 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         imageRemoveAction.destroy();
         imageRemoveFromDiskAction.destroy();
         imageZoomAction.destroy();
+        toggleAction.destroy();
         cancelLoadingImage();
         super.destroy();
+        // make sure that Image Display is destroyed here, it might not be a component
+        imgDisplay.destroy();
+        // Ensure that this dialog is removed from memory
         destroyInstance();
     }
 
@@ -898,6 +910,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                     .filter(IGeoImageLayer.class::isInstance).map(IGeoImageLayer.class::cast).collect(Collectors.toList());
         if (!Config.getPref().getBoolean("geoimage.viewer.show.tabs", true)) {
             updateRequired = true;
+            layers.removeAll();
             // Clear the selected images in other geoimage layers
             this.getImageTabs().map(m -> m.layer).filter(IGeoImageLayer.class::isInstance).map(IGeoImageLayer.class::cast)
                     .filter(l -> !Objects.equals(entries, l.getSelection()))
@@ -922,7 +935,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
         if (!isDialogShowing()) {
             setIsDocked(false); // always open a detached window when an image is clicked and dialog is closed
-            showDialog();
+            unfurlDialog();
         } else if (isDocked && isCollapsed) {
             expand();
             dialogsPanel.reconstruct(DialogsPanel.Action.COLLAPSED_TO_DEFAULT, this);
@@ -963,6 +976,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private void updateButtonsNonNullEntry(IImageEntry<?> entry, boolean imageChanged) {
         if (imageChanged) {
             cancelLoadingImage();
+            // don't show unwanted image
+            imgDisplay.setImage(null);
             // Set only if the image is new to preserve zoom and position if the same image is redisplayed
             // (e.g. to update the OSD).
             imgLoadingFuture = imgDisplay.setImage(entry);
@@ -1049,7 +1064,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         if (btnCollapse != null) {
             btnCollapse.setVisible(!isDocked);
         }
-        this.updateLayers(true);
     }
 
     /**
@@ -1100,6 +1114,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             displayImages(null);
         }
         this.updateLayers(true);
+        if (!layers.isVisible()) {
+            hideNotify();
+            destroy();
+        }
     }
 
     @Override

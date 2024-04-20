@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,12 +25,10 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import jakarta.json.JsonObject;
-import org.apache.commons.compress.utils.FileNameUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -63,6 +60,8 @@ import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.json.JsonObject;
 
 /**
  * Add a validate command to the JOSM command line interface.
@@ -174,7 +173,7 @@ public class ValidatorCLI implements CLIModule {
                 throw new IllegalArgumentException(tr("Missing argument - input data file ({0})", "--input|-i"));
             }
             this.initialize();
-            final ProgressMonitor fileMonitor = progressMonitorFactory.get();
+            final var fileMonitor = progressMonitorFactory.get();
             fileMonitor.beginTask(tr("Processing files..."), this.input.size());
             for (String inputFile : this.input) {
                 if (inputFile.endsWith(".validator.mapcss")) {
@@ -200,7 +199,7 @@ public class ValidatorCLI implements CLIModule {
      * @throws ParseException if the file does not match the mapcss syntax
      */
     private static void processMapcssFile(final String inputFile) throws ParseException {
-        final MapCSSStyleSource styleSource = new MapCSSStyleSource(new File(inputFile).toURI().getPath(), inputFile, inputFile);
+        final var styleSource = new MapCSSStyleSource(new File(inputFile).toURI().getPath(), inputFile, inputFile);
         styleSource.loadStyleSource();
         if (!styleSource.getErrors().isEmpty()) {
             throw new ParseException(trn("{0} had {1} error", "{0} had {1} errors", styleSource.getErrors().size(),
@@ -219,8 +218,8 @@ public class ValidatorCLI implements CLIModule {
     private static void processValidatorFile(final String inputFile) throws ParseException, IOException {
         // Check asserts
         Config.getPref().putBoolean("validator.check_assert_local_rules", true);
-        final MapCSSTagChecker mapCSSTagChecker = new MapCSSTagChecker();
-        final Collection<String> assertionErrors = new ArrayList<>();
+        final var mapCSSTagChecker = new MapCSSTagChecker();
+        final var assertionErrors = new ArrayList<String>();
         final MapCSSTagChecker.ParseResult result = mapCSSTagChecker.addMapCSS(new File(inputFile).toURI().getPath(),
                 assertionErrors::add);
         if (!result.parseErrors.isEmpty() || !assertionErrors.isEmpty()) {
@@ -245,10 +244,10 @@ public class ValidatorCLI implements CLIModule {
      * @throws IOException If a file could not be read or written
      */
     private void processFile(final String inputFile) throws IllegalDataException, IOException {
-        final File inputFileFile = new File(inputFile);
+        final var inputFileFile = new File(inputFile);
         final List<FileImporter> inputFileImporters = ExtensionFileFilter.getImporters().stream()
                 .filter(importer -> importer.acceptFile(inputFileFile)).collect(Collectors.toList());
-        final Stopwatch stopwatch = Stopwatch.createStarted();
+        final var stopwatch = Stopwatch.createStarted();
         if (inputFileImporters.stream().noneMatch(fileImporter ->
                 fileImporter.importDataHandleExceptions(inputFileFile, progressMonitorFactory.get()))) {
             throw new IOException(tr("Could not load input file: {0}", inputFile));
@@ -261,26 +260,26 @@ public class ValidatorCLI implements CLIModule {
             dataLayer = MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)
                     .stream().filter(layer -> inputFileFile.equals(layer.getAssociatedFile()))
                     .findFirst().orElseThrow(() -> new JosmRuntimeException(tr("Could not find a layer for {0}", inputFile)));
-            final DataSet dataSet = dataLayer.getDataSet();
+            final var dataSet = dataLayer.getDataSet();
             if (this.changeFiles.containsKey(inputFile)) {
-                ProgressMonitor changeFilesMonitor = progressMonitorFactory.get();
+                final var changeFilesMonitor = progressMonitorFactory.get();
                 for (String changeFile : this.changeFiles.getOrDefault(inputFile, Collections.emptyList())) {
-                    try (InputStream changeStream = Compression.getUncompressedFileInputStream(Paths.get(changeFile))) {
+                    try (var changeStream = Compression.getUncompressedFileInputStream(Paths.get(changeFile))) {
                         dataSet.mergeFrom(OsmChangeReader.parseDataSet(changeStream, changeFilesMonitor));
                     }
                 }
             }
-            Path path = Paths.get(outputFile);
+            final var path = Paths.get(outputFile);
             if (path.toFile().isFile() && !Files.deleteIfExists(path)) {
                 Logging.error("Could not delete {0}, attempting to append", outputFile);
             }
-            GeoJSONMapRouletteWriter geoJSONMapRouletteWriter = new GeoJSONMapRouletteWriter(dataSet);
+            final var geoJSONMapRouletteWriter = new GeoJSONMapRouletteWriter(dataSet);
             OsmValidator.initializeTests();
 
-            try (OutputStream fileOutputStream = Files.newOutputStream(path)) {
+            try (var fileOutputStream = Files.newOutputStream(path)) {
                 // The first writeErrors catches anything that was written, for whatever reason. This is probably never
                 // going to be called.
-                ValidationTask validationTask = new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
+                final var validationTask = new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
                         progressMonitorFactory.get(), OsmValidator.getEnabledTests(false),
                         dataSet.allPrimitives(), Collections.emptyList(), false);
                 // This avoids keeping errors in memory
@@ -318,14 +317,14 @@ public class ValidatorCLI implements CLIModule {
      * @return The default output name for the input file (extension stripped, ".geojson" added)
      */
     private static String getDefaultOutputName(final String inputString) {
-        final String extension = FileNameUtils.getExtension(inputString);
+        final String extension = FilenameUtils.getExtension(inputString);
         if (!Arrays.asList("zip", "bz", "xz", "geojson").contains(extension)) {
-            return FileNameUtils.getBaseName(inputString) + ".geojson";
+            return FilenameUtils.getBaseName(inputString) + ".geojson";
         } else if ("geojson".equals(extension)) {
             // Account for geojson input files
-            return FileNameUtils.getBaseName(inputString) + ".validated.geojson";
+            return FilenameUtils.getBaseName(inputString) + ".validated.geojson";
         }
-        return FileNameUtils.getBaseName(FileNameUtils.getBaseName(inputString)) + ".geojson";
+        return FilenameUtils.getBaseName(FilenameUtils.getBaseName(inputString)) + ".geojson";
     }
 
     /**
@@ -346,7 +345,7 @@ public class ValidatorCLI implements CLIModule {
 
     /**
      * Initialize everything that might be needed
-     *
+     * <p>
      * Arguments may need to be parsed first.
      */
     void initialize() {
@@ -355,9 +354,7 @@ public class ValidatorCLI implements CLIModule {
         Config.setUrlsProvider(JosmUrls.getInstance());
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("epsg:3857".toUpperCase(Locale.ROOT)));
 
-        if (Territories.getKnownIso3166Codes().isEmpty()) {
-            Territories.initializeInternalData();
-        }
+        Territories.initializeInternalData(); // There is no current way to check to see if territories is already initialized
         OsmValidator.initialize();
         MapPaintStyles.readFromPreferences();
     }
@@ -369,8 +366,8 @@ public class ValidatorCLI implements CLIModule {
     void parseArguments(String[] argArray) {
         Logging.setLogLevel(Level.INFO);
 
-        OptionParser parser = new OptionParser("JOSM validate");
-        final AtomicReference<String> currentInput = new AtomicReference<>(null);
+        final var parser = new OptionParser("JOSM validate");
+        final var currentInput = new AtomicReference<String>(null);
         for (Option o : Option.values()) {
             if (o.requiresArgument()) {
                 parser.addArgumentParameter(o.getName(),
@@ -425,9 +422,9 @@ public class ValidatorCLI implements CLIModule {
             I18n.set(argument);
             break;
         case LOAD_PREFERENCES:
-            final Preferences tempPreferences = new Preferences();
+            final var tempPreferences = new Preferences();
             tempPreferences.enableSaveOnPut(false);
-            CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(tempPreferences);
+            final var config = new CustomConfigurator.XMLCommandProcessor(tempPreferences);
             try (InputStream is = Utils.openStream(new File(argument).toURI().toURL())) {
                 config.openAndReadXML(is);
             } catch (IOException e) {
@@ -435,7 +432,7 @@ public class ValidatorCLI implements CLIModule {
             }
             final IPreferences pref = Config.getPref();
             if (pref instanceof MemoryPreferences) {
-                final MemoryPreferences memoryPreferences = (MemoryPreferences) pref;
+                final var memoryPreferences = (MemoryPreferences) pref;
                 tempPreferences.getAllSettings().forEach(memoryPreferences::putSetting);
             } else {
                 throw new JosmRuntimeException(tr("Preferences are not the expected type"));
@@ -454,7 +451,7 @@ public class ValidatorCLI implements CLIModule {
     }
 
     private static String getHelp() {
-        final String helpPadding = "\t                          ";
+        final var helpPadding = "\t                          ";
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         return tr("JOSM Validation command line interface") + "\n\n" +
                 tr("Usage") + ":\n" +

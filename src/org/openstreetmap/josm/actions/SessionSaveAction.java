@@ -155,6 +155,14 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
      * @throws UserCancelException when the user has cancelled the save process
      */
     public boolean saveSession(boolean saveAs, boolean forceSaveAll) throws UserCancelException {
+        try {
+            return saveSessionImpl(saveAs, forceSaveAll);
+        } finally {
+            cleanup();
+        }
+    }
+
+    private boolean saveSessionImpl(boolean saveAs, boolean forceSaveAll) throws UserCancelException {
         if (!isEnabled()) {
             return false;
         }
@@ -368,9 +376,9 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
         }
 
         /**
-         * Initializes action.
+         * Initializes some action fields.
          */
-        public final void initialize() {
+        private void initialize() {
             layers = new ArrayList<>(getLayerManager().getLayers());
             exporters = new HashMap<>();
             dependencies = new MultiMap<>();
@@ -610,6 +618,12 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             }
         }
         return false;
+    }
+
+    protected void cleanup() {
+        layers = null;
+        exporters = null;
+        dependencies = null;
     }
 
 }

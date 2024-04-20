@@ -64,6 +64,9 @@ public @interface BasicPreferences {
         public void afterEach(ExtensionContext context) throws Exception {
             if (AnnotationSupport.isAnnotated(context.getElement(), BasicPreferences.class)) {
                 this.afterAll(context);
+                if (AnnotationSupport.isAnnotated(context.getTestClass(), BasicPreferences.class)) {
+                    this.beforeAll(context);
+                }
             }
         }
 

@@ -1617,11 +1617,6 @@ way[/^is_in:/] {
   suggestAlternative: "highway=steps + conveying=*";
   group: tr("deprecated tagging");
 }
-*[fenced] {
-  throwWarning: tr("{0} is deprecated", "{0.key}");
-  suggestAlternative: "barrier=fence";
-  group: tr("deprecated tagging");
-}
 *[historic_name][!old_name] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "old_name";
@@ -2512,6 +2507,27 @@ area[parking:orientation][orientation]["parking:orientation"!=*orientation] {
   group: tr("deprecated tagging");
   suggestAlternative: "{1.key}={0.value}";
   suggestAlternative: "{1.key}={1.value}";
+}
+
+/* Tags were consolidated, see #23177 */
+*[gnis:id][!gnis:feature_id],
+*[tiger:PLACENS][!gnis:feature_id],
+*[NHD:GNIS_ID][!gnis:feature_id],
+*[nhd:gnis_id][!gnis:feature_id],
+*[ref:gnis][!gnis:feature_id] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "{1.key}={0.value}";
+  fixChangeKey: "{0.key} => {1.key}";
+}
+*[gnis:id][gnis:feature_id],
+*[tiger:PLACENS][gnis:feature_id],
+*[NHD:GNIS_ID][gnis:feature_id],
+*[nhd:gnis_id][gnis:feature_id],
+*[ref:gnis][gnis:feature_id] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "{1.key}";
 }
 
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

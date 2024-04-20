@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.widgets;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -18,10 +17,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.Icon;
-import javax.swing.JTextField;
-import javax.swing.RepaintManager;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+import javax.swing.RepaintManager;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -29,6 +28,7 @@ import javax.swing.text.Document;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -253,7 +253,7 @@ public class JosmTextField extends JTextField implements Destroyable, ComponentL
      * @return the Color for hint texts
      */
     public static Color getHintTextColor() {
-        Color color = UIManager.getColor("TextField[Disabled].textForeground"); // Nimbus?
+        var color = UIManager.getColor("TextField[Disabled].textForeground"); // Nimbus?
         if (color == null)
             color = UIManager.getColor("TextField.inactiveForeground");
         if (color == null)
@@ -289,8 +289,9 @@ public class JosmTextField extends JTextField implements Destroyable, ComponentL
     public void drawHint(Graphics g) {
         int x;
         try {
-            x = modelToView(0).x;
+            x = (int) Math.round(modelToView2D(0).getX());
         } catch (BadLocationException exc) {
+            Logging.trace(exc);
             return; // can't happen
         }
         // Taken from http://stackoverflow.com/a/24571681/2257172
@@ -303,7 +304,7 @@ public class JosmTextField extends JTextField implements Destroyable, ComponentL
         if (getComponentOrientation().isLeftToRight()) {
             g.drawString(getHint(), x, getBaseline(getWidth(), getHeight()));
         } else {
-            FontMetrics metrics = g.getFontMetrics(g.getFont());
+            final var metrics = g.getFontMetrics(g.getFont());
             int dx = metrics.stringWidth(getHint());
             g.drawString(getHint(), x - dx, getBaseline(getWidth(), getHeight()));
         }

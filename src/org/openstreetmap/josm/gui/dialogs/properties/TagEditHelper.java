@@ -605,6 +605,8 @@ public class TagEditHelper {
             }
             if (key.equals(newkey) && KeyedItem.DIFFERENT_I18N.equals(value))
                 return;
+            if (value != null && key.equals(getEditItem(keys)) && m.size() == 1 && m.containsKey(getEditItem(values)))
+                return; // see #22814: avoid to create a command that wouldn't change anything
             if (key.equals(newkey) || value == null) {
                 UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel, newkey, value));
                 if (value != null) {

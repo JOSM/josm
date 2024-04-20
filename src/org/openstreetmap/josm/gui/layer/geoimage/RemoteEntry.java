@@ -295,11 +295,11 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        URI u = getImageURI();
+        final var u = getImageURI();
         if (u.getScheme().contains("file")) {
             return Files.newInputStream(Paths.get(u));
         }
-        HttpClient client = HttpClient.create(u.toURL());
+        final var client = HttpClient.create(u.toURL());
         InputStream actual = client.connect().getContent();
         return new BufferedInputStream(actual) {
             @Override
@@ -342,7 +342,7 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
 
     @Override
     public boolean equals(Object obj) {
-        if (super.equals(obj)) {
+        if (this == obj) {
             return true;
         }
         if (obj != null && obj.getClass() == this.getClass()) {

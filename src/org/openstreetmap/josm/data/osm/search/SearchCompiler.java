@@ -22,7 +22,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -159,7 +158,7 @@ public class SearchCompiler {
 
         @Override
         public Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError {
-            switch(keyword) {
+            switch (keyword) {
             case MODIFIED:
                 return new Modified();
             case DELETED:
@@ -1139,8 +1138,8 @@ public class SearchCompiler {
 
                     value = Normalizer.normalize(value, Normalizer.Form.NFC);
 
-                    Matcher keyMatcher = searchRegex.matcher(key);
-                    Matcher valMatcher = searchRegex.matcher(value);
+                    final var keyMatcher = searchRegex.matcher(key);
+                    final var valMatcher = searchRegex.matcher(value);
 
                     boolean keyMatchFound = keyMatcher.find();
                     boolean valMatchFound = valMatcher.find();
@@ -1622,7 +1621,7 @@ public class SearchCompiler {
     /**
      * Matches objects that are new (i.e. have not been uploaded to the server)
      */
-    private static class New extends Match {
+    private static final class New extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isNew();
@@ -1637,7 +1636,7 @@ public class SearchCompiler {
     /**
      * Matches all objects that have been modified, created, or undeleted
      */
-    private static class Modified extends Match {
+    private static final class Modified extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isModified() || osm.isNewOrUndeleted();
@@ -1652,7 +1651,7 @@ public class SearchCompiler {
     /**
      * Matches all objects that have been deleted
      */
-    private static class Deleted extends Match {
+    private static final class Deleted extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isDeleted();
@@ -1667,7 +1666,7 @@ public class SearchCompiler {
     /**
      * Matches all objects currently selected
      */
-    private static class Selected extends Match {
+    private static final class Selected extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.getDataSet().isSelected(osm);
@@ -1684,7 +1683,7 @@ public class SearchCompiler {
      * Typically, some members of a relation are incomplete until they are
      * fetched from the server.
      */
-    private static class Incomplete extends Match {
+    private static final class Incomplete extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isIncomplete() || (osm instanceof Relation && ((Relation) osm).hasIncompleteMembers());
@@ -1701,7 +1700,7 @@ public class SearchCompiler {
      * fixme, etc.). The complete list of uninteresting tags can be found here:
      * org.openstreetmap.josm.data.osm.OsmPrimitive.getUninterestingKeys()
      */
-    private static class Untagged extends Match {
+    private static final class Untagged extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return !osm.isTagged() && !osm.isIncomplete();
@@ -1716,7 +1715,7 @@ public class SearchCompiler {
     /**
      * Matches ways which are closed (i.e. first and last node are the same)
      */
-    private static class Closed extends Match {
+    private static final class Closed extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm instanceof Way && ((Way) osm).isClosed();
@@ -1817,7 +1816,7 @@ public class SearchCompiler {
         protected Long getNumber(OsmPrimitive osm) {
             if (!(osm instanceof Way))
                 return null;
-            Way way = (Way) osm;
+            final var way = (Way) osm;
             return (long) way.getLength();
         }
 
@@ -1970,7 +1969,7 @@ public class SearchCompiler {
             }
 
             try {
-                String groupSuffix = name.substring(0, name.length() - 2); // try to remove '/*'
+                final var groupSuffix = name.substring(0, name.length() - 2); // try to remove '/*'
                 TaggingPresetMenu group = preset.group;
 
                 return group != null && groupSuffix.equalsIgnoreCase(group.getRawName());
@@ -2178,11 +2177,11 @@ public class SearchCompiler {
                 return new ValueComparison(key, tokenizer.readTextOrNumber(), +1).validate();
             } else if (tokenizer.readIfEqual(Token.COLON)) {
                 // see if we have a Match that takes a data parameter
-                SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
+                final var factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
                     return factory.get(key, caseSensitive, regexSearch, tokenizer);
 
-                UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
+                final var unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
                     return getValidate(unaryFactory, key, tokenizer);
 
@@ -2195,11 +2194,11 @@ public class SearchCompiler {
             } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
             else {
-                SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
+                final var factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
                     return factory.get(key, caseSensitive, regexSearch, null).validate();
 
-                UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
+                final var unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
                     return getValidate(unaryFactory, key, null);
 
@@ -2221,7 +2220,7 @@ public class SearchCompiler {
     }
 
     private static int regexFlags(boolean caseSensitive) {
-        int searchFlags = 0;
+        var searchFlags = 0;
 
         // Enables canonical Unicode equivalence so that e.g. the two
         // forms of "\u00e9gal" and "e\u0301gal" will match.

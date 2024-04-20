@@ -147,4 +147,23 @@ public final class OAuth20Parameters implements IOAuthParameters {
         if (this.tokenUrl != null) builder.add(TOKEN_URL, this.tokenUrl);
         return builder.build().toString();
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.apiUrl, this.authorizeUrl, this.tokenUrl, this.clientId, this.clientSecret, this.redirectUri);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && this.getClass() == obj.getClass()) {
+            OAuth20Parameters other = (OAuth20Parameters) obj;
+            return Objects.equals(this.clientSecret, other.clientSecret) &&
+                    Objects.equals(this.clientId, other.clientId) &&
+                    Objects.equals(this.redirectUri, other.redirectUri) &&
+                    Objects.equals(this.tokenUrl, other.tokenUrl) &&
+                    Objects.equals(this.authorizeUrl, other.authorizeUrl) &&
+                    Objects.equals(this.apiUrl, other.apiUrl);
+        }
+        return false;
+    }
 }

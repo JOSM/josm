@@ -144,9 +144,7 @@ public final class MessageNotifier {
             CredentialsManager credManager = CredentialsManager.getInstance();
             try {
                 if (JosmPreferencesCredentialAgent.class.equals(credManager.getCredentialsAgentClass())) {
-                    if (OsmApi.isUsingOAuth(OAuthVersion.OAuth10a)) {
-                        return credManager.lookupOAuthAccessToken() != null;
-                    } else if (OsmApi.isUsingOAuth(OAuthVersion.OAuth20) || OsmApi.isUsingOAuth(OAuthVersion.OAuth21)) {
+                    if (OsmApi.isUsingOAuth(OAuthVersion.OAuth20) || OsmApi.isUsingOAuth(OAuthVersion.OAuth21)) {
                         return credManager.lookupOAuthAccessToken(OsmApi.getOsmApi().getHost()) != null;
                     } else if (OsmApi.isUsingOAuth()) {
                         // Ensure we do not forget to update this section

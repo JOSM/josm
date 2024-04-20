@@ -2,13 +2,18 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.coor.LatLon.NORTH_POLE;
 import static org.openstreetmap.josm.data.coor.LatLon.SOUTH_POLE;
 import static org.openstreetmap.josm.data.coor.LatLon.ZERO;
 
 import java.util.List;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -16,8 +21,10 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
 /**
  * JUnit Test of {@link Addresses} validation test.
@@ -118,5 +125,65 @@ class AddressesTest {
         doTestDuplicateHouseNumber(num1, ZERO, num2, ZERO, Severity.WARNING);
         doTestDuplicateHouseNumber(num1, ZERO, num3, ZERO, Severity.WARNING);
         doTestDuplicateHouseNumber(num1, ZERO, num4, ZERO, null);
+    }
+
+    /**
+     * See #23302
+     */
+    @Test
+    void testCheckForDuplicatePOIBuildingAddresses() {
+        final Addresses test = new Addresses();
+        final JPanel panel = new JPanel();
+        final Node poi = TestUtils.newNode("addr:housenumber=1 addr:street=Foo");
+        final Way building = TestUtils.newWay("addr:housenumber=1 addr:street=Foo building=yes",
+                TestUtils.newNode(""), TestUtils.newNode(""), TestUtils.newNode(""));
+        final DataSet ds = new DataSet();
+        // Ensure that we are checking for building-poi duplicates
+        test.addGui(panel);
+        JCheckBox checkboxIncludeBldgPOI = assertInstanceOf(JCheckBox.class, panel.getComponent(panel.getComponentCount() - 1));
+        checkboxIncludeBldgPOI.setSelected(true);
+        test.ok();
+        // Set up the dataset
+        ds.addPrimitive(poi);
+        ds.addPrimitiveRecursive(building);
+        building.addNode(building.firstNode());
+
+        // Duplicate addresses with no additional information should always have warnings
+        test.startTest(NullProgressMonitor.INSTANCE);
+        test.visit(ds.allPrimitives());
+        test.endTest();
+        assertEquals(1, test.getErrors().size());
+
+        // Do the first test checking for building-poi duplicates
+        poi.put("name", "FooBar");
+        test.startTest(NullProgressMonitor.INSTANCE);
+        test.visit(ds.allPrimitives());
+        test.endTest();
+        assertEquals(1, test.getErrors().size());
+        assertEquals(Severity.OTHER, test.getErrors().get(0).getSeverity());
+
+        // Now check if they have the same name
+        building.put("name", "FooBar");
+        test.startTest(NullProgressMonitor.INSTANCE);
+        test.visit(ds.allPrimitives());
+        test.endTest();
+        assertEquals(1, test.getErrors().size());
+        assertEquals(Severity.WARNING, test.getErrors().get(0).getSeverity());
+
+        // Now check if they have a different name
+        building.put("name", "FooBar2");
+        test.startTest(NullProgressMonitor.INSTANCE);
+        test.visit(ds.allPrimitives());
+        test.endTest();
+        assertEquals(1, test.getErrors().size());
+        assertEquals(Severity.OTHER, test.getErrors().get(0).getSeverity());
+
+        // Now ensure that it doesn't get errors when disabled
+        checkboxIncludeBldgPOI.setSelected(false);
+        test.ok();
+        test.startTest(NullProgressMonitor.INSTANCE);
+        test.visit(ds.allPrimitives());
+        test.endTest();
+        assertTrue(test.getErrors().isEmpty());
     }
 }

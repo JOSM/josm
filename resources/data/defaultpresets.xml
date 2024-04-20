@@ -650,20 +650,20 @@
     </chunk>
     <chunk id="crossing_markings">
         <multiselect key="crossing:markings" text="Markings" values_sort="false" values_context="crossing:markings">
-            <list_entry value="no" />
-            <list_entry value="yes" />
-            <list_entry value="surface" />
-            <list_entry value="lines" />
-            <list_entry value="lines:paired" />
-            <list_entry value="dashes" />
-            <list_entry value="dots" />
-            <list_entry value="zebra" />
-            <list_entry value="zebra:double" />
-            <list_entry value="zebra:paired" />
-            <list_entry value="zebra:bicolour" />
-            <list_entry value="ladder" />
-            <list_entry value="ladder:skewed" />
-            <list_entry value="ladder:paired" />
+            <list_entry value="no" icon="presets/vehicle/crossing_unmarked.svg" />
+            <list_entry value="yes" icon="presets/vehicle/crossing.svg" />
+            <list_entry value="surface" icon="presets/vehicle/crossing_markings_surface.svg" />
+            <list_entry value="lines" icon="presets/vehicle/crossing_markings_lines.svg" />
+            <list_entry value="lines:paired" icon="presets/vehicle/crossing_markings_lines_paired.svg" />
+            <list_entry value="dashes" icon="presets/vehicle/crossing_markings_dashes.svg" />
+            <list_entry value="dots" icon="presets/vehicle/crossing_markings_dots.svg" />
+            <list_entry value="zebra" icon="presets/vehicle/crossing_ref_zebra.svg" />
+            <list_entry value="zebra:double" icon="presets/vehicle/crossing_markings_zebra_double.svg" />
+            <list_entry value="zebra:paired" icon="presets/vehicle/crossing_markings_zebra_paired.svg" />
+            <list_entry value="zebra:bicolour" icon="presets/vehicle/crossing_markings_zebra_bicolour.svg" />
+            <list_entry value="ladder" icon="presets/vehicle/crossing_markings_ladder.svg" />
+            <list_entry value="ladder:skewed" icon="presets/vehicle/crossing_markings_ladder_skewed.svg" />
+            <list_entry value="ladder:paired" icon="presets/vehicle/crossing_markings_ladder_paired.svg" />
             <list_entry value="pictograms" />
         </multiselect>
     </chunk>
@@ -1465,7 +1465,7 @@
                     <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
                     <list_entry value="no" />
                 </combo>
-                <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+                <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" regions="GB" />
                 <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
                 <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
                 <check key="crossing:island" text="With island" />
@@ -1516,7 +1516,7 @@
                 <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
             </combo>
             <reference ref="crossing_markings" />
-            <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
+            <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" regions="GB" />
             <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
@@ -1588,6 +1588,10 @@
         <item name="Turning Circle" icon="presets/vehicle/turning_circle.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=turning_circle" />
             <key key="highway" value="turning_circle" />
+            <optional>
+                <link wiki="Key:turning_circle" />
+                <combo key="turning_circle" text="Type of Turning Circle" values="circle,oval,knuckle,hammer,square" values_sort="false" />
+            </optional>
         </item> <!-- Turning Circle -->
         <item name="Turning Loop" icon="presets/vehicle/turning_loop.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=turning_loop" />
@@ -2901,47 +2905,51 @@
             <link wiki="Tag:amenity=charging_station" />
             <space />
             <key key="amenity" value="charging_station" />
-            <reference ref="name_ref_operator" />
+            <reference ref="name_ref"/>
+            <text key="network" text="Charging Network (Mobility Service Provider)" />
+            <text key="operator" text="Operator (Charge Point Operator)" />
             <reference ref="oh" />
-            <reference ref="fee" />
-            <space />
-            <combo key="voltage" text="Voltage" values="230,400"/>
-            <combo key="amperage" text="Amperage" values="16,32" />
-            <combo key="capacity" text="Capacity" values="1,2,3,4,5,6" />
-            <space />
-            <label text="Types of vehicles which can be charged:" />
-            <checkgroup columns="4">
-                <check key="bicycle" text="Bicycle" />
-                <check key="scooter" text="Scooter" />
-                <check key="motorcycle" text="Motorcycle" />
-                <check key="motorcar" text="Motorcar" />
-                <check key="truck" text="Truck" />
+            <text key="capacity" text="Simultaneously usable charging spots" default="" delete_if_empty="true" />
+            <text key="level" text="Storey" default="" delete_if_empty="true" />
+            <label text="Surroundings and Fees:" />
+            <checkgroup columns="3">
+                <check key="covered" text="Covered" default="" delete_if_empty="true" />
+                <check key="fee" text="Charging fee" default="on" delete_if_empty="true" />
+                <check key="parking:fee" text="Parking fee" default="" delete_if_empty="true" />
             </checkgroup>
+            <label text="Types of vehicles which can be charged:" />
+            <checkgroup columns="3">
+                <check key="motorcar" text="Cars" default="on" delete_if_empty="true" />
+                <check key="motorcycle" text="Motorcycles" default="on" delete_if_empty="true" />
+                <check key="hgv" text="Trucks (HGV)" default="" delete_if_empty="true" />
+            </checkgroup>
+            <label text="(Note: For most charging stations, check 'Cars' and 'Motorcycles'. Check 'Trucks' only if there is sufficient space.)" />
             <space />
             <label text="Number of Sockets:" />
-            <combo key="socket:type1" text="SAE J1772 (IEC Type 1)" values="1,2,3,4,5,6" />
-            <combo key="socket:type1_combo" text="SAE J1772 Combo (DC)" values="1,2,3,4,5,6" />
-            <combo key="socket:type2" text="IEC Type 2 (Mennekes)" values="1,2,3,4,5,6" />
-            <combo key="socket:type2_combo" text="IEC Type 2 Combo (DC)" values="1,2,3,4,5,6" />
-            <combo key="socket:type3" text="Type 3 (SCAME)" values="1,2,3,4,5,6" />
-            <combo key="socket:chademo" text="CHAdeMO" values="1,2,3,4,5,6" />
-            <combo key="socket:tesla_supercharger" text="Tesla Supercharger" values="1,2,3,4,5,6" />
-            <combo key="socket:schuko" text="Schuko" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_blue" text="CEE blue" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_red_16a" text="CEE red 16A" values="1,2,3,4,5,6" />
-            <combo key="socket:cee_red_32a" text="CEE red 32A" values="1,2,3,4,5,6" />
-            <combo key="socket:nema_5_15" text="NEMA 5-15" values="1,2,3,4,5,6" />
-            <combo key="socket:nema_5_20" text="NEMA 5-20" values="1,2,3,4,5,6" />
+            <text key="socket:type1" text="IEC Type 1" default="" delete_if_empty="true" />
+            <text key="socket:type2" text="IEC Type 2 (Mennekes) socket only" default="" delete_if_empty="true" />
+            <text key="socket:type2_cable" text="IEC Type 2 (Mennekes) with cable" default="" delete_if_empty="true" />
+            <text key="socket:type2_combo" text="IEC Type 2 Combo (CCS)" default="" delete_if_empty="true" />
+            <text key="socket:chademo" text="CHAdeMO" default="" delete_if_empty="true" />
+            <text key="socket:tesla_supercharger" text="Tesla Supercharger" default="" delete_if_empty="true" />
+            <text key="socket:schuko" text="Schuko" default="" delete_if_empty="true" />
             <space />
-            <label text="Authentication:" />
-            <checkgroup columns="4">
-                <check key="authentication:none" text="None" />
-                <check key="authentication:phone_call" text="Phone call" />
-                <check key="authentication:short_message" text="Short message" />
-                <check key="authentication:nfc" text="NFC" />
+            <label text="Charging Power (e.g. '22 kW'):" />
+            <text key="socket:type1:output" text="IEC Type 1" default="" delete_if_empty="true" />
+            <text key="socket:type2:output" text="IEC Type 2 (Mennekes) socket only" default="" delete_if_empty="true" />
+            <text key="socket:type2_cable:output" text="IEC Type 2 (Mennekes) with cable" default="" delete_if_empty="true" />
+            <text key="socket:type2_combo:output" text="IEC Type 2 Combo (CCS)" default="" delete_if_empty="true" />
+            <text key="socket:chademo:output" text="CHAdeMO" default="" delete_if_empty="true" />
+            <text key="socket:tesla_supercharger:output" text="Tesla Supercharger" default="" delete_if_empty="true" />
+            <text key="socket:schuko:output" text="Schuko" default="" delete_if_empty="true" />
+            <space />
+            <label text="Unlocking (Authentication):" />
+            <checkgroup columns="3">
+                <check key="authentication:app" text="Unlock through App" />
+                <check key="authentication:contactless" text="Unlock through RFID/NFC" />
+                <check key="authentication:none" text="Usable without registration" />
             </checkgroup>
-            <combo key="authentication:membership_card" text="Membership card" values="yes" />
-            <preset_link preset_name="Payment Methods" />
+            <preset_link preset_name="Payment Methods" text="Edit Payment Methods (only if usable without registration)" />
         </item> <!-- Charging Station -->
         <item name="Wash" icon="presets/vehicle/car_wash.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=car_wash" />
@@ -3100,6 +3108,19 @@
             <check key="service:bicycle:chain_tool" text="Chain tool" />
             </optional>
         </item> <!-- Public Bicycle Repair Station -->
+        <item name="Bicycle Wash" icon="presets/vehicle/bicycle_wash.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=bicycle_wash" />
+            <space />
+            <key key="amenity" value="bicycle_wash" />
+            <optional>
+            <reference ref="name_operator" />
+            <text key="manufacturer" text="Manufacturer" />
+            <reference ref="oh" />
+            <check key="self_service" text="Self Service" />
+            <check key="automated" text="Automated" />
+            <check key="fee" text="Fee" />
+            </optional>
+        </item> <!-- Bicycle Wash -->
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/transport/bus.svg">
         <item name="Public Transport Route (Rail)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -7308,10 +7329,10 @@
                 <list_entry value="war_memorial" short_description="A building, monument, statue or other edifice celebrating a victory or commemorating those who died or were injured in a war." />
                 <list_entry value="sculpture" short_description="A non figurative sculpture which does not match any of the other categories." />
                 <list_entry value="cross" short_description="A cross-shaped memorial." />
-                <list_entry value="blue_plaque" short_description="A blue plaque commemorating a historical link to that location. (UK)" />
+                <list_entry value="blue_plaque" short_description="A blue plaque commemorating a historical link to that location. (UK)" regions="GB" />
                 <list_entry value="obelisk" short_description="An obelisk." />
                 <list_entry value="ghost_bike" short_description="A bicycle painted white permanently placed as memorial for a victim of a road accident (usually cyclists)." />
-                <list_entry value="stolperstein" short_description="10cm × 10cm brass plaque commemorating victims of Nazi persecution. (EU,RU)" />
+                <list_entry value="stolperstein" short_description="10cm × 10cm brass plaque commemorating victims of Nazi persecution. (EU,RU)" regions="EU,RU" />
                 <list_entry value="bench" short_description="A bench placed in memory of someone or something; usually has a plaque, and sometimes a statue sitting on (part of) it." />
             </combo>
             <optional>
@@ -8261,7 +8282,7 @@
             <check key="payment:girocard" text="Girocard" match="keyvalue" />
             <check key="payment:laser" text="Laser" match="keyvalue" />
             <check key="payment:maestro" text="Maestro" match="keyvalue" />
-            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" />
+            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" regions="CH" />
             <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
             <check key="payment:visa_electron" text="Visa Electron" match="keyvalue" />
         </checkgroup>
@@ -8280,12 +8301,12 @@
         <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" />
-            <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" />
-            <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" />
-            <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" />
-            <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" />
-            <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" />
+            <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" regions="FI" />
+            <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" regions="DE" />
+            <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" regions="PT" />
+            <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" regions="LU" />
+            <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" regions="IT" />
+            <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" regions="ES" />
         </checkgroup>
         <space />
         <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="yes,no" match="keyvalue" />
@@ -9968,11 +9989,11 @@
             <optional>
                 <text key="destination" text="Name of river/lake/sea/ocean it runs into" />
                 <text key="ref" text="Reference" />
-                <text key="ref:sandre" text="Reference Sandre (FR)" />
-                <text key="ref:fgkz" text="Reference FGKZ (DE)" />
-                <text key="ref:regine" text="Reference REGINE (NO)" />
-                <text key="ref:gnis" text="Reference GNIS (USA)" />
-                <text key="ref:gnbc" text="Reference GNBC (CA)" />
+                <text key="ref:sandre" text="Reference Sandre (FR)" regions="FR" />
+                <text key="ref:fgkz" text="Reference FGKZ (DE)" regions="DE" />
+                <text key="ref:regine" text="Reference REGINE (NO)" regions="NO" />
+                <text key="gnis:feature_id" text="Reference GNIS (USA)" regions="US" />
+                <text key="ref:gnbc" text="Reference GNBC (CA)" regions="CA" />
                 <reference ref="wikipedia_wikidata" />
             </optional>
             <roles>
@@ -9980,6 +10001,7 @@
                 <role key="main_stream" text="waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank" />
                 <role key="side_stream" text="branch waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank" />
                 <role key="spring" text="spring of waterway" requisite="optional" type="node" />
+                <role key="mouth" text="place where waterway ends" requisite="optional" type="node" />
             </roles>
         </item> <!-- Waterway -->
         <item name="Bridge" icon="presets/transport/bridge/bridge.svg" type="relation" preset_name_label="true">

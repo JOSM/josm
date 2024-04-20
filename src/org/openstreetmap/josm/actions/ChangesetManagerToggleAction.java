@@ -48,7 +48,7 @@ public class ChangesetManagerToggleAction extends ToggleAction {
         }
     }
 
-    private class ChangesetCacheManagerClosedHandler extends WindowAdapter {
+    private final class ChangesetCacheManagerClosedHandler extends WindowAdapter {
         @Override
         public void windowClosed(WindowEvent e) {
             setSelected(false);

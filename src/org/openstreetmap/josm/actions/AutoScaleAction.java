@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,7 +21,6 @@ import javax.swing.event.TreeSelectionListener;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.conflict.Conflict;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -33,7 +31,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
-import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -145,7 +142,7 @@ public class AutoScaleAction extends JosmAction {
      * @param sel The primitives to zoom to, e.g. the current selection.
      */
     public static void zoomTo(Collection<? extends IPrimitive> sel) {
-        BoundingXYVisitor bboxCalculator = new BoundingXYVisitor();
+        final var bboxCalculator = new BoundingXYVisitor();
         bboxCalculator.computeBoundingBox(sel);
         if (bboxCalculator.getBounds() != null) {
             MainApplication.getMap().mapView.zoomTo(bboxCalculator);
@@ -243,7 +240,7 @@ public class AutoScaleAction extends JosmAction {
      */
     public void autoScale() {
         if (MainApplication.isDisplayingMapView()) {
-            MapView mapView = MainApplication.getMap().mapView;
+            final var mapView = MainApplication.getMap().mapView;
             switch (mode) {
             case PREVIOUS:
                 mapView.zoomPrevious();
@@ -311,7 +308,7 @@ public class AutoScaleAction extends JosmAction {
 
     private void modeLayer(BoundingXYVisitor v) {
         // try to zoom to the first selected layer
-        Layer l = getFirstSelectedLayer();
+        final var l = getFirstSelectedLayer();
         if (l == null)
             return;
         l.visitBoundingBox(v);
@@ -326,7 +323,7 @@ public class AutoScaleAction extends JosmAction {
                 sel.addAll(dataSet.getSelected());
             }
         } else {
-            ConflictDialog conflictDialog = MainApplication.getMap().conflictDialog;
+            final var conflictDialog = MainApplication.getMap().conflictDialog;
             Conflict<? extends IPrimitive> c = conflictDialog.getSelectedConflict();
             if (c != null) {
                 sel.add(c.getMy());
@@ -358,7 +355,7 @@ public class AutoScaleAction extends JosmAction {
             lastZoomTime = -1;
         }
         Bounds bbox = null;
-        final DataSet dataset = getLayerManager().getActiveDataSet();
+        final var dataset = getLayerManager().getActiveDataSet();
         if (dataset != null) {
             List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
             int s = dataSources.size();
@@ -371,7 +368,7 @@ public class AutoScaleAction extends JosmAction {
                     bbox = dataSources.get(lastZoomArea).bounds;
                 } else {
                     lastZoomArea = -1;
-                    Area sourceArea = getLayerManager().getActiveDataSet().getDataSourceArea();
+                    final var sourceArea = getLayerManager().getActiveDataSet().getDataSourceArea();
                     if (sourceArea != null) {
                         bbox = new Bounds(sourceArea.getBounds2D());
                     }
@@ -438,7 +435,7 @@ public class AutoScaleAction extends JosmAction {
     /**
      * Adapter for zoom change events
      */
-    private class ZoomChangeAdapter implements ZoomChangeListener {
+    private final class ZoomChangeAdapter implements ZoomChangeListener {
         @Override
         public void zoomChanged() {
             updateEnabledState();

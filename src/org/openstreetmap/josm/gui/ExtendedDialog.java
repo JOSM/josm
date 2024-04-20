@@ -30,11 +30,13 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.util.WindowOnTopListener;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -47,19 +49,19 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * General configurable dialog window.
- *
+ * <p>
  * If dialog is modal, you can use {@link #getValue()} to retrieve the
  * button index. Note that the user can close the dialog
  * by other means. This is usually equivalent to cancel action.
- *
+ * <p>
  * For non-modal dialogs, {@link #buttonAction(int, ActionEvent)} can be overridden.
- *
+ * <p>
  * There are various options, see below.
- *
+ * <p>
  * Note: The button indices are counted from 1 and upwards.
  * So for {@link #getValue()}, {@link #setDefaultButton(int)} and
  * {@link #setCancelButton} the first button has index 1.
- *
+ * <p>
  * Simple example:
  * <pre>
  *  ExtendedDialog ed = new ExtendedDialog(
@@ -84,7 +86,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
     private String togglePref = "";
     private int toggleValue = -1;
     private ConditionalOptionPaneUtil.MessagePanel togglePanel;
-    private final Component parent;
+    private final Component parentComponent;
     private Component content;
     private final String[] bTexts;
     private String[] bToolTipTexts;
@@ -93,7 +95,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
     private int defaultButtonIdx = 1;
     protected JButton defaultButton;
     private transient Icon icon;
-    private final boolean modal;
+    private final boolean isModal;
     private boolean focusOnDefaultButton;
 
     /** true, if the dialog should include a help button */
@@ -157,11 +159,11 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
      */
     public ExtendedDialog(Component parent, String title, String[] buttonTexts, boolean modal, boolean disposeOnClose) {
         super(searchRealParent(parent), title, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
-        this.parent = parent;
-        this.modal = modal;
+        this.parentComponent = parent;
+        this.isModal = modal;
         bTexts = Utils.copyArray(buttonTexts);
         if (disposeOnClose) {
-            setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         }
         this.disposeOnClose = disposeOnClose;
     }
@@ -371,7 +373,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
         }
 
         setSize(d);
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(parentComponent);
     }
 
     protected Action createButtonAction(final int i) {
@@ -400,8 +402,8 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
     protected Dimension findMaxDialogSize() {
         Dimension screenSize = GuiHelper.getScreenSize();
         Dimension x = new Dimension(screenSize.width*2/3, screenSize.height*2/3);
-        if (parent != null && parent.isVisible()) {
-            x = GuiHelper.getFrameForComponent(parent).getSize();
+        if (parentComponent != null && parentComponent.isVisible()) {
+            x = GuiHelper.getFrameForComponent(parentComponent).getSize();
         }
         return x;
     }
@@ -461,6 +463,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
         }
         if (visible && isModal()) {
             this.setAlwaysOnTop(true);
+            this.addWindowFocusListener(new WindowOnTopListener());
         }
         super.setVisible(visible);
 
@@ -478,7 +481,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
 
     @Override
     public ExtendedDialog toggleEnable(String togglePref) {
-        if (!modal) {
+        if (!isModal) {
             throw new IllegalStateException();
         }
         this.toggleable = true;
@@ -494,7 +497,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
 
     @Override
     public ExtendedDialog setCancelButton(Integer... cancelButtonIdx) {
-        this.cancelButtonIdx = new HashSet<>(Arrays.<Integer>asList(cancelButtonIdx));
+        this.cancelButtonIdx = new HashSet<>(Arrays.asList(cancelButtonIdx));
         return this;
     }
 

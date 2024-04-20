@@ -154,6 +154,47 @@ public final class LanguageInfo {
     }
 
     /**
+     * Replies the OSM locale codes for the default locale.
+     *
+     * @return the OSM locale codes for the default locale
+     * @see #getOSMLocaleCodes(String, Locale)
+     * @since 19045
+     */
+    public static String[] getOSMLocaleCodes(String prefix) {
+        return getOSMLocaleCodes(prefix, Locale.getDefault());
+    }
+
+    /**
+     * Replies the locale codes used by OSM for a given locale.
+     *
+     * In most cases OSM uses the 2-character ISO 639 language code ({@link Locale#getLanguage()}
+     * to identify the locale of a localized resource, but in some cases it may use the
+     * programmatic name for locales, as replied by {@link Locale#toString()}.
+     *
+     * For unknown country codes and variants this function already does fallback to
+     * internally known translations.
+     *
+     * @param prefix a prefix like {@code name:}.
+     * @param locale the locale. Replies "en" if null.
+     * @return the OSM codes for the given locale
+     * @since 19045
+     */
+    public static String[] getOSMLocaleCodes(String prefix, Locale locale) {
+        if (prefix == null) {
+            prefix = "";
+        }
+        String main = getJOSMLocaleCode(locale);
+        switch (main) {
+            case "zh_CN":
+                return new String[]{prefix+"zh-Hans-CN", prefix+"zh-Hans", prefix+"zh"};
+            case "zh_TW":
+                return new String[]{prefix+"zh-Hant-TW", prefix+"zh-Hant", prefix+"zh"};
+            default:
+                return new String[]{prefix+main};
+        }
+    }
+
+    /**
      * Replies the locale code used by Java for a given locale.
      *
      * In most cases JOSM and Java uses the same codes, but for some exceptions this is needed.

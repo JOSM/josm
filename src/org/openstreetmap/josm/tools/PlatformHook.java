@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -8,12 +10,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -86,10 +90,11 @@ public interface PlatformHook {
       * OS, so we'll receive events from the system menu.
       * @param javaCallback Java expiration callback, providing GUI feedback
       * @param webStartCallback WebStart migration callback, providing GUI feedback
-      * @since 17679 (signature)
+      * @since 18985
       */
-    default void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback) {
-        // Do nothing
+    default void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback,
+            SanityCheckCallback sanityCheckCallback) {
+        startupSanityChecks(sanityCheckCallback);
     }
 
     /**
@@ -287,6 +292,20 @@ public interface PlatformHook {
     }
 
     /**
+     * Inform the user that a sanity check or checks failed
+     */
+    @FunctionalInterface
+    interface SanityCheckCallback {
+        /**
+         * Tells the user that a sanity check failed
+         * @param title The title of the message to show
+         * @param canContinue {@code true} if the failed sanity check(s) will not instantly kill JOSM when the user edits
+         * @param message The message parts to show the user (as a list)
+         */
+        void sanityCheckFailed(String title, boolean canContinue, String... message);
+    }
+
+    /**
      * Checks if the running version of Java has expired, proposes to user to update it if needed.
      * @param callback Java expiration callback
      * @since 12270 (signature)
@@ -331,7 +350,7 @@ public interface PlatformHook {
      * @since 18580
      */
     default String getJavaUrl() {
-        StringBuilder defaultDownloadUrl = new StringBuilder("https://www.azul.com/downloads/?version=java-17-lts");
+        StringBuilder defaultDownloadUrl = new StringBuilder("https://www.azul.com/downloads/?version=java-21-lts");
         if (PlatformManager.isPlatformWindows()) {
             defaultDownloadUrl.append("&os=windows");
         } else if (PlatformManager.isPlatformOsx()) {
@@ -366,6 +385,53 @@ public interface PlatformHook {
     default void checkWebStartMigration(WebStartMigrationCallback callback) {
         if (Utils.isRunningJavaWebStart()) {
             callback.askMigrateWebStart(Config.getPref().get("openwebstart.download.url", "https://openwebstart.com/download/"));
+        }
+    }
+
+    default void startupSanityChecks(SanityCheckCallback sanityCheckCallback) {
+        final String arch = System.getProperty("os.arch");
+        final List<String> messages = new ArrayList<>();
+        final String jvmArch = System.getProperty("sun.arch.data.model");
+        boolean canContinue = true;
+        if (Utils.getJavaVersion() < 11) {
+            canContinue = false;
+            messages.add(tr("You must update Java to Java {0} or later in order to run this version of JOSM", 17));
+            // Reset webstart/java update prompts
+            Config.getPref().put("askUpdateWebStart", null);
+            Config.getPref().put("askUpdateJava" + Utils.getJavaLatestVersion(), null);
+            Config.getPref().put("askUpdateJavalatest", null);
+        }
+        if (!"x86".equals(arch) && "32".equals(jvmArch)) {
+            messages.add(tr("Please use a 64 bit version of Java -- this will avoid out of memory errors"));
+        }
+        // Note: these might be able to be removed with the appropriate module-info.java settings.
+        final String[] expectedJvmArguments = {
+                "--add-exports=java.base/sun.security.action=ALL-UNNAMED",
+                "--add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED",
+                "--add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED"
+        };
+        final List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        final StringBuilder missingArguments = new StringBuilder();
+        for (String arg : expectedJvmArguments) {
+            if (vmArguments.stream().noneMatch(s -> s.contains(arg))) {
+                if (missingArguments.length() > 0) {
+                    missingArguments.append("<br>");
+                }
+                missingArguments.append(arg);
+            }
+        }
+        if (missingArguments.length() > 0) {
+            final String args = missingArguments.toString();
+            messages.add(tr("Missing JVM Arguments:<br>{0}", args));
+        }
+        if (!messages.isEmpty()) {
+            if (canContinue) {
+                sanityCheckCallback.sanityCheckFailed(tr("JOSM may work improperly"), true,
+                        messages.toArray(new String[0]));
+            } else {
+                sanityCheckCallback.sanityCheckFailed(tr("JOSM will be unable to work properly and will exit"), false,
+                        messages.toArray(new String[0]));
+            }
         }
     }
 

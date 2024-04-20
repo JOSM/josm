@@ -541,8 +541,8 @@ way[highway][natural][natural!=ridge],
   fixRemove: "natural";
 }
 
-/* #9593, #11183, #12418, #12761, #17254, #19311  */
-*[sport][sport!=skiing][!building][!club][tourism != hotel][highway !~ /^(pedestrian|raceway)$/][!leisure][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(bar|dojo|pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports][attraction!=summer_toboggan] {
+/* #9593, #11183, #12418, #12761, #17254, #19311,#23604  */
+*[sport][sport!=skiing][!building][!"building:part"][!club][tourism != hotel][highway !~ /^(pedestrian|raceway)$/][!leisure][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(bar|dojo|pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports][attraction!=summer_toboggan] {
     throwWarning: tr("sport without physical feature");
     group: tr("missing tag");
     assertMatch: "node sport=tennis";
@@ -551,6 +551,7 @@ way[highway][natural][natural!=ridge],
     assertNoMatch: "node sport=skiing"; /* skiing has deprecated warning */
     assertNoMatch: "node sport=swimming tourism=hotel";
     assertNoMatch: "node sport=10pin amenity=restaurant";
+    assertNoMatch: "node sport=boxing building:part=yes";
 }
 
 /* {0.key} without {1.key} or {2.key} see #10140 */
@@ -664,27 +665,6 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
 way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) <= 400] {
   throwOther: tr("Short waterway with {0} but without a tag which defines it as tunnel or underground. Remove {1} or add a tunnel tag if applicable. Also check crossing bridges and their {1} tags.", "{1.tag}", "{1.key}");
   group: tr("suspicious tag combination");
-}
-
-/* #13144, #15536 */
-*[unisex=yes][female=yes][male!=yes][shop=hairdresser],
-*[unisex=yes][male=yes][female!=yes][shop=hairdresser] {
-  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
-  group: tr("suspicious tag combination");
-}
-*[unisex=yes][female=yes][male=yes][shop=hairdresser] {
-  throwWarning: tr("{0} together with {1} and {2}. Remove {1} and {2}", "{0.tag}", "{1.tag}", "{2.tag}");
-  group: tr("suspicious tag combination");
-  fixRemove: "female";
-  fixRemove: "male";
-}
-*[female=yes][male=yes][!unisex][shop=hairdresser] {
-  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
-  suggestAlternative: "unisex=yes";
-  group: tr("suspicious tag combination");
-  fixRemove: "female";
-  fixRemove: "male";
-  fixAdd: "unisex=yes";
 }
 
 /* {0.key} without {1.tag} see #13138, #14468 */

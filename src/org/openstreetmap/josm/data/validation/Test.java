@@ -6,8 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -382,5 +384,23 @@ public class Test implements OsmPrimitiveVisitor {
      */
     public Object getSource() {
         return "Java: " + this.getClass().getName();
+    }
+
+    /**
+     * Filter the list of errors, remove all which do not concern the given list of primitives
+     * @param given the list of primitives
+     * @since 18960
+     */
+    public void removeIrrelevantErrors(Collection<? extends OsmPrimitive> given) {
+        if (errors == null || errors.isEmpty())
+            return;
+        // filter errors for those which are needed, don't show errors for objects which were not in the selection
+        final Set<? extends OsmPrimitive> relevant;
+        if (given instanceof Set) {
+            relevant = (Set<? extends OsmPrimitive>) given;
+        } else {
+            relevant = new HashSet<>(given);
+        }
+        errors.removeIf(e -> !e.isConcerned(relevant));
     }
 }

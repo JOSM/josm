@@ -589,7 +589,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations, 20));
 
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
-                "combine_tags",
+                "combine_relation_member",
                 MainApplication.getMainFrame(),
                 "<html>" + msg + "</html>",
                 tr("Combine confirmation"),

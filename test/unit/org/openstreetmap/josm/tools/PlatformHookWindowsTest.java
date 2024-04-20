@@ -46,7 +46,8 @@ class PlatformHookWindowsTest {
     void testStartupHook() {
         final PlatformHook.JavaExpirationCallback javaCallback = (a, b, c, d) -> System.out.println("java callback");
         final PlatformHook.WebStartMigrationCallback webstartCallback = u -> System.out.println("webstart callback");
-        assertDoesNotThrow(() -> hook.startupHook(javaCallback, webstartCallback));
+        final PlatformHook.SanityCheckCallback sanityCheckCallback = (a, b, c) -> System.out.println("sanity check callback");
+        assertDoesNotThrow(() -> hook.startupHook(javaCallback, webstartCallback, sanityCheckCallback));
     }
 
     /**

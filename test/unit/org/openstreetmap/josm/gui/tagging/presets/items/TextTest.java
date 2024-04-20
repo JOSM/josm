@@ -8,21 +8,28 @@ import javax.swing.JPanel;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemTest;
 import org.openstreetmap.josm.testutils.annotations.Main;
 
 /**
  * Unit tests of {@link Text} class.
  */
 @Main
-class TextTest {
+class TextTest implements TaggingPresetItemTest {
+    @Override
+    public Text getInstance() {
+        return new Text();
+    }
+
     /**
-     * Unit test for {@link Text#addToPanel}.
+     * Unit test for {@link Check#addToPanel}.
      */
+    @Override
     @Test
-    void testAddToPanel() {
+    public void testAddToPanel() {
         JPanel p = new JPanel();
         assertEquals(0, p.getComponentCount());
-        assertTrue(new Text().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
+        assertTrue(getInstance().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
         assertTrue(p.getComponentCount() > 0);
     }
 }
