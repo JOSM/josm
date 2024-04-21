@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 /**
- * A segment consisting of 2 consecutive nodes out of a way.
+ * A segment consisting of two consecutive nodes out of a way.
  */
 public final class WaySegment extends IWaySegment<Node, Way> {
 
@@ -36,7 +36,7 @@ public final class WaySegment extends IWaySegment<Node, Way> {
             }
             endIndex--;
         }
-        throw new IllegalArgumentException("Node pair is not part of way!");
+        throw new IllegalArgumentException("The node pair is not consecutive part of the way!");
     }
 
     /**

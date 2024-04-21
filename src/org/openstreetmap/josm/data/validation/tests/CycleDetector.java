@@ -155,7 +155,7 @@ public class CycleDetector extends Test {
                 intersect.retainAll(mWays);
 
                 for (Way w : intersect) {
-                    if (w.getNeighbours(n).contains(m) && getNodeIndex(w, n) + 1 == getNodeIndex(w, m)) {
+                    if (isConsecutive(w, n, m)) {
                         segments.add(WaySegment.forNodePair(w, n, m));
                     }
                 }
@@ -166,20 +166,21 @@ public class CycleDetector extends Test {
     }
 
     /**
-     * Returns the way index of a node. Only the first occurrence is considered in case it's a closed way.
+     * Returns the way index of a node. Only the first occurrence is considered in case it's a closed or self-intersecting way.
      *
      * @param w parent way
-     * @param n the node to look up
-     * @return {@code >=0} if the node is found or<br>{@code -1} if node not part of the way
+     * @param n the first node to look up
+     * @param m the second, possibly consecutive node
+     * @return {@code true} if the nodes are consecutive order in the way direction
      */
-    private static int getNodeIndex(Way w, Node n) {
-        for (int i = 0; i < w.getNodesCount(); i++) {
-            if (w.getNode(i).equals(n)) {
-                return i;
+    private static boolean isConsecutive(Way w, Node n, Node m) {
+        for (int i = 0; i < w.getNodesCount() - 1; i++) {
+            if (w.getNode(i).equals(n) && w.getNode(i + 1).equals(m)) {
+                return true;
             }
         }
 
-        return -1;
+        return false;
     }
 
     /**
@@ -237,6 +238,12 @@ public class CycleDetector extends Test {
                 }
             }
         }
+
+        // case for single, non-connected waterways
+        if (graph.isEmpty()) {
+            graph.add(way);
+        }
+
         return graph;
     }
 }
