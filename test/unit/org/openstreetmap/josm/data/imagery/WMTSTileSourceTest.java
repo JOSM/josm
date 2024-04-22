@@ -381,7 +381,7 @@ class WMTSTileSourceTest {
                 );
 
         tileServer.stubFor(
-                WireMock.get("//maps")
+                WireMock.get("/other/maps")
                 .willReturn(
                         WireMock.aResponse().withBody(
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
@@ -399,7 +399,7 @@ class WMTSTileSourceTest {
                 "</imagery>"
                 )));
 
-        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("//maps")));
+        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("/other/maps")));
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
 
         assertEquals(1, ImageryLayerInfo.instance.getDefaultLayers().size());
