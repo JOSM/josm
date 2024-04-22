@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,20 +22,18 @@ import org.junit.jupiter.api.Test;
 class JosmDecimalFormatSymbolsProviderTest {
     @BeforeAll
     static void beforeAll() throws IOException {
-        if (Utils.getJavaVersion() >= 9) {
-            assertEquals("SPI,JRE,CLDR", System.getProperty("java.locale.providers"),
-                    "This test must be launched with -Djava.locale.providers=SPI,JRE,CLDR");
-            try (InputStream in = I18n.class.getResourceAsStream("/META-INF/services/java.text.spi.DecimalFormatSymbolsProvider")) {
-                assertEquals("org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider",
-                        new String(Utils.readBytesFromStream(in), StandardCharsets.UTF_8).trim());
-            }
+        assertEquals("SPI,CLDR", System.getProperty("java.locale.providers"),
+                "This test must be launched with -Djava.locale.providers=SPI,CLDR");
+        try (InputStream in = I18n.class.getResourceAsStream("/META-INF/services/java.text.spi.DecimalFormatSymbolsProvider")) {
+            assertNotNull(in);
+            assertEquals("org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider",
+                    new String(in.readAllBytes(), StandardCharsets.UTF_8).trim());
         }
     }
 
     @Test
     void testGroupingSeparator() {
         System.out.println(Locale.getDefault());
-        assumeTrue(Utils.getJavaVersion() >= 9);
 
         assertTrue(I18n.getAvailableTranslations().count() > 10);
         I18n.getAvailableTranslations().forEach(this::checkGroupingSymbol);
