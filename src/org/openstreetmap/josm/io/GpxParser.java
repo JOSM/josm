@@ -615,6 +615,7 @@ class GpxParser extends DefaultHandler {
             case "urlname":
             case "cmt":
             case "desc":
+            case "dgpsid":
             case "fix":
                 currentWayPoint.put(localName, accumulator.toString());
                 break;
