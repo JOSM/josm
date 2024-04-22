@@ -166,10 +166,10 @@ public class CycleDetector extends Test {
     }
 
     /**
-     * Returns the way index of a node. Only the first occurrence is considered in case it's a closed or self-intersecting way.
+     * Determines if the given nodes are consecutive part of the parent way.
      *
      * @param w parent way
-     * @param n the first node to look up
+     * @param n the first node to look up in the way direction
      * @param m the second, possibly consecutive node
      * @return {@code true} if the nodes are consecutive order in the way direction
      */
