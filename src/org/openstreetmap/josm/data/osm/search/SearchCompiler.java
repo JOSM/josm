@@ -22,6 +22,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -1138,8 +1139,8 @@ public class SearchCompiler {
 
                     value = Normalizer.normalize(value, Normalizer.Form.NFC);
 
-                    final var keyMatcher = searchRegex.matcher(key);
-                    final var valMatcher = searchRegex.matcher(value);
+                    final Matcher keyMatcher = searchRegex.matcher(key);
+                    final Matcher valMatcher = searchRegex.matcher(value);
 
                     boolean keyMatchFound = keyMatcher.find();
                     boolean valMatchFound = valMatcher.find();
@@ -1816,7 +1817,7 @@ public class SearchCompiler {
         protected Long getNumber(OsmPrimitive osm) {
             if (!(osm instanceof Way))
                 return null;
-            final var way = (Way) osm;
+            final Way way = (Way) osm;
             return (long) way.getLength();
         }
 
@@ -1969,7 +1970,7 @@ public class SearchCompiler {
             }
 
             try {
-                final var groupSuffix = name.substring(0, name.length() - 2); // try to remove '/*'
+                String groupSuffix = name.substring(0, name.length() - 2); // try to remove '/*'
                 TaggingPresetMenu group = preset.group;
 
                 return group != null && groupSuffix.equalsIgnoreCase(group.getRawName());
@@ -2177,11 +2178,11 @@ public class SearchCompiler {
                 return new ValueComparison(key, tokenizer.readTextOrNumber(), +1).validate();
             } else if (tokenizer.readIfEqual(Token.COLON)) {
                 // see if we have a Match that takes a data parameter
-                final var factory = simpleMatchFactoryMap.get(key);
+                SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
                     return factory.get(key, caseSensitive, regexSearch, tokenizer);
 
-                final var unaryFactory = unaryMatchFactoryMap.get(key);
+                UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
                     return getValidate(unaryFactory, key, tokenizer);
 
@@ -2194,11 +2195,11 @@ public class SearchCompiler {
             } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
             else {
-                final var factory = simpleMatchFactoryMap.get(key);
+                SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
                     return factory.get(key, caseSensitive, regexSearch, null).validate();
 
-                final var unaryFactory = unaryMatchFactoryMap.get(key);
+                UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
                     return getValidate(unaryFactory, key, null);
 
@@ -2220,7 +2221,7 @@ public class SearchCompiler {
     }
 
     private static int regexFlags(boolean caseSensitive) {
-        var searchFlags = 0;
+        int searchFlags = 0;
 
         // Enables canonical Unicode equivalence so that e.g. the two
         // forms of "\u00e9gal" and "e\u0301gal" will match.

@@ -456,7 +456,7 @@ class GpxDataTest {
         assertNull(cl2.lastEvent);
     }
 
-    private static class TestChangeListener implements GpxDataChangeListener {
+    private static final class TestChangeListener implements GpxDataChangeListener {
 
         private GpxDataChangeEvent lastEvent;
 

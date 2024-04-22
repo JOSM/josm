@@ -171,7 +171,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                         return;
                     String msg;
                     String id = Long.toString(p.getUniqueId());
-                    switch(p.getType()) {
+                    switch (p.getType()) {
                     case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i, children.size(), id); break;
                     case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i, children.size(), id); break;
                     case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i, children.size(), id); break;

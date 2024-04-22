@@ -76,7 +76,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             30, // keepalive for thread
             TimeUnit.SECONDS,
             // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
-            new LinkedBlockingDeque<Runnable>(),
+            new LinkedBlockingDeque<>(),
             Utils.newThreadFactory("JCS-downloader-%d", Thread.NORM_PRIORITY)
             );
 
@@ -322,7 +322,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             file = new File(fileName.substring("file://".length() - 1));
         }
         try (InputStream fileInputStream = Files.newInputStream(file.toPath())) {
-            cacheData = createCacheEntry(Utils.readBytesFromStream(fileInputStream));
+            cacheData = createCacheEntry(fileInputStream.readAllBytes());
             cache.put(getCacheKey(), cacheData, attributes);
             return true;
         } catch (IOException e) {
@@ -393,7 +393,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 attributes.setResponseCode(urlConn.getResponseCode());
                 byte[] raw;
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    raw = Utils.readBytesFromStream(urlConn.getContent());
+                    raw = urlConn.getContent().readAllBytes();
                 } else {
                     raw = new byte[]{};
                     try {

@@ -21,7 +21,7 @@ public class ChangesetContentTableCellRenderer extends AbstractCellRenderer {
      * @param type modification type
      */
     protected void renderModificationType(ChangesetModificationType type) {
-        switch(type) {
+        switch (type) {
         case CREATED: setText(tr("Created")); break;
         case UPDATED: setText(tr("Updated")); break;
         case DELETED: setText(tr("Deleted")); break;
@@ -36,7 +36,7 @@ public class ChangesetContentTableCellRenderer extends AbstractCellRenderer {
             return this;
         reset();
         renderColors(isSelected);
-        switch(column) {
+        switch (column) {
         case 0:
             if (value instanceof ChangesetModificationType) {
                 renderModificationType((ChangesetModificationType) value);

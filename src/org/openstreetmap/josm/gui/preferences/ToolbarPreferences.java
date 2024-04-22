@@ -408,7 +408,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         }
     }
 
-    private static class ActionParametersTableModel extends AbstractTableModel {
+    private static final class ActionParametersTableModel extends AbstractTableModel {
 
         private transient ActionDefinition currentAction = ActionDefinition.getSeparator();
 
@@ -493,7 +493,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         }
     }
 
-    private class ToolbarPopupMenu extends JPopupMenu {
+    private final class ToolbarPopupMenu extends JPopupMenu {
         private transient ActionDefinition act;
 
         private void setActionAndAdapt(ActionDefinition action) {
@@ -749,7 +749,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             }
         }
 
-        private class ActionDefinitionModel extends DefaultListModel<ActionDefinition> implements ReorderableTableModel<ActionDefinition> {
+        private final class ActionDefinitionModel extends DefaultListModel<ActionDefinition> implements ReorderableTableModel<ActionDefinition> {
             @Override
             public ListSelectionModel getSelectionModel() {
                 return selectedList.getSelectionModel();

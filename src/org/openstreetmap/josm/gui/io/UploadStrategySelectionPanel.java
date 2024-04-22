@@ -211,7 +211,7 @@ public class UploadStrategySelectionPanel extends JPanel {
         UploadStrategy strategy = getUploadStrategy();
         UploadStrategySpecification spec = new UploadStrategySpecification();
         if (strategy != null) {
-            switch(strategy) {
+            switch (strategy) {
             case CHUNKED_DATASET_STRATEGY:
                 spec.setStrategy(strategy).setChunkSize(getChunkSize());
                 break;
@@ -388,7 +388,7 @@ public class UploadStrategySelectionPanel extends JPanel {
             UploadStrategy strategy = getUploadStrategy();
             if (strategy == null)
                 return;
-            switch(strategy) {
+            switch (strategy) {
             case CHUNKED_DATASET_STRATEGY:
                 tfChunkSize.setEnabled(true);
                 tfChunkSize.requestFocusInWindow();

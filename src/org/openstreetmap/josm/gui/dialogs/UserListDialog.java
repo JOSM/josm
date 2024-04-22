@@ -350,7 +350,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
         @Override
         public Object getValueAt(int row, int column) {
             UserInfo info = data.get(row);
-            switch(column) {
+            switch (column) {
             case 0: /* author */ return info.getName() == null ? "" : info.getName();
             case 1: /* count */ return info.count;
             case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);

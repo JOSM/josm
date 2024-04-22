@@ -149,7 +149,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         if (decision.canKeepAll()) {
             editorModel.addElement(MultiValueDecisionType.KEEP_ALL);
         }
-        switch(decision.getDecisionType()) {
+        switch (decision.getDecisionType()) {
         case UNDECIDED:
             editor.setSelectedItem(MultiValueDecisionType.UNDECIDED);
             break;
@@ -219,7 +219,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
             if (value instanceof String) {
                 setText((String) value);
             } else if (value instanceof MultiValueDecisionType) {
-                switch((MultiValueDecisionType) value) {
+                switch ((MultiValueDecisionType) value) {
                 case UNDECIDED:
                     setText(tr("Choose a value"));
                     setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));

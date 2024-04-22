@@ -160,7 +160,7 @@ public abstract class ImageryLayer extends Layer {
      * @return The created layer
      */
     public static ImageryLayer create(ImageryInfo info) {
-        switch(info.getImageryType()) {
+        switch (info.getImageryType()) {
         case WMS:
         case WMS_ENDPOINT:
             return new WMSLayer(info);

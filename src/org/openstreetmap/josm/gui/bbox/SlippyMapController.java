@@ -44,7 +44,7 @@ public class SlippyMapController extends MouseAdapter {
     /** The speed increase per timer interval when a cursor button is clicked */
     private static final double ACCELERATION = 0.10;
 
-    private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+    private static final int MAC_MOUSE_BUTTON3_MASK = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON1_DOWN_MASK;
 
     private static final String[] N = {
             ",", ".", "up", "right", "down", "left"};
@@ -72,7 +72,7 @@ public class SlippyMapController extends MouseAdapter {
         if (contentPane != null) {
             for (int i = 0; i < N.length; ++i) {
                 contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                        KeyStroke.getKeyStroke(K[i], KeyEvent.CTRL_DOWN_MASK), "MapMover.Zoomer." + N[i]);
+                        KeyStroke.getKeyStroke(K[i], InputEvent.CTRL_DOWN_MASK), "MapMover.Zoomer." + N[i]);
             }
         }
         isSelecting = false;
@@ -129,7 +129,7 @@ public class SlippyMapController extends MouseAdapter {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (iStartSelectionPoint != null && (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK
+        if (iStartSelectionPoint != null && (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) == InputEvent.BUTTON1_DOWN_MASK
                 && !(PlatformManager.isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK)) {
             iEndSelectionPoint = e.getPoint();
             iSlippyMapChooser.setSelection(iStartSelectionPoint, iEndSelectionPoint);
@@ -194,7 +194,7 @@ public class SlippyMapController extends MouseAdapter {
     }
 
     /** Moves the map depending on which cursor keys are pressed (or not) */
-    private class MoveTask extends TimerTask {
+    private final class MoveTask extends TimerTask {
         /** The current x speed (pixels per timer interval) */
         private double speedX = 1;
 
@@ -211,14 +211,14 @@ public class SlippyMapController extends MouseAdapter {
          * Indicated if <code>moveTask</code> is currently enabled (periodically
          * executed via timer) or disabled
          */
-        protected boolean scheduled;
+        boolean scheduled;
 
-        protected void setDirectionX(int directionX) {
+        void setDirectionX(int directionX) {
             this.directionX = directionX;
             updateScheduleStatus();
         }
 
-        protected void setDirectionY(int directionY) {
+        void setDirectionY(int directionY) {
             this.directionY = directionY;
             updateScheduleStatus();
         }
@@ -300,7 +300,7 @@ public class SlippyMapController extends MouseAdapter {
         }
     }
 
-    private class ZoomInAction extends AbstractAction {
+    private final class ZoomInAction extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -308,7 +308,7 @@ public class SlippyMapController extends MouseAdapter {
         }
     }
 
-    private class ZoomOutAction extends AbstractAction {
+    private final class ZoomOutAction extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent e) {

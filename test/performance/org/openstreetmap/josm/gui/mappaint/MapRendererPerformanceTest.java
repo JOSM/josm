@@ -179,7 +179,7 @@ public class MapRendererPerformanceTest {
         MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
     }
 
-    private static class PerformanceTester {
+    private static final class PerformanceTester {
         public double scale = 0;
         public LatLon center = LL_CITY;
         public Bounds bounds;

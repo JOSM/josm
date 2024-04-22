@@ -79,7 +79,7 @@ public class AutoCompEvent extends AWTEvent {
     @Override
     public String paramString() {
         String typeStr;
-        switch(id) {
+        switch (id) {
             case AUTOCOMP_BEFORE:
                 typeStr = "AUTOCOMP_BEFORE";
                 break;

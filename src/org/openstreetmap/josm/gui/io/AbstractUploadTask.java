@@ -40,7 +40,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Abstract base class for the task of uploading primitives via OSM API.
- *
+ * <p>
  * Mainly handles conflicts and certain error situations.
  */
 public abstract class AbstractUploadTask extends PleaseWaitRunnable {
@@ -97,7 +97,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
 
     /**
      * Synchronizes the local state of the dataset with the state on the server.
-     *
+     * <p>
      * Reuses the functionality of {@link UpdateDataAction}.
      *
      * @see UpdateDataAction#actionPerformed(ActionEvent)
@@ -120,7 +120,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion,
             String myVersion) {
         String lbl;
-        switch(primitiveType) {
+        switch (primitiveType) {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         case NODE:     lbl = tr("Synchronize node {0} only", id); break;
         case WAY:      lbl = tr("Synchronize way {0} only", id); break;
@@ -163,7 +163,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 spec[0],
                 "/Concepts/Conflict"
         );
-        switch(ret) {
+        switch (ret) {
         case 0: synchronizePrimitive(primitiveType, id); break;
         case 1: synchronizeDataSet(); break;
         default: return;

@@ -223,7 +223,7 @@ public class ListenerList<T> {
         }
     }
 
-    private static class UncheckedListenerList<T> extends ListenerList<T> {
+    private static final class UncheckedListenerList<T> extends ListenerList<T> {
         @Override
         protected void failAdd(T listener) {
             Logging.warn("Listener was already added: {0}", listener);

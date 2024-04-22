@@ -110,7 +110,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
         if (node == null) {
             renderEmptyRow();
         } else {
-            switch(column) {
+            switch (column) {
             case 0:
                 renderRowId(getModel(table), row);
                 break;

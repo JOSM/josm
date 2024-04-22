@@ -169,7 +169,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         }
         switch (strategy.getPolicy()) {
         case AUTOMATICALLY_OPEN_NEW_CHANGESETS:
-            final var newChangeSet = new Changeset();
+            final Changeset newChangeSet = new Changeset();
             newChangeSet.setKeys(changeset.getKeys());
             closeChangeset();
             this.changeset = newChangeSet;
@@ -371,7 +371,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
             }
             if (uploadCanceled) return;
             if (lastException == null) {
-                final var panel = new HtmlPanel(
+                final HtmlPanel panel = new HtmlPanel(
                         "<h3><a href=\"" + Config.getUrls().getBaseBrowseUrl() + "/changeset/" + changeset.getId() + "\">"
                                 + tr("Upload successful!") + "</a></h3>");
                 panel.enableClickableHyperlinks();

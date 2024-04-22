@@ -34,7 +34,7 @@ public abstract class TagMergeTableCellRenderer extends JLabel implements TableC
             return this;
 
         TagMergeItem item = (TagMergeItem) value;
-        switch(col) {
+        switch (col) {
         case 0:
             renderKey(item, isSelected);
             break;

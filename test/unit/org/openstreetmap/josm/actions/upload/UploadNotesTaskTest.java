@@ -156,7 +156,7 @@ class UploadNotesTaskTest {
         assertTrue(Logging.getLastErrorAndWarnings().isEmpty());
     }
 
-    private static class FakeOsmApiMocker extends MockUp<FakeOsmApi> {
+    private static final class FakeOsmApiMocker extends MockUp<FakeOsmApi> {
         Collection<Note> closed = new ArrayList<>();
         Collection<Note> commented = new ArrayList<>();
         Collection<Note> created = new ArrayList<>();

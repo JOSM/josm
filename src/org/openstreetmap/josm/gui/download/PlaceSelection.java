@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -105,7 +106,7 @@ public class PlaceSelection implements DownloadSelection {
         JPanel panel = new JPanel(new GridBagLayout());
 
         lpanel.add(new JLabel(tr("Choose the server for searching:")), GBC.std(0, 0).weight(0, 0).insets(0, 0, 5, 0));
-        lpanel.add(serverComboBox, GBC.std(1, 0).fill(GBC.HORIZONTAL));
+        lpanel.add(serverComboBox, GBC.std(1, 0).fill(GridBagConstraints.HORIZONTAL));
         String s = Config.getPref().get("namefinder.server", SERVERS[0].name);
         for (int i = 0; i < SERVERS.length; ++i) {
             if (SERVERS[i].name.equals(s)) {
@@ -117,9 +118,9 @@ public class PlaceSelection implements DownloadSelection {
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
         cbSearchExpression.getModel().prefs().load(HISTORY_KEY);
-        lpanel.add(cbSearchExpression, GBC.std(1, 1).fill(GBC.HORIZONTAL));
+        lpanel.add(cbSearchExpression, GBC.std(1, 1).fill(GridBagConstraints.HORIZONTAL));
 
-        panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));
+        panel.add(lpanel, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 0, 5));
         SearchAction searchAction = new SearchAction();
         JButton btnSearch = new JButton(searchAction);
         cbSearchExpression.getEditorComponent().getDocument().addDocumentListener(searchAction);
@@ -494,7 +495,7 @@ public class PlaceSelection implements DownloadSelection {
             if (value == null)
                 return this;
             SearchResult sr = (SearchResult) value;
-            switch(column) {
+            switch (column) {
             case 0:
                 setText(sr.getName());
                 break;

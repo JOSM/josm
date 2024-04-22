@@ -386,7 +386,7 @@ public class NmeaParser {
                 accu = e[GGA.QUALITY.position];
                 if (!accu.isEmpty()) {
                     int fixtype = Integer.parseInt(accu);
-                    switch(fixtype) {
+                    switch (fixtype) {
                     case 0:
                         currentwp.put(GpxConstants.PT_FIX, "none");
                         break;

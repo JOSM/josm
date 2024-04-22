@@ -98,7 +98,7 @@ public class OsmServerWriter {
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
                 String msg;
-                switch(OsmPrimitiveType.from(osm)) {
+                switch (OsmPrimitiveType.from(osm)) {
                 case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
                 case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
                 case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
@@ -206,7 +206,7 @@ public class OsmServerWriter {
                 api.updateChangeset(changeset, monitor.createSubTaskMonitor(0, false));
             }
             api.setChangeset(changeset);
-            switch(strategy.getStrategy()) {
+            switch (strategy.getStrategy()) {
             case SINGLE_REQUEST_STRATEGY:
                 uploadChangesAsDiffUpload(primitives, monitor.createSubTaskMonitor(0, false));
                 break;

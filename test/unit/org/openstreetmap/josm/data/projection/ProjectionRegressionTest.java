@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,7 +46,7 @@ class ProjectionRegressionTest {
 
     private static final String PROJECTION_DATA_FILE = "nodist/data/projection/projection-regression-test-data";
 
-    private static class TestData {
+    private static final class TestData {
         public String code;
         public LatLon ll;
         public EastNorth en;
@@ -184,7 +186,7 @@ class ProjectionRegressionTest {
 
         if (fail.length() > 0) {
             System.err.println(fail);
-            throw new AssertionError(fail.toString());
+            fail(fail.toString());
         }
     }
 

@@ -50,7 +50,7 @@ class ImproveWayAccuracyActionTest {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
-    private static class AlwaysDeleteCallback implements DeleteCommand.DeletionCallback {
+    private static final class AlwaysDeleteCallback implements DeleteCommand.DeletionCallback {
         @Override
         public boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {
             return true;

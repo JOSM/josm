@@ -34,7 +34,7 @@ public final class ChangesetUpdater {
 
     private static volatile ScheduledFuture<?> task;
 
-    private static class Worker implements Runnable {
+    private static final class Worker implements Runnable {
 
         private long lastTimeInMillis;
 

@@ -1046,11 +1046,11 @@ public class MainApplication {
 
         SwingUtilities.invokeLater(new GuiFinalizationWorker(args, proxySelector));
 
-        if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
+        if (Boolean.TRUE.equals(RemoteControl.PROP_REMOTECONTROL_ENABLED.get())) {
             RemoteControl.start();
         }
 
-        if (MessageNotifier.PROP_NOTIFIER_ENABLED.get()) {
+        if (Boolean.TRUE.equals(MessageNotifier.PROP_NOTIFIER_ENABLED.get())) {
             MessageNotifier.start();
         }
 
@@ -1477,7 +1477,7 @@ public class MainApplication {
         }
 
         private static void handleAutosave() {
-            if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
+            if (Boolean.TRUE.equals(AutosaveTask.PROP_AUTOSAVE_ENABLED.get())) {
                 AutosaveTask autosaveTask = new AutosaveTask();
                 List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
                 if (!unsavedLayerFiles.isEmpty()) {
@@ -1558,7 +1558,7 @@ public class MainApplication {
         }
     }
 
-    private static class DefaultNativeOsCallback implements NativeOsCallback {
+    private static final class DefaultNativeOsCallback implements NativeOsCallback {
         @Override
         public void openFiles(List<File> files) {
             Executors.newSingleThreadExecutor(Utils.newThreadFactory("openFiles-%d", Thread.NORM_PRIORITY)).submit(

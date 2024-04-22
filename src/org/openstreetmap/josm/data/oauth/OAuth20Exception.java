@@ -54,7 +54,7 @@ public final class OAuth20Exception extends OAuthException {
                 ? serverMessage.getString("error_description", serverMessage.getString("error", "Unknown error"))
                 : "Unknown error");
         if (serverMessage != null && serverMessage.containsKey("error")) {
-            switch(serverMessage.getString("error")) {
+            switch (serverMessage.getString("error")) {
                 case "invalid_request":
                 case "invalid_client":
                 case "invalid_grant":

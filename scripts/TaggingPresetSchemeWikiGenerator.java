@@ -63,7 +63,7 @@ public final class TaggingPresetSchemeWikiGenerator {
                         node.getTextContent().trim()));
     }
 
-    private static class TaggingNamespaceContext implements NamespaceContext {
+    private static final class TaggingNamespaceContext implements NamespaceContext {
         @Override
         public String getNamespaceURI(String prefix) {
             switch (prefix) {

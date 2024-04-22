@@ -175,7 +175,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
             decision.keepOne((String) value);
         } else if (value instanceof MultiValueDecisionType) {
             MultiValueDecisionType type = (MultiValueDecisionType) value;
-            switch(type) {
+            switch (type) {
             case KEEP_NONE:
                 decision.keepNone();
                 break;

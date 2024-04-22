@@ -66,6 +66,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.geoimage.AdjustTimezoneAndOffsetDialog.AdjustListener;
+import org.openstreetmap.josm.gui.layer.geoimage.SynchronizeTimeFromPhotoDialog.TimeZoneItem;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDataHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
@@ -171,10 +172,10 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
                 // Search whether an other layer has yet defined some bounding box.
                 // If none, we'll zoom to the bounding box of the layer with the photos.
-                var boundingBoxedLayerFound = false;
+                boolean boundingBoxedLayerFound = false;
                 for (Layer l: MainApplication.getLayerManager().getLayers()) {
                     if (l != yLayer) {
-                        final var bbox = new BoundingXYVisitor();
+                        BoundingXYVisitor bbox = new BoundingXYVisitor();
                         l.visitBoundingBox(bbox);
                         if (bbox.getBounds() != null) {
                             boundingBoxedLayerFound = true;
@@ -183,7 +184,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
                     }
                 }
                 if (!boundingBoxedLayerFound) {
-                    final var bbox = new BoundingXYVisitor();
+                    BoundingXYVisitor bbox = new BoundingXYVisitor();
                     yLayer.visitBoundingBox(bbox);
                     MainApplication.getMap().mapView.zoomTo(bbox);
                 }
@@ -263,14 +264,14 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final var sel = GpxDataHelper.chooseGpxDataFile();
+            File sel = GpxDataHelper.chooseGpxDataFile();
             if (sel != null) {
                 try {
                     outerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     removeDuplicates(sel);
-                    final var data = GpxDataHelper.loadGpxData(sel);
+                    GpxData data = GpxDataHelper.loadGpxData(sel);
                     if (data != null) {
-                        final var elem = new GpxDataWrapper(sel.getName(), data, sel);
+                        GpxDataWrapper elem = new GpxDataWrapper(sel.getName(), data, sel);
                         gpxModel.addElement(elem);
                         gpxModel.setSelectedItem(elem);
                         statusBarUpdater.matchAndUpdateStatusBar();
@@ -298,7 +299,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final var ed = new AdvancedCorrelationSettingsDialog(MainApplication.getMainFrame(), forceTags);
+            AdvancedCorrelationSettingsDialog ed = new AdvancedCorrelationSettingsDialog(MainApplication.getMainFrame(), forceTags);
             if (ed.showDialog().getValue() == 1) {
                 forceTags = ed.isForceTaggingSelected(); // This setting is not supposed to be saved permanently
 
@@ -319,9 +320,10 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            var isOk = false;
+            boolean isOk = false;
             while (!isOk) {
-                final var ed = new SynchronizeTimeFromPhotoDialog(MainApplication.getMainFrame(), yLayer.getImageData().getImages());
+                SynchronizeTimeFromPhotoDialog ed = new SynchronizeTimeFromPhotoDialog(
+                        MainApplication.getMainFrame(), yLayer.getImageData().getImages());
                 int answer = ed.showDialog().getValue();
                 if (answer != 1)
                     return;
@@ -337,7 +339,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
                     continue;
                 }
 
-                final var selectedTz = ed.getTimeZoneItem();
+                TimeZoneItem selectedTz = ed.getTimeZoneItem();
 
                 Config.getPref().put("geoimage.timezoneid", selectedTz.getID());
                 Config.getPref().putBoolean("geoimage.timezoneid.dst", ed.isDstSelected());
@@ -354,12 +356,12 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     private static final class GpxLayerAddedListener implements LayerChangeListener {
         @Override
         public void layerAdded(LayerAddEvent e) {
-            final var layer = e.getAddedLayer();
+            Layer layer = e.getAddedLayer();
             if (layer instanceof GpxDataContainer) {
-                final var gpx = ((GpxDataContainer) layer).getGpxData();
-                final var file = gpx.storageFile;
+                GpxData gpx = ((GpxDataContainer) layer).getGpxData();
+                File file = gpx.storageFile;
                 removeDuplicates(file);
-                final var gdw = new GpxDataWrapper(layer.getName(), gpx, file);
+                GpxDataWrapper gdw = new GpxDataWrapper(layer.getName(), gpx, file);
                 layer.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
                 gpxModel.addElement(gdw);
                 forEachLayer(correlateAction -> {
@@ -373,9 +375,9 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         @Override
         public void layerRemoving(LayerRemoveEvent e) {
-            final var layer = e.getRemovedLayer();
+            Layer layer = e.getRemovedLayer();
             if (layer instanceof GpxDataContainer) {
-                final var removedGpxData = ((GpxDataContainer) layer).getGpxData();
+                GpxData removedGpxData = ((GpxDataContainer) layer).getGpxData();
                 for (int i = gpxModel.getSize() - 1; i >= 0; i--) {
                     GpxData data = gpxModel.getElementAt(i).data;
                     // removedGpxData can be null if gpx layer has been destroyed before this listener
@@ -425,8 +427,8 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         GpxDataWrapper defaultItem = null;
         for (AbstractModifiableLayer cur : MainApplication.getLayerManager().getLayersOfType(AbstractModifiableLayer.class)) {
             if (cur instanceof GpxDataContainer) {
-                final var data = ((GpxDataContainer) cur).getGpxData();
-                final var gdw = new GpxDataWrapper(cur.getName(), data, data.storageFile);
+                GpxData data = ((GpxDataContainer) cur).getGpxData();
+                GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), data, data.storageFile);
                 cur.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
                 gpxModel.addElement(gdw);
                 if (data.equals(yLayer.gpxData) || defaultItem == null) {
@@ -468,12 +470,12 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        final var nogdw = new NoGpxDataWrapper();
+        NoGpxDataWrapper nogdw = new NoGpxDataWrapper();
         if (gpxModel == null) {
             constructGpxModel(nogdw);
         }
 
-        final var panelCb = new JPanel();
+        JPanel panelCb = new JPanel();
 
         panelCb.add(new JLabel(tr("GPX track: ")));
 
@@ -482,7 +484,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         cbGpx.addActionListener(statusBarUpdaterWithRepaint);
         panelCb.add(cbGpx);
 
-        final var buttonOpen = new JButton(tr("Open another GPX trace"));
+        JButton buttonOpen = new JButton(tr("Open another GPX trace"));
         buttonOpen.addActionListener(new LoadGpxDataActionListener());
         panelCb.add(buttonOpen);
 
@@ -490,7 +492,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         buttonSupport.addActionListener(new UseSupportLayerActionListener());
         panelCb.add(buttonSupport);
 
-        final var panelTf = new JPanel(new GridBagLayout());
+        JPanel panelTf = new JPanel(new GridBagLayout());
 
         timezone = loadTimezone();
 
@@ -502,21 +504,21 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         tfOffset = new JosmTextField(10);
         tfOffset.setText(delta.formatOffset());
 
-        final var buttonViewGpsPhoto = new JButton(tr("<html>Use photo of an accurate clock,<br>e.g. GPS receiver display</html>"));
+        JButton buttonViewGpsPhoto = new JButton(tr("<html>Use photo of an accurate clock,<br>e.g. GPS receiver display</html>"));
         buttonViewGpsPhoto.setIcon(ImageProvider.get("clock"));
         buttonViewGpsPhoto.addActionListener(new SetOffsetActionListener());
 
-        final var buttonAutoGuess = new JButton(tr("Auto-Guess"));
+        JButton buttonAutoGuess = new JButton(tr("Auto-Guess"));
         buttonAutoGuess.setToolTipText(tr("Matches first photo with first gpx point"));
         buttonAutoGuess.addActionListener(new AutoGuessActionListener());
 
-        final var buttonAdjust = new JButton(tr("Manual adjust"));
+        JButton buttonAdjust = new JButton(tr("Manual adjust"));
         buttonAdjust.addActionListener(new AdjustActionListener());
 
-        final var buttonAdvanced = new JButton(tr("Advanced settings..."));
+        JButton buttonAdvanced = new JButton(tr("Advanced settings..."));
         buttonAdvanced.addActionListener(new AdvancedSettingsActionListener());
 
-        final var labelPosition = new JLabel(tr("Override position for: "));
+        JLabel labelPosition = new JLabel(tr("Override position for: "));
 
         int numAll = yLayer.getSortedImgList(true, true).size();
         int numExif = numAll - yLayer.getSortedImgList(false, true).size();
@@ -534,8 +536,8 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         cbShowThumbs = new JCheckBox(tr("Show Thumbnail images on the map"), ticked);
         cbShowThumbs.setEnabled(!yLayer.thumbsLoaded);
 
-        var y = 0;
-        var gbc = GBC.eol();
+        int y = 0;
+        GBC gbc = GBC.eol();
         gbc.gridx = 0;
         gbc.gridy = y++;
         panelTf.add(panelCb, gbc);
@@ -624,13 +626,13 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         expertChanged(ExpertToggleAction.isExpert());
 
-        final var statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        final JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
         statusBarText = new JLabel(" ");
         statusBarText.setFont(statusBarText.getFont().deriveFont(Font.PLAIN, 8));
         statusBar.add(statusBarText);
 
-        final var repaintTheMap = new RepaintTheMapListener(yLayer);
+        RepaintTheMapListener repaintTheMap = new RepaintTheMapListener(yLayer);
         pDirectionPosition.addFocusListenerOnComponent(repaintTheMap);
         tfTimezone.addFocusListener(repaintTheMap);
         tfOffset.addFocusListener(repaintTheMap);
@@ -810,7 +812,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            final var offset = GpxTimeOffset.milliseconds(
+            final GpxTimeOffset offset = GpxTimeOffset.milliseconds(
                     delta.getMilliseconds() + Math.round(timezone.getHours() * TimeUnit.HOURS.toMillis(1)));
             final int dayOffset = offset.getDayOffset();
             final Pair<GpxTimezone, GpxTimeOffset> timezoneOffsetPair = offset.withoutDayOffset().splitOutTimezone();

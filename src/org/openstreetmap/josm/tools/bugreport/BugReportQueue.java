@@ -88,7 +88,7 @@ public class BugReportQueue {
         }
     }
 
-    private class BugReportDisplayRunnable implements Runnable {
+    private final class BugReportDisplayRunnable implements Runnable {
 
         private volatile boolean running = true;
 

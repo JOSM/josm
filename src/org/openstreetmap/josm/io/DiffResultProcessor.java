@@ -166,7 +166,7 @@ public class DiffResultProcessor {
         }
     }
 
-    private class Parser extends DefaultHandler {
+    private final class Parser extends DefaultHandler {
         private Locator locator;
 
         @Override
@@ -174,7 +174,7 @@ public class DiffResultProcessor {
             this.locator = locator;
         }
 
-        protected void throwException(String msg) throws XmlParsingException {
+        void throwException(String msg) throws XmlParsingException {
             throw new XmlParsingException(msg).rememberLocation(locator);
         }
 

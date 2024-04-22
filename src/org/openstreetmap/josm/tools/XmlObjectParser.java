@@ -64,7 +64,7 @@ public class XmlObjectParser implements Iterable<Object> {
         }
     }
 
-    private class Parser extends DefaultHandler {
+    private final class Parser extends DefaultHandler {
         private final Stack<Object> current = new Stack<>();
         private StringBuilder characters = new StringBuilder(64);
         private Locator locator;
@@ -77,7 +77,7 @@ public class XmlObjectParser implements Iterable<Object> {
             this.locator = locator;
         }
 
-        protected void throwException(Exception e) throws XmlParsingException {
+        void throwException(Exception e) throws XmlParsingException {
             throw new XmlParsingException(e).rememberLocation(locator);
         }
 

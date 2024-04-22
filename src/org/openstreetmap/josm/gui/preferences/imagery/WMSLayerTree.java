@@ -106,7 +106,7 @@ public class WMSLayerTree {
         getLayerTree().expandRow(1);
     }
 
-    private static class LayerTreeCellRenderer extends DefaultTreeCellRenderer {
+    private static final class LayerTreeCellRenderer extends DefaultTreeCellRenderer {
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value,
                                                       boolean sel, boolean expanded, boolean leaf, int row,
@@ -123,7 +123,7 @@ public class WMSLayerTree {
         }
     }
 
-    private class WMSTreeSelectionListener implements TreeSelectionListener {
+    private final class WMSTreeSelectionListener implements TreeSelectionListener {
 
         @Override
         public void valueChanged(TreeSelectionEvent e) {

@@ -129,9 +129,9 @@ public final class Logging {
         }
 
         @Override
-        public synchronized void publish(LogRecord record) {
-            if (this.prioritizedHandler == null || !this.prioritizedHandler.isLoggable(record)) {
-                super.publish(record);
+        public synchronized void publish(LogRecord logRecord) {
+            if (this.prioritizedHandler == null || !this.prioritizedHandler.isLoggable(logRecord)) {
+                super.publish(logRecord);
             }
         }
     }
@@ -480,7 +480,7 @@ public final class Logging {
         return LOGGER;
     }
 
-    private static class RememberWarningHandler extends Handler {
+    private static final class RememberWarningHandler extends Handler {
         private final String[] log = new String[10];
         private int messagesLogged;
 
@@ -490,13 +490,13 @@ public final class Logging {
         }
 
         @Override
-        public synchronized void publish(LogRecord record) {
+        public synchronized void publish(LogRecord logRecord) {
             // We don't use setLevel + isLoggable to work in WebStart Sandbox mode
-            if (record.getLevel().intValue() < LEVEL_WARN.intValue()) {
+            if (logRecord.getLevel().intValue() < LEVEL_WARN.intValue()) {
                 return;
             }
 
-            String msg = String.format(Locale.ROOT, "%09.3f %s%s", startup.elapsed() / 1000., getPrefix(record), record.getMessage());
+            String msg = String.format(Locale.ROOT, "%09.3f %s%s", startup.elapsed() / 1000., getPrefix(logRecord), logRecord.getMessage());
 
             // Only remember first line of message
             int idx = msg.indexOf('\n');
@@ -507,8 +507,8 @@ public final class Logging {
             messagesLogged++;
         }
 
-        private static String getPrefix(LogRecord record) {
-            if (record.getLevel().equals(LEVEL_WARN)) {
+        private static String getPrefix(LogRecord logRecord) {
+            if (logRecord.getLevel().equals(LEVEL_WARN)) {
                 return "W: ";
             } else {
                 // worse than warn

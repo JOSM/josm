@@ -125,7 +125,7 @@ public class ChangesetQueryDialog extends JDialog {
     public ChangesetQuery getChangesetQuery() {
         if (isCanceled())
             return null;
-        switch(tpQueryPanels.getSelectedIndex()) {
+        switch (tpQueryPanels.getSelectedIndex()) {
         case 0:
             return pnlBasicChangesetQueries.buildChangesetQuery();
         case 1:
@@ -185,7 +185,7 @@ public class ChangesetQueryDialog extends JDialog {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             try {
-                switch(tpQueryPanels.getSelectedIndex()) {
+                switch (tpQueryPanels.getSelectedIndex()) {
                 case 0:
                     // currently, query specifications can't be invalid in the basic query panel.
                     // We select from a couple of predefined queries and there is always a query

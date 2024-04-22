@@ -110,7 +110,7 @@ public final class MultikeyActionsHandler {
         }
     }
 
-    private class MyKeyEventDispatcher implements KeyEventDispatcher {
+    private final class MyKeyEventDispatcher implements KeyEventDispatcher {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
 

@@ -237,7 +237,7 @@ public final class NameFinder {
      * A very primitive parser for the name finder's output.
      * Structure of xml described here:  http://wiki.openstreetmap.org/index.php/Name_finder
      */
-    private static class NameFinderResultParser extends DefaultHandler {
+    private static final class NameFinderResultParser extends DefaultHandler {
         private SearchResult currentResult;
         private StringBuilder description;
         private int depth;

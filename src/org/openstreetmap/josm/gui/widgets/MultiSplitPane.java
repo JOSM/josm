@@ -153,7 +153,7 @@ public class MultiSplitPane extends JPanel {
         void paint(Graphics g, Divider divider);
     }
 
-    private class DefaultDividerPainter implements DividerPainter {
+    private final class DefaultDividerPainter implements DividerPainter {
         @Override
         public void paint(Graphics g, Divider divider) {
             if (g instanceof Graphics2D && divider == activeDivider() && !isContinuousLayout()) {
@@ -343,7 +343,7 @@ public class MultiSplitPane extends JPanel {
         setCursor(Cursor.getPredefinedCursor(cursorID));
     }
 
-    private class InputHandler extends MouseInputAdapter implements KeyListener {
+    private final class InputHandler extends MouseInputAdapter implements KeyListener {
 
         @Override
         public void mouseEntered(MouseEvent e) {

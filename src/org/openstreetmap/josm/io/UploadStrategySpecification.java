@@ -136,7 +136,7 @@ public class UploadStrategySpecification {
     public int getNumRequests(int numObjects) {
         if (numObjects <= 0)
             return 0;
-        switch(strategy) {
+        switch (strategy) {
         case INDIVIDUAL_OBJECTS_STRATEGY: return numObjects;
         case SINGLE_REQUEST_STRATEGY: return 1;
         case CHUNKED_DATASET_STRATEGY:

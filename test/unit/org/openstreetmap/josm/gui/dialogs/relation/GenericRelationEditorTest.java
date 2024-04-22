@@ -323,9 +323,9 @@ public class GenericRelationEditorTest {
         return (T) current;
     }
 
-    private static class PasteMembersActionMock extends MockUp<PasteMembersAction> {
+    private static final class PasteMembersActionMock extends MockUp<PasteMembersAction> {
         @Mock
-        protected void updateEnabledState() {
+        public void updateEnabledState() {
             // Do nothing
         }
     }

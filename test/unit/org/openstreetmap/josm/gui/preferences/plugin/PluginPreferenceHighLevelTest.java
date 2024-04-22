@@ -18,10 +18,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import mockit.MockUp;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +38,10 @@ import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import mockit.MockUp;
 
 /**
  * Higher level tests of {@link PluginPreference} class.
@@ -131,13 +131,13 @@ class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    void testInstallWithoutUpdate(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testInstallWithoutUpdate() throws Exception {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "2"), "irrelevant_plugin")
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Collections.singletonList("dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
@@ -237,13 +237,13 @@ class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    void testDisablePluginWithUpdatesAvailable(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testDisablePluginWithUpdatesAvailable() throws Exception {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew),
             new PluginServer.RemotePlugin(null, null, "irrelevant_plugin")
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
@@ -345,13 +345,13 @@ class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    void testUpdateOnlySelectedPlugin(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testUpdateOnlySelectedPlugin() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
@@ -515,14 +515,14 @@ class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    void testUpdateWithNoAvailableUpdates(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testUpdateWithNoAvailableUpdates() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarOld),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "123"), "irrelevant_plugin")
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
@@ -643,7 +643,7 @@ class PluginPreferenceHighLevelTest {
      * @throws Exception never
      */
     @Test
-    void testInstallWithoutRestartRequired(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testInstallWithoutRestartRequired() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final boolean[] loadPluginsCalled = new boolean[] {false};
         new MockUp<PluginHandler>() {
@@ -664,7 +664,7 @@ class PluginPreferenceHighLevelTest {
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Collections.emptyList());
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
@@ -755,7 +755,7 @@ class PluginPreferenceHighLevelTest {
      */
     @AssumeRevision("Revision: 7000\n")
     @Test
-    void testInstallMultiVersion(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testInstallMultiVersion() throws Exception {
         TestUtils.assumeWorkingJMockit();
 
         final String bazOldServePath = "/baz/old.jar";
@@ -765,7 +765,7 @@ class PluginPreferenceHighLevelTest {
                 "6800_Plugin-Url", "6;" + pluginServerRule.url(bazOldServePath)
             ))
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         // need to actually serve this older jar from somewhere
         pluginServerRule.stubFor(
             WireMock.get(WireMock.urlEqualTo(bazOldServePath)).willReturn(

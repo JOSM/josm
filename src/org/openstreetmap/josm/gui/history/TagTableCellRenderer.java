@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.awt.Component;
 
@@ -12,8 +14,6 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * The {@link TableCellRenderer} for a list of tags in {@link HistoryBrowser}
@@ -50,7 +50,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         String tooltip = null;
         setBorder(null);
         if (model.hasTag(key)) {
-            switch(column) {
+            switch (column) {
             case TagTableColumnModel.COLUMN_KEY:
                 // the name column
                 text = key;

@@ -71,7 +71,7 @@ public class AddCommand extends Command {
     @Override
     public String getDescriptionText() {
         String msg;
-        switch(OsmPrimitiveType.from(osm)) {
+        switch (OsmPrimitiveType.from(osm)) {
         case NODE: msg = marktr("Add node {0}"); break;
         case WAY: msg = marktr("Add way {0}"); break;
         case RELATION: msg = marktr("Add relation {0}"); break;

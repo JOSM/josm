@@ -113,7 +113,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        switch(col) {
+        switch (col) {
         case 0: return data.get(row).getModificationType();
         default: return data.get(row).getPrimitive();
         }

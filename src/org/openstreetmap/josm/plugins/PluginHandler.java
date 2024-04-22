@@ -500,7 +500,7 @@ public final class PluginHandler {
         // check whether automatic update at startup was disabled
         //
         String policy = Config.getPref().get(togglePreferenceKey, "ask").trim().toLowerCase(Locale.ENGLISH);
-        switch(policy) {
+        switch (policy) {
         case "never":
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 Logging.info(tr("Skipping plugin update after JOSM upgrade. Automatic update at startup is disabled."));
@@ -551,7 +551,7 @@ public final class PluginHandler {
         );
 
         if (pnlMessage.isRememberDecision()) {
-            switch(ret) {
+            switch (ret) {
             case 0:
                 Config.getPref().put(togglePreferenceKey, "always");
                 break;
@@ -1643,7 +1643,7 @@ public final class PluginHandler {
             String name = info.name
             + (!Utils.isEmpty(info.localversion) ? " Version: " + info.localversion : "");
             pluginTab.add(new JLabel(name), GBC.std());
-            pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+            pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GridBagConstraints.HORIZONTAL));
             pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
 
             JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
@@ -1656,7 +1656,7 @@ public final class PluginHandler {
             description.setBackground(UIManager.getColor("Panel.background"));
             description.setCaretPosition(0);
 
-            pluginTab.add(description, GBC.eop().fill(GBC.HORIZONTAL));
+            pluginTab.add(description, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
         }
         return pluginTab;
     }

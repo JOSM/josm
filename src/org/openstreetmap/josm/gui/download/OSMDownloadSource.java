@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -217,13 +218,13 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             };
 
             downloadSourcesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            add(downloadSourcesPanel, GBC.eol().fill(GBC.HORIZONTAL));
+            add(downloadSourcesPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             updateSources();
 
             sizeCheck.setFont(sizeCheck.getFont().deriveFont(Font.PLAIN));
             JPanel sizeCheckPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             sizeCheckPanel.add(sizeCheck);
-            add(sizeCheckPanel, GBC.eol().fill(GBC.HORIZONTAL));
+            add(sizeCheckPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
             setMinimumSize(new Dimension(450, 115));
         }
@@ -353,7 +354,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         }
     }
 
-    private static class OsmDataDownloadType implements IDownloadSourceType {
+    private static final class OsmDataDownloadType implements IDownloadSourceType {
         static final BooleanProperty IS_ENABLED = new BooleanProperty("download.osm.data", true);
         JCheckBox cbDownloadOsmData;
 
@@ -393,7 +394,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         }
     }
 
-    private static class GpsDataDownloadType implements IDownloadSourceType {
+    private static final class GpsDataDownloadType implements IDownloadSourceType {
         static final BooleanProperty IS_ENABLED = new BooleanProperty("download.osm.gps", false);
         private JCheckBox cbDownloadGpxData;
 
@@ -431,7 +432,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         }
     }
 
-    private static class NotesDataDownloadType implements IDownloadSourceType {
+    private static final class NotesDataDownloadType implements IDownloadSourceType {
         static final BooleanProperty IS_ENABLED = new BooleanProperty("download.osm.notes", false);
         private JCheckBox cbDownloadNotes;
 

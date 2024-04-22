@@ -84,7 +84,7 @@ class UploadActionTest {
         }
     }
 
-    private static class UploadDialogMock extends MockUp<UploadDialog> {
+    private static final class UploadDialogMock extends MockUp<UploadDialog> {
         @Mock
         public void pack(final Invocation invocation) {
             if (!GraphicsEnvironment.isHeadless()) {
@@ -100,7 +100,7 @@ class UploadActionTest {
         }
 
         @Mock
-        public final boolean isCanceled(final Invocation invocation) {
+        public boolean isCanceled(final Invocation invocation) {
             if (!GraphicsEnvironment.isHeadless()) {
                 return Boolean.TRUE.equals(invocation.proceed());
             }

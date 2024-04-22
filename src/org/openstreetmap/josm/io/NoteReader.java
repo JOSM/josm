@@ -81,6 +81,7 @@ public class NoteReader {
                 parseMode = NoteParseMode.DUMP;
                 notes = new ArrayList<>(10_000);
                 return;
+            default: // Keep going
             }
 
             if (parseMode == NoteParseMode.API) {
@@ -168,6 +169,7 @@ public class NoteReader {
             case "note": //nothing to do for comment or note, already handled above
             case "comment":
                 break;
+            default: // Keep going (return)
             }
         }
 
@@ -178,8 +180,8 @@ public class NoteReader {
     }
 
     static LatLon parseLatLon(UnaryOperator<String> attrs) {
-        final var lat = Double.parseDouble(attrs.apply("lat"));
-        final var lon = Double.parseDouble(attrs.apply("lon"));
+        final double lat = Double.parseDouble(attrs.apply("lat"));
+        final double lon = Double.parseDouble(attrs.apply("lon"));
         return new LatLon(lat, lon);
     }
 
@@ -196,7 +198,7 @@ public class NoteReader {
     }
 
     static Note parseNoteFull(UnaryOperator<String> attrs) {
-        final var note = parseNoteBasic(attrs);
+        final Note note = parseNoteBasic(attrs);
         String id = attrs.apply("id");
         if (id != null) {
             note.setId(Long.parseLong(id));

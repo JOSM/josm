@@ -466,7 +466,7 @@ public final class CustomConfigurator {
                 String elementName = item.getNodeName();
                 Element elem = (Element) item;
 
-                switch(elementName) {
+                switch (elementName) {
                 case "var":
                     setVar(elem.getAttribute("name"), evalVars(elem.getAttribute("value")));
                     break;

@@ -499,7 +499,7 @@ public class ChangesetQuery {
 
             for (Entry<String, String> entry: queryParams.entrySet()) {
                 String k = entry.getKey();
-                switch(k) {
+                switch (k) {
                 case "uid":
                     if (queryParams.containsKey("display_name"))
                         throw new ChangesetQueryUrlException(
@@ -520,7 +520,7 @@ public class ChangesetQuery {
                     break;
                 case "time":
                     Instant[] dates = parseTime(entry.getValue());
-                    switch(dates.length) {
+                    switch (dates.length) {
                     case 1:
                         csQuery.closedAfter(dates[0]);
                         break;

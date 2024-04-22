@@ -645,7 +645,7 @@ public final class I18n {
     }
 
     private static int pluralEval(long n) {
-        switch(pluralMode) {
+        switch (pluralMode) {
         case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, es, et, eu, fi, gl, is, it, iw_IL, mr, nb, nl, sv */
             return (n != 1) ? 1 : 0;
         case MODE_NONE: /* id, vi, ja, km, tr, zh_CN, zh_TW */

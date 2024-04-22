@@ -24,7 +24,7 @@ public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {
         JComponent comp = this;
         reset(comp, true);
         renderColors(comp, isSelected);
-        switch(column) {
+        switch (column) {
         case 0:
             renderInstant((Instant) value);
             break;
