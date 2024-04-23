@@ -159,7 +159,7 @@ public class DateUtilsTest {
         assertEquals("12:00 AM", DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
 
         setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-        assertEquals("1:00:00 AM CET", DateUtils.formatTime(new Date(0), DateFormat.LONG));
+        assertEquals("1:00:00 AM GMT+01:00", DateUtils.formatTime(new Date(0), DateFormat.LONG), "This is mostly dependent upon java.locale.providers. CET is also OK.");
     }
 
     /**
@@ -306,5 +306,14 @@ public class DateUtilsTest {
         } finally {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
+    }
+
+    /**
+     * Some Java version use narrow no-break space ("NNBSP") instead of a space.
+     * @param time The time string with NNBSP instead of a space
+     * @return The time with spaces instead of NNBSP
+     */
+    private static String replaceWhitespace(String time) {
+        return time.replace((char) 8239 /* "NNBSP" */, ' ');
     }
 }
