@@ -40,6 +40,7 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Test cases for {@link StyledMapRenderer} and the MapCSS classes.
@@ -353,6 +354,10 @@ public class MapCSSRendererTest {
         public File getReference() {
             // Sometimes Java changes how things are rendered. When that happens, use separate reference files. It is
             // usually "reference" + javaSuffix + ".png".
+            final File customReferenceFile = new File(getTestDirectory() + "/reference-java" + Utils.getJavaVersion() + ".png");
+            if (customReferenceFile.isFile()) {
+                return customReferenceFile;
+            }
             return new File(getTestDirectory() + "/reference.png");
         }
 

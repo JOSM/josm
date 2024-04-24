@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.AssertionsInEDT;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests for Remote Control
@@ -59,7 +58,7 @@ class RemoteControlTest {
         connection.connect();
         assertEquals(HttpURLConnection.HTTP_BAD_REQUEST, connection.getResponseCode());
         try (InputStream is = connection.getErrorStream()) {
-            String responseBody = new String(Utils.readBytesFromStream(is), StandardCharsets.UTF_8);
+            String responseBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assert responseBody.contains(RequestProcessor.getUsageAsHtml());
         }
     }

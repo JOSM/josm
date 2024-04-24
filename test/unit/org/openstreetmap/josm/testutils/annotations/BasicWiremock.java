@@ -40,7 +40,8 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.extension.ResponseTransformerV2;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
 /**
@@ -64,7 +65,7 @@ public @interface BasicWiremock {
     String value() default "";
 
     /**
-     * {@link ResponseTransformer} for use with the WireMock server.
+     * {@link ResponseTransformerV2} for use with the WireMock server.
      * Current constructors supported:
      * <ul>
      *     <li>{@code new ResponseTransformer()}</li>
@@ -72,7 +73,7 @@ public @interface BasicWiremock {
      * </ul>
      * @return The transformers to instantiate
      */
-    Class<? extends ResponseTransformer>[] responseTransformers() default {};
+    Class<? extends ResponseTransformerV2>[] responseTransformers() default {};
 
     /**
      * Start/stop WireMock automatically, and check for missed calls.
@@ -91,13 +92,13 @@ public @interface BasicWiremock {
             BasicWiremock annotation = AnnotationUtils.findFirstParentAnnotation(context, BasicWiremock.class)
                     .orElseThrow(() -> new IllegalArgumentException("There must be a @BasicWiremock annotation"));
             return context.getStore(namespace).getOrComputeIfAbsent(WireMockServer.class, clazz -> {
-                final List<ResponseTransformer> transformers = new ArrayList<>(annotation.responseTransformers().length);
-                for (Class<? extends ResponseTransformer> responseTransformer : annotation.responseTransformers()) {
+                final List<ResponseTransformerV2> transformers = new ArrayList<>(annotation.responseTransformers().length);
+                for (Class<? extends ResponseTransformerV2> responseTransformer : annotation.responseTransformers()) {
                     for (Pair<Class<?>[], Object[]> parameterMapping : Arrays.asList(
                             new Pair<>(new Class<?>[] {ExtensionContext.class }, new Object[] {context }),
                             new Pair<>(new Class<?>[0], new Object[0]))) {
                         try {
-                            Constructor<? extends ResponseTransformer> constructor = responseTransformer
+                            Constructor<? extends ResponseTransformerV2> constructor = responseTransformer
                                     .getConstructor(parameterMapping.a);
                             transformers.add(constructor.newInstance(parameterMapping.b));
                             break;
@@ -108,7 +109,7 @@ public @interface BasicWiremock {
                 }
                 return new WireMockServer(
                     options().usingFilesUnderDirectory(Utils.isStripEmpty(annotation.value()) ? TestUtils.getTestDataRoot() :
-                            annotation.value()).extensions(transformers.toArray(new ResponseTransformer[0])).dynamicPort());
+                            annotation.value()).extensions(transformers.toArray(new ResponseTransformerV2[0])).dynamicPort());
             }, WireMockServer.class);
         }
 
@@ -166,7 +167,7 @@ public @interface BasicWiremock {
                 List<Field> wireMockFields = AnnotationSupport.findAnnotatedFields(context.getRequiredTestClass(), BasicWiremock.class);
                 for (Field field : wireMockFields) {
                     if (WireMockServer.class.isAssignableFrom(field.getType())) {
-                        final boolean isAccessible = field.isAccessible();
+                        final boolean isAccessible = field.canAccess(context.getRequiredTestInstance());
                         field.setAccessible(true);
                         try {
                             field.set(context.getTestInstance().orElse(null), getWiremock(context));
@@ -213,7 +214,11 @@ public @interface BasicWiremock {
                 fail("OsmApiExtension requires @BasicPreferences");
             }
             super.beforeAll(context);
-            Config.getPref().put("osm-server.url", getWiremock(context).baseUrl());
+            Config.getPref().put("osm-server.url", getWiremock(context).baseUrl() + "/api");
+            getWiremock(context).stubFor(WireMock.get("/api/0.6/capabilities")
+                    .willReturn(WireMock.aResponse().withBodyFile("api/0.6/capabilities")));
+            getWiremock(context).stubFor(WireMock.get("/api/capabilities")
+                    .willReturn(WireMock.aResponse().withBodyFile("api/capabilities")));
             OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         }
     }

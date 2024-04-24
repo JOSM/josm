@@ -18,7 +18,6 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests for class {@link PluginDownloadTask}.
@@ -128,7 +127,7 @@ class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
             // the ".jar" file's contents should be as before
             assertArrayEquals(
                 existingPluginContents,
-                Utils.readBytesFromStream(pluginDirPluginStream)
+                pluginDirPluginStream.readAllBytes()
             );
         }
     }

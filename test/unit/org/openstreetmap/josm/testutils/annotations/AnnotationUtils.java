@@ -47,12 +47,12 @@ public final class AnnotationUtils {
      */
     public static void resetStaticClass(Class<?> clazz) throws ReflectiveOperationException {
         for (Field field : clazz.getDeclaredFields()) {
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
             // Don't reset fields that are not static
             if ((field.getModifiers() & Modifier.STATIC) == 0) {
                 continue;
+            }
+            if (!field.canAccess(null)) {
+                field.setAccessible(true);
             }
             final boolean isFinal = (field.getModifiers() & Modifier.FINAL) != 0;
             if (field.get(null) instanceof Collection && isFinal) {
