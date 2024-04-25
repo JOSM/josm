@@ -71,7 +71,7 @@ public class CycleDetector extends Test {
     public void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
         directionalWaterways = Config.getPref().getList(PREFIX + ".directionalWaterways",
-                Arrays.asList("river", "stream", "drain", "ditch", "fish_pass"));
+                Arrays.asList("river", "stream", "tidal_channel", "drain", "ditch", "fish_pass"));
     }
 
     @Override
