@@ -163,7 +163,8 @@ public class DateUtilsTest {
         assertEquals(twelveAM, DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
 
         setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-        assertEquals("1:00:00" + separator + "AM GMT+01:00", DateUtils.formatTime(new Date(0), DateFormat.LONG), "This is mostly dependent upon java.locale.providers. CET is also OK.");
+        assertEquals("1:00:00" + separator + "AM GMT+01:00", DateUtils.formatTime(new Date(0),
+            DateFormat.LONG), "This is mostly dependent upon java.locale.providers. CET is also OK.");
     }
 
     /**
