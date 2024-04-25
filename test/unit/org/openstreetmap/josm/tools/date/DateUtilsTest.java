@@ -23,6 +23,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.tools.UncheckedParseException;
+import org.openstreetmap.josm.tools.Utils;
 
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
@@ -152,14 +153,18 @@ public class DateUtilsTest {
      */
     @Test
     void testFormatTime() {
-        assertEquals("12:00 AM", DateUtils.formatTime(new Date(0), DateFormat.SHORT));
-        assertEquals("1:00 AM", DateUtils.formatTime(new Date(60 * 60 * 1000), DateFormat.SHORT));
-        assertEquals("12:00 AM", DateUtils.formatTime(new Date(999), DateFormat.SHORT));
+        // Somewhere between Java 17 and Java 21, a non-breaking space replaced the original space between the time and AM/PM.
+        final var separator = Utils.getJavaVersion() >= 21 ? '\u202f' : ' ';
+        final var twelveAM = "12:00" + separator + "AM";
+        assertEquals(twelveAM, DateUtils.formatTime(new Date(0), DateFormat.SHORT));
+        assertEquals("1:00" + separator + "AM", DateUtils.formatTime(new Date(60 * 60 * 1000), DateFormat.SHORT));
+        assertEquals(twelveAM, DateUtils.formatTime(new Date(999), DateFormat.SHORT));
         // ignore seconds
-        assertEquals("12:00 AM", DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
+        assertEquals(twelveAM, DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
 
         setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-        assertEquals("1:00:00 AM CET", DateUtils.formatTime(new Date(0), DateFormat.LONG));
+        assertEquals("1:00:00" + separator + "AM GMT+01:00", DateUtils.formatTime(new Date(0),
+            DateFormat.LONG), "This is mostly dependent upon java.locale.providers. CET is also OK.");
     }
 
     /**
@@ -306,5 +311,14 @@ public class DateUtilsTest {
         } finally {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
+    }
+
+    /**
+     * Some Java version use narrow no-break space ("NNBSP") instead of a space.
+     * @param time The time string with NNBSP instead of a space
+     * @return The time with spaces instead of NNBSP
+     */
+    private static String replaceWhitespace(String time) {
+        return time.replace((char) 8239 /* "NNBSP" */, ' ');
     }
 }

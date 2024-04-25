@@ -84,7 +84,7 @@ class JCSCachedTileLoaderJobTest {
         }
     }
 
-    private static class Listener implements ICachedLoaderListener {
+    private static final class Listener implements ICachedLoaderListener {
         private CacheEntryAttributes attributes;
         private boolean ready;
         private LoadResult result;
@@ -512,7 +512,7 @@ class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testCheckUsing304() throws IOException {
+    void testCheckUsing304() throws IOException {
         ICacheAccess<String, CacheEntry> cache = getCache();
         long expires = TimeUnit.DAYS.toMillis(1);
         long testStart = System.currentTimeMillis();

@@ -428,7 +428,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
                     continue;
                 }
                 String msg;
-                switch(type) {
+                switch (type) {
                 case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives, numPrimitives); break;
                 case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
                 case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
@@ -460,7 +460,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
             } else {
                 StatisticsInfo info = (StatisticsInfo) value;
 
-                switch(column) {
+                switch (column) {
                 case 0: renderNumTags(info); break;
                 case 1: renderFrom(info); break;
                 case 2: renderTo(info); break;

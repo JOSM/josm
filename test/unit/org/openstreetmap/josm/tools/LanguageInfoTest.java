@@ -45,7 +45,7 @@ class LanguageInfoTest {
                 "", "DE:", "Pt:", "Ca:", "Zh-hans:", "Zh-hant:", "Ast:", "", "RU:", "No:");
     }
 
-    private static void testGetWikiLanguagePrefixes(LanguageInfo.LocaleType type, String...expected) {
+    private static void testGetWikiLanguagePrefixes(LanguageInfo.LocaleType type, String... expected) {
         final List<String> actual = Stream.of(EN_NZ, DE_DE, PT_BR, CA_ES_VALENCIA, ZN_CN, ZN_TW, AST, EN_GB, RU, NB)
                 .map(locale -> LanguageInfo.getWikiLanguagePrefix(locale, type))
                 .collect(Collectors.toList());

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -87,7 +88,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
             } else {
                 EastNorth center = nc.getCenter();
                 EastNorth newcenter = nc.getEastNorth(nc.getWidth()/2+nc.getWidth()/5, nc.getHeight()/2+nc.getHeight()/5);
-                switch(action) {
+                switch (action) {
                 case "left":
                     nc.zoomTo(new EastNorth(2*center.east()-newcenter.east(), center.north()));
                     break;
@@ -172,11 +173,11 @@ public class MapMover extends MouseAdapter implements Destroyable {
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
-        boolean allowMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
+        int offMask = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK;
+        boolean allowMovement = (e.getModifiersEx() & (InputEvent.BUTTON3_DOWN_MASK | offMask)) == InputEvent.BUTTON3_DOWN_MASK;
         if (PlatformManager.isPlatformOsx()) {
             MapFrame map = MainApplication.getMap();
-            int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+            int macMouseMask = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON1_DOWN_MASK;
             boolean macMovement = e.getModifiersEx() == macMouseMask;
             boolean allowedMode = !map.mapModeSelect.equals(map.mapMode)
                               || SelectAction.Mode.SELECT == map.mapModeSelect.getMode();
@@ -203,8 +204,8 @@ public class MapMover extends MouseAdapter implements Destroyable {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
-        int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+        int offMask = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK;
+        int macMouseMask = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON1_DOWN_MASK;
         if ((e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0) ||
                 (PlatformManager.isPlatformOsx() && e.getModifiersEx() == macMouseMask)) {
             startMovement(e);
@@ -252,7 +253,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        int rotation = PROP_ZOOM_REVERSE_WHEEL.get() ? -e.getWheelRotation() : e.getWheelRotation();
+        int rotation = Boolean.TRUE.equals(PROP_ZOOM_REVERSE_WHEEL.get()) ? -e.getWheelRotation() : e.getWheelRotation();
         nc.zoomManyTimes(e.getX(), e.getY(), rotation);
     }
 
@@ -267,7 +268,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         // Is only the selected mouse button pressed?
         if (PlatformManager.isPlatformOsx()) {
-            if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK) {
+            if (e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 doMoveForDrag(e);
             } else {
                 endMovement();

@@ -349,7 +349,7 @@ public class MenuScroller {
         }
     }
 
-    private class MenuScrollListener implements PopupMenuListener {
+    private final class MenuScrollListener implements PopupMenuListener {
 
         @Override
         public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -452,7 +452,7 @@ public class MenuScroller {
         }
     }
 
-    private class MouseScrollListener implements MouseWheelListener {
+    private final class MouseScrollListener implements MouseWheelListener {
         @Override
         public void mouseWheelMoved(MouseWheelEvent mwe) {
             firstIndex += mwe.getWheelRotation();

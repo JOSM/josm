@@ -387,7 +387,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
      */
     private void wayPoint(WayPoint pnt, int mode) {
         String type;
-        switch(mode) {
+        switch (mode) {
         case WAY_POINT:
             type = "wpt";
             break;

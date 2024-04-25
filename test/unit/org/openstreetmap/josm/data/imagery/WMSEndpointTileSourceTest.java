@@ -67,7 +67,7 @@ class WMSEndpointTileSourceTest implements TileSourceTest {
                         )
                 );
 
-        tileServer.stubFor(WireMock.get(WireMock.urlEqualTo("//maps")).willReturn(WireMock.aResponse().withBody(
+        tileServer.stubFor(WireMock.get(WireMock.urlEqualTo("/other/maps")).willReturn(WireMock.aResponse().withBody(
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n" +
                 "<entry>\n" +
@@ -94,7 +94,7 @@ class WMSEndpointTileSourceTest implements TileSourceTest {
                 "</imagery>"
                 )));
 
-        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("//maps")));
+        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("/other/maps")));
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
         assertEquals(1, ImageryLayerInfo.instance.getDefaultLayers().size());
         ImageryInfo wmsImageryInfo = ImageryLayerInfo.instance.getDefaultLayers().get(0);
@@ -117,7 +117,7 @@ class WMSEndpointTileSourceTest implements TileSourceTest {
                         )
                 );
 
-        tileServer.stubFor(WireMock.get(WireMock.urlEqualTo("//maps")).willReturn(WireMock.aResponse().withBody(
+        tileServer.stubFor(WireMock.get(WireMock.urlEqualTo("/other/maps")).willReturn(WireMock.aResponse().withBody(
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n" +
                 "  <entry>\n" +
@@ -140,7 +140,7 @@ class WMSEndpointTileSourceTest implements TileSourceTest {
                 "</imagery>"
                 )));
 
-        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("//maps")));
+        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("/other/maps")));
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
         ImageryInfo wmsImageryInfo = ImageryLayerInfo.instance.getDefaultLayers().get(0);
         wmsImageryInfo.setDefaultLayers(Collections.singletonList(new DefaultLayer(ImageryType.WMS_ENDPOINT, "historiske-ortofoto", "", "")));

@@ -242,7 +242,7 @@ public class CachedFile implements Closeable {
      * @throws IOException in case of an I/O error
      */
     public byte[] getByteContent() throws IOException {
-        return Utils.readBytesFromStream(getInputStream());
+        return getInputStream().readAllBytes();
     }
 
     /**

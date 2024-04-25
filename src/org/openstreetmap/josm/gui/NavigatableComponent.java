@@ -1060,7 +1060,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
 
         if (ds != null) {
-            double dist, snapDistanceSq = PROP_SNAP_DISTANCE.get();
+            double dist;
+            double snapDistanceSq = PROP_SNAP_DISTANCE.get();
             snapDistanceSq *= snapDistanceSq;
 
             for (Node n : ds.searchNodes(getBBox(p, PROP_SNAP_DISTANCE.get()))) {
@@ -1191,7 +1192,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (nlists.isEmpty()) return null;
 
         if (preferredRefs != null && preferredRefs.isEmpty()) preferredRefs = null;
-        Node ntsel = null, ntnew = null, ntref = null;
+        Node ntsel = null;
+        Node ntnew = null;
+        Node ntref = null;
         boolean useNtsel = useSelected;
         double minDistSq = nlists.keySet().iterator().next();
 
@@ -1787,7 +1790,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Listener for mouse movement events. Used to detect when primitives are being hovered over with the mouse pointer
      * so that registered {@link PrimitiveHoverListener}s can be notified.
      */
-    private class PrimitiveHoverMouseListener extends MouseAdapter {
+    private final class PrimitiveHoverMouseListener extends MouseAdapter {
         @Override
         public void mouseMoved(MouseEvent e) {
             OsmPrimitive hovered = getNearestNodeOrWay(e.getPoint(), isSelectablePredicate, true);

@@ -591,8 +591,8 @@ public final class TestUtils {
                 FileInputStream streamB = new FileInputStream(fileB);
             ) {
                 assertArrayEquals(
-                    Utils.readBytesFromStream(streamA),
-                    Utils.readBytesFromStream(streamB)
+                    streamA.readAllBytes(),
+                    streamB.readAllBytes()
                 );
             }
         } catch (IOException e) {

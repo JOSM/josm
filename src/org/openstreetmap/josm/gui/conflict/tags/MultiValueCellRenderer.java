@@ -154,7 +154,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         boolean conflict = tagModel.getKeysWithConflicts().contains(tagModel.getKey(row));
         renderColors(decision, isSelected, conflict);
         renderToolTipText(decision);
-        switch(column) {
+        switch (column) {
         case 0:
             if (decision.isDecided()) {
                 setIcon(iconDecided);

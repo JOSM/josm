@@ -194,7 +194,7 @@ public class ChangesetManagementPanel extends JPanel implements ItemListener, Ch
         public void itemStateChanged(ItemEvent e) {
             if (e.getItemSelectable() != cbCloseAfterUpload)
                 return;
-            switch(e.getStateChange()) {
+            switch (e.getStateChange()) {
             case ItemEvent.SELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, false, true);
                 Config.getPref().putBoolean("upload.changeset.close", true);

@@ -18,7 +18,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @OsmApi(OsmApi.APIType.DEV)
 @Projection
 class LifecycleTest {
-    private static class InitStatusListenerStub implements InitStatusListener {
+    private static final class InitStatusListenerStub implements InitStatusListener {
 
         boolean updated;
         boolean finished;

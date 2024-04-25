@@ -142,7 +142,7 @@ public class MultiValueResolutionDecision {
      * @throws IllegalStateException if this resolution is not yet decided
      */
     public String getChosenValue() {
-        switch(type) {
+        switch (type) {
         case UNDECIDED: throw new IllegalStateException(tr("Not decided yet"));
         case KEEP_ONE: return value;
         case SUM_ALL_NUMERIC: return tags.getSummedValues(getKey());
@@ -293,7 +293,7 @@ public class MultiValueResolutionDecision {
      * @return a tag representing the current resolution. Null, if this resolution is not resolved yet
      */
     public Tag getResolution() {
-        switch(type) {
+        switch (type) {
         case SUM_ALL_NUMERIC: return new Tag(getKey(), tags.getSummedValues(getKey()));
         case KEEP_ALL: return new Tag(getKey(), tags.getJoinedValues(getKey()));
         case KEEP_ONE: return new Tag(getKey(), value);

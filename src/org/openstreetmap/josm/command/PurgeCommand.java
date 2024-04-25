@@ -95,7 +95,7 @@ public class PurgeCommand extends Command {
                     // but that would not free memory in case the
                     // user clears undo/redo buffer after purge
                     PrimitiveData empty;
-                    switch(osm.getType()) {
+                    switch (osm.getType()) {
                     case NODE: empty = new NodeData(); break;
                     case WAY: empty = new WayData(); break;
                     case RELATION: empty = new RelationData(); break;

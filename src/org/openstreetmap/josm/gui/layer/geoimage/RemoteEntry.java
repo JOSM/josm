@@ -295,11 +295,11 @@ public class RemoteEntry implements IImageEntry<RemoteEntry>, ImageMetadata {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        final var u = getImageURI();
+        final URI u = getImageURI();
         if (u.getScheme().contains("file")) {
             return Files.newInputStream(Paths.get(u));
         }
-        final var client = HttpClient.create(u.toURL());
+        final HttpClient client = HttpClient.create(u.toURL());
         InputStream actual = client.connect().getContent();
         return new BufferedInputStream(actual) {
             @Override

@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -121,7 +122,7 @@ public class MapPaintDialog extends ToggleDialog {
         model = new StylesModel();
 
         cbWireframe = new JCheckBox();
-        JLabel wfLabel = new JLabel(tr("Wireframe View"), ImageProvider.get("dialogs/mappaint", "wireframe_small"), JLabel.HORIZONTAL);
+        JLabel wfLabel = new JLabel(tr("Wireframe View"), ImageProvider.get("dialogs/mappaint", "wireframe_small"), SwingConstants.HORIZONTAL);
         wfLabel.setFont(wfLabel.getFont().deriveFont(Font.PLAIN));
         wfLabel.setLabelFor(cbWireframe);
 
@@ -295,7 +296,7 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
 
-    private class StyleSourceRenderer extends DefaultTableCellRenderer {
+    private final class StyleSourceRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
@@ -574,7 +575,7 @@ public class MapPaintDialog extends ToggleDialog {
                 tabs.setTabComponentAt(pos, lblErrors);
                 tabs.setEnabledAt(pos, false);
             } else {
-                JLabel lblErrors = new JLabel(tr(title), icon, JLabel.HORIZONTAL);
+                JLabel lblErrors = new JLabel(tr(title), icon, SwingConstants.HORIZONTAL);
                 lblErrors.setLabelFor(pErrors);
                 tabs.setTabComponentAt(pos, lblErrors);
             }
@@ -600,7 +601,7 @@ public class MapPaintDialog extends ToggleDialog {
             }
             text.append(tableRow(tr("Style is currently active?"), s.active ? tr("Yes") : tr("No")))
                 .append("</table>");
-            p.add(new JScrollPane(new HtmlPanel(text.toString())), GBC.eol().fill(GBC.BOTH));
+            p.add(new JScrollPane(new HtmlPanel(text.toString())), GBC.eol().fill(GridBagConstraints.BOTH));
             return p;
         }
 

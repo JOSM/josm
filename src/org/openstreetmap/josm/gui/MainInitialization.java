@@ -157,7 +157,7 @@ public class MainInitialization implements InitializationSequence {
         );
     }
 
-    private static class JosmSettingsAdapter implements SettingsAdapter {
+    private static final class JosmSettingsAdapter implements SettingsAdapter {
 
         @Override
         public String get(String key, String def) {

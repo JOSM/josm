@@ -248,7 +248,16 @@ Build-Date: ${build.tstamp}
               <compilerarg value="-Xlint:unchecked"/>
               <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
               <compilerarg value="-XDignore.symbol.file"/>
-              <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsGetClass:OFF -Xep:UndefinedEquals:OFF -Xep:BadImport:OFF -Xep:AnnotateFormatMethod:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF -Xep:InlineMeSuggester:OFF" unless:set="noErrorProne"/>
+              <!-- -XepExcludedPaths:.*/parsergen/.*: see #16860 - Resolve JavaCC using Apache Ivy -->
+              <!-- ReferenceEquality: see #12472, fix #13230, fix #13225, fix #13228 - disable ReferenceEquality warning + partial revert of r10656 + r10659, causes too much problems -->
+              <!-- FutureReturnValueIgnored: update to error_prone 2.0.18 (disabled on purpose?) -->
+              <!-- JdkObsolete: see #11924 - see #15560 - support jdk10+ in build.xml, update to proguard 6.0beta1 and error_prone 2.1.2 (disabled due to crashes) -->
+              <!-- EqualsGetClass, UndefinedEquals: see #16498 - update to error_prone 2.3.2-20180817.184126-35 to test JDK 12 compatibility. (disabled due to crashes?) -->
+              <!-- BadImport, AnnotateFormatMethod: see #17516 - update to error-prone 2.3.5-SNAPSHOT plus following patches for Java 13 compatibility (disabled due to crashes?) -->
+              <!-- JavaUtilDate, DoNotCallSuggester, BanSerializableRead: see #19724 - update to error-prone 2.5.1, checkstyle 8.36, spotbugs 4.2.1 (disabled due to crashes?) -->
+              <!-- InlineMeSuggester: See #20522 - Disable https://errorprone.info/bugpattern/InlineMeSuggester (maybe it crashed?) -->
+              <!-- LongDoubleConversion: Disable due to conflicting with Sonar settings -->
+              <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsGetClass:OFF -Xep:UndefinedEquals:OFF -Xep:BadImport:OFF -Xep:AnnotateFormatMethod:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF -Xep:InlineMeSuggester:OFF -Xep:LongDoubleConversion:OFF" unless:set="noErrorProne"/>
               <compilerarg line="-Xmaxwarns 1000"/>
               <compilerarg value="-Xplugin:semanticdb -sourceroot:@{srcdir} -targetroot:${build.dir}/semanticdb" if:set="lsif" />
               <classpath>

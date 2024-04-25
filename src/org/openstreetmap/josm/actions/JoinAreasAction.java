@@ -209,11 +209,11 @@ public class JoinAreasAction extends JosmAction {
         }
 
         public List<Node> getNodes() {
-            final var nodes = new ArrayList<Node>();
+            List<Node> nodes = new ArrayList<>();
             for (WayInPolygon way : this.ways) {
                 //do not add the last node as it will be repeated in the next way
                 if (way.insideToTheRight) {
-                    for (var pos = 0; pos < way.way.getNodesCount() - 1; pos++) {
+                    for (int pos = 0; pos < way.way.getNodesCount() - 1; pos++) {
                         nodes.add(way.way.getNode(pos));
                     }
                 } else {
@@ -342,9 +342,9 @@ public class JoinAreasAction extends JosmAction {
          * @return oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
          */
         private static double getAngle(Node n1, Node n2, Node n3) {
-            final var en1 = n1.getEastNorth();
-            final var en2 = n2.getEastNorth();
-            final var en3 = n3.getEastNorth();
+            EastNorth en1 = n1.getEastNorth();
+            EastNorth en2 = n2.getEastNorth();
+            EastNorth en3 = n3.getEastNorth();
             double angle = Math.atan2(en3.getY() - en1.getY(), en3.getX() - en1.getX()) -
                     Math.atan2(en2.getY() - en1.getY(), en2.getX() - en1.getX());
             while (angle >= 2*Math.PI) {
@@ -361,8 +361,8 @@ public class JoinAreasAction extends JosmAction {
          * @return The next way.
          */
         public WayInPolygon walk() {
-            final var headNode = getHeadNode();
-            final var prevNode = getPrevNode();
+            Node headNode = getHeadNode();
+            Node prevNode = getPrevNode();
 
             double headAngle = Math.atan2(headNode.getEastNorth().east() - prevNode.getEastNorth().east(),
                     headNode.getEastNorth().north() - prevNode.getEastNorth().north());
@@ -370,7 +370,7 @@ public class JoinAreasAction extends JosmAction {
 
             //find best next way
             WayInPolygon bestWay = null;
-            var bestWayReverse = false;
+            boolean bestWayReverse = false;
 
             for (WayInPolygon way : availableWays) {
                 Node nextNode;
@@ -417,11 +417,11 @@ public class JoinAreasAction extends JosmAction {
          * @return left way or null if none found
          */
         public WayInPolygon leftComingWay() {
-            final var headNode = getHeadNode();
-            final var prevNode = getPrevNode();
+            Node headNode = getHeadNode();
+            Node prevNode = getPrevNode();
 
             WayInPolygon mostLeft = null; // most left way connected to head node
-            var comingToHead = false; // true if candidate come to head node
+            boolean comingToHead = false; // true if candidate come to head node
             double angle = 2*Math.PI;
 
             for (WayInPolygon candidateWay : availableWays) {
@@ -648,11 +648,11 @@ public class JoinAreasAction extends JosmAction {
             ds = areas.get(0).getOuterWay().getDataSet();
         }
 
-        var hasChanges = false;
+        boolean hasChanges = false;
 
-        final var allStartingWays = new ArrayList<Way>();
-        final var innerStartingWays = new ArrayList<Way>();
-        final var outerStartingWays = new ArrayList<Way>();
+        List<Way> allStartingWays = new ArrayList<>();
+        List<Way> innerStartingWays = new ArrayList<>();
+        List<Way> outerStartingWays = new ArrayList<>();
 
         for (Multipolygon area : areas) {
             outerStartingWays.add(area.outerWay);
@@ -720,12 +720,12 @@ public class JoinAreasAction extends JosmAction {
         //  see #9599
         if (discardedWays.stream().anyMatch(w -> !w.isNew())) {
             for (AssembledPolygon ring : boundaries) {
-                for (var k = 0; k < ring.ways.size(); k++) {
+                for (int k = 0; k < ring.ways.size(); k++) {
                     WayInPolygon ringWay = ring.ways.get(k);
                     Way older = keepOlder(ringWay.way, oldestWayMap, discardedWays);
 
                     if (ringWay.way != older) {
-                        final var repl = new WayInPolygon(older, ringWay.insideToTheRight);
+                        WayInPolygon repl = new WayInPolygon(older, ringWay.insideToTheRight);
                         ring.ways.set(k, repl);
                     }
                 }
@@ -768,7 +768,7 @@ public class JoinAreasAction extends JosmAction {
 
         // Delete the discarded inner ways
         if (!discardedWays.isEmpty()) {
-            final var deleteCmd = DeleteCommand.delete(discardedWays, true);
+            Command deleteCmd = DeleteCommand.delete(discardedWays, true);
             if (deleteCmd != null) {
                 cmds.add(deleteCmd);
                 commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
@@ -795,8 +795,8 @@ public class JoinAreasAction extends JosmAction {
      */
     private Way keepOlder(Way way, Map<Node, Way> oldestWayMap, List<Way> discardedWays) {
         Way oldest = null;
-        for (var n : way.getNodes()) {
-            final var orig = oldestWayMap .get(n);
+        for (Node n : way.getNodes()) {
+            Way orig = oldestWayMap .get(n);
             if (orig != null && (oldest == null || oldest.getUniqueId() > orig.getUniqueId())
                     && discardedWays.contains(orig)) {
                 oldest = orig;
@@ -829,7 +829,7 @@ public class JoinAreasAction extends JosmAction {
             return true;
         }
 
-        final var wayTags = TagCollection.unionOfAllPrimitives(ways);
+        TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
         try {
             cmds.addAll(CombinePrimitiveResolverDialog.launchIfNecessary(wayTags, ways, ways));
             commitCommands(marktr("Fix tag conflicts"));
@@ -846,20 +846,20 @@ public class JoinAreasAction extends JosmAction {
      * @return {@code true} if any changes where made
      */
     private boolean removeDuplicateNodes(List<Way> ways) {
-        final var nodeMap = new TreeMap<Node, Node>(new NodePositionComparator());
-        var totalWaysModified = 0;
+        Map<Node, Node> nodeMap = new TreeMap<>(new NodePositionComparator());
+        int totalWaysModified = 0;
 
         for (Way way : ways) {
             if (way.getNodes().size() < 2) {
                 continue;
             }
 
-            final var newNodes = new ArrayList<Node>();
+            List<Node> newNodes = new ArrayList<>();
             Node prevNode = null;
-            var modifyWay = false;
+            boolean modifyWay = false;
 
             for (Node node : way.getNodes()) {
-                var representator = nodeMap.get(node);
+                Node representator = nodeMap.get(node);
                 if (representator == null) {
                     //new node
                     nodeMap.put(node, node);
@@ -922,7 +922,7 @@ public class JoinAreasAction extends JosmAction {
     private void commitExecuted() {
         cmds.clear();
         if (addUndoRedo && !executedCmds.isEmpty()) {
-            final var ur = UndoRedoHandler.getInstance();
+            UndoRedoHandler ur = UndoRedoHandler.getInstance();
             if (executedCmds.size() == 1) {
                 ur.add(executedCmds.getFirst(), false);
             } else {
@@ -944,7 +944,7 @@ public class JoinAreasAction extends JosmAction {
         //prepare next map
         Map<Way, Way> nextWayMap = new HashMap<>();
 
-        for (var pos = 0; pos < parts.size(); pos++) {
+        for (int pos = 0; pos < parts.size(); pos++) {
 
             if (!parts.get(pos).lastNode().equals(parts.get((pos + 1) % parts.size()).firstNode()))
                 throw new IllegalArgumentException("Way not circular");
@@ -955,12 +955,12 @@ public class JoinAreasAction extends JosmAction {
         //find the node with minimum y - it's guaranteed to be outer. (What about the south pole?)
         Way topWay = null;
         Node topNode = null;
-        var topIndex = 0;
+        int topIndex = 0;
         double minY = Double.POSITIVE_INFINITY;
 
         for (Way way : parts) {
-            for (var pos = 0; pos < way.getNodesCount(); pos++) {
-                final var node = way.getNode(pos);
+            for (int pos = 0; pos < way.getNodesCount(); pos++) {
+                Node node = way.getNode(pos);
 
                 if (node.getEastNorth().getY() < minY) {
                     minY = node.getEastNorth().getY();
@@ -995,7 +995,7 @@ public class JoinAreasAction extends JosmAction {
 
             for (Way way : parts) {
                 if (way.firstNode().equals(headNode)) {
-                    final var nextNode = way.getNode(1);
+                    Node nextNode = way.getNode(1);
 
                     if (topWay == null || !Geometry.isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode)) {
                         //the new way is better
@@ -1007,7 +1007,7 @@ public class JoinAreasAction extends JosmAction {
 
                 if (way.lastNode().equals(headNode)) {
                     //end adjacent to headNode
-                    final var nextNode = way.getNode(way.getNodesCount() - 2);
+                    Node nextNode = way.getNode(way.getNodesCount() - 2);
 
                     if (topWay == null || !Geometry.isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode)) {
                         //the new way is better
@@ -1019,14 +1019,14 @@ public class JoinAreasAction extends JosmAction {
             }
         } else {
             //node is inside way - pick the clockwise going end.
-            final var prev = topWay.getNode(topIndex - 1);
-            final var next = topWay.getNode(topIndex + 1);
+            Node prev = topWay.getNode(topIndex - 1);
+            Node next = topWay.getNode(topIndex + 1);
 
             //there will be no parallel segments in the middle of way, so all fine.
             wayClockwise = Geometry.angleIsClockwise(prev, topNode, next);
         }
 
-        var curWay = topWay;
+        Way curWay = topWay;
         boolean curWayInsideToTheRight = wayClockwise ^ isInner;
         List<WayInPolygon> result = new ArrayList<>();
 
@@ -1034,14 +1034,14 @@ public class JoinAreasAction extends JosmAction {
         while (curWay != null) {
 
             //add cur way
-            final var resultWay = new WayInPolygon(curWay, curWayInsideToTheRight);
+            WayInPolygon resultWay = new WayInPolygon(curWay, curWayInsideToTheRight);
             result.add(resultWay);
 
             //process next way
-            final var nextWay = nextWayMap.get(curWay);
-            final var prevNode = curWay.getNode(curWay.getNodesCount() - 2);
-            final var headNode = curWay.lastNode();
-            final var nextNode = nextWay.getNode(1);
+            Way nextWay = nextWayMap.get(curWay);
+            Node prevNode = curWay.getNode(curWay.getNodesCount() - 2);
+            Node headNode = curWay.lastNode();
+            Node nextNode = nextWay.getNode(1);
 
             if (nextWay == topWay) {
                 //full loop traversed - all done.
@@ -1067,7 +1067,7 @@ public class JoinAreasAction extends JosmAction {
             //                       X wayANode
             //                       |
 
-            var intersectionCount = 0;
+            int intersectionCount = 0;
 
             for (Way wayA : parts) {
 
@@ -1077,12 +1077,12 @@ public class JoinAreasAction extends JosmAction {
 
                 if (wayA.lastNode().equals(headNode)) {
 
-                    final var wayB = nextWayMap.get(wayA);
+                    Way wayB = nextWayMap.get(wayA);
 
                     //test if wayA is opposite wayB relative to curWay and nextWay
 
-                    final var wayANode = wayA.getNode(wayA.getNodesCount() - 2);
-                    final var wayBNode = wayB.getNode(1);
+                    Node wayANode = wayA.getNode(wayA.getNodesCount() - 2);
+                    Node wayBNode = wayB.getNode(1);
 
                     boolean wayAToTheRight = Geometry.isToTheRightSideOfLine(prevNode, headNode, nextNode, wayANode);
                     boolean wayBToTheRight = Geometry.isToTheRightSideOfLine(prevNode, headNode, nextNode, wayBNode);
@@ -1116,7 +1116,7 @@ public class JoinAreasAction extends JosmAction {
      * @param parts the parts of a single closed way
      */
     private static void revertDuplicateTwoNodeWays(List<WayInPolygon> parts) {
-        for (var i = 0; i < parts.size(); i++) {
+        for (int i = 0; i < parts.size(); i++) {
             WayInPolygon w1 = parts.get(i);
             if (w1.way.getNodesCount() != 2)
                 continue;
@@ -1140,11 +1140,11 @@ public class JoinAreasAction extends JosmAction {
      */
     private List<Way> splitWayOnNodes(Way way, Set<Node> nodes, Map<Node, Way> oldestWayMap) {
 
-        final var result = new ArrayList<Way>();
+        List<Way> result = new ArrayList<>();
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
-            final var split = SplitWayCommand.splitWay(way, chunks,
+            SplitWayCommand split = SplitWayCommand.splitWay(way, chunks,
                     Collections.emptyList(), SplitWayCommand.Strategy.keepFirstChunk());
 
             if (split != null) {
@@ -1158,8 +1158,8 @@ public class JoinAreasAction extends JosmAction {
                 // see #9599
                 if (!way.isNew() && result.size() > 1) {
                     for (Way part : result) {
-                        final var n = part.firstNode();
-                        final var old = oldestWayMap.get(n);
+                        Node n = part.firstNode();
+                        Way old = oldestWayMap.get(n);
                         if (old == null || old.getUniqueId() > way.getUniqueId()) {
                             oldestWayMap.put(n, way);
                         }
@@ -1230,12 +1230,12 @@ public class JoinAreasAction extends JosmAction {
     private static List<PolygonLevel> findOuterWaysImpl(int level, Collection<AssembledPolygon> boundaryWays) {
 
         //TODO: bad performance for deep nestings...
-        final var result = new ArrayList<PolygonLevel>();
+        List<PolygonLevel> result = new ArrayList<>();
 
         for (AssembledPolygon outerWay : boundaryWays) {
 
-            var outerGood = true;
-            final var innerCandidates = new ArrayList<AssembledPolygon>();
+            boolean outerGood = true;
+            List<AssembledPolygon> innerCandidates = new ArrayList<>();
 
             for (AssembledPolygon innerWay : boundaryWays) {
                 if (innerWay == outerWay) {
@@ -1255,8 +1255,8 @@ public class JoinAreasAction extends JosmAction {
             }
 
             //add new outer polygon
-            final var pol = new AssembledMultipolygon(outerWay);
-            final var polLev = new PolygonLevel(pol, level);
+            AssembledMultipolygon pol = new AssembledMultipolygon(outerWay);
+            PolygonLevel polLev = new PolygonLevel(pol, level);
 
             //process inner ways
             if (!innerCandidates.isEmpty()) {
@@ -1287,18 +1287,18 @@ public class JoinAreasAction extends JosmAction {
         // In multigonWays collection, some way are just a point (i.e. way like nodeA-nodeA)
         // This seems to appear when is apply over invalid way like #9911 test-case
         // Remove all of these way to make the next work.
-        final var cleanMultigonWays = new ArrayList<WayInPolygon>();
+        List<WayInPolygon> cleanMultigonWays = new ArrayList<>();
         for (WayInPolygon way: multigonWays) {
             if (way.way.getNodesCount() != 2 || !way.way.isClosed())
                 cleanMultigonWays.add(way);
         }
-        final var traverser = new WayTraverser(cleanMultigonWays);
-        final var result = new ArrayList<AssembledPolygon>();
+        WayTraverser traverser = new WayTraverser(cleanMultigonWays);
+        List<AssembledPolygon> result = new ArrayList<>();
 
         WayInPolygon startWay;
         while ((startWay = traverser.startNewWay()) != null) {
-            final var path = new ArrayList<WayInPolygon>();
-            final var startWays = new ArrayList<WayInPolygon>();
+            List<WayInPolygon> path = new ArrayList<>();
+            List<WayInPolygon> startWays = new ArrayList<>();
             path.add(startWay);
             while (true) {
                 WayInPolygon leftComing;
@@ -1317,7 +1317,7 @@ public class JoinAreasAction extends JosmAction {
                     throw new JosmRuntimeException("Join areas internal error.");
                 if (path.get(0) == nextWay) {
                     // path is closed -> stop here
-                    final var ring = new AssembledPolygon(path);
+                    AssembledPolygon ring = new AssembledPolygon(path);
                     if (ring.getNodes().size() <= 2) {
                         // Invalid ring (2 nodes) -> remove
                         traverser.removeWays(path);
@@ -1356,15 +1356,15 @@ public class JoinAreasAction extends JosmAction {
      * @return the resulting list of polygons
      */
     public static List<AssembledPolygon> fixTouchingPolygons(List<AssembledPolygon> polygons) {
-        final var newPolygons = new ArrayList<AssembledPolygon>();
+        List<AssembledPolygon> newPolygons = new ArrayList<>();
 
         for (AssembledPolygon ring : polygons) {
             ring.reverse();
-            final var traverser = new WayTraverser(ring.ways);
+            WayTraverser traverser = new WayTraverser(ring.ways);
             WayInPolygon startWay;
 
             while ((startWay = traverser.startNewWay()) != null) {
-                final var simpleRingWays = new ArrayList<WayInPolygon>();
+                List<WayInPolygon> simpleRingWays = new ArrayList<>();
                 simpleRingWays.add(startWay);
                 WayInPolygon nextWay;
                 while ((nextWay = traverser.walk()) != startWay) {
@@ -1373,7 +1373,7 @@ public class JoinAreasAction extends JosmAction {
                     simpleRingWays.add(nextWay);
                 }
                 traverser.removeWays(simpleRingWays);
-                final var simpleRing = new AssembledPolygon(simpleRingWays);
+                AssembledPolygon simpleRing = new AssembledPolygon(simpleRingWays);
                 simpleRing.reverse();
                 newPolygons.add(simpleRing);
             }
@@ -1410,7 +1410,7 @@ public class JoinAreasAction extends JosmAction {
      * @throws UserCancelException if user cancels the operation
      */
     private Multipolygon joinPolygon(AssembledMultipolygon polygon) throws UserCancelException {
-        final var result = new Multipolygon(joinWays(polygon.outerWay.ways));
+        Multipolygon result = new Multipolygon(joinWays(polygon.outerWay.ways));
 
         for (AssembledPolygon pol : polygon.innerWays) {
             result.innerWays.add(joinWays(pol.ways));
@@ -1428,7 +1428,7 @@ public class JoinAreasAction extends JosmAction {
     private Way joinWays(List<WayInPolygon> ways) throws UserCancelException {
 
         //leave original orientation, if all paths are reverse.
-        var allReverse = true;
+        boolean allReverse = true;
         for (WayInPolygon way : ways) {
             allReverse &= !way.insideToTheRight;
         }
@@ -1439,7 +1439,7 @@ public class JoinAreasAction extends JosmAction {
             }
         }
 
-        final var joinedWay = joinOrientedWays(ways);
+        Way joinedWay = joinOrientedWays(ways);
 
         //should not happen
         if (joinedWay == null || !joinedWay.isClosed())
@@ -1461,8 +1461,8 @@ public class JoinAreasAction extends JosmAction {
         // This will turn ways so all of them point in the same direction and CombineAction won't bug
         // the user about this.
 
-        final var actionWays = new ArrayList<Way>(ways.size());
-        var oldestPos = 0;
+        List<Way> actionWays = new ArrayList<>(ways.size());
+        int oldestPos = 0;
         Way oldest = ways.get(0).way;
         for (WayInPolygon way : ways) {
             actionWays.add(way.way);
@@ -1510,7 +1510,7 @@ public class JoinAreasAction extends JosmAction {
                 continue;
             }
 
-            var hasKnownOuter = false;
+            boolean hasKnownOuter = false;
             outerWays.clear();
             innerWays.clear();
 
@@ -1537,7 +1537,7 @@ public class JoinAreasAction extends JosmAction {
                 return null;
             }
 
-            final var outerWay = outerWays.get(0);
+            Way outerWay = outerWays.get(0);
 
             //retain only selected inner ways
             innerWays.retainAll(selectedWays);
@@ -1587,7 +1587,7 @@ public class JoinAreasAction extends JosmAction {
             processedOuterWays.add(outerWay);
             processedInnerWays.addAll(innerWays);
 
-            final var pol = new Multipolygon(outerWay);
+            Multipolygon pol = new Multipolygon(outerWay);
             pol.innerWays.addAll(innerWays);
 
             result.add(pol);
@@ -1614,7 +1614,7 @@ public class JoinAreasAction extends JosmAction {
         if (inner.isEmpty()) return null;
         OsmDataLayer layer = getLayerManager().getEditLayer();
         // Create new multipolygon relation and add all inner ways to it
-        final var newRel = new Relation();
+        Relation newRel = new Relation();
         newRel.put("type", "multipolygon");
         for (Way w : inner) {
             newRel.addMember(new RelationMember("inner", w));
@@ -1649,7 +1649,7 @@ public class JoinAreasAction extends JosmAction {
                 members.remove(rm);
 
                 cmds.add(new ChangeMembersCommand(r, members));
-                final var saverel = new RelationRole(r, rm.getRole());
+                RelationRole saverel = new RelationRole(r, rm.getRole());
                 if (!result.contains(saverel)) {
                     result.add(saverel);
                 }
@@ -1700,7 +1700,7 @@ public class JoinAreasAction extends JosmAction {
             return;
         default:
             // Create a new relation with all previous members and (Way)outer as outer.
-            final var newRel = new Relation();
+            Relation newRel = new Relation();
             for (RelationRole r : multiouters) {
                 // Add members
                 for (RelationMember rm : r.rel.getMembers()) {

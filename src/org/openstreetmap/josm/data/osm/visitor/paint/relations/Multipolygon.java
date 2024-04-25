@@ -67,7 +67,7 @@ public class Multipolygon {
      * <p>The decision is taken based on preference settings, see the four preference keys
      * above.</p>
      */
-    private static class MultipolygonRoleMatcher implements PreferenceChangedListener {
+    private static final class MultipolygonRoleMatcher implements PreferenceChangedListener {
         private final List<String> outerExactRoles = new ArrayList<>();
         private final List<String> outerRolePrefixes = new ArrayList<>();
         private final List<String> innerExactRoles = new ArrayList<>();

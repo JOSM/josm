@@ -1,4 +1,5 @@
 // License: GPL. For details, see LICENSE file.
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -31,11 +32,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonWriter;
-import jakarta.json.stream.JsonGenerator;
 
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -83,6 +79,12 @@ import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonWriter;
+import jakarta.json.stream.JsonGenerator;
 
 /**
  * Extracts tag information for the taginfo project.
@@ -162,7 +164,7 @@ public class TagInfoExtract {
         System.exit(0);
     }
 
-    private static class Options {
+    private static final class Options {
         Mode mode;
         int josmSvnRevision = Version.getInstance().getVersion();
         Path baseDir = Paths.get("");
@@ -313,7 +315,7 @@ public class TagInfoExtract {
         }
     }
 
-    private class ExternalPresets extends Presets {
+    private final class ExternalPresets extends Presets {
 
         @Override
         void run() throws IOException, OsmTransferException, SAXException {
@@ -340,7 +342,7 @@ public class TagInfoExtract {
         }
     }
 
-    private class StyleSheet extends Extractor {
+    private final class StyleSheet extends Extractor {
         private MapCSSStyleSource styleSource;
 
         @Override

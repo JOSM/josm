@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JButton;
@@ -47,6 +48,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.actions.JosmAction;
@@ -669,7 +671,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
          * @param editorAccess relation editor
          */
         LeftButtonToolbar(IRelationEditorActionAccess editorAccess) {
-            setOrientation(JToolBar.VERTICAL);
+            setOrientation(SwingConstants.VERTICAL);
             setFloatable(false);
 
             List<IRelationEditorActionGroup> groups = new ArrayList<>();
@@ -702,15 +704,15 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
             IRelationEditorActionGroup.fillToolbar(this, groups, editorAccess);
 
 
-            InputMap inputMap = editorAccess.getMemberTable().getInputMap(MemberTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            InputMap inputMap = editorAccess.getMemberTable().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             inputMap.put((KeyStroke) new RemoveAction(editorAccess, "removeSelected")
-                    .getValue(AbstractAction.ACCELERATOR_KEY), "removeSelected");
+                    .getValue(Action.ACCELERATOR_KEY), "removeSelected");
             inputMap.put((KeyStroke) new MoveUpAction(editorAccess, "moveUp")
-                    .getValue(AbstractAction.ACCELERATOR_KEY), "moveUp");
+                    .getValue(Action.ACCELERATOR_KEY), "moveUp");
             inputMap.put((KeyStroke) new MoveDownAction(editorAccess, "moveDown")
-                    .getValue(AbstractAction.ACCELERATOR_KEY), "moveDown");
+                    .getValue(Action.ACCELERATOR_KEY), "moveDown");
             inputMap.put((KeyStroke) new DownloadIncompleteMembersAction(
-                    editorAccess, "downloadIncomplete").getValue(AbstractAction.ACCELERATOR_KEY), "downloadIncomplete");
+                    editorAccess, "downloadIncomplete").getValue(Action.ACCELERATOR_KEY), "downloadIncomplete");
         }
     }
 
@@ -721,7 +723,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      * @return control buttons panel for selection/members
      */
     protected static JToolBar buildSelectionControlButtonToolbar(IRelationEditorActionAccess editorAccess) {
-        JToolBar tb = new JToolBar(JToolBar.VERTICAL);
+        JToolBar tb = new JToolBar(SwingConstants.VERTICAL);
         tb.setFloatable(false);
 
         List<IRelationEditorActionGroup> groups = new ArrayList<>();
@@ -848,7 +850,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
                             new String[]{tr("Remove them, clean up relation"), tr("Ignore them, leave relation as is")},
                             tr("Remove them, clean up relation")
             );
-            switch(ret) {
+            switch (ret) {
             case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION:
             case JOptionPane.CLOSED_OPTION:
             case JOptionPane.NO_OPTION:
@@ -927,7 +929,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
                 null,
                 null
         );
-        switch(ret) {
+        switch (ret) {
         case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION:
         case JOptionPane.YES_OPTION:
             return true;
@@ -1035,7 +1037,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         }
     }
 
-    private class RelationEditorActionAccess implements IRelationEditorActionAccess {
+    private final class RelationEditorActionAccess implements IRelationEditorActionAccess {
 
         @Override
         public MemberTable getMemberTable() {

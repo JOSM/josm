@@ -35,7 +35,7 @@ public enum AuthorizationProcedure {
      * @return the translated name of this procedure
      */
     public String getText() {
-        switch(this) {
+        switch (this) {
         case FULLY_AUTOMATIC:
             return tr("Fully automatic");
         case SEMI_AUTOMATIC:
@@ -51,7 +51,7 @@ public enum AuthorizationProcedure {
      * @return a translated description of this procedure
      */
     public String getDescription() {
-        switch(this) {
+        switch (this) {
         case FULLY_AUTOMATIC:
             return tr(
                     "<html>Run a fully automatic procedure to get an access token from the OSM website.<br>"

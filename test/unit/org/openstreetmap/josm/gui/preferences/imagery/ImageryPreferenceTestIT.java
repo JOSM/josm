@@ -169,7 +169,7 @@ public class ImageryPreferenceTestIT {
                     Logging.warn(url + " -> HTTP " + response.getResponseCode());
                 }
                 try {
-                    byte[] data = Utils.readBytesFromStream(response.getContent());
+                    byte[] data = response.getContent().readAllBytes();
                     if (response.getResponseCode() < 300) {
                         workingURLs.put(url, data);
                     }

@@ -497,7 +497,7 @@ public class SelectionListDialog extends ToggleDialog {
             int numWays = 0;
             int numRelations = 0;
             for (OsmPrimitive p: selection) {
-                switch(p.getType()) {
+                switch (p.getType()) {
                 case NODE: numNodes++; break;
                 case WAY: numWays++; break;
                 case RELATION: numRelations++; break;

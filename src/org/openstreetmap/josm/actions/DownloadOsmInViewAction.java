@@ -36,8 +36,8 @@ public final class DownloadOsmInViewAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final var bounds = MainApplication.getMap().mapView.getRealBounds();
-        final var task = new DownloadOsmInViewTask();
+        final Bounds bounds = MainApplication.getMap().mapView.getRealBounds();
+        DownloadOsmInViewTask task = new DownloadOsmInViewTask();
         task.setZoomAfterDownload(false);
         Future<?> future = task.download(bounds);
         MainApplication.worker.submit(new PostDownloadHandler(task, future));
@@ -54,7 +54,7 @@ public final class DownloadOsmInViewAction extends JosmAction {
                 && !NetworkManager.isOffline(OnlineResource.OSM_API));
     }
 
-    private static class DownloadOsmInViewTask extends DownloadOsmTask {
+    private static final class DownloadOsmInViewTask extends DownloadOsmTask {
         Future<?> download(Bounds downloadArea) {
             return download(new DownloadTask(new DownloadParams(), new BoundingBoxDownloader(downloadArea), null, false), downloadArea);
         }

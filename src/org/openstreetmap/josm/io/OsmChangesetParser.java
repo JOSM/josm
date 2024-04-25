@@ -58,7 +58,7 @@ public final class OsmChangesetParser {
         return changesets;
     }
 
-    private class Parser extends DefaultHandler {
+    private final class Parser extends DefaultHandler {
         private Locator locator;
 
         @Override
@@ -66,7 +66,7 @@ public final class OsmChangesetParser {
             this.locator = locator;
         }
 
-        protected void throwException(String msg) throws XmlParsingException {
+        void throwException(String msg) throws XmlParsingException {
             throw new XmlParsingException(msg).rememberLocation(locator);
         }
 
@@ -79,7 +79,7 @@ public final class OsmChangesetParser {
         /** The current comment text */
         private StringBuilder text;
 
-        protected void parseChangesetAttributes(Attributes atts) throws XmlParsingException {
+        void parseChangesetAttributes(Attributes atts) throws XmlParsingException {
             // -- id
             String value = atts.getValue("id");
             if (value == null) {
@@ -247,7 +247,7 @@ public final class OsmChangesetParser {
             }
         }
 
-        protected User createUser(Attributes atts) throws XmlParsingException {
+        User createUser(Attributes atts) throws XmlParsingException {
             String name = atts.getValue("user");
             String uid = atts.getValue("uid");
             if (uid == null) {

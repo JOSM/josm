@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,83 +68,83 @@ public class MapCSSRendererTest {
      */
     public static Collection<Object[]> runs() {
         return Stream.of(
-                /** Tests for StyledMapRenderer#drawNodeSymbol */
+                /* Tests for StyledMapRenderer#drawNodeSymbol */
                 new TestConfig("node-shapes", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Text for nodes */
+                /* Text for nodes */
                 new TestConfig("node-text", AREA_DEFAULT).usesFont("DejaVu Sans")
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests that StyledMapRenderer#drawWay respects width */
+                /* Tests that StyledMapRenderer#drawWay respects width */
                 new TestConfig("way-width", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests the way color property, including alpha */
+                /* Tests the way color property, including alpha */
                 new TestConfig("way-color", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests dashed ways. */
+                /* Tests dashed ways. */
                 new TestConfig("way-dashes", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests dashed way clamping algorithm */
+                /* Tests dashed way clamping algorithm */
                 new TestConfig("way-dashes-clamp", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests fill-color property */
+                /* Tests fill-color property */
                 new TestConfig("area-fill-color", AREA_DEFAULT),
 
-                /** Tests the fill-image property. */
+                /* Tests the fill-image property. */
                 new TestConfig("area-fill-image", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests area label drawing/placement */
+                /* Tests area label drawing/placement */
                 new TestConfig("area-text", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests area icon drawing/placement */
+                /* Tests area icon drawing/placement */
                 new TestConfig("area-icon", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
+                /* Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
                 new TestConfig("order", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests repeat-image feature for ways */
+                /* Tests repeat-image feature for ways */
                 new TestConfig("way-repeat-image", AREA_DEFAULT)
                         .setThresholdPixels(2100).setThresholdTotalColorDiff(93_000),
-                /** Tests the clamping for repeat-images and repeat-image-phase */
+                /* Tests the clamping for repeat-images and repeat-image-phase */
                 new TestConfig("way-repeat-image-clamp", AREA_DEFAULT)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests text along a way */
+                /* Tests text along a way */
                 new TestConfig("way-text", AREA_DEFAULT)
                         .setThresholdPixels(3400).setThresholdTotalColorDiff(0),
 
-                /** Another test for node shapes */
+                /* Another test for node shapes */
                 new TestConfig("node-shapes2").setImageWidth(600)
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
-                /** Tests default values for node shapes */
+                /* Tests default values for node shapes */
                 new TestConfig("node-shapes-default")
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
-                /** Tests node shapes with both fill and stroke combined */
+                /* Tests node shapes with both fill and stroke combined */
                 new TestConfig("node-shapes-combined")
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
-                /** Another test for dashed ways */
+                /* Another test for dashed ways */
                 new TestConfig("way-dashes2")
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
-                /** Tests node text placement */
+                /* Tests node text placement */
                 new TestConfig("node-text2")
                         .setThresholdPixels(1020).setThresholdTotalColorDiff(0),
-                /** Tests relation link selector */
+                /* Tests relation link selector */
                 new TestConfig("relation-linkselector")
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
-                /** Tests parent selector on relation */
+                /* Tests parent selector on relation */
                 new TestConfig("relation-parentselector")
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
-                /** Tests evaluation of expressions */
+                /* Tests evaluation of expressions */
                 new TestConfig("eval").setImageWidth(600)
                         .setThresholdPixels(6610).setThresholdTotalColorDiff(0)
 
@@ -162,11 +161,6 @@ public class MapCSSRendererTest {
     @ParameterizedTest(name = "{1}")
     @MethodSource("runs")
     void testRender(TestConfig testConfig, String ignored) throws Exception {
-        // This test only runs on OpenJDK.
-        // It is ignored for other Java versions since they differ slightly in their rendering engine.
-        String javaHome = System.getProperty("java.home");
-        assumeTrue(javaHome != null && javaHome.toLowerCase(Locale.ENGLISH).contains("openjdk"), "Test requires openJDK");
-
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         for (String font : testConfig.fonts) {
             assumeTrue(fonts.contains(font), "Test requires font: " + font);
@@ -227,8 +221,8 @@ public class MapCSSRendererTest {
             return;
         }
         final BufferedImage reference = ImageIO.read(referenceImageFile);
-        assertEquals(image.getWidth(), reference.getWidth());
-        assertEquals(image.getHeight(), reference.getHeight());
+        assertEquals(reference.getWidth(), image.getWidth());
+        assertEquals(reference.getHeight(), image.getHeight());
 
         StringBuilder differences = new StringBuilder();
         ArrayList<Point> differencePoints = new ArrayList<>();
@@ -330,7 +324,7 @@ public class MapCSSRendererTest {
 
         /**
          * Set the number of pixels that can differ.
-         *
+         * <p>
          * Needed due to somewhat platform dependent font rendering.
          * @param thresholdPixels the number of pixels that can differ
          * @return this object, for convenience
@@ -358,9 +352,13 @@ public class MapCSSRendererTest {
         }
 
         public File getReference() {
-            // Java 8 renders SVG images differently, thus, use separate reference files
-            final String javaSuffix = Utils.getJavaVersion() == 8 ? "-java8" : "";
-            return new File(getTestDirectory() + "/reference" + javaSuffix + ".png");
+            // Sometimes Java changes how things are rendered. When that happens, use separate reference files. It is
+            // usually "reference" + javaSuffix + ".png".
+            final File customReferenceFile = new File(getTestDirectory() + "/reference-java" + Utils.getJavaVersion() + ".png");
+            if (customReferenceFile.isFile()) {
+                return customReferenceFile;
+            }
+            return new File(getTestDirectory() + "/reference.png");
         }
 
         private String getTestDirectory() {

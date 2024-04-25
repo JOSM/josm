@@ -977,7 +977,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         continue;
                     }
 
-                    switch(m.getRole()) {
+                    switch (m.getRole()) {
                     case "from":
                         if (fromWay == null) {
                             fromWay = w;
@@ -1247,7 +1247,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
                     MapViewPath path = new MapViewPath(mapState);
                     path.appendFromEastNorth(pd.get());
-                    path.setWindingRule(MapViewPath.WIND_EVEN_ODD);
+                    path.setWindingRule(Path2D.WIND_EVEN_ODD);
                     consumer.accept(path);
                 }
             }

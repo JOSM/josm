@@ -2,11 +2,11 @@
 package org.openstreetmap.josm.io.session;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -133,11 +133,10 @@ public class SessionWriterTest {
             try (ZipFile zipFile = new ZipFile(file)) {
                 return Collections.list(zipFile.entries()).stream().collect(Collectors.toMap(ZipEntry::getName, e -> {
                     try {
-                        return Utils.readBytesFromStream(zipFile.getInputStream(e));
+                        return zipFile.getInputStream(e).readAllBytes();
                     } catch (IOException ex) {
-                        fail(ex);
+                        throw new UncheckedIOException(ex);
                     }
-                    return null;
                 }));
             }
         } finally {
@@ -274,12 +273,12 @@ public class SessionWriterTest {
         Map<String, byte[]> bytes = testWrite(Arrays.asList(gpx, markers), true);
 
         Path path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/gpx_markers_combined.jos");
-        String expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        String expected = Files.readString(path).replace("\r", "");
         String actual = new String(bytes.get("session.jos"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
 
         path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/data_export.gpx");
-        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        expected = Files.readString(path).replace("\r", "");
         actual = new String(bytes.get("layers/01/data.gpx"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
 
@@ -290,17 +289,17 @@ public class SessionWriterTest {
         bytes = testWrite(Arrays.asList(gpx, markers), true);
 
         path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/gpx_markers.jos");
-        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        expected = Files.readString(path).replace("\r", "");
         actual = new String(bytes.get("session.jos"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
 
         path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/data_export.gpx");
-        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        expected = Files.readString(path).replace("\r", "");
         actual = new String(bytes.get("layers/01/data.gpx"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
 
         path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/markers.gpx");
-        expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        expected = Files.readString(path).replace("\r", "");
         actual = new String(bytes.get("layers/02/data.gpx"), StandardCharsets.UTF_8).replace("\r", "");
         assertEquals(expected, actual);
 

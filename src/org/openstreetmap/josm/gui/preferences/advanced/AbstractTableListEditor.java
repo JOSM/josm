@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -102,7 +103,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
         }
     }
 
-    private class EntryListener implements ListSelectionListener {
+    private final class EntryListener implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             TableCellEditor editor = table.getCellEditor();
@@ -131,7 +132,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
         JScrollPane scroll = new JScrollPane(entryList);
         left.add(scroll, GBC.eol().fill());
 
-        JToolBar sideButtonTB = new JToolBar(JToolBar.HORIZONTAL);
+        JToolBar sideButtonTB = new JToolBar(SwingConstants.HORIZONTAL);
         sideButtonTB.setBorderPainted(false);
         sideButtonTB.setOpaque(false);
         sideButtonTB.add(new NewEntryAction());

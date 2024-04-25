@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -173,7 +175,7 @@ public class ValidatorCLI implements CLIModule {
                 throw new IllegalArgumentException(tr("Missing argument - input data file ({0})", "--input|-i"));
             }
             this.initialize();
-            final var fileMonitor = progressMonitorFactory.get();
+            final ProgressMonitor fileMonitor = progressMonitorFactory.get();
             fileMonitor.beginTask(tr("Processing files..."), this.input.size());
             for (String inputFile : this.input) {
                 if (inputFile.endsWith(".validator.mapcss")) {
@@ -199,7 +201,7 @@ public class ValidatorCLI implements CLIModule {
      * @throws ParseException if the file does not match the mapcss syntax
      */
     private static void processMapcssFile(final String inputFile) throws ParseException {
-        final var styleSource = new MapCSSStyleSource(new File(inputFile).toURI().getPath(), inputFile, inputFile);
+        final MapCSSStyleSource styleSource = new MapCSSStyleSource(new File(inputFile).toURI().getPath(), inputFile, inputFile);
         styleSource.loadStyleSource();
         if (!styleSource.getErrors().isEmpty()) {
             throw new ParseException(trn("{0} had {1} error", "{0} had {1} errors", styleSource.getErrors().size(),
@@ -218,8 +220,8 @@ public class ValidatorCLI implements CLIModule {
     private static void processValidatorFile(final String inputFile) throws ParseException, IOException {
         // Check asserts
         Config.getPref().putBoolean("validator.check_assert_local_rules", true);
-        final var mapCSSTagChecker = new MapCSSTagChecker();
-        final var assertionErrors = new ArrayList<String>();
+        final MapCSSTagChecker mapCSSTagChecker = new MapCSSTagChecker();
+        final Collection<String> assertionErrors = new ArrayList<>();
         final MapCSSTagChecker.ParseResult result = mapCSSTagChecker.addMapCSS(new File(inputFile).toURI().getPath(),
                 assertionErrors::add);
         if (!result.parseErrors.isEmpty() || !assertionErrors.isEmpty()) {
@@ -244,10 +246,10 @@ public class ValidatorCLI implements CLIModule {
      * @throws IOException If a file could not be read or written
      */
     private void processFile(final String inputFile) throws IllegalDataException, IOException {
-        final var inputFileFile = new File(inputFile);
+        final File inputFileFile = new File(inputFile);
         final List<FileImporter> inputFileImporters = ExtensionFileFilter.getImporters().stream()
                 .filter(importer -> importer.acceptFile(inputFileFile)).collect(Collectors.toList());
-        final var stopwatch = Stopwatch.createStarted();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         if (inputFileImporters.stream().noneMatch(fileImporter ->
                 fileImporter.importDataHandleExceptions(inputFileFile, progressMonitorFactory.get()))) {
             throw new IOException(tr("Could not load input file: {0}", inputFile));
@@ -260,23 +262,23 @@ public class ValidatorCLI implements CLIModule {
             dataLayer = MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)
                     .stream().filter(layer -> inputFileFile.equals(layer.getAssociatedFile()))
                     .findFirst().orElseThrow(() -> new JosmRuntimeException(tr("Could not find a layer for {0}", inputFile)));
-            final var dataSet = dataLayer.getDataSet();
+            final DataSet dataSet = dataLayer.getDataSet();
             if (this.changeFiles.containsKey(inputFile)) {
-                final var changeFilesMonitor = progressMonitorFactory.get();
+                final ProgressMonitor changeFilesMonitor = progressMonitorFactory.get();
                 for (String changeFile : this.changeFiles.getOrDefault(inputFile, Collections.emptyList())) {
-                    try (var changeStream = Compression.getUncompressedFileInputStream(Paths.get(changeFile))) {
+                    try (InputStream changeStream = Compression.getUncompressedFileInputStream(Paths.get(changeFile))) {
                         dataSet.mergeFrom(OsmChangeReader.parseDataSet(changeStream, changeFilesMonitor));
                     }
                 }
             }
-            final var path = Paths.get(outputFile);
+            final Path path = Paths.get(outputFile);
             if (path.toFile().isFile() && !Files.deleteIfExists(path)) {
                 Logging.error("Could not delete {0}, attempting to append", outputFile);
             }
-            final var geoJSONMapRouletteWriter = new GeoJSONMapRouletteWriter(dataSet);
+            final GeoJSONMapRouletteWriter geoJSONMapRouletteWriter = new GeoJSONMapRouletteWriter(dataSet);
             OsmValidator.initializeTests();
 
-            try (var fileOutputStream = Files.newOutputStream(path)) {
+            try (OutputStream fileOutputStream = Files.newOutputStream(path)) {
                 // The first writeErrors catches anything that was written, for whatever reason. This is probably never
                 // going to be called.
                 final var validationTask = new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
@@ -345,7 +347,7 @@ public class ValidatorCLI implements CLIModule {
 
     /**
      * Initialize everything that might be needed
-     * <p>
+     *
      * Arguments may need to be parsed first.
      */
     void initialize() {
@@ -366,8 +368,8 @@ public class ValidatorCLI implements CLIModule {
     void parseArguments(String[] argArray) {
         Logging.setLogLevel(Level.INFO);
 
-        final var parser = new OptionParser("JOSM validate");
-        final var currentInput = new AtomicReference<String>(null);
+        OptionParser parser = new OptionParser("JOSM validate");
+        final AtomicReference<String> currentInput = new AtomicReference<>(null);
         for (Option o : Option.values()) {
             if (o.requiresArgument()) {
                 parser.addArgumentParameter(o.getName(),
@@ -422,9 +424,9 @@ public class ValidatorCLI implements CLIModule {
             I18n.set(argument);
             break;
         case LOAD_PREFERENCES:
-            final var tempPreferences = new Preferences();
+            final Preferences tempPreferences = new Preferences();
             tempPreferences.enableSaveOnPut(false);
-            final var config = new CustomConfigurator.XMLCommandProcessor(tempPreferences);
+            CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(tempPreferences);
             try (InputStream is = Utils.openStream(new File(argument).toURI().toURL())) {
                 config.openAndReadXML(is);
             } catch (IOException e) {
@@ -432,7 +434,7 @@ public class ValidatorCLI implements CLIModule {
             }
             final IPreferences pref = Config.getPref();
             if (pref instanceof MemoryPreferences) {
-                final var memoryPreferences = (MemoryPreferences) pref;
+                final MemoryPreferences memoryPreferences = (MemoryPreferences) pref;
                 tempPreferences.getAllSettings().forEach(memoryPreferences::putSetting);
             } else {
                 throw new JosmRuntimeException(tr("Preferences are not the expected type"));
@@ -451,7 +453,7 @@ public class ValidatorCLI implements CLIModule {
     }
 
     private static String getHelp() {
-        final var helpPadding = "\t                          ";
+        final String helpPadding = "\t                          ";
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         return tr("JOSM Validation command line interface") + "\n\n" +
                 tr("Usage") + ":\n" +

@@ -28,7 +28,7 @@ public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileS
     }
 
     // lazy initialization
-    private static class InstanceHolder {
+    private static final class InstanceHolder {
         static final NTV2Proj4DirGridShiftFileSource INSTANCE = new NTV2Proj4DirGridShiftFileSource();
     }
 

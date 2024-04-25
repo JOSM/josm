@@ -90,11 +90,11 @@ class PluginHandlerMultiVersionTest {
      */
     @AssumeRevision("Revision: 7501\n")
     @Test
-    void testUpdatePluginsOneMultiVersion(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testUpdatePluginsOneMultiVersion() throws Exception {
         TestUtils.assumeWorkingJMockit();
 
         final String quxNewerServePath = "/qux/newer.jar";
-        final Map<String, String> attrOverrides = new HashMap<String, String>() {{
+        final Map<String, String> attrOverrides = new HashMap<>() {{
             put("7500_Plugin-Url", "432;" + pluginServerRule.url(quxNewerServePath));
             put("7499_Plugin-Url", "346;" + pluginServerRule.url("/not/served.jar"));
             put("6999_Plugin-Url", "345;" + pluginServerRule.url("/not/served/eithejar"));
@@ -103,6 +103,7 @@ class PluginHandlerMultiVersionTest {
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(this.referenceQuxJarNewest, attrOverrides)
         );
+        final WireMockRuntimeInfo wireMockRuntimeInfo = pluginServerRule.getRuntimeInfo();
         pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
         // need to actually serve this older jar from somewhere
         wireMockRuntimeInfo.getWireMock().register(
@@ -157,10 +158,10 @@ class PluginHandlerMultiVersionTest {
      */
     @AssumeRevision("Revision: 7000\n")
     @Test
-    void testUpdatePluginsExistingVersionLatestPossible(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testUpdatePluginsExistingVersionLatestPossible() throws Exception {
         TestUtils.assumeWorkingJMockit();
 
-        final Map<String, String> attrOverrides = new HashMap<String, String>() {{
+        final Map<String, String> attrOverrides = new HashMap<>() {{
             put("7500_Plugin-Url", "432;" + pluginServerRule.url("/dont.jar"));
             put("7499_Plugin-Url", "346;" + pluginServerRule.url("/even.jar"));
             put("6999_Plugin-Url", "345;" + pluginServerRule.url("/bother.jar"));
@@ -169,7 +170,7 @@ class PluginHandlerMultiVersionTest {
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(this.referenceQuxJarNewest, attrOverrides)
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
         // catch any (unexpected) attempts to show us an ExtendedDialog

@@ -172,7 +172,7 @@ public class RelationSorter {
 
         // Dispatch members to the first adequate sorter
         for (RelationMember m : relationMembers) {
-            var wasAdded = false;
+            boolean wasAdded = false;
             for (AdditionalSorter sorter : ADDITIONAL_SORTERS) {
                 if (sorter.acceptsMember(relationMembers, m)) {
                     wasAdded = customMap.computeIfAbsent(sorter, k -> new LinkedList<>()).add(m);

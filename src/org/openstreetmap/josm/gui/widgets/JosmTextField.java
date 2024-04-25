@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -17,10 +18,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.Icon;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.RepaintManager;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -253,7 +254,7 @@ public class JosmTextField extends JTextField implements Destroyable, ComponentL
      * @return the Color for hint texts
      */
     public static Color getHintTextColor() {
-        var color = UIManager.getColor("TextField[Disabled].textForeground"); // Nimbus?
+        Color color = UIManager.getColor("TextField[Disabled].textForeground"); // Nimbus?
         if (color == null)
             color = UIManager.getColor("TextField.inactiveForeground");
         if (color == null)
@@ -304,7 +305,7 @@ public class JosmTextField extends JTextField implements Destroyable, ComponentL
         if (getComponentOrientation().isLeftToRight()) {
             g.drawString(getHint(), x, getBaseline(getWidth(), getHeight()));
         } else {
-            final var metrics = g.getFontMetrics(g.getFont());
+            FontMetrics metrics = g.getFontMetrics(g.getFont());
             int dx = metrics.stringWidth(getHint());
             g.drawString(getHint(), x - dx, getBaseline(getWidth(), getHeight()));
         }

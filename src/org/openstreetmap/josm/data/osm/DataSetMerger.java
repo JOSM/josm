@@ -114,7 +114,7 @@ public class DataSetMerger {
         // the target dataset. Create a clone and add it to the target dataset.
         //
         OsmPrimitive target;
-        switch(source.getType()) {
+        switch (source.getType()) {
         case NODE: target = source.isNew() ? new Node() : new Node(source.getId()); break;
         case WAY: target = source.isNew() ? new Way() : new Way(source.getId()); break;
         case RELATION: target = source.isNew() ? new Relation() : new Relation(source.getId()); break;

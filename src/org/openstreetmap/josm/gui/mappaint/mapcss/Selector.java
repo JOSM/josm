@@ -714,7 +714,7 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return "LinkSelector{conditions=" + getConditions() + '}';
+            return "LinkSelector{conditions=" + super.getConditions() + '}';
         }
     }
 
@@ -760,7 +760,7 @@ public interface Selector {
          * @throws IllegalArgumentException if value is not knwon
          */
         private static String checkBase(String base) {
-            switch(base) {
+            switch (base) {
             case "*": return BASE_ANY;
             case "node": return BASE_NODE;
             case "way": return BASE_WAY;
@@ -843,7 +843,7 @@ public interface Selector {
         public String toString() {
             return base
                     + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range)
-                    + getConditions().stream().map(String::valueOf).collect(Collectors.joining(""))
+                    + super.getConditions().stream().map(String::valueOf).collect(Collectors.joining(""))
                     + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? ("::" + subpart) : "");
         }
     }

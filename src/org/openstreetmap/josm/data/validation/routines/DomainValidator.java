@@ -1852,7 +1852,7 @@ public final class DomainValidator extends AbstractValidator {
                 .map(tld -> tld.toLowerCase(Locale.ENGLISH))
                 .toArray(String[]::new);
         Arrays.sort(copy);
-        switch(table) {
+        switch (table) {
         case COUNTRY_CODE_MINUS:
             countryCodeTLDsMinus = copy;
             break;
@@ -1884,7 +1884,7 @@ public final class DomainValidator extends AbstractValidator {
      */
     public static String[] getTLDEntries(ArrayType table) {
         final String[] array;
-        switch(table) {
+        switch (table) {
         case COUNTRY_CODE_MINUS:
             array = countryCodeTLDsMinus;
             break;
@@ -1942,7 +1942,7 @@ public final class DomainValidator extends AbstractValidator {
             //            (ideographic full stop), U+FF0E (fullwidth full stop), U+FF61
             //            (halfwidth ideographic full stop).
             char lastChar = input.charAt(length-1); // fetch original last char
-            switch(lastChar) {
+            switch (lastChar) {
                 case '.':      // "." full stop, AKA U+002E
                 case '\u3002': // ideographic full stop
                 case '\uFF0E': // fullwidth full stop
@@ -1957,7 +1957,7 @@ public final class DomainValidator extends AbstractValidator {
         }
     }
 
-    private static class IdnBugHolder {
+    private static final class IdnBugHolder {
         private static boolean keepsTrailingDot() {
             final String input = "a."; // must be a valid name
             return input.equals(IDN.toASCII(input));

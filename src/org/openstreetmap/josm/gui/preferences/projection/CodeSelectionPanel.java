@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class CodeSelectionPanel extends JPanel implements ListSelectionListener,
     /**
      * List model for the filtered view on the list of all codes.
      */
-    private class ProjectionCodeModel extends AbstractTableModel {
+    private final class ProjectionCodeModel extends AbstractTableModel {
         @Override
         public int getRowCount() {
             return filteredData.size();
@@ -104,8 +105,8 @@ public class CodeSelectionPanel extends JPanel implements ListSelectionListener,
         scroll.setPreferredSize(new Dimension(200, 214));
 
         this.setLayout(new GridBagLayout());
-        this.add(filter, GBC.eol().fill(GBC.HORIZONTAL).weight(1.0, 0.0));
-        this.add(scroll, GBC.eol().fill(GBC.HORIZONTAL));
+        this.add(filter, GBC.eol().fill(GridBagConstraints.HORIZONTAL).weight(1.0, 0.0));
+        this.add(scroll, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
     }
 
     /**

@@ -86,8 +86,8 @@ enum ImageResizeMode {
      * @throws IllegalArgumentException if renderer or sourceIcon is null
      */
     BufferedImage createBufferedImage(Dimension dim, Dimension icon, Consumer<Graphics2D> renderer, Image sourceIcon) {
-        final var real = computeDimension(dim, icon);
-        final var bufferedImage = new BufferedImage(real.width, real.height, BufferedImage.TYPE_INT_ARGB);
+        final Dimension real = computeDimension(dim, icon);
+        final BufferedImage bufferedImage = new BufferedImage(real.width, real.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = bufferedImage.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (renderer != null) {

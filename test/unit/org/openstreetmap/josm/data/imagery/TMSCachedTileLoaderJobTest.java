@@ -98,7 +98,7 @@ class TMSCachedTileLoaderJobTest {
         }
     }
 
-    private static class Listener implements TileLoaderListener {
+    private static final class Listener implements TileLoaderListener {
         private CacheEntryAttributes attributes;
         private boolean ready;
         private byte[] data;

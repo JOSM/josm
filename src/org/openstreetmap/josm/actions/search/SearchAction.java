@@ -83,7 +83,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
             @Override
             public Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError {
-                switch(keyword) {
+                switch (keyword) {
                 case "inview":
                     return new InView(false);
                 case "allinview":
@@ -290,7 +290,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     /**
      * Select the search result and display a status text for it.
      */
-    private static class SelectSearchReceiver implements SearchReceiver {
+    private static final class SelectSearchReceiver implements SearchReceiver {
 
         @Override
         public void receiveSearchResult(OsmData<?, ?, ?, ?> ds, Collection<IPrimitive> result,

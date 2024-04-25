@@ -73,7 +73,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
 
     private static void handleElement(GpxImageEntry entry, Element attrElem) {
         try {
-            switch(attrElem.getTagName()) {
+            switch (attrElem.getTagName()) {
             case "file":
                 entry.setFile(new File(attrElem.getTextContent()));
                 break;

@@ -59,7 +59,7 @@ public class ImportAudioAction extends AbstractAction {
         }
     }
 
-    private static class Markers {
+    private static final class Markers {
         public boolean timedMarkersOmitted;
         public boolean untimedMarkersOmitted;
     }

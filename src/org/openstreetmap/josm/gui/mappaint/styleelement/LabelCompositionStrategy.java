@@ -166,7 +166,7 @@ public interface LabelCompositionStrategy {
 
         /* Is joining an array really that complicated in Java? */
         private static String[] getDefaultNameTags() {
-            final var tags = new ArrayList<String>(Arrays.asList(LanguageInfo.getOSMLocaleCodes("name:")));
+            final var tags = new ArrayList<>(Arrays.asList(LanguageInfo.getOSMLocaleCodes("name:")));
             tags.addAll(Arrays.asList("name",
                     "int_name",
                     "distance",
@@ -248,7 +248,7 @@ public interface LabelCompositionStrategy {
         }
 
         private String getPrimitiveName(IPrimitive n) {
-            final var name = new StringBuilder();
+            StringBuilder name = new StringBuilder();
             if (!n.hasKeys()) return null;
             nameTags.stream().map(n::get).filter(Objects::nonNull).findFirst()
                     .ifPresent(name::append);

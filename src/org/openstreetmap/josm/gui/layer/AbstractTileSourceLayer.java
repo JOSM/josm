@@ -1480,7 +1480,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     /**
      * Data container to hold information about a {@code TileSet} class.
      */
-    private static class TileSetInfo {
+    private static final class TileSetInfo {
         boolean hasVisibleTiles;
         boolean hasOverzoomedTiles;
         boolean hasLoadingTiles;
@@ -2025,7 +2025,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private class TileSourcePainter extends CompatibilityModeLayerPainter {
+    private final class TileSourcePainter extends CompatibilityModeLayerPainter {
         /** The memory handle that will hold our tile source. */
         private MemoryHandle<?> memory;
 
@@ -2071,7 +2071,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
         }
 
-        protected long getEstimatedCacheSize() {
+        private long getEstimatedCacheSize() {
             return 4L * tileSource.getTileSize() * tileSource.getTileSize() * estimateTileCacheSize();
         }
 

@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -169,7 +170,7 @@ public class OAuthAuthorizationWizard extends JDialog {
                         + "</body></html>"
         );
         pnlMessage.enableClickableHyperlinks();
-        pnl.add(pnlMessage, GBC.eol().fill(GBC.HORIZONTAL));
+        pnl.add(pnlMessage, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         // the authorisation procedure
         JMultilineLabel lbl = new JMultilineLabel(AuthorizationProcedure.FULLY_AUTOMATIC.getDescription());
@@ -200,7 +201,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      * currently selected
      */
     protected void refreshAuthorisationProcedurePanel() {
-        switch(procedure) {
+        switch (procedure) {
         case FULLY_AUTOMATIC:
             spAuthorisationProcedureUI.getViewport().setView(pnlFullyAutomaticAuthorisationUI);
             pnlFullyAutomaticAuthorisationUI.revalidate();
@@ -289,7 +290,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     protected AbstractAuthorizationUI getCurrentAuthorisationUI() {
-        switch(procedure) {
+        switch (procedure) {
         case FULLY_AUTOMATIC: return pnlFullyAutomaticAuthorisationUI;
         case MANUALLY: return pnlManualAuthorisationUI;
         default: return null;

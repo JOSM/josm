@@ -808,7 +808,7 @@ public class OsmApi extends OsmConnection {
 
                 errorHeader = errorHeader == null ? null : errorHeader.trim();
                 String errorBody = responseBody.isEmpty() ? null : responseBody.trim();
-                switch(retCode) {
+                switch (retCode) {
                 case HttpURLConnection.HTTP_OK:
                     return responseBody;
                 case HttpURLConnection.HTTP_GONE:

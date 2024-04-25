@@ -102,7 +102,7 @@ public class SaveLayersModel extends DefaultTableModel {
     @Override
     public void setValueAt(Object value, int row, int column) {
         final SaveLayerInfo info = this.layerInfo.get(row);
-        switch(column) {
+        switch (column) {
         case columnFilename:
             info.setFile((File) value);
             if (info.isSavable()) {

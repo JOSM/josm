@@ -25,7 +25,7 @@ public final class JosmBaseDirectories implements IBaseDirectories {
         // hide constructor
     }
 
-    private static class InstanceHolder {
+    private static final class InstanceHolder {
         static final JosmBaseDirectories INSTANCE = new JosmBaseDirectories();
     }
 

@@ -134,7 +134,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     public void append(PrimitiveId id) {
         if (id.isNew()) return;
-        switch(id.getType()) {
+        switch (id.getType()) {
         case NODE: nodes.add(id.getUniqueId()); break;
         case WAY: ways.add(id.getUniqueId()); break;
         case RELATION: relations.add(id.getUniqueId()); break;

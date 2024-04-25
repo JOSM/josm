@@ -573,9 +573,8 @@ public class SessionReader {
                 dialog.show(
                         tr("Unable to load layer"),
                         tr("Cannot load layer of type ''{0}'' because no suitable importer was found.", type),
-                        JOptionPane.WARNING_MESSAGE,
-                        progressMonitor
-                        );
+                        JOptionPane.WARNING_MESSAGE
+                );
                 if (dialog.isCancel()) {
                     progressMonitor.cancel();
                     return;
@@ -592,9 +591,8 @@ public class SessionReader {
                         dialog.show(
                                 tr("Unable to load layer"),
                                 tr("Cannot load layer {0} because it depends on layer {1} which has been skipped.", idx, d),
-                                JOptionPane.WARNING_MESSAGE,
-                                progressMonitor
-                                );
+                                JOptionPane.WARNING_MESSAGE
+                        );
                         if (dialog.isCancel()) {
                             progressMonitor.cancel();
                             return;
@@ -624,9 +622,8 @@ public class SessionReader {
                                 tr("<html>Could not load layer {0} ''{1}''.<br>Error is:<br>{2}</html>", idx,
                                         Utils.escapeReservedCharactersHTML(name),
                                         Utils.escapeReservedCharactersHTML(exception.getMessage())),
-                                JOptionPane.ERROR_MESSAGE,
-                                progressMonitor
-                                );
+                                JOptionPane.ERROR_MESSAGE
+                        );
                         if (dialog.isCancel()) {
                             progressMonitor.cancel();
                             return;
@@ -734,11 +731,11 @@ public class SessionReader {
      * This is expected to run in a worker thread (PleaseWaitRunnable), so invokeAndWait is
      * needed to block the current thread and wait for the result of the modal dialog from EDT.
      */
-    private static class CancelOrContinueDialog {
+    private static final class CancelOrContinueDialog {
 
         private boolean cancel;
 
-        public void show(final String title, final String message, final int icon, final ProgressMonitor progressMonitor) {
+        void show(final String title, final String message, final int icon) {
             try {
                 SwingUtilities.invokeAndWait(() -> {
                     ExtendedDialog dlg = new ExtendedDialog(

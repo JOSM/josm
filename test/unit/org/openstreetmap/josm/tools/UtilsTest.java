@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +22,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import net.trajano.commons.testing.UtilityClassTestUtil;
 import org.junit.jupiter.api.Test;
+
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link Utils} class.
@@ -353,8 +355,10 @@ class UtilsTest {
     /**
      * Tests if readBytesFromStream handles null streams (might happen when there is no data on error stream)
      * @throws IOException in case of I/O error
+     * @deprecated {@link Utils#readBytesFromStream(InputStream)} is deprecated since the JVM has the same functionality.
      */
     @Test
+    @Deprecated
     void testNullStreamForReadBytesFromStream() throws IOException {
         assertEquals(0, Utils.readBytesFromStream(null).length, "Empty on null stream");
     }

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
@@ -54,7 +56,7 @@ public class MainFrame extends JFrame {
     };
 
     protected transient WindowGeometry geometry;
-    protected int windowState = JFrame.NORMAL;
+    protected int windowState = Frame.NORMAL;
     private final MainPanel panel;
     private MainMenu menu;
 
@@ -110,7 +112,7 @@ public class MainFrame extends JFrame {
                 .collect(Collectors.toList());
         setIconImages(l);
         addWindowListener(new ExitWindowAdapter());
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         // This listener is never removed, since the main frame exists forever.
         MainApplication.getLayerManager().addActiveLayerChangeListener(e -> refreshTitle());
@@ -130,7 +132,7 @@ public class MainFrame extends JFrame {
         if (geometry != null) {
              geometry.remember(WindowGeometry.PREF_KEY_GUI_GEOMETRY);
         }
-        Config.getPref().putBoolean("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
+        Config.getPref().putBoolean("gui.maximized", (windowState & Frame.MAXIMIZED_BOTH) != 0);
     }
 
     /**
@@ -161,8 +163,8 @@ public class MainFrame extends JFrame {
      */
     public void setMaximized(boolean maximized) {
         if (maximized) {
-            if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
-                windowState = JFrame.MAXIMIZED_BOTH;
+            if (Toolkit.getDefaultToolkit().isFrameStateSupported(Frame.MAXIMIZED_BOTH)) {
+                windowState = Frame.MAXIMIZED_BOTH;
                 setExtendedState(windowState);
             } else {
                 Logging.debug("Main window: maximizing not supported");
@@ -228,7 +230,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class WindowPositionSizeListener extends WindowAdapter implements ComponentListener {
+    private final class WindowPositionSizeListener extends WindowAdapter implements ComponentListener {
         @Override
         public void windowStateChanged(WindowEvent e) {
             windowState = e.getNewState();
@@ -257,7 +259,7 @@ public class MainFrame extends JFrame {
         private void handleComponentEvent(ComponentEvent e) {
             Component c = e.getComponent();
             if (c instanceof JFrame && c.isVisible()) {
-                if (windowState == JFrame.NORMAL) {
+                if (windowState == Frame.NORMAL) {
                     geometry = new WindowGeometry((JFrame) c);
                 } else {
                     geometry.fixScreen((JFrame) c);

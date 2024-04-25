@@ -39,7 +39,7 @@ public final class UndoRedoHandler {
     private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<>();
     private final LinkedList<CommandQueuePreciseListener> preciseListenerCommands = new LinkedList<>();
 
-    private static class InstanceHolder {
+    private static final class InstanceHolder {
         static final UndoRedoHandler INSTANCE = new UndoRedoHandler();
     }
 

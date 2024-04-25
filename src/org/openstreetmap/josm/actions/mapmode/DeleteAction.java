@@ -90,7 +90,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         }
     }
 
-    private static class DeleteParameters {
+    private static final class DeleteParameters {
         private DeleteMode mode;
         private Node nearestNode;
         private WaySegment nearestSegment;

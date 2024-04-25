@@ -34,7 +34,7 @@ public class FileWatcher {
     private static final Map<SourceType, Consumer<SourceEntry>> loaderMap = new EnumMap<>(SourceType.class);
     private final Map<Path, SourceEntry> sourceMap = new HashMap<>();
 
-    private static class InstanceHolder {
+    private static final class InstanceHolder {
         static final FileWatcher INSTANCE = new FileWatcher();
     }
 

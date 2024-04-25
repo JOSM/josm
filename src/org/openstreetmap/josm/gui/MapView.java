@@ -121,7 +121,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @author Michael Zangl
      * @since 10271
      */
-    private class LayerInvalidatedListener implements PaintableInvalidationListener {
+    private final class LayerInvalidatedListener implements PaintableInvalidationListener {
         private boolean ignoreRepaint;
 
         private final Set<MapViewPaintable> invalidatedLayers = Collections.newSetFromMap(new IdentityHashMap<MapViewPaintable, Boolean>());

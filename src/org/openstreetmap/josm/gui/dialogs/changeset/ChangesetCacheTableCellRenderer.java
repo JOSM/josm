@@ -56,7 +56,7 @@ public class ChangesetCacheTableCellRenderer extends AbstractCellRenderer {
         reset();
         renderColors(isSelected);
         Changeset cs = (Changeset) value;
-        switch(column) {
+        switch (column) {
         case 0: /* id */ renderId(cs.getId()); break;
         case 1: /* upload comment */ renderUploadComment(cs); break;
         case 2: /* open/closed */ renderOpen(cs); break;
