@@ -35,6 +35,6 @@ jobs:
       with:
         path: checkstyle-josm.xml
 
-    - uses: JOSM/JOSMPluginAction/actions/checkstyle@v1
+    - uses: JOSM/JOSMPluginAction/actions/checkstyle@v2
       with:
         file: "checkstyle-josm.xml"
