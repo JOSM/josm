@@ -161,7 +161,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         /**
          * Attempts to trace repaints that did not originate from this listener. Good to find missed {@link MapView#repaint()}s in code.
          */
-        protected synchronized void traceRandomRepaint() {
+        private synchronized void traceRandomRepaint() {
             if (!ignoreRepaint) {
                 Logging.trace("Repaint: {0} from {1}", Thread.currentThread().getStackTrace()[3], Thread.currentThread());
             }
@@ -172,7 +172,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * Retrieves a set of all layers that have been marked as invalid since the last call to this method.
          * @return The layers
          */
-        protected synchronized Set<MapViewPaintable> collectInvalidatedLayers() {
+        private synchronized Set<MapViewPaintable> collectInvalidatedLayers() {
             Set<MapViewPaintable> layers = Collections.newSetFromMap(new IdentityHashMap<MapViewPaintable, Boolean>());
             layers.addAll(invalidatedLayers);
             invalidatedLayers.clear();
