@@ -14,6 +14,8 @@ jobs:
   createrelease:
     name: Create Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to create actual release
     env:
       LANG: en_US.UTF-8
     outputs:
@@ -48,17 +50,14 @@ jobs:
 
       - name: Create release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.josm_release_tag }}
-          release_name: JOSM release ${{ env.josm_release_tag }}
+          name: JOSM release ${{ env.josm_release_tag }}
           body: |
             JOSM release ${{ env.josm_release_tag }}
           draft: false
           prerelease: ${{ env.josm_prerelease }}
-        if: github.ref == 'refs/heads/master'
 
   build:
     needs: createrelease
@@ -136,13 +135,19 @@ jobs:
       - name: Upload jar
         if: ${{ always() && needs.createrelease.outputs.upload_url }}
         env:
+          ASSET: dist/josm-custom.jar
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+          CONTENT_TYPE: application/java-archive
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: dist/josm-custom.jar
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-          asset_content_type: application/java-archive
+        # Use `gh api` instead of `gh release upload` so we can set the content type -- it also lets us avoid renaming files
+        run: |
+          gh api --verbose --method POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+            --header "Content-Type: ${{ env.CONTENT_TYPE }}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "$(sed 's/{?name,label}/?name=${{ env.ASSET_NAME }}/g' <<< ${{ needs.createrelease.outputs.upload_url }})" \
+            --input "${{ env.ASSET }}"
 
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && matrix.java != '11' && always() }}
@@ -193,55 +198,84 @@ jobs:
 
       - name: Upload macOS app
         if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
-        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: app/JOSM.zip
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.zip
-          asset_content_type: application/zip
+          CONTENT_TYPE: application/zip
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.create_revision.outputs.josm_release_tag }}.zip
+        run: |
+          curl --location \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+            --header "Content-Type: ${{ env.CONTENT_TYPE }}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "$(sed 's/{?name,label}/?name=${{ env.ASSET_NAME }}/g' <<< ${{ needs.createrelease.outputs.upload_url }})" \
+            --data-binary "@app/JOSM.zip"
 
       - name: Upload macOS app (x64)
         if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
-        uses: actions/upload-release-asset@v1
         env:
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.create_revision.outputs.josm_release_tag }}-x64.zip
+          CONTENT_TYPE: application/zip
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: app/JOSM_${{ matrix.java }}_x86_64.zip
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-x64.zip
-          asset_content_type: application/zip
+        # Use `curl` instead of `gh release upload` so we can set the content type
+        run: |
+          curl --location \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+            --header "Content-Type: ${{ env.CONTENT_TYPE }}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "$(sed 's/{?name,label}/?name=${{ env.ASSET_NAME }}/g' <<< ${{ needs.createrelease.outputs.upload_url }})" \
+            --data-binary "@app/JOSM_${{ matrix.java }}_x86_64.zip"
 
       - name: Upload macOS app (aarch64)
         if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
-        uses: actions/upload-release-asset@v1
         env:
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.create_revision.outputs.josm_release_tag }}-aarch64.zip
+          CONTENT_TYPE: application/zip
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: app/JOSM_${{ matrix.java }}_arm64.zip
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-aarch64.zip
-          asset_content_type: application/zip
+        # Use `curl` instead of `gh release upload` so we can set the content type
+        run: |
+          curl --location \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+            --header "Content-Type: ${{ env.CONTENT_TYPE }}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "$(sed 's/{?name,label}/?name=${{ env.ASSET_NAME }}/g' <<< ${{ needs.createrelease.outputs.upload_url }})" \
+            --data-binary "@app/JOSM_${{ matrix.java }}_arm64.zip"
 
       - name: Upload Windows Installer executable
         if: ${{ runner.os == 'windows' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
-        uses: actions/upload-release-asset@v1
         env:
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.exe
+          CONTENT_TYPE: application/vnd.microsoft.portable-executable
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: app/JOSM.exe
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.exe
-          asset_content_type: application/vnd.microsoft.portable-executable
+        # Use `curl` instead of `gh release upload` so we can set the content type
+        run: |
+          curl --location \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+            --header "Content-Type: ${{ env.CONTENT_TYPE }}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "$(sed 's/{?name,label}/?name=${{ env.ASSET_NAME }}/g' <<< ${{ needs.createrelease.outputs.upload_url }})" \
+            --data-binary "@app/JOSM.exe"
 
       - name: Upload Windows Installer package
         if: ${{ runner.os == 'windows' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
-        uses: actions/upload-release-asset@v1
         env:
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.msi
+          CONTENT_TYPE: application/x-ole-storage
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: app/JOSM.msi
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.msi
-          asset_content_type: application/x-ole-storage
+        # Use `curl` instead of `gh release upload` so we can set the content type
+        run: |
+          curl --location \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+            --header "Content-Type: ${{ env.CONTENT_TYPE }}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "$(sed 's/{?name,label}/?name=${{ env.ASSET_NAME }}/g' <<< ${{ needs.createrelease.outputs.upload_url }})" \
+            --data-binary "@app/JOSM.msi"

@@ -149,7 +149,7 @@ if [ -n "${2}" ]; then
   )
   do_signapp "JOSM_${first}"
   do_signapp "JOSM_${second}"
-  if [ -n "${KEYCHAINPATH}" ]; then
+  if [ "${KEYCHAINPATH}" != "false" ]; then
     function do_codesign() {
       codesign --sign "FOSSGIS e.V." \
         --force \
