@@ -69,7 +69,7 @@ jobs:
       fail-fast: false
       matrix:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
-        java: [8, 11, 17, 21, 22]
+        java: [11, 17, 21, 22]
         os: [ubuntu-latest, macos-14, windows-latest]
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
@@ -145,7 +145,7 @@ jobs:
           asset_content_type: application/java-archive
 
       - name: Build and package for macOS
-        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() }}
+        if: ${{ runner.os == 'macos' && matrix.java != '11' && always() }}
         env:
           CERT_MACOS_P12: ${{ secrets.CERT_MACOS_P12 }}
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
@@ -171,14 +171,14 @@ jobs:
           fi
 
       - name: Setup Windows PATH
-        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        if: ${{ runner.os == 'windows' && matrix.java != '11' && always() }}
         run: |
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
           echo "C:\Program Files (x86)\Windows Kits\10\bin\x64" >> $GITHUB_PATH
           echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
 
       - name: Build and package for Windows
-        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        if: ${{ runner.os == 'windows' && matrix.java != '11' && always() }}
         env:
           SIGN_CERT: ${{ secrets.SIGN_CERT }}
           SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
@@ -192,7 +192,7 @@ jobs:
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
-        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
+        if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -203,7 +203,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload macOS app (x64)
-        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
+        if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -214,7 +214,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload macOS app (aarch64)
-        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
+        if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -225,7 +225,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload Windows Installer executable
-        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
+        if: ${{ runner.os == 'windows' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -236,7 +236,7 @@ jobs:
           asset_content_type: application/vnd.microsoft.portable-executable
 
       - name: Upload Windows Installer package
-        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
+        if: ${{ runner.os == 'windows' && matrix.java != '11' && always() && needs.createrelease.outputs.upload_url }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

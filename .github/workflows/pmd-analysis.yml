@@ -35,7 +35,7 @@ jobs:
       with:
         path: pmd-josm.xml
 
-    - uses: JOSM/JOSMPluginAction/actions/pmd@v1
+    - uses: JOSM/JOSMPluginAction/actions/pmd@v2
       with:
         src: 'src'
         file: "pmd-josm.xml"
