@@ -36,6 +36,6 @@ class WaySegmentTest {
         assertEquals(WaySegment.forNodePair(w, n1, n4).getLowerIndex(), 4);
         assertEquals(WaySegment.forNodePair(w, n4, n1).getLowerIndex(), 5);
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class, () -> WaySegment.forNodePair(w, n3, n4));
-        assertEquals("Node pair is not part of way!", iae.getMessage());
+        assertEquals("The node pair is not consecutive part of the way!", iae.getMessage());
     }
 }

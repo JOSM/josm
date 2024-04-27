@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.Pair;
  * currently used for waterways only. The processed graph consists of ways labeled as waterway.
  *
  * @author gaben
- * @since xxx
+ * @since 19062
  */
 public class CycleDetector extends Test {
     protected static final int CYCLE_DETECTED = 4200;

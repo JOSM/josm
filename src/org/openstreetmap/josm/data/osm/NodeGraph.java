@@ -167,7 +167,7 @@ public class NodeGraph {
      * This method creates a map where each node is associated with a list of nodes that are directly connected to it.
      *
      * @return A map representing the graph structure, where nodes are keys, and values are their direct successors.
-     * @since xxx
+     * @since 19062
      */
     public Map<Node, List<Node>> createMap() {
         final Map<Node, List<Node>> result = new HashMap<>(Utils.hashMapInitialCapacity(edges.size()));

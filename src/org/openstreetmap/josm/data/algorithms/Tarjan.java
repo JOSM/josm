@@ -1,11 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.algorithms;
 
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.NodeGraph;
-import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,13 +10,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.NodeGraph;
+import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * Tarjan's strongly connected components algorithm for JOSM.
  *
  * @author gaben
  * @see <a href="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm">
  * Tarjan's strongly connected components algorithm</a>
- * @since xxx
+ * @since 19062
  */
 public final class Tarjan {
 
