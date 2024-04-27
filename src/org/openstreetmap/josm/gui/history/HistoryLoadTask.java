@@ -9,12 +9,14 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
@@ -229,15 +231,27 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
             // load corresponding changesets (mostly for changeset comment)
             OsmServerChangesetReader changesetReader = new OsmServerChangesetReader();
             List<Long> changesetIds = new ArrayList<>(ds.getChangesetIds());
+            Iterator<Long> iter = changesetIds.iterator();
+            while (iter.hasNext()) {
+                long id = iter.next();
+                Changeset cs = ChangesetCache.getInstance().get((int) id);
+                if (cs != null && !cs.isOpen()) {
+                    ds.putChangeset(cs);
+                    iter.remove();
+                }
+            }
 
             // query changesets 100 by 100 (OSM API limit)
             int n = ChangesetQuery.MAX_CHANGESETS_NUMBER;
             for (int i = 0; i < changesetIds.size(); i += n) {
+                List<Changeset> downloadedCS = new ArrayList<>(changesetIds.size());
                 for (Changeset c : changesetReader.queryChangesets(
                         new ChangesetQuery().forChangesetIds(changesetIds.subList(i, Math.min(i + n, changesetIds.size()))),
                         progressMonitor.createSubTaskMonitor(1, false))) {
                     ds.putChangeset(c);
+                    downloadedCS.add(c);
                 }
+                ChangesetCache.getInstance().update(downloadedCS);
             }
         }
         return ds;
