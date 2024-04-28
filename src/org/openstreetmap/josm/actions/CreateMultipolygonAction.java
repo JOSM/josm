@@ -464,7 +464,12 @@ public class CreateMultipolygonAction extends JosmAction {
         for (Entry<String, String> entry : values.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            List<OsmPrimitive> affectedWays = innerWays.stream().filter(way -> value.equals(way.get(key))).collect(Collectors.toList());
+            List<OsmPrimitive> affectedWays;
+            if ("area".equals(key)) {
+                affectedWays = innerWays.stream().filter(way -> value.equals(way.get(key))).collect(Collectors.toList());
+            } else {
+                affectedWays = new ArrayList<>();
+            }
 
             if (moveTags) {
                 // remove duplicated tags from outer ways
