@@ -25,18 +25,20 @@ public final class WaySegment extends IWaySegment<Node, Way> {
      * @param first  first node
      * @param second second node
      * @return way segment
-     * @throws IllegalArgumentException if the node pair is not part of way
+     * @throws IllegalArgumentException if the node pair is not single a segment of the way
      */
     public static WaySegment forNodePair(Way way, Node first, Node second) {
         int endIndex = way.getNodesCount() - 1;
         while (endIndex > 0) {
             final int indexOfFirst = way.getNodes().subList(0, endIndex).lastIndexOf(first);
+            if (indexOfFirst < 0)
+                break;
             if (second.equals(way.getNode(indexOfFirst + 1))) {
                 return new WaySegment(way, indexOfFirst);
             }
             endIndex--;
         }
-        throw new IllegalArgumentException("The node pair is not consecutive part of the way!");
+        throw new IllegalArgumentException(IWaySegment.NOT_A_SEGMENT);
     }
 
     /**

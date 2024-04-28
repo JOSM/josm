@@ -20,22 +20,35 @@ class WaySegmentTest {
         final Node n2 = new Node(new LatLon(1, 0));
         final Node n3 = new Node(new LatLon(2, 0));
         final Node n4 = new Node(new LatLon(3, 0));
-        final Way w = new Way();
-        for (OsmPrimitive p : Arrays.asList(n1, n2, n3, n4, w)) {
+        final Way w1 = new Way();
+        final Way w2 = new Way();
+        for (OsmPrimitive p : Arrays.asList(n1, n2, n3, n4, w1, w2)) {
             ds.addPrimitive(p);
         }
-        w.addNode(n1);
-        w.addNode(n2);
-        w.addNode(n1);
-        w.addNode(n3);
-        w.addNode(n1);
-        w.addNode(n4);
-        w.addNode(n1);
-        assertEquals(WaySegment.forNodePair(w, n1, n2).getLowerIndex(), 0);
-        assertEquals(WaySegment.forNodePair(w, n1, n3).getLowerIndex(), 2);
-        assertEquals(WaySegment.forNodePair(w, n1, n4).getLowerIndex(), 4);
-        assertEquals(WaySegment.forNodePair(w, n4, n1).getLowerIndex(), 5);
-        IllegalArgumentException iae = assertThrows(IllegalArgumentException.class, () -> WaySegment.forNodePair(w, n3, n4));
-        assertEquals("The node pair is not consecutive part of the way!", iae.getMessage());
+        w1.addNode(n1);
+        w1.addNode(n2);
+        w1.addNode(n1);
+        w1.addNode(n3);
+        w1.addNode(n1);
+        w1.addNode(n4);
+        w1.addNode(n1);
+
+        w2.addNode(n1);
+        w2.addNode(n2);
+        w2.addNode(n3);
+
+        assertEquals(0, WaySegment.forNodePair(w1, n1, n2).getLowerIndex());
+        assertEquals(2, WaySegment.forNodePair(w1, n1, n3).getLowerIndex());
+        assertEquals(4, WaySegment.forNodePair(w1, n1, n4).getLowerIndex());
+        assertEquals(5, WaySegment.forNodePair(w1, n4, n1).getLowerIndex());
+        // two segments between n3 and n4
+        IllegalArgumentException iae = assertThrows(IllegalArgumentException.class, () -> WaySegment.forNodePair(w1, n3, n4));
+        assertEquals(IWaySegment.NOT_A_SEGMENT, iae.getMessage());
+        // wrong order
+        iae = assertThrows(IllegalArgumentException.class, () -> WaySegment.forNodePair(w2, n2, n1));
+        assertEquals(IWaySegment.NOT_A_SEGMENT, iae.getMessage());
+        // node is not in way
+        iae = assertThrows(IllegalArgumentException.class, () -> WaySegment.forNodePair(w2, n1, n4));
+        assertEquals(IWaySegment.NOT_A_SEGMENT, iae.getMessage());
     }
 }
