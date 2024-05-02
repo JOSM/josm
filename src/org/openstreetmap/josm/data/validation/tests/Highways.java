@@ -309,6 +309,8 @@ public class Highways extends Test {
      * @param connection the connection node of two or more different ways
      */
     private void testDifferentLayers(Node connection) {
+        if (connection.hasTag("highway", "elevator"))
+            return;
         List<Way> ways = connection.getParentWays();
         ways.removeIf(w -> !w.hasTag("highway") || w.hasTag("highway", "steps") || isSpecialArea(w));
         if (ways.size() < 2 || ways.stream().noneMatch(w -> w.hasKey("layer")))

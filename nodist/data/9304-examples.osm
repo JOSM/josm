@@ -84,6 +84,22 @@
   <node id='-81985' action='modify' lat='52.85546909714' lon='8.32826598577' />
   <node id='-81986' action='modify' lat='52.8556900621' lon='8.32931900066' />
   <node id='-81995' action='modify' lat='52.85568346895' lon='8.33033082658' />
+  <node id='-82015' action='modify' lat='52.85064916115' lon='8.33364826283'>
+    <tag k='highway' v='elevator' />
+  </node>
+  <node id='-82016' action='modify' lat='52.85064487318' lon='8.33361266283' />
+  <node id='-82017' action='modify' lat='52.85065295052' lon='8.33352316283' />
+  <node id='-82018' action='modify' lat='52.85063898969' lon='8.33337126283' />
+  <node id='-82019' action='modify' lat='52.85064856283' lon='8.33361296283' />
+  <node id='-82020' action='modify' lat='52.85065733821' lon='8.33356556283' />
+  <node id='-82021' action='modify' lat='52.85067708281' lon='8.33352616283' />
+  <node id='-82022' action='modify' lat='52.85070659999' lon='8.33350036283' />
+  <node id='-82023' action='modify' lat='52.85075376764' lon='8.33348326283' />
+  <node id='-82024' action='modify' lat='52.85120480212' lon='8.33344126283' />
+  <node id='-82025' action='modify' lat='52.8507402057' lon='8.33442726283' />
+  <node id='-82026' action='modify' lat='52.85074987855' lon='8.33455636283' />
+  <node id='-82027' action='modify' lat='52.85070709859' lon='8.33492606283' />
+  <node id='-82028' action='modify' lat='52.85058803267' lon='8.33589816283' />
   <way id='-579' action='modify'>
     <nd ref='-25357' />
     <nd ref='-25377' />
@@ -345,5 +361,46 @@
     <tag k='bridge' v='yes' />
     <tag k='highway' v='unclassified' />
     <tag k='layer' v='1' />
+  </way>
+  <way id='-37095' action='modify'>
+    <nd ref='-82015' />
+    <nd ref='-82016' />
+    <nd ref='-82017' />
+    <nd ref='-82018' />
+    <tag k='highway' v='footway' />
+    <tag k='smoothness' v='excellent' />
+    <tag k='surface' v='paving_stones' />
+  </way>
+  <way id='-37096' action='modify'>
+    <nd ref='-82015' />
+    <nd ref='-82019' />
+    <nd ref='-82020' />
+    <nd ref='-82021' />
+    <nd ref='-82022' />
+    <nd ref='-82023' />
+    <nd ref='-82024' />
+    <tag k='bicycle' v='yes' />
+    <tag k='bridge' v='yes' />
+    <tag k='foot' v='yes' />
+    <tag k='highway' v='footway' />
+    <tag k='layer' v='1' />
+    <tag k='lit' v='yes' />
+    <tag k='segregated' v='no' />
+    <tag k='surface' v='concrete' />
+  </way>
+  <way id='-37097' action='modify'>
+    <nd ref='-82015' />
+    <nd ref='-82025' />
+    <nd ref='-82026' />
+    <nd ref='-82027' />
+    <nd ref='-82028' />
+    <tag k='bicycle' v='yes' />
+    <tag k='bridge' v='yes' />
+    <tag k='foot' v='yes' />
+    <tag k='highway' v='footway' />
+    <tag k='layer' v='1' />
+    <tag k='lit' v='yes' />
+    <tag k='segregated' v='no' />
+    <tag k='surface' v='concrete' />
   </way>
 </osm>
