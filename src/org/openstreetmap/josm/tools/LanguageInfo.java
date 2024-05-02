@@ -190,7 +190,11 @@ public final class LanguageInfo {
             case "zh_TW":
                 return new String[]{prefix+"zh-Hant-TW", prefix+"zh-Hant", prefix+"zh"};
             default:
-                return new String[]{prefix+main};
+                ArrayList<String> r = new ArrayList<String>();
+                for (String s : LanguageInfo.getLanguageCodes(null)) {
+                    r.add(prefix + s);
+                }
+                return r.toArray(String[]::new);
         }
     }
 

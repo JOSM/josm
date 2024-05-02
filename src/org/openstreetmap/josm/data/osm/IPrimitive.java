@@ -380,11 +380,11 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * accessed from very specific (language variant) to more generic (default name).
      *
      * @return the name of this primitive, <code>null</code> if no name exists
-     * @see LanguageInfo#getLanguageCodes
+     * @see LanguageInfo#getOSMLocaleCodes
      */
     default String getLocalName() {
-        for (String s : LanguageInfo.getLanguageCodes(null)) {
-            String val = get("name:" + s);
+        for (String s : LanguageInfo.getOSMLocaleCodes("name:")) {
+            String val = get(s);
             if (val != null)
                 return val;
         }
