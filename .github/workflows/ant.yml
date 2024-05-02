@@ -201,7 +201,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONTENT_TYPE: application/zip
-          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.create_revision.outputs.josm_release_tag }}.zip
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.zip
         run: |
           curl --location \
             --request POST \
@@ -215,7 +215,7 @@ jobs:
       - name: Upload macOS app (x64)
         if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
         env:
-          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.create_revision.outputs.josm_release_tag }}-x64.zip
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-x64.zip
           CONTENT_TYPE: application/zip
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Use `curl` instead of `gh release upload` so we can set the content type
@@ -232,7 +232,7 @@ jobs:
       - name: Upload macOS app (aarch64)
         if: ${{ runner.os == 'macos' && matrix.java != '11' && always() && runner.arch == 'ARM64' && needs.createrelease.outputs.upload_url }}
         env:
-          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.create_revision.outputs.josm_release_tag }}-aarch64.zip
+          ASSET_NAME: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}-aarch64.zip
           CONTENT_TYPE: application/zip
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Use `curl` instead of `gh release upload` so we can set the content type
