@@ -682,7 +682,7 @@
         <preset_link preset_name="Access Restrictions" />
     </chunk>
     <chunk id="school_common">
-        <combo key="school:gender" values="mixed,male,female,separated" text="Gender of students"/>
+        <combo key="school:gender" values="mixed,male,female,separated" values_context="gender" text="Gender of students"/>
     </chunk>
     <chunk id="trailblazed">
         <combo key="trailblazed" text="Trail marking" values="yes,poles,cairns,symbols,no" values_sort="false" match="key" />
