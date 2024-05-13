@@ -56,6 +56,7 @@ class JoinAreasActionTest {
     void testTicket9599() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(9599, "ex5.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
+            ds.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
             Layer layer = new OsmDataLayer(ds, null, null);
             MainApplication.getLayerManager().addLayer(layer);
             try {
@@ -80,6 +81,7 @@ class JoinAreasActionTest {
         try (InputStream is = TestUtils.getRegressionDataStream(9599, "three_old.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ds.addDataSource(new DataSource(new Bounds(-90, -180, 90, 180), "Everywhere"));
+            ds.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
             Layer layer = new OsmDataLayer(ds, null, null);
             MainApplication.getLayerManager().addLayer(layer);
             try {
@@ -152,6 +154,7 @@ class JoinAreasActionTest {
         try (InputStream is = TestUtils.getRegressionDataStream(18744, "18744-sample.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ds.addDataSource(new DataSource(new Bounds(-90, -180, 90, 180), "Everywhere"));
+            ds.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
             Layer layer = new OsmDataLayer(ds, null, null);
             MainApplication.getLayerManager().addLayer(layer);
             try {

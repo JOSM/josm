@@ -143,6 +143,14 @@ public class SplitWayAction extends JosmAction {
                     .setIcon(JOptionPane.WARNING_MESSAGE)
                     .show();
             return;
+        } else if (!checkAndConfirmOutlyingOperation("splitway", tr("Split way confirmation"),
+                tr("You are about to split a way that may have referrers that are not yet downloaded.")
+                        + "<br/>"
+                        + tr("This can lead to broken relations.") + "<br/>"
+                        + tr("Do you really want to split?"),
+                tr("The selected area is incomplete. Continue?"),
+                applicableWays, null)) {
+            return;
         }
 
         // Finally, applicableWays contains only one perfect way

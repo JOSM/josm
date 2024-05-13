@@ -364,21 +364,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     @Override
-    public boolean isDisabled() {
-        return (flags & FLAG_DISABLED) != 0;
-    }
-
-    @Override
-    public boolean isDisabledAndHidden() {
-        return ((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0);
-    }
-
-    @Override
-    public boolean isPreserved() {
-        return (flags & FLAG_PRESERVED) != 0;
-    }
-
-    @Override
     public boolean isSelectable() {
         // not synchronized -> check disabled twice just to be sure we did not have a race condition.
         return !isDisabled() && isDrawable() && !isDisabled();
@@ -492,11 +477,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-    @Override
-    public boolean isHighlighted() {
-        return (flags & FLAG_HIGHLIGHTED) != 0;
-    }
-
     /*---------------
      * DIRECTION KEYS
      *---------------*/
@@ -526,16 +506,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         updateFlagsNoLock(FLAG_ANNOTATED, hasKeys() && getWorkInProgressKeys().stream().anyMatch(this::hasKey));
     }
 
-    @Override
-    public boolean isTagged() {
-        return (flags & FLAG_TAGGED) != 0;
-    }
-
-    @Override
-    public boolean isAnnotated() {
-        return (flags & FLAG_ANNOTATED) != 0;
-    }
-
     protected void updateDirectionFlags() {
         boolean hasDirections = false;
         boolean directionReversed = false;
@@ -549,16 +519,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
         updateFlagsNoLock(FLAG_DIRECTION_REVERSED, directionReversed);
         updateFlagsNoLock(FLAG_HAS_DIRECTIONS, hasDirections);
-    }
-
-    @Override
-    public boolean hasDirectionKeys() {
-        return (flags & FLAG_HAS_DIRECTIONS) != 0;
-    }
-
-    @Override
-    public boolean reversedDirection() {
-        return (flags & FLAG_DIRECTION_REVERSED) != 0;
     }
 
     /*------------
@@ -851,12 +811,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
                 throw new DataIntegrityProblemException(
                         tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 
-            setKeys(other.hasKeys() ? other.getKeys() : null);
-            timestamp = other.timestamp;
-            version = other.version;
             setIncomplete(other.isIncomplete());
-            flags = other.flags;
-            user = other.user;
+            super.cloneFrom(other);
+            setKeys(other.hasKeys() ? other.getKeys() : null);
+            version = other.version;
             changesetId = other.changesetId;
         } finally {
             writeUnlock(locked);

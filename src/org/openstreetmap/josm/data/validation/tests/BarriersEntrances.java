@@ -26,7 +26,7 @@ public class BarriersEntrances extends Test {
 
     @Override
     public void visit(Node n) {
-        if (n.hasTag("barrier", "entrance") && !n.isOutsideDownloadArea()) {
+        if (n.hasTag("barrier", "entrance") && n.isReferrersDownloaded()) {
             for (OsmPrimitive p : n.getReferrers()) {
                 if (p.hasKey("barrier")) {
                     return;

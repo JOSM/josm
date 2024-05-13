@@ -37,6 +37,15 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
     void setModified(boolean modified);
 
     /**
+     * Set the status of the referrers
+     * @param referrersDownloaded {@code true} if all referrers for this object have been downloaded
+     * @since xxx
+     */
+    default void setReferrersDownloaded(boolean referrersDownloaded) {
+        throw new UnsupportedOperationException(this.getClass().getName() + " does not support referrers status");
+    }
+
+    /**
      * Checks if object is known to the server.
      * Replies true if this primitive is either unknown to the server (i.e. its id
      * is 0) or it is known to the server and it hasn't be deleted on the server.
@@ -74,6 +83,16 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * @param deleted  true, if this primitive is deleted; false, otherwise
      */
     void setDeleted(boolean deleted);
+
+    /**
+     * Determines if this primitive is fully downloaded
+     * @return {@code true} if the primitive is fully downloaded and all parents and children should be available.
+     * {@code false} otherwise.
+     * @since xxx
+     */
+    default boolean isReferrersDownloaded() {
+        return false;
+    }
 
     /**
      * Determines if this primitive is incomplete.

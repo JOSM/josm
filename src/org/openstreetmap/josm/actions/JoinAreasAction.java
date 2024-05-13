@@ -672,7 +672,7 @@ public class JoinAreasAction extends JosmAction {
             commitCommands(marktr("Removed duplicate nodes"));
             // remove now unconnected nodes without tags
             List<Node> toRemove = oldNodes.stream().filter(
-                    n -> (n.isNew() || !n.isOutsideDownloadArea()) && !n.hasKeys() && n.getReferrers().isEmpty())
+                    n -> n.isReferrersDownloaded() && !n.hasKeys() && n.getReferrers().isEmpty())
                     .collect(Collectors.toList());
             if (!toRemove.isEmpty()) {
                 cmds.add(new DeleteCommand(toRemove));

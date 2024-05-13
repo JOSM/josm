@@ -369,7 +369,11 @@ public class DataSetMerger {
             mergeFromSource = true;
         }
         if (mergeFromSource) {
+            boolean backupReferrersDownloadedStatus = target.isReferrersDownloaded() && haveSameVersion;
             target.mergeFrom(source);
+            if (backupReferrersDownloadedStatus && !target.isReferrersDownloaded()) {
+                target.setReferrersDownloaded(true);
+            }
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
         }
         return true;

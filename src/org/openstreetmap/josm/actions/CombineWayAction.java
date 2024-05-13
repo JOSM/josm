@@ -284,8 +284,8 @@ public class CombineWayAction extends JosmAction {
         for (Way w : selectedWays) {
             final Node[] endnodes = {w.firstNode(), w.lastNode()};
             for (Node n : endnodes) {
-                if (!n.isNew() && n.isOutsideDownloadArea() && !endNodesOutside.add(n)) {
-                    new Notification(tr("Combine ways refused<br>" + "(A shared node is outside of the download area)"))
+                if (!n.isNew() && !n.isReferrersDownloaded() && !endNodesOutside.add(n)) {
+                    new Notification(tr("Combine ways refused<br>" + "(A shared node may have additional referrers)"))
                             .setIcon(JOptionPane.INFORMATION_MESSAGE).show();
                     return;
 

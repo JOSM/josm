@@ -84,26 +84,13 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
         // since super class is not Serializable
-        oos.writeLong(id);
-        oos.writeLong(user == null ? -1 : user.getId());
-        oos.writeInt(version);
-        oos.writeInt(changesetId);
-        oos.writeInt(timestamp);
-        oos.writeObject(keys);
-        oos.writeShort(flags);
+        super.writeObjectCommon(oos);
         oos.defaultWriteObject();
     }
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
         // since super class is not Serializable
-        id = ois.readLong();
-        final long userId = ois.readLong();
-        user = userId == -1 ? null : User.getById(userId);
-        version = ois.readInt();
-        changesetId = ois.readInt();
-        timestamp = ois.readInt();
-        keys = (String[]) ois.readObject();
-        flags = ois.readShort();
+        super.readObjectCommon(ois);
         ois.defaultReadObject();
     }
 

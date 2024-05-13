@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static java.util.function.Predicate.not;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -271,9 +272,9 @@ public final class AlignInCircleAction extends JosmAction {
         }
         fixNodes.addAll(collectNodesWithExternReferrers(ways));
 
-        // Check if one or more nodes are outside of download area
-        if (nodes.stream().anyMatch(Node::isOutsideDownloadArea))
-            throw new InvalidSelection(tr("One or more nodes involved in this action is outside of the downloaded area."));
+        // Check if one or more nodes does not have all parents available
+        if (nodes.stream().anyMatch(not(Node::isReferrersDownloaded)))
+            throw new InvalidSelection(tr("One or more nodes involved in this action may have additional referrers."));
 
 
         if (center == null) {

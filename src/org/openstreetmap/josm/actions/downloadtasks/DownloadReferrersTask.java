@@ -123,6 +123,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
 
         DataSetMerger visitor = new DataSetMerger(targetLayer.getDataSet(), parents);
         visitor.merge();
+        this.children.stream().map(p -> targetLayer.getDataSet().getPrimitiveById(p))
+                .forEach(p -> p.setReferrersDownloaded(true));
+
         SwingUtilities.invokeLater(targetLayer::onPostDownloadFromServer);
         if (visitor.getConflicts().isEmpty())
             return;

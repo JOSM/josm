@@ -433,8 +433,7 @@ public class DeleteCommand extends Command {
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!silent && !callback.checkAndConfirmOutlyingDelete(
-                primitivesToDelete, Utils.filteredCollection(primitivesToDelete, Way.class)))
+        if (!silent && !callback.checkAndConfirmOutlyingDelete(primitivesToDelete, null))
             return null;
 
         Collection<Way> waysToBeChanged = primitivesToDelete.stream()

@@ -89,6 +89,7 @@ public class CommandTest {
             node.setOsmId(id, 1);
             node.setCoor(LatLon.ZERO);
             node.put("existing", "existing");
+            node.setReferrersDownloaded(true);
             layer.data.addPrimitive(node);
             return node;
         }
@@ -104,6 +105,7 @@ public class CommandTest {
             way.setOsmId(id, 1);
             way.setNodes(Arrays.asList(nodes));
             way.put("existing", "existing");
+            way.setReferrersDownloaded(true);
             layer.data.addPrimitive(way);
             return way;
         }
@@ -120,6 +122,7 @@ public class CommandTest {
                 relation.addMember(member);
             }
             relation.put("existing", "existing");
+            relation.setReferrersDownloaded(true);
             layer.data.addPrimitive(relation);
             return relation;
         }

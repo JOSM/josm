@@ -129,6 +129,11 @@ public class InspectPrimitiveDataText {
         if (!o.isVisible()) {
             sb.append(tr("deleted-on-server")).append(INDENT);
         }
+        if (o.isReferrersDownloaded()) {
+            sb.append(tr("all-referrers-downloaded")).append(INDENT);
+        } else {
+            sb.append(tr("referrers-not-all-downloaded")).append(INDENT);
+        }
         if (o.isModified()) {
             sb.append(tr("modified")).append(INDENT);
         }

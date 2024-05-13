@@ -13,12 +13,15 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -406,19 +409,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         } else {
             // add bounds if necessary (note that Overpass API does not return bounds in the response XML)
             if (ds != null && ds.getDataSources().isEmpty() && overpassQuery.contains("{{bbox}}")) {
-                if (crosses180th) {
-                    Bounds bounds = new Bounds(lat1, lon1, lat2, 180.0);
-                    DataSource src = new DataSource(bounds, getBaseUrl());
-                    ds.addDataSource(src);
-
-                    bounds = new Bounds(lat1, -180.0, lat2, lon2);
-                    src = new DataSource(bounds, getBaseUrl());
-                    ds.addDataSource(src);
-                } else {
-                    Bounds bounds = new Bounds(lat1, lon1, lat2, lon2);
-                    DataSource src = new DataSource(bounds, getBaseUrl());
-                    ds.addDataSource(src);
-                }
+                getBounds().forEach(bounds -> ds.addDataSource(new DataSource(bounds, getBaseUrl())));
             }
             return ds;
         }
@@ -439,5 +430,18 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
     @Override
     public boolean considerAsFullDownload() {
         return overpassQuery.equals(OverpassDownloadSource.FULL_DOWNLOAD_QUERY);
+    }
+
+    @Override
+    protected Collection<Bounds> getBounds() {
+        if (this.overpassQuery.contains("{{bbox}}")) {
+            if (crosses180th) {
+                return Set.of(new Bounds(lat1, lon1, lat2, 180.0),
+                        new Bounds(lat1, -180.0, lat2, lon2));
+            } else {
+                return Collections.singleton(new Bounds(lat1, lon1, lat2, lon2));
+            }
+        }
+        return Collections.emptySet();
     }
 }

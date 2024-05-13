@@ -3,6 +3,9 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -131,10 +134,15 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     protected static final short FLAG_PRESERVED = 1 << 13;
 
     /**
+     * Determines if the primitive has all of its referrers
+     */
+    protected static final short FLAG_ALL_REFERRERS_DOWNLOADED = 1 << 14;
+
+    /**
      * Put several boolean flags to one short int field to save memory.
      * Other bits of this field are used in subclasses.
      */
-    protected volatile short flags = FLAG_VISIBLE;   // visible per default
+    private volatile short flags = FLAG_VISIBLE;   // visible per default
 
     /**
      * The mappaint cache index for this primitive.
@@ -365,6 +373,38 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         return oldFlags != flags;
     }
 
+    /**
+     * Write common data to a serialization stream. At time of writing, this should <i>only</i> be used by {@link PrimitiveData}.
+     * @param oos The output stream to write to
+     * @throws IOException see {@link ObjectOutputStream#write}
+     */
+    protected void writeObjectCommon(ObjectOutputStream oos) throws IOException {
+        oos.writeLong(id);
+        oos.writeLong(user == null ? -1 : user.getId());
+        oos.writeInt(version);
+        oos.writeInt(changesetId);
+        oos.writeInt(timestamp);
+        oos.writeObject(keys);
+        oos.writeShort(flags);
+    }
+
+    /**
+     * Read common data from a serialization stream. At time of writing, this should <i>only</i> be used by {@link PrimitiveData}.
+     * @param ois The serialization stream to read from
+     * @throws ClassNotFoundException see {@link ObjectInputStream#readObject()}
+     * @throws IOException see {@link ObjectInputStream#read}
+     */
+    protected void readObjectCommon(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        id = ois.readLong();
+        final long userId = ois.readLong();
+        user = userId == -1 ? null : User.getById(userId);
+        version = ois.readInt();
+        changesetId = ois.readInt();
+        timestamp = ois.readInt();
+        keys = (String[]) ois.readObject();
+        flags = ois.readShort();
+    }
+
     @Override
     public void setModified(boolean modified) {
         updateFlags(FLAG_MODIFIED, modified);
@@ -378,6 +418,11 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     @Override
     public boolean isDeleted() {
         return (flags & FLAG_DELETED) != 0;
+    }
+
+    @Override
+    public void setReferrersDownloaded(boolean referrersDownloaded) {
+        this.updateFlags(FLAG_ALL_REFERRERS_DOWNLOADED, referrersDownloaded);
     }
 
     @Override
@@ -406,6 +451,51 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     public void setDeleted(boolean deleted) {
         updateFlags(FLAG_DELETED, deleted);
         setModified(deleted ^ !isVisible());
+    }
+
+    @Override
+    public boolean hasDirectionKeys() {
+        return (flags & FLAG_HAS_DIRECTIONS) != 0;
+    }
+
+    @Override
+    public boolean reversedDirection() {
+        return (flags & FLAG_DIRECTION_REVERSED) != 0;
+    }
+
+    @Override
+    public boolean isTagged() {
+        return (flags & FLAG_TAGGED) != 0;
+    }
+
+    @Override
+    public boolean isAnnotated() {
+        return (flags & FLAG_ANNOTATED) != 0;
+    }
+
+    @Override
+    public boolean isHighlighted() {
+        return (flags & FLAG_HIGHLIGHTED) != 0;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return (flags & FLAG_DISABLED) != 0;
+    }
+
+    @Override
+    public boolean isDisabledAndHidden() {
+        return ((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0);
+    }
+
+    @Override
+    public boolean isPreserved() {
+        return (flags & FLAG_PRESERVED) != 0;
+    }
+
+    @Override
+    public boolean isReferrersDownloaded() {
+        return isNew() || (flags & FLAG_ALL_REFERRERS_DOWNLOADED) != 0;
     }
 
     /**
