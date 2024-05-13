@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +16,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.input.BoundedInputStream;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -50,6 +50,71 @@ import jakarta.annotation.Nullable;
  * @since 18695
  */
 public final class OsmPbfReader extends AbstractReader {
+    /**
+     * This could be replaced by {@link org.apache.commons.io.input.BoundedInputStream} from Apache Commons IO.
+     * However, Commons IO is not <i>currently</i> (2024-05-13) a required JOSM dependency, so we should avoid using it
+     * for now. Commons IO is a <i>transitive</i> dependency, currently pulled in by {@link org.apache.commons.compress}
+     * (see {@link org.apache.commons.compress.utils.BoundedInputStream}).
+     */
+    private static final class BoundedInputStream extends InputStream {
+        private final InputStream source;
+        private long count;
+        private long mark;
+
+        BoundedInputStream(InputStream source) {
+            this.source = source;
+        }
+
+        @Override
+        public int read() throws IOException {
+            count++;
+            return this.source.read();
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            long skipped = super.skip(n);
+            this.count += skipped;
+            return skipped;
+        }
+
+        @Override
+        public int available() throws IOException {
+            return this.source.available();
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.source.close();
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            this.source.mark(readlimit);
+            this.mark = this.count;
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            this.source.reset();
+            this.count = this.mark;
+        }
+
+        @Override
+        public boolean markSupported() {
+            return this.source.markSupported();
+        }
+
+        @Override
+        public long transferTo(OutputStream out) throws IOException {
+            return super.transferTo(out);
+        }
+
+        long getCount() {
+            return this.count;
+        }
+    }
+
     private static final long[] EMPTY_LONG = new long[0];
     /**
      * Nano degrees

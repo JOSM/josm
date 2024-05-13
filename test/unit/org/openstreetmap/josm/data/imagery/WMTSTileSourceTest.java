@@ -15,13 +15,13 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -487,12 +487,12 @@ class WMTSTileSourceTest {
     @ValueSource(strings = {"image/jpgpng", "image/png8", "image/png; mode=8bit", "image/jpeg", "image/jpg"})
     void testSupportedMimeTypesUrlEncode(String mimeType, @TempDir File temporaryDirectory)
             throws IOException, WMTSGetCapabilitiesException, ReflectiveOperationException {
-        final String data = FileUtils.readFileToString(new File(TestUtils.getTestDataRoot() +
-                "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml"), StandardCharsets.UTF_8)
+        final String data = Files.readString(Paths.get(TestUtils.getTestDataRoot() +
+                        "wmts", "bug13975-multiple-tile-matrices-for-one-layer-projection.xml"), StandardCharsets.UTF_8)
                 .replace("image/jpgpng", mimeType);
-        File file = new File(temporaryDirectory, "testSupportedMimeTypes.xml");
-        FileUtils.writeStringToFile(file, data, StandardCharsets.UTF_8);
-        WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(file.toURI().toURL().toExternalForm(), Collections.emptyMap());
+        Path file = temporaryDirectory.toPath().resolve("testSupportedMimeTypes.xml");
+        Files.writeString(file, data, StandardCharsets.UTF_8);
+        WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(file.toUri().toURL().toExternalForm(), Collections.emptyMap());
         assertEquals(2, capabilities.getLayers().size());
         Field format = WMTSTileSource.Layer.class.getDeclaredField("format");
         ReflectionUtils.setObjectsAccessible(format);

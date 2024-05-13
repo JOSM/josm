@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FilenameUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.Preferences;
@@ -319,14 +318,35 @@ public class ValidatorCLI implements CLIModule {
      * @return The default output name for the input file (extension stripped, ".geojson" added)
      */
     private static String getDefaultOutputName(final String inputString) {
-        final String extension = FilenameUtils.getExtension(inputString);
+        final String[] parts = getFileParts(inputString);
+        final String extension = parts[1];
         if (!Arrays.asList("zip", "bz", "xz", "geojson").contains(extension)) {
-            return FilenameUtils.getBaseName(inputString) + ".geojson";
+            return parts[0] + ".geojson";
         } else if ("geojson".equals(extension)) {
             // Account for geojson input files
-            return FilenameUtils.getBaseName(inputString) + ".validated.geojson";
+            return parts[0] + ".validated.geojson";
         }
-        return FilenameUtils.getBaseName(FilenameUtils.getBaseName(inputString)) + ".geojson";
+        return parts[0] + ".geojson";
+    }
+
+    /**
+     * Split a string into a filename + extension. Example:
+     * "foo.bar.txt" -> ["foo.bar", "txt"]
+     * <p>
+     * Please note that future versions of Java may make this method redundant. It is not as of Java 21 (look for
+     * something like {@code Path#getExtension}, see <a href="https://bugs.openjdk.org/browse/JDK-8298318">JDK-8298318</a>.
+     * That may be in Java 22.
+     * @param inputString The string to get the filename and extension from
+     * @return The filename and the (optional) extension
+     */
+    private static String[] getFileParts(String inputString) {
+        final int split = inputString.lastIndexOf('.');
+        final int path = inputString.lastIndexOf(File.separatorChar);
+        if (split == -1 || path > split) {
+            return new String[] {inputString, ""};
+        } else {
+            return new String[]{inputString.substring(0, split), inputString.substring(split + 1)};
+        }
     }
 
     /**
