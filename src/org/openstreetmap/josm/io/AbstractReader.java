@@ -87,6 +87,11 @@ public abstract class AbstractReader {
     }
 
     /**
+     * A lookup table to avoid calling {@link String#intern()} unnecessarily.
+     */
+    private final Map<String, String> tagMap = new HashMap<>();
+
+    /**
      * The dataset to add parsed objects to.
      */
     protected DataSet ds = new DataSet();
@@ -369,6 +374,7 @@ public abstract class AbstractReader {
                     }
                 }
             }
+            this.tagMap.clear();
             progressMonitor.finishTask();
             progressMonitor.removeCancelListener(cancelListener);
         }
@@ -604,7 +610,7 @@ public abstract class AbstractReader {
             // Drop the tag on import, but flag the primitive as modified
             ((AbstractPrimitive) t).setModified(true);
         } else {
-            t.put(key.intern(), value.intern());
+            t.put(this.tagMap.computeIfAbsent(key, Utils::intern), this.tagMap.computeIfAbsent(value, Utils::intern));
         }
     }
 

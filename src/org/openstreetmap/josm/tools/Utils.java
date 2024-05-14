@@ -738,7 +738,7 @@ public final class Utils {
      * @since 18208
      */
     public static boolean isBlank(String string) {
-        return string == null || strip(string).isEmpty();
+        return isStripEmpty(string);
     }
 
     /**
@@ -762,7 +762,14 @@ public final class Utils {
      * @since 11435
      */
     public static boolean isStripEmpty(String str) {
-        return str == null || IntStream.range(0, str.length()).allMatch(i -> isStrippedChar(str.charAt(i), null));
+        if (str != null && !str.isBlank()) {
+            for (int i = 0; i < str.length(); i++) {
+                if (!isStrippedChar(str.charAt(i), null)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
