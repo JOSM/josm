@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.styleelement;
 
+import static java.util.function.Predicate.not;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -185,7 +187,7 @@ public interface LabelCompositionStrategy {
                 return new ArrayList<>();
             }
             return nameTags.stream()
-                    .filter(tag -> !Utils.isStripEmpty(tag))
+                    .filter(not(Utils::isStripEmpty))
                     .collect(Collectors.toList());
         }
 

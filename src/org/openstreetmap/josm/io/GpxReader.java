@@ -74,7 +74,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     if (dot)
                         message += '.';
                 }
-                if (!Utils.isBlank(parser.getData().creator)) {
+                if (!Utils.isStripEmpty(parser.getData().creator)) {
                     message += "\n" + tr("The file was created by \"{0}\".", parser.getData().creator);
                 }
                 SAXException ex = new SAXException(message, e);

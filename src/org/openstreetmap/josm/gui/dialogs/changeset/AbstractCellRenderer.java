@@ -56,7 +56,7 @@ public abstract class AbstractCellRenderer extends JLabel implements TableCellRe
     }
 
     protected void renderUser(User user) {
-        if (user == null || Utils.isBlank(user.getName())) {
+        if (user == null || Utils.isStripEmpty(user.getName())) {
             setFont(UIManager.getFont("Table.font").deriveFont(Font.ITALIC));
             setText(tr("anonymous"));
         } else {

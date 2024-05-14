@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static java.util.function.Predicate.not;
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -826,8 +828,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     public String getLayerInformationForSourceTag() {
         return layerManager.getVisibleLayersInZOrder().stream()
-                .filter(layer -> !Utils.isBlank(layer.getChangesetSourceTag()))
-                .map(layer -> layer.getChangesetSourceTag().trim())
+                .map(Layer::getChangesetSourceTag)
+                .filter(not(Utils::isStripEmpty))
+                .map(String::trim)
                 .distinct()
                 .collect(Collectors.joining("; "));
     }

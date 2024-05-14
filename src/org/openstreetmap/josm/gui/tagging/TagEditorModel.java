@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static java.util.function.Predicate.not;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.beans.PropertyChangeListener;
@@ -531,7 +532,7 @@ public class TagEditorModel extends AbstractTableModel {
     public List<String> getKeys() {
         return tags.stream()
                 .map(TagModel::getName)
-                .filter(name -> !Utils.isStripEmpty(name))
+                .filter(not(Utils::isStripEmpty))
                 .collect(Collectors.toList());
     }
 

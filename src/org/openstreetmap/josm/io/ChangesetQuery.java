@@ -431,7 +431,7 @@ public class ChangesetQuery {
      */
     public static class ChangesetQueryUrlParser {
         protected int parseUid(String value) throws ChangesetQueryUrlException {
-            if (Utils.isBlank(value))
+            if (Utils.isStripEmpty(value))
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
             int id;
@@ -448,7 +448,7 @@ public class ChangesetQuery {
         }
 
         protected boolean parseBoolean(String value, String parameter) throws ChangesetQueryUrlException {
-            if (Utils.isBlank(value))
+            if (Utils.isStripEmpty(value))
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             switch (value) {
@@ -463,7 +463,7 @@ public class ChangesetQuery {
         }
 
         protected Instant parseDate(String value, String parameter) throws ChangesetQueryUrlException {
-            if (Utils.isBlank(value))
+            if (Utils.isStripEmpty(value))
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             try {

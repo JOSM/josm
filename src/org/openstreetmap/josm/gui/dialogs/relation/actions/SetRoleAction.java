@@ -44,7 +44,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
     }
 
     protected boolean isEmptyRole() {
-        return Utils.isBlank(tfRole.getText());
+        return Utils.isStripEmpty(tfRole.getText());
     }
 
     protected boolean confirmSettingEmptyRole(int onNumMembers) {

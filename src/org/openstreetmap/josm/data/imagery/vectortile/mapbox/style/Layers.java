@@ -272,7 +272,7 @@ public class Layers {
         boolean iconImage = false;
         if (layoutObject.containsKey("icon-image")) {
             sb.append(/* NO-ICON */"icon-image:concat(");
-            if (!Utils.isBlank(this.styleId)) {
+            if (!Utils.isStripEmpty(this.styleId)) {
                 sb.append('"').append(this.styleId).append('/').append("\",");
             }
             Matcher matcher = CURLY_BRACES.matcher(layoutObject.getString("icon-image"));

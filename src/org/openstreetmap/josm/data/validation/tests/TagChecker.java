@@ -1402,7 +1402,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             for (Entry<String, String> prop: tags.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
-                if (Utils.isBlank(value)) {
+                if (Utils.isStripEmpty(value)) {
                     commands.add(new ChangePropertyCommand(p, key, null));
                 } else if (value.startsWith(" ") || value.endsWith(" ") || value.contains("  ")) {
                     commands.add(new ChangePropertyCommand(p, key, Utils.removeWhiteSpaces(value)));

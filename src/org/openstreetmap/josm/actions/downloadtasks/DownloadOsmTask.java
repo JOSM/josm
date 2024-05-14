@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
+import static java.util.function.Predicate.not;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
@@ -298,7 +299,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          */
         protected String generateLayerName() {
             return Optional.ofNullable(settings.getLayerName())
-                .filter(layerName -> !Utils.isStripEmpty(layerName))
+                .filter(not(Utils::isStripEmpty))
                 .orElse(OsmDataLayer.createNewName());
         }
 
@@ -359,7 +360,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             if (settings.isNewLayer() || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
-                final OsmDataLayer layer = createNewLayer(Optional.ofNullable(newLayerName).filter(it -> !Utils.isStripEmpty(it)));
+                final OsmDataLayer layer = createNewLayer(Optional.ofNullable(newLayerName).filter(not(Utils::isStripEmpty)));
                 MainApplication.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;
             }

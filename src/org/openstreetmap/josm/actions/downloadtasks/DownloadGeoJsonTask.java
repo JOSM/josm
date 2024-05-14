@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -56,7 +57,7 @@ public class DownloadGeoJsonTask extends DownloadOsmTask {
         @Override
         protected String generateLayerName() {
             return Optional.of(url.substring(url.lastIndexOf('/')+1))
-                .filter(it -> !Utils.isStripEmpty(it))
+                .filter(Predicate.not(Utils::isStripEmpty))
                 .orElse(super.generateLayerName());
         }
 

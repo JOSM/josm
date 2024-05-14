@@ -114,7 +114,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             }
             String token = Config.getPref().get(hostKey, null);
             String parameters = Config.getPref().get(parametersKey, null);
-            if (!Utils.isBlank(token) && !Utils.isBlank(parameters) && OAuthVersion.OAuth20 == oauthType) {
+            if (!Utils.isStripEmpty(token) && !Utils.isStripEmpty(parameters) && OAuthVersion.OAuth20 == oauthType) {
                 try {
                     OAuth20Parameters oAuth20Parameters = new OAuth20Parameters(parameters);
                     return new OAuth20Token(oAuth20Parameters, token);

@@ -74,7 +74,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
          */
         public boolean readChangesetId() {
             String value = getComponent().getText();
-            if (!Utils.isBlank(value)) {
+            if (!Utils.isStripEmpty(value)) {
                 value = value.trim();
                 id = 0;
                 try {

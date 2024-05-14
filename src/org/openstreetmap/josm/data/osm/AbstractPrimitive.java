@@ -718,7 +718,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         Map<String, String> originalKeys = getKeys();
         List<Map.Entry<String, String>> tagsToAdd = new ArrayList<>(tags.size());
         for (Map.Entry<String, String> tag : tags.entrySet()) {
-            if (!Utils.isBlank(tag.getKey())) {
+            if (!Utils.isStripEmpty(tag.getKey())) {
                 int keyIndex = indexOfKey(newKeys, tag.getKey());
                 // Realistically, we will not hit the newKeys == null branch. If it is null, keyIndex is always < 0
                 if (keyIndex < 0 || newKeys == null) {

@@ -214,7 +214,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
     public void initFromPreferences() {
         String credentialsUserName = CredentialsManager.getInstance().getUsername();
         if (isAnonymous()) {
-            if (!Utils.isBlank(credentialsUserName)) {
+            if (!Utils.isStripEmpty(credentialsUserName)) {
                 setPartiallyIdentified(credentialsUserName);
             }
         } else {
@@ -279,7 +279,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
             if (evt.getNewValue() instanceof StringSetting) {
                 newUserName = ((StringSetting) evt.getNewValue()).getValue();
             }
-            if (Utils.isBlank(newUserName)) {
+            if (Utils.isStripEmpty(newUserName)) {
                 setAnonymous();
             } else if (!newUserName.equals(userName)) {
                 setPartiallyIdentified(newUserName);
@@ -290,7 +290,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
             if (evt.getNewValue() instanceof StringSetting) {
                 newUrl = ((StringSetting) evt.getNewValue()).getValue();
             }
-            if (Utils.isBlank(newUrl)) {
+            if (Utils.isStripEmpty(newUrl)) {
                 setAnonymous();
             } else if (isFullyIdentified()) {
                 setPartiallyIdentified(getUserName());

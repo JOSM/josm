@@ -75,7 +75,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                     Object trackUrl = track.get("url");
                     if (trackUrl instanceof String) {
                         String sTrackUrl = (String) trackUrl;
-                        if (!Utils.isBlank(sTrackUrl) && !sTrackUrl.startsWith("http")) {
+                        if (!Utils.isStripEmpty(sTrackUrl) && !sTrackUrl.startsWith("http")) {
                             track.put("url", browseUrl + sTrackUrl);
                         }
                     }

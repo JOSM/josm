@@ -149,7 +149,7 @@ public final class HelpUtil {
      */
     public static String buildAbsoluteHelpTopic(String topic, LocaleType type) {
         String prefix = getHelpTopicPrefix(type);
-        if (prefix == null || Utils.isBlank(topic) || "/".equals(topic.trim()))
+        if (prefix == null || Utils.isStripEmpty(topic) || "/".equals(topic.trim()))
             return prefix;
         prefix += '/' + topic;
         return prefix.replaceAll("\\/+", "\\/"); // collapse sequences of //

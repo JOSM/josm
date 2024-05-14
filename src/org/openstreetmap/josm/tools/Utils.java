@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static java.util.function.Predicate.not;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -736,7 +737,9 @@ public final class Utils {
      * @param string string
      * @return {@code true} if string is null or blank
      * @since 18208
+     * @deprecated use {@link #isStripEmpty(String)} or {@link String#isBlank()} instead
      */
+    @Deprecated(since = "19080", forRemoval = true)
     public static boolean isBlank(String string) {
         return isStripEmpty(string);
     }
@@ -750,7 +753,7 @@ public final class Utils {
      */
     public static String firstNotEmptyString(String defaultString, String... candidates) {
         return Arrays.stream(candidates)
-                .filter(candidate -> !Utils.isStripEmpty(candidate))
+                .filter(not(Utils::isStripEmpty))
                 .findFirst().orElse(defaultString);
     }
 

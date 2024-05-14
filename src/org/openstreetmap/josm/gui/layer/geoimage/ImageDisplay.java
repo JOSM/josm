@@ -771,7 +771,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         } else {
             errorMessage = null;
         }
-        if (!Utils.isBlank(errorMessage)) {
+        if (!Utils.isStripEmpty(errorMessage)) {
             Rectangle2D errorStringSize = g.getFontMetrics(g.getFont()).getStringBounds(errorMessage, g);
             if (Boolean.TRUE.equals(ERROR_MESSAGE_BACKGROUND.get())) {
                 int height = g.getFontMetrics().getHeight();

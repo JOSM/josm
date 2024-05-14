@@ -292,7 +292,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     public static void putDataPrefLocal(IGpxLayerPrefs data, String key, String value) {
         if (data == null) return;
         data.setModified(true);
-        if (Utils.isBlank(value) ||
+        if (Utils.isStripEmpty(value) ||
                 (getLayerPref(null, key).equals(value) && DEFAULT_PREFS.get(key) != null && DEFAULT_PREFS.get(key).toString().equals(value))) {
             data.getLayerPrefs().remove(key);
         } else {
