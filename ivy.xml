@@ -66,7 +66,7 @@
         <!-- test->default -->
         <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.8.4"/>
         <dependency conf="test->default" org="com.ginsberg" name="junit5-system-exit" rev="1.1.2"/>
-        <dependency conf="test->default" org="com.github.tomakehurst" name="wiremock" rev="3.0.1"/>
+        <dependency conf="test->default" org="org.wiremock" name="wiremock" rev="3.5.4"/>
         <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.171"/>
         <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.10.2"/>
         <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.10.2"/>
