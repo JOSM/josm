@@ -140,7 +140,7 @@ public class TagEditHelper {
             DEFAULT_LRU_TAGS_NUMBER);
     /** The preference storage of recent tags */
     public static final ListProperty PROPERTY_RECENT_TAGS = new ListProperty("properties.recent-tags",
-            Collections.<String>emptyList());
+            Collections.emptyList());
     /** The preference list of tags which should not be remembered, since r9940 */
     public static final StringProperty PROPERTY_TAGS_TO_IGNORE = new StringProperty("properties.recent-tags.ignore",
             new SearchSetting().writeToString());
@@ -180,7 +180,7 @@ public class TagEditHelper {
 
     /**
      * Copy of recently added tags in sorted from newest to oldest order.
-     *
+     * <p>
      * We store the maximum number of recent tags to allow dynamic change of number of tags shown in the preferences.
      * Used to cache initial status.
      */
@@ -277,27 +277,24 @@ public class TagEditHelper {
         DataSet activeDataSet = OsmDataManager.getInstance().getActiveDataSet();
         if (activeDataSet == null)
             return;
-        try {
-            activeDataSet.beginUpdate();
-            Collection<OsmPrimitive> selection = OsmDataManager.getInstance().getInProgressSelection();
-            this.sel = selection;
-            if (Utils.isEmpty(selection))
-                return;
+        final Collection<OsmPrimitive> selection = updateSelection();
 
-            final AddTagsDialog addDialog = getAddTagsDialog();
+        if (Utils.isEmpty(selection))
+            return;
 
-            addDialog.showDialog();
+        final AddTagsDialog addDialog = getAddTagsDialog();
 
-            addDialog.destroyActions();
+        addDialog.showDialog();
+
+        addDialog.destroyActions();
+        activeDataSet.update(() -> {
             // Remote control can cause the selection to change, see #23191.
-            if (addDialog.getValue() == 1 && (selection == sel || warnSelectionChanged())) {
+            if (addDialog.getValue() == 1 && (selection.equals(updateSelection()) || warnSelectionChanged())) {
                 addDialog.performTagAdding(selection);
             } else {
                 addDialog.undoAllTagsAdding();
             }
-        } finally {
-            activeDataSet.endUpdate();
-        }
+        });
     }
 
     /**
@@ -316,7 +313,7 @@ public class TagEditHelper {
     */
     public void editTag(final int row, boolean focusOnKey) {
         changedKey = null;
-        sel = OsmDataManager.getInstance().getInProgressSelection();
+        updateSelection();
         if (Utils.isEmpty(sel))
             return;
 
@@ -360,6 +357,21 @@ public class TagEditHelper {
     }
 
     /**
+     * Update the current selection for this editor
+     */
+    private Collection<OsmPrimitive> updateSelection() {
+        final DataSet activeDataSet = OsmDataManager.getInstance().getActiveDataSet();
+        try {
+            activeDataSet.getReadLock().lock();
+            Collection<OsmPrimitive> selection = new ArrayList<>(OsmDataManager.getInstance().getInProgressSelection());
+            this.sel = selection;
+            return selection;
+        } finally {
+            activeDataSet.getReadLock().unlock();
+        }
+    }
+
+    /**
      * For a given key k, return a list of keys which are used as keys for
      * auto-completing values to increase the search space.
      * @param key the key k
@@ -369,7 +381,7 @@ public class TagEditHelper {
         if ("name".equals(key) || "addr:street".equals(key))
             return Arrays.asList("addr:street", "name");
         else
-            return Arrays.asList(key);
+            return Collections.singletonList(key);
     }
 
     /**
@@ -551,7 +563,7 @@ public class TagEditHelper {
             p.add(Box.createVerticalStrut(5), GBC.eol());
             p.add(new JLabel(tr("Key")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
-            p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
+            p.add(keys, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
             List<AutoCompletionItem> valueList = autocomplete.getTagValues(getAutocompletionKeys(key), usedValuesAwareComparator);
 
@@ -568,7 +580,7 @@ public class TagEditHelper {
             p.add(Box.createVerticalStrut(5), GBC.eol());
             p.add(new JLabel(tr("Value")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
-            p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
+            p.add(values, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(Box.createVerticalStrut(2), GBC.eol());
 
             p.applyComponentOrientation(OrientationAction.getDefaultComponentOrientation());
@@ -828,7 +840,7 @@ public class TagEditHelper {
             };
             mainPanel.add(new JLabel("<html>"+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(), sel.size())
-                +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
+                +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
             keys = new AutoCompComboBox<>();
             keys.setPrototypeDisplayValue(new AutoCompletionItem("dummy"));
@@ -836,7 +848,7 @@ public class TagEditHelper {
             keys.getModel().setComparator(Comparator.naturalOrder()); // according to Comparable
             keys.setAutocompleteEnabled(AUTOCOMPLETE_KEYS.get());
 
-            mainPanel.add(keys, GBC.eop().fill(GBC.HORIZONTAL));
+            mainPanel.add(keys, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             mainPanel.add(new JLabel(tr("Choose a value")), GBC.eol());
 
             values = new AutoCompComboBox<>();
@@ -845,7 +857,7 @@ public class TagEditHelper {
             values.getModel().setComparator(Comparator.naturalOrder());
             values.setAutocompleteEnabled(AUTOCOMPLETE_VALUES.get());
 
-            mainPanel.add(values, GBC.eop().fill(GBC.HORIZONTAL));
+            mainPanel.add(values, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
 
             cacheRecentTags();
             autocomplete = AutoCompletionManager.of(OsmDataManager.getInstance().getActiveDataSet());
@@ -977,9 +989,9 @@ public class TagEditHelper {
             Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask).ifPresent(sc ->
                     lines.add(sc.getKeyText() + ' ' + tr("to apply first suggestion"))
             );
-            lines.add(Shortcut.getKeyText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK)) + ' '
+            lines.add(Shortcut.getKeyText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK)) + ' '
                     +tr("to add without closing the dialog"));
-            Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK).ifPresent(sc ->
+            Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | InputEvent.SHIFT_DOWN_MASK).ifPresent(sc ->
                     lines.add(sc.getKeyText() + ' ' + tr("to add first suggestion without closing the dialog"))
             );
             final JLabel helpLabel = new JLabel("<html>" + String.join("<br>", lines) + "</html>");
@@ -1012,7 +1024,7 @@ public class TagEditHelper {
             if (recentTagsPanel == null) {
                 recentTagsPanel = new JPanel(new GridBagLayout());
                 buildRecentTagsPanel();
-                mainPanel.add(recentTagsPanel, GBC.eol().fill(GBC.HORIZONTAL));
+                mainPanel.add(recentTagsPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             } else {
                 Dimension panelOldSize = recentTagsPanel.getPreferredSize();
                 recentTagsPanel.removeAll();
@@ -1131,7 +1143,7 @@ public class TagEditHelper {
                 // Finally add label to the resulting panel
                 JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
                 tagPanel.add(tagLabel);
-                recentTagsPanel.add(tagPanel, GBC.eol().fill(GBC.HORIZONTAL));
+                recentTagsPanel.add(tagPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             }
             // Clear label if no tags were added
             if (count == 0) {
