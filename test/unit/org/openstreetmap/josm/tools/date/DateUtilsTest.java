@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.date;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -166,9 +167,8 @@ public class DateUtilsTest {
         setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
         String p1 = "1:00:00" + separator + "AM GMT+01:00";
         String p2 = "1:00:00" + separator + "AM CET";
-        assertEquals(DateUtils.formatTime(new Date(0), DateFormat.LONG),
-            CoreMatchers.anyOf(CoreMatchers.is(p1), CoreMatchers.is(p2)),
-            "This is mostly dependent upon java.locale.providers.");
+        assertThat("This is mostly dependent upon java.locale.providers.", DateUtils.formatTime(new Date(0), DateFormat.LONG),
+            CoreMatchers.anyOf(CoreMatchers.is(p1), CoreMatchers.is(p2)));
     }
 
     /**
