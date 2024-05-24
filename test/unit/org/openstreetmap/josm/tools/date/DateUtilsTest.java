@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.concurrent.ForkJoinPool;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -163,8 +164,11 @@ public class DateUtilsTest {
         assertEquals(twelveAM, DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
 
         setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-        assertEquals("1:00:00" + separator + "AM GMT+01:00", DateUtils.formatTime(new Date(0),
-            DateFormat.LONG), "This is mostly dependent upon java.locale.providers. CET is also OK.");
+        String p1 = "1:00:00" + separator + "AM GMT+01:00";
+        String p2 = "1:00:00" + separator + "AM CET";
+        assertEquals(DateUtils.formatTime(new Date(0), DateFormat.LONG),
+            CoreMatchers.anyOf(CoreMatchers.is(p1), CoreMatchers.is(p2)),
+            "This is mostly dependent upon java.locale.providers.");
     }
 
     /**

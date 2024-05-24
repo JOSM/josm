@@ -44,7 +44,7 @@ class RenderingCLIAreaTest {
 
         // 1
         runs.add(new Object[] {"--scale 4000 --bounds " + param(bFeldberg),
-                CoreMatchers.is(scaleFeldberg4000),
+                isFP(scaleFeldberg4000, ErrorMode.ABSOLUTE, 0.000000000001d),
                 CoreMatchers.is(bFeldberg)});
 
         // 2
