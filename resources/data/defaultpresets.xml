@@ -5196,7 +5196,7 @@
             <space />
             <key key="amenity" value="bench" />
             <check key="backrest" text="Backrest" />
-            <check key="armrest" text="Armrest(s)" />
+            <combo key="armrest" text="Armrests" values="no,yes" display_values="No armrests,One or more armrests" editable="false" />
             <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
             <reference ref="color" />
             <combo key="seats" text="Amount of Seats" values="1,2,3,4,5,6,7,8,9,10" />
