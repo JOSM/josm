@@ -1528,7 +1528,7 @@ public final class Utils {
      * @param stream input stream
      * @return byte array of data in input stream (empty if stream is null)
      * @throws IOException if any I/O error occurs
-     * @deprecated since 19089 -- use {@link InputStream#readAllBytes()} instead
+     * @deprecated since 19050 -- use {@link InputStream#readAllBytes()} instead
      */
     @Deprecated
     public static byte[] readBytesFromStream(InputStream stream) throws IOException {
