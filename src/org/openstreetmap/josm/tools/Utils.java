@@ -90,6 +90,9 @@ public final class Utils {
 
     private static final Pattern REMOVE_DIACRITICS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
+    private static final Pattern PATTERN_LENGTH = Pattern.compile("^(\\d+(?:\\.\\d+)?)(cm|mm|m|ft|in|'|\")?$");
+    private static final Pattern PATTERN_LENGTH2 = Pattern.compile("^(\\d+(?:\\.\\d+)?)(ft|')(\\d+(?:\\.\\d+)?)(in|\")?$");
+
     private static final String DEFAULT_STRIP = "\uFEFF\u200B";
 
     private static final String[] SIZE_UNITS = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
@@ -1525,7 +1528,7 @@ public final class Utils {
      * @param stream input stream
      * @return byte array of data in input stream (empty if stream is null)
      * @throws IOException if any I/O error occurs
-     * @deprecated since xxx -- use {@link InputStream#readAllBytes()} instead
+     * @deprecated since 19089 -- use {@link InputStream#readAllBytes()} instead
      */
     @Deprecated
     public static byte[] readBytesFromStream(InputStream stream) throws IOException {
@@ -2057,5 +2060,34 @@ public final class Utils {
      */
     public static String intern(String string) {
         return string == null ? null : string.intern();
+    }
+
+    /**
+     * Convert a length unit to meters
+     * @param s arbitrary string representing a length
+     * @return the length converted to meters
+     * @since 19089
+     */
+    public static Double unitToMeter(String s) throws IllegalArgumentException {
+        s = s.replaceAll(" ", "").replaceAll(",", ".");
+        Matcher m = PATTERN_LENGTH.matcher(s);
+        if (m.matches()) {
+            Double v = Double.valueOf(m.group(1));
+            if ("cm".equals(m.group(2)))
+                v *= 0.01;
+            else if ("mm".equals(m.group(2)))
+                v *= 0.001;
+            else if ("ft".equals(m.group(2)) || "'".equals(m.group(2)))
+                v *= 0.3048;
+            else if ("in".equals(m.group(2)) || "\"".equals(m.group(2)))
+                v *= 0.0254;
+            return v;
+        } else {
+            m = PATTERN_LENGTH2.matcher(s);
+            if (m.matches()) {
+                return Double.valueOf(m.group(1))*0.3048+Double.valueOf(m.group(3))*0.0254;
+            }
+        }
+        throw new IllegalArgumentException("Invalid length value: " + s);
     }
 }

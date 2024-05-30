@@ -1185,6 +1185,25 @@ public final class Functions {
     }
 
     /**
+     * Convert a length unit to meters
+     * <p>
+     * Tries to convert a length unit to meter value or returns a - when impossible
+     * @param s arbitrary string representing a length
+     * @return the length converted to meters
+     * @since 19089
+     */
+    public static String siunit_length(String s) {
+        if (s == null)
+            return null;
+        try {
+            return Utils.unitToMeter(s).toString();
+        } catch (IllegalArgumentException e) {
+            Logging.debug(e);
+        }
+        return "-";
+    }
+
+    /**
      * Calculates the CRC32 checksum from a string (based on RFC 1952).
      * @param s the string
      * @return long value from 0 to 2^32-1

@@ -551,4 +551,23 @@ class UtilsTest {
         assertEquals(-1.0, Utils.getStandardDeviation(new double[]{}));
         assertEquals(-1.0, Utils.getStandardDeviation(new double[]{0}));
     }
+
+    /**
+     * Test of {@link Utils#unitToMeter(String)}
+     */
+    @Test
+    void testUnitToMeter() {
+        assertEquals(1.2, Utils.unitToMeter("1.2"));
+        assertEquals(1.3, Utils.unitToMeter("  1,3 m "));
+        assertEquals(1.4, Utils.unitToMeter("1.4m"));
+        assertEquals(1.5, Utils.unitToMeter("150cm"));
+        assertEquals(1.6, Utils.unitToMeter("1600.0mm"));
+        assertEquals(3.048, Utils.unitToMeter("10ft"));
+        assertEquals(6.096, Utils.unitToMeter("20'"));
+        assertEquals(2.54, Utils.unitToMeter("100in"));
+        assertEquals(5.08, Utils.unitToMeter("200\""));
+        assertEquals(3.0734, Utils.unitToMeter("10ft1in"));
+        assertEquals(6.1468, Utils.unitToMeter("20'2\""));
+        assertThrows(IllegalArgumentException.class, () -> Utils.unitToMeter("Hallo"));
+    }
 }
