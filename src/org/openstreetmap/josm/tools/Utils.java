@@ -2092,7 +2092,7 @@ public final class Utils {
             m = PATTERN_LENGTH2.matcher(s);
             if (m.matches()) {
                 /* NOTE: we assume -a'b" means -(a'+b") and not (-a')+b" - because of such issues SI units have been invented
-                   and have been adapted by the majority of the world */
+                   and have been adopted by the majority of the world */
                 return (Double.valueOf(m.group(2))*0.3048+Double.valueOf(m.group(4))*0.0254)*(m.group(1).isEmpty()?1.0:-1.0);
             }
         }
