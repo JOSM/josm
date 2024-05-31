@@ -90,8 +90,8 @@ public final class Utils {
 
     private static final Pattern REMOVE_DIACRITICS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
-    private static final Pattern PATTERN_LENGTH = Pattern.compile("^(\\d+(?:\\.\\d+)?)(cm|mm|m|ft|in|'|\")?$");
-    private static final Pattern PATTERN_LENGTH2 = Pattern.compile("^(\\d+(?:\\.\\d+)?)(ft|')(\\d+(?:\\.\\d+)?)(in|\")?$");
+    private static final Pattern PATTERN_LENGTH = Pattern.compile("^(-?\\d+(?:\\.\\d+)?)(cm|mi|mm|m|ft|km|nmi|in|'|\")?$");
+    private static final Pattern PATTERN_LENGTH2 = Pattern.compile("^(-?)(\\d+(?:\\.\\d+)?)(ft|')(\\d+(?:\\.\\d+)?)(in|\")?$");
 
     private static final String DEFAULT_STRIP = "\uFEFF\u200B";
 
@@ -2077,6 +2077,12 @@ public final class Utils {
                 v *= 0.01;
             else if ("mm".equals(m.group(2)))
                 v *= 0.001;
+            else if ("km".equals(m.group(2)))
+                v *= 1000.0;
+            else if ("nmi".equals(m.group(2)))
+                v *= 1852.0;
+            else if ("mi".equals(m.group(2)))
+                v *= 1609.344;
             else if ("ft".equals(m.group(2)) || "'".equals(m.group(2)))
                 v *= 0.3048;
             else if ("in".equals(m.group(2)) || "\"".equals(m.group(2)))
@@ -2085,7 +2091,9 @@ public final class Utils {
         } else {
             m = PATTERN_LENGTH2.matcher(s);
             if (m.matches()) {
-                return Double.valueOf(m.group(1))*0.3048+Double.valueOf(m.group(3))*0.0254;
+                /* NOTE: we assume -a'b" means -(a'+b") and not (-a')+b" - because of such issues SI units have been invented
+                   and have been adapted by the majority of the world */
+                return (Double.valueOf(m.group(2))*0.3048+Double.valueOf(m.group(4))*0.0254)*(m.group(1).isEmpty()?1.0:-1.0);
             }
         }
         throw new IllegalArgumentException("Invalid length value: " + s);

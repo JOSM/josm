@@ -1187,7 +1187,7 @@ public final class Functions {
     /**
      * Convert a length unit to meters
      * <p>
-     * Tries to convert a length unit to meter value or returns a - when impossible
+     * Tries to convert a length unit to meter value or returns {@code null} when impossible
      * @param s arbitrary string representing a length
      * @return the length converted to meters
      * @since 19089
@@ -1200,7 +1200,7 @@ public final class Functions {
         } catch (IllegalArgumentException e) {
             Logging.debug(e);
         }
-        return "-";
+        return null;
     }
 
     /**

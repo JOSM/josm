@@ -562,12 +562,17 @@ class UtilsTest {
         assertEquals(1.4, Utils.unitToMeter("1.4m"));
         assertEquals(1.5, Utils.unitToMeter("150cm"));
         assertEquals(1.6, Utils.unitToMeter("1600.0mm"));
+        assertEquals(1700, Utils.unitToMeter("1.7km"));
+        assertEquals(-1800, Utils.unitToMeter("-1.8km"));
         assertEquals(3.048, Utils.unitToMeter("10ft"));
         assertEquals(6.096, Utils.unitToMeter("20'"));
         assertEquals(2.54, Utils.unitToMeter("100in"));
         assertEquals(5.08, Utils.unitToMeter("200\""));
+        assertEquals(1852, Utils.unitToMeter("1nmi"));
+        assertEquals(1609.344, Utils.unitToMeter("1mi"));
         assertEquals(3.0734, Utils.unitToMeter("10ft1in"));
         assertEquals(6.1468, Utils.unitToMeter("20'2\""));
+        assertEquals(-6.1468, Utils.unitToMeter("-20'2\""));
         assertThrows(IllegalArgumentException.class, () -> Utils.unitToMeter("Hallo"));
     }
 }
