@@ -17,7 +17,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
@@ -46,15 +45,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     private BasicAuthenticationPreferencesPanel pnlBasicAuthPreferences;
     /** the panel for the OAuth 2.0 authentication parameters */
     private OAuthAuthenticationPreferencesPanel pnlOAuth20Preferences;
-
-    /** Used to determine which API we are using for disabling/enabling Basic Auth/OAuth 1.0a */
-    private String apiUrl = OsmApi.getOsmApi().getServerUrl();
-    /** ExpertToggleAction uses weak references; we don't want this listener to be garbage collected */
-    private final ExpertToggleAction.ExpertModeChangeListener expertModeChangeListener = isExpert -> {
-        final String authMethod = OsmApi.getAuthMethod();
-        final boolean defaultApi = JosmUrls.getInstance().getDefaultOsmApiUrl().equals(apiUrl);
-        rbBasicAuthentication.setEnabled(rbBasicAuthentication.isSelected() || "basic".equals(authMethod) || isExpert || !defaultApi);
-    };
 
     /**
      * Constructs a new {@code AuthenticationPreferencesPanel}.
@@ -108,9 +98,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         pnlBasicAuthPreferences = new BasicAuthenticationPreferencesPanel();
         pnlOAuth20Preferences = new OAuthAuthenticationPreferencesPanel(OAuthVersion.OAuth20);
 
-        ExpertToggleAction.addExpertModeChangeListener(expertModeChangeListener, true);
-
         pnlAuthenticationParameters.add(pnlOAuth20Preferences, BorderLayout.CENTER);
+        this.updateAcceptableAuthenticationMethods(OsmApi.getOsmApi().getServerUrl());
     }
 
     /**
@@ -166,7 +155,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
                 UserIdentityManager.getInstance().setAnonymous();
             }
         }
-        ExpertToggleAction.removeExpertModeChangeListener(this.expertModeChangeListener);
     }
 
     /**
@@ -195,8 +183,18 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             pnlOAuth20Preferences.propertyChange(evt);
         }
         if (OsmApiUrlInputPanel.API_URL_PROP.equals(evt.getPropertyName())) {
-            this.apiUrl = (String) evt.getNewValue();
-            this.expertModeChangeListener.expertChanged(ExpertToggleAction.isExpert());
+            this.updateAcceptableAuthenticationMethods((String) evt.getNewValue());
         }
     }
+
+    /**
+     * Update the acceptable authentications methods
+     * @param apiUrl The API url to check
+     */
+    private void updateAcceptableAuthenticationMethods(String apiUrl) {
+        final String authMethod = OsmApi.getAuthMethod();
+        final boolean defaultApi = JosmUrls.getInstance().getDefaultOsmApiUrl().equals(apiUrl);
+        rbBasicAuthentication.setEnabled(rbBasicAuthentication.isSelected() || "basic".equals(authMethod) || !defaultApi);
+    }
+
 }

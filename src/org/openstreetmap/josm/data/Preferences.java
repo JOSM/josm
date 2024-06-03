@@ -37,11 +37,13 @@ import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.NetworkManager;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.DefaultPreferenceChangeEvent;
@@ -909,6 +911,12 @@ public class Preferences extends AbstractPreferences {
                 Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
             }
             modifiedDefault = false;
+        }
+        // As of June 1st, 2024, the OSM.org instance no longer allows basic authentication.
+        if (JosmUrls.getInstance().getDefaultOsmApiUrl().equals(OsmApi.getOsmApi().getServerUrl()) && "basic".equals(OsmApi.getAuthMethod())) {
+            put("osm-server.auth-method", null);
+            put("osm-server.username", null);
+            put("osm-server.password", null);
         }
     }
 
