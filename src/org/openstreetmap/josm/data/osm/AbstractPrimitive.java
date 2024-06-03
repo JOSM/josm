@@ -3,9 +3,6 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -142,7 +139,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
      * Put several boolean flags to one short int field to save memory.
      * Other bits of this field are used in subclasses.
      */
-    private volatile short flags = FLAG_VISIBLE;   // visible per default
+    protected volatile short flags = FLAG_VISIBLE;   // visible per default
 
     /**
      * The mappaint cache index for this primitive.
@@ -371,38 +368,6 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         int oldFlags = flags;
         updateFlags(flag, value);
         return oldFlags != flags;
-    }
-
-    /**
-     * Write common data to a serialization stream. At time of writing, this should <i>only</i> be used by {@link PrimitiveData}.
-     * @param oos The output stream to write to
-     * @throws IOException see {@link ObjectOutputStream#write}
-     */
-    protected void writeObjectCommon(ObjectOutputStream oos) throws IOException {
-        oos.writeLong(id);
-        oos.writeLong(user == null ? -1 : user.getId());
-        oos.writeInt(version);
-        oos.writeInt(changesetId);
-        oos.writeInt(timestamp);
-        oos.writeObject(keys);
-        oos.writeShort(flags);
-    }
-
-    /**
-     * Read common data from a serialization stream. At time of writing, this should <i>only</i> be used by {@link PrimitiveData}.
-     * @param ois The serialization stream to read from
-     * @throws ClassNotFoundException see {@link ObjectInputStream#readObject()}
-     * @throws IOException see {@link ObjectInputStream#read}
-     */
-    protected void readObjectCommon(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        id = ois.readLong();
-        final long userId = ois.readLong();
-        user = userId == -1 ? null : User.getById(userId);
-        version = ois.readInt();
-        changesetId = ois.readInt();
-        timestamp = ois.readInt();
-        keys = (String[]) ois.readObject();
-        flags = ois.readShort();
     }
 
     @Override
