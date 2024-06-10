@@ -192,7 +192,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
                 setAccessToken(null);
             } else {
                 try {
-                    setAccessToken(new OAuth20Token(getOAuthParameters(), "{\"token_type\":\"bearer\", \"access_token\""
+                    setAccessToken(new OAuth20Token(getOAuthParameters(), "{\"token_type\":\"bearer\", \"access_token\":\""
                             + tfAccessTokenKey.getText().trim() + "\"}"));
                 } catch (OAuth20Exception e) {
                     throw new JosmRuntimeException(e);
