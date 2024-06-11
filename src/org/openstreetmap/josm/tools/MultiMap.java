@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 /**
  * MultiMap - maps keys to multiple values.
- *
+ * <p>
  * Corresponds to Google guava LinkedHashMultimap and Apache Collections MultiValueMap
  * but it is an independent (simple) implementation.
  *
@@ -58,7 +58,7 @@ public class MultiMap<A, B> {
 
     /**
      * Map a key to a value.
-     *
+     * <p>
      * Can be called multiple times with the same key, but different value.
      * @param key key with which the specified value is to be associated
      * @param value value to be associated with the specified key
@@ -69,7 +69,7 @@ public class MultiMap<A, B> {
 
     /**
      * Put a key that maps to nothing. (Only if it is not already in the map)
-     *
+     * <p>
      * Afterwards containsKey(key) will return true and get(key) will return
      * an empty Set instead of null.
      * @param key key with which an empty set is to be associated
@@ -77,12 +77,12 @@ public class MultiMap<A, B> {
     public void putVoid(A key) {
         if (map.containsKey(key))
             return;
-        map.put(key, new LinkedHashSet<B>());
+        map.put(key, new LinkedHashSet<>());
     }
 
     /**
      * Map the key to all the given values.
-     *
+     * <p>
      * Adds to the mappings that are already there.
      * @param key key with which the specified values are to be associated
      * @param values values to be associated with the specified key
@@ -103,7 +103,7 @@ public class MultiMap<A, B> {
     /**
      * Returns the Set associated with the given key. Result is null if
      * nothing has been mapped to this key.
-     *
+     * <p>
      * Modifications of the returned list changes the underling map,
      * but you should better not do that.
      * @param key the key whose associated value is to be returned

@@ -91,9 +91,9 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
     private static EnumMap<OsmPrimitiveType, Map<Long, Long>> generateNewPrimitives(PrimitiveTransferData pasteBuffer,
             List<PrimitiveData> bufferCopy, List<PrimitiveData> toSelect) {
         EnumMap<OsmPrimitiveType, Map<Long, Long>> newIds = new EnumMap<>(OsmPrimitiveType.class);
-        newIds.put(OsmPrimitiveType.NODE, new HashMap<Long, Long>());
-        newIds.put(OsmPrimitiveType.WAY, new HashMap<Long, Long>());
-        newIds.put(OsmPrimitiveType.RELATION, new HashMap<Long, Long>());
+        newIds.put(OsmPrimitiveType.NODE, new HashMap<>());
+        newIds.put(OsmPrimitiveType.WAY, new HashMap<>());
+        newIds.put(OsmPrimitiveType.RELATION, new HashMap<>());
 
         for (PrimitiveData data : pasteBuffer.getAll()) {
             if (!data.isUsable()) {

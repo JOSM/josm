@@ -168,7 +168,7 @@ public interface LabelCompositionStrategy {
 
         /* Is joining an array really that complicated in Java? */
         private static String[] getDefaultNameTags() {
-            final var tags = new ArrayList<>(Arrays.asList(LanguageInfo.getOSMLocaleCodes("name:")));
+            final ArrayList<String> tags = new ArrayList<>(Arrays.asList(LanguageInfo.getOSMLocaleCodes("name:")));
             tags.addAll(Arrays.asList("name",
                     "int_name",
                     "distance",

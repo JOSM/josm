@@ -61,10 +61,8 @@ public class Variable implements TemplateEntry {
 
     @Override
     public boolean isValid(TemplateEngineDataProvider dataProvider) {
-        if (special && SPECIAL_VALUE_EVERYTHING.equals(variableName))
-            return true;
-        else
-            return dataProvider.getTemplateValue(variableName, special) != null;
+        return (special && SPECIAL_VALUE_EVERYTHING.equals(variableName))
+            || dataProvider.getTemplateValue(variableName, special) != null;
     }
 
     @Override
@@ -93,13 +91,6 @@ public class Variable implements TemplateEntry {
         if (obj == null || getClass() != obj.getClass())
             return false;
         Variable other = (Variable) obj;
-        if (special != other.special)
-            return false;
-        if (variableName == null) {
-            if (other.variableName != null)
-                return false;
-        } else if (!variableName.equals(other.variableName))
-            return false;
-        return true;
+        return this.special == other.special && Objects.equals(this.variableName, other.variableName);
     }
 }

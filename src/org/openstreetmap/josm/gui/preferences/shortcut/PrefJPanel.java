@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.im.InputContext;
 import java.lang.reflect.Field;
@@ -55,14 +56,14 @@ public class PrefJPanel extends JPanel {
     // on the physical keyboard. What language pack is installed in JOSM is completely
     // independent from the keyboard's labelling. But the operation system's locale
     // usually matches the keyboard. This even works with my English Windows and my German keyboard.
-    private static final String SHIFT = KeyEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
-            KeyEvent.SHIFT_DOWN_MASK).getModifiers());
-    private static final String CTRL = KeyEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
-            KeyEvent.CTRL_DOWN_MASK).getModifiers());
-    private static final String ALT = KeyEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
-            KeyEvent.ALT_DOWN_MASK).getModifiers());
-    private static final String META = KeyEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
-            KeyEvent.META_DOWN_MASK).getModifiers());
+    private static final String SHIFT = InputEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+            InputEvent.SHIFT_DOWN_MASK).getModifiers());
+    private static final String CTRL = InputEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+            InputEvent.CTRL_DOWN_MASK).getModifiers());
+    private static final String ALT = InputEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+            InputEvent.ALT_DOWN_MASK).getModifiers());
+    private static final String META = InputEvent.getModifiersExText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+            InputEvent.META_DOWN_MASK).getModifiers());
 
     // A list of keys to present the user. Sadly this really is a list of keys Java knows about,
     // not a list of real physical keys. If someone knows how to get that list?
@@ -96,8 +97,8 @@ public class PrefJPanel extends JPanel {
                 try {
                     int i = field.getInt(null);
                     String s = KeyEvent.getKeyText(i);
-                    if (s != null && !s.isEmpty() && !s.contains(unknown)) {
-                        list.put(Integer.valueOf(i), s);
+                    if (!s.isEmpty() && !s.contains(unknown)) {
+                        list.put(i, s);
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     Logging.error(e);
@@ -106,7 +107,7 @@ public class PrefJPanel extends JPanel {
         }
         KeyboardUtils.getExtendedKeyCodes(InputContext.getInstance().getLocale())
                 .forEach((key, value) -> list.put(key, value.toString()));
-        list.put(Integer.valueOf(-1), "");
+        list.put(-1, "");
 
         // Remove "look-alike" values. See JOSM #22020 comment 2. These override the standard left/right/up/down keys.
         list.remove(KeyboardUtils.EXTENDED_KEYCODE_FLAG + 0x2190); // '←' (LEFTWARDS ARROW)
@@ -291,10 +292,10 @@ public class PrefJPanel extends JPanel {
                 Shortcut sc = (Shortcut) panel.model.getValueAt(row, -1);
                 panel.cbDefault.setSelected(!sc.isAssignedUser());
                 panel.cbDisable.setSelected(sc.getKeyStroke() == null);
-                panel.cbShift.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.SHIFT_DOWN_MASK) != 0);
-                panel.cbCtrl.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.CTRL_DOWN_MASK) != 0);
-                panel.cbAlt.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.ALT_DOWN_MASK) != 0);
-                panel.cbMeta.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.META_DOWN_MASK) != 0);
+                panel.cbShift.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & InputEvent.SHIFT_DOWN_MASK) != 0);
+                panel.cbCtrl.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & InputEvent.CTRL_DOWN_MASK) != 0);
+                panel.cbAlt.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & InputEvent.ALT_DOWN_MASK) != 0);
+                panel.cbMeta.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & InputEvent.META_DOWN_MASK) != 0);
                 if (sc.getKeyStroke() != null) {
                     panel.tfKey.setSelectedItem(keyList.get(sc.getKeyStroke().getKeyCode()));
                 } else {
@@ -328,10 +329,10 @@ public class PrefJPanel extends JPanel {
                         sc.setAssignedModifier(KeyEvent.VK_CANCEL);
                     } else {
                         sc.setAssignedModifier(
-                                (panel.cbShift.isSelected() ? KeyEvent.SHIFT_DOWN_MASK : 0) |
-                                (panel.cbCtrl.isSelected() ? KeyEvent.CTRL_DOWN_MASK : 0) |
-                                (panel.cbAlt.isSelected() ? KeyEvent.ALT_DOWN_MASK : 0) |
-                                (panel.cbMeta.isSelected() ? KeyEvent.META_DOWN_MASK : 0)
+                                (panel.cbShift.isSelected() ? InputEvent.SHIFT_DOWN_MASK : 0) |
+                                (panel.cbCtrl.isSelected() ? InputEvent.CTRL_DOWN_MASK : 0) |
+                                (panel.cbAlt.isSelected() ? InputEvent.ALT_DOWN_MASK : 0) |
+                                (panel.cbMeta.isSelected() ? InputEvent.META_DOWN_MASK : 0)
                         );
                         for (Map.Entry<Integer, String> entry : keyList.entrySet()) {
                             if (entry.getValue().equals(selectedKey)) {

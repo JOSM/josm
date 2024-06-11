@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -100,22 +99,6 @@ public final class Utils {
     // Constants backported from Java 9, see https://bugs.openjdk.java.net/browse/JDK-4477961
     private static final double TO_DEGREES = 180.0 / Math.PI;
     private static final double TO_RADIANS = Math.PI / 180.0;
-
-    /**
-     * A reference to {@code Map.ofEntries()} available since Java 9
-     */
-    static final Method mapOfEntries = mapOfEntriesMethod();
-
-    private static Method mapOfEntriesMethod() {
-        if (getJavaVersion() >= 9) {
-            try {
-                return Map.class.getMethod("ofEntries", Map.Entry[].class);
-            } catch (NoSuchMethodException noSuchMethodException) {
-                Logging.trace(noSuchMethodException);
-            }
-        }
-        return null;
-    }
 
     private Utils() {
         // Hide default constructor for utils classes
@@ -204,7 +187,7 @@ public final class Utils {
      * @return null if values is null. The joined string otherwise.
      * @deprecated since 15718, use {@link String#join} or {@link Collectors#joining}
      */
-    @Deprecated
+    @Deprecated(since = "15718", forRemoval = true)
     public static String join(String sep, Collection<?> values) {
         CheckParameterUtil.ensureParameterNotNull(sep, "sep");
         if (values == null)
@@ -348,11 +331,7 @@ public final class Utils {
      * @since 10569
      */
     public static boolean deleteFileIfExists(File file) {
-        if (file.exists()) {
-            return deleteFile(file);
-        } else {
-            return true;
-        }
+        return !file.exists() || deleteFile(file);
     }
 
     /**
@@ -589,7 +568,7 @@ public final class Utils {
      * @return the transformed unmodifiable collection
      */
     public static <A, B> Collection<B> transform(final Collection<? extends A> c, final Function<A, B> f) {
-        return new AbstractCollection<B>() {
+        return new AbstractCollection<>() {
 
             @Override
             public int size() {
@@ -598,7 +577,7 @@ public final class Utils {
 
             @Override
             public Iterator<B> iterator() {
-                return new Iterator<B>() {
+                return new Iterator<>() {
 
                     private final Iterator<? extends A> it = c.iterator();
 
@@ -631,7 +610,7 @@ public final class Utils {
      * @return the transformed unmodifiable list
      */
     public static <A, B> List<B> transform(final List<? extends A> l, final Function<A, B> f) {
-        return new AbstractList<B>() {
+        return new AbstractList<>() {
 
             @Override
             public int size() {
@@ -656,13 +635,14 @@ public final class Utils {
      */
     @SuppressWarnings("unchecked")
     public static <T> List<T> toUnmodifiableList(Collection<T> collection) {
-        // Java 9: use List.of(...)
         if (isEmpty(collection)) {
             return Collections.emptyList();
         } else if (collection.size() == 1) {
             return Collections.singletonList(collection.iterator().next());
         } else {
-            return (List<T>) Arrays.asList(collection.toArray());
+            // List.copyOf would also work, but if the original collection is immutable, it just returns the original
+            // collection.
+            return (List<T>) List.of(collection.toArray());
         }
     }
 
@@ -684,15 +664,9 @@ public final class Utils {
         } else if (map.size() == 1) {
             final Map.Entry<K, V> entry = map.entrySet().iterator().next();
             return Collections.singletonMap(entry.getKey(), entry.getValue());
-        } else if (mapOfEntries != null) {
-            try {
-                // Java 9: use Map.ofEntries(...)
-                return (Map<K, V>) mapOfEntries.invoke(null, (Object) map.entrySet().toArray(new Map.Entry[0]));
-            } catch (ReflectiveOperationException toLog) {
-                Logging.trace(toLog);
-            }
         }
-        return Collections.unmodifiableMap(map);
+        // Map.copyOf would also work, but if the original map is immutable, it just returns the original map.
+        return Map.ofEntries(map.entrySet().toArray(new Map.Entry[0]));
     }
 
     /**
@@ -848,7 +822,7 @@ public final class Utils {
 
     /**
      * Runs an external command and returns the standard output.
-     *
+     * <p>
      * The program is expected to execute fast, as this call waits 10 seconds at most.
      *
      * @param command the command with arguments
@@ -990,8 +964,8 @@ public final class Utils {
             } else if (cnt == 0) {
                 sb.append(',').append(cur);
             } else {
-                sb.append('-').append(last);
-                sb.append(',').append(cur);
+                sb.append('-').append(last)
+                  .append(',').append(cur);
                 cnt = 0;
             }
             last = cur;
@@ -1128,7 +1102,7 @@ public final class Utils {
     /**
      * Fixes URL with illegal characters in the query (and fragment) part by
      * percent encoding those characters.
-     *
+     * <p>
      * special characters like &amp; and # are not encoded
      *
      * @param url the URL that should be fixed
@@ -1530,7 +1504,7 @@ public final class Utils {
      * @throws IOException if any I/O error occurs
      * @deprecated since 19050 -- use {@link InputStream#readAllBytes()} instead
      */
-    @Deprecated
+    @Deprecated(since = "19050", forRemoval = true)
     public static byte[] readBytesFromStream(InputStream stream) throws IOException {
         if (stream == null) {
             return new byte[0];
@@ -1643,11 +1617,8 @@ public final class Utils {
             throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greater than max ({1})", min, max));
         } else if (val < min) {
             return min;
-        } else if (val > max) {
-            return max;
-        } else {
-            return val;
         }
+        return Math.min(val, max);
     }
 
     /**
@@ -1859,7 +1830,9 @@ public final class Utils {
      * Determines whether JOSM has been started via Oracle Java Web Start.
      * @return true if JOSM has been started via Oracle Java Web Start
      * @since 15740
+     * @deprecated JOSM no longer supports Oracle Java Webstart since Oracle Java Webstart doesn't support Java 9+.
      */
+    @Deprecated(since = "19101", forRemoval = true)
     public static boolean isRunningJavaWebStart() {
         return isRunningWebStart() && isClassFound("com.sun.javaws.Main");
     }
@@ -2070,33 +2043,45 @@ public final class Utils {
      * @since 19089
      */
     public static Double unitToMeter(String s) throws IllegalArgumentException {
-        s = s.replaceAll(" ", "").replaceAll(",", ".");
+        s = s.replace(" ", "").replace(",", ".");
         Matcher m = PATTERN_LENGTH.matcher(s);
         if (m.matches()) {
-            Double v = Double.valueOf(m.group(1));
-            if ("cm".equals(m.group(2)))
-                v *= 0.01;
-            else if ("mm".equals(m.group(2)))
-                v *= 0.001;
-            else if ("km".equals(m.group(2)))
-                v *= 1000.0;
-            else if ("nmi".equals(m.group(2)))
-                v *= 1852.0;
-            else if ("mi".equals(m.group(2)))
-                v *= 1609.344;
-            else if ("ft".equals(m.group(2)) || "'".equals(m.group(2)))
-                v *= 0.3048;
-            else if ("in".equals(m.group(2)) || "\"".equals(m.group(2)))
-                v *= 0.0254;
-            return v;
+            return Double.parseDouble(m.group(1)) * unitToMeterConversion(m.group(2));
         } else {
             m = PATTERN_LENGTH2.matcher(s);
             if (m.matches()) {
                 /* NOTE: we assume -a'b" means -(a'+b") and not (-a')+b" - because of such issues SI units have been invented
                    and have been adopted by the majority of the world */
-                return (Double.valueOf(m.group(2))*0.3048+Double.valueOf(m.group(4))*0.0254)*(m.group(1).isEmpty() ? 1.0 : -1.0);
+                return (Double.parseDouble(m.group(2))*0.3048+Double.parseDouble(m.group(4))*0.0254)*(m.group(1).isEmpty() ? 1.0 : -1.0);
             }
         }
         throw new IllegalArgumentException("Invalid length value: " + s);
+    }
+
+    /**
+     * Get the conversion factor for a specified unit to meters
+     * @param unit The unit to convert to meters
+     * @return The conversion factor or 1.
+     * @throws IllegalArgumentException if the unit does not currently have a conversion
+     */
+    private static double unitToMeterConversion(String unit) throws IllegalArgumentException {
+        if (unit == null) {
+            return 1;
+        }
+        switch (unit) {
+            case "cm": return 0.01;
+            case "mm": return 0.001;
+            case "m": return 1;
+            case "km": return 1000.0;
+            case "nmi": return 1852.0;
+            case "mi": return 1609.344;
+            case "ft":
+            case "'":
+                return 0.3048;
+            case "in":
+            case "\"":
+                return 0.0254;
+            default: throw new IllegalArgumentException("Invalid length unit: " + unit);
+        }
     }
 }

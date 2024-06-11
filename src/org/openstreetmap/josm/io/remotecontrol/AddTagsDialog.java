@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -97,7 +98,7 @@ public class AddTagsDialog extends ExtendedDialog {
 
         int addValue(String val) {
             Integer c = valueCount.get(val);
-            int r = c == null ? 1 : (c.intValue()+1);
+            int r = c == null ? 1 : (c + 1);
             valueCount.put(val, r);
             return r;
         }
@@ -137,8 +138,9 @@ public class AddTagsDialog extends ExtendedDialog {
         for (int i = 0; i < tags.length; i++) {
             count[i] = 0;
             String key = tags[i][0];
-            String value = tags[i][1], oldValue;
-            Boolean b = Boolean.TRUE;
+            String value = tags[i][1];
+            String oldValue;
+            boolean b = Boolean.TRUE;
             ExistingValues old = new ExistingValues(key);
             for (OsmPrimitive osm : sel) {
                 oldValue = osm.get(key);
@@ -203,7 +205,7 @@ public class AddTagsDialog extends ExtendedDialog {
         TableHelper.adjustColumnWidth(propertyTable, 3, 300);
         // get edit results if the table looses the focus, for example if a user clicks "add tags"
         propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK), "shiftenter");
+        propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), "shiftenter");
         propertyTable.getActionMap().put("shiftenter", new AbstractAction() {
             @Override public void actionPerformed(ActionEvent e) {
                 buttonAction(1, e); // add all tags on Shift-Enter
@@ -241,7 +243,7 @@ public class AddTagsDialog extends ExtendedDialog {
         if (buttonIndex != 2 && MainApplication.getLayerManager().getEditDataSet() != null) {
             TableModel tm = propertyTable.getModel();
             for (int i = 0; i < tm.getRowCount(); i++) {
-                if (buttonIndex == 1 || (Boolean) tm.getValueAt(i, 0)) {
+                if (buttonIndex == 1 || Boolean.TRUE.equals(tm.getValueAt(i, 0))) {
                     String key = (String) tm.getValueAt(i, 1);
                     Object value = tm.getValueAt(i, 2);
                     UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel,

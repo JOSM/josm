@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -51,12 +52,12 @@ public class StyleSettingGroupGui implements StyleSettingGui {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     List<BooleanStyleSettingCheckBoxMenuItem> items = Arrays.stream(submenu.getMenuComponents())
-                            .filter(c -> c instanceof BooleanStyleSettingCheckBoxMenuItem)
+                            .filter(BooleanStyleSettingCheckBoxMenuItem.class::isInstance)
                             .map(c -> (BooleanStyleSettingCheckBoxMenuItem) c)
                             .collect(Collectors.toList());
                     final boolean select = items.stream().anyMatch(cbi -> !cbi.isSelected());
                     items.stream().filter(cbi -> select != cbi.isSelected()).forEach(cbi -> cbi.doClickWithoutRepaint(0));
-                    MainApplication.worker.submit(new MapPaintStyleLoader(Arrays.asList(group.parentStyle)));
+                    MainApplication.worker.submit(new MapPaintStyleLoader(Collections.singletonList(group.parentStyle)));
                 }
             });
             item.setUI(new StayOpenCheckBoxMenuItemUI());

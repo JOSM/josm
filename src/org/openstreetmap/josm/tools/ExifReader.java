@@ -22,7 +22,6 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 
@@ -75,18 +74,18 @@ public final class ExifReader {
                     continue;
                 }
                 for (Tag tag : dirIt.getTags()) {
-                    if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
-                            !tag.getDescription().matches("\\[[0-9]+ .+\\]")) {
+                    if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
+                            !tag.getDescription().matches("\\[\\d+ .+]")) {
                         dateTimeOrig = tag.getDescription();
-                    } else if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME /* 0x0132 */) {
                         dateTime = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
                         dateTimeDig = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME_ORIGINAL /* 0x9291 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_SUBSECOND_TIME_ORIGINAL /* 0x9291 */) {
                         subSecOrig = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME /* 0x9290 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_SUBSECOND_TIME /* 0x9290 */) {
                         subSec = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME_DIGITIZED /* 0x9292 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_SUBSECOND_TIME_DIGITIZED /* 0x9292 */) {
                         subSecDig = tag.getDescription();
                     }
                 }
@@ -144,7 +143,7 @@ public final class ExifReader {
         try {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
             final Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            return dir == null ? null : dir.getInteger(ExifIFD0Directory.TAG_ORIENTATION);
+            return dir == null ? null : dir.getInteger(ExifDirectoryBase.TAG_ORIENTATION);
         } catch (JpegProcessingException | IOException e) {
             Logging.error(e);
         }
@@ -315,7 +314,7 @@ public final class ExifReader {
             Double ele = dirGps.getDoubleObject(GpsDirectory.TAG_ALTITUDE);
             if (ele != null) {
                 final Integer d = dirGps.getInteger(GpsDirectory.TAG_ALTITUDE_REF);
-                if (d != null && d.intValue() == 1) {
+                if (d != null && d == 1) {
                     ele *= -1;
                 }
                 return ele;
@@ -366,7 +365,7 @@ public final class ExifReader {
 
     /**
      * Returns a Transform that fixes the image orientation.
-     *
+     * <p>
      * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated as 1.
      * @param orientation the exif-orientation of the image
      * @param width the original width of the image
@@ -375,7 +374,8 @@ public final class ExifReader {
      */
     public static AffineTransform getRestoreOrientationTransform(final int orientation, final int width, final int height) {
         final int q;
-        final double ax, ay;
+        final double ax;
+        final double ay;
         switch (orientation) {
         case 8:
             q = -1;
@@ -403,7 +403,7 @@ public final class ExifReader {
     /**
      * Check, if the given orientation switches width and height of the image.
      * E.g. 90 degree rotation
-     *
+     * <p>
      * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
      * as 1.
      * @param orientation the exif-orientation of the image
@@ -415,7 +415,7 @@ public final class ExifReader {
 
     /**
      * Check, if the given orientation requires any correction to the image.
-     *
+     * <p>
      * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
      * as 1.
      * @param orientation the exif-orientation of the image

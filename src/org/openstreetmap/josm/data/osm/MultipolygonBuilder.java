@@ -70,7 +70,7 @@ public class MultipolygonBuilder {
             for (int waypos = 0; waypos < this.ways.size(); waypos++) {
                 Way way = this.ways.get(waypos);
 
-                if (!this.reversed.get(waypos)) {
+                if (Boolean.FALSE.equals(this.reversed.get(waypos))) {
                     for (int pos = 0; pos < way.getNodesCount() - 1; pos++) {
                         ringNodes.add(way.getNode(pos));
                     }
@@ -211,7 +211,7 @@ public class MultipolygonBuilder {
 
                 //add cur way to the list
                 collectedWays.add(curWay);
-                collectedWaysReverse.add(Boolean.valueOf(curWayReverse));
+                collectedWaysReverse.add(curWayReverse);
 
                 if (nextNode == startNode) {
                     //way finished

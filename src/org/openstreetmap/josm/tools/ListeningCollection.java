@@ -31,7 +31,7 @@ public class ListeningCollection<T> extends AbstractCollection<T> {
     @Override
     public final Iterator<T> iterator() {
         Iterator<T> it = base.iterator();
-        return new Iterator<T>() {
+        return new Iterator<>() {
             private T object;
 
             @Override

@@ -95,7 +95,7 @@ public final class LanguageInfo {
             return null;
         } else if (code.matches(".+@.+")) {
             return code.substring(0, 1).toUpperCase(Locale.ENGLISH)
-                    + code.substring(1, 2)
+                    + code.charAt(1)
                     + '-'
                     + code.substring(3, 4).toUpperCase(Locale.ENGLISH)
                     + code.substring(4)
@@ -127,11 +127,11 @@ public final class LanguageInfo {
 
     /**
      * Replies the locale code used by JOSM for a given locale.
-     *
+     * <p>
      * In most cases JOSM uses the 2-character ISO 639 language code ({@link Locale#getLanguage()}
      * to identify the locale of a localized resource, but in some cases it may use the
      * programmatic name for locales, as replied by {@link Locale#toString()}.
-     *
+     * <p>
      * For unknown country codes and variants this function already does fallback to
      * internally known translations.
      *
@@ -156,6 +156,7 @@ public final class LanguageInfo {
     /**
      * Replies the OSM locale codes for the default locale.
      *
+     * @param prefix a prefix like {@code name:}.
      * @return the OSM locale codes for the default locale
      * @see #getOSMLocaleCodes(String, Locale)
      * @since 19045
@@ -166,11 +167,11 @@ public final class LanguageInfo {
 
     /**
      * Replies the locale codes used by OSM for a given locale.
-     *
+     * <p>
      * In most cases OSM uses the 2-character ISO 639 language code ({@link Locale#getLanguage()}
      * to identify the locale of a localized resource, but in some cases it may use the
      * programmatic name for locales, as replied by {@link Locale#toString()}.
-     *
+     * <p>
      * For unknown country codes and variants this function already does fallback to
      * internally known translations.
      *
@@ -190,7 +191,7 @@ public final class LanguageInfo {
             case "zh_TW":
                 return new String[]{prefix+"zh-Hant-TW", prefix+"zh-Hant", prefix+"zh"};
             default:
-                var r = new ArrayList<String>();
+                ArrayList<String> r = new ArrayList<>();
                 for (String s : LanguageInfo.getLanguageCodes(null)) {
                     r.add(prefix + s);
                 }
@@ -200,7 +201,7 @@ public final class LanguageInfo {
 
     /**
      * Replies the locale code used by Java for a given locale.
-     *
+     * <p>
      * In most cases JOSM and Java uses the same codes, but for some exceptions this is needed.
      *
      * @param localeName the locale. Replies "en" if null.
@@ -218,13 +219,14 @@ public final class LanguageInfo {
                 return "iw_IL";
             case "id":
                 return "in";
+            default:
+                return localeName;
         }
-        return localeName;
     }
 
     /**
      * Replies the display string used by JOSM for a given locale.
-     *
+     * <p>
      * In most cases returns text replied by {@link Locale#getDisplayName()}, for some
      * locales an override is used (i.e. when unsupported by Java).
      *
@@ -244,7 +246,7 @@ public final class LanguageInfo {
 
     /**
      * Replies the locale used by Java for a given language code.
-     *
+     * <p>
      * Accepts JOSM and Java codes as input.
      *
      * @param localeName the locale code.
@@ -256,7 +258,7 @@ public final class LanguageInfo {
 
     /**
      * Replies the locale used by Java for a given language code.
-     *
+     * <p>
      * Accepts JOSM, Java and POSIX codes as input.
      *
      * @param localeName the locale code.

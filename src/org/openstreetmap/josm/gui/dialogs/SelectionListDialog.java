@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -93,6 +94,8 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * @since 8
  */
 public class SelectionListDialog extends ToggleDialog {
+    private static final String SELECTION_CASING = marktr("Selection");
+    private static final String SELECTION = "selection";
     private JList<OsmPrimitive> lstPrimitives;
     private final DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
     private final SelectionListModel model = new SelectionListModel(selectionModel);
@@ -146,9 +149,9 @@ public class SelectionListDialog extends ToggleDialog {
      * Constructs a new {@code SelectionListDialog}.
      */
     public SelectionListDialog() {
-        super(tr("Selection"), "selectionlist", tr("Open a selection list window."),
+        super(tr(SELECTION_CASING), "selectionlist", tr("Open a selection list window."),
                 Shortcut.registerShortcut("subwindow:selection", tr("Windows: {0}",
-                tr("Selection")), KeyEvent.VK_T, Shortcut.ALT_SHIFT),
+                tr(SELECTION_CASING)), KeyEvent.VK_T, Shortcut.ALT_SHIFT),
                 150, // default height
                 true // default is "show dialog"
         );
@@ -394,7 +397,7 @@ public class SelectionListDialog extends ToggleDialog {
         ZoomToJOSMSelectionAction() {
             putValue(NAME, tr("Zoom to selection"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to selection"));
-            new ImageProvider("dialogs/autoscale", "selection").getResource().attachImageIcon(this, true);
+            new ImageProvider("dialogs/autoscale", SELECTION).getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -433,7 +436,7 @@ public class SelectionListDialog extends ToggleDialog {
          * Constructs a new {@code ZoomToListSelection}.
          */
         ZoomToListSelection() {
-            new ImageProvider("dialogs/autoscale", "selection").getResource().attachImageIcon(this, true);
+            new ImageProvider("dialogs/autoscale", SELECTION).getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -463,7 +466,7 @@ public class SelectionListDialog extends ToggleDialog {
 
     /**
      * The list model for the list of OSM primitives in the current JOSM selection.
-     *
+     * <p>
      * The model also maintains a history of the last {@link SelectionListModel#SELECTION_HISTORY_SIZE}
      * JOSM selection.
      *
@@ -492,7 +495,7 @@ public class SelectionListDialog extends ToggleDialog {
          * @return a summary of the current JOSM selection
          */
         public synchronized String getJOSMSelectionSummary() {
-            if (selection.isEmpty()) return tr("Selection");
+            if (selection.isEmpty()) return tr(SELECTION_CASING);
             int numNodes = 0;
             int numWays = 0;
             int numRelations = 0;
@@ -649,7 +652,7 @@ public class SelectionListDialog extends ToggleDialog {
                             ? OsmPrimitiveComparator.comparingUniqueId()
                             : OsmPrimitiveComparator.comparingNames()));
                 } catch (IllegalArgumentException e) {
-                    throw BugReport.intercept(e).put("size", size).put("quick", quick).put("selection", selection);
+                    throw BugReport.intercept(e).put("size", size).put("quick", quick).put(SELECTION, selection);
                 }
             }
         }

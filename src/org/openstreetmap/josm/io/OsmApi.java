@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -63,6 +64,9 @@ import jakarta.annotation.Nullable;
  * @since 1523
  */
 public class OsmApi extends OsmConnection {
+    private static final String CHANGESET_STR = "changeset";
+    private static final String CHANGESET_SLASH = "changeset/";
+    private static final String ERROR_MESSAGE = marktr("Changeset ID > 0 expected. Got {0}.");
 
     /**
      * Maximum number of retries to send a request in case of HTTP 500 errors or timeouts
@@ -464,7 +468,7 @@ public class OsmApi extends OsmConnection {
      * @throws IllegalArgumentException if changeset is null
      */
     public void openChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
-        CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
+        CheckParameterUtil.ensureParameterNotNull(changeset, CHANGESET_STR);
         try {
             progressMonitor.beginTask(tr("Creating changeset..."));
             initialize(progressMonitor);
@@ -495,17 +499,17 @@ public class OsmApi extends OsmConnection {
      *
      */
     public void updateChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
-        CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
+        CheckParameterUtil.ensureParameterNotNull(changeset, CHANGESET_STR);
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
         if (changeset.getId() <= 0)
-            throw new IllegalArgumentException(tr("Changeset ID > 0 expected. Got {0}.", changeset.getId()));
+            throw new IllegalArgumentException(tr(ERROR_MESSAGE, changeset.getId()));
         try {
             monitor.beginTask(tr("Updating changeset..."));
             initialize(monitor);
             monitor.setCustomText(tr("Updating changeset {0}...", changeset.getId()));
-            sendPutRequest("changeset/" + changeset.getId(), toXml(changeset), monitor);
+            sendPutRequest(CHANGESET_SLASH + changeset.getId(), toXml(changeset), monitor);
         } catch (ChangesetClosedException e) {
             e.setSource(ChangesetClosedException.Source.UPDATE_CHANGESET);
             throw e;
@@ -530,17 +534,17 @@ public class OsmApi extends OsmConnection {
      * @throws IllegalArgumentException if changeset.getId() &lt;= 0
      */
     public void closeChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
-        CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
+        CheckParameterUtil.ensureParameterNotNull(changeset, CHANGESET_STR);
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
         if (changeset.getId() <= 0)
-            throw new IllegalArgumentException(tr("Changeset ID > 0 expected. Got {0}.", changeset.getId()));
+            throw new IllegalArgumentException(tr(ERROR_MESSAGE, changeset.getId()));
         try {
             monitor.beginTask(tr("Closing changeset..."));
             initialize(monitor);
             // send "\r\n" instead of empty string, so we don't send zero payload - workaround bugs in proxy software
-            sendPutRequest("changeset/" + changeset.getId() + "/close", "\r\n", monitor);
+            sendPutRequest(CHANGESET_SLASH + changeset.getId() + "/close", "\r\n", monitor);
         } catch (ChangesetClosedException e) {
             e.setSource(ChangesetClosedException.Source.CLOSE_CHANGESET);
             throw e;
@@ -564,8 +568,8 @@ public class OsmApi extends OsmConnection {
         if (changeset.isOpen())
             throw new IllegalArgumentException(tr("Changeset must be closed in order to add a comment"));
         else if (changeset.getId() <= 0)
-            throw new IllegalArgumentException(tr("Changeset ID > 0 expected. Got {0}.", changeset.getId()));
-        sendRequest("POST", "changeset/" + changeset.getId() + "/comment?text="+ Utils.encodeUrl(comment),
+            throw new IllegalArgumentException(tr(ERROR_MESSAGE, changeset.getId()));
+        sendRequest("POST", CHANGESET_SLASH + changeset.getId() + "/comment?text="+ Utils.encodeUrl(comment),
                 null, monitor, "application/x-www-form-urlencoded", true, false);
     }
 
@@ -598,7 +602,7 @@ public class OsmApi extends OsmConnection {
             //
             monitor.indeterminateSubTask(
                     trn("Uploading {0} object...", "Uploading {0} objects...", list.size(), list.size()));
-            String diffUploadResponse = sendPostRequest("changeset/" + changeset.getId() + "/upload", diffUploadRequest, monitor);
+            String diffUploadResponse = sendPostRequest(CHANGESET_SLASH + changeset.getId() + "/upload", diffUploadRequest, monitor);
 
             // Process the response from the server
             //
@@ -892,7 +896,7 @@ public class OsmApi extends OsmConnection {
             return;
         }
         if (changeset.getId() <= 0)
-            throw new IllegalArgumentException(tr("Changeset ID > 0 expected. Got {0}.", changeset.getId()));
+            throw new IllegalArgumentException(tr(ERROR_MESSAGE, changeset.getId()));
         if (!changeset.isOpen())
             throw new IllegalArgumentException(tr("Open changeset expected. Got closed changeset with id {0}.", changeset.getId()));
         this.changeset = changeset;
@@ -953,8 +957,8 @@ public class OsmApi extends OsmConnection {
         StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/close");
         if (!encodedMessage.trim().isEmpty()) {
-            urlBuilder.append("?text=");
-            urlBuilder.append(encodedMessage);
+            urlBuilder.append("?text=")
+                    .append(encodedMessage);
         }
 
         return parseSingleNote(sendPostRequest(urlBuilder.toString(), null, monitor));
@@ -974,8 +978,8 @@ public class OsmApi extends OsmConnection {
         StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/reopen");
         if (!encodedMessage.trim().isEmpty()) {
-            urlBuilder.append("?text=");
-            urlBuilder.append(encodedMessage);
+            urlBuilder.append("?text=")
+                    .append(encodedMessage);
         }
 
         return parseSingleNote(sendPostRequest(urlBuilder.toString(), null, monitor));
