@@ -78,7 +78,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
                 value = value.trim();
                 id = 0;
                 try {
-                    if (value.matches("http.*/changeset/[0-9]+")) {
+                    if (value.matches("http.*/changeset/\\d+")) {
                         // full URL given, extract id
                         value = value.substring(value.lastIndexOf('/') + 1);
                     }

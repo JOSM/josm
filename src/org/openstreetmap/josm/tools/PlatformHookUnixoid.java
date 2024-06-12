@@ -1,11 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.Desktop;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,6 +30,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
@@ -50,23 +54,16 @@ public class PlatformHookUnixoid implements PlatformHook {
     public void preStartupHook() {
         // See #12022, #16666 - Disable GNOME ATK Java wrapper as it causes a lot of serious trouble
         if (isDebianOrUbuntu()) {
-            if (Utils.getJavaVersion() >= 9) {
-                // TODO: find a way to disable ATK wrapper on Java >= 9
-                // We should probably be able to do that by embedding a no-op AccessibilityProvider in our jar
-                // so that it is loaded by ServiceLoader without error
-                // But this require to compile at least one class with Java 9
-            } else {
-                // Java 8 does a simple Class.newInstance() from system classloader
-                Utils.updateSystemProperty("javax.accessibility.assistive_technologies", "java.lang.Object");
-            }
+            // TODO: find a way to disable ATK wrapper on Java >= 9
+            // We should probably be able to do that by embedding a no-op AccessibilityProvider in our jar
+            // so that it is loaded by ServiceLoader without error
+            // But this require to compile at least one class with Java 9
         }
     }
 
     @Override
-    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback,
-            SanityCheckCallback sanityCheckCallback) {
-        checkWebStartMigration(webStartCallback);
-        PlatformHook.super.startupHook(javaCallback, webStartCallback, sanityCheckCallback);
+    public void startupHook(JavaExpirationCallback javaCallback, SanityCheckCallback sanityCheckCallback) {
+        PlatformHook.super.startupHook(javaCallback, sanityCheckCallback);
     }
 
     @Override
@@ -90,16 +87,18 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     @Override
+    @SuppressWarnings("squid:S103") // NOSONAR LineLength
     public void initSystemShortcuts() {
+        final String reserved = marktr("reserved");
         // CHECKSTYLE.OFF: LineLength
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
         for (int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i) {
-            Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"), i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)
+            Shortcut.registerSystemShortcut("screen:toggle"+i, tr(reserved), i, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK)
                 .setAutomatic();
         }
-        Shortcut.registerSystemShortcut("system:reset", tr("reserved"), KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)
+        Shortcut.registerSystemShortcut("system:reset", tr(reserved), KeyEvent.VK_DELETE, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK)
             .setAutomatic();
-        Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)
+        Shortcut.registerSystemShortcut("system:resetX", tr(reserved), KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK)
             .setAutomatic();
         // CHECKSTYLE.ON: LineLength
     }
@@ -174,7 +173,7 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     /**
      * Get the Java package name including detailed version.
-     *
+     * <p>
      * Some Java bugs are specific to a certain security update, so in addition
      * to the Java version, we also need the exact package version.
      *
@@ -182,16 +181,13 @@ public class PlatformHookUnixoid implements PlatformHook {
      */
     public String getJavaPackageDetails() {
         String home = getSystemProperty("java.home");
-        if (home.contains("java-8-openjdk") || home.contains("java-1.8.0-openjdk")) {
-            return getPackageDetails("openjdk-8-jre", "java-1_8_0-openjdk", "java-1.8.0-openjdk");
-        } else if (home.contains("java-9-openjdk") || home.contains("java-1.9.0-openjdk")) {
-            return getPackageDetails("openjdk-9-jre", "java-1_9_0-openjdk", "java-1.9.0-openjdk", "java-9-openjdk");
-        } else if (home.contains("java-10-openjdk")) {
-            return getPackageDetails("openjdk-10-jre", "java-10-openjdk");
-        } else if (home.contains("java-11-openjdk")) {
-            return getPackageDetails("openjdk-11-jre", "java-11-openjdk");
-        } else if (home.contains("java-17-openjdk")) {
-            return getPackageDetails("openjdk-17-jre", "java-17-openjdk");
+        if (home == null) {
+            return null;
+        }
+        Matcher matcher = Pattern.compile("java-(\\d+)-openjdk").matcher(home);
+        if (matcher.find()) {
+            String version = matcher.group(1);
+            return getPackageDetails("openjdk-" + version + "-jre", "java-" + version + "-openjdk");
         } else if (home.contains("java-openjdk")) {
             return getPackageDetails("java-openjdk");
         } else if (home.contains("icedtea")) {
@@ -204,10 +200,10 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     /**
      * Get the Web Start package name including detailed version.
-     *
+     * <p>
      * OpenJDK packages are shipped with icedtea-web package,
      * but its version generally does not match main java package version.
-     *
+     * <p>
      * Simply return {@code null} if there's no separate package for Java WebStart.
      *
      * @return The package name and package version if it can be identified, null otherwise
@@ -221,10 +217,10 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     /**
      * Get the Gnome ATK wrapper package name including detailed version.
-     *
+     * <p>
      * Debian and Ubuntu derivatives come with a pre-enabled accessibility software
      * completely buggy that makes Swing crash in a lot of different ways.
-     *
+     * <p>
      * Simply return {@code null} if it's not found.
      *
      * @return The package name and package version if it can be identified, null otherwise

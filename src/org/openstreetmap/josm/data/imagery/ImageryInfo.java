@@ -79,7 +79,7 @@ public class ImageryInfo extends
          * @since 6690
          */
         @Override
-        public final String getTypeString() {
+        public String getTypeString() {
             return typeString;
         }
 
@@ -142,7 +142,7 @@ public class ImageryInfo extends
          * @return the unique string identifying this category
          */
         @Override
-        public final String getCategoryString() {
+        public String getCategoryString() {
             return category;
         }
 
@@ -151,7 +151,7 @@ public class ImageryInfo extends
          * @return the description of this category
          */
         @Override
-        public final String getDescription() {
+        public String getDescription() {
             return description;
         }
 
@@ -162,7 +162,7 @@ public class ImageryInfo extends
          * @since 15049
          */
         @Override
-        public final ImageIcon getIcon(ImageSizes size) {
+        public ImageIcon getIcon(ImageSizes size) {
             return iconCache
                     .computeIfAbsent(size, x -> Collections.synchronizedMap(new EnumMap<>(ImageryCategory.class)))
                     .computeIfAbsent(this, x -> ImageProvider.get("data/imagery", x.category, size));

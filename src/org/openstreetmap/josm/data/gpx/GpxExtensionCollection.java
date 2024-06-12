@@ -228,7 +228,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
     public void remove(String prefix, String key) {
         stream(prefix, key)
         .collect(Collectors.toList()) //needs to be collected to avoid concurrent modification
-        .forEach(e -> super.remove(e));
+        .forEach(super::remove);
     }
 
     /**
@@ -239,7 +239,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
         stream()
         .filter(e -> Objects.equals(prefix, e.getPrefix()))
         .collect(Collectors.toList()) //needs to be collected to avoid concurrent modification
-        .forEach(e -> super.remove(e));
+        .forEach(super::remove);
     }
 
     /**

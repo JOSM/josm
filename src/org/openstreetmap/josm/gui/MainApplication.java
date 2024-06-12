@@ -396,24 +396,6 @@ public class MainApplication {
     }
 
     /**
-     * Asks user to migrate to OpenWebStart
-     * @param url download URL
-     * @since 17679
-     */
-    public static void askMigrateWebStart(String url) {
-        // CHECKSTYLE.OFF: LineLength
-        StringBuilder content = new StringBuilder(tr("You are running an <b>Oracle</b> implementation of Java WebStart."))
-                .append("<br><br>")
-                .append(tr("It was for years the recommended way to use JOSM. Oracle removed WebStart from Java 11,<br>but the open source community reimplemented the Java Web Start technology as a new product: <b>OpenWebStart</b>"))
-                .append("<br><br>")
-                .append(tr("OpenWebStart is now considered mature enough by JOSM developers to ask everyone to move away from an Oracle implementation,<br>allowing you to benefit from a recent version of Java, and allowing JOSM developers to move forward by planning the Java {0} migration.", "11"))
-                .append("<br><br>")
-                .append(tr("Would you like to <b>download OpenWebStart now</b>? (Please do!)"));
-        askUpdate(tr("Outdated Java WebStart version"), tr("Update to OpenWebStart"), "askUpdateWebStart", /* ICON */"presets/transport/rocket", content, url);
-        // CHECKSTYLE.ON: LineLength
-    }
-
-    /**
      * Tells the user that a sanity check failed
      * @param title The title of the message to show
      * @param canContinue {@code true} if the failed sanity check(s) will not instantly kill JOSM when the user edits

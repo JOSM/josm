@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JCheckBox;
@@ -39,11 +40,11 @@ public class TMSSettingsPanel extends JPanel {
     public TMSSettingsPanel() {
         super(new GridBagLayout());
         minZoomLvl = new JSpinner(new SpinnerNumberModel(
-                Utils.clamp(TMSLayer.PROP_MIN_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM),
+                Utils.clamp(TMSLayer.PROP_MIN_ZOOM_LVL.get(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM),
                 TMSLayer.MIN_ZOOM,
                 TMSLayer.MAX_ZOOM, 1));
         maxZoomLvl = new JSpinner(new SpinnerNumberModel(
-                Utils.clamp(TMSLayer.PROP_MAX_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM),
+                Utils.clamp(TMSLayer.PROP_MAX_ZOOM_LVL.get(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM),
                 TMSLayer.MIN_ZOOM,
                 TMSLayer.MAX_ZOOM, 1));
         maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(
@@ -54,11 +55,11 @@ public class TMSSettingsPanel extends JPanel {
 
         add(new JLabel(tr("Auto zoom by default: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
-        add(autozoomActive, GBC.eol().fill(GBC.HORIZONTAL));
+        add(autozoomActive, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         add(new JLabel(tr("Autoload tiles by default: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
-        add(autoloadTiles, GBC.eol().fill(GBC.HORIZONTAL));
+        add(autoloadTiles, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         add(new JLabel(tr("Min. zoom level: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
@@ -70,7 +71,7 @@ public class TMSSettingsPanel extends JPanel {
 
         add(new JLabel(tr("Add to slippymap chooser: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
-        add(addToSlippyMapChosser, GBC.eol().fill(GBC.HORIZONTAL));
+        add(addToSlippyMapChosser, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         add(new JLabel(tr("Maximum concurrent downloads: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());

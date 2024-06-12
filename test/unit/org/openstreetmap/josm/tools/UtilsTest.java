@@ -353,17 +353,6 @@ class UtilsTest {
     }
 
     /**
-     * Tests if readBytesFromStream handles null streams (might happen when there is no data on error stream)
-     * @throws IOException in case of I/O error
-     * @deprecated {@link Utils#readBytesFromStream(InputStream)} is deprecated since the JVM has the same functionality.
-     */
-    @Test
-    @Deprecated
-    void testNullStreamForReadBytesFromStream() throws IOException {
-        assertEquals(0, Utils.readBytesFromStream(null).length, "Empty on null stream");
-    }
-
-    /**
      * Test of {@link Utils#getLevenshteinDistance} method.
      */
     @Test

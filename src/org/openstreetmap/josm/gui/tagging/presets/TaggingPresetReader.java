@@ -106,6 +106,11 @@ public final class TaggingPresetReader {
         }
     }
 
+    /**
+     * A {@link LinkedHashSet} with the ability to get the "last" object.
+     * Note that this is unnecessary in Java 21 (see JEP 431).
+     * @param <E> The object type in the set
+     */
     static class HashSetWithLast<E> extends LinkedHashSet<E> {
         private static final long serialVersionUID = 1L;
         protected transient E last;

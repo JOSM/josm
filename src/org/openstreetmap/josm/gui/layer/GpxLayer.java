@@ -78,9 +78,9 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
 
     /**
      * used by {@link ChooseTrackVisibilityAction} to determine which tracks to show/hide
-     *
+     * <p>
      * Call {@link #invalidate()} after each change!
-     *
+     * <p>
      * TODO: Make it private, make it respond to track changes.
      */
     public boolean[] trackVisibility = new boolean[0];
@@ -145,7 +145,7 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
     public Color getColor() {
         if (data == null)
             return null;
-        Color[] c = data.getTracks().stream().map(t -> t.getColor()).distinct().toArray(Color[]::new);
+        Color[] c = data.getTracks().stream().map(IGpxTrack::getColor).distinct().toArray(Color[]::new);
         return c.length == 1 ? c[0] : null; //only return if exactly one distinct color present
     }
 
@@ -209,30 +209,31 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
         }
 
         if (!data.getTracks().isEmpty()) {
+            String tdSep = "</td><td>";
             info.append("<table><thead align='center'><tr><td colspan='5'>")
                 .append(trn("{0} track, {1} track segments", "{0} tracks, {1} track segments",
                         data.getTrackCount(), data.getTrackCount(),
                         data.getTrackSegsCount(), data.getTrackSegsCount()))
                 .append("</td></tr><tr align='center'><td>").append(tr("Name"))
-                .append("</td><td>").append(tr("Description"))
-                .append("</td><td>").append(tr("Timespan"))
-                .append("</td><td>").append(tr("Length"))
-                .append("</td><td>").append(tr("Number of<br/>Segments"))
-                .append("</td><td>").append(tr("URL"))
+                .append(tdSep).append(tr("Description"))
+                .append(tdSep).append(tr("Timespan"))
+                .append(tdSep).append(tr("Length"))
+                .append(tdSep).append(tr("Number of<br/>Segments"))
+                .append(tdSep).append(tr("URL"))
                 .append("</td></tr></thead>");
 
             for (IGpxTrack trk : data.getTracks()) {
-                info.append("<tr><td>");
-                info.append(trk.getAttributes().getOrDefault(GpxConstants.GPX_NAME, ""));
-                info.append("</td><td>");
-                info.append(trk.getAttributes().getOrDefault(GpxConstants.GPX_DESC, ""));
-                info.append("</td><td>");
-                info.append(getTimespanForTrack(trk));
-                info.append("</td><td>");
-                info.append(SystemOfMeasurement.getSystemOfMeasurement().getDistText(trk.length()));
-                info.append("</td><td>");
-                info.append(trk.getSegments().size());
-                info.append("</td><td>");
+                info.append("<tr><td>")
+                    .append(trk.getAttributes().getOrDefault(GpxConstants.GPX_NAME, ""))
+                    .append(tdSep)
+                    .append(trk.getAttributes().getOrDefault(GpxConstants.GPX_DESC, ""))
+                    .append(tdSep)
+                    .append(getTimespanForTrack(trk))
+                    .append(tdSep)
+                    .append(SystemOfMeasurement.getSystemOfMeasurement().getDistText(trk.length()))
+                    .append(tdSep)
+                    .append(trk.getSegments().size())
+                    .append(tdSep);
                 if (trk.getAttributes().containsKey("url")) {
                     info.append(trk.get("url"));
                 }
@@ -286,7 +287,7 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
 
         if (isExpertMode && expert.stream().anyMatch(Action::isEnabled)) {
             entries.add(SeparatorLayerAction.INSTANCE);
-            expert.stream().filter(Action::isEnabled).forEach(entries::add);
+            entries.addAll(expert.stream().filter(Action::isEnabled).collect(Collectors.toList()));
         }
 
         entries.add(SeparatorLayerAction.INSTANCE);
@@ -620,18 +621,16 @@ public class GpxLayer extends AbstractModifiableLayer implements GpxDataContaine
     }
 
     private void jumpToNext(List<IGpxTrackSegment> segments) {
-        if (segments.isEmpty()) {
-            return;
-        } else if (currentSegment == null) {
+        if (!segments.isEmpty() && currentSegment == null) {
             currentSegment = segments.get(0);
             MainApplication.getMap().mapView.zoomTo(currentSegment.getBounds());
-        } else {
+        } else if (!segments.isEmpty()) {
             try {
                 int index = segments.indexOf(currentSegment);
                 currentSegment = segments.listIterator(index + 1).next();
                 MainApplication.getMap().mapView.zoomTo(currentSegment.getBounds());
-            } catch (IndexOutOfBoundsException | NoSuchElementException ignore) {
-                Logging.trace(ignore);
+            } catch (IndexOutOfBoundsException | NoSuchElementException exception) {
+                Logging.trace(exception);
             }
         }
     }

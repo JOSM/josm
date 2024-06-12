@@ -30,7 +30,7 @@ public class HistoryComboBoxModel extends AutoCompComboBoxModel<String> {
      * @param strings the strings to add
      */
     public void addAllStrings(List<String> strings) {
-        strings.forEach(s -> addElement(s));
+        strings.forEach(this::addElement);
     }
 
     /**
@@ -40,7 +40,7 @@ public class HistoryComboBoxModel extends AutoCompComboBoxModel<String> {
      */
     public List<String> asStringList() {
         List<String> list = new ArrayList<>(getSize());
-        this.forEach(item -> list.add(item));
+        this.forEach(list::add);
         return list;
     }
 

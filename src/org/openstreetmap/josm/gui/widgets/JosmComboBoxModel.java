@@ -49,7 +49,7 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
 
     /**
      * Returns the index of the specified element
-     *
+     * <p>
      * Note: This is not part of the {@link javax.swing.ComboBoxModel} interface but is defined in
      * {@link javax.swing.DefaultComboBoxModel}.
      *
@@ -183,7 +183,7 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
      */
     public void addAllElements(Collection<E> elems) {
         int index0 = elements.size();
-        elems.forEach(e -> doAddElement(e));
+        elems.forEach(this::doAddElement);
         int index1 = elements.size() - 1;
         if (index0 <= index1)
             fireIntervalAdded(this, index0, index1);
@@ -268,9 +268,9 @@ public class JosmComboBoxModel<E> extends AbstractListModel<E> implements Mutabl
     public final class Preferences {
 
         /** A {@link Function} that builds an {@code <E>} from a {@code String}. */
-        private Function<String, E> readE;
+        private final Function<String, E> readE;
         /** A {@code Function} that serializes {@code <E>} to a {@code String}. */
-        private Function<E, String> writeE;
+        private final Function<E, String> writeE;
 
         /**
          * Private constructor

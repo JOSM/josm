@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
@@ -11,6 +13,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Session exporter for {@link OsmDataLayer}.
@@ -39,11 +42,14 @@ public class OsmDataSessionExporter extends GenericSessionExporter<OsmDataLayer>
      */
     public static void exportData(DataSet data, OutputStream out) {
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-        OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, data.getVersion());
         data.getReadLock().lock();
-        try {
+        try (OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, data.getVersion())) {
             w.write(data);
             w.flush();
+        } catch (IOException e) {
+            // Catch needed since XmlWriter (parent of OsmWriter) has IOException in the method signature.
+            // It doesn't actually throw though. In other words, we should never hit this.
+            throw new UncheckedIOException(e);
         } finally {
             data.getReadLock().unlock();
         }

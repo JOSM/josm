@@ -33,7 +33,7 @@ public class EditableList extends JPanel {
     /**
      * The list items
      */
-    public final JList<String> sourcesList = new JList<>(new DefaultListModel<String>());
+    public final JList<String> sourcesList = new JList<>(new DefaultListModel<>());
     /**
      * The add button
      */

@@ -282,14 +282,14 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
      * clear all highlights of virtual nodes
      */
     default void clearHighlightedVirtualNodes() {
-        setHighlightedVirtualNodes(new ArrayList<WaySegment>());
+        setHighlightedVirtualNodes(new ArrayList<>());
     }
 
     /**
      * clear all highlights of way segments
      */
     default void clearHighlightedWaySegments() {
-        setHighlightedWaySegments(new ArrayList<WaySegment>());
+        setHighlightedWaySegments(new ArrayList<>());
     }
 
     /**
@@ -326,7 +326,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
     /**
      * Replies an unmodifiable collection of primitives currently selected
      * in this dataset, except deleted ones. May be empty, but not null.
-     *
+     * <p>
      * When iterating through the set it is ordered by the order in which the primitives were added to the selection.
      *
      * @return unmodifiable collection of primitives
@@ -338,7 +338,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
     /**
      * Replies an unmodifiable collection of primitives currently selected
      * in this dataset, including deleted ones. May be empty, but not null.
-     *
+     * <p>
      * When iterating through the set it is ordered by the order in which the primitives were added to the selection.
      *
      * @return unmodifiable collection of primitives
