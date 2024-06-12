@@ -635,14 +635,15 @@ public final class Utils {
      */
     @SuppressWarnings("unchecked")
     public static <T> List<T> toUnmodifiableList(Collection<T> collection) {
+        // Note: Windows does a `null` check on startup on these lists. See #23717.
+        // Only change this once that is fixed.
+        // Java 9: use List.of(...)
         if (isEmpty(collection)) {
             return Collections.emptyList();
         } else if (collection.size() == 1) {
             return Collections.singletonList(collection.iterator().next());
         } else {
-            // List.copyOf would also work, but if the original collection is immutable, it just returns the original
-            // collection.
-            return (List<T>) List.of(collection.toArray());
+            return (List<T>) Arrays.asList(collection.toArray());
         }
     }
 
