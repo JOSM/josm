@@ -1,11 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
@@ -13,7 +11,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Session exporter for {@link OsmDataLayer}.
@@ -37,19 +34,20 @@ public class OsmDataSessionExporter extends GenericSessionExporter<OsmDataLayer>
     /**
      * Exports OSM data to the given output stream.
      * @param data data set
-     * @param out output stream
-     * @since 15386
+     * @param out output stream (must be closed by caller; note: if caller has access, caller should use
+     *            {@link org.apache.commons.io.output.CloseShieldOutputStream} when calling this method to
+     *            avoid potential future issues)
      */
+    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"}) // All the closeables in this method will close the input OutputStream.
     public static void exportData(DataSet data, OutputStream out) {
+        // This writer will close out when it is closed
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+        // The PrintWriter will close the writer when it is closed, and the OsmWriter will close the PrintWriter when it is closed.
+        OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, data.getVersion());
         data.getReadLock().lock();
-        try (OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, data.getVersion())) {
+        try {
             w.write(data);
             w.flush();
-        } catch (IOException e) {
-            // Catch needed since XmlWriter (parent of OsmWriter) has IOException in the method signature.
-            // It doesn't actually throw though. In other words, we should never hit this.
-            throw new UncheckedIOException(e);
         } finally {
             data.getReadLock().unlock();
         }
