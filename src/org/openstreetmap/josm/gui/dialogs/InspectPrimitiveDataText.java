@@ -222,8 +222,8 @@ public class InspectPrimitiveDataText {
         for (IRelationMember<?> m : r.getMembers()) {
             s.append(INDENT).append(INDENT);
             addHeadline(m.getMember());
-            s.append(tr(" as \"{0}\"", m.getRole()));
-            s.append(NL);
+            s.append(tr(" as \"{0}\"", m.getRole()))
+                .append(NL);
         }
     }
 

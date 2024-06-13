@@ -356,7 +356,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 }
                 Logging.error(e);
                 if (e.getCause() instanceof OsmTransferException)
-                    throw (OsmTransferException) e.getCause();
+                    throw (OsmTransferException) e.getCause(); // NOPMD
             }
         }
         exec.shutdown();

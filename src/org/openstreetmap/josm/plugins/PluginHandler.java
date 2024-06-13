@@ -55,6 +55,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
+import jakarta.annotation.Nullable;
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
@@ -769,22 +770,8 @@ public final class PluginHandler {
         String requires = local ? plugin.localrequires : plugin.requires;
 
         // make sure the dependencies to other plugins are not broken
-        //
         if (requires != null) {
-            Set<String> pluginNames = new HashSet<>();
-            for (PluginInformation pi: plugins) {
-                pluginNames.add(pi.name);
-                if (pi.provides != null) {
-                    pluginNames.add(pi.provides);
-                }
-            }
-            Set<String> missingPlugins = new HashSet<>();
-            List<String> requiredPlugins = local ? plugin.getLocalRequiredPlugins() : plugin.getRequiredPlugins();
-            for (String requiredPlugin : requiredPlugins) {
-                if (!pluginNames.contains(requiredPlugin)) {
-                    missingPlugins.add(requiredPlugin);
-                }
-            }
+            Set<String> missingPlugins = findMissingPlugins(plugins, plugin, local);
             if (!missingPlugins.isEmpty()) {
                 if (parent != null) {
                     alertMissingRequiredPlugin(parent, plugin.name, missingPlugins);
@@ -793,6 +780,31 @@ public final class PluginHandler {
             }
         }
         return true;
+    }
+
+    /**
+     * Find the missing plugin(s) for a specified plugin
+     * @param plugins The currently loaded plugins
+     * @param plugin The plugin to find the missing information for
+     * @param local Determines if the local or up-to-date plugin dependencies are to be checked.
+     * @return A set of missing plugins for the given plugin
+     */
+    private static Set<String> findMissingPlugins(Collection<PluginInformation> plugins, PluginInformation plugin, boolean local) {
+        Set<String> pluginNames = new HashSet<>();
+        for (PluginInformation pi: plugins) {
+            pluginNames.add(pi.name);
+            if (pi.provides != null) {
+                pluginNames.add(pi.provides);
+            }
+        }
+        Set<String> missingPlugins = new HashSet<>();
+        List<String> requiredPlugins = local ? plugin.getLocalRequiredPlugins() : plugin.getRequiredPlugins();
+        for (String requiredPlugin : requiredPlugins) {
+            if (!pluginNames.contains(requiredPlugin)) {
+                missingPlugins.add(requiredPlugin);
+            }
+        }
+        return missingPlugins;
     }
 
     /**
@@ -817,6 +829,7 @@ public final class PluginHandler {
      *
      * @param plugins the plugins to add
      */
+    @SuppressWarnings("PMD.CloseResource") // NOSONAR We do *not* want to close class loaders in this method...
     private static void extendJoinedPluginResourceCL(Collection<PluginInformation> plugins) {
         // iterate all plugins and collect all libraries of all plugins:
         File pluginDir = Preferences.main().getPluginsDirectory();
@@ -900,35 +913,10 @@ public final class PluginHandler {
             if (toLoad.isEmpty())
                 return;
 
-            for (PluginInformation info : toLoad) {
-                PluginClassLoader cl = AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>)
-                    () -> new PluginClassLoader(
-                        info.libraries.toArray(new URL[0]),
-                        PluginHandler.class.getClassLoader(),
-                        null));
-                classLoaders.put(info.name, cl);
-            }
+            generateClassloaders(toLoad);
 
             // resolve dependencies
-            for (PluginInformation info : toLoad) {
-                PluginClassLoader cl = classLoaders.get(info.name);
-                DEPENDENCIES:
-                for (String depName : info.getLocalRequiredPlugins()) {
-                    for (PluginInformation depInfo : toLoad) {
-                        if (isDependency(depInfo, depName)) {
-                            cl.addDependency(classLoaders.get(depInfo.name));
-                            continue DEPENDENCIES;
-                        }
-                    }
-                    for (PluginProxy proxy : pluginList) {
-                        if (isDependency(proxy.getPluginInformation(), depName)) {
-                            cl.addDependency(proxy.getClassLoader());
-                            continue DEPENDENCIES;
-                        }
-                    }
-                    Logging.error("unable to find dependency " + depName + " for plugin " + info.getName());
-                }
-            }
+            resolveDependencies(toLoad);
 
             extendJoinedPluginResourceCL(toLoad);
             ResourceProvider.addAdditionalClassLoaders(getResourceClassLoaders());
@@ -940,6 +928,53 @@ public final class PluginHandler {
             }
         } finally {
             monitor.finishTask();
+        }
+    }
+
+    /**
+     * Generate classloaders for a list of plugins
+     * @param toLoad The plugins to generate the classloaders for
+     */
+    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"}) // NOSONAR the classloaders and put in a map which we want to keep.
+    private static void generateClassloaders(List<PluginInformation> toLoad) {
+        for (PluginInformation info : toLoad) {
+            PluginClassLoader cl = AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>)
+                    () -> new PluginClassLoader(
+                            info.libraries.toArray(new URL[0]),
+                            PluginHandler.class.getClassLoader(),
+                            null));
+            classLoaders.put(info.name, cl);
+        }
+    }
+
+    /**
+     * Resolve dependencies for a list of plugins
+     * @param toLoad The plugins to resolve dependencies for
+     */
+    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"}) // NOSONAR the classloaders are from a persistent map
+    private static void resolveDependencies(List<PluginInformation> toLoad) {
+        for (PluginInformation info : toLoad) {
+            PluginClassLoader cl = classLoaders.get(info.name);
+            for (String depName : info.getLocalRequiredPlugins()) {
+                boolean finished = false;
+                for (PluginInformation depInfo : toLoad) {
+                    if (isDependency(depInfo, depName)) {
+                        cl.addDependency(classLoaders.get(depInfo.name));
+                        finished = true;
+                        break;
+                    }
+                }
+                if (finished) {
+                    continue;
+                }
+                for (PluginProxy proxy : pluginList) {
+                    if (isDependency(proxy.getPluginInformation(), depName)) {
+                        cl.addDependency(proxy.getClassLoader());
+                        break;
+                    }
+                }
+                Logging.error("unable to find dependency " + depName + " for plugin " + info.getName());
+            }
         }
     }
 
@@ -998,6 +1033,8 @@ public final class PluginHandler {
      * @return the map of locally available plugin information, null in case of errors
      *
      */
+    @Nullable
+    @SuppressWarnings("squid:S1168") // The null return is part of the API for this method.
     private static Map<String, PluginInformation> loadLocallyAvailablePluginInformation(ProgressMonitor monitor) {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
@@ -1011,6 +1048,7 @@ public final class PluginHandler {
                 Logging.error(e);
                 return null;
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 Logging.warn("InterruptedException in " + PluginHandler.class.getSimpleName()
                         + " while loading locally available plugin information");
                 return null;
@@ -1026,19 +1064,18 @@ public final class PluginHandler {
     }
 
     private static void alertMissingPluginInformation(Component parent, Collection<String> plugins) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(HTML_START)
-          .append(trn("JOSM could not find information about the following plugin:",
-                "JOSM could not find information about the following plugins:",
-                plugins.size()))
-          .append(Utils.joinAsHtmlUnorderedList(plugins))
-          .append(trn("The plugin is not going to be loaded.",
-                "The plugins are not going to be loaded.",
-                plugins.size()))
-          .append(HTML_END);
+        String sb = HTML_START +
+                trn("JOSM could not find information about the following plugin:",
+                        "JOSM could not find information about the following plugins:",
+                        plugins.size()) +
+                Utils.joinAsHtmlUnorderedList(plugins) +
+                trn("The plugin is not going to be loaded.",
+                        "The plugins are not going to be loaded.",
+                        plugins.size()) +
+                HTML_END;
         HelpAwareOptionPane.showOptionDialog(
                 parent,
-                sb.toString(),
+                sb,
                 tr(WARNING),
                 JOptionPane.WARNING_MESSAGE,
                 ht("/Plugin/Loading#MissingPluginInfos")
@@ -1190,6 +1227,7 @@ public final class PluginHandler {
                 Logging.error(e);
                 // don't abort in case of error, continue with downloading plugins below
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 Logging.warn(tr("Failed to download plugin information list") + ": InterruptedException");
                 // don't abort in case of error, continue with downloading plugins below
             }
@@ -1239,6 +1277,7 @@ public final class PluginHandler {
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     Logging.warn("InterruptedException in " + PluginHandler.class.getSimpleName()
                             + " while updating plugins");
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
@@ -1534,7 +1573,10 @@ public final class PluginHandler {
             ));
             GuiHelper.runInEDT(task);
             return task.get();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Logging.warn(e);
+        } catch (ExecutionException e) {
             Logging.warn(e);
         }
         return -1;

@@ -175,7 +175,7 @@ public class ValidatorDialog extends ToggleDialog
         fixAction.setEnabled(false);
         buttons.add(new SideButton(fixAction));
 
-        if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
+        if (Boolean.TRUE.equals(ValidatorPrefHelper.PREF_USE_IGNORE.get())) {
             ignoreAction = new AbstractAction() {
                 {
                     putValue(NAME, tr("Ignore"));
@@ -429,7 +429,7 @@ public class ValidatorDialog extends ToggleDialog
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         OsmDataLayer editLayer = e.getSource().getEditLayer();
         if (editLayer == null) {
-            tree.setErrorList(new ArrayList<TestError>());
+            tree.setErrorList(new ArrayList<>());
         } else {
             tree.setErrorList(editLayer.validationErrors);
         }

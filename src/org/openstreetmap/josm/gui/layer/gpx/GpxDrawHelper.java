@@ -592,8 +592,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 for (Line segment : getLinesIterable(null)) {
                     for (WayPoint trkPnt : segment) {
                         Object val = trkPnt.get(GpxConstants.PT_HDOP);
-                        if (val != null) {
-                            double hdop = ((Float) val).doubleValue();
+                        if (val instanceof Float) {
+                            double hdop = ((Float) val);
                             if (hdop > maxval) {
                                 maxval = hdop;
                             }
@@ -1465,7 +1465,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private static void drawHeatGrayDotMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm, int drawSize) {
 
         // typical rendering rate -> use realtime preview instead of accurate display
-        final double maxSegm = 25_000, nrSegms = listSegm.size();
+        final double maxSegm = 25_000;
+        final double nrSegms = listSegm.size();
 
         // determine random drop rate
         final double randomDrop = Math.min(nrSegms > maxSegm ? (nrSegms - maxSegm) / nrSegms : 0, 0.70f);
@@ -1510,8 +1511,10 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Point fromPnt, Point toPnt, int drawSize, double rmsSizeX, double rmsSizeY, double dropRate) {
 
         // collect frequently used items
-        final long fromX = (long) fromPnt.getX(); final long deltaX = (long) (toPnt.getX() - fromX);
-        final long fromY = (long) fromPnt.getY(); final long deltaY = (long) (toPnt.getY() - fromY);
+        final long fromX = (long) fromPnt.getX();
+        final long fromY = (long) fromPnt.getY();
+        final long deltaX = (long) (toPnt.getX() - fromX);
+        final long deltaY = (long) (toPnt.getY() - fromY);
 
         // use same random values for each point
         final Random heatMapRandom = new Random(fromX+fromY+deltaX+deltaY);

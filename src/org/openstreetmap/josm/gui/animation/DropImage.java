@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -70,7 +71,7 @@ class DropImage implements IAnimObject {
             ArrayList<String> result = new ArrayList<>();
             String path = "images/presets/";
             URL url = DropImage.class.getClassLoader().getResource(path);
-            if (url != null && url.getProtocol().equals("file")) {
+            if (url != null && "file".equals(url.getProtocol())) {
                 ArrayList<File> dirs = new ArrayList<>();
                 dirs.add(new File(url.toURI()));
                 do {
@@ -86,9 +87,9 @@ class DropImage implements IAnimObject {
                     }
                 } while (!dirs.isEmpty());
                 name = result.get(seed.nextInt(result.size()));
-            } else if (url != null && url.getProtocol().equals("jar")) {
-                String jarPath = url.getPath().substring(5, url.getPath().indexOf("!"));
-                try (JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {
+            } else if (url != null && "jar".equals(url.getProtocol())) {
+                String jarPath = url.getPath().substring(5, url.getPath().indexOf('!'));
+                try (JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8))) {
                     Enumeration<JarEntry> entries = jar.entries();
                     while (entries.hasMoreElements()) {
                         String fileName = entries.nextElement().getName();

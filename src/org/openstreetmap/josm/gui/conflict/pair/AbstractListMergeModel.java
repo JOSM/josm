@@ -64,7 +64,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A ListMergeModel can be ''frozen''. If it's frozen, it doesn't accept additional merge
  * decisions. {@link PropertyChangeListener}s can register for property value changes of
  * {@link #FROZEN_PROP}.
- *
+ * <p>
  * ListMergeModel is an abstract class. Three methods have to be implemented by subclasses:
  * <ul>
  *   <li>{@link AbstractListMergeModel#cloneEntryForMergedList} - clones an entry of type T</li>
@@ -202,7 +202,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
     protected AbstractListMergeModel() {
         entries = new EnumMap<>(ListRole.class);
         for (ListRole role : ListRole.values()) {
-            entries.put(role, new ArrayList<T>());
+            entries.put(role, new ArrayList<>());
         }
 
         buildMyEntriesTableModel();
@@ -378,14 +378,13 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
         if (deletedIds.size() > MAX_DELETED_PRIMITIVE_IN_DIALOG) {
             items.add(tr("{0} more...", deletedIds.size() - MAX_DELETED_PRIMITIVE_IN_DIALOG));
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>")
-          .append(tr("The following objects could not be copied to the target object<br>because they are deleted in the target dataset:"))
-          .append(Utils.joinAsHtmlUnorderedList(items))
-          .append("</html>");
+        String sb = "<html>" +
+                tr("The following objects could not be copied to the target object<br>because they are deleted in the target dataset:") +
+                Utils.joinAsHtmlUnorderedList(items) +
+                "</html>";
         HelpAwareOptionPane.showOptionDialog(
                 MainApplication.getMainFrame(),
-                sb.toString(),
+                sb,
                 tr("Merging deleted objects failed"),
                 JOptionPane.WARNING_MESSAGE,
                 HelpUtil.ht("/Dialog/Conflict#MergingDeletedPrimitivesFailed")

@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * This manager handles a list of layers with the first layer being the front layer.
  * <h1>Threading</h1>
  * Synchronization of the layer manager is done by synchronizing all read/write access. All changes are internally done in the EDT thread.
- *
+ * <p>
  * Methods of this manager may be called from any thread in any order.
  * Listeners are called while this layer manager is locked, so they should not block on other threads.
  *
@@ -188,10 +188,13 @@ public class LayerManager {
         }
     }
 
+    private static final String LISTENER = "listener";
+    private static final String EVENT = "event";
+
     /**
      * This is the list of layers we manage. The list is unmodifiable. That way, read access does
      * not need to be synchronized.
-     *
+     * <p>
      * It is only changed in the EDT.
      * @see LayerManager#updateLayers(Consumer)
      */
@@ -254,7 +257,7 @@ public class LayerManager {
      */
     protected synchronized void realRemoveLayer(Layer layer) {
         GuiHelper.assertCallFromEdt();
-        Set<Layer> toRemove = Collections.newSetFromMap(new IdentityHashMap<Layer, Boolean>());
+        Set<Layer> toRemove = Collections.newSetFromMap(new IdentityHashMap<>());
         toRemove.add(layer);
 
         while (!toRemove.isEmpty()) {
@@ -360,7 +363,7 @@ public class LayerManager {
 
     /**
      * Replies an unmodifiable list of layers of a certain type.
-     *
+     * <p>
      * Example:
      * <pre>
      *     List&lt;WMSLayer&gt; wmsLayers = getLayersOfType(WMSLayer.class);
@@ -458,7 +461,7 @@ public class LayerManager {
             try {
                 l.layerAdded(e);
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
-                throw BugReport.intercept(t).put("listener", l).put("event", e);
+                throw BugReport.intercept(t).put(LISTENER, l).put(EVENT, e);
             }
         }
     }
@@ -475,7 +478,7 @@ public class LayerManager {
             try {
                 l.layerRemoving(e);
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
-                throw BugReport.intercept(t).put("listener", l).put("event", e).put("layer", layer);
+                throw BugReport.intercept(t).put(LISTENER, l).put(EVENT, e).put("layer", layer);
             }
         }
         if (layer instanceof OsmDataLayer) {
@@ -491,7 +494,7 @@ public class LayerManager {
             try {
                 l.layerOrderChanged(e);
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
-                throw BugReport.intercept(t).put("listener", l).put("event", e);
+                throw BugReport.intercept(t).put(LISTENER, l).put(EVENT, e);
             }
         }
     }

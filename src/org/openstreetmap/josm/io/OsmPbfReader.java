@@ -6,7 +6,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,8 +66,20 @@ public final class OsmPbfReader extends AbstractReader {
 
         @Override
         public int read() throws IOException {
-            count++;
-            return this.source.read();
+            final int read = this.source.read();
+            if (read > 0) {
+                count++;
+            }
+            return read;
+        }
+
+        @Override
+        public int read(@Nonnull byte[] b, int off, int len) throws IOException {
+            final int read = this.source.read(b, off, len);
+            if (read > 0) {
+                this.count += read;
+            }
+            return read;
         }
 
         @Override
@@ -103,11 +114,6 @@ public final class OsmPbfReader extends AbstractReader {
         @Override
         public boolean markSupported() {
             return this.source.markSupported();
-        }
-
-        @Override
-        public long transferTo(OutputStream out) throws IOException {
-            return super.transferTo(out);
         }
 
         long getCount() {
@@ -250,41 +256,41 @@ public final class OsmPbfReader extends AbstractReader {
         long start = cis.getCount();
         int size = Integer.MIN_VALUE;
         Blob.CompressionType type = null;
-        ProtobufRecord current;
         // Needed since size and compression type + compression data may be in a different order
         byte[] bytes = null;
         while (parser.hasNext() && cis.getCount() - start < header.dataSize()) {
-            current = new ProtobufRecord(baos, parser);
-            switch (current.getField()) {
-                case 1:
-                    type = Blob.CompressionType.raw;
-                    bytes = current.getBytes();
-                    break;
-                case 2:
-                    size = current.asUnsignedVarInt().intValue();
-                    break;
-                case 3:
-                    type = Blob.CompressionType.zlib;
-                    bytes = current.getBytes();
-                    break;
-                case 4:
-                    type = Blob.CompressionType.lzma;
-                    bytes = current.getBytes();
-                    break;
-                case 5:
-                    type = Blob.CompressionType.bzip2;
-                    bytes = current.getBytes();
-                    break;
-                case 6:
-                    type = Blob.CompressionType.lz4;
-                    bytes = current.getBytes();
-                    break;
-                case 7:
-                    type = Blob.CompressionType.zstd;
-                    bytes = current.getBytes();
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown compression type: " + current.getField());
+            try (ProtobufRecord current = new ProtobufRecord(baos, parser)) {
+                switch (current.getField()) {
+                    case 1:
+                        type = Blob.CompressionType.raw;
+                        bytes = current.getBytes();
+                        break;
+                    case 2:
+                        size = current.asUnsignedVarInt().intValue();
+                        break;
+                    case 3:
+                        type = Blob.CompressionType.zlib;
+                        bytes = current.getBytes();
+                        break;
+                    case 4:
+                        type = Blob.CompressionType.lzma;
+                        bytes = current.getBytes();
+                        break;
+                    case 5:
+                        type = Blob.CompressionType.bzip2;
+                        bytes = current.getBytes();
+                        break;
+                    case 6:
+                        type = Blob.CompressionType.lz4;
+                        bytes = current.getBytes();
+                        break;
+                    case 7:
+                        type = Blob.CompressionType.zstd;
+                        bytes = current.getBytes();
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown compression type: " + current.getField());
+                }
             }
         }
         if (type == null) {
@@ -420,7 +426,7 @@ public final class OsmPbfReader extends AbstractReader {
             }
         }
         for (ProtobufRecord primitiveGroup : primitiveGroups) {
-            try {
+            try (primitiveGroup) {
                 ds.beginUpdate();
                 parsePrimitiveGroup(baos, primitiveGroup.getBytes(), primitiveBlockRecord);
             } finally {

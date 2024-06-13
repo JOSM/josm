@@ -82,7 +82,6 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  *
  * @author imi
  */
-@SuppressWarnings("deprecation")
 public final class PreferenceTabbedPane extends JTabbedPane implements ExpertModeChangeListener, ChangeListener {
 
     private final class PluginDownloadAfterTask implements Runnable {
@@ -117,9 +116,9 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                 sb.append(PluginPreference.buildDownloadSummary(task));
             }
             if (requiresRestart) {
-                sb.append(tr("You have to restart JOSM for some settings to take effect."));
-                sb.append("<br/><br/>");
-                sb.append(tr("Would you like to restart now?"));
+                sb.append(tr("You have to restart JOSM for some settings to take effect."))
+                    .append("<br/><br/>")
+                    .append(tr("Would you like to restart now?"));
             }
             sb.append("</html>");
 
@@ -357,8 +356,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
             final TabPreferenceSetting tab = sub.getTabPreferenceSetting(this);
             selectTabBy(tps -> tps.equals(tab));
             return tab.selectSubTab(sub);
-        } catch (NoSuchElementException ignore) {
-            Logging.trace(ignore);
+        } catch (NoSuchElementException e) {
+            Logging.trace(e);
             return false;
         }
     }
@@ -563,7 +562,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
 
     private int computeMaxTabWidth() {
         FontMetrics fm = getFontMetrics(getFont());
-        return settings.stream().filter(x -> x instanceof TabPreferenceSetting).map(x -> ((TabPreferenceSetting) x).getTitle())
+        return settings.stream().filter(TabPreferenceSetting.class::isInstance)
+                .map(TabPreferenceSetting.class::cast).map(TabPreferenceSetting::getTitle)
                 .filter(Objects::nonNull).mapToInt(fm::stringWidth).max().orElse(120);
     }
 

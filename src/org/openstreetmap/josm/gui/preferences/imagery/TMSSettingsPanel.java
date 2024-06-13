@@ -48,9 +48,9 @@ public class TMSSettingsPanel extends JPanel {
                 TMSLayer.MIN_ZOOM,
                 TMSLayer.MAX_ZOOM, 1));
         maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(
-                TMSCachedTileLoader.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
+                (int) TMSCachedTileLoader.THREAD_LIMIT.get(), 0, Integer.MAX_VALUE, 1));
         maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(
-                TMSCachedTileLoader.HOST_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
+                (int) TMSCachedTileLoader.HOST_LIMIT.get(), 0, Integer.MAX_VALUE, 1));
 
 
         add(new JLabel(tr("Auto zoom by default: ")), GBC.std());

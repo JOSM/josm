@@ -253,7 +253,7 @@ public class UploadSelectionDialog extends JDialog {
             if (indices == null || indices.length == 0)
                 return Collections.emptyList();
             return Arrays.stream(indices).filter(i -> i >= 0)
-                    .mapToObj(i -> data.get(i))
+                    .mapToObj(data::get)
                     .collect(Collectors.toList());
         }
     }

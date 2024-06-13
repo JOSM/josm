@@ -858,11 +858,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 }
             });
 
-            ListCellRenderer<ActionDefinition> renderer = new ListCellRenderer<ActionDefinition>() {
+            ListCellRenderer<ActionDefinition> renderer = new ListCellRenderer<>() {
                 private final DefaultListCellRenderer def = new DefaultListCellRenderer();
+
                 @Override
                 public Component getListCellRendererComponent(JList<? extends ActionDefinition> list,
-                        ActionDefinition action, int index, boolean isSelected, boolean cellHasFocus) {
+                                                              ActionDefinition action, int index, boolean isSelected, boolean cellHasFocus) {
                     String s;
                     Icon i;
                     if (!action.isSeparator()) {

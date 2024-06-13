@@ -109,7 +109,10 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
                         } else if (b != null) {
                             bounds.extend(b);
                         }
-                    } catch (InterruptedException | ExecutionException ex) {
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        Logging.warn(ex);
+                    } catch (ExecutionException ex) {
                         Logging.warn(ex);
                     }
                 }
@@ -214,7 +217,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             // size check depends on selected data source
             checkboxChangeListener = e -> {
                 rememberSettings();
-                dialog.getSelectedDownloadArea().ifPresent(OSMDownloadSourcePanel.this::boundingBoxChanged);
+                dialog.getSelectedDownloadArea().ifPresent(this::boundingBoxChanged);
             };
 
             downloadSourcesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -272,7 +275,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             /*
              * It is mandatory to specify the area to download from OSM.
              */
-            if (!settings.getDownloadBounds().isPresent()) {
+            if (settings.getDownloadBounds().isEmpty()) {
                 JOptionPane.showMessageDialog(
                         this.getParent(),
                         tr("Please select a download area first."),

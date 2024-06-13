@@ -107,8 +107,8 @@ public class SyncEditorLayerIndex {
     private static String optionJosmXml;
     private static String optionEncoding;
     private static boolean optionNoEli;
-    private Map<String, String> skip = new HashMap<>();
-    private Map<String, String> skipStart = new HashMap<>();
+    private final Map<String, String> skip = new HashMap<>();
+    private final Map<String, String> skipStart = new HashMap<>();
 
     /**
      * Main method.
@@ -237,7 +237,7 @@ public class SyncEditorLayerIndex {
     }
 
     void loadSkip() throws IOException {
-        final Pattern pattern = Pattern.compile("^\\|\\| *(ELI|Ignore) *\\|\\| *\\{\\{\\{(.+)\\}\\}\\} *\\|\\|");
+        final Pattern pattern = Pattern.compile("^\\|\\| *(ELI|Ignore) *\\|\\| *\\{\\{\\{(.+)}}} *\\|\\|");
         try (BufferedReader fr = Files.newBufferedReader(Paths.get(ignoreInputFile), UTF_8)) {
             String line;
 
@@ -478,8 +478,8 @@ public class SyncEditorLayerIndex {
                     }
                     shapes += sep + "</shape>\n";
                 }
-            } catch (IllegalArgumentException ignored) {
-                Logging.trace(ignored);
+            } catch (IllegalArgumentException illegalArgumentException) {
+                Logging.trace(illegalArgumentException);
             }
             if (!shapes.isEmpty()) {
                 stream.write("        <bounds min-lat='"+df.format(minlat)
@@ -775,9 +775,9 @@ public class SyncEditorLayerIndex {
             Matcher m = pattern.matcher(ed);
             if (m.matches()) {
                 Calendar cal = Calendar.getInstance();
-                cal.set(Integer.valueOf(m.group(2)),
-                        m.group(4) == null ? 0 : Integer.valueOf(m.group(4))-1,
-                        m.group(6) == null ? 1 : Integer.valueOf(m.group(6)));
+                cal.set(Integer.parseInt(m.group(2)),
+                        m.group(4) == null ? 0 : Integer.parseInt(m.group(4))-1,
+                        m.group(6) == null ? 1 : Integer.parseInt(m.group(6)));
                 cal.add(Calendar.DAY_OF_MONTH, -1);
                 ed2 = m.group(1) + cal.get(Calendar.YEAR);
                 if (m.group(4) != null)
@@ -1229,7 +1229,7 @@ public class SyncEditorLayerIndex {
                     myprintln("~ Strange URL '"+u+"': "+getDescription(j));
                 } else {
                     try {
-                        URL jurl = new URL(u.replaceAll("\\{switch:[^\\}]*\\}", "x"));
+                        URL jurl = new URL(u.replaceAll("\\{switch:[^}]*}", "x"));
                         String domain = jurl.getHost();
                         int port = jurl.getPort();
                         if (!(domain.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) && !dv.isValid(domain))
@@ -1374,11 +1374,9 @@ public class SyncEditorLayerIndex {
     static List<String> getProjections(Object e) {
         List<String> r = new ArrayList<>();
         List<String> u = getProjectionsUnstripped(e);
-        if (u != null) {
-            for (String p : u) {
-                if (!oldproj.containsKey(p) && !("CRS:84".equals(p) && !(getUrlStripped(e).matches("(?i)version=1\\.3")))) {
-                    r.add(p);
-                }
+        for (String p : u) {
+            if (!oldproj.containsKey(p) && !("CRS:84".equals(p) && !(getUrlStripped(e).matches("(?i)version=1\\.3")))) {
+                r.add(p);
             }
         }
         return r;

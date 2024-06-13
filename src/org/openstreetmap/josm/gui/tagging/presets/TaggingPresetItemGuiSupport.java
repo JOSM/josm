@@ -134,7 +134,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
         // if there is only one primitive selected, get its tags
         Tagged tagged = Tagged.ofMap(selected.iterator().next().getKeys());
         // update changed tags
-        changedTagsSupplier.get().forEach(tag -> tagged.put(tag));
+        changedTagsSupplier.get().forEach(tagged::put);
         return tagged;
     }
 

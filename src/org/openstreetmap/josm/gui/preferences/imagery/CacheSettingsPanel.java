@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -59,7 +60,7 @@ public class CacheSettingsPanel extends JPanel {
 
     private final JosmTextField cacheDir = new JosmTextField(11);
     private final JSpinner maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(
-            AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().intValue(), 0, Integer.MAX_VALUE, 1));
+            (int) AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get(), 0, Integer.MAX_VALUE, 1));
 
     /**
      * Creates cache content panel
@@ -69,7 +70,7 @@ public class CacheSettingsPanel extends JPanel {
 
         add(new JLabel(tr("Tile cache directory: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
-        add(cacheDir, GBC.eol().fill(GBC.HORIZONTAL));
+        add(cacheDir, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         add(new JLabel(tr("Maximum size of disk cache (per imagery) in MB: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
@@ -93,7 +94,7 @@ public class CacheSettingsPanel extends JPanel {
             add(new JLabel(tr("{0} cache, total cache size: {1}", name, sizeString)),
                 GBC.eol().insets(5, 5, 0, 0));
             add(new JScrollPane(getTableForCache(cache, tableModel)),
-                GBC.eol().fill(GBC.BOTH));
+                GBC.eol().fill(GridBagConstraints.BOTH));
         });
     }
 
@@ -211,7 +212,9 @@ public class CacheSettingsPanel extends JPanel {
 
     private static boolean removeCacheFiles(String path, long maxSize) {
         File directory = new File(path);
-        File[] cacheFiles = directory.listFiles((dir, name) -> name.endsWith(".data") || name.endsWith(".key"));
+        final String data = ".data";
+        final String key = ".key";
+        File[] cacheFiles = directory.listFiles((dir, name) -> name.endsWith(data) || name.endsWith(key));
         boolean restartRequired = false;
         if (cacheFiles != null) {
             for (File cacheFile: cacheFiles) {
@@ -222,10 +225,10 @@ public class CacheSettingsPanel extends JPanel {
                     }
                     Utils.deleteFile(cacheFile);
                     File otherFile = null;
-                    if (cacheFile.getName().endsWith(".data")) {
-                        otherFile = new File(cacheFile.getPath().replaceAll("\\.data$", ".key"));
-                    } else if (cacheFile.getName().endsWith(".key")) {
-                        otherFile = new File(cacheFile.getPath().replaceAll("\\.key$", ".data"));
+                    if (cacheFile.getName().endsWith(data)) {
+                        otherFile = new File(cacheFile.getPath().replaceAll("\\.data$", key));
+                    } else if (cacheFile.getName().endsWith(key)) {
+                        otherFile = new File(cacheFile.getPath().replaceAll("\\.key$", data));
                     }
                     if (otherFile != null) {
                         Utils.deleteFileIfExists(otherFile);

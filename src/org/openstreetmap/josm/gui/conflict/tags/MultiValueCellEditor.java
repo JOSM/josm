@@ -27,11 +27,11 @@ import org.openstreetmap.josm.tools.Logging;
  * This is a table cell editor for selecting a possible tag value from a list of
  * proposed tag values. The editor also allows to select all proposed valued or
  * to remove the tag.
- *
+ * <p>
  * The editor responds intercepts some keys and interprets them as navigation keys. It
  * forwards navigation events to {@link NavigationListener}s registered with this editor.
  * You should register the parent table using this editor as {@link NavigationListener}.
- *
+ * <p>
  * {@link KeyEvent#VK_ENTER} and {@link KeyEvent#VK_TAB} trigger a {@link NavigationListener#gotoNextDecision()}.
  */
 public class MultiValueCellEditor extends AbstractCellEditor implements TableCellEditor {
@@ -87,7 +87,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
      */
     public MultiValueCellEditor() {
         editorModel = new JosmComboBoxModel<>();
-        editor = new JosmComboBox<Object>(editorModel) {
+        editor = new JosmComboBox<>(editorModel) {
             @Override
             public void processKeyEvent(KeyEvent e) {
                 if (e.getID() == KeyEvent.KEY_PRESSED) {
@@ -215,26 +215,27 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
          * @param value {@link String} or {@link MultiValueDecisionType}
          */
         protected void renderValue(Object value) {
-            setFont(UIManager.getFont("ComboBox.font"));
+            final String comboBoxFont = "ComboBox.font";
+            setFont(UIManager.getFont(comboBoxFont));
             if (value instanceof String) {
                 setText((String) value);
             } else if (value instanceof MultiValueDecisionType) {
                 switch ((MultiValueDecisionType) value) {
                 case UNDECIDED:
                     setText(tr("Choose a value"));
-                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    setFont(UIManager.getFont(comboBoxFont).deriveFont(Font.ITALIC + Font.BOLD));
                     break;
                 case KEEP_NONE:
                     setText(tr("none"));
-                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    setFont(UIManager.getFont(comboBoxFont).deriveFont(Font.ITALIC + Font.BOLD));
                     break;
                 case KEEP_ALL:
                     setText(tr("all"));
-                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    setFont(UIManager.getFont(comboBoxFont).deriveFont(Font.ITALIC + Font.BOLD));
                     break;
                 case SUM_ALL_NUMERIC:
                     setText(tr("sum"));
-                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    setFont(UIManager.getFont(comboBoxFont).deriveFont(Font.ITALIC + Font.BOLD));
                     break;
                 default:
                     // don't display other values

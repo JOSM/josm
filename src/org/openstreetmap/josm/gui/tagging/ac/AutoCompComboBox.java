@@ -31,7 +31,7 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements AutoCompList
      * Constructs an {@code AutoCompletingComboBox}.
      */
     public AutoCompComboBox() {
-        this(new AutoCompComboBoxModel<E>());
+        this(new AutoCompComboBoxModel<>());
     }
 
     /**
@@ -41,7 +41,7 @@ public class AutoCompComboBox<E> extends JosmComboBox<E> implements AutoCompList
      */
     public AutoCompComboBox(AutoCompComboBoxModel<E> model) {
         super(model);
-        setEditor(new AutoCompComboBoxEditor<E>());
+        setEditor(new AutoCompComboBoxEditor<>());
         setEditable(true);
         getEditorComponent().setModel(model);
         getEditorComponent().addAutoCompListener(this);

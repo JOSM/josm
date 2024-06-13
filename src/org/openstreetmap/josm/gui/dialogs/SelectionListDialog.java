@@ -528,7 +528,7 @@ public class SelectionListDialog extends ToggleDialog {
             IntStream.range(1, history.size())
                     .filter(i -> history.get(i).equals(selection))
                     .findFirst()
-                    .ifPresent(i -> history.remove(i));
+                    .ifPresent(history::remove);
             int maxsize = Config.getPref().getInt("select.history-size", SELECTION_HISTORY_SIZE);
             while (history.size() > maxsize) {
                 history.removeLast();

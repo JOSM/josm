@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tools / Orthogonalize
- *
+ * <p>
  * Align edges of a way so all angles are angles of 90 or 180 degrees.
  * See USAGE String below.
  */
@@ -72,7 +72,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * excepted deviation from an angle of 0, 90, 180, 360 degrees
      * maximum value: 45 degrees
-     *
+     * <p>
      * Current policy is to except just everything, no matter how strange the result would be.
      */
     private static final double TOLERANCE1 = Utils.toRadians(45.);   // within a way
@@ -85,10 +85,10 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Undo the previous orthogonalization for certain nodes.
-     *
+     * <p>
      * This is useful, if the way shares nodes that you don't like to change, e.g. imports or
      * work of another user.
-     *
+     * <p>
      * This action can be triggered by shortcut only.
      */
     public static class Undo extends JosmAction {
@@ -278,7 +278,8 @@ public final class OrthogonalizeAction extends JosmAction {
         for (WayData wd : wayDataList) {
             int n = wd.wayNodes.size();
             int i = wd.wayNodes.indexOf(singleNode);
-            Node n0, n2;
+            final Node n0;
+            final Node n2;
             if (i == 0 && n >= 3 && singleNode.equals(wd.wayNodes.get(n-1))) {
                 n0 = wd.wayNodes.get(n-2);
                 n2 = wd.wayNodes.get(1);
@@ -427,7 +428,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 double average = 0;
                 for (Node n : cs) {
                     s.remove(n);
-                    average += nC.get(n).doubleValue();
+                    average += nC.get(n);
                 }
                 average = average / cs.size();
 
