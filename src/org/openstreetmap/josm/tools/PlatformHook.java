@@ -401,7 +401,7 @@ public interface PlatformHook {
         }
         if (missingArguments.length() > 0) {
             final String args = missingArguments.toString();
-            messages.add(tr("Missing JVM Arguments:<br>{0}", args));
+            messages.add(tr("Missing JVM Arguments:<br>{0}<br>These arguments should be added in the command line or start script before the -jar parameter.", args));
         }
         if (!messages.isEmpty()) {
             if (canContinue) {
