@@ -1002,10 +1002,9 @@ public final class Utils {
      * @return null if <code>o</code> is null or the type <code>o</code> is not
      *  a subclass of <code>klass</code>. The casted value otherwise.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T cast(Object o, Class<T> klass) {
         if (klass.isInstance(o)) {
-            return (T) o;
+            return klass.cast(o);
         }
         return null;
     }
@@ -1783,15 +1782,10 @@ public final class Utils {
                             "java.baseline.version.url",
                             Config.getUrls().getJOSMWebsite() + "/remote/oracle-java-update-baseline.version")))
                     .connect().fetchContent().split("\n", -1);
-            if (getJavaVersion() <= 11 && isRunningWebStart()) { // OpenWebStart currently only has Java 11
+            // OpenWebStart currently only has Java 21
+            if (getJavaVersion() <= 21) {
                 for (String version : versions) {
-                    if (version.startsWith("11")) {
-                        return version;
-                    }
-                }
-            } else if (getJavaVersion() <= 17) {
-                for (String version : versions) {
-                    if (version.startsWith("17")) { // Use current Java LTS
+                    if (version.startsWith("21")) { // Use current Java LTS
                         return version;
                     }
                 }
@@ -1851,7 +1845,7 @@ public final class Utils {
     /**
      * Get a function that converts an object to a singleton stream of a certain
      * class (or null if the object cannot be cast to that class).
-     *
+     * <p>
      * Can be useful in relation with streams, but be aware of the performance
      * implications of creating a stream for each element.
      * @param <T> type of the objects to convert
@@ -1876,10 +1870,9 @@ public final class Utils {
      * @param consumer action to take when o is and instance of T
      * @since 12604
      */
-    @SuppressWarnings("unchecked")
     public static <T> void instanceOfThen(Object o, Class<T> klass, Consumer<? super T> consumer) {
         if (klass.isInstance(o)) {
-            consumer.accept((T) o);
+            consumer.accept(klass.cast(o));
         }
     }
 
@@ -1892,10 +1885,9 @@ public final class Utils {
      * @return {@link Optional} containing the result of the cast, if it is possible, an empty
      * Optional otherwise
      */
-    @SuppressWarnings("unchecked")
     public static <T> Optional<T> instanceOfAndCast(Object o, Class<T> klass) {
         if (klass.isInstance(o))
-            return Optional.of((T) o);
+            return Optional.of(klass.cast(o));
         return Optional.empty();
     }
 

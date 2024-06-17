@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.testutils;
 
 import java.awt.Color;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
@@ -16,7 +14,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
@@ -25,7 +22,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
-import java.util.logging.Level;
 
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
@@ -77,8 +73,6 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
-import org.openstreetmap.josm.tools.PlatformManager;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -645,27 +639,12 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
                     this.navigableComponentMockingRunnable.run();
                 }
 
-                workaroundJdkBug8159956();
                 new MainApplication();
                 JOSMFixture.initContentPane();
                 JOSMFixture.initMainPanel(true);
                 JOSMFixture.initToolbar();
                 JOSMFixture.initMainMenu();
             }
-        }
-    }
-
-    private void workaroundJdkBug8159956() {
-        // Note: This has been backported to Java 8u381 (2023-07-18)
-        try {
-            if (PlatformManager.isPlatformWindows() && Utils.getJavaVersion() == 8 && GraphicsEnvironment.isHeadless()) {
-                // https://bugs.openjdk.java.net/browse/JDK-8159956
-                Method initIDs = Toolkit.class.getDeclaredMethod("initIDs");
-                initIDs.setAccessible(true);
-                initIDs.invoke(Toolkit.getDefaultToolkit());
-            }
-        } catch (Exception e) {
-            Logging.log(Level.WARNING, "Failed to Toolkit.initIDs", e);
         }
     }
 

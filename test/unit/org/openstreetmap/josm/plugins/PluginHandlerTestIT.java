@@ -246,18 +246,6 @@ public class PluginHandlerTestIT {
             }
         }
 
-        // On Java < 11 and headless mode, filter plugins requiring JavaFX as Monocle is not available
-        int javaVersion = Utils.getJavaVersion();
-        if (GraphicsEnvironment.isHeadless() && javaVersion < 11) {
-            for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
-                PluginInformation pi = it.next();
-                if (pi.getRequiredPlugins().contains("javafx")) {
-                    System.out.println("Ignoring " + pi.name + " (requiring JavaFX and we're using Java < 11 in headless mode)");
-                    it.remove();
-                }
-            }
-        }
-
         // Skip unofficial plugins in headless mode, too much work for us for little added-value
         if (GraphicsEnvironment.isHeadless()) {
             for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {

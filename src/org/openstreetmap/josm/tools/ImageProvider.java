@@ -1717,27 +1717,14 @@ public class ImageProvider {
         reader.setInput(stream, true, !readMetadata && !enforceTransparency);
         ImageReadParam param = readParamFunction.apply(reader);
         BufferedImage bi = null;
-        try { // NOPMD
+        try (stream) {
             bi = reader.read(0, param);
-            if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency) && Utils.getJavaVersion() < 11) {
-                Color color = getTransparentColor(bi.getColorModel(), reader);
-                if (color != null) {
-                    Hashtable<String, Object> properties = new Hashtable<>(1);
-                    properties.put(PROP_TRANSPARENCY_COLOR, color);
-                    bi = new BufferedImage(bi.getColorModel(), bi.getRaster(), bi.isAlphaPremultiplied(), properties);
-                    if (enforceTransparency) {
-                        Logging.trace("Enforcing image transparency of {0} for {1}", stream, color);
-                        bi = makeImageTransparent(bi, color);
-                    }
-                }
-            }
         } catch (LinkageError e) {
             // On Windows, ComponentColorModel.getRGBComponent can fail with "UnsatisfiedLinkError: no awt in java.library.path", see #13973
             // Then it can leads to "NoClassDefFoundError: Could not initialize class sun.awt.image.ShortInterleavedRaster", see #15079
             Logging.error(e);
         } finally {
             reader.dispose();
-            stream.close();
         }
         return bi;
     }
