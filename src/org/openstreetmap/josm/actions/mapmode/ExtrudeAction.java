@@ -389,7 +389,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         MapFrame map = MainApplication.getMap();
         if (!map.mapView.isActiveLayerVisible())
             return;
-        if (!(Boolean) this.getValue("active"))
+        if (Boolean.FALSE.equals(this.getValue("active")))
             return;
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -511,7 +511,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     //move nodes to new position
                     if (moveCommand == null) {
                         //make a new move command
-                        moveCommand = new MoveCommand(new ArrayList<OsmPrimitive>(movingNodeList), bestMovement);
+                        moveCommand = new MoveCommand(new ArrayList<>(movingNodeList), bestMovement);
                         UndoRedoHandler.getInstance().add(moveCommand);
                     } else {
                         //reuse existing move command
@@ -938,7 +938,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      */
     private EastNorth calculateBestMovementAndNewNodes(EastNorth mouseEn) {
         EastNorth bestMovement = calculateBestMovement(mouseEn);
-        EastNorth n1movedEn = initialN1en.add(bestMovement), n2movedEn;
+        EastNorth n1movedEn = initialN1en.add(bestMovement);
+        EastNorth n2movedEn;
 
         // find out the movement distance, in metres
         double distance = ProjectionRegistry.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(
@@ -1157,7 +1158,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         double raoffsetx = symbolSize*factor*normal.getX();
         double raoffsety = symbolSize*factor*normal.getY();
 
-        double cx = center.getX(), cy = center.getY();
+        final double cx = center.getX();
+        final double cy = center.getY();
         double k = mirror ? -1 : 1;
         Point2D ra1 = new Point2D.Double(cx + raoffsetx, cy + raoffsety);
         Point2D ra3 = new Point2D.Double(cx - raoffsety*k, cy + raoffsetx*k);

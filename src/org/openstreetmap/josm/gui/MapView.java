@@ -126,7 +126,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private final class LayerInvalidatedListener implements PaintableInvalidationListener {
         private boolean ignoreRepaint;
 
-        private final Set<MapViewPaintable> invalidatedLayers = Collections.newSetFromMap(new IdentityHashMap<MapViewPaintable, Boolean>());
+        private final Set<MapViewPaintable> invalidatedLayers = Collections.newSetFromMap(new IdentityHashMap<>());
 
         @Override
         public void paintableInvalidated(PaintableInvalidationEvent event) {
@@ -175,7 +175,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * @return The layers
          */
         private synchronized Set<MapViewPaintable> collectInvalidatedLayers() {
-            Set<MapViewPaintable> layers = Collections.newSetFromMap(new IdentityHashMap<MapViewPaintable, Boolean>());
+            Set<MapViewPaintable> layers = Collections.newSetFromMap(new IdentityHashMap<>());
             layers.addAll(invalidatedLayers);
             invalidatedLayers.clear();
             return layers;
@@ -298,7 +298,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
         });
 
-        setFocusTraversalKeysEnabled(!Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent());
+        setFocusTraversalKeysEnabled(Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isEmpty());
 
         mapNavigationComponents = getMapNavigationComponents(this);
         for (JComponent c : mapNavigationComponents) {
@@ -320,7 +320,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         Dimension size = zoomSlider.getPreferredSize();
         zoomSlider.setSize(size);
         zoomSlider.setLocation(3, 0);
-        zoomSlider.setFocusTraversalKeysEnabled(!Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent());
+        zoomSlider.setFocusTraversalKeysEnabled(Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isEmpty());
 
         MapScaler scaler = new MapScaler(forMapView);
         scaler.setPreferredLineLength(size.width - 10);

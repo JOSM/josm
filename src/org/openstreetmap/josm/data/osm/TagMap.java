@@ -276,9 +276,9 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
             if (!first) {
                 stringBuilder.append(',');
             }
-            stringBuilder.append(e.getKey());
-            stringBuilder.append('=');
-            stringBuilder.append(e.getValue());
+            stringBuilder.append(e.getKey())
+                .append('=')
+                .append(e.getValue());
             first = false;
         }
         stringBuilder.append(']');

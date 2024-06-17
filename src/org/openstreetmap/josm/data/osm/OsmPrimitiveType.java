@@ -160,7 +160,7 @@ public enum OsmPrimitiveType {
      * @return the unique identifier generator
      * @since 15820
      */
-    public final UniqueIdGenerator getIdGenerator() {
+    public UniqueIdGenerator getIdGenerator() {
         return idGenerator;
     }
 

@@ -98,6 +98,7 @@ public final class Layer implements Destroyable {
      * @param records The records to convert to a layer
      * @throws IOException - if an IO error occurs
      */
+    @SuppressWarnings("PMD.CloseResource") // The resources _are_ closed after use; it just isn't detect with PMD 7.2.x.
     public Layer(Collection<ProtobufRecord> records) throws IOException {
         // Do the unique required fields first
         Map<Integer, List<ProtobufRecord>> sorted = new HashMap<>(records.size());
@@ -136,7 +137,7 @@ public final class Layer implements Destroyable {
             this.featureCollection.add(new Feature(this, protobufRecord));
         }
         // Cleanup bytes (for memory)
-        for (ProtobufRecord protobufRecord : records) {
+        for (ProtobufRecord protobufRecord : records) { // NOSONAR -- this shouldn't be combined since this is a cleanup loop.
             protobufRecord.close();
         }
     }

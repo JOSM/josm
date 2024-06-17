@@ -32,9 +32,9 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
  * The base class for OSM objects ({@link Node}, {@link Way}, {@link Relation}).
- *
+ * <p>
  * It can be created, deleted and uploaded to the OSM-Server.
- *
+ * <p>
  * Although OsmPrimitive is designed as a base class, it is not to be meant to subclass
  * it by any other than from the package {@link org.openstreetmap.josm.data.osm}. The available primitives are a fixed
  * set that are given by the server environment and not an extendable data stuff.
@@ -95,7 +95,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Creates a new primitive for the given id.
-     *
+     * <p>
      * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
@@ -123,11 +123,11 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Creates a new primitive for the given id and version.
-     *
+     * <p>
      * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
-     *
+     * <p>
      * If id is not &gt; 0 version is ignored and set to 0.
      *
      * @param id the id
@@ -224,7 +224,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Sets the id and the version of this primitive if it is known to the OSM API.
-     *
+     * <p>
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
      *
@@ -260,7 +260,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * Clears the metadata, including id and version known to the OSM API.
      * The id is a new unique id. The version, changeset and timestamp are set to 0.
      * incomplete and deleted are set to false. It's preferred to use copy constructor with clearMetadata set to true instead
-     *
+     * <p>
      * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@link DataSet}.
      *
      * @throws DataIntegrityProblemException If primitive was already added to the dataset
@@ -299,7 +299,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-    @Deprecated
+    @Deprecated(since = "17749", forRemoval = true)
     @Override
     public void setTimestamp(Date timestamp) {
         checkDatasetNotReadOnly();
@@ -712,18 +712,18 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     private void doVisitReferrers(Consumer<OsmPrimitive> visitor) {
-        if (this.referrers == null)
-            return;
-        else if (this.referrers instanceof OsmPrimitive) {
-            OsmPrimitive ref = (OsmPrimitive) this.referrers;
-            if (ref.dataSet == dataSet) {
-                visitor.accept(ref);
-            }
-        } else if (this.referrers instanceof OsmPrimitive[]) {
-            OsmPrimitive[] refs = (OsmPrimitive[]) this.referrers;
-            for (OsmPrimitive ref: refs) {
+        if (this.referrers != null) {
+            if (this.referrers instanceof OsmPrimitive) {
+                OsmPrimitive ref = (OsmPrimitive) this.referrers;
                 if (ref.dataSet == dataSet) {
                     visitor.accept(ref);
+                }
+            } else if (this.referrers instanceof OsmPrimitive[]) {
+                OsmPrimitive[] refs = (OsmPrimitive[]) this.referrers;
+                for (OsmPrimitive ref : refs) {
+                    if (ref.dataSet == dataSet) {
+                        visitor.accept(ref);
+                    }
                 }
             }
         }
@@ -790,7 +790,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Merges the technical and semantic attributes from <code>other</code> onto this.
-     *
+     * <p>
      * Both this and other must be new, or both must be assigned an OSM ID. If both this and <code>other</code>
      * have an assigned OSM id, the IDs have to be the same.
      *

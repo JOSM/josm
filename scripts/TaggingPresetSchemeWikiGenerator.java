@@ -34,7 +34,7 @@ public final class TaggingPresetSchemeWikiGenerator {
         // Hide public constructor for utility class
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         document = parseTaggingPresetSchema();
         xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new TaggingNamespaceContext());

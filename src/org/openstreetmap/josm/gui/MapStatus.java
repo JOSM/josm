@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -55,6 +56,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -111,9 +113,9 @@ import org.openstreetmap.josm.tools.Utils;
  * A component that manages some status information display about the map.
  * It keeps a status line below the map up to date and displays some tooltip
  * information if the user hold the mouse long enough at some point.
- *
+ * <p>
  * All this is done in background to not disturb other processes.
- *
+ * <p>
  * The background thread does not alter any data of the map (read only thread).
  * Also it is rather fail safe. In case of some error in the data, it just does
  * nothing instead of whining and complaining.
@@ -315,7 +317,7 @@ public final class MapStatus extends JPanel implements
             @Override
             public void run() {
                 // Freeze display when holding down CTRL
-                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0) {
+                if ((ms.modifiers & InputEvent.CTRL_DOWN_MASK) != 0) {
                     // update the information popup's labels though, because the selection might have changed from the outside
                     popupUpdateLabels();
                     return;
@@ -326,7 +328,7 @@ public final class MapStatus extends JPanel implements
                 // if the middle mouse button has been pressed in the first place
                 boolean mouseNotMoved = oldMousePos != null && oldMousePos.equals(ms.mousePos);
                 boolean isAtOldPosition = mouseNotMoved && popup != null;
-                boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
+                boolean middleMouseDown = (ms.modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0;
 
                 DataSet ds = mv.getLayerManager().getActiveDataSet();
                 if (ds != null) {
@@ -360,9 +362,9 @@ public final class MapStatus extends JPanel implements
                                 "<html>"+tr("Middle click again to cycle through.<br>"+
                                         "Hold CTRL to select directly from this list with the mouse.<hr>")+"</html>",
                                         null,
-                                        JLabel.HORIZONTAL
+                                        SwingConstants.CENTER
                                 );
-                        lbl.setHorizontalAlignment(JLabel.LEADING);
+                        lbl.setHorizontalAlignment(SwingConstants.LEADING);
                         c.add(lbl, GBC.eol().insets(2, 0, 2, 0));
 
                         // Only cycle if the mouse has not been moved and the middle mouse button has been pressed at least
@@ -378,7 +380,7 @@ public final class MapStatus extends JPanel implements
                         for (final OsmPrimitive osm : osms) {
                             JLabel l = popupBuildPrimitiveLabels(osm);
                             lbls.add(l);
-                            c.add(l, GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 2));
+                            c.add(l, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(2, 0, 2, 2));
                         }
 
                         popupShowPopup(popupCreatePopup(c, ms), lbls);
@@ -536,7 +538,7 @@ public final class MapStatus extends JPanel implements
             // Clear previous selection if SHIFT (add to selection) is not
             // pressed. Cannot use "setSelected()" because it will cause a
             // fireSelectionChanged event which is unnecessary at this point.
-            if ((mods & MouseEvent.SHIFT_DOWN_MASK) == 0) {
+            if ((mods & InputEvent.SHIFT_DOWN_MASK) == 0) {
                 ds.clearSelection();
             }
 
@@ -647,7 +649,7 @@ public final class MapStatus extends JPanel implements
             final JLabel l = new JLabel(
                     "<html>" + text.toString() + "</html>",
                     ImageProvider.get(osm.getDisplayType()),
-                    JLabel.HORIZONTAL
+                    SwingConstants.HORIZONTAL
                     ) {
                 // This is necessary so the label updates its colors when the
                 // selection is changed from the outside
@@ -660,8 +662,8 @@ public final class MapStatus extends JPanel implements
             l.setOpaque(true);
             popupSetLabelColors(l, osm);
             l.setFont(l.getFont().deriveFont(Font.PLAIN));
-            l.setVerticalTextPosition(JLabel.TOP);
-            l.setHorizontalAlignment(JLabel.LEADING);
+            l.setVerticalTextPosition(SwingConstants.TOP);
+            l.setHorizontalAlignment(SwingConstants.LEADING);
             l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             l.addMouseListener(new MouseAdapter() {
                 @Override
@@ -901,7 +903,7 @@ public final class MapStatus extends JPanel implements
                 if (mv.getCenter() == null)
                     return;
                 // Do not update the view if ctrl or right button is pressed.
-                if ((e.getModifiersEx() & (MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) == 0) {
+                if ((e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) == 0) {
                     updateLatLonText(e.getX(), e.getY());
                 }
             }
@@ -950,7 +952,7 @@ public final class MapStatus extends JPanel implements
 
         helpText.setEditable(false);
         add(nameText, GBC.std().insets(3, 0, 0, 0));
-        add(helpText, GBC.std().insets(3, 0, 0, 0).fill(GBC.HORIZONTAL));
+        add(helpText, GBC.std().insets(3, 0, 0, 0).fill(GridBagConstraints.HORIZONTAL));
 
         progressBar.setMaximum(PleaseWaitProgressMonitor.PROGRESS_BAR_MAX);
         progressBar.setVisible(false);
@@ -1225,7 +1227,7 @@ public final class MapStatus extends JPanel implements
                 return;
             }
         }
-        setDist(new SubclassFilteredCollection<OsmPrimitive, Way>(newSelection, Way.class::isInstance));
+        setDist(new SubclassFilteredCollection<>(newSelection, Way.class::isInstance));
     }
 
     @Override

@@ -280,7 +280,8 @@ public class ValidatorCLI implements CLIModule {
             try (OutputStream fileOutputStream = Files.newOutputStream(path)) {
                 // The first writeErrors catches anything that was written, for whatever reason. This is probably never
                 // going to be called.
-                final var validationTask = new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
+                final ValidationTask validationTask =
+                        new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
                         progressMonitorFactory.get(), OsmValidator.getEnabledTests(false),
                         dataSet.allPrimitives(), Collections.emptyList(), false);
                 // This avoids keeping errors in memory

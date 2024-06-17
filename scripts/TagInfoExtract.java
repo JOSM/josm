@@ -223,7 +223,7 @@ public class TagInfoExtract {
     }
 
     private abstract class Extractor {
-        abstract void run() throws Exception;
+        abstract void run() throws IOException, OsmTransferException, ParseException, SAXException;
 
         void writeJson(String name, String description, Iterable<TagInfoTag> tags) throws IOException {
             try (Writer writer = options.outputFile != null ? Files.newBufferedWriter(options.outputFile) : new StringWriter();

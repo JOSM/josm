@@ -83,7 +83,7 @@ public class OpenFileAction extends DiskAccessAction {
         final AbstractFileChooser fc;
         // If the user explicitly wants native file dialogs, let them use it.
         // Rather unfortunately, this means that they will not be able to select files and directories.
-        if (FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get()
+        if (Boolean.TRUE.equals(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get())
                 // This is almost redundant, as the JDK currently doesn't support this with (all?) native file choosers.
                 && !NativeFileChooser.supportsSelectionMode(FILES_AND_DIRECTORIES)) {
             fc = createAndOpenFileChooser(true, true, null);

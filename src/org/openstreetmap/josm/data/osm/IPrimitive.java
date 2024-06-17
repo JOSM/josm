@@ -298,7 +298,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * @see #setTimestamp
      * @deprecated since 17749, use {@link #getInstant} instead
      */
-    @Deprecated
+    @Deprecated(since = "17749")
     Date getTimestamp();
 
     /**
@@ -327,7 +327,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * @see #getTimestamp
      * @deprecated since 17749, use {@link #setInstant} instead
      */
-    @Deprecated
+    @Deprecated(since = "17749")
     void setTimestamp(Date timestamp);
 
     /**

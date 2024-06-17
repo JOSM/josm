@@ -309,7 +309,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         this.changesetId = changesetId;
     }
 
-    @Deprecated
+    @Deprecated(since = "17749")
     @Override
     public void setTimestamp(Date timestamp) {
         this.timestamp = (int) TimeUnit.MILLISECONDS.toSeconds(timestamp.getTime());
@@ -325,7 +325,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         this.timestamp = timestamp;
     }
 
-    @Deprecated
+    @Deprecated(since = "17749")
     @Override
     public Date getTimestamp() {
         return Date.from(getInstant());
@@ -647,7 +647,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         Map<String, String> originalKeys = getKeys();
         if (key == null || Utils.isStripEmpty(key))
             return;
-        else if (value == null) {
+        if (value == null) {
             remove(key);
         } else if (keys == null) {
             keys = new String[] {key, value};
@@ -807,6 +807,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     }
 
     @Override
+    @SuppressWarnings("PMD.UseArraysAsList") // See https://github.com/pmd/pmd/issues/5071
     public final Collection<String> keySet() {
         String[] tKeys = this.keys;
         if (tKeys == null) {

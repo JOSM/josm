@@ -473,7 +473,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * Check if the object is loadable. This means, if the data will be parsed, and if this response
      * will finish as successful retrieve.
-     *
+     * <p>
      * This simple implementation doesn't load empty response, nor client (4xx) and server (5xx) errors
      *
      * @param headerFields headers sent by server
@@ -543,10 +543,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             urlConn.setHeaders(headers);
         }
 
-        final boolean noCache = force
-                // To remove when switching to Java 11
-                // Workaround for https://bugs.openjdk.java.net/browse/JDK-8146450
-                || (Utils.getJavaVersion() == 8 && Utils.isRunningJavaWebStart());
+        final boolean noCache = force;
         urlConn.useCache(!noCache);
 
         return urlConn;

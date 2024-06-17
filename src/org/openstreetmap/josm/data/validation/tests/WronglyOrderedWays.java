@@ -36,12 +36,12 @@ public class WronglyOrderedWays extends Test {
             return;
 
         String natural = w.get("natural");
-        if (natural == null) {
-            return;
-        } else if ("coastline".equals(natural) && Geometry.isClockwise(w)) {
-            reportError(w, tr("Reversed coastline: land not on left side"), WRONGLY_ORDERED_COAST);
-        } else if ("land".equals(natural) && Geometry.isClockwise(w)) {
-            reportError(w, tr("Reversed land: land not on left side"), WRONGLY_ORDERED_LAND);
+        if (natural != null) {
+            if ("coastline".equals(natural) && Geometry.isClockwise(w)) {
+                reportError(w, tr("Reversed coastline: land not on left side"), WRONGLY_ORDERED_COAST);
+            } else if ("land".equals(natural) && Geometry.isClockwise(w)) {
+                reportError(w, tr("Reversed land: land not on left side"), WRONGLY_ORDERED_LAND);
+            }
         }
     }
 

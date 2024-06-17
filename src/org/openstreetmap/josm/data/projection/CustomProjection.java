@@ -40,7 +40,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Custom projection.
- *
+ * <p>
  * Inspired by PROJ.4 and Proj4J.
  * @since 5072
  */
@@ -58,7 +58,7 @@ public class CustomProjection extends AbstractProjection {
 
     /**
      * pref String that defines the projection
-     *
+     * <p>
      * null means fall back mode (Mercator)
      */
     protected String pref;
@@ -222,6 +222,7 @@ public class CustomProjection extends AbstractProjection {
      * @param code unique code for this projection - may be null
      * @param pref the string that defines the custom projection
      */
+    @SuppressWarnings("PMD.PreserveStackTrace") // PMD 7.2.x doesn't like log + new exception here for some reason.
     public CustomProjection(String name, String code, String pref) {
         this.name = name;
         this.code = code;
@@ -873,7 +874,7 @@ public class CustomProjection extends AbstractProjection {
 
     /**
      * Return true, if a geographic coordinate reference system is represented.
-     *
+     * <p>
      * I.e. if it returns latitude/longitude values rather than Cartesian
      * east/north coordinates on a flat surface.
      * @return true, if it is geographic

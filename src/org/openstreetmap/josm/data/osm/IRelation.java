@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @param <M> Type of OSM relation member
  * @since 4098
  */
-public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
+public interface IRelation<M extends IRelationMember<? extends IPrimitive>> extends IPrimitive {
 
     /**
      * Returns the number of members.
@@ -128,8 +128,8 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
      */
     default Collection<? extends IPrimitive> getIncompleteMembers() {
         return getMembers().stream()
-                .filter(rm -> rm.getMember().isIncomplete())
-                .map(rm -> rm.getMember())
+                .map(IRelationMember::getMember)
+                .filter(IPrimitive::isIncomplete)
                 .collect(Collectors.toSet());
     }
 

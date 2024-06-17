@@ -212,8 +212,9 @@ public class DownloadTaskList {
      */
     public Set<OsmPrimitive> getDownloadedPrimitives() {
         return tasks.stream()
-                .filter(t -> t instanceof DownloadOsmTask)
-                .map(t -> ((DownloadOsmTask) t).getDownloadedData())
+                .filter(DownloadOsmTask.class::isInstance)
+                .map(DownloadOsmTask.class::cast)
+                .map(DownloadOsmTask::getDownloadedData)
                 .filter(Objects::nonNull)
                 .flatMap(ds -> ds.allPrimitives().stream())
                 .collect(Collectors.toSet());
@@ -239,7 +240,11 @@ public class DownloadTaskList {
             for (Future<?> future : taskFutures) {
                 try {
                     future.get();
-                } catch (InterruptedException | ExecutionException | CancellationException e) {
+                } catch (InterruptedException interruptedException) {
+                    Thread.currentThread().interrupt();
+                    Logging.error(interruptedException);
+                    return;
+                } catch (ExecutionException | CancellationException e) {
                     Logging.error(e);
                     return;
                 }
@@ -254,7 +259,6 @@ public class DownloadTaskList {
                                 + tr("The following errors occurred during mass download: {0}",
                                         Utils.joinAsHtmlUnorderedList(errors)) + "</html>",
                                 tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
-                        return;
                     }
                 });
             }
@@ -268,7 +272,7 @@ public class DownloadTaskList {
             final DataSet editDataSet = MainApplication.getLayerManager().getEditDataSet();
             if (editDataSet != null && osmData) {
                 final List<DownloadOsmTask> osmTasks = tasks.stream()
-                        .filter(t -> t instanceof DownloadOsmTask).map(t -> (DownloadOsmTask) t)
+                        .filter(DownloadOsmTask.class::isInstance).map(DownloadOsmTask.class::cast)
                         .filter(t -> t.getDownloadedData() != null)
                         .collect(Collectors.toList());
                 final Set<Bounds> tasksBounds = osmTasks.stream()

@@ -55,10 +55,11 @@ public class SelectNonBranchingWaySequences {
      */
     private void addNodes(Node node) {
         if (node == null) return;
-        else if (!nodes.add(node))
+        if (!nodes.add(node)) {
             outerNodes.remove(node);
-        else
+        } else {
             outerNodes.add(node);
+        }
     }
 
     /**

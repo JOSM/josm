@@ -306,8 +306,7 @@ public class Layers {
                 if (!"\"".equals(current) && !current.endsWith(",\"")) {
                     stringBuffer.append(",\"");
                 }
-                stringBuffer.append(tail);
-                stringBuffer.append('"');
+                stringBuffer.append(tail).append('"');
             }
 
             sb.append(stringBuffer).append(')').append(SEMI_COLON);
