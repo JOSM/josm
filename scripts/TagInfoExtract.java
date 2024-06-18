@@ -102,9 +102,12 @@ public class TagInfoExtract {
     /**
      * Main method.
      * @param args Main program arguments
-     * @throws Exception if any error occurs
+     * @throws IOException if an IO exception occurs
+     * @throws OsmTransferException if something happened when communicating with the OSM server
+     * @throws ParseException if there was an issue parsing MapCSS
+     * @throws SAXException if there was an issue parsing XML
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, OsmTransferException, ParseException, SAXException {
         HttpClient.setFactory(Http1Client::new);
         TagInfoExtract script = new TagInfoExtract();
         script.parseCommandLineArguments(args);

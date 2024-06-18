@@ -37,6 +37,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * Custom projection.
@@ -222,7 +223,6 @@ public class CustomProjection extends AbstractProjection {
      * @param code unique code for this projection - may be null
      * @param pref the string that defines the custom projection
      */
-    @SuppressWarnings("PMD.PreserveStackTrace") // PMD 7.2.x doesn't like log + new exception here for some reason.
     public CustomProjection(String name, String code, String pref) {
         this.name = name;
         this.code = code;
@@ -234,7 +234,9 @@ public class CustomProjection extends AbstractProjection {
             try {
                 update(null);
             } catch (ProjectionConfigurationException ex1) {
-                throw BugReport.intercept(ex1).put("name", name).put("code", code).put("pref", pref);
+                ReportedException reportedException = BugReport.intercept(ex1).put("name", name).put("code", code).put("pref", pref);
+                reportedException.addSuppressed(ex);
+                throw reportedException;
             }
         }
     }

@@ -16,22 +16,19 @@
         <!-- javacc->default -->
         <dependency org="net.java.dev.javacc" name="javacc" rev="7.0.13" conf="javacc->default"/>
         <!-- checkstyle->default -->
-        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="10.15.0" conf="checkstyle->default"/>
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="10.17.0" conf="checkstyle->default"/>
         <!-- proguard->default -->
-        <dependency org="com.guardsquare" name="proguard-ant" rev="7.4.2" conf="proguard->default"/>
+        <dependency org="com.guardsquare" name="proguard-ant" rev="7.5.0" conf="proguard->default"/>
         <!-- pmd->default -->
-        <!-- PMD 7.0.0 has too many false positives right now. When updating, don't forget to add pmd-ant as a new dependency -->
-        <dependency org="net.sourceforge.pmd" name="pmd-core" rev="6.55.0" conf="pmd->default"/>
-        <dependency org="net.sourceforge.pmd" name="pmd-java" rev="6.55.0" conf="pmd->default"/>
-        <dependency org="net.sourceforge.saxon" name="saxon" rev="9.1.0.8" conf="pmd->default">
-            <artifact name="saxon" type="jar"/>
-            <artifact name="saxon" type="jar" maven:classifier="dom"/>
-        </dependency>
+        <dependency org="net.sourceforge.pmd" name="pmd-core" rev="7.2.0" conf="pmd->default"/>
+        <dependency org="net.sourceforge.pmd" name="pmd-ant" rev="7.2.0" conf="pmd->default"/>
+        <dependency org="net.sourceforge.pmd" name="pmd-java" rev="7.2.0" conf="pmd->default"/>
+        <dependency org="org.xmlresolver" name="xmlresolver" rev="6.0.4" conf="pmd->default"/>
         <!-- spotbugs->default -->
-        <dependency org="com.github.spotbugs" name="spotbugs" rev="4.8.4" conf="spotbugs->default"/>
-        <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.8.4" conf="spotbugs->default"/>
+        <dependency org="com.github.spotbugs" name="spotbugs" rev="4.8.5" conf="spotbugs->default"/>
+        <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.8.5" conf="spotbugs->default"/>
         <!-- errorprone->default -->
-        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.26.1" conf="errorprone->default"/>
+        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.28.0" conf="errorprone->default"/>
         <!-- animal->default -->
         <dependency org="org.codehaus.mojo" name="animal-sniffer-ant-tasks" rev="1.23" conf="animal->default"/>
     </dependencies>
