@@ -941,7 +941,6 @@ public final class DomainValidator extends AbstractValidator {
         "nab", // nab National Australia Bank Limited
         "nagoya", // nagoya GMO Registry, Inc.
         "name", // name VeriSign Information Services, Inc.
-        "natura", // natura NATURA COSMÉTICOS S.A.
         "navy", // navy United TLD Holdco Ltd.
         "nba", // nba NBA REGISTRY, LLC
         "nec", // nec NEC Corporation
