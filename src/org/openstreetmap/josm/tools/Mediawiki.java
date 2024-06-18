@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -59,22 +60,33 @@ public class Mediawiki {
         );
         final Document document = getDocument(url);
         final XPath xPath = XPathFactory.newInstance().newXPath();
-        for (String page : distinctPages) {
-            String normalized = xPath.evaluate("/api/query/normalized/n[@from='" + page + "']/@to", document);
-            if (Utils.isEmpty(normalized)) {
-                normalized = page;
+        AtomicReference<String> normalized = new AtomicReference<>();
+        AtomicReference<String> page = new AtomicReference<>();
+        xPath.setXPathVariableResolver(v -> {
+            if ("page".equals(v.getLocalPart())) {
+                return page.get();
+            } else if ("normalized".equals(v.getLocalPart())) {
+                return normalized.get();
             }
-            final Node node = (Node) xPath.evaluate("/api/query/pages/page[@title='" + normalized + "']", document, XPathConstants.NODE);
+            throw new IllegalArgumentException();
+        });
+        for (String p : distinctPages) {
+            page.set(p);
+            normalized.set(xPath.evaluate("/api/query/normalized/n[@from=$page]/@to", document));
+            if (Utils.isEmpty(normalized.get())) {
+                normalized.set(page.get());
+            }
+            final Node node = (Node) xPath.evaluate("/api/query/pages/page[@title=$normalized]", document, XPathConstants.NODE);
             if (node != null
                     && node.getAttributes().getNamedItem("missing") == null
                     && node.getAttributes().getNamedItem("invalid") == null) {
-                return Optional.of(page);
+                return Optional.of(page.get());
             }
         }
         return Optional.empty();
     }
 
-    private Document getDocument(URL url) throws IOException, ParserConfigurationException, SAXException {
+    private static Document getDocument(URL url) throws IOException, ParserConfigurationException, SAXException {
         final HttpClient.Response conn = HttpClient.create(url).connect();
         try (InputStream content = conn.getContent()) {
             return XmlUtils.parseSafeDOM(content);
