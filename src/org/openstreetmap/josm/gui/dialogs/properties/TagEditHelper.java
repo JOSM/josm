@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.properties;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -123,6 +124,10 @@ public class TagEditHelper {
     static final Comparator<AutoCompletionItem> DEFAULT_AC_ITEM_COMPARATOR =
             (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
 
+    private static final String CANCEL_TR = marktr("Cancel");
+    private static final String CANCEL = "cancel";
+    private static final String HTML = "<html>";
+    private static final String DUMMY = "dummy";
     /** Default number of recent tags */
     public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
     /** Maximum number of recent tags */
@@ -361,8 +366,8 @@ public class TagEditHelper {
      */
     private Collection<OsmPrimitive> updateSelection() {
         final DataSet activeDataSet = OsmDataManager.getInstance().getActiveDataSet();
+        activeDataSet.getReadLock().lock();
         try {
-            activeDataSet.getReadLock().lock();
             Collection<OsmPrimitive> selection = new ArrayList<>(OsmDataManager.getInstance().getInProgressSelection());
             this.sel = selection;
             return selection;
@@ -489,8 +494,8 @@ public class TagEditHelper {
         return new ExtendedDialog(
                 MainApplication.getMainFrame(),
                 tr("Overwrite tag"),
-                tr("Overwrite"), tr("Cancel"))
-            .setButtonIcons("ok", "cancel")
+                tr("Overwrite"), tr(CANCEL_TR))
+            .setButtonIcons("ok", CANCEL)
             .setContent(action)
             .setCancelButton(2)
             .toggleEnable(togglePref)
@@ -504,8 +509,8 @@ public class TagEditHelper {
         private final transient AutoCompletionManager autocomplete;
 
         protected EditTagDialog(String key, Map<String, Integer> map, boolean initialFocusOnKey) {
-            super(MainApplication.getMainFrame(), trn("Change value?", "Change values?", map.size()), tr("OK"), tr("Cancel"));
-            setButtonIcons("ok", "cancel");
+            super(MainApplication.getMainFrame(), trn("Change value?", "Change values?", map.size()), tr("OK"), tr(CANCEL_TR));
+            setButtonIcons("ok", CANCEL);
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/EditValue", true /* show help button */);
             this.key = key;
@@ -525,7 +530,7 @@ public class TagEditHelper {
 
             JPanel mainPanel = new JPanel(new BorderLayout());
 
-            String msg = "<html>"+trn("This will change {0} object.",
+            String msg = HTML+trn("This will change {0} object.",
                     "This will change up to {0} objects.", sel.size(), sel.size())
                     +"<br><br>("+tr("An empty value deletes the tag.", key)+")</html>";
 
@@ -556,7 +561,7 @@ public class TagEditHelper {
             keys = new AutoCompComboBox<>();
             keys.getModel().setComparator(Comparator.naturalOrder()); // according to Comparable
             keys.setEditable(true);
-            keys.setPrototypeDisplayValue(new AutoCompletionItem("dummy"));
+            keys.setPrototypeDisplayValue(new AutoCompletionItem(DUMMY));
             keys.getModel().addAllElements(keyList);
             keys.setSelectedItemText(key);
 
@@ -573,7 +578,7 @@ public class TagEditHelper {
             values.getModel().setComparator(Comparator.naturalOrder());
             values.setRenderer(new TEHListCellRenderer(values, values.getRenderer(), valueCount.get(key)));
             values.setEditable(true);
-            values.setPrototypeDisplayValue(new AutoCompletionItem("dummy"));
+            values.setPrototypeDisplayValue(new AutoCompletionItem(DUMMY));
             values.getModel().addAllElements(valueList);
             values.setSelectedItemText(selection);
 
@@ -816,8 +821,8 @@ public class TagEditHelper {
         private final transient AutoCompletionManager autocomplete;
 
         protected AddTagsDialog() {
-            super(MainApplication.getMainFrame(), tr("Add tag"), tr("OK"), tr("Cancel"));
-            setButtonIcons("ok", "cancel");
+            super(MainApplication.getMainFrame(), tr("Add tag"), tr("OK"), tr(CANCEL_TR));
+            setButtonIcons("ok", CANCEL);
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
 
@@ -838,12 +843,12 @@ public class TagEditHelper {
                     setComponentOrientation(o);
                 }
             };
-            mainPanel.add(new JLabel("<html>"+trn("This will change up to {0} object.",
+            mainPanel.add(new JLabel(HTML+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(), sel.size())
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
             keys = new AutoCompComboBox<>();
-            keys.setPrototypeDisplayValue(new AutoCompletionItem("dummy"));
+            keys.setPrototypeDisplayValue(new AutoCompletionItem(DUMMY));
             keys.setEditable(true);
             keys.getModel().setComparator(Comparator.naturalOrder()); // according to Comparable
             keys.setAutocompleteEnabled(AUTOCOMPLETE_KEYS.get());
@@ -852,7 +857,7 @@ public class TagEditHelper {
             mainPanel.add(new JLabel(tr("Choose a value")), GBC.eol());
 
             values = new AutoCompComboBox<>();
-            values.setPrototypeDisplayValue(new AutoCompletionItem("dummy"));
+            values.setPrototypeDisplayValue(new AutoCompletionItem(DUMMY));
             values.setEditable(true);
             values.getModel().setComparator(Comparator.naturalOrder());
             values.setAutocompleteEnabled(AUTOCOMPLETE_VALUES.get());
@@ -994,7 +999,7 @@ public class TagEditHelper {
             Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | InputEvent.SHIFT_DOWN_MASK).ifPresent(sc ->
                     lines.add(sc.getKeyText() + ' ' + tr("to add first suggestion without closing the dialog"))
             );
-            final JLabel helpLabel = new JLabel("<html>" + String.join("<br>", lines) + "</html>");
+            final JLabel helpLabel = new JLabel(HTML + String.join("<br>", lines) + "</html>");
             helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
             contentPane.add(helpLabel, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 5, 5));
             super.setContentPane(contentPane);
@@ -1096,7 +1101,7 @@ public class TagEditHelper {
                 recentTagsPanel.add(new JLabel(action.isEnabled() ? icon : GuiHelper.getDisabledIcon(icon)), gbc);
                 // Create tag label
                 final String color = action.isEnabled() ? "" : "; color:gray";
-                final JLabel tagLabel = new JLabel("<html>"
+                final JLabel tagLabel = new JLabel(HTML
                         + "<style>td{" + color + "}</style>"
                         + "<table><tr>"
                         + "<td>" + count + ".</td>"
@@ -1237,7 +1242,7 @@ public class TagEditHelper {
                 String val = osm.get(key);
                 if (val != null && !val.equals(value)) {
                     String valueHtmlString = Utils.joinAsHtmlUnorderedList(Arrays.asList("<strike>" + val + "</strike>", value));
-                    if (!warnOverwriteKey("<html>"
+                    if (!warnOverwriteKey(HTML
                             + tr("You changed the value of ''{0}'': {1}", key, valueHtmlString)
                             + tr("Overwrite?"), "overwriteAddKey"))
                         return;

@@ -547,6 +547,12 @@ public final class OrthogonalizeAction extends JosmAction {
 
     enum Direction {
         RIGHT, UP, LEFT, DOWN;
+        /**
+         * Change a direction by the specified number of 90 degree increments counter-clockwise
+         * @param directionChange The number of increments to rotate counter-clockwise
+         * @return The new direction
+         */
+        @SuppressWarnings("EnumOrdinal") // Yes, this is very dependent on order
         public Direction changeBy(int directionChange) {
             int tmp = (this.ordinal() + directionChange) % 4;
             if (tmp < 0) {
