@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.Pair;
  * try {
  *   ... your code ...
  * } catch (RuntimeException t) {
- *   throw BugReport.intercept(t).put("id", id).put("tag", () -&gt; x.getTag());
+ *   throw BugReport.intercept(t).put("id", id).put("tag", () → x.getTag());
  * }
  * </pre>
  *

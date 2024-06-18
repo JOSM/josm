@@ -781,7 +781,7 @@ class GpxParser extends DefaultHandler {
     }
 
     /**
-     * convert url/urlname to link element (GPX 1.0 -&gt; GPX 1.1).
+     * convert url/urlname to link element (GPX 1.0 → GPX 1.1).
      * @param attr attributes
      */
     private static void convertUrlToLink(Map<String, Object> attr) {

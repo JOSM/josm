@@ -77,9 +77,9 @@ public class ValidatorCLI implements CLIModule {
 
     /** The input file(s) */
     private final List<String> input = new ArrayList<>();
-    /** The change files. input file -> list of change files */
+    /** The change files. input file → list of change files */
     private final Map<String, List<String>> changeFiles = new HashMap<>();
-    /** The output file(s). If {@code null}, use input filename as base (replace extension with geojson). input -> output */
+    /** The output file(s). If {@code null}, use input filename as base (replace extension with geojson). input → output */
     private final Map<String, String> output = new HashMap<>();
 
     private static final Supplier<ProgressMonitor> progressMonitorFactory = CLIProgressMonitor::new;
@@ -332,7 +332,7 @@ public class ValidatorCLI implements CLIModule {
 
     /**
      * Split a string into a filename + extension. Example:
-     * "foo.bar.txt" -> ["foo.bar", "txt"]
+     * "foo.bar.txt" → ["foo.bar", "txt"]
      * <p>
      * Please note that future versions of Java may make this method redundant. It is not as of Java 21 (look for
      * something like {@code Path#getExtension}, see <a href="https://bugs.openjdk.org/browse/JDK-8298318">JDK-8298318</a>.

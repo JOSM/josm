@@ -128,7 +128,7 @@ public final class TextTagParser {
 
     /**
      * Check tags for correctness and display warnings if needed
-     * @param tags - map key-&gt;value to check
+     * @param tags - map key → value to check
      * @param callback warning callback
      * @return true if the tags should be pasted
      * @since 12683

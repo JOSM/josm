@@ -9,7 +9,7 @@ public interface SaveToFile {
 
     /**
      * Replies the savable state of the layer (i.e. if it can be saved through
-     * a "File-&gt;Save" dialog).  A layer that implements the
+     * a "File → Save" dialog).  A layer that implements the
      * {@code SaveToFile} interface must return {@code true}.
      *
      * @return {@code true} if the layer can be saved to a file; {@code false}, otherwise

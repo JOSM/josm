@@ -663,13 +663,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * The value should be sum(2^x for x in (-5 to 2)) - 1
      * -1 to exclude current zoom level
      * <p>
+     * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
+     * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
+     * <p>
      * Check call to tryLoadFromDifferentZoom
      * @see #tryLoadFromDifferentZoom(Graphics2D, int, List, int)
      * @see #drawInViewArea(Graphics2D, MapView, ProjectionBounds)
-     *
-     * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
-     * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
-     * @see TileSet#overloadTiles()
+     * @see AbstractTileSourceLayer.TileSet#overloadTiles()
      */
     private static int calculateRealTiles(int visibleTiles, int maxXtiles, int maxYtiles) {
         return (int) Math.ceil(

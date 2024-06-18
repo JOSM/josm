@@ -250,7 +250,7 @@ public class MapboxVectorStyle {
     }
 
     /**
-     * Get the generated layer->style mapping
+     * Get the generated layer → style mapping
      * @return The mapping (use to enable/disable a paint style)
      */
     public Map<Source, ElemStyles> getSources() {

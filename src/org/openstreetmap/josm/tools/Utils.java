@@ -517,7 +517,7 @@ public final class Utils {
      * Topological sort.
      * @param <T> type of items
      *
-     * @param dependencies contains mappings (key -&gt; value). In the final list of sorted objects, the key will come
+     * @param dependencies contains mappings (key → value). In the final list of sorted objects, the key will come
      * after the value. (In other words, the key depends on the value(s).)
      * There must not be cyclic dependencies.
      * @return the list of sorted objects

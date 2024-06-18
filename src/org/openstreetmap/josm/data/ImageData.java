@@ -378,7 +378,7 @@ public class ImageData implements Data {
     }
 
     /**
-     * Set the layer for use with {@link org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog#displayImages(Layer, List)}
+     * Set the layer for use with {@link org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog#displayImages(List)}
      * @param layer The layer to use for organization
      * @since 18591
      */

@@ -67,7 +67,7 @@ public abstract class FileExporter implements ActiveLayerChangeListener {
     }
 
     /**
-     * Returns the enabled state of this {@code FileExporter}. When enabled, it is listed and usable in "File-&gt;Save" dialogs.
+     * Returns the enabled state of this {@code FileExporter}. When enabled, it is listed and usable in "File → Save" dialogs.
      * @return true if this {@code FileExporter} is enabled
      * @since 5459
      */
@@ -76,7 +76,7 @@ public abstract class FileExporter implements ActiveLayerChangeListener {
     }
 
     /**
-     * Sets the enabled state of the {@code FileExporter}. When enabled, it is listed and usable in "File-&gt;Save" dialogs.
+     * Sets the enabled state of the {@code FileExporter}. When enabled, it is listed and usable in "File → Save" dialogs.
      * @param enabled true to enable this {@code FileExporter}, false to disable it
      * @since 5459
      */

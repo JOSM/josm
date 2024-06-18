@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.util.StayOpenCheckBoxMenuItem;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * The View -&gt; Map Paint Styles menu
+ * The View → Map Paint Styles menu
  * @since 5086
  */
 public class MapPaintMenu extends JMenu implements MapPaintStylesUpdateListener {

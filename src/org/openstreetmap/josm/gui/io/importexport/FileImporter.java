@@ -179,7 +179,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     }
 
     /**
-     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File-&gt;Open" dialog.
+     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File → Open" dialog.
      * @return true if this {@code FileImporter} is enabled
      * @since 5459
      */
@@ -188,7 +188,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     }
 
     /**
-     * Sets the enabled state of the {@code FileImporter}. When enabled, it is listed and usable in "File-&gt;Open" dialog.
+     * Sets the enabled state of the {@code FileImporter}. When enabled, it is listed and usable in "File → Open" dialog.
      * @param enabled true to enable this {@code FileImporter}, false to disable it
      * @since 5459
      */

@@ -156,7 +156,7 @@ public class SourceEntry {
 
     /**
      * Extracts file part from url, e.g.:
-     * <code>http://www.test.com/file.xml?format=text --&gt; file.xml</code>
+     * <code>http://www.test.com/file.xml?format=text → file.xml</code>
      * @return The filename part of the URL
      */
     public String getFileNamePart() {

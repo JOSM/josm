@@ -79,7 +79,7 @@ public class GeoJSONWriter {
      * Used to avoid many calls to {@link JsonProvider#provider} in {@link #getCoorArray(JsonArrayBuilder, EastNorth)}.
      * For validating Mesa County, CO, this reduces CPU and memory usage of {@link #write()} by ~80%. By using this for
      * other {@link Json} calls, {@link #write()} takes ~95% less resources than the original. And the entire process
-     * takes 1/4 of the time (38 minutes -&gt; <10 minutes).
+     * takes 1/4 of the time (38 minutes → &lt;10 minutes).
      * <p>
      * For more details, see <a href="https://github.com/jakartaee/jsonp-api/issues/346">JSONP #346</a>.
      */
