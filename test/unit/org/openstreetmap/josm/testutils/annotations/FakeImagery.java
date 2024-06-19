@@ -14,15 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.bbox.JosmMapViewer;
@@ -45,74 +38,8 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 @Retention(RUNTIME)
 @Target(TYPE)
 @BasicPreferences
-@ExtendWith(FakeImagery.FakeImageryExtension.class)
+@ExtendWith(FakeImagery.FakeImageryWireMockExtension.class)
 public @interface FakeImagery {
-    /**
-     * This is a stop-gap for <a href="https://github.com/wiremock/wiremock/pull/1981">WireMock #1981</a>.
-     * We just wrap everything.
-     */
-    class FakeImageryExtension implements ParameterResolver,
-            BeforeEachCallback,
-            BeforeAllCallback,
-            AfterEachCallback,
-            AfterAllCallback {
-
-        @Override
-        public void afterAll(ExtensionContext extensionContext) throws Exception {
-            getActualExtension(extensionContext).afterAll(extensionContext);
-        }
-
-        @Override
-        public void afterEach(ExtensionContext extensionContext) throws Exception {
-            final FakeImageryWireMockExtension extension = getActualExtension(extensionContext);
-            extension.afterEach(extensionContext);
-            extension.onAfterEach(extensionContext, getWireMockRuntimeInfo(extensionContext));
-        }
-
-        @Override
-        public void beforeAll(ExtensionContext extensionContext) throws Exception {
-            getActualExtension(extensionContext).beforeAll(extensionContext);
-        }
-
-        @Override
-        public void beforeEach(ExtensionContext extensionContext) throws Exception {
-            final FakeImageryWireMockExtension extension = getActualExtension(extensionContext);
-            extension.beforeEach(extensionContext);
-            extension.onBeforeEach(extensionContext, getWireMockRuntimeInfo(extensionContext));
-        }
-
-        @Override
-        public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
-                throws ParameterResolutionException {
-            if (parameterContext.getParameter().getType().equals(FakeImageryWireMockExtension.class)) {
-                return true;
-            }
-            return getActualExtension(extensionContext).supportsParameter(parameterContext, extensionContext);
-        }
-
-        @Override
-        public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
-                throws ParameterResolutionException {
-            if (parameterContext.getParameter().getType().equals(FakeImageryWireMockExtension.class)) {
-                return getActualExtension(extensionContext);
-            }
-            return getActualExtension(extensionContext).resolveParameter(parameterContext, extensionContext);
-        }
-
-        private static FakeImageryWireMockExtension getActualExtension(ExtensionContext extensionContext) {
-            return FakeImageryWireMockExtension.getStore(extensionContext)
-                    .getOrComputeIfAbsent(FakeImageryWireMockExtension.class, ignored -> new FakeImageryWireMockExtension(),
-                            FakeImageryWireMockExtension.class);
-        }
-
-        private static WireMockRuntimeInfo getWireMockRuntimeInfo(ExtensionContext extensionContext) {
-            return FakeImageryWireMockExtension.getStore(extensionContext)
-                    .getOrComputeIfAbsent(WireMockRuntimeInfo.class, ignored -> getActualExtension(extensionContext).getRuntimeInfo(),
-                            WireMockRuntimeInfo.class);
-
-        }
-    }
-
     /**
      * A wiremock extension for fake imagery
      */
@@ -178,6 +105,7 @@ public @interface FakeImagery {
             return this.sources;
         }
 
+        @Override
         protected void onBeforeEach(ExtensionContext extensionContext, WireMockRuntimeInfo wireMockRuntimeInfo) {
             super.onBeforeEach(wireMockRuntimeInfo);
             final ExtensionContext.Store store = getStore(extensionContext);
@@ -187,32 +115,37 @@ public @interface FakeImagery {
             }
         }
 
+        @Override
         protected void onAfterEach(ExtensionContext extensionContext, WireMockRuntimeInfo wireMockRuntimeInfo) {
-            super.onAfterEach(wireMockRuntimeInfo);
-            final ExtensionContext.Store store = getStore(extensionContext);
-            unregisterLayers(store);
+            try {
+                super.onAfterEach(wireMockRuntimeInfo);
+            } finally {
+                final ExtensionContext.Store store = getStore(extensionContext);
+                unregisterLayers(store);
+            }
         }
 
         private void registerLayers(ExtensionContext.Store store, WireMockRuntimeInfo wireMockRuntimeInfo) {
             if (this.clearSlippyMapSources) {
                 try {
                     @SuppressWarnings("unchecked")
-                    List<SlippyMapBBoxChooser.TileSourceProvider> slippyMapProviders =
-                            (List<SlippyMapBBoxChooser.TileSourceProvider>) getPrivateStaticField(
+                    List<JosmMapViewer.TileSourceProvider> slippyMapProviders =
+                            (List<JosmMapViewer.TileSourceProvider>) getPrivateStaticField(
                                     SlippyMapBBoxChooser.class,
                                     "providers"
                             );
                     // pop this off the beginning of the list, keep for later
-                    SlippyMapBBoxChooser.TileSourceProvider slippyMapDefaultProvider = slippyMapProviders.remove(0);
+                    JosmMapViewer.TileSourceProvider slippyMapDefaultProvider = slippyMapProviders.remove(0);
                     store.put("slippyMapProviders", slippyMapProviders);
                     store.put("slippyMapDefaultProvider", slippyMapDefaultProvider);
                 } catch (ReflectiveOperationException e) {
                     Logging.warn("Failed to remove default SlippyMapBBoxChooser TileSourceProvider");
+                    Logging.trace(e);
                 }
             }
 
             if (this.clearLayerList) {
-                store.put("originalImageryInfoList", ImageryLayerInfo.instance.getLayers());
+                store.put("originalImageryInfoList", List.copyOf(ImageryLayerInfo.instance.getLayers()));
                 ImageryLayerInfo.instance.clear();
             }
             if (this.registerInLayerList) {
@@ -222,14 +155,13 @@ public @interface FakeImagery {
             }
         }
 
-        private void unregisterLayers(ExtensionContext.Store store) {
+        private static void unregisterLayers(ExtensionContext.Store store) {
             @SuppressWarnings("unchecked")
-            final List<SlippyMapBBoxChooser.TileSourceProvider> slippyMapProviders =
-                    (List<SlippyMapBBoxChooser.TileSourceProvider>) store.get("slippyMapProviders", List.class);
-            SlippyMapBBoxChooser.TileSourceProvider slippyMapDefaultProvider =
+            final List<JosmMapViewer.TileSourceProvider> slippyMapProviders = store.get("slippyMapProviders", List.class);
+            JosmMapViewer.TileSourceProvider slippyMapDefaultProvider =
                     store.get("slippyMapDefaultProvider", JosmMapViewer.TileSourceProvider.class);
             @SuppressWarnings("unchecked")
-            List<ImageryInfo> originalImageryInfoList = (List<ImageryInfo>) store.get("originalImageryInfoList", List.class);
+            List<ImageryInfo> originalImageryInfoList = store.get("originalImageryInfoList", List.class);
             // clean up to original state
             if (slippyMapDefaultProvider != null && slippyMapProviders != null) {
                 slippyMapProviders.add(0, slippyMapDefaultProvider);
