@@ -1195,6 +1195,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         if (data.getUploadPolicy() != UploadPolicy.BLOCKED &&
                 (uploadDiscouraged ^ isUploadDiscouraged())) {
             data.setUploadPolicy(uploadDiscouraged ? UploadPolicy.DISCOURAGED : UploadPolicy.NORMAL);
+            setRequiresSaveToFile(true);
             for (LayerStateChangeListener l : layerStateChangeListeners) {
                 l.uploadDiscouragedChanged(this, uploadDiscouraged);
             }

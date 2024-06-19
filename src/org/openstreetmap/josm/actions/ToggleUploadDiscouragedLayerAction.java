@@ -11,10 +11,12 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -40,6 +42,8 @@ public class ToggleUploadDiscouragedLayerAction extends AbstractAction implement
     @Override
     public void actionPerformed(ActionEvent e) {
         layer.setUploadDiscouraged(!layer.isUploadDiscouraged());
+        String msg = layer.isUploadDiscouraged() ? tr("Upload is discouraged") : tr("Upload is encouraged");
+        GuiHelper.runInEDT(() -> new Notification(msg).show());
         LayerListDialog.getInstance().repaint();
     }
 

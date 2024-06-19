@@ -22,8 +22,6 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.SaveToFile;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -86,15 +84,6 @@ public final class SaveAction extends SaveActionBase {
     @Override
     protected boolean listenToSelectionChange() {
         return false;
-    }
-
-    @Override
-    protected void updateEnabledState() {
-        Layer activeLayer = getLayerManager().getActiveLayer();
-        boolean en = activeLayer != null
-                && activeLayer.isSavable() && !(activeLayer.getAssociatedFile() != null
-                && activeLayer instanceof SaveToFile && !((SaveToFile) activeLayer).requiresSaveToFile());
-        GuiHelper.runInEDT(() -> setEnabled(en));
     }
 
     @Override
