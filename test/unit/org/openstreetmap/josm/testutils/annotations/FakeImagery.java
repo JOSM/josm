@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.bbox.JosmMapViewer;
@@ -123,6 +125,24 @@ public @interface FakeImagery {
                 final ExtensionContext.Store store = getStore(extensionContext);
                 unregisterLayers(store);
             }
+        }
+
+        @Override
+        public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+                throws ParameterResolutionException {
+            if (parameterContext.getParameter().getType().equals(FakeImageryWireMockExtension.class)) {
+                return true;
+            }
+            return super.supportsParameter(parameterContext, extensionContext);
+        }
+
+        @Override
+        public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+                throws ParameterResolutionException {
+            if (parameterContext.getParameter().getType().equals(FakeImageryWireMockExtension.class)) {
+                return this;
+            }
+            return super.resolveParameter(parameterContext, extensionContext);
         }
 
         private void registerLayers(ExtensionContext.Store store, WireMockRuntimeInfo wireMockRuntimeInfo) {
