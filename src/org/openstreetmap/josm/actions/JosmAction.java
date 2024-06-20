@@ -536,7 +536,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
                 JOptionPane.YES_OPTION);
         if (!answer && JOptionPane.NO_OPTION == ConditionalOptionPaneUtil.getDialogReturnValue(preferenceKey)) {
             String message = tr("Operation was not performed, as per {0} preference", preferenceKey);
-            new Notification(message).show();
+            new Notification(message).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
             Logging.info(message);
         }
         return answer;

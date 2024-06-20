@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.APIDataSet;
@@ -96,7 +97,7 @@ public class UploadSelectionAction extends AbstractUploadAction {
         Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(editLayer.data.getAllSelected());
         Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(editLayer.getDataSet());
         if (modifiedCandidates.isEmpty() && deletedCandidates.isEmpty()) {
-            new Notification(tr("No changes to upload.")).show();
+            new Notification(tr("No changes to upload.")).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
             return;
         }
         UploadSelectionDialog dialog = new UploadSelectionDialog();
@@ -109,7 +110,7 @@ public class UploadSelectionAction extends AbstractUploadAction {
             return;
         Collection<OsmPrimitive> toUpload = new UploadHullBuilder().build(dialog.getSelectedPrimitives());
         if (toUpload.isEmpty()) {
-            new Notification(tr("No changes to upload.")).show();
+            new Notification(tr("No changes to upload.")).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
             return;
         }
         uploadPrimitives(editLayer, toUpload);

@@ -515,7 +515,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (tile != null) {
             try {
                 new Notification(HttpClient.create(new URL(tile.getUrl() + '/' + request))
-                        .connect().fetchContent()).show();
+                        .connect().fetchContent()).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
             } catch (IOException ex) {
                 Logging.error(ex);
             }

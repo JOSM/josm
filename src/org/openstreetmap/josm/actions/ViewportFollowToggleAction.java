@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.Notification;
@@ -52,7 +53,7 @@ public class ViewportFollowToggleAction extends ToggleAction {
             String msg = isSelected()
                     ? tr("Viewport following is enabled, press {0} to disable it", getShortcut().getKeyText())
                     : tr("Viewport following is disabled");
-            GuiHelper.runInEDT(() -> new Notification(msg).show());
+            GuiHelper.runInEDT(() -> new Notification(msg).setIcon(JOptionPane.INFORMATION_MESSAGE).show());
         }
         notifySelectedState();
     }

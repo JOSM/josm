@@ -49,6 +49,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
@@ -1016,6 +1017,7 @@ public final class MapStatus extends JPanel implements
         SystemOfMeasurement.setSystemOfMeasurement(som);
         if (Config.getPref().getBoolean("statusbar.notify.change-system-of-measurement", true)) {
             new Notification(tr("System of measurement changed to {0}", som.toString()))
+                .setIcon(JOptionPane.INFORMATION_MESSAGE)
                 .setDuration(Notification.TIME_SHORT)
                 .show();
         }

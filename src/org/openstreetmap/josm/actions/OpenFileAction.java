@@ -166,7 +166,7 @@ public class OpenFileAction extends DiskAccessAction {
                 } else {
                     String message = tr("Unable to locate file  ''{0}''.", file.getPath());
                     Logging.warn(message);
-                    new Notification(message).show();
+                    new Notification(message).setIcon(JOptionPane.WARNING_MESSAGE).show();
                 }
             }
         }

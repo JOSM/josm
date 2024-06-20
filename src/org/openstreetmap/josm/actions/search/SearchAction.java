@@ -315,7 +315,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     map.statusLine.setHelpText(msg);
                 }
                 if (!GraphicsEnvironment.isHeadless()) {
-                    new Notification(msg).show();
+                    new Notification(msg).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
                 }
             } else {
                 map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
