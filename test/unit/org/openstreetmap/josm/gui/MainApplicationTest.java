@@ -129,7 +129,7 @@ public class MainApplicationTest {
             t.start();
             t.join();
             System.out.flush();
-            assertEquals(expected, baos.toString(StandardCharsets.UTF_8.name()).trim());
+            assertEquals(expected, baos.toString(StandardCharsets.UTF_8).trim());
         } finally {
             System.setOut(old);
         }

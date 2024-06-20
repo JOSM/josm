@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1138,12 +1137,7 @@ public final class Utils {
      * @since 8304
      */
     public static String encodeUrl(String s) {
-        final String enc = StandardCharsets.UTF_8.name();
-        try {
-            return URLEncoder.encode(s, enc);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
+        return URLEncoder.encode(s, StandardCharsets.UTF_8);
     }
 
     /**
@@ -1158,12 +1152,7 @@ public final class Utils {
      * @since 8304
      */
     public static String decodeUrl(String s) {
-        final String enc = StandardCharsets.UTF_8.name();
-        try {
-            return URLDecoder.decode(s, enc);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
+        return URLDecoder.decode(s, StandardCharsets.UTF_8);
     }
 
     /**
