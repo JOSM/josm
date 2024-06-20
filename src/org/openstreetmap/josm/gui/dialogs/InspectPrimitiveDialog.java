@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Panel to inspect one or more OsmPrimitives.
- *
+ * <p>
  * Gives an unfiltered view of the object's internal state.
  * Might be useful for power users to give more detailed bug reports and
  * to better understand the JOSM data representation.
@@ -128,7 +128,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             for (IPrimitive osm : sel) {
                 String heading = tr("Styles for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance()));
                 txtMappaint.println(heading);
-                txtMappaint.println(repeatString("=", heading.length()));
+                txtMappaint.println("=".repeat(heading.length()));
 
                 MultiCascade mc = new MultiCascade();
 
@@ -136,7 +136,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                     if (s.active) {
                         heading = tr("{0} style \"{1}\"", getSort(s), s.getDisplayString());
                         txtMappaint.println(heading);
-                        txtMappaint.println(repeatString("-", heading.length()));
+                        txtMappaint.println("-".repeat(heading.length()));
                         s.apply(mc, osm, scale, false);
                         txtMappaint.println(tr("Display range: {0}", mc.range));
                         for (Entry<String, Cascade> e : mc.getLayers()) {
@@ -149,7 +149,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 txtMappaint.println();
                 heading = tr("List of generated Styles:");
                 txtMappaint.println(heading);
-                txtMappaint.println(repeatString("-", heading.length()));
+                txtMappaint.println("-".repeat(heading.length()));
                 StyleElementList sl = elemstyles.get(osm, scale, nc);
                 for (StyleElement s : sl) {
                     txtMappaint.print(" * ");
@@ -176,11 +176,6 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             }
         }
         return stringWriter.toString();
-    }
-
-    private static String repeatString(String string, int count) {
-        // Java 11: use String.repeat
-        return new String(new char[count]).replace("\0", string);
     }
 
     /*  Future Ideas:

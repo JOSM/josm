@@ -247,7 +247,7 @@ public interface PlatformHook {
 
     /**
      * Returns extended modifier key used as the appropriate accelerator key for menu shortcuts.
-     * It is advised everywhere to use {@link Toolkit#getMenuShortcutKeyMask()} to get the cross-platform modifier, but:
+     * It was advised everywhere to use {@link Toolkit#getMenuShortcutKeyMask()} to get the cross-platform modifier, but:
      * <ul>
      * <li>it returns KeyEvent.CTRL_MASK instead of KeyEvent.CTRL_DOWN_MASK. We used the extended
      *    modifier for years, and Oracle recommends to use it instead, so it's best to keep it</li>
@@ -257,7 +257,9 @@ public interface PlatformHook {
      * @since 12748 (as a replacement to {@code GuiHelper.getMenuShortcutKeyMaskEx()})
      */
     default int getMenuShortcutKeyMaskEx() {
-        // To remove when switching to Java 10+, and use Toolkit.getMenuShortcutKeyMaskEx instead
+        if (!GraphicsEnvironment.isHeadless()) {
+            return Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+        }
         return InputEvent.CTRL_DOWN_MASK;
     }
 

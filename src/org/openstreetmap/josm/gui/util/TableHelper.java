@@ -122,7 +122,7 @@ public final class TableHelper {
      * Returns an array of all of the selected indices in the selection model, in increasing order.
      * Unfortunately this method is not available in OpenJDK before version 11, see
      * https://bugs.openjdk.java.net/browse/JDK-8199395
-     *
+     * <p>
      * To be removed when we switch to Java 11 or later.
      *
      * @param selectionModel list selection model.
@@ -131,9 +131,11 @@ public final class TableHelper {
      *         or an empty array if nothing is selected
      * @see #selectedIndices(ListSelectionModel)
      * @since 15226
+     * @deprecated Use {@link ListSelectionModel#getSelectedIndices()} instead
      */
+    @Deprecated(since = "19120")
     public static int[] getSelectedIndices(ListSelectionModel selectionModel) {
-        return selectedIndices(selectionModel).toArray();
+        return selectionModel.getSelectedIndices();
     }
 
     /**

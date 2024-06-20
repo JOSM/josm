@@ -105,11 +105,6 @@ public class PlatformHookOsx implements PlatformHook {
                 && ("Aqua".equals(laf) || laf.contains("Mac")));
     }
 
-    @Override
-    public int getMenuShortcutKeyMaskEx() {
-        return InputEvent.META_DOWN_MASK;
-    }
-
     /**
      * Registers Apple handlers.
      *
