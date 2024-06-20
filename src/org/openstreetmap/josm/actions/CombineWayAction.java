@@ -10,12 +10,10 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -279,20 +277,6 @@ public class CombineWayAction extends JosmAction {
             return;
         }
 
-        // see #18083: check if we will combine ways at nodes outside of the download area
-        Set<Node> endNodesOutside = new HashSet<>();
-        for (Way w : selectedWays) {
-            final Node[] endnodes = {w.firstNode(), w.lastNode()};
-            for (Node n : endnodes) {
-                if (!n.isNew() && !n.isReferrersDownloaded() && !endNodesOutside.add(n)) {
-                    new Notification(tr("Combine ways refused<br>" + "(A shared node may have additional referrers)"))
-                            .setIcon(JOptionPane.INFORMATION_MESSAGE).show();
-                    return;
-
-                }
-            }
-        }
-
         // combine and update gui
         Pair<Way, Command> combineResult;
         try {
@@ -303,6 +287,10 @@ public class CombineWayAction extends JosmAction {
         }
 
         if (combineResult == null)
+            return;
+
+        // see #18083: check if we will combine ways at nodes outside of the download area
+        if (!checkAndConfirmCombineOutlyingWays(selectedWays))
             return;
 
         final Way selectedWay = combineResult.a;
@@ -344,6 +332,29 @@ public class CombineWayAction extends JosmAction {
             }
         }
         setEnabled(numWays >= 2);
+    }
+
+    /**
+     * Check whether user is about to combine ways with unknown parents.
+     * Request confirmation if he is.
+     * @param ways the primitives to operate on
+     * @return true, if operating on outlying primitives is OK; false, otherwise
+     */
+    private static boolean checkAndConfirmCombineOutlyingWays(Collection<Way> ways) {
+        DownloadReferrersAction action = MainApplication.getMenu().downloadReferrers;
+        final String downloadHint = tr("You should use {0}->{1}({2}) first.",
+                MainApplication.getMenu().editMenu.getText(), action.getValue(NAME), action.getShortcut().toString());
+        return Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() -> checkAndConfirmOutlyingOperation("combine",
+                tr("Combine confirmation"),
+                tr("You are about to combine ways which can be members of relations not yet downloaded."
+                        + "<br>"
+                        + "This can lead to damaging these parent relations (that you do not see)."
+                        + "<br>"
+                        + "{0}"
+                        + "<br><br>"
+                        + "Do you really want to combine without downloading?", downloadHint),
+                "", // not used, we never combine incomplete ways
+                ways, Collections.emptyList())));
     }
 
 }
