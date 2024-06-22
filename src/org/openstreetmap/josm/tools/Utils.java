@@ -665,8 +665,8 @@ public final class Utils {
             final Map.Entry<K, V> entry = map.entrySet().iterator().next();
             return Collections.singletonMap(entry.getKey(), entry.getValue());
         }
-        // Map.copyOf would also work, but if the original map is immutable, it just returns the original map.
-        return Map.ofEntries(map.entrySet().toArray(new Map.Entry[0]));
+        // see #23748 don't use Map.ofEntries as it doesn't allow null keys or values
+        return Collections.unmodifiableMap(map);
     }
 
     /**
