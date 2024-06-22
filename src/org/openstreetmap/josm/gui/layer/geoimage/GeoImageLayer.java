@@ -64,7 +64,6 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.imagery.Vector3D;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -191,19 +190,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         this.useThumbs = useThumbs;
         this.data.addImageDataUpdateListener(this);
         this.data.setLayer(this);
-        if (!ImageViewerDialog.hasInstance()) {
-            GuiHelper.runInEDTAndWait(() -> {
-                if (!ImageViewerDialog.hasInstance()) {
-                    ImageViewerDialog.createInstance();
-                }
-            });
-        }
-        if (getInvalidGeoImages().size() == data.size()) {
-            this.data.setSelectedImage(this.data.getFirstImage());
-            // We do have to wrap the EDT call in a worker call, since layers may be created in the EDT.
-            // And the layer must be added to the layer list in order for the dialog to work properly.
-            MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> ImageViewerDialog.getInstance().displayImages(this.getSelection())));
-        }
     }
 
     private final class ImageMouseListener extends MouseAdapter {
@@ -517,7 +503,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             }
         }
 
-        final IImageEntry<?> currentImage = ImageViewerDialog.getCurrentImage();
         for (ImageEntry e: data.getSelectedImages()) {
             if (e != null && e.getPos() != null) {
                 Point p = mv.getPoint(e.getPos());
@@ -532,7 +517,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 if (useThumbs && e.hasThumbnail()) {
                     g.setColor(new Color(128, 0, 0, 122));
                     g.fillRect(p.x - imgDim.width / 2, p.y - imgDim.height / 2, imgDim.width, imgDim.height);
-                } else if (e.equals(currentImage)) {
+                } else if (e.equals(ImageViewerDialog.getCurrentImage())) {
                     selectedIcon.paintIcon(mv, g,
                             p.x - imgDim.width / 2,
                             p.y - imgDim.height / 2);
@@ -919,11 +904,16 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     @Override
     public void jumpToNextMarker() {
         data.setSelectedImage(data.getNextImage());
+        if (data.getSelectedImage() != null)
+            ImageViewerDialog.getInstance().displayImages(Collections.singletonList(data.getSelectedImage()));
+
     }
 
     @Override
     public void jumpToPreviousMarker() {
         data.setSelectedImage(data.getPreviousImage());
+        if (data.getSelectedImage() != null)
+            ImageViewerDialog.getInstance().displayImages(Collections.singletonList(data.getSelectedImage()));
     }
 
     /**
