@@ -513,6 +513,7 @@ class UtilsTest {
         map4.put("ooo", "bar");
         map4.put("sss", "baz");
         map4.put("mmm", ":-)");
+        map4.put("xxx", null); // see #23748
         assertEquals(map4, Utils.toUnmodifiableMap(map4));
     }
 
