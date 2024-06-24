@@ -154,8 +154,8 @@ public class JOSMFixture {
     }
 
     private static boolean isProductionApiUrl(String url) {
-        return url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
-            || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org");
+        return url.startsWith("http://api.openstreetmap.org")
+            || url.startsWith("https://api.openstreetmap.org");
     }
 
     private void setupGUI() {
