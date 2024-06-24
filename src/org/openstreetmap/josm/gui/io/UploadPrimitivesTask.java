@@ -260,6 +260,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                 try {
                     getProgressMonitor().subTask(
                             trn("Uploading {0} object...", "Uploading {0} objects...", toUpload.getSize(), toUpload.getSize()));
+                    getProgressMonitor().setTicks(0); // needed in 2nd and further loop executions
                     synchronized (this) {
                         writer = new OsmServerWriter();
                     }
