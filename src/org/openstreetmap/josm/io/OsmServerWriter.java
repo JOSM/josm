@@ -99,6 +99,8 @@ public class OsmServerWriter {
             progressMonitor.setTicksCount(primitives.size());
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
+                if (progressMonitor.isCanceled())
+                    break;
                 String msg;
                 switch (OsmPrimitiveType.from(osm)) {
                 case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
