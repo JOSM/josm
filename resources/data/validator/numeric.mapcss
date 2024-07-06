@@ -662,3 +662,13 @@ node[fire_hydrant:pressure="#"] {
   assertMatch: "node name=3.5";
   assertNoMatch: "node name=\"1. Chemnitzer Billardclub 1952 e.V.\"";
 }
+
+/* #23621 */
+node[natural=tree][circumference][siunit_length(tag(circumference)) > 45] {
+  throwWarning: tr("Unusually large value of {0} in meters, possibly centimeter units are meant?", "{0.key}");
+  assertMatch: "node natural=tree circumference=200";
+  assertMatch: "node natural=tree circumference=82.4";
+  assertNoMatch: "node natural=tree circumference=18.4";
+  assertNoMatch: "node natural=tree circumference=\"100 cm\"";
+  assertNoMatch: "node natural=tree circumference=43"; /* Current world record */
+}
