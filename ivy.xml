@@ -38,7 +38,7 @@
         <dependency conf="api->default" org="com.formdev" name="svgSalamander" rev="1.1.4"/>
         <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.28.2"/>
         <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
-        <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2024.2.8"/>
+        <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2024.7.8"/>
         <!-- sources->sources -->
         <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.19"/>
         <dependency conf="sources->sources" org="javax.json" name="javax.json-api" rev="1.1.4"/>
@@ -55,7 +55,7 @@
         <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.19.0" transitive="false"/>
         <dependency conf="sources->sources" org="com.formdev" name="svgSalamander" rev="1.1.4"/>
         <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.28.2"/>
-        <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2024.2.8"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
+        <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2024.7.8"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
         <!-- commonslang->default -->
         <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.14.0"/>
         <!-- jacocoant->default -->

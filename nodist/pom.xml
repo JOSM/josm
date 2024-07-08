@@ -310,7 +310,7 @@
             <dependency>
                 <groupId>org.webjars.npm</groupId>
                 <artifactId>tag2link</artifactId>
-                <version>2024.2.8</version>
+                <version>2024.7.8</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
