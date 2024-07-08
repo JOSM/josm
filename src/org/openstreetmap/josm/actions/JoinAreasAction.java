@@ -136,7 +136,7 @@ public class JoinAreasAction extends JosmAction {
     }
 
     // HelperClass
-    // Saves a relation and a role an OsmPrimitve was part of until it was stripped from all relations
+    // Saves a relation and a role an OsmPrimitive was part of until it was stripped from all relations
     private static class RelationRole {
         public final Relation rel;
         public final String role;
@@ -539,6 +539,7 @@ public class JoinAreasAction extends JosmAction {
                     ways.size()) + "<br/>"
                     + tr("This can lead to nodes being deleted accidentally.") + "<br/>"
                     + tr("Are you really sure to continue?")
+                    + ' '
                     + tr("Please abort if you are not sure"),
                 tr("The selected area is incomplete. Continue?"),
                 allNodes, null);
