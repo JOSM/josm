@@ -657,7 +657,7 @@ public final class Utils {
      * @see <a href="https://dzone.com/articles/preventing-your-java-collections-from-wasting-memo">
      *     How to Prevent Your Java Collections From Wasting Memory</a>
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "squid:S1696"})
     public static <K, V> Map<K, V> toUnmodifiableMap(Map<K, V> map) {
         if (isEmpty(map)) {
             return Collections.emptyMap();
@@ -665,7 +665,13 @@ public final class Utils {
             final Map.Entry<K, V> entry = map.entrySet().iterator().next();
             return Collections.singletonMap(entry.getKey(), entry.getValue());
         }
-        // see #23748 don't use Map.ofEntries as it doesn't allow null keys or values
+        // see #23748: If the map contains `null`, then Map.ofEntries will throw an NPE.
+        // We also cannot check the map for `null`, since that may _also_ throw an NPE.
+        try {
+            return Map.ofEntries(map.entrySet().toArray(new Map.Entry[0]));
+        } catch (NullPointerException e) {
+            Logging.trace(e);
+        }
         return Collections.unmodifiableMap(map);
     }
 
