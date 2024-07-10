@@ -50,12 +50,15 @@ import org.openstreetmap.josm.tools.Logging;
 public class UploadPrimitivesTask extends AbstractUploadTask {
     private boolean uploadCanceled;
     private Exception lastException;
+    /** The objects to upload. Successfully uploaded objects are removed. */
     private final APIDataSet toUpload;
     private OsmServerWriter writer;
     private final OsmDataLayer layer;
     private Changeset changeset;
     private final Set<IPrimitive> processedPrimitives;
     private final UploadStrategySpecification strategy;
+    /** Initial number of objects to be uploaded */
+    private final int numObjectsToUpload;
 
     /**
      * Creates the task
@@ -76,6 +79,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         ensureParameterNotNull(strategy, "strategy");
         ensureParameterNotNull(changeset, "changeset");
         this.toUpload = toUpload;
+        this.numObjectsToUpload = toUpload.getSize();
         this.layer = layer;
         this.changeset = changeset;
         this.strategy = strategy;
@@ -108,7 +112,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                         null /* no specific help text */
                 )
         };
-        int numObjectsToUploadLeft = toUpload.getSize() - processedPrimitives.size();
+        int numObjectsToUploadLeft = numObjectsToUpload - processedPrimitives.size();
         String msg1 = tr("The server reported that the current changeset was closed.<br>"
                 + "This is most likely because the changesets size exceeded the max. size<br>"
                 + "of {0} objects on the server ''{1}''.",
@@ -160,7 +164,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
      * @throws OsmTransferException "if something goes wrong."
      */
     protected boolean handleChangesetFullResponse() throws OsmTransferException {
-        if (processedPrimitives.size() == toUpload.getSize()) {
+        if (processedPrimitives.size() >= numObjectsToUpload) {
             strategy.setPolicy(MaxChangesetSizeExceededPolicy.ABORT);
             return false;
         }
