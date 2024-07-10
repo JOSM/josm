@@ -78,6 +78,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         ensureParameterNotNull(layer, "layer");
         ensureParameterNotNull(strategy, "strategy");
         ensureParameterNotNull(changeset, "changeset");
+        ensureParameterNotNull(toUpload, "toUpload");
         this.toUpload = toUpload;
         this.numObjectsToUpload = toUpload.getSize();
         this.layer = layer;

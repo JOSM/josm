@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.io;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -21,7 +22,7 @@ class UploadPrimitivesTaskTest {
         assertDoesNotThrow(() -> new UploadPrimitivesTask(
                 new UploadStrategySpecification(),
                 new OsmDataLayer(new DataSet(), null, null),
-                null,
+                new APIDataSet(),
                 new Changeset()));
     }
 }
