@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2024040900, Last Updated Tue Apr  9 07:07:01 2024 UTC
+        // Taken from Version 2024071000, Last Updated Wed Jul 10 07:07:01 2024 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -1138,7 +1138,6 @@ public final class DomainValidator extends AbstractValidator {
         "sfr", // sfr Societe Francaise du Radiotelephone - SFR
         "shangrila", // shangrila Shangri‐La International Hotel Management Limited
         "sharp", // sharp Sharp Corporation
-        "shaw", // shaw Shaw Cablesystems G.P.
         "shell", // shell Shell Information Technology International Inc
         "shia", // shia Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "shiksha", // shiksha Afilias Limited
