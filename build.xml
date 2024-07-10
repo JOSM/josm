@@ -80,6 +80,7 @@
              (PlatformHook#getJavaUrl, PlatformHook#startupSanityChecks and PlatformHook#warnSoonToBeUnsupportedJava) -->
         <property name="java.lang.version" value="11" />
         <property name="test.headless" value="true" />
+        <property name="noErrorProne" value="false"/>
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
         <property name="jacoco.inclbootstrapclasses" value="false" />
         <property name="jacoco.inclnolocationclasses" value="false" />
@@ -863,6 +864,18 @@ Build-Date: ${build.tstamp}
             <arg value="https://raw.githubusercontent.com/osmlab/editor-layer-index/gh-pages/imagery.geojson"/>
             <arg value="-O"/>
             <arg value="imagery_eli.geojson"/>
+            <arg value="--unlink"/>
+        </exec>
+        <exec append="false" executable="wget" failifexecutionfails="true">
+            <arg value="https://raw.githubusercontent.com/openstreetmap/iD/develop/data/imagery.json"/>
+            <arg value="-O"/>
+            <arg value="imagery_id.geojson"/>
+            <arg value="--unlink"/>
+        </exec>
+        <exec append="false" executable="wget" failifexecutionfails="true">
+            <arg value="https://raw.githubusercontent.com/facebook/Rapid/main/data/imagery.json"/>
+            <arg value="-O"/>
+            <arg value="imagery_rapid.geojson"/>
             <arg value="--unlink"/>
         </exec>
         <antcall target="imageryindex"/>

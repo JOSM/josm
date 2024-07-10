@@ -87,14 +87,20 @@ public class SyncEditorLayerIndex {
 
     private List<ImageryInfo> josmEntries;
     private JsonArray eliEntries;
+    private JsonArray idEntries;
+    private JsonArray rapidEntries;
 
     private final Map<String, JsonObject> eliUrls = new HashMap<>();
+    private final Map<String, JsonObject> idUrls = new HashMap<>();
+    private final Map<String, JsonObject> rapidUrls = new HashMap<>();
     private final Map<String, ImageryInfo> josmUrls = new HashMap<>();
     private final Map<String, ImageryInfo> josmMirrors = new HashMap<>();
     private static final Map<String, String> oldproj = new HashMap<>();
     private static final List<String> ignoreproj = new LinkedList<>();
 
     private static String eliInputFile = "imagery_eli.geojson";
+    private static String idInputFile = "imagery_id.geojson";
+    private static String rapidInputFile = "imagery_rapid.geojson";
     private static String josmInputFile = "imagery_josm.imagery.xml";
     private static String ignoreInputFile = "imagery_josm.ignores.txt";
     private static Writer outputStream;
@@ -135,6 +141,7 @@ public class SyncEditorLayerIndex {
             }
         }
         script.loadELIEntries();
+        script.loadELIUsers();
         if (optionEliXml != null) {
             try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(optionEliXml), UTF_8)) {
                 script.printentries(script.eliEntries, writer);
@@ -161,15 +168,19 @@ public class SyncEditorLayerIndex {
         "-c,--encoding <encoding>           output encoding (defaults to UTF-8 or cp850 on Windows)\n" +
         "-e,--eli_input <eli_input>         Input file for the editor layer index (geojson). " +
                                             "Default is imagery_eli.geojson (current directory).\n" +
+        "-d,--id_input <id_input>           Input file for the id index (geojson). " +
+                                            "Default is imagery_id.geojson (current directory).\n" +
         "-h,--help                          show this help\n" +
         "-i,--ignore_input <ignore_input>   Input file for the ignore list. Default is imagery_josm.ignores.txt (current directory).\n" +
         "-j,--josm_input <josm_input>       Input file for the JOSM imagery list (xml). " +
                                             "Default is imagery_josm.imagery.xml (current directory).\n" +
-        "-m,--noeli                         don't show output for ELI problems\n" +
+        "-m,--noeli                         don't show output for ELI, Rapid or iD problems\n" +
         "-n,--noskip                        don't skip known entries\n" +
         "-o,--output <output>               Output file, - prints to stdout (default: -)\n" +
         "-p,--elixml <elixml>               ELI entries for use in JOSM as XML file (incomplete)\n" +
         "-q,--josmxml <josmxml>             JOSM entries reoutput as XML file (incomplete)\n" +
+        "-r,--rapid_input <rapid_input>     Input file for the rapid index (geojson). " +
+                                            "Default is imagery_rapid.geojson (current directory).\n" +
         "-s,--shorten                       shorten the output, so it is easier to read in a console window\n" +
         "-x,--xhtmlbody                     create XHTML body for display in a web page\n" +
         "-X,--xhtml                         create XHTML for display in a web page\n";
@@ -188,6 +199,10 @@ public class SyncEditorLayerIndex {
                 .addShortAlias("output", "o")
                 .addArgumentParameter("eli_input", OptionCount.OPTIONAL, x -> eliInputFile = x)
                 .addShortAlias("eli_input", "e")
+                .addArgumentParameter("id_input", OptionCount.OPTIONAL, x -> idInputFile = x)
+                .addShortAlias("id_input", "d")
+                .addArgumentParameter("rapid_input", OptionCount.OPTIONAL, x -> rapidInputFile = x)
+                .addShortAlias("rapid_input", "r")
                 .addArgumentParameter("josm_input", OptionCount.OPTIONAL, x -> josmInputFile = x)
                 .addShortAlias("josm_input", "j")
                 .addArgumentParameter("ignore_input", OptionCount.OPTIONAL, x -> ignoreInputFile = x)
@@ -370,6 +385,28 @@ public class SyncEditorLayerIndex {
         }
         myprintln("*** Loaded "+eliEntries.size()+" entries (ELI). ***");
     }
+    void loadELIUsers() throws IOException {
+        try (JsonReader jr = Json.createReader(Files.newBufferedReader(Paths.get(idInputFile), UTF_8))) {
+            idEntries = jr.readArray();
+        }
+        for (JsonValue e : idEntries) {
+            String url = getUrlStripped(e);
+            if (!eliUrls.containsKey(url))
+                myprintln("+++ iD-URL not in ELI: "+url);
+            idUrls.put(url, e.asJsonObject());
+        }
+        myprintln("*** Loaded "+idEntries.size()+" entries (iD). ***");
+        try (JsonReader jr = Json.createReader(Files.newBufferedReader(Paths.get(rapidInputFile), UTF_8))) {
+            rapidEntries = jr.readArray();
+        }
+        for (JsonValue e : rapidEntries) {
+            String url = getUrlStripped(e);
+            if (!eliUrls.containsKey(url))
+                myprintln("+++ Rapid-URL not in ELI: "+url);
+            rapidUrls.put(url, e.asJsonObject());
+        }
+        myprintln("*** Loaded "+rapidEntries.size()+" entries (Rapid). ***");
+    }
 
     String cdata(String s) {
         return cdata(s, false);
@@ -449,7 +486,7 @@ public class SyncEditorLayerIndex {
             if (isNotBlank(t = getIcon(e)))
                 stream.write("        <icon>"+cdata(t)+"</icon>\n");
             for (Entry<String, String> d : getDescriptions(e).entrySet()) {
-                stream.write("        <description lang=\""+d.getKey()+"\">"+d.getValue()+"</description>\n");
+                stream.write("        <description lang=\""+d.getKey()+"\">"+cdata(d.getValue(), true)+"</description>\n");
             }
             for (ImageryInfo m : getMirrors(e)) {
                 stream.write("        <mirror>\n"+maininfo(m, "            ")+"        </mirror>\n");
@@ -596,7 +633,14 @@ public class SyncEditorLayerIndex {
         Collections.sort(le);
         if (!le.isEmpty()) {
             for (String l : le) {
-                myprintln("-  " + getDescription(eliUrls.get(l)));
+                String e = "";
+                if(idUrls.get(l) != null && rapidUrls.get(l) != null)
+                    e = " **iD+Rapid**";
+                else if(idUrls.get(l) != null)
+                    e = " **iD**";
+                else if(rapidUrls.get(l) != null)
+                    e = " **Rapid**";
+                myprintln("-  " + getDescription(eliUrls.get(l)) + e);
             }
         }
         myprintln("*** URLs found in JOSM but not in ELI ("+lj.size()+"): ***");
@@ -1323,7 +1367,11 @@ public class SyncEditorLayerIndex {
 
     static String getUrl(Object e) {
         if (e instanceof ImageryInfo) return ((ImageryInfo) e).getUrl();
-        return ((Map<String, JsonObject>) e).get("properties").getString("url");
+        JsonObject p = ((Map<String, JsonObject>) e).get("properties");
+        if (p != null)
+            return p.getString("url");
+        else
+            return ((JsonObject)e).getString("template");
     }
 
     static String getUrlStripped(Object e) {
