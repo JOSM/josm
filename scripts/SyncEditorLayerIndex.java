@@ -282,7 +282,7 @@ public class SyncEditorLayerIndex {
     void myprintlnfinal(String s) {
         if (outputStream != null) {
             try {
-                outputStream.write(s + System.getProperty("line.separator"));
+                outputStream.write(s + System.lineSeparator());
             } catch (IOException e) {
                 throw new JosmRuntimeException(e);
             }
@@ -385,6 +385,7 @@ public class SyncEditorLayerIndex {
         }
         myprintln("*** Loaded "+eliEntries.size()+" entries (ELI). ***");
     }
+
     void loadELIUsers() throws IOException {
         try (JsonReader jr = Json.createReader(Files.newBufferedReader(Paths.get(idInputFile), UTF_8))) {
             idEntries = jr.readArray();
@@ -634,11 +635,11 @@ public class SyncEditorLayerIndex {
         if (!le.isEmpty()) {
             for (String l : le) {
                 String e = "";
-                if(idUrls.get(l) != null && rapidUrls.get(l) != null)
+                if (idUrls.get(l) != null && rapidUrls.get(l) != null)
                     e = " **iD+Rapid**";
-                else if(idUrls.get(l) != null)
+                else if (idUrls.get(l) != null)
                     e = " **iD**";
-                else if(rapidUrls.get(l) != null)
+                else if (rapidUrls.get(l) != null)
                     e = " **Rapid**";
                 myprintln("-  " + getDescription(eliUrls.get(l)) + e);
             }
@@ -1371,7 +1372,7 @@ public class SyncEditorLayerIndex {
         if (p != null)
             return p.getString("url");
         else
-            return ((JsonObject)e).getString("template");
+            return ((JsonObject) e).getString("template");
     }
 
     static String getUrlStripped(Object e) {
