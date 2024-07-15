@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.oauth.osm.OsmScopes;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -190,6 +191,7 @@ class OAuth20AuthorizationTest {
         authorization.authorize(new OAuth20Parameters(CLIENT_ID_VALUE, parameters.getClientSecret(),
                 wireMockRuntimeInfo.getHttpBaseUrl() + "/oauth2", wireMockRuntimeInfo.getHttpBaseUrl() + "/api",
                 parameters.getRedirectUri()), consumer::set, OsmScopes.read_gpx);
+        GuiHelper.runInEDTAndWait(() -> { /* Sync EDT thread */ });
         assertEquals(1, OpenBrowserMocker.getCalledURIs().size());
         final URL url = assertDoesNotThrow(() -> OpenBrowserMocker.getCalledURIs().get(0).toURL());
         return HttpClient.create(url);
