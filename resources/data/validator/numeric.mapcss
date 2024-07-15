@@ -67,7 +67,7 @@
   assertNoMatch: "node building:levels=0"; /* valid because there can be building:levels:underground > 0 or roof:levels > 0 */
 }
 
-*[roof:height][roof:height =~ /^0*(\.0*)?( (m|ft))?$/][roof:shape=flat] {
+*[roof:height][siunit_length(tag("roof:height")) == 0][roof:shape=flat] {
   throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{2.tag}");
   group: tr("unnecessary tag");
   fixRemove: "{0.key}";
