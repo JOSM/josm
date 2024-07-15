@@ -68,15 +68,17 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
+        // Note: xdg-open may not always give "expected" results, see #23804.
+        // At the time, it appeared to be primarily a Brave browser problem.
         for (String program : Config.getPref().getList("browser.unix",
-                Arrays.asList("xdg-open", "#DESKTOP#", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {
+                Arrays.asList("#DESKTOP#", "xdg-open", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {
             try {
                 if ("#DESKTOP#".equals(program)) {
                     Desktop.getDesktop().browse(Utils.urlToURI(url));
-                } else if (program.startsWith("$")) {
-                    program = System.getenv().get(program.substring(1));
-                    Runtime.getRuntime().exec(new String[]{program, url});
                 } else {
+                    if (program.startsWith("$")) {
+                        program = System.getenv().get(program.substring(1));
+                    }
                     Runtime.getRuntime().exec(new String[]{program, url});
                 }
                 return;
