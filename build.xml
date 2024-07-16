@@ -1001,21 +1001,33 @@ Build-Date: ${build.tstamp}
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-plugins.jar" includes="org/openstreetmap/josm/plugins/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-spi.jar" includes="org/openstreetmap/josm/spi/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-tools.jar" includes="org/openstreetmap/josm/tools/**/*.class"/>
+        <path id="jar.files">
+            <fileset dir="${modules.dir}" includes="*.jar"/>
+        </path>
+        <pathconvert property="jar.files.string" refid="jar.files" pathsep=" "/>
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.*|oauth.*|org.apache.*|org.glassfish.*|org.openstreetmap.gui.*'"/>
-            <arg line="-dotoutput dots *.jar"/>
+            <arg line="-dotoutput dots" />
+            <arg line="${jar.files.string}" />
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
             <arg line="-O -Tpng summary.dot"/>
         </exec>
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-without-dependencies.png"/>
+
         <!-- Direct dependencies -->
         <copy todir="${modules.dir}" flatten="true">
             <fileset refid="runtime.fileset" />
         </copy>
+        <path id="jar-direct.files">
+            <fileset dir="${modules.dir}" includes="*.jar"/>
+        </path>
+        <pathconvert property="jar-direct.files.string" refid="jar-direct.files" pathsep=" "/>
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*'"/>
-            <arg line="-dotoutput dots *.jar"/>
+            <arg line="-dotoutput dots"/>
+            <arg line="--multi-release 11"/>
+            <arg line="${jar-direct.files.string}" />
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
             <arg line="-O -Tpng summary.dot"/>
@@ -1023,8 +1035,14 @@ Build-Date: ${build.tstamp}
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-direct-dependencies.png"/>
         <!-- All dependencies -->
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/google-gdata.jar" includes="com/google/**/*.class"/>
+        <path id="jar-all.files">
+            <fileset dir="${modules.dir}" includes="*.jar"/>
+        </path>
+        <pathconvert property="jar-all.files.string" refid="jar-direct.files" pathsep=" "/>
         <exec executable="jdeps" dir="${modules.dir}">
-            <arg line="-dotoutput dots *.jar"/>
+            <arg line="-dotoutput dots"/>
+            <arg line="--multi-release 11"/>
+            <arg line="${jar-all.files.string}" />
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
             <arg line="-O -Tpng summary.dot"/>
