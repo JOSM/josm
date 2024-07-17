@@ -75,26 +75,6 @@
       <groupId>org.jmockit</groupId>
       <artifactId>jmockit</artifactId>
     </dependency>
-    <!-- Deprecated dependencies (to remove sometime in 2024)-->
-    <dependency>
-      <groupId>javax.json</groupId>
-      <artifactId>javax.json-api</artifactId>
-      <version>1.1.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>javax.json</artifactId>
-      <version>1.1.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>jsr305</artifactId>
-      <version>3.0.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <!-- end Deprecated dependencies -->
     <dependency>
       <groupId>org.openstreetmap.jmapviewer</groupId>
       <artifactId>jmapviewer</artifactId>
@@ -622,7 +602,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <!-- TODO: Do we want to minimize the jar? <minimizeJar>true</minimizeJar> -->
+              <minimizeJar>true</minimizeJar>
               <filters>
                 <filter>
                   <artifact>org.webjars.npm:tag2link</artifact>

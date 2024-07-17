@@ -17,7 +17,7 @@
         <sonar.host.url>https://josm.openstreetmap.de/sonar/</sonar.host.url>
         <sonar.projectKey>JOSM</sonar.projectKey>
         <jmockit.version>1.49.a</jmockit.version>
-        <pmd.version>7.2.0</pmd.version>
+        <pmd.version>7.3.0</pmd.version>
     </properties>
     <modules>
         <module>..</module>
@@ -236,14 +236,14 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.10.2</version>
+                <version>5.10.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.openstreetmap.jmapviewer</groupId>
                 <artifactId>jmapviewer</artifactId>
-                <version>2.19</version>
+                <version>2.20</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -322,7 +322,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.8.5</version>
+                <version>4.8.6</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -334,13 +334,13 @@
             <dependency>
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock</artifactId>
-                <version>3.6.0</version>
+                <version>3.8.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
-                <version>4.8.173</version>
+                <version>4.8.174</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -359,7 +359,7 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.14.0</version>
-                <scope>test</scope>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
