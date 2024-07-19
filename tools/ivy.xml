@@ -28,7 +28,7 @@
         <dependency org="com.github.spotbugs" name="spotbugs" rev="4.8.6" conf="spotbugs->default"/>
         <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.8.6" conf="spotbugs->default"/>
         <!-- errorprone->default -->
-        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.29.0" conf="errorprone->default"/>
+        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.29.1" conf="errorprone->default"/>
         <!-- animal->default -->
         <dependency org="org.codehaus.mojo" name="animal-sniffer-ant-tasks" rev="1.24" conf="animal->default"/>
     </dependencies>
