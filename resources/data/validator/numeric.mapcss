@@ -665,7 +665,7 @@ node[fire_hydrant:pressure="#"] {
 
 /* #23621 */
 node[natural=tree][circumference][siunit_length(tag(circumference)) > 45] {
-  throwWarning: tr("Unusually large value of {0} in meters, possibly centimeter units are meant?", "{0.key}");
+  throwWarning: tr("Unusually large value of {0}, possibly centimeter units are meant?", "{1.key}");
   assertMatch: "node natural=tree circumference=200";
   assertMatch: "node natural=tree circumference=82.4";
   assertNoMatch: "node natural=tree circumference=18.4";
