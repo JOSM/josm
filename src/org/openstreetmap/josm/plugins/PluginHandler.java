@@ -182,7 +182,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("javafx-unixoid", inCore),
             new DeprecatedPlugin("javafx-windows", inCore),
             new DeprecatedPlugin("wikidata", tr(replacedByPlugin, "osmwiki-dataitem")),
-            new DeprecatedPlugin("mapdust", noLongerRequired)
+            new DeprecatedPlugin("mapdust", noLongerRequired),
+            new DeprecatedPlugin("tofix", noLongerRequired)
         );
         Collections.sort(DEPRECATED_PLUGINS);
     }
