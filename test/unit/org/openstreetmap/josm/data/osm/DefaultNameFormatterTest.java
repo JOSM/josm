@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
@@ -24,8 +25,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.xml.sax.SAXException;
-
-import com.github.tomakehurst.wiremock.WireMockServer;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -38,27 +37,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @HTTP
 class DefaultNameFormatterTest {
     /**
-     * HTTP mock.
-     */
-    @BasicWiremock
-    WireMockServer wireMockServer;
-
-    /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/9632">#9632</a>.
+     * @param wireMockRuntimeInfo Wiremock information
      * @throws IllegalDataException if an error was found while parsing the data from the source
      * @throws IOException if any I/O error occurs
      * @throws SAXException if any XML error occurs
      */
     @Test
     @SuppressFBWarnings(value = "ITA_INEFFICIENT_TO_ARRAY")
-    void testTicket9632() throws IllegalDataException, IOException, SAXException {
+    void testTicket9632(WireMockRuntimeInfo wireMockRuntimeInfo) throws IllegalDataException, IOException, SAXException {
         String source = "presets/Presets_BicycleJunction-preset.xml";
-        wireMockServer.stubFor(get(urlEqualTo("/" + source))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/" + source))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "text/xml")
                     .withBodyFile(source)));
-        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(wireMockServer.url(source), true));
+        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(wireMockRuntimeInfo.getHttpBaseUrl() + '/' + source, true));
 
         Comparator<IRelation<?>> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 

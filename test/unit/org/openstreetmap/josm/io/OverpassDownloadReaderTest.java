@@ -13,6 +13,7 @@ import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
@@ -24,8 +25,6 @@ import org.openstreetmap.josm.tools.SearchCompilerQueryWizard;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-
 /**
  * Unit tests of {@link OverpassDownloadReader} class.
  */
@@ -33,11 +32,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @BasicPreferences
 @HTTP
 class OverpassDownloadReaderTest {
-    /**
-     * HTTP mock.
-     */
-    @BasicWiremock
-    WireMockServer wireMockServer;
+    private WireMockRuntimeInfo wireMockServer;
 
     private static final String NOMINATIM_URL_PATH = "/search?format=xml&q=";
 
@@ -45,8 +40,9 @@ class OverpassDownloadReaderTest {
      * Setup test.
      */
     @BeforeEach
-    public void setUp() {
-        NameFinder.NOMINATIM_URL_PROP.put(wireMockServer.url(NOMINATIM_URL_PATH));
+    public void setUp(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        this.wireMockServer = wireMockRuntimeInfo;
+        NameFinder.NOMINATIM_URL_PROP.put(wireMockServer.getHttpBaseUrl() + NOMINATIM_URL_PATH);
     }
 
     private String getExpandedQuery(String search) {
@@ -73,7 +69,7 @@ class OverpassDownloadReaderTest {
     }
 
     private void stubNominatim(String query) {
-        wireMockServer.stubFor(get(urlEqualTo(NOMINATIM_URL_PATH + query))
+        wireMockServer.getWireMock().register(get(urlEqualTo(NOMINATIM_URL_PATH + query))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "text/xml")

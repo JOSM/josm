@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -20,8 +21,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.OsmApi;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-
 /**
  * Unit tests for class {@link AddImageryLayerAction}.
  */
@@ -30,12 +29,6 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @OsmApi(OsmApi.APIType.FAKE)
 @Projection
 final class AddImageryLayerActionTest {
-    /**
-     * HTTP mock.
-     */
-    @BasicWiremock
-    WireMockServer wireMockServer;
-
     /**
      * Unit test of {@link AddImageryLayerAction#updateEnabledState}.
      */
@@ -64,22 +57,22 @@ final class AddImageryLayerActionTest {
      * Unit test of {@link AddImageryLayerAction#actionPerformed} - Enabled cases for WMS.
      */
     @Test
-    void testActionPerformedEnabledWms() {
-        wireMockServer.stubFor(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1"))
+    void testActionPerformedEnabledWms(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
                         .withBodyFile("imagery/wms-capabilities.xml")));
-        wireMockServer.stubFor(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities"))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities"))
                 .willReturn(aResponse()
                         .withStatus(404)));
-        wireMockServer.stubFor(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/wms?apikey=random_key&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"))
                 .willReturn(aResponse()
                         .withStatus(404)));
 
         try {
             FeatureAdapter.registerApiKeyAdapter(id -> "random_key");
-            final ImageryInfo imageryInfo = new ImageryInfo("localhost", wireMockServer.url("/wms?apikey={apikey}"),
+            final ImageryInfo imageryInfo = new ImageryInfo("localhost", wireMockRuntimeInfo.getHttpBaseUrl() + "/wms?apikey={apikey}",
                     "wms_endpoint", null, null);
             imageryInfo.setId("testActionPerformedEnabledWms");
             new AddImageryLayerAction(imageryInfo).actionPerformed(null);

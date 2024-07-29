@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
@@ -17,7 +19,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 
 /**
@@ -27,8 +28,13 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @BasicWiremock
 @Projection
 class WMSImageryTest {
-    @BasicWiremock
-    WireMockServer tileServer;
+
+    private WireMockRuntimeInfo tileServer;
+
+    @BeforeEach
+    void setup(WireMockRuntimeInfo wireMockRuntimeRule) {
+        this.tileServer = wireMockRuntimeRule;
+    }
 
     /**
      * Unit test of {@code WMSImagery.WMSGetCapabilitiesException} class
@@ -51,20 +57,20 @@ class WMSImageryTest {
      */
     @Test
     void testTicket15730() throws IOException, WMSGetCapabilitiesException {
-        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
+        tileServer.getWireMock().register(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
                 Files.readAllBytes(Paths.get(TestUtils.getRegressionDataDir(15730), "capabilities.xml"))
                 )));
 
-        WMSImagery wms = new WMSImagery(tileServer.url("capabilities.xml"));
+        WMSImagery wms = new WMSImagery(tileServer.getHttpBaseUrl() + "/capabilities.xml");
         assertEquals(1, wms.getLayers().size());
         assertTrue(wms.getLayers().get(0).getAbstract().startsWith("South Carolina  NAIP Imagery 2017    Resolution: 100CM "));
     }
 
     @Test
     void testNestedLayers() throws Exception {
-        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
+        tileServer.getWireMock().register(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
                 Files.readAllBytes(Paths.get(TestUtils.getTestDataRoot() + "wms/mapa-um-warszawa-pl.xml")))));
-        WMSImagery wmsi = new WMSImagery(tileServer.url("/serwis"));
+        WMSImagery wmsi = new WMSImagery(tileServer.getHttpBaseUrl() + "/serwis");
         assertEquals(1, wmsi.getLayers().size());
         assertEquals("Server WMS m.st. Warszawy", wmsi.getLayers().get(0).toString());
         assertEquals(202, wmsi.getLayers().get(0).getChildren().size());
@@ -78,8 +84,8 @@ class WMSImageryTest {
     @Test
     void testTicket16248() throws IOException, WMSGetCapabilitiesException {
         byte[] capabilities = Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml")));
-        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
-        WMSImagery wms = new WMSImagery(tileServer.url("any"));
+        tileServer.getWireMock().register(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
+        WMSImagery wms = new WMSImagery(tileServer.getHttpBaseUrl() + "/any");
         assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k?", wms.buildRootUrl());
         assertEquals("wms.hgis.cartomatic.pl", wms.getLayers().get(0).getName());
         assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&"
@@ -95,8 +101,8 @@ class WMSImageryTest {
     @Test
     void testTicket19193() throws IOException, WMSGetCapabilitiesException {
         byte[] capabilities = Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(19193, "capabilities.xml")));
-        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
-        WMSImagery wms = new WMSImagery(tileServer.url("any"));
+        tileServer.getWireMock().register(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
+        WMSImagery wms = new WMSImagery(tileServer.getHttpBaseUrl() + "/any");
         assertEquals("https://inspire.brandenburg.de/services/gn_alkis_wms?", wms.buildRootUrl());
         assertEquals(1, wms.getLayers().size());
         assertNull(wms.getLayers().get(0).getName());
@@ -113,13 +119,13 @@ class WMSImageryTest {
      */
     @Test
     void testTicket16333() throws IOException, WMSGetCapabilitiesException {
-        tileServer.stubFor(
+        tileServer.getWireMock().register(
                 WireMock.get(WireMock.anyUrl())
                 .willReturn(WireMock.aResponse().withBody(
                         Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16333, "capabilities.xml")))
                 ))
         );
-        WMSImagery wms = new WMSImagery(tileServer.url("any"));
+        WMSImagery wms = new WMSImagery(tileServer.getHttpBaseUrl() + "/any");
         assertEquals("https://duinoord.xs4all.nl/geoserver/ows?SERVICE=WMS&", wms.buildRootUrl());
         assertNull(wms.getLayers().get(0).getName());
         assertEquals("", wms.getLayers().get(0).getTitle());
@@ -130,13 +136,13 @@ class WMSImageryTest {
 
     @Test
     void testForTitleWithinAttribution_ticket16940() throws IOException, WMSGetCapabilitiesException {
-        tileServer.stubFor(
+        tileServer.getWireMock().register(
                 WireMock.get(WireMock.anyUrl())
                 .willReturn(WireMock.aResponse().withBody(
                         Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16940, "capabilities.xml")))
                 ))
         );
-        WMSImagery wms = new WMSImagery(tileServer.url("any"));
+        WMSImagery wms = new WMSImagery(tileServer.getHttpBaseUrl() + "/any");
         assertEquals("Hipsográfico", wms.getLayers().stream().findFirst().get().getTitle());
     }
 }
