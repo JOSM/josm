@@ -37,6 +37,8 @@ import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -50,7 +52,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.admin.model.ServeEventQuery;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
@@ -68,8 +69,7 @@ class HttpClientTest {
     /**
      * mocked local http server
      */
-    @BasicWiremock
-    public WireMockServer localServer;
+    private WireMockRuntimeInfo wireMockRuntimeInfo;
 
     private ProgressMonitor progress;
 
@@ -94,8 +94,8 @@ class HttpClientTest {
      * Setup test.
      */
     @BeforeEach
-    public void setUp() {
-        localServer.resetAll();
+    public void setUp(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        this.wireMockRuntimeInfo = wireMockRuntimeInfo;
         progress = TestUtils.newTestProgressMonitor();
         captured = null;
         Logging.getLogger().addHandler(handler);
@@ -131,7 +131,7 @@ class HttpClientTest {
     @Test
     void testGet() throws IOException {
         final UrlPattern pattern = urlEqualTo("/get?foo=bar");
-        localServer.stubFor(get(pattern).willReturn(aResponse().withStatusMessage("OK")
+        wireMockRuntimeInfo.getWireMock().register(get(pattern).willReturn(aResponse().withStatusMessage("OK")
                 .withHeader("Content-Type", "application/json; encoding=utf-8")));
         final Response response = connect("/get?foo=bar");
         assertThat(response.getRequestMethod(), is("GET"));
@@ -142,7 +142,7 @@ class HttpClientTest {
         assertThat(response.getHeaderField("Content-TYPE"), is("application/json; encoding=utf-8"));
         assertThat(response.getHeaderFields().get("Content-Type"), is(Collections.singletonList("application/json; encoding=utf-8")));
         assertThat(response.getHeaderFields().get("Content-TYPE"), is(Collections.singletonList("application/json; encoding=utf-8")));
-        localServer.verify(getRequestedFor(pattern)
+        wireMockRuntimeInfo.getWireMock().verifyThat(getRequestedFor(pattern)
                 .withQueryParam("foo", equalTo("bar"))
                 .withoutHeader("Cache-Control")
                 .withoutHeader("Pragma"));
@@ -155,9 +155,9 @@ class HttpClientTest {
     @Test
     void testHeaders() throws IOException {
         final UrlPattern pattern = urlEqualTo("/headers");
-        localServer.stubFor(get(pattern).willReturn(aResponse()));
+        wireMockRuntimeInfo.getWireMock().register(get(pattern).willReturn(aResponse()));
         connect("/headers");
-        localServer.verify(getRequestedFor(pattern)
+        wireMockRuntimeInfo.getWireMock().verifyThat(getRequestedFor(pattern)
                 .withHeader("Accept", equalTo("*/*"))
                 .withHeader("Accept-Encoding", equalTo("gzip, deflate"))
                 .withHeader("User-Agent", equalTo(Version.getInstance().getFullAgentString())));
@@ -169,7 +169,7 @@ class HttpClientTest {
      */
     @Test
     void testFetchUtf8Content() throws IOException {
-        localServer.stubFor(get(urlEqualTo("/encoding/utf8"))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/encoding/utf8"))
                 .willReturn(aResponse().withBody("∀x∈ℝ: UTF-8 encoded sample plain-text file")));
         final Response response = connect("/encoding/utf8");
         assertThat(response.getResponseCode(), is(200));
@@ -185,7 +185,7 @@ class HttpClientTest {
     @Test
     void testPost() throws IOException {
         final UrlPattern pattern = urlEqualTo("/post");
-        localServer.stubFor(post(pattern).willReturn(aResponse()));
+        wireMockRuntimeInfo.getWireMock().register(post(pattern).willReturn(aResponse()));
         final String text = "Hello World!\nGeetings from JOSM, the Java OpenStreetMap Editor";
         final Response response = HttpClient.create(url("/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
@@ -194,7 +194,7 @@ class HttpClientTest {
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getRequestMethod(), is("POST"));
-        localServer.verify(postRequestedFor(pattern).withRequestBody(equalTo(text)));
+        wireMockRuntimeInfo.getWireMock().verifyThat(postRequestedFor(pattern).withRequestBody(equalTo(text)));
     }
 
     /**
@@ -204,7 +204,7 @@ class HttpClientTest {
     @Test
     void testPostZero() throws IOException {
         final UrlPattern pattern = urlEqualTo("/post");
-        localServer.stubFor(post(pattern).willReturn(aResponse()));
+        wireMockRuntimeInfo.getWireMock().register(post(pattern).willReturn(aResponse()));
         final byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
         final Response response = HttpClient.create(url("/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
@@ -213,7 +213,7 @@ class HttpClientTest {
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getRequestMethod(), is("POST"));
-        localServer.verify(postRequestedFor(pattern).withRequestBody(binaryEqualTo(bytes)));
+        wireMockRuntimeInfo.getWireMock().verifyThat(postRequestedFor(pattern).withRequestBody(binaryEqualTo(bytes)));
     }
 
     @Test
@@ -264,25 +264,26 @@ class HttpClientTest {
     void testRedirectsToDifferentSite(String authorization) throws IOException {
         final String localhost = "localhost";
         final String localhostIp = "127.0.0.1";
-        final String otherServer = this.localServer.baseUrl().contains(localhost) ? localhostIp : localhost;
-        final UUID redirect = this.localServer.stubFor(get(urlEqualTo("/redirect/other-site"))
+        final String otherServer = this.wireMockRuntimeInfo.getHttpBaseUrl().contains(localhost) ? localhostIp : localhost;
+        final UUID redirect = this.wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/redirect/other-site"))
                 .willReturn(aResponse().withStatus(302).withHeader(
-                        "Location", localServer.url("/same-site/other-site")))).getId();
-        final UUID sameSite = this.localServer.stubFor(get(urlEqualTo("/same-site/other-site"))
+                        "Location", wireMockRuntimeInfo.getHttpBaseUrl() + "/same-site/other-site"))).getId();
+        final UUID sameSite = this.wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/same-site/other-site"))
                 .willReturn(aResponse().withStatus(302).withHeader(
-                        "Location", localServer.url("/other-site")
+                        "Location", (this.wireMockRuntimeInfo.getHttpBaseUrl() + "/other-site")
                                 .replace(otherServer == localhost ? localhostIp : localhost, otherServer)))).getId();
-        final UUID otherSite = this.localServer.stubFor(get(urlEqualTo("/other-site"))
+        final UUID otherSite = this.wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/other-site"))
                 .willReturn(aResponse().withStatus(200).withBody("other-site-here"))).getId();
         final HttpClient client = HttpClient.create(url("/redirect/other-site"));
         client.setHeader("Authorization", authorization);
         try {
             client.connect();
-            this.localServer.getServeEvents();
-            final ServeEvent first = this.localServer.getServeEvents(ServeEventQuery.forStubMapping(redirect)).getRequests().get(0);
-            final ServeEvent second = this.localServer.getServeEvents(ServeEventQuery.forStubMapping(sameSite)).getRequests().get(0);
-            final ServeEvent third = this.localServer.getServeEvents(ServeEventQuery.forStubMapping(otherSite)).getRequests().get(0);
-            assertAll(() -> assertEquals(3, this.localServer.getServeEvents().getRequests().size()),
+            final WireMock wireMock = this.wireMockRuntimeInfo.getWireMock();
+            wireMock.getServeEvents();
+            final ServeEvent first = wireMock.getServeEvents(ServeEventQuery.forStubMapping(redirect)).get(0);
+            final ServeEvent second = wireMock.getServeEvents(ServeEventQuery.forStubMapping(sameSite)).get(0);
+            final ServeEvent third = wireMock.getServeEvents(ServeEventQuery.forStubMapping(otherSite)).get(0);
+            assertAll(() -> assertEquals(3, wireMock.getServeEvents().size()),
                     () -> assertEquals(authorization, first.getRequest().getHeader("Authorization"),
                     "Authorization is expected for the first request: " + first.getRequest().getUrl()),
                     () -> assertEquals(authorization, second.getRequest().getHeader("Authorization"),
@@ -388,7 +389,7 @@ class HttpClientTest {
      */
     @Test
     void testGzip() throws IOException {
-        localServer.stubFor(get(urlEqualTo("/gzip")).willReturn(aResponse().withBody("foo")));
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/gzip")).willReturn(aResponse().withBody("foo")));
         final Response response = connect("/gzip");
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentEncoding(), is("gzip"));
@@ -403,13 +404,13 @@ class HttpClientTest {
     void testOpenUrlGzip() throws IOException {
         final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.gz");
         final byte[] gpx = Files.readAllBytes(path);
-        localServer.stubFor(get(urlEqualTo("/trace/1613906/data"))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/trace/1613906/data"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("content-type", "application/x-gzip")
                         .withBody(gpx)));
 
-        final URL url = new URL(localServer.url("/trace/1613906/data"));
+        final URL url = new URL(wireMockRuntimeInfo.getHttpBaseUrl() + "/trace/1613906/data");
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
             assertThat(x.readLine(), startsWith("<?xml version="));
         }
@@ -423,13 +424,13 @@ class HttpClientTest {
     void testOpenUrlBzip() throws IOException {
         final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.bz2");
         final byte[] gpx = Files.readAllBytes(path);
-        localServer.stubFor(get(urlEqualTo("/trace/785544/data"))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/trace/785544/data"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("content-type", "application/x-bzip2")
                         .withBody(gpx)));
 
-        final URL url = new URL(localServer.url("/trace/785544/data"));
+        final URL url = new URL(wireMockRuntimeInfo.getHttpBaseUrl() + "/trace/785544/data");
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
             assertThat(x.readLine(), startsWith("<?xml version="));
         }
@@ -443,14 +444,14 @@ class HttpClientTest {
     void testOpenUrlBzipAccordingToContentDisposition() throws IOException {
         final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.bz2");
         final byte[] gpx = Files.readAllBytes(path);
-        localServer.stubFor(get(urlEqualTo("/trace/1350010/data"))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/trace/1350010/data"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("content-type", "application/octet-stream")
                         .withHeader("content-disposition", "attachment; filename=\"1350010.gpx.bz2\"")
                         .withBody(gpx)));
 
-        final URL url = new URL(localServer.url("/trace/1350010/data"));
+        final URL url = new URL(wireMockRuntimeInfo.getHttpBaseUrl() + "/trace/1350010/data");
         try (BufferedReader x = HttpClient.create(url).connect()
                 .uncompress(true).uncompressAccordingToContentDisposition(true).getContentReader()) {
             assertThat(x.readLine(), startsWith("<?xml version="));
@@ -481,7 +482,7 @@ class HttpClientTest {
     }
 
     private void mockDelay(int seconds) {
-        localServer.stubFor(get(urlEqualTo("/delay/" + seconds))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/delay/" + seconds))
                 .willReturn(aResponse().withFixedDelay(1000 * seconds)));
     }
 
@@ -489,11 +490,11 @@ class HttpClientTest {
         final String prefix = absolute ? "absolute" : "relative";
         for (int i = n; i > 0; i--) {
             final String location = "/" + prefix + "-redirect/" + (i-1);
-            localServer.stubFor(get(urlEqualTo("/" + prefix + "-redirect/" + i))
+            wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/" + prefix + "-redirect/" + i))
                     .willReturn(aResponse().withStatus(302).withHeader(
-                            "Location", absolute ? localServer.url(location) : location)));
+                            "Location", absolute ? wireMockRuntimeInfo.getHttpBaseUrl() + location : location)));
         }
-        localServer.stubFor(get(urlEqualTo("/" + prefix + "-redirect/0"))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/" + prefix + "-redirect/0"))
                 .willReturn(aResponse().withHeader("foo", "bar")));
     }
 
@@ -502,7 +503,7 @@ class HttpClientTest {
     }
 
     private Response doTestHttp(int responseCode, String message, String body, Map<String, String> headersMap) throws IOException {
-        localServer.stubFor(get(urlEqualTo("/status/" + responseCode))
+        wireMockRuntimeInfo.getWireMock().register(get(urlEqualTo("/status/" + responseCode))
                 .willReturn(aResponse().withStatus(responseCode).withStatusMessage(message).withBody(body).withHeaders(
                         new HttpHeaders(headersMap.entrySet().stream().map(
                                 e -> new HttpHeader(e.getKey(), e.getValue())).collect(Collectors.toList())))));
@@ -521,6 +522,6 @@ class HttpClientTest {
     }
 
     private URL url(String path) throws MalformedURLException {
-        return new URL(localServer.url(path));
+        return new URL(wireMockRuntimeInfo.getHttpBaseUrl() + path);
     }
 }
