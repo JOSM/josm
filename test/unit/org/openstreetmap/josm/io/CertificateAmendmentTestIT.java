@@ -74,7 +74,7 @@ class CertificateAmendmentTestIT {
      */
     @Test
     void testDutchGovernment() throws IOException {
-        connect("https://geodata.nationaalgeoregister.nl", true);
+        connect("https://www.nationaalgeoregister.nl", true);
     }
 
     /**

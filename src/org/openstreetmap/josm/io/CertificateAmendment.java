@@ -157,11 +157,6 @@ public final class CertificateAmendment {
      * </ul>
      */
     private static final NativeCertAmend[] PLATFORM_CERT_AMEND = {
-        // #14649 - Government of Netherlands - for PDOK aerial imagery at ​https://geodata.nationaalgeoregister.nl (expires 2028)
-        new NativeCertAmend(Arrays.asList("Government of Netherlands G3", "Staat der Nederlanden Root CA - G3"),
-                "Staat_der_Nederlanden_Root_CA_-_G3.crt",
-                "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428",
-                "https://roottest-g3.pkioverheid.nl"),
         // #15178 - Trusted and used by French Government - for cadastre - https://www.certigna.fr/autorites/index.xhtml?ac=Racine#lracine
         // (expires 2027, should be in Java 21)
         new NativeCertAmend(Collections.singleton("Certigna"),
