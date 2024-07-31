@@ -2530,4 +2530,31 @@ area[parking:orientation][orientation]["parking:orientation"!=*orientation] {
   suggestAlternative: "{1.key}";
 }
 
+way[cycleway=opposite],
+way[cycleway:left=opposite],
+way[cycleway:right=opposite],
+way[cycleway:both=opposite] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  fixAdd: "oneway:bicycle=no";
+  fixRemove: "{0.key}";
+  /* No automated addition of e.g. cycleway:both=no for cycleway=opposite as it may already be tagged with e.g. cycleway:left=lane */
+}
+way[cycleway:left][cycleway:left^=opposite_],
+way[cycleway:right][cycleway:right^=opposite_] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  /* No fix: unambiguous definition */
+}
+way[cycleway][cycleway^=opposite_]:righthandtraffic {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "oneway:bicycle=no + cycleway:right=* + cycleway:left=* + cycleway:left:oneway=-1";
+}
+way[cycleway][cycleway^=opposite_]!:righthandtraffic {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "oneway:bicycle=no + cycleway:right=* + cycleway:left=* + cycleway:right:oneway=-1";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
