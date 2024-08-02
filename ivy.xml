@@ -36,15 +36,11 @@
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2024.7.8"/>
         <!-- sources->sources -->
         <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.20"/>
-        <dependency conf="sources->sources" org="javax.json" name="javax.json-api" rev="1.1.4"/>
-        <dependency conf="sources->sources" org="org.glassfish" name="javax.json" rev="1.1.4"/>
         <dependency conf="sources->sources" org="jakarta.json" name="jakarta.json-api" rev="2.1.3"/>
         <dependency conf="sources->sources" org="org.eclipse.parsson" name="parsson" rev="1.1.6"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-jcs3-core" rev="3.2.1"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-compress" rev="1.26.2"/>
         <dependency conf="sources->sources" org="jakarta.annotation" name="jakarta.annotation-api" rev="2.1.1" />
-        <!-- jsr305 has some source files with non-free CC-BY-2.5 license. Remove after 2024-06-01 to give plugins time to migrate. See #23220 for details -->
-        <dependency conf="sources->sources" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.9"/>
         <dependency conf="sources->sources" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
         <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.19.0" transitive="false"/>
