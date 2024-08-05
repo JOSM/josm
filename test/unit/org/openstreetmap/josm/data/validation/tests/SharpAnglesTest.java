@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
@@ -36,6 +37,7 @@ class SharpAnglesTest {
     public void setUp() throws Exception {
         angles = new SharpAngles();
         angles.initialize();
+        angles.startTest(NullProgressMonitor.INSTANCE);
     }
 
     /**
