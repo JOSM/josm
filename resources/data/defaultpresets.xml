@@ -2690,6 +2690,7 @@
                 <text key="aerialway:occupancy" text="Number of people per car" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
                 <check key="aerialway:heating" text="Has heating?" />
+                <combo key="usage" text="Usage" values="industrial,freight,tourism" values_context="usage" values_searchable="true" />
                 <space />
                 <text key="operator" text="Operator" />
                 <reference ref="oh" />
@@ -2707,6 +2708,7 @@
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
                 <check key="aerialway:bubble" text="Has bubble?" />
                 <check key="aerialway:heating" text="Has heating?" />
+                <combo key="usage" text="Usage" values="industrial,freight,tourism" values_context="usage" values_searchable="true" />
                 <space />
                 <text key="operator" text="Operator" />
                 <reference ref="oh" />
@@ -2779,6 +2781,7 @@
             <space />
             <key key="aerialway" value="goods" />
             <optional>
+                <combo key="usage" text="Usage" values="industrial,freight,tourism" values_context="usage" values_searchable="true" />
                 <reference ref="name_ref_operator" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
             </optional>
@@ -2788,6 +2791,8 @@
             <space />
             <key key="aerialway" value="zip_line" />
             <optional>
+                <combo key="usage" text="Usage" values="industrial,freight,tourism" values_context="usage" values_searchable="true" />
+                <space />
                 <reference ref="name_ref_operator" />
                 <reference ref="oh" />
                 <reference ref="fee" />
@@ -2800,12 +2805,14 @@
             <link wiki="Tag:aerialway=station" />
             <space />
             <key key="aerialway" value="station" />
+            <combo key="usage" text="Usage" values="industrial,freight,tourism" values_context="usage" values_searchable="true" />
             <reference ref="name_ref_operator" />
         </item> <!-- Station -->
         <item name="Pylon" icon="presets/transport/aerialway/pylon.svg" type="node" preset_name_label="true">
             <link wiki="Tag:aerialway=pylon" />
             <space />
             <key key="aerialway" value="pylon" />
+            <combo key="usage" text="Usage" values="industrial,freight,tourism" values_context="usage" values_searchable="true" />
             <reference ref="name_ref" />
         </item> <!-- Pylon -->
     </group> <!-- Aerialway -->

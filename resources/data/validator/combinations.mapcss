@@ -556,7 +556,7 @@ way[highway][natural][natural!=ridge],
 
 /* {0.key} without {1.key} or {2.key} see #10140 */
 *[building:levels][!building][!building:part],
-way[usage][!railway][!waterway][route!=railway][man_made!=pipeline] {
+way[usage][!railway][!waterway][route!=railway][man_made!=pipeline][!aerialway] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
   group: tr("missing tag");
 }
