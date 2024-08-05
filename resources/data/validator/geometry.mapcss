@@ -282,8 +282,6 @@ node:unconnected:in-downloaded-area[railway=buffer_stop],
 node:unconnected:in-downloaded-area[railway=crossing],
 node:unconnected:in-downloaded-area[railway=level_crossing],
 node:unconnected:in-downloaded-area[railway=milestone],
-node:unconnected:in-downloaded-area[railway=railway_crossing],
-node:unconnected:in-downloaded-area[railway=switch],
 node:unconnected:in-downloaded-area[public_transport=stop_position],
 node:unconnected:in-downloaded-area[aeroway=holding_position],
 node:unconnected:in-downloaded-area[noexit],
@@ -423,4 +421,19 @@ way[man_made=pier] > node {
 way[route=ferry]!:closed >[index= 1] node[amenity!=ferry_terminal][man_made!=pier]!.node_in_terminal_pier!.node_in_ferry_bridge_tunnel:in-downloaded-area,
 way[route=ferry]!:closed >[index=-1] node[amenity!=ferry_terminal][man_made!=pier]!.node_in_terminal_pier!.node_in_ferry_bridge_tunnel:in-downloaded-area { 
   throwWarning: tr("Ferry route is not connected to a ferry terminal or branches.");
+}
+
+/* #21801 */
+way[railway][railway !~ /^(turntable|traverser|roundhouse|workshop|platform)$/] > node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) > 2]:connection,
+way[railway][railway !~ /^(turntable|traverser|roundhouse|workshop|platform)$/] >[index!=1][index!=-1] node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) == 2]:connection {
+  set missing_switch_railway_crossing;
+}
+node.missing_switch_railway_crossing {
+  throwWarning: tr("Railways connection node without {0} or {1}", "railway=switch", "railway=railway_crossing");
+  group: tr("missing tag");
+}
+node[railway=railway_crossing]!:connection:in-downloaded-area,
+node[railway=switch]!:connection:in-downloaded-area {
+  throwWarning: tr("{0}", "{0.tag}");
+  group: tr("Node should be connected to two or more ways");
 }
