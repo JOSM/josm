@@ -67,7 +67,8 @@ way:closed[aeroway=helipad][area?] {
 }
 
 /* see ticket #7639 -- Warn when a node has the same tags as its parent way. */
-way >:sameTags node:tagged {
+/* But don't warn on barrier tags -- a common mapping method will have a barrier on the routable way and then the micromapped barrier */
+way[!barrier] >:sameTags node:tagged {
   throwWarning: tr("Nodes duplicating parent way tags");
 }
 

@@ -413,6 +413,16 @@ node[barrier=gate] {
     icon-image: "presets/barrier/gate.svg";
     set icon_z17;
 }
+way[barrier=gate],
+way[barrier=lift_gate],
+way[barrier=swing_gate],
+way[barrier=hampshire_gate],
+way[barrier=bump_gate],
+way[barrier=kissing_gate],
+way[barrier=wicket_gate] {
+    width: 2;
+    color: barrier-opening#88F050;
+}
 way[barrier=yes],
 way[barrier=hedge],
 way[barrier=fence],
@@ -499,6 +509,10 @@ node[barrier=swing_gate] {
 }
 node[barrier=kissing_gate] {
     icon-image: "presets/barrier/kissing_gate.svg";
+    set icon_z17;
+}
+node[barrier=wicket_gate] {
+    icon-image: "presets/barrier/wicket_gate.svg";
     set icon_z17;
 }
 node[barrier=height_restrictor] {
@@ -615,7 +629,8 @@ way[highway=unclassified] {
     z-index: 0.03;
     color: street#c0c0c0;
 }
-way[highway=escape] {
+way[highway=escape],
+way[highway=emergency_bay] {
     width: 3;
     color: street#c0c0c0;
     dashes: 3,3;
@@ -829,7 +844,8 @@ node[highway=crossing][crossing:island=yes] {
     icon-image: "presets/vehicle/crossing_island.svg";
     set icon_z17;
 }
-node[highway=crossing][crossing=unmarked] {
+node[highway=crossing][crossing=unmarked],
+node[highway=crossing][crossing=informal] {
     icon-image: "presets/vehicle/crossing_unmarked.svg";
     set icon_z17;
 }
@@ -946,6 +962,10 @@ node[highway=turning_loop] {
 }
 node[highway=passing_place] {
     icon-image: "presets/vehicle/passing_place.svg";
+    set icon_z17;
+}
+node[highway=emergency_bay] {
+    icon-image: "presets/vehicle/emergency_bay.svg";
     set icon_z17;
 }
 area[highway=elevator] {
@@ -2377,6 +2397,7 @@ area[shop=confectionery],
 area[shop=chocolate],
 area[shop=pastry],
 area[shop=copyshop],
+area[shop=craft],
 area[shop=curtain],
 area[shop=cycle_repair],
 area[shop=department_store],
@@ -2453,6 +2474,7 @@ area[shop=storage_rental],
 area[shop=music],
 area[shop=weapons],
 area[shop=funeral_directors],
+area[shop=agrarian],
 area[shop=wine],
 area[shop=farm],
 area[shop=tattoo],
@@ -2563,6 +2585,10 @@ node[shop=pastry] {
 }
 node[shop=copyshop] {
     icon-image: "presets/shop/copyshop.svg";
+    set icon_z17;
+}
+node[shop=craft] {
+    icon-image: "presets/shop/craft.svg";
     set icon_z17;
 }
 node[shop=curtain] {
@@ -2869,6 +2895,10 @@ node[shop=funeral_directors] {
     icon-image: "presets/shop/funeral_directors.svg";
     set icon_z17;
 }
+node[shop=agrarian] {
+    icon-image: "presets/shop/agrarian.svg";
+    set icon_z17;
+}
 node[shop=wine] {
     icon-image: "presets/shop/wine.svg";
     set icon_z17;
@@ -3081,6 +3111,9 @@ way[amenity=bicycle_parking] {
 area[amenity=parking_space] {
     fill-color: parking_space#f7efb8;
 }
+area[amenity=trolley_bay] {
+    fill-color: trolley_bay#b8d8f7;
+}
 area[amenity=parking],
 area[amenity=motorcycle_parking],
 area[amenity=bicycle_rental],
@@ -3096,6 +3129,10 @@ area[amenity=fuel] {
 }
 node[amenity=parking_space] {
     icon-image: "presets/vehicle/parking/parking_space.svg";
+    set icon_z17;
+}
+node[amenity=trolley_bay] {
+    icon-image: "presets/vehicle/parking/trolley_bay.svg";
     set icon_z17;
 }
 node[amenity=parking] {
@@ -3276,6 +3313,7 @@ area[amenity=university],
 area[amenity=college],
 area[amenity=kindergarten],
 area[amenity=language_school],
+area[amenity=music_school],
 area[amenity=driving_school] {
     fill-color: amenity_light#f7efb7;
 }
@@ -3405,6 +3443,10 @@ node[amenity=language_school] {
 }
 node[amenity=driving_school] {
     icon-image: "presets/education/driving_school.svg";
+    set icon_z17;
+}
+node[amenity=music_school] {
+    icon-image: "presets/education/music_school.svg";
     set icon_z17;
 }
 area[amenity=pharmacy],
@@ -4753,6 +4795,14 @@ node[sport=chess] {
 }
 node[sport=climbing] {
     icon-image: "presets/sport/climbing.svg";
+    set icon_z17;
+}
+node[climbing=route_bottom] {
+    icon-image: "presets/sport/climbing_route_bottom.svg";
+    set icon_z17;
+}
+node[climbing=route_top] {
+    icon-image: "presets/sport/climbing_route_top.svg";
     set icon_z17;
 }
 node[sport=cricket] {
