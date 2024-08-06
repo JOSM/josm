@@ -38,9 +38,14 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -805,7 +810,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      */
     private void tagCheckReal(TaggingPreset preset, OsmPrimitive p, LatLon center, RegionSpecific data) {
         // First, check if we aren't in the region for the tag
-        if (latLonInRegions(center, data.regions()) == data.exclude_regions()) {
+        if (latLonInRegions(center, data.regions()) == data.exclude_regions()
+                // Check to ensure that no nodes are in the region if the center is not in the region
+                && !primitiveInRegions(p, data.regions(), data.exclude_regions())) {
             final String key;
             final String value;
             if (data instanceof PresetListEntry) {
@@ -839,15 +846,33 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     /**
+     * Check if a primitive is in the specified regions
+     * @param primitive The primitive to recursively check
+     * @param regions The regions to look for
+     * @param excludeRegions Whether or not we are looking to exclude the regions (see {@link RegionSpecific#exclude_regions()})
+     * @return {@code true} if the primitive is in a region that it should not be
+     */
+    private static boolean primitiveInRegions(IPrimitive primitive, Collection<String> regions, boolean excludeRegions) {
+        if (primitive instanceof INode) {
+            return latLonInRegions((INode) primitive, regions) == excludeRegions;
+        } else if (primitive instanceof IWay) {
+            return ((IWay<?>) primitive).getNodes().stream().anyMatch(n -> primitiveInRegions(n, regions, excludeRegions));
+        } else if (primitive instanceof IRelation) {
+            return ((IRelation<?>) primitive).getMemberPrimitivesList().stream().anyMatch(p -> primitiveInRegions(p, regions, excludeRegions));
+        }
+        throw new IllegalArgumentException("Unknown primitive type: " + primitive);
+    }
+
+    /**
      * Check if the specified latlon is inside any of the specified regions
      * @param latLon The {@link LatLon} to check
      * @param regions The regions to see if the {@link LatLon} is in
      * @return {@code true} if the coordinate is inside any of the regions
      */
-    private static boolean latLonInRegions(LatLon latLon, Collection<String> regions) {
+    private static boolean latLonInRegions(ILatLon latLon, Collection<String> regions) {
         if (regions != null) {
             for (String region : regions) {
-                if (Territories.isIso3166Code(region, latLon)) {
+                if (Territories.isIso3166Code(region, latLon instanceof LatLon ? (LatLon) latLon : new LatLon(latLon))) {
                     return true;
                 }
             }
