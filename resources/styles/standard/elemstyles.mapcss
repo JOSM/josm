@@ -1637,6 +1637,10 @@ node[man_made=adit] {
     icon-image: "presets/landmark/adit.svg";
     set icon_z17;
 }
+node[man_made=cairn] {
+    icon-image: "presets/landmark/cairn.svg";
+    set icon_z17;
+}
 area[man_made=pier]:closed {
     fill-color: pier#660000;
 }

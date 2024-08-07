@@ -6247,6 +6247,16 @@
             <text key="name" text="Name" />
             <combo key="resource" text="Resource" values="aggregate,bauxite,basalt,clay,coal,copper,dimension_stone,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,tin,zinc,zircon" />
         </item> <!-- Heap -->
+        <item name="Cairn" icon="presets/landmark/cairn.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:man_made=cairn" />
+            <space />
+            <text key="name" text="Name" />
+            <text key="height" text="Height (meters)" length="7" />
+            <text key="ele" text="Elevation (meters)" length="10" />
+            <key key="man_made" value="cairn" />
+            <text key="description" text="Description" />
+            <combo key="cairn" values="small,clearance" text="Type" text_context="Tag:man_made=cairn" values_context="Tag:man_made=cairn" />
+        </item>
         <item name="Adit" icon="presets/landmark/adit.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=adit" />
             <space />
