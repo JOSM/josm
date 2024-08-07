@@ -232,10 +232,10 @@ class TagCheckerTest {
 
     @Test
     void testRegionKey() throws IOException {
-        final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=crossing crossing_ref=zebra"));
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node payment:ep_avant=yes"));
         assertEquals(1, errors.size());
         assertEquals("Key from a preset is invalid in this region", errors.get(0).getMessage());
-        assertEquals("Preset Pedestrian Crossing should not have the key crossing_ref", errors.get(0).getDescription());
+        assertEquals("Preset Payment Methods should not have the key payment:ep_avant", errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
 

@@ -416,12 +416,14 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                         addPresetValue((KeyedItem) i);
                     } else if (i instanceof CheckGroup) {
                         for (Check c : ((CheckGroup) i).checks) {
+                            if (!"none".equals(c.match))
+                                minData.add(c);
                             addPresetValue(c);
                         }
                     }
                 }
                 if (!minData.isEmpty()) {
-                    presetIndex .put(p, minData);
+                    presetIndex.put(p, minData);
                 }
             }
         }
@@ -854,7 +856,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      */
     private static boolean primitiveInRegions(IPrimitive primitive, Collection<String> regions, boolean excludeRegions) {
         if (primitive instanceof INode) {
-            return latLonInRegions((INode) primitive, regions) == excludeRegions;
+            // 4 options:
+            // In Region    | excluding region  | expected
+            // true         | false             | true
+            // true         | true              | false
+            // false        | false             | false
+            // false        | true              | true
+            return latLonInRegions((INode) primitive, regions) != excludeRegions;
         } else if (primitive instanceof IWay) {
             return ((IWay<?>) primitive).getNodes().stream().anyMatch(n -> primitiveInRegions(n, regions, excludeRegions));
         } else if (primitive instanceof IRelation) {

@@ -195,10 +195,10 @@
         <reference ref="oh_wheelchair" />
     </chunk>
     <chunk id="toilets">
-        <check key="toilets" />
-        <check key="toilets:unisex" />
-        <combo key="toilets:wheelchair" values="yes,no,limited" values_context="toilets" />
-        <combo key="toilets:access" values="customers,yes,no" />
+        <check key="toilets" text="Toilets" />
+        <check key="toilets:unisex" text="Gender neutral" />
+        <combo key="toilets:wheelchair" values="yes,no,limited" values_context="toilets" text="Wheelchair accessible" />
+        <combo key="toilets:access" values="customers,yes,no" text="Access" />
     </chunk>
     <chunk id="color">
         <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" values_context="color" />
@@ -8387,7 +8387,7 @@
             <key key="shop" value="agrarian" />
             <reference ref="name_oh_wheelchair" />
             <optional>
-                <combo key="agrarian" values="yes,pesticide,fertilizer,seed,feed,tools,machine_parts,agricultural_machinery" values_context="Tag:shop=agrarian" />
+                <combo key="agrarian" values="yes,pesticide,fertilizer,seed,feed,tools,machine_parts,agricultural_machinery" values_context="Tag:shop=agrarian" text="Products" />
             </optional>
             <reference ref="link_contact_address_payment" />
         </item>
