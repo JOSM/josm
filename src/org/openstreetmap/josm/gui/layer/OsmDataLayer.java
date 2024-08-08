@@ -49,6 +49,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.commons.jcs3.access.CacheAccess;
+import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -56,8 +58,10 @@ import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
+import org.openstreetmap.josm.data.IBounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -70,6 +74,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -77,7 +82,10 @@ import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.HighlightUpdateListener;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
@@ -91,7 +99,10 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.AbstractMapRenderer;
+import org.openstreetmap.josm.data.osm.visitor.paint.ImageCache;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledTiledMapRenderer;
+import org.openstreetmap.josm.data.osm.visitor.paint.TileZXY;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -104,6 +115,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.PrimitiveHoverListener;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.data.OsmLayerTransferData;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -144,7 +157,10 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @author imi
  * @since 17
  */
-public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, DataSelectionListener, HighlightUpdateListener {
+public class OsmDataLayer extends AbstractOsmDataLayer
+        implements Listener, DataSelectionListener, HighlightUpdateListener, PrimitiveHoverListener {
+    private static final int MAX_ZOOM = 30;
+    private static final int OVER_ZOOM = 2;
     private static final int HATCHED_SIZE = 15;
     // U+2205 EMPTY SET
     private static final String IS_EMPTY_SYMBOL = "\u2205";
@@ -155,6 +171,15 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     private boolean requiresUploadToServer;
     /** Flag used to know if the layer is being uploaded */
     private final AtomicBoolean isUploadInProgress = new AtomicBoolean(false);
+    /**
+     * A cache used for painting
+     */
+    private final CacheAccess<TileZXY, ImageCache> cache = JCSCacheManager.getCache("osmDataLayer:" + System.identityHashCode(this));
+    /** The map paint index that was painted (used to invalidate {@link #cache}) */
+    private int lastDataIdx;
+    /** The last zoom level (we invalidate all tiles when switching layers) */
+    private int lastZoom;
+    private boolean hoverListenerAdded;
 
     /**
      * List of validation errors in this layer.
@@ -497,13 +522,21 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * Draw nodes last to overlap the ways they belong to.
      */
     @Override public void paint(final Graphics2D g, final MapView mv, Bounds box) {
+        if (!hoverListenerAdded) {
+            MainApplication.getMap().mapView.addPrimitiveHoverListener(this);
+            hoverListenerAdded = true;
+        }
         boolean active = mv.getLayerManager().getActiveLayer() == this;
         boolean inactive = !active && Config.getPref().getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && mv.isVirtualNodesEnabled();
+        paintHatch(g, mv, active);
+        paintData(g, mv, box, inactive, virtual);
+    }
 
+    private void paintHatch(final Graphics2D g, final MapView mv, boolean active) {
         // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
-        if (active && DrawingPreference.SOURCE_BOUNDS_PROP.get() && !data.getDataSources().isEmpty()) {
+        if (active && Boolean.TRUE.equals(DrawingPreference.SOURCE_BOUNDS_PROP.get()) && !data.getDataSources().isEmpty()) {
             // initialize area with current viewport
             Rectangle b = mv.getBounds();
             // on some platforms viewport bounds seem to be offset from the left,
@@ -536,11 +569,43 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                 Logging.error(e);
             }
         }
+    }
 
+    private void paintData(final Graphics2D g, final MapView mv, Bounds box, boolean inactive, boolean virtual) {
+        // Used to invalidate cache
+        int zoom = getZoom(mv);
+        if (zoom != lastZoom) {
+            // We just mark the previous zoom as dirty before moving in.
+            // It means we don't have to traverse up/down z-levels marking tiles as dirty (this can get *very* expensive).
+            this.cache.getMatching("TileZXY\\{" + lastZoom + "/.*")
+                    .forEach((tile, imageCache) -> this.cache.put(tile, imageCache.becomeDirty()));
+        }
+        lastZoom = zoom;
         AbstractMapRenderer painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
-        painter.enableSlowOperations(mv.getMapMover() == null || !mv.getMapMover().movementInProgress()
-                || !PROPERTY_HIDE_LABELS_WHILE_DRAGGING.get());
-        painter.render(data, virtual, box);
+        if (!(painter instanceof StyledTiledMapRenderer) || zoom - OVER_ZOOM > Config.getPref().getInt("mappaint.fast_render.zlevel", 16)) {
+            painter.enableSlowOperations(mv.getMapMover() == null || !mv.getMapMover().movementInProgress()
+                    || !PROPERTY_HIDE_LABELS_WHILE_DRAGGING.get());
+        } else {
+            StyledTiledMapRenderer renderer = (StyledTiledMapRenderer) painter;
+            renderer.setCache(box, this.cache, zoom, (tile) -> {
+                /* This causes "bouncing". I'm not certain why.
+                if (oldState.equalsInWindow(mv.getState())) { (oldstate = mv.getState())
+                    final Point upperLeft = mv.getPoint(tile);
+                    final Point lowerRight = mv.getPoint(new TileZXY(tile.zoom(), tile.x() + 1, tile.y() + 1));
+                    GuiHelper.runInEDT(() -> mv.repaint(0, upperLeft.x, upperLeft.y, lowerRight.x - upperLeft.x, lowerRight.y - upperLeft.y));
+                }
+                 */
+                // Invalidate doesn't trigger an instant repaint, but putting this off lets us batch the repaints needed for multiple tiles
+                MainApplication.worker.submit(this::invalidate);
+            });
+
+            if (this.data.getMappaintCacheIndex() != this.lastDataIdx) {
+                this.cache.clear();
+                this.lastDataIdx = this.data.getMappaintCacheIndex();
+                Logging.trace("OsmDataLayer {0} paint cache cleared", this.getName());
+            }
+        }
+        painter.render(this.data, virtual, box);
         MainApplication.getMap().conflictDialog.paintConflicts(g, mv);
     }
 
@@ -1147,6 +1212,10 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         validationErrors.clear();
         removeClipboardDataFor(this);
         recentRelations.clear();
+        if (hoverListenerAdded) {
+            hoverListenerAdded = false;
+            MainApplication.getMap().mapView.removePrimitiveHoverListener(this);
+        }
     }
 
     protected static void removeClipboardDataFor(OsmDataLayer osm) {
@@ -1165,6 +1234,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     @Override
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
+        resetTiles(event.getPrimitives());
         invalidate();
         setRequiresSaveToFile(true);
         setRequiresUploadToServer(event.getDataset().requiresUploadToServer());
@@ -1172,7 +1242,117 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     @Override
     public void selectionChanged(SelectionChangeEvent event) {
+        Set<IPrimitive> primitives = new HashSet<>(event.getAdded());
+        primitives.addAll(event.getRemoved());
+        resetTiles(primitives);
         invalidate();
+    }
+
+    private void resetTiles(Collection<? extends IPrimitive> primitives) {
+        if (primitives.size() >= this.data.allNonDeletedCompletePrimitives().size() || primitives.size() > 100) {
+            dirtyAll();
+            return;
+        }
+        if (primitives.size() < 5) {
+            for (IPrimitive p : primitives) {
+                resetTiles(p);
+            }
+            return;
+        }
+        // Most of the time, a selection is going to be a big box.
+        // So we want to optimize for that case.
+        BBox box = null;
+        for (IPrimitive primitive : primitives) {
+            if (primitive == null || primitive.getDataSet() != this.getDataSet()) continue;
+            final Collection<? extends IPrimitive> referrers = primitive.getReferrers();
+            if (box == null) {
+                box = new BBox(primitive.getBBox());
+            } else {
+                box.addPrimitive(primitive, 0);
+            }
+            for (IPrimitive referrer : referrers) {
+                box.addPrimitive(referrer, 0);
+            }
+        }
+        if (box != null) {
+            resetBounds(box.getMinLat(), box.getMinLon(), box.getMaxLat(), box.getMaxLon());
+        }
+    }
+
+    private void resetTiles(IPrimitive p) {
+        if (p instanceof INode) {
+            resetBounds(getInvalidatedBBox((INode) p, null));
+        } else if (p instanceof IWay) {
+            IWay<?> way = (IWay<?>) p;
+            for (int i = 0; i < way.getNodesCount() - 1; i++) {
+                resetBounds(getInvalidatedBBox(way.getNode(i), way.getNode(i + 1)));
+            }
+        } else if (p instanceof IRelation<?>) {
+            for (IPrimitive member : ((IRelation<?>) p).getMemberPrimitivesList()) {
+                resetTiles(member);
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported primitive type: " + p.getClass().getName());
+        }
+    }
+
+    private BBox getInvalidatedBBox(INode first, INode second) {
+        final BBox bbox = new BBox(first);
+        if (second != null) {
+            bbox.add(second);
+        }
+        return bbox;
+    }
+
+    private void resetBounds(IBounds bbox) {
+        resetBounds(bbox.getMinLat(), bbox.getMinLon(), bbox.getMaxLat(), bbox.getMaxLon());
+    }
+
+    private void resetBounds(double minLat, double minLon, double maxLat, double maxLon) {
+        // Get the current zoom. Hopefully we aren't painting with a different navigatable component
+        final int currentZoom = lastZoom;
+        final AtomicInteger counter = new AtomicInteger();
+        TileZXY.boundsToTiles(minLat, minLon, maxLat, maxLon, currentZoom, 1).limit(100).forEach(tile -> {
+            final ImageCache imageCache = this.cache.get(tile);
+            if (imageCache != null && !imageCache.isDirty()) {
+                this.cache.put(tile, imageCache.becomeDirty());
+            }
+            counter.incrementAndGet();
+        });
+        if (counter.get() > 100) {
+            dirtyAll();
+        }
+    }
+
+    private void dirtyAll() {
+        this.cache.getMatching(".*").forEach((key, value) -> {
+            this.cache.remove(key);
+            this.cache.put(key, value.becomeDirty());
+        });
+    }
+
+    /**
+     * Get the zoom for a {@link NavigatableComponent}
+     * @param navigatableComponent The component to get the zoom from
+     * @return The zoom for the navigatable component
+     */
+    private static int getZoom(NavigatableComponent navigatableComponent) {
+        final double scale = navigatableComponent.getScale();
+        // We might have to fall back to the old method if user is reprojecting
+        // 256 is the "target" size, (TODO check HiDPI!)
+        final int targetSize = Config.getPref().getInt("mappaint.fast_render.tile_size", 256);
+        final double topResolution = 2 * Math.PI * OsmMercator.EARTH_RADIUS / targetSize;
+        int zoom;
+        for (zoom = 0; zoom < MAX_ZOOM; zoom++) { // Use something like imagery.{generic|tms}.max_zoom_lvl (20 is a bit too low for our needs)
+            if (scale > topResolution / Math.pow(2, zoom)) {
+                zoom = zoom > 0 ? zoom - 1 : zoom;
+                break;
+            }
+        }
+        // We paint at a few levels higher, note that the tiles are appropriately sized (if 256 is the "target" size, the tiles should be
+        // 64px square).
+        zoom += OVER_ZOOM;
+        return zoom;
     }
 
     @Override
@@ -1306,6 +1486,16 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     @Override
     public void highlightUpdated(HighlightUpdateEvent e) {
         invalidate();
+    }
+
+    @Override
+    public void primitiveHovered(PrimitiveHoverEvent e) {
+        List<IPrimitive> primitives = new ArrayList<>(2);
+        primitives.add(e.getHoveredPrimitive());
+        primitives.add(e.getPreviousPrimitive());
+        primitives.removeIf(Objects::isNull);
+        resetTiles(primitives);
+        this.invalidate();
     }
 
     @Override
