@@ -351,6 +351,7 @@ public class DataSetMerger {
             if (target.hasEqualSemanticAttributes(source, false)) {
                 target.setModified(false);
             }
+            target.setReferrersDownloaded(target.isReferrersDownloaded() || source.isReferrersDownloaded());
         } else if (source.isDeleted() != target.isDeleted()) {
             // target is modified and deleted state differs.
             // this has to be resolved manually.

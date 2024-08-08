@@ -13,10 +13,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -1356,4 +1360,29 @@ class DataSetMergerTest {
         assertEquals(w1b, visitor.getConflicts().iterator().next().getMy());
     }
 
+    static Stream<BiConsumer<Node, Node>> testNonRegression23846() {
+        return Stream.of(
+                (firstNode, secondNode) -> firstNode.setModified(true),
+                (firstNode, secondNode) -> { /* No modifications */ }
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testNonRegression23846(BiConsumer<Node, Node> nodeSetup) {
+        final Node firstNode = new Node(1234, 1);
+        final Node secondNode = new Node(1234, 1);
+        final DataSetMerger merge = new DataSetMerger(my, their);
+        firstNode.setCoor(LatLon.ZERO);
+        secondNode.setCoor(LatLon.ZERO);
+        nodeSetup.accept(firstNode, secondNode);
+        my.addPrimitive(firstNode);
+        their.addPrimitive(secondNode);
+        secondNode.setReferrersDownloaded(true);
+        assertFalse(firstNode.isReferrersDownloaded());
+        assertTrue(secondNode.isReferrersDownloaded());
+        merge.merge();
+        assertTrue(firstNode.isReferrersDownloaded());
+        assertTrue(secondNode.isReferrersDownloaded());
+    }
 }
