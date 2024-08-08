@@ -777,6 +777,8 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.w3c.*"/>
             <ignore classname="org.zeromq.*"/>
             <ignore classname="waffle.*"/>
+            <!-- Our installers include javafx -->
+            <ignore classname="javafx.*"/>
             <!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jaxb.*"/>
