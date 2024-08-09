@@ -706,6 +706,7 @@ public class MainApplication {
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
                 "\t--status-report                           "+ShowStatusReportAction.ACTION_DESCRIPTION+"\n\n"+
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
+                "\t--warn                                    "+tr("Print only warning or error messages to console")+"\n\n"+
                 "\t--skip-plugins                            "+tr("Skip loading plugins")+"\n\n"+
                 "\t--offline=" + Arrays.stream(OnlineResource.values()).map(OnlineResource::name).collect(
                         Collectors.joining("|", "<", ">")) + "\n" +
