@@ -965,6 +965,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         invalidate();
     }
 
+    /**
+     * Remove all cached error tiles
+     * @since 19192
+     */
+    public void clearErrorTiles() {
+        tileCache.clearErrorTiles();
+        invalidate();
+    }
+
     @Override
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
         boolean done = (infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0;
