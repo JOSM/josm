@@ -154,7 +154,7 @@ class ProjectionRegressionTest {
         }
 
         double fact = 1200;
-        if(Utils.getSystemProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("mac os x"))
+        if (Utils.getSystemProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("mac os x"))
             fact = 15000;
         for (TestData data : allData) {
             Projection proj = Projections.getProjectionByCode(data.code);
