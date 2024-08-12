@@ -40,6 +40,7 @@ public final class TileZXY implements ILatLon {
      * Get the x coordinate
      * @return The x coordinate for this tile
      */
+    @SuppressWarnings("PMD.ShortMethodName")
     public int x() {
         return this.x;
     }
@@ -48,6 +49,7 @@ public final class TileZXY implements ILatLon {
      * Get the y coordinate
      * @return The y coordinate for this tile
      */
+    @SuppressWarnings("PMD.ShortMethodName")
     public int y() {
         return this.y;
     }

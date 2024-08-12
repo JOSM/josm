@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -615,7 +614,7 @@ public class TagInfoExtract {
             }
 
             static Set<TagInfoTag.Type> forPresetTypes(Set<TaggingPresetType> types) {
-                return types == null ? new HashSet<>() : types.stream()
+                return types == null ? new EnumSet<>() : types.stream()
                         .map(Type::forPresetType)
                         .collect(Collectors.toCollection(() -> EnumSet.noneOf(Type.class)));
             }
