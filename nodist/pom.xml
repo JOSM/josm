@@ -17,7 +17,7 @@
         <sonar.host.url>https://josm.openstreetmap.de/sonar/</sonar.host.url>
         <sonar.projectKey>JOSM</sonar.projectKey>
         <jmockit.version>1.49.a</jmockit.version>
-        <pmd.version>7.3.0</pmd.version>
+        <pmd.version>7.4.0</pmd.version>
     </properties>
     <modules>
         <module>..</module>
@@ -243,7 +243,7 @@
             <dependency>
                 <groupId>org.openstreetmap.jmapviewer</groupId>
                 <artifactId>jmapviewer</artifactId>
-                <version>2.20</version>
+                <version>2.21</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -255,7 +255,7 @@
             <dependency>
                 <groupId>org.eclipse.parsson</groupId>
                 <artifactId>parsson</artifactId>
-                <version>1.1.6</version>
+                <version>1.1.7</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -267,7 +267,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.26.2</version>
+                <version>1.27.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -279,7 +279,7 @@
             <dependency>
                 <groupId>org.tukaani</groupId>
                 <artifactId>xz</artifactId>
-                <version>1.9</version>
+                <version>1.10</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -310,7 +310,7 @@
             <dependency>
                 <groupId>org.webjars.npm</groupId>
                 <artifactId>tag2link</artifactId>
-                <version>2024.7.8</version>
+                <version>2024.8.12</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -334,7 +334,7 @@
             <dependency>
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock</artifactId>
-                <version>3.8.0</version>
+                <version>3.9.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -358,13 +358,13 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.14.0</version>
+                <version>3.16.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
-                <version>4.2.1</version>
+                <version>4.2.2</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

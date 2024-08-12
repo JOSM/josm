@@ -43,9 +43,6 @@ with Apache license version 2.0.
 The Bzip2 code is from Apache Commons Compress and licensed
 with Apache license version 2.0.
 
-The signpost code (http://code.google.com/p/oauth-signpost/)
-is from Matthias Käppler and licensed with the Apache License 2.0.
-
 The mail/url validator routines use code from Apache Commons
 Validator which is licensed with Apache license version 2.0.
 
@@ -74,7 +71,7 @@ with MIT.
 
 The XZ code (https://tukaani.org/xz/java.html)
 is from Lasse Collin and Igor Pavlov
-and license free Public Domain.
+and license BSD Zero Clause License (0BSD).
 
 The Windows shortcut parsing code is from StackOverflow:
 - https://stackoverflow.com/a/9403438/2257172
