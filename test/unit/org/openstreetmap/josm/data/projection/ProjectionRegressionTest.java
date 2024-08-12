@@ -187,7 +187,8 @@ class ProjectionRegressionTest {
         // NAD83 / Colorado South (EPSG:26955): Projecting latlon(32.24604527892822,-125.93039495227096):
         // expected: eastnorth(-1004398.8994415681,24167.8944844745),
         // but got:  eastnorth(-1004398.8994415683,24167.894484478747)!
-        return Math.abs(d1 - d2) <= 1200 * Math.ulp(d1);
+        // MacOS has higher errors, otherwise 1200 would be enough
+        return Math.abs(d1 - d2) <= 1700 * Math.ulp(d1);
     }
 
     private static boolean equalsJava9(EastNorth en1, EastNorth en2) {
