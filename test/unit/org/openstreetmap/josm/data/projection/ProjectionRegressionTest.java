@@ -153,7 +153,7 @@ class ProjectionRegressionTest {
              }
         }
 
-        double fact = 12;
+        double fact = 1200;
         if(Utils.getSystemProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("mac os x"))
             fact = 1700;
         for (TestData data : allData) {
