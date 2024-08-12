@@ -614,9 +614,10 @@ public class TagInfoExtract {
             }
 
             static Set<TagInfoTag.Type> forPresetTypes(Set<TaggingPresetType> types) {
-                return types == null ? new EnumSet<>() : types.stream()
+                final EnumSet<TagInfoTag.Type> enums = EnumSet.noneOf(TagInfoTag.Type.class);
+                return types == null ? enums : types.stream()
                         .map(Type::forPresetType)
-                        .collect(Collectors.toCollection(() -> EnumSet.noneOf(Type.class)));
+                        .collect(Collectors.toCollection(() -> enums));
             }
         }
     }
