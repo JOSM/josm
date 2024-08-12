@@ -2959,6 +2959,14 @@ node[emergency=suction_point] {
     icon-image: "presets/emergency/suction_point.svg";
     set icon_z17;
 }
+node[emergency=life_ring] {
+    icon-image: "presets/emergency/life_ring.svg";
+    set icon_z17;
+}
+node[emergency=lifeguard] {
+    icon-image: "presets/emergency/lifeguard.svg";
+    set icon_z17;
+}
 node[emergency=emergency_ward_entrance] {
     icon-image: "presets/emergency/emergency_ward_entrance.svg";
     set icon_z17;
