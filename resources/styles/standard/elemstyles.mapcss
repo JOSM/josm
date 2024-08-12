@@ -2944,6 +2944,7 @@ node[shop=bag] {
 /* emergency tags */
 /******************/
 area[emergency=ambulance_station],
+area[emergency=lifeguard],
 area[emergency=water_tank] {
     fill-color: emergency#eeeeee;
 }
