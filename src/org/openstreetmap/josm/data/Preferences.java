@@ -439,7 +439,7 @@ public class Preferences extends AbstractPreferences {
 
         // Backup old preferences if there are old preferences
         if (initSuccessful && prefFile.exists() && prefFile.length() > 0) {
-            Utils.copyFile(prefFile, backupFile);
+            checkFileValidity(prefFile, f -> Utils.copyFile(f, backupFile));
         }
 
         try (PreferencesWriter writer = new PreferencesWriter(
@@ -450,10 +450,31 @@ public class Preferences extends AbstractPreferences {
         }
 
         File tmpFile = new File(prefFile + "_tmp");
-        Files.move(tmpFile.toPath(), prefFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        // Only replace the pref file if the _tmp file is valid
+        checkFileValidity(tmpFile, f -> Files.move(f.toPath(), prefFile.toPath(), StandardCopyOption.REPLACE_EXISTING));
 
         setCorrectPermissions(prefFile);
         setCorrectPermissions(backupFile);
+    }
+
+    /**
+     * Ensure that a preferences file is "ok" before copying/moving it over another preferences file
+     * @param file The file to check
+     * @param consumer The consumer that will perform the copy/move action
+     * @throws IOException If there is an issue reading/writing the file
+     */
+    private static void checkFileValidity(File file, ThrowingConsumer<File, IOException> consumer) throws IOException {
+        try {
+            // But don't back up if the current preferences are invalid.
+            // The validations are expensive (~2/3 CPU, ~1/3 memory), but this isn't a "hot" method
+            PreferencesReader.validateXML(file);
+            PreferencesReader reader = new PreferencesReader(file, false);
+            reader.parse();
+            consumer.accept(file);
+        } catch (SAXException | XMLStreamException e) {
+            Logging.trace(e);
+            Logging.debug("Invalid preferences file (" + file + ") due to: " + e.getMessage());
+        }
     }
 
     private static void setCorrectPermissions(File file) {
@@ -972,5 +993,19 @@ public class Preferences extends AbstractPreferences {
         synchronized (this) {
             saveOnPut = enable;
         }
+    }
+
+    /**
+     * A consumer that can throw an exception
+     * @param <T> The object type to accept
+     * @param <E> The throwable type
+     */
+    private interface ThrowingConsumer<T, E extends Throwable> {
+        /**
+         * Accept an object
+         * @param object The object to accept
+         * @throws E The exception that can be thrown
+         */
+        void accept(T object) throws E;
     }
 }
