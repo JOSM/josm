@@ -250,8 +250,8 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
 
         temporaryView.zoomTo(bounds.getCenter().getEastNorth(ProjectionRegistry.getProjection()), mapState.getScale());
         BufferedImage bufferedImage = Optional.ofNullable(nc.getGraphicsConfiguration())
-                .map(gc -> gc.createCompatibleImage(tileSize * xCount + xCount, tileSize * yCount + xCount, Transparency.TRANSLUCENT))
-                .orElseGet(() -> new BufferedImage(tileSize * xCount + xCount, tileSize * yCount + xCount, BufferedImage.TYPE_INT_ARGB));
+                .map(gc -> gc.createCompatibleImage(tileSize * xCount + xCount, tileSize * yCount + yCount, Transparency.TRANSLUCENT))
+                .orElseGet(() -> new BufferedImage(tileSize * xCount + xCount, tileSize * yCount + yCount, BufferedImage.TYPE_INT_ARGB));
         Graphics2D g2d = bufferedImage.createGraphics();
         try {
             g2d.setRenderingHints(Map.of(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
@@ -334,7 +334,7 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
          * Finish a tile generation job
          * @param tImage The tile image for this job
          */
-        private synchronized void cacheTile(BufferedImage tImage) {
+        private void cacheTile(BufferedImage tImage) {
             cache.put(tile, new ImageCache(tImage, null, false));
             done = true;
             notifier.accept(tile);

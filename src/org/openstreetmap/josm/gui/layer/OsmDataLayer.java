@@ -1341,6 +1341,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer
         // We might have to fall back to the old method if user is reprojecting
         // 256 is the "target" size, (TODO check HiDPI!)
         final int targetSize = Config.getPref().getInt("mappaint.fast_render.tile_size", 256);
+        CheckParameterUtil.ensureThat(targetSize > 0, "mappaint.fast_render.tile_size should be > 0 (default 256)");
         final double topResolution = 2 * Math.PI * OsmMercator.EARTH_RADIUS / targetSize;
         int zoom;
         for (zoom = 0; zoom < MAX_ZOOM; zoom++) { // Use something like imagery.{generic|tms}.max_zoom_lvl (20 is a bit too low for our needs)
