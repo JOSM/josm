@@ -1988,6 +1988,7 @@ area[office=diplomatic],
 area[office=educational_institution],
 area[office=employment_agency],
 area[office=estate_agent],
+area[office=financial],
 area[office=foundation],
 area[office=government],
 area[office=insurance],
@@ -2037,6 +2038,10 @@ node[office=employment_agency] {
 }
 node[office=estate_agent] {
     icon-image: "presets/office/real_state.svg";
+    set icon_z17;
+}
+node[office=financial] {
+    icon-image: "presets/office/financial.svg";
     set icon_z17;
 }
 node[office=foundation] {

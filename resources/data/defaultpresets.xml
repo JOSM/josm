@@ -8570,6 +8570,17 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Estate agent -->
+    <item name="Financial" icon="presets/office/financial.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
+        <link wiki="Tag:office=financial" />
+        <space />
+        <key key="office" value="financial" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+        <space />
+        <preset_link preset_name="Accountant" text="Similar but different tags:" />
+        <preset_link preset_name="Bank" text="Similar but different tags:" />
+        <preset_link preset_name="Tax advisor" text="Similar but different tags:" />
+    </item> <!-- Financial -->
     <item name="Foundation" icon="presets/office/foundation.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:office=foundation" />
         <space />
