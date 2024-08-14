@@ -3272,7 +3272,6 @@
             <optional>
                 <check key="ferry:cable" text="Reaction ferry" />
                 <space />
-                <reference ref="oh" />
                 <reference ref="public_transport_route_optionals" />
                 <reference ref="pt_route_opt2" />
                 <space />
@@ -3808,7 +3807,6 @@
                 <check key="group_only" text="Group only access" />
             </checkgroup>
             <combo key="sanitary_dump_station" text="Dump Station" values="yes,public,customers,no" />
-            <reference ref="wheelchair" />
             <reference ref="internet" />
             <space />
             <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
@@ -6982,11 +6980,11 @@
                 <combo key="generator:method" text="Method" values_context="generator method" values="combustion,gasification,pyrolysis" />
                 <combo key="generator:type" text="Generator Type" values_searchable="true">
                     <list_entry value="bioreactor" short_description="gasification" />
+                    <list_entry value="boiler" short_description="" />
                     <list_entry value="pyrolysis" short_description="" />
                     <list_entry value="reciprocating_engine" short_description="combustion" />
                     <list_entry value="steam_generator" short_description="combustion" />
                 </combo>
-                <combo key="generator:type" text="Generator Type" values="bioreactor,boiler,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
             </item> <!-- Waste Power Generator -->
             <item name="Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">

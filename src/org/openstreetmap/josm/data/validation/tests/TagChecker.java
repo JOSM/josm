@@ -718,8 +718,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             // Potential error, unless matching tags are all known by a supported preset
             Map<String, String> matchingTags = tp.data.stream()
                     .filter(i -> Boolean.TRUE.equals(i.matches(tags)))
-                    .filter(i -> i instanceof KeyedItem).map(i -> ((KeyedItem) i).key)
-                    .collect(Collectors.toMap(k -> k, tags::get));
+                    .filter(KeyedItem.class::isInstance).map(i -> ((KeyedItem) i).key)
+                    .collect(Collectors.toMap(k -> k, tags::get, (o, n) -> n));
             if (matchingPresetsOK.stream().noneMatch(
                     tp2 -> matchingTags.entrySet().stream().allMatch(
                             e -> tp2.data.stream().anyMatch(

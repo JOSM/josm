@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -17,8 +18,13 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.TaggingPresets;
 
@@ -413,5 +419,53 @@ class TagCheckerTest {
     void testTicket21348() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node power=tower ref=12"));
         assertEquals(0, errors.size());
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/23860">Bug #23860</a>.
+     * Duplicate key
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    void testTicket23860Equal() throws IOException {
+        ValidatorPrefHelper.PREF_OTHER.put(true);
+        Config.getPref().putBoolean(TagChecker.PREF_CHECK_PRESETS_TYPES, true);
+        final TaggingPreset originalBusStop = org.openstreetmap.josm.gui.tagging.presets.TaggingPresets.getMatchingPresets(
+                Collections.singleton(TaggingPresetType.NODE), Collections.singletonMap("highway", "bus_stop"), false)
+                .iterator().next();
+        final Key duplicateKey = new Key();
+        duplicateKey.key = "highway";
+        duplicateKey.value = "bus_stop";
+        try {
+            originalBusStop.data.add(duplicateKey);
+            final List<TestError> errors = test(OsmUtils.createPrimitive("way highway=bus_stop"));
+            assertEquals(1, errors.size());
+        } finally {
+            originalBusStop.data.remove(duplicateKey);
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/23860">Bug #23860</a>.
+     * Duplicate key
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    void testTicket23860NonEqual() throws IOException {
+        ValidatorPrefHelper.PREF_OTHER.put(true);
+        Config.getPref().putBoolean(TagChecker.PREF_CHECK_PRESETS_TYPES, true);
+        final TaggingPreset originalBusStop = org.openstreetmap.josm.gui.tagging.presets.TaggingPresets.getMatchingPresets(
+                        Collections.singleton(TaggingPresetType.NODE), Collections.singletonMap("highway", "bus_stop"), false)
+                .iterator().next();
+        final Key duplicateKey = new Key();
+        duplicateKey.key = "highway";
+        duplicateKey.value = "bus_stop2";
+        try {
+            originalBusStop.data.add(duplicateKey);
+            final List<TestError> errors = test(OsmUtils.createPrimitive("way highway=bus_stop"));
+            assertEquals(0, errors.size());
+        } finally {
+            originalBusStop.data.remove(duplicateKey);
+        }
     }
 }
