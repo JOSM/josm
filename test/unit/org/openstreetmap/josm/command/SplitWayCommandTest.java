@@ -467,25 +467,110 @@ final class SplitWayCommandTest {
         dataSet.addPrimitiveRecursive(route);
         dataSet.setSelected(splitNode);
         // Sanity check (preconditions -- the route should be well-formed already)
-        WayConnectionTypeCalculator connectionTypeCalculator = new WayConnectionTypeCalculator();
-        List<WayConnectionType> links = connectionTypeCalculator.updateLinks(route, route.getMembers());
-        assertAll("All links should be connected (forward)",
-                links.subList(0, links.size() - 2).stream().map(link -> () -> assertTrue(link.linkNext)));
-        assertAll("All links should be connected (backward)",
-                links.subList(1, links.size() - 1).stream().map(link -> () -> assertTrue(link.linkPrev)));
+        assertWellFormedRoute(route);
         final Optional<SplitWayCommand> result = SplitWayCommand.splitWay(
                 splitWay,
                 SplitWayCommand.buildSplitChunks(splitWay, Collections.singletonList(splitNode)),
                 new ArrayList<>(),
                 Strategy.keepLongestChunk(),
-                // This split requires additional downloads but problem occured before the download
+                // This split requires additional downloads but problem occurred before the download
                 SplitWayCommand.WhenRelationOrderUncertain.SPLIT_ANYWAY
         );
         assertTrue(result.isPresent());
         result.get().executeCommand();
         // Actual check
-        connectionTypeCalculator = new WayConnectionTypeCalculator();
-        links = connectionTypeCalculator.updateLinks(route, route.getMembers());
+        assertWellFormedRoute(route);
+    }
+
+    @Test
+    void testTicket21856DoublePoints() {
+        final Way incomplete = new Way(1082474948, 10);
+        final Way way1 = TestUtils.newWay("highway=residential", new Node(new LatLon(47.9971473, 8.1274441)),
+                new Node(new LatLon(48.0011535, 8.1363531)));
+        final Way way2 =  TestUtils.newWay("highway=residential", new Node(new LatLon(48.0012294, 8.136414)),
+                new Node(new LatLon(48.0042513, 8.1378392)));
+        final Way splitWay = TestUtils.newWay("highway=residential", new Node(new LatLon(48.0011817, 8.1363763)),
+                new Node(new LatLon(48.0012086, 8.1363974)));
+        final Relation ptRelation = TestUtils.newRelation("type=route route=bus public_transport:version=2",
+                new RelationMember("", incomplete), new RelationMember("", way1),
+                new RelationMember("", splitWay), new RelationMember("", splitWay),
+                new RelationMember("", way1), new RelationMember("", incomplete));
+        final List<Node> splitLocations = splitWay.getNodes();
+        final DataSet ds = new DataSet();
+        way1.setOsmId(289122842, 10);
+        way2.setOsmId(30239125, 18);
+        splitWay.setOsmId(1082474946, 1);
+        ds.addPrimitiveRecursive(way1);
+        ds.addPrimitiveRecursive(way2);
+        ds.addPrimitiveRecursive(splitWay);
+        ds.addPrimitiveRecursive(incomplete);
+        ds.addPrimitive(ptRelation);
+        splitWay.addNode(0, way1.lastNode());
+        splitWay.addNode(way2.firstNode());
+
+        ds.setSelected(splitLocations);
+        assertWellFormedRoute(ptRelation);
+        final Optional<SplitWayCommand> result = SplitWayCommand.splitWay(
+                splitWay,
+                SplitWayCommand.buildSplitChunks(splitWay, splitLocations),
+                new ArrayList<>(),
+                Strategy.keepLongestChunk(),
+                SplitWayCommand.WhenRelationOrderUncertain.SPLIT_ANYWAY
+        );
+        assertTrue(result.isPresent());
+        result.get().executeCommand();
+        // Actual check
+        assertWellFormedRoute(ptRelation);
+    }
+
+    @Test
+    void testTicket21856DoublePointsRouteMiddle() {
+        final Way incomplete = new Way(1082474948, 10);
+        final Way way1 = TestUtils.newWay("highway=residential", new Node(new LatLon(47.9971473, 8.1274441)),
+                new Node(new LatLon(48.0011535, 8.1363531)));
+        final Way way2 =  TestUtils.newWay("highway=residential", new Node(new LatLon(48.0012294, 8.136414)),
+                new Node(new LatLon(48.0042513, 8.1378392)));
+        final Way splitWay = TestUtils.newWay("highway=residential", new Node(new LatLon(48.0011817, 8.1363763)),
+                new Node(new LatLon(48.0012086, 8.1363974)));
+        final Relation ptRelation = TestUtils.newRelation("type=route route=bus public_transport:version=2",
+                new RelationMember("", incomplete), new RelationMember("", way1),
+                new RelationMember("", splitWay), new RelationMember("", way2),
+                new RelationMember("", way2), new RelationMember("", splitWay),
+                new RelationMember("", way1), new RelationMember("", incomplete));
+        final List<Node> splitLocations = splitWay.getNodes();
+        final DataSet ds = new DataSet();
+        way1.setOsmId(289122842, 10);
+        way2.setOsmId(30239125, 18);
+        splitWay.setOsmId(1082474946, 1);
+        ds.addPrimitiveRecursive(way1);
+        ds.addPrimitiveRecursive(way2);
+        ds.addPrimitiveRecursive(splitWay);
+        ds.addPrimitiveRecursive(incomplete);
+        ds.addPrimitive(ptRelation);
+        splitWay.addNode(0, way1.lastNode());
+        splitWay.addNode(way2.firstNode());
+
+        ds.setSelected(splitLocations);
+        assertWellFormedRoute(ptRelation);
+        final Optional<SplitWayCommand> result = SplitWayCommand.splitWay(
+                splitWay,
+                SplitWayCommand.buildSplitChunks(splitWay, splitLocations),
+                new ArrayList<>(),
+                Strategy.keepLongestChunk(),
+                SplitWayCommand.WhenRelationOrderUncertain.SPLIT_ANYWAY
+        );
+        assertTrue(result.isPresent());
+        result.get().executeCommand();
+        // Actual check
+        assertWellFormedRoute(ptRelation);
+    }
+
+
+    private static void assertWellFormedRoute(Relation route) {
+        WayConnectionTypeCalculator connectionTypeCalculator = new WayConnectionTypeCalculator();
+        List<WayConnectionType> links = connectionTypeCalculator.updateLinks(route, route.getMembers());
+        // NONE is the default, and is most often found on incomplete ways
+        links.removeIf(link -> link.direction == WayConnectionType.Direction.NONE);
         assertAll("All links should be connected (forward)",
                 links.subList(0, links.size() - 2).stream().map(link -> () -> assertTrue(link.linkNext)));
         assertAll("All links should be connected (backward)",
