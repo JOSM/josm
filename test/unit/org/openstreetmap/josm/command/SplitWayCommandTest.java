@@ -487,7 +487,7 @@ final class SplitWayCommandTest {
         final Way incomplete = new Way(1082474948, 10);
         final Way way1 = TestUtils.newWay("highway=residential", new Node(new LatLon(47.9971473, 8.1274441)),
                 new Node(new LatLon(48.0011535, 8.1363531)));
-        final Way way2 =  TestUtils.newWay("highway=residential", new Node(new LatLon(48.0012294, 8.136414)),
+        final Way way2 = TestUtils.newWay("highway=residential", new Node(new LatLon(48.0012294, 8.136414)),
                 new Node(new LatLon(48.0042513, 8.1378392)));
         final Way splitWay = TestUtils.newWay("highway=residential", new Node(new LatLon(48.0011817, 8.1363763)),
                 new Node(new LatLon(48.0012086, 8.1363974)));
@@ -528,7 +528,7 @@ final class SplitWayCommandTest {
         final Way incomplete = new Way(1082474948, 10);
         final Way way1 = TestUtils.newWay("highway=residential", new Node(new LatLon(47.9971473, 8.1274441)),
                 new Node(new LatLon(48.0011535, 8.1363531)));
-        final Way way2 =  TestUtils.newWay("highway=residential", new Node(new LatLon(48.0012294, 8.136414)),
+        final Way way2 = TestUtils.newWay("highway=residential", new Node(new LatLon(48.0012294, 8.136414)),
                 new Node(new LatLon(48.0042513, 8.1378392)));
         final Way splitWay = TestUtils.newWay("highway=residential", new Node(new LatLon(48.0011817, 8.1363763)),
                 new Node(new LatLon(48.0012086, 8.1363974)));
@@ -564,7 +564,6 @@ final class SplitWayCommandTest {
         // Actual check
         assertWellFormedRoute(ptRelation);
     }
-
 
     private static void assertWellFormedRoute(Relation route) {
         WayConnectionTypeCalculator connectionTypeCalculator = new WayConnectionTypeCalculator();
