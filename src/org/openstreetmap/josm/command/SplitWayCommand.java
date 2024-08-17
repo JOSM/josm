@@ -755,7 +755,7 @@ public class SplitWayCommand extends SequenceCommand {
     }
 
     /**
-     * Ad ways in a sorted manner
+     * Add ways in a sorted manner
      * @param position The position of the relation member we are operating on
      * @param indexOfWayToKeep The index of the way that is keeping history if it were in {@code newWays}
      * @param direction The direction of the ways
