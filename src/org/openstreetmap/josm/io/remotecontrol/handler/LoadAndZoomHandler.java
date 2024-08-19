@@ -7,7 +7,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +15,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,8 +71,6 @@ public class LoadAndZoomHandler extends RequestHandler {
     private static final String CHANGESET_HASHTAGS = "changeset_hashtags";
     private static final String CHANGESET_TAGS = "changeset_tags";
     private static final String SEARCH = "search";
-
-    private static final Map<String, ReadWriteLock> layerLockMap = new HashMap<>();
 
     // Mandatory arguments
     private double minlat;
@@ -165,19 +160,13 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     private void download() throws RequestHandlerErrorException {
         DownloadOsmTask osmTask = new DownloadOsmTask();
-        ReadWriteLock lock = null;
-        DownloadParams settings = null;
         try {
-            settings = getDownloadParams();
+            final DownloadParams settings = getDownloadParams();
 
             if (command.equals(myCommand)) {
                 if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
                     Logging.info("RemoteControl: download forbidden by preferences");
                 } else {
-                    // The lock ensures that a download that creates a new layer will finish before
-                    // downloads that do not create a new layer. This should be thread-safe.
-                    lock = obtainLock(settings);
-                    // We need to ensure that we only try to download new areas
                     Area toDownload = null;
                     if (!settings.isNewLayer()) {
                         toDownload = removeAlreadyDownloadedArea();
@@ -189,58 +178,10 @@ public class LoadAndZoomHandler extends RequestHandler {
                     }
                 }
             }
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            throw new RequestHandlerErrorException(ex);
         } catch (RuntimeException ex) { // NOPMD
             Logging.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
             Logging.error(ex);
             throw new RequestHandlerErrorException(ex);
-        } finally {
-            releaseLock(settings, lock);
-        }
-    }
-
-    /**
-     * Obtain a lock to ensure that a new layer is created before downloading non-new layers
-     * @param settings The settings with the appropriate layer name; if no layer name is given, we assume that
-     *                 the caller doesn't care where the data goes.
-     * @return The lock to pass to {@link #releaseLock(DownloadParams, ReadWriteLock)} or {@code null} if no lock is needed.
-     * @throws InterruptedException If the lock could not be obtained.
-     */
-    private static ReadWriteLock obtainLock(DownloadParams settings) throws InterruptedException {
-        final ReadWriteLock lock;
-        if (settings.isNewLayer() && !Utils.isEmpty(settings.getLayerName())) {
-            synchronized (layerLockMap) {
-                lock = layerLockMap.computeIfAbsent(settings.getLayerName(), k -> new ReentrantReadWriteLock());
-                lock.writeLock().lock();
-            }
-        } else {
-            synchronized (layerLockMap) {
-                lock = layerLockMap.get(settings.getLayerName());
-            }
-            if (lock != null) {
-                lock.readLock().lockInterruptibly();
-            }
-        }
-        return lock;
-    }
-
-    /**
-     * Release the lock preventing data from being downloaded into an old layer
-     * @param settings The settings with information on the new layer status
-     * @param lock The lock to unlock
-     */
-    private static void releaseLock(DownloadParams settings, ReadWriteLock lock) {
-        if (lock != null) {
-            if (settings != null && settings.isNewLayer()) {
-                lock.writeLock().unlock();
-                synchronized (layerLockMap) {
-                    layerLockMap.remove(settings.getLayerName());
-                }
-            } else {
-                lock.readLock().unlock();
-            }
         }
     }
 

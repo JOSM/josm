@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -48,8 +47,6 @@ public abstract class RequestHandler {
     public static final BooleanProperty LOAD_IN_NEW_LAYER = new BooleanProperty("remotecontrol.new-layer", false);
     /** preference to define OSM download timeout in seconds */
     public static final IntegerProperty OSM_DOWNLOAD_TIMEOUT = new IntegerProperty("remotecontrol.osm.download.timeout", 5*60);
-    /** A lock to ensure that messages are shown in the order the commands were sent from the server (see #23821) */
-    private static final ReentrantLock MESSAGE_LOCK = new ReentrantLock(true);
 
     protected static final Pattern SPLITTER_COMMA = Pattern.compile(",\\s*");
     protected static final Pattern SPLITTER_SEMIC = Pattern.compile(";\\s*");
@@ -211,26 +208,19 @@ public abstract class RequestHandler {
                     "<br/>" + tr("Do you want to allow this?") + "</div></html>";
             final Object[] choices = {tr("Yes, always"), tr("Yes, once"), tr("No")};
             final int choice;
-            // The ordering of the requests can be important, so we use a fair lock to ensure ordering
-            // Note that the EDT will be more than happy to show multiple dialogs without blocking.
-            try {
-                MESSAGE_LOCK.lock();
-                final Integer tChoice = GuiHelper.runInEDTAndWaitAndReturn(() -> {
-                    final JLabel label = new JLabel(message);
-                    if (label.getPreferredSize().width > maxWidth) {
-                        label.setText(message.replaceFirst("<div>", "<div style=\"width:" + maxWidth + "px;\">"));
-                    }
-                    return JOptionPane.showOptionDialog(MainApplication.getMainFrame(), label, tr("Confirm Remote Control action"),
-                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
-                });
-                if (tChoice == null) {
-                    // I have no clue how this would ever happen, but just in case.
-                    throw new RequestHandlerForbiddenException(MessageFormat.format("RemoteControl: ''{0}'' forbidden due to NPE", myCommand));
+            final Integer tChoice = GuiHelper.runInEDTAndWaitAndReturn(() -> {
+                final JLabel label = new JLabel(message);
+                if (label.getPreferredSize().width > maxWidth) {
+                    label.setText(message.replaceFirst("<div>", "<div style=\"width:" + maxWidth + "px;\">"));
                 }
-                choice = tChoice;
-            } finally {
-                MESSAGE_LOCK.unlock();
+                return JOptionPane.showOptionDialog(MainApplication.getMainFrame(), label, tr("Confirm Remote Control action"),
+                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
+            });
+            if (tChoice == null) {
+                // I have no clue how this would ever happen, but just in case.
+                throw new RequestHandlerForbiddenException(MessageFormat.format("RemoteControl: ''{0}'' forbidden due to NPE", myCommand));
             }
+            choice = tChoice;
             if (choice != JOptionPane.YES_OPTION && choice != JOptionPane.NO_OPTION) { // Yes/no refer to always/once
                 String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by user''s choice", myCommand);
                 throw new RequestHandlerForbiddenException(err);
