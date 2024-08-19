@@ -183,6 +183,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
     private static final int MAX_LEVENSHTEIN_DISTANCE = 2;
 
+    /* Common string values */
+    private static final String FIXME_STR = marktr("fixme");
+    private static final String MULTIPOLYGON_TAGS = marktr("Multipolygon tags");
+    private static final String SEAMARK_TYPE = "seamark:type";
+
     protected boolean includeOtherSeverity;
 
     protected boolean checkKeys;
@@ -292,46 +297,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 CachedFile cf = new CachedFile(source);
                 BufferedReader reader = cf.getContentReader()
             ) {
-                String okValue = null;
-                boolean tagcheckerfile = false;
-                boolean ignorefile = false;
-                boolean isFirstLine = true;
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.isEmpty()) {
-                        // ignore
-                    } else if (line.startsWith("#")) {
-                        if (line.startsWith("# JOSM TagChecker")) {
-                            tagcheckerfile = true;
-                            Logging.error(tr("Ignoring {0}. Support was dropped", source));
-                        } else
-                        if (line.startsWith("# JOSM IgnoreTags")) {
-                            ignorefile = true;
-                            if (!DEFAULT_SOURCES.contains(source)) {
-                                Logging.info(tr("Adding {0} to ignore tags", source));
-                            }
-                        }
-                    } else if (ignorefile) {
-                        parseIgnoreFileLine(source, line);
-                    } else if (tagcheckerfile) {
-                        // ignore
-                    } else if (line.charAt(0) == '+') {
-                        okValue = line.substring(1);
-                    } else if (line.charAt(0) == '-' && okValue != null) {
-                        String hk = harmonizeKey(line.substring(1));
-                        if (!okValue.equals(hk) && harmonizedKeys.put(hk, okValue) != null && Logging.isDebugEnabled()) {
-                            Logging.debug("Line was ignored: " + line);
-                        }
-                    } else {
-                        Logging.error(tr("Invalid spellcheck line: {0}", line));
-                    }
-                    if (isFirstLine) {
-                        isFirstLine = false;
-                        if (!(tagcheckerfile || ignorefile) && !DEFAULT_SOURCES.contains(source)) {
-                            Logging.info(tr("Adding {0} to spellchecker", source));
-                        }
-                    }
-                }
+                parseSource(source, reader);
             } catch (IOException e) {
                 Logging.error(e);
                 errorSources.append(source).append('\n');
@@ -342,6 +308,49 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             throw new IOException(trn(
                     "Could not access data file:\n{0}",
                     "Could not access data files:\n{0}", errorSources.length(), errorSources));
+    }
+
+    private static void parseSource(String source, BufferedReader reader) throws IOException {
+        String okValue = null;
+        boolean tagcheckerfile = false;
+        boolean ignorefile = false;
+        boolean isFirstLine = true;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (line.isEmpty()) {
+                // ignore
+            } else if (line.startsWith("#")) {
+                if (line.startsWith("# JOSM TagChecker")) {
+                    tagcheckerfile = true;
+                    Logging.error(tr("Ignoring {0}. Support was dropped", source));
+                } else
+                if (line.startsWith("# JOSM IgnoreTags")) {
+                    ignorefile = true;
+                    if (!DEFAULT_SOURCES.contains(source)) {
+                        Logging.info(tr("Adding {0} to ignore tags", source));
+                    }
+                }
+            } else if (ignorefile) {
+                parseIgnoreFileLine(source, line);
+            } else if (tagcheckerfile) {
+                // ignore
+            } else if (line.charAt(0) == '+') {
+                okValue = line.substring(1);
+            } else if (line.charAt(0) == '-' && okValue != null) {
+                String hk = harmonizeKey(line.substring(1));
+                if (!okValue.equals(hk) && harmonizedKeys.put(hk, okValue) != null && Logging.isDebugEnabled()) {
+                    Logging.debug("Line was ignored: " + line);
+                }
+            } else {
+                Logging.error(tr("Invalid spellcheck line: {0}", line));
+            }
+            if (isFirstLine) {
+                isFirstLine = false;
+                if (!(tagcheckerfile || ignorefile) && !DEFAULT_SOURCES.contains(source)) {
+                    Logging.info(tr("Adding {0} to spellchecker", source));
+                }
+            }
+        }
     }
 
     /**
@@ -434,7 +443,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         additionalPresetsValueData.addAll(AbstractPrimitive.getUninterestingKeys());
         additionalPresetsValueData.addAll(Config.getPref().getList(
                 ValidatorPrefHelper.PREFIX + ".knownkeys",
-                Arrays.asList("is_in", "int_ref", "fixme", "population")));
+                Arrays.asList("is_in", "int_ref", FIXME_STR, "population")));
     }
 
     private static void addPresetValue(KeyedItem ky) {
@@ -583,7 +592,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * @since 9023
      * @deprecated since 18281 -- use {@link TaggingPresets#isKeyInPresets(String)} instead
      */
-    @Deprecated
+    @Deprecated(since = "18281", forRemoval = true)
     public static boolean isKeyInPresets(String key) {
         return TaggingPresets.isKeyInPresets(key);
     }
@@ -666,7 +675,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             }
             if (checkFixmes && key != null && !Utils.isEmpty(value) && isFixme(key, value) && !withErrors.contains(p, "FIXME")) {
                 errors.add(TestError.builder(this, Severity.OTHER, FIXME)
-                        .message(tr("fixme"))
+                        .message(tr(FIXME_STR))
                         .primitives(p)
                         .build());
                 withErrors.put(p, "FIXME");
@@ -866,7 +875,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         } else if (primitive instanceof IWay) {
             return ((IWay<?>) primitive).getNodes().stream().anyMatch(n -> primitiveInRegions(n, regions, excludeRegions));
         } else if (primitive instanceof IRelation) {
-            return ((IRelation<?>) primitive).getMemberPrimitivesList().stream().anyMatch(p -> primitiveInRegions(p, regions, excludeRegions));
+            final IRelation<?> relation = (IRelation<?>) primitive;
+            if (relation.hasIncompleteMembers()) {
+                return true; // Assume that the relation has members in a valid area. See #23290.
+            }
+            return relation.getMemberPrimitivesList().stream().anyMatch(p -> primitiveInRegions(p, regions, excludeRegions));
         }
         throw new IllegalArgumentException("Unknown primitive type: " + primitive);
     }
@@ -903,7 +916,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (p.hasKey("surface")) {
             // accept often used tag surface=* as area tag
             builder = TestError.builder(this, Severity.OTHER, MULTIPOLYGON_INCOMPLETE)
-                    .message(tr("Multipolygon tags"), marktr("only {0} tag"), "surface");
+                    .message(tr(MULTIPOLYGON_TAGS), marktr("only {0} tag"), "surface");
         } else {
             Map<String, String> filteredTags = p.getInterestingTags();
             filteredTags.remove("type");
@@ -912,14 +925,14 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
             if (filteredTags.isEmpty()) {
                 builder = TestError.builder(this, Severity.ERROR, MULTIPOLYGON_NO_AREA)
-                        .message(tr("Multipolygon tags"), marktr("tag describing the area is missing"), new Object());
+                        .message(tr(MULTIPOLYGON_TAGS), marktr("tag describing the area is missing"), new Object());
 
             }
         }
         if (builder == null) {
             // multipolygon has either no area tag or a rarely used one
             builder = TestError.builder(this, Severity.WARNING, MULTIPOLYGON_MAYBE_NO_AREA)
-                    .message(tr("Multipolygon tags"), marktr("tag describing the area might be missing"), new Object());
+                    .message(tr(MULTIPOLYGON_TAGS), marktr("tag describing the area might be missing"), new Object());
         }
         errors.add(builder.primitives(p).build());
     }
@@ -983,9 +996,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 || p.hasTag("waterway", "riverbank", "dam", "rapids", "dock", "boatyard", "fuel")
                 || p.hasTag("indoor", "corridor", "room", "area")
                 || p.hasTag("power", "substation", "generator", "plant", "switchgear", "converter", "sub_station")
-                || p.hasTag("seamark:type", "harbour", "fairway", "anchorage", "landmark", "berth", "harbour_basin",
+                || p.hasTag(SEAMARK_TYPE, "harbour", "fairway", "anchorage", "landmark", "berth", "harbour_basin",
                         "separation_zone")
-                || (p.get("seamark:type") != null && p.get("seamark:type").matches(".*\\_(area|zone)$")))
+                || (p.get(SEAMARK_TYPE) != null && p.get(SEAMARK_TYPE).matches(".*\\_(area|zone)$")))
             return true;
         return p.hasTag("harbour", OsmUtils.TRUE_VALUE)
                 || p.hasTag("flood_prone", OsmUtils.TRUE_VALUE)
@@ -1258,8 +1271,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     private static boolean isFixme(String key, String value) {
-        return key.toLowerCase(Locale.ENGLISH).contains("fixme") || key.contains("todo")
-          || value.toLowerCase(Locale.ENGLISH).contains("fixme") || value.contains("check and delete");
+        return key.toLowerCase(Locale.ENGLISH).contains(FIXME_STR) || key.contains("todo")
+          || value.toLowerCase(Locale.ENGLISH).contains(FIXME_STR) || value.contains("check and delete");
     }
 
     private static String harmonizeKey(String key) {
