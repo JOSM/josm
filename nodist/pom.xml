@@ -18,6 +18,9 @@
         <sonar.projectKey>JOSM</sonar.projectKey>
         <jmockit.version>1.49.a</jmockit.version>
         <pmd.version>7.4.0</pmd.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <checkstyle.version>10.17.0</checkstyle.version>
+        <spotbugs.version>4.8.6</spotbugs.version>
     </properties>
     <modules>
         <module>..</module>
@@ -26,26 +29,14 @@
     </modules>
     <repositories>
         <repository>
-            <id>JOSM-central</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/central/</url>
-        </repository>
-        <repository>
-            <id>JOSM-releases</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>JOSM-snapshots</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>JOSM-osgeo</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/osgeo/</url>
+            <id>JOSM</id>
+            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>JOSM-central</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/central/</url>
+            <id>JOSM</id>
+            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
         </pluginRepository>
     </pluginRepositories>
     <build>
@@ -115,6 +106,13 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.3.1</version>
+                    <dependencies>
+                      <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                      </dependency>
+                    </dependencies>
                 </plugin>
                 <!-- Used to merge compile dependencies into jars -->
                 <plugin>
@@ -316,13 +314,13 @@
             <dependency>
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.ant</artifactId>
-                <version>0.8.12</version>
+                <version>${jacoco.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.8.6</version>
+                <version>${spotbugs.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -359,7 +357,7 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.16.0</version>
-                <scope>compile</scope>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
