@@ -2531,22 +2531,22 @@ area[parking:orientation][orientation]["parking:orientation"!=*orientation] {
 }
 /* From the canvec import */
 *[natural=landform][landform=esker] {
-  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "geological=esker";
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "geological=esker");
   group: tr("deprecated tagging");
   suggestAlternative: "natural=ridge or geological=esker";
 }
 *[natural=landform][landform=moraine] {
-  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "geological=moraine";
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "geological=moraine");
   group: tr("deprecated tagging");
   suggestAlternative: "geological=moraine";
 }
 *[natural=landform][landform=beach] {
-  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "natural=beach";
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "natural=beach");
   group: tr("deprecated tagging");
   suggestAlternative: "natural=beach";
 }
 *[natural=landform][landform=tundra_polygon] {
-  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "natural=tundra";
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "natural=tundra");
   group: tr("deprecated tagging");
   suggestAlternative: "natural=tundra or natural=fell";
 }
