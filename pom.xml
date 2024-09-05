@@ -459,6 +459,7 @@
             <exclude>**/*TestIT</exclude>
           </excludes>
           <skipAfterFailureCount>1</skipAfterFailureCount>
+          <useModulePath>false</useModulePath> <!-- testing with modules seems to be problematic right now -->
           <!-- We might need @{argLine} in the future if another plugin has issues -->
           <argLine>
             -javaagent:"${settings.localRepository}"/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar
