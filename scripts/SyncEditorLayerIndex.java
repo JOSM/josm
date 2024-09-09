@@ -398,7 +398,7 @@ public class SyncEditorLayerIndex {
         }
         myprintln("*** Loaded "+idEntries.size()+" entries (iD). ***");
         try (JsonReader jr = Json.createReader(Files.newBufferedReader(Paths.get(rapidInputFile), UTF_8))) {
-            rapidEntries = jr.readArray();
+            rapidEntries = jr.readObject().getJsonArray("imagery");
         }
         for (JsonValue e : rapidEntries) {
             String url = getUrlStripped(e);
