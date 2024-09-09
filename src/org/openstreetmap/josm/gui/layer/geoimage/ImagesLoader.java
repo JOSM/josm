@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -90,7 +91,14 @@ final class ImagesLoader extends PleaseWaitRunnable {
             progressMonitor.worked(1);
 
             ImageEntry e = new ImageEntry(f);
-            e.extractExif();
+            try {
+                e.extractExif();
+            } catch (UncheckedIOException uncheckedIOException) {
+                // We want to throw the actual IOException that is wrapped, not the unchecked IO exception.
+                // See #23866
+                Logging.trace(uncheckedIOException);
+                throw uncheckedIOException.getCause();
+            }
             File parentFile = f.getParentFile();
             entries.computeIfAbsent(parentFile != null ? parentFile.getName() : "", x -> new ArrayList<>()).add(e);
         }
