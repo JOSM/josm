@@ -364,7 +364,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Primiti
                     g.draw(new Ellipse2D.Double(p.getInViewX()-4, p.getInViewY()-4, 9, 9));
                 }
 
-            } else if (m.isWay() && viewArea.contains(m.getMember().getBBox())) {
+            } else if (m.isWay() && viewArea.intersects(m.getMember().getBBox())) {
                 GeneralPath path = new GeneralPath();
 
                 boolean first = true;
