@@ -63,6 +63,7 @@ final class ImagesLoader extends PleaseWaitRunnable {
     }
 
     @Override
+    @SuppressWarnings("PMD.PreserveStackTrace")
     protected void realRun() throws IOException {
         progressMonitor.subTask(tr("Starting directory scan"));
         Collection<File> files = new ArrayList<>();
