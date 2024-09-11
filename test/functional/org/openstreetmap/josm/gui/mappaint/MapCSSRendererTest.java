@@ -221,6 +221,20 @@ public class MapCSSRendererTest {
             return;
         }
         final BufferedImage reference = ImageIO.read(referenceImageFile);
+        assertImageEquals(testIdentifier, reference, image, thresholdPixels, thresholdTotalColorDiff, diffImageConsumer);
+    }
+
+    /**
+     * Compares the reference image file with the actual images given as {@link BufferedImage}.
+     * @param testIdentifier a test identifier for error messages
+     * @param reference the reference image
+     * @param image the actual image
+     * @param thresholdPixels maximum number of differing pixels
+     * @param thresholdTotalColorDiff maximum sum of color value differences
+     * @param diffImageConsumer a consumer for a rendered image highlighting the differing pixels, may be null
+     */
+    public static void assertImageEquals(String testIdentifier, BufferedImage reference, BufferedImage image,
+                                         int thresholdPixels, int thresholdTotalColorDiff, Consumer<BufferedImage> diffImageConsumer) {
         assertEquals(reference.getWidth(), image.getWidth());
         assertEquals(reference.getHeight(), image.getHeight());
 

@@ -8,7 +8,8 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.ILatLon;
 
 /**
- * A record used for storing tile information for painting
+ * A record used for storing tile information for painting.
+ * The origin is upper-left, not lower-left (so more like Google tile coordinates than TMS tile coordinates).
  * @since 19176
  */
 public final class TileZXY implements ILatLon {
@@ -143,9 +144,10 @@ public final class TileZXY implements ILatLon {
      * @return The specified tile coordinates at the specified zoom
      */
     public static TileZXY latLonToTile(double lat, double lon, int zoom) {
-        int xCoord = (int) Math.floor(Math.pow(2, zoom) * (180 + lon) / 360);
-        int yCoord = (int) Math.floor(Math.pow(2, zoom) *
-                (1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2);
+        final double zoom2 = Math.pow(2, zoom);
+        final double latLog = Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat)));
+        final int xCoord = (int) Math.floor(zoom2 * (180 + lon) / 360);
+        final int yCoord = (int) Math.floor(zoom2 * (1 - latLog / Math.PI) / 2);
         return new TileZXY(zoom, xCoord, yCoord);
     }
 

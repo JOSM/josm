@@ -7,12 +7,12 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,9 +21,9 @@ import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -51,6 +51,7 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
     private CacheAccess<TileZXY, ImageCache> cache;
     private int zoom;
     private Consumer<TileZXY> notifier;
+    private final ExecutorService worker;
 
     /**
      * Constructs a new {@code StyledMapRenderer}.
@@ -64,6 +65,7 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
      */
     public StyledTiledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
+        this.worker = MainApplication.worker;
     }
 
     @Override
@@ -73,11 +75,11 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
             super.render(data, renderVirtualNodes, bounds);
             return;
         }
-        final Executor worker = MainApplication.worker;
+        final Executor worker = this.worker;
         final BufferedImage tempImage;
         final Graphics2D tempG2d;
         // I'd like to avoid two image copies, but there are some issues using the original g2d object
-        tempImage = nc.getGraphicsConfiguration().createCompatibleImage(this.nc.getWidth(), this.nc.getHeight(), Transparency.TRANSLUCENT);
+        tempImage = createCompatibleImage(nc, this.nc.getWidth(), this.nc.getHeight());
         tempG2d = tempImage.createGraphics();
         tempG2d.setComposite(AlphaComposite.DstAtop); // Avoid tile lines in large areas
 
@@ -93,7 +95,7 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
             final Bounds box2 = TileZXY.tileToBounds(tile);
             final Point min = this.nc.getPoint(box2.getMin());
             final Point max = this.nc.getPoint(box2.getMax());
-            tileSize = max.x - min.x + BUFFER_PIXELS;
+            tileSize = max.x - min.x;
         }
 
         // Sort the tiles based off of proximity to the mouse pointer
@@ -150,8 +152,9 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
                 } else {
                     painted++;
                 }
-                // There seems to be an off-by-one error somewhere.
-                tempG2d.drawImage(tileImage, point.x + 1, point.y + 1, null, null);
+                // There seems to be an off-by-one error somewhere. Seems to be tied to sign of lat/lon
+                final int offset = (tile.lat() > 0 ? 1 : 0) + (tile.lon() >= 0 ? 1 : 0);
+                tempG2d.drawImage(tileImage, point.x + 1, point.y + offset, null, null);
             } else {
                 Logging.trace("StyledMapRenderer did not paint tile {1}", tile);
             }
@@ -249,19 +252,26 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
         final Bounds bounds = generateRenderArea(tiles);
 
         temporaryView.zoomTo(bounds.getCenter().getEastNorth(ProjectionRegistry.getProjection()), mapState.getScale());
-        BufferedImage bufferedImage = Optional.ofNullable(nc.getGraphicsConfiguration())
-                .map(gc -> gc.createCompatibleImage(tileSize * xCount + xCount, tileSize * yCount + yCount, Transparency.TRANSLUCENT))
-                .orElseGet(() -> new BufferedImage(tileSize * xCount + xCount, tileSize * yCount + yCount, BufferedImage.TYPE_INT_ARGB));
+        BufferedImage bufferedImage = createCompatibleImage(nc, width, height);
         Graphics2D g2d = bufferedImage.createGraphics();
         try {
             g2d.setRenderingHints(Map.of(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
-            g2d.setTransform(AffineTransform.getTranslateInstance(-BUFFER_TILES * (double) tileSize, -BUFFER_TILES * (double) tileSize));
             final AbstractMapRenderer tilePainter = MapRendererFactory.getInstance().createActiveRenderer(g2d, temporaryView, false);
             tilePainter.render(data, true, bounds);
         } finally {
             g2d.dispose();
         }
-        return bufferedImage;
+        final int bufferPixels = BUFFER_TILES * tileSize;
+        return bufferedImage.getSubimage(bufferPixels, bufferPixels,
+                width - 2 * bufferPixels + BUFFER_PIXELS, height - 2 * bufferPixels + BUFFER_PIXELS);
+    }
+
+    private static BufferedImage createCompatibleImage(NavigatableComponent nc, int width, int height) {
+        final GraphicsConfiguration gc = nc.getGraphicsConfiguration();
+        if (gc == null) {
+            return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        }
+        return gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
     }
 
     /**
@@ -318,11 +328,11 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
                         final int minY = tileCollection.stream().map(t -> t.tile).mapToInt(TileZXY::y).min().orElse(this.tile.y());
                         for (TileLoader loader : tileCollection) {
                             final TileZXY txy = loader.tile;
-                            final int x = (txy.x() - minX) * (tileSize - BUFFER_PIXELS) + BUFFER_PIXELS / 2;
-                            final int y = (txy.y() - minY) * (tileSize - BUFFER_PIXELS) + BUFFER_PIXELS / 2;
-                            final int wh = tileSize - BUFFER_PIXELS / 2;
+                            final int x = (txy.x() - minX) * tileSize;
+                            final int y = (txy.y() - minY) * tileSize;
+                            final int wh = tileSize;
 
-                            final BufferedImage tileImage = tImage.getSubimage(x, y, wh, wh);
+                            final BufferedImage tileImage = tImage.getSubimage(x, y, wh + BUFFER_PIXELS, wh + BUFFER_PIXELS);
                             loader.cacheTile(tileImage);
                         }
                     }
