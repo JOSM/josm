@@ -33,6 +33,7 @@ public @interface Plugins {
      */
     class PluginExtension implements AfterEachCallback {
 
+        @SuppressWarnings("unchecked")
         @Override
         public void afterEach(ExtensionContext context) throws Exception {
             // We want to clean up as much as possible using "standard" methods

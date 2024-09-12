@@ -1,14 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
-import static org.openstreetmap.josm.gui.mappaint.MapCSSRendererTest.assertImageEquals;
+import static org.openstreetmap.josm.testutils.ImageTestUtils.assertImageEquals;
+import static org.openstreetmap.josm.testutils.ImageTestUtils.writeDebugImages;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
@@ -19,8 +16,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.awaitility.Awaitility;
@@ -72,7 +67,7 @@ class StyledTiledMapRendererTest {
                 .flatMap(generateTests);
     }
 
-    @ParameterizedTest(name = "{0} - {2}")
+    @ParameterizedTest(name = "{2} - {0}")
     @MethodSource
     void testRender(String testIdentifier, final Supplier<DataSet> dataSetSupplier, final TileZXY tile)
             throws InterruptedException, ExecutionException {
@@ -117,20 +112,10 @@ class StyledTiledMapRendererTest {
                     null, 0, image.getWidth())).anyMatch(i -> i != 0);
         }).collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().image()));
         try {
-            assertImageEquals(testIdentifier, oldRenderStyle, newRenderStyle, 0, 0, diff -> {
-                try {
-                    if (!Files.isDirectory(Paths.get(TestUtils.getTestDataRoot(), "output"))) {
-                        Files.createDirectories(Paths.get(TestUtils.getTestDataRoot(), "output"));
-                    }
-                    final String basename = TestUtils.getTestDataRoot() + "output/" +
-                            testIdentifier + ' ' + tile.zoom() + '-' + tile.x() + '-' + tile.y();
-                    ImageIO.write(diff, "png", new File(basename + "-diff.png"));
-                    ImageIO.write(newRenderStyle, "png", new File(basename + "-new.png"));
-                    ImageIO.write(oldRenderStyle, "png", new File(basename + "-old.png"));
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
+            assertImageEquals(testIdentifier, oldRenderStyle, newRenderStyle, 0, 0, diff ->
+                writeDebugImages(Paths.get(TestUtils.getTestDataRoot(), "output"),
+                        testIdentifier + ' ' + tile.zoom() + '-' + tile.x() + '-' + tile.y(), diff, oldRenderStyle, newRenderStyle)
+            );
         } finally {
             cache.clear();
         }
