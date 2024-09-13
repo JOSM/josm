@@ -2577,5 +2577,10 @@ way[cycleway][cycleway^=opposite_]!:righthandtraffic {
   group: tr("deprecated tagging");
   suggestAlternative: "oneway:bicycle=no + cycleway:right=* + cycleway:left=* + cycleway:right:oneway=-1";
 }
+*[residential=condominium] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "residential=apartments + condo=*"
+}
 
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

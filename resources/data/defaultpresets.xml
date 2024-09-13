@@ -532,6 +532,11 @@
             <combo key="canoe" text="Canoe" values="yes,designated,destination,delivery,permissive,permit,private,no" values_sort="false" />
         </optional>
     </chunk>
+    <chunk id="managed">
+        <optional>
+            <combo key="managed" text="Managed" values="no,yes,grazing,undergrowth,mowing,scientific" values_context="Key:managed" />
+        </optional>
+    </chunk>
     <chunk id="substance">
         <combo key="substance" text="Substance" values="water,hot_water,steam,sewage,gas,oil" values_sort="false" values_searchable="true" />
     </chunk>
@@ -935,7 +940,9 @@
                 <reference ref="lit_common_no_times"/>
                 <text key="width" text="Width (meters)" />
                 <combo key="bus_bay" text="Bus bay" values="both,left,right" />
-                <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
+                <combo key="sidewalk:both" text="Sidewalk (both)" values="yes,no,separate" values_context="sidewalk" />
+                <combo key="sidewalk:left" text="Sidewalk (left)" values="yes,no,separate" values_context="sidewalk" />
+                <combo key="sidewalk:right" text="Sidewalk (right)" values="yes,no,separate" values_context="sidewalk" />
                 <checkgroup columns="3">
                     <check key="dual_carriageway" text="Divided highway" disable_off="true" />
                     <check key="narrow" text="Narrow" disable_off="true" />
@@ -2404,6 +2411,7 @@
             <text key="name" text="Name" />
             <combo key="wetland" text="Type" values="bog,fen,mangrove,marsh,reedbed,saltern,saltmarsh,string_bog,swamp,tidalflat,wet_meadow" values_searchable="true" />
             <check key="seasonal" text="Seasonal" disable_off="true" />
+            <reference ref="managed" />
         </item> <!-- Wetland -->
         <item name="Mud" icon="presets/landuse/mud.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=mud" />
@@ -9286,6 +9294,7 @@
             <key key="natural" value="wood" />
             <text key="name" text="Name" />
             <reference ref="leaf" />
+            <reference ref="managed" />
         </item> <!-- Wood -->
         <item name="Forest" icon="presets/landmark/forest.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=forest" />
@@ -9339,6 +9348,7 @@
             <space />
             <key key="natural" value="fell" />
             <text key="name" text="Name" />
+            <reference ref="managed" />
         </item> <!-- Fell -->
         <item name="Scrub" icon="presets/landuse/scrub.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=scrub" />
@@ -9358,6 +9368,7 @@
             <space />
             <key key="natural" value="heath" />
             <text key="name" text="Name" />
+            <reference ref="managed" />
         </item> <!-- Heath -->
         <item name="Sand" icon="presets/landuse/sand.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=sand" />
