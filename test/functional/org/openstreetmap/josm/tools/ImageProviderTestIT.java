@@ -4,10 +4,14 @@ package org.openstreetmap.josm.tools;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link ImageProvider} class.
  */
+@FunctionalTest
+@IntegrationTest
 class ImageProviderTestIT {
     /**
      * Test fetching an image using {@code wiki://} protocol.

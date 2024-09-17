@@ -67,6 +67,7 @@ import org.openstreetmap.josm.io.imagery.ApiKeyProvider;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.testutils.annotations.ProjectionNadGrids;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
@@ -78,6 +79,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 @HTTPS
 @I18n
+@IntegrationTest
 @org.openstreetmap.josm.testutils.annotations.Projection
 @ProjectionNadGrids
 @Timeout(value = 40, unit = TimeUnit.MINUTES)

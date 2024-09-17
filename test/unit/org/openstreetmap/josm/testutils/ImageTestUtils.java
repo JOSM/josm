@@ -147,7 +147,7 @@ public final class ImageTestUtils {
      */
     public static void writeDebugImages(@Nonnull Path directory, @Nonnull String filePrefix, @Nonnull BufferedImage diff,
                                         @Nullable BufferedImage oldImage, @Nullable BufferedImage newImage) {
-        if (!UPDATE_ALL) {
+        if (!UPDATE_ALL && false) {
             return;
         }
         try {

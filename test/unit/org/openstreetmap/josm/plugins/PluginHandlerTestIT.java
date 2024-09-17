@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Plugins;
 import org.openstreetmap.josm.testutils.annotations.Projection;
@@ -55,6 +56,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 @BasicPreferences
 @HTTPS
+@IntegrationTest
 @Main
 @Projection
 @Territories

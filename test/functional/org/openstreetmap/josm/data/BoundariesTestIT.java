@@ -16,11 +16,15 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Test of boundaries OSM file.
  */
 @BasicPreferences
+@FunctionalTest
+@IntegrationTest
 class BoundariesTestIT {
 
     private static final List<String> RETIRED_ISO3166_1_CODES = Arrays.asList(

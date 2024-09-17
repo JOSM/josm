@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -57,6 +58,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @version $Revision: 1723861 $
  */
 @HTTPS
+@IntegrationTest
 class DomainValidatorTestIT {
     /**
      * Download and process local copy of http://data.iana.org/TLD/tlds-alpha-by-domain.txt

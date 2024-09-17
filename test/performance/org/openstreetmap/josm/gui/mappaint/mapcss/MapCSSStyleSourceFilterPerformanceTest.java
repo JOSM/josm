@@ -10,12 +10,14 @@ import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Tests how fast {@link MapCSSStyleSource} finds the right style candidates for one object.
  * @author Michael Zangl
  */
+@PerformanceTest
 @Projection
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 class MapCSSStyleSourceFilterPerformanceTest {

@@ -8,10 +8,12 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLonTest;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 
 /**
  * Checks that rounding of coordinates is not too slow.
  */
+@PerformanceTest
 class RoundingPerformanceTest {
 
     private static double oldRoundToOsmPrecision(double value) {

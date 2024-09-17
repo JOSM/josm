@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 import org.xml.sax.SAXException;
 
 import com.kitfox.svg.SVGConst;
@@ -42,6 +43,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ImageProvider} class.
  */
+@FunctionalTest
 class ImageProviderTest {
     private static final class LogHandler14319 extends Handler {
         boolean failed;

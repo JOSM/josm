@@ -6,11 +6,13 @@ import java.util.EnumSet;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 
 /**
  * Performance test of MapCSS Condition objects.
  * @author Michael Zangl
  */
+@PerformanceTest
 class MapCSSConditionPerformanceTest {
     /**
      * Test the performance of all OP entries.

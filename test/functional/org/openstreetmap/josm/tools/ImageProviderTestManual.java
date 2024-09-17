@@ -12,10 +12,12 @@ import javax.swing.JPanel;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 
 /**
  * Unit tests of {@link ImageProvider} class for manual execution.
  */
+@FunctionalTest
 class ImageProviderTestManual {
     /**
      * Test getting a cursor
