@@ -262,6 +262,7 @@ public final class HelpAwareOptionPane {
         if (msg instanceof String) {
             String msgStr = (String) msg;
             content = new HtmlPanel(msgStr.startsWith("<html>") ? msgStr : "<html>" + msgStr + "</html>");
+            ((HtmlPanel) content).enableClickableHyperlinks();
         } else {
             content = msg;
         }
