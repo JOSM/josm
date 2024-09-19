@@ -9,9 +9,14 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.TimeZone;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
@@ -49,35 +54,46 @@ class ExceptionUtilTest {
         DateUtils.PROP_ISO_DATES.put(Boolean.TRUE);
     }
 
+    static Stream<Arguments> testExplainBadRequest() {
+        return Stream.of(
+                Arguments.of((Supplier<String>) () -> "<html>The OSM server '"+baseUrl+"' reported a bad request.<br></html>",
+                        new OsmApiException("")),
+                Arguments.of((Supplier<String>) () -> "<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
+                        "Error message(untranslated): header</html>", new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "header", "")),
+                Arguments.of((Supplier<String>) () -> "<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
+                        "Error message(untranslated): header</html>",
+                        new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "header", "", "invalid_url")),
+                Arguments.of((Supplier<String>) () -> "<html>The OSM server '"+host+"' reported a bad request.<br><br>"+
+                        "Error message(untranslated): header</html>",
+                        (Supplier<OsmApiException>) () -> new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "header", "", baseUrl)),
+                Arguments.of((Supplier<String>) () -> "<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
+                        "The area you tried to download is too big or your request was too large.<br>"+
+                        "Either request a smaller area or use an export file provided by the OSM community." +
+                        "<br><br>Downloading a smaller area is <em>recommended</em>!" +
+                        "<br><br>Advanced users can use one of the following options:<br><ul>" +
+                        "<li><a href=\"https://josm.openstreetmap.de/wiki/Help/Action/Download#DownloadfromOverpassAPI\">Overpass</a></li>" +
+                        "<li><a href=\"https://www.geofabrik.de/data/download.html\">Geofabrik</a></li>" +
+                        "<li><a href=\"https://planet.openstreetmap.org/\">OSM Planet File</a></li></ul></html>",
+                        new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "The maximum bbox", "")),
+                Arguments.of((Supplier<String>) () -> "<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
+                        "The area you tried to download is too big or your request was too large.<br>"+
+                        "Either request a smaller area or use an export file provided by the OSM community." +
+                        "<br><br>Downloading a smaller area is <em>recommended</em>!" +
+                        "<br><br>Advanced users can use one of the following options:<br><ul>" +
+                        "<li><a href=\"https://josm.openstreetmap.de/wiki/Help/Action/Download#DownloadfromOverpassAPI\">Overpass</a></li>" +
+                        "<li><a href=\"https://www.geofabrik.de/data/download.html\">Geofabrik</a></li>" +
+                        "<li><a href=\"https://planet.openstreetmap.org/\">OSM Planet File</a></li></ul></html>",
+                        new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "You requested too many nodes", ""))
+        );
+    }
     /**
      * Test of {@link ExceptionUtil#explainBadRequest} method.
      */
-    @Test
-    void testExplainBadRequest() {
-        assertEquals("<html>The OSM server '"+baseUrl+"' reported a bad request.<br></html>",
-                ExceptionUtil.explainBadRequest(new OsmApiException("")));
-
-        assertEquals("<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
-                "Error message(untranslated): header</html>",
-                ExceptionUtil.explainBadRequest(new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "header", "")));
-
-        assertEquals("<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
-                "Error message(untranslated): header</html>",
-                ExceptionUtil.explainBadRequest(new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "header", "", "invalid_url")));
-
-        assertEquals("<html>The OSM server '"+host+"' reported a bad request.<br><br>"+
-                "Error message(untranslated): header</html>",
-                ExceptionUtil.explainBadRequest(new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "header", "", baseUrl)));
-
-        assertEquals("<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
-                "The area you tried to download is too big or your request was too large.<br>"+
-                "Either request a smaller area or use an export file provided by the OSM community.</html>",
-                ExceptionUtil.explainBadRequest(new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "The maximum bbox", "")));
-
-        assertEquals("<html>The OSM server '"+baseUrl+"' reported a bad request.<br><br>"+
-                "The area you tried to download is too big or your request was too large.<br>"+
-                "Either request a smaller area or use an export file provided by the OSM community.</html>",
-                ExceptionUtil.explainBadRequest(new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "You requested too many nodes", "")));
+    @ParameterizedTest(name = "{1}")
+    @MethodSource
+    @SuppressWarnings("unchecked")
+    void testExplainBadRequest(Supplier<String> message, Object exception) {
+        assertEquals(message.get(), ExceptionUtil.explainBadRequest(exception instanceof Supplier ? ((Supplier<OsmApiException>) exception).get() : (OsmApiException) exception));
     }
 
     /**
