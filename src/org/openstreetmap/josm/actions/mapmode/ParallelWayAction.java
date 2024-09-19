@@ -12,11 +12,13 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -286,7 +288,9 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
 
         // Since the created way is left selected, we need to unselect again here
         if (pWays != null && pWays.getWays() != null) {
-            getLayerManager().getEditDataSet().clearSelection(pWays.getWays());
+            final List<Way> ways = new ArrayList<>(pWays.getWays());
+            ways.removeIf(w -> w.getDataSet() == null);
+            getLayerManager().getEditDataSet().clearSelection(ways);
             pWays = null;
         }
 

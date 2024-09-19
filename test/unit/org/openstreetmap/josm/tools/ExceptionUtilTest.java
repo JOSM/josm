@@ -86,6 +86,7 @@ class ExceptionUtilTest {
                         new OsmApiException(HttpURLConnection.HTTP_BAD_REQUEST, "You requested too many nodes", ""))
         );
     }
+
     /**
      * Test of {@link ExceptionUtil#explainBadRequest} method.
      */
@@ -93,7 +94,9 @@ class ExceptionUtilTest {
     @MethodSource
     @SuppressWarnings("unchecked")
     void testExplainBadRequest(Supplier<String> message, Object exception) {
-        assertEquals(message.get(), ExceptionUtil.explainBadRequest(exception instanceof Supplier ? ((Supplier<OsmApiException>) exception).get() : (OsmApiException) exception));
+        assertEquals(message.get(), ExceptionUtil.explainBadRequest(
+                exception instanceof Supplier ? ((Supplier<OsmApiException>) exception).get() : (OsmApiException) exception
+        ));
     }
 
     /**
