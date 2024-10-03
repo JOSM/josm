@@ -3,7 +3,9 @@
   <id>org.openstreetmap.josm</id>
   <metadata_license>CC-BY-SA-3.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
-  <developer_name>JOSM developers</developer_name>
+  <developer id="org.openstreetmap.josm">
+    <name>JOSM developers</name>
+  </developer>
   <name>JOSM</name>
   <summary>Java OpenStreetMap Editor</summary>
   <description>
@@ -23,8 +25,15 @@
   <content_rating type="oars-1.1"/>
   <launchable type="desktop-id">org.openstreetmap.josm.desktop</launchable>
   <screenshots>
-    <screenshot type="default" width="1024" height="576">https://josm.openstreetmap.de/svn/trunk/native/linux/josm-screenshot.png</screenshot>
+    <screenshot type="default">
+      <image type="source" width="1024" height="576">https://josm.openstreetmap.de/svn/trunk/native/linux/josm-screenshot.png</image>
+      <caption>JOSM with data and background layer loaded</caption>
+    </screenshot>
   </screenshots>
   <url type="homepage">https://josm.openstreetmap.de</url>
-  <updatecontact>josm-dev_at_openstreetmap.org</updatecontact>
+  <url type="bugtracker">https://josm.openstreetmap.de/report/1</url>
+  <url type="contact">https://lists.openstreetmap.org/pipermail/josm-dev/</url>
+  <url type="faq">https://josm.openstreetmap.de/wiki/Help</url>
+  <url type="translate">https://josm.openstreetmap.de/wiki/Translations</url>
+  <url type="vcs-browser">https://josm.openstreetmap.de/browser</url>
 </component>
