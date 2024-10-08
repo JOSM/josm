@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.json.stream.JsonParsingException;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
@@ -94,7 +95,7 @@ public final class OAuthParameters {
                     }
                 }
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (JsonParsingException | URISyntaxException | IOException e) {
             throw new JosmRuntimeException(e);
         } finally {
             if (client != null) {
@@ -157,7 +158,8 @@ public final class OAuthParameters {
                 }
             }
         } catch (JosmRuntimeException e) {
-            if (e.getCause() instanceof URISyntaxException || e.getCause() instanceof IOException) {
+            if (e.getCause() instanceof URISyntaxException || e.getCause() instanceof IOException
+                    || e.getCause() instanceof JsonParsingException) {
                 Logging.trace(e);
             } else {
                 throw e;

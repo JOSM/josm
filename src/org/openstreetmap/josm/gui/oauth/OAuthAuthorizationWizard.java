@@ -175,7 +175,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         // the authorisation procedure
         JMultilineLabel lbl = new JMultilineLabel(AuthorizationProcedure.FULLY_AUTOMATIC.getDescription());
         lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
-        pnl.add(lbl, GBC.std());
+        pnl.add(lbl, GBC.eol());
 
         if (!Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
             final HtmlPanel pnlWarning = new HtmlPanel();
