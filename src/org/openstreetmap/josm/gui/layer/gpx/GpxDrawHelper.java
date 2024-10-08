@@ -236,16 +236,22 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     // The heat map was invalidated since the last draw.
     private boolean gpxLayerInvalidated;
 
+    /** minTime saves the start time of the track as epoch seconds */
+    private double minTime;
+    /** maxTime saves the end time of the track as epoch seconds */
+    private double maxTime;
+
+
     private void setupColors() {
         hdopAlpha = Config.getPref().getInt("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);
         /* Colors (without custom alpha channel, if given) for HDOP painting. */
         hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP"));
         qualityScale = ColorScale.createFixedScale(rtkLibQualityColors).addTitle(tr("Quality")).addColorBarTitles(rtkLibQualityNames);
-        fixScale = ColorScale.createFixedScale(gpsFixQualityColors).addTitle(tr("GPS fix")).addColorBarTitles(gpsFixQualityNames);
-        refScale = ColorScale.createCyclicScale(1).addTitle(tr("GPS ref"));
-        dateScale = ColorScale.createHSBScale(256).addTitle(tr("Time"));
-        directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction"));
+        fixScale = ColorScale.createFixedScale(gpsFixQualityColors).addTitle(tr("GPS fix value")).addColorBarTitles(gpsFixQualityNames);
+        refScale = ColorScale.createCyclicScale(1).addTitle(tr("GPS Ref-ID"));
+        dateScale = ColorScale.createHSBScale(256).addTitle(tr("Track date"));
+        directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction [°]"));
 
         systemOfMeasurementChanged(null, null);
     }
@@ -253,7 +259,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     @Override
     public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
         SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
-        velocityScale.addTitle(tr("Velocity, {0}", som.speedName));
+        velocityScale.addTitle(tr("Velocity [{0}]", som.speedName));
         layer.invalidate();
     }
 
@@ -622,6 +628,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Interval interval = data.getMinMaxTimeForAllTracks().orElse(new Interval(Instant.EPOCH, Instant.now()));
             minval = interval.getStart().getEpochSecond();
             maxval = interval.getEnd().getEpochSecond();
+            this.minTime = minval;
+            this.maxTime = maxval;
+
             dateScale.setRange(minval, maxval);
         }
 
@@ -641,7 +650,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             if (!refs.isEmpty()) {
                 Collections.sort(refs);
                 String[] a = {};
-                refScale = ColorScale.createCyclicScale(refs.size()).addTitle(tr("GPS ref")).addColorBarTitles(refs.toArray(a));
+                refScale = ColorScale.createCyclicScale(refs.size()).addTitle(tr("GPS ref ID")).addColorBarTitles(refs.toArray(a));
                 refScale.setRange(0, refs.size());
             }
         }
@@ -1618,18 +1627,20 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         g.setComposite(AlphaComposite.SrcOver.derive(1.00f));
 
         if (colored == ColorMode.HDOP) {
-            hdopScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
+            hdopScale.drawColorBar(g, w-10, 50, 20, 100, 1.0);
         } else if (colored == ColorMode.QUALITY) {
-            qualityScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
+            qualityScale.drawColorBar(g, w-10, 50, 20, 100, 1.0);
         } else if (colored == ColorMode.FIX) {
-            fixScale.drawColorBar(g, w-30, 50, 20, 175, 1.0);
+            fixScale.drawColorBar(g, w-10, 50, 20, 175, 1.0);
         } else if (colored == ColorMode.REF) {
-            refScale.drawColorBar(g, w-30, 50, 20, 175, 1.0);
+            refScale.drawColorBar(g, w-10, 50, 20, 175, 1.0);
         } else if (colored == ColorMode.VELOCITY) {
             SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
-            velocityScale.drawColorBar(g, w-30, 50, 20, 100, som.speedValue);
+            velocityScale.drawColorBar(g, w-10, 50, 20, 100, som.speedValue);
         } else if (colored == ColorMode.DIRECTION) {
-            directionScale.drawColorBar(g, w-30, 50, 20, 100, 180.0/Math.PI);
+            directionScale.drawColorBar(g, w-10, 50, 20, 100, 180.0/Math.PI);
+        } else if (colored == ColorMode.TIME) {
+            dateScale.drawColorBarTime(g, w-10, 50, 20, 100, this.minTime, this.maxTime);
         }
     }
 

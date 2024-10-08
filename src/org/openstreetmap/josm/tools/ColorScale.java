@@ -1,16 +1,40 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Font;
 import java.util.Arrays;
+import java.util.Date;
+import java.time.ZoneId;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+
+import javax.swing.UIManager;
 
 /**
  * Utility class that helps to work with color scale for coloring GPX tracks etc.
  * @since 7319
  */
 public final class ColorScale {
+    private static final Color LEGEND_BACKGROUND = new NamedColorProperty(marktr("gpx legend background"), new Color(180, 180, 180, 160)).get();
+    private static final Color LEGEND_TEXT_OUTLINE_DARK = new NamedColorProperty(marktr("gpx legend text outline dark"),
+            new Color(102, 102, 102)).get();
+    private static final Color LEGEND_TEXT_OUTLINE_BRIGHT = new NamedColorProperty(marktr("gpx legend text outline bright"),
+            new Color(204, 204, 204)).get();
+    private static final Color LEGEND_TITLE = new NamedColorProperty(marktr("gpx legend title color"), new Color(0, 0, 0)).get();
+
+    private static final String DAY_TIME_FORMAT = "yyyy-MM-dd      HH:mm";
+    private static final String TIME_FORMAT = "HH:mm:ss";
+    /** Padding for the legend (from the text to the edge of the rectangle) */
+    private static final byte PADDING = 19;
+
     private double min, max;
     private Color noDataColor;
     private Color belowMinColor;
@@ -225,6 +249,29 @@ public final class ColorScale {
     }
 
     /**
+     * draws an outline for the legend texts
+     * @param g The graphics to draw on
+     * @param txt The text to draw the outline
+     * @param x Text x
+     * @param y Text y
+     * @param color The color of the text
+     */
+    private void drawOutline(final Graphics2D g, final String txt, final int x, final int y, final Color color) {
+        if (ColorHelper.calculateContrastRatio(color, LEGEND_TEXT_OUTLINE_DARK) >=
+            ColorHelper.calculateContrastRatio(color, LEGEND_TEXT_OUTLINE_BRIGHT)) {
+            g.setColor(LEGEND_TEXT_OUTLINE_DARK);
+        } else {
+            g.setColor(LEGEND_TEXT_OUTLINE_BRIGHT);
+        }
+
+        g.drawString(txt, x -1, y -1);
+        g.drawString(txt, x +1, y -1);
+        g.drawString(txt, x -1, y +1);
+        g.drawString(txt, x +1, y +1);
+        g.setColor(color);
+    }
+
+    /**
      * Draws a color bar representing this scale on the given graphics
      * @param g The graphics to draw on
      * @param x Rect x
@@ -233,47 +280,267 @@ public final class ColorScale {
      * @param h Rect height
      * @param valueScale The scale factor of the values
      */
-    public void drawColorBar(Graphics2D g, int x, int y, int w, int h, double valueScale) {
-        int n = colors.length;
-        for (int i = 0; i < n; i++) {
-            g.setColor(colors[i]);
-            if (w < h) {
-                g.fillRect(x, y+i*h/n, w, h/n+1);
-            } else {
-                g.fillRect(x+i*w/n, y, w/n+1, h);
-            }
-        }
+    public void drawColorBar(final Graphics2D g, final int x, final int y, final int w, final int h, final double valueScale) {
+        final int n = colors.length;
 
-        int fw, fh;
-        FontMetrics fm = g.getFontMetrics();
-        fh = fm.getHeight()/2;
+        final FontMetrics fm = calculateFontMetrics(g);
+
+        g.setColor(LEGEND_BACKGROUND);
+
+        // color bar texts width & height
+        final int fw;
+        final int fh = fm.getHeight() / 2;
+
+        // calculates the width of the color bar texts
         if (colorBarTitles != null && colorBarTitles.length > 0) {
-             fw = Arrays.stream(colorBarTitles).mapToInt(fm::stringWidth).max().orElse(50);
+            fw = Arrays.stream(colorBarTitles).mapToInt(fm::stringWidth).max().orElse(50);
         } else {
             fw = fm.stringWidth(
                     String.valueOf(Math.max((int) Math.abs(max * valueScale), (int) Math.abs(min * valueScale))))
                     + fm.stringWidth("0.123");
         }
-        g.setColor(noDataColor);
-        if (title != null) {
-            g.drawString(title, x-fw-3, y-fh*3/2);
+
+        // background rectangle
+        final int[] t = drawBackgroundRectangle(g, x, y, w, h, fw, fh, fm.stringWidth(title));
+        final int xRect = t[0];
+        final int rectWidth = t[1];
+        final int xText = t[2];
+        final int titleWidth = t[3];
+
+        // colorbar
+        for (int i = 0; i < n; i++) {
+            g.setColor(colors[i]);
+            if (w < h) {
+                double factor = n == 6 ? 1.2 : 1.07 + (0.045 * Math.log(n));
+                if (n < 200) {
+                    g.fillRect(xText + fw + PADDING / 3, y - PADDING / 2 + i * (int) ((double) h / n * factor),
+                            w, (int) ((double) h / n * factor));
+                } else {
+                    g.fillRect(xText + fw + PADDING / 3, y - PADDING / 2 + i * h / (int) (n * 0.875), w, (h / n + 1));
+                }
+            } else {
+                g.fillRect(xText + fw + 7 + i * w / n, y, w / n, h + 1);
+            }
         }
+
+        // legend title
+        if (title != null) {
+            g.setColor(LEGEND_TITLE);
+            g.drawString(title, xRect + rectWidth / 2 - titleWidth / 2, y - fh * 3 / 2 - 10);
+        }
+
+        // legend texts
+        drawLegend(g, y, w, h, valueScale, fh, fw, xText);
+
+        g.setColor(noDataColor);
+    }
+
+    /**
+     * Draws a color bar representing the time scale on the given graphics
+     * @param g The graphics to draw on
+     * @param x Rect x
+     * @param y Rect y
+     * @param w Color bar width
+     * @param h Color bar height
+     * @param minVal start time of the track
+     * @param maxVal end time of the track
+     */
+    public void drawColorBarTime(final Graphics2D g, final int x, final int y, final int w, final int h,
+                                 final double minVal, final double maxVal) {
+        final int n = colors.length;
+
+        final FontMetrics fm = calculateFontMetrics(g);
+
+        g.setColor(LEGEND_BACKGROUND);
+
+        final int padding = PADDING;
+
+        // color bar texts width & height
+        final int fw;
+        final int fh = fm.getHeight() / 2;
+
+        // calculates the width of the colorbar texts
+        if (maxVal - minVal > 86400) {
+            fw = fm.stringWidth(DAY_TIME_FORMAT);
+        } else {
+            fw = fm.stringWidth(TIME_FORMAT);
+        }
+
+        // background rectangle
+        final int[] t = drawBackgroundRectangle(g, x, y, w, h, fw, fh, fm.stringWidth(title));
+        final int xRect = t[0];
+        final int rectWidth = t[1];
+        final int xText = t[2];
+        final int titleWidth = t[3];
+
+        // colorbar
+        for (int i = 0; i < n; i++) {
+            g.setColor(colors[i]);
+            if (w < h) {
+                g.fillRect(xText + fw + padding / 3, y - padding / 2 + i * h / (int) (n * 0.875), w, (h / n + 1));
+            } else {
+                g.fillRect(xText + fw + padding / 3 + i * w / n, y, w / n + 1, h);
+            }
+        }
+
+        // legend title
+        if (title != null) {
+            g.setColor(LEGEND_TITLE);
+            g.drawString(title, xRect + rectWidth / 2 - titleWidth / 2, y - fh * 3 / 2 - padding / 2);
+        }
+
+        // legend texts
+        drawTimeLegend(g, y, x, h, minVal, maxVal, fh, fw, xText);
+
+        g.setColor(noDataColor);
+    }
+
+    private static FontMetrics calculateFontMetrics(final Graphics2D g) {
+        final Font newFont = UIManager.getFont("PopupMenu.font");
+        g.setFont(newFont);
+        return g.getFontMetrics();
+    }
+
+    /**
+     * Draw the background rectangle
+     * @param g The graphics to draw on
+     * @param x Rect x
+     * @param y Rect y
+     * @param w Color bar width
+     * @param h Color bar height
+     * @param fw The font width
+     * @param fh The font height
+     * @param titleWidth The width of the title
+     * @return an @{code int[]} of [xRect, rectWidth, xText, titleWidth] TODO investigate using records in Java 17
+     */
+    private int[] drawBackgroundRectangle(final Graphics2D g, final int x, final int y,
+                                          final int w, final int h, final int fw, final int fh,
+                                          int titleWidth) {
+        final int xRect;
+        final int rectWidth;
+        final int xText;
+        final int arcWidth = 20;
+        final int arcHeight = 20;
+        if (fw + w > titleWidth) {
+            rectWidth = w + fw + PADDING * 2;
+            xRect = x - rectWidth;
+            xText = xRect + (int) (PADDING / 1.2);
+            g.fillRoundRect(xRect, (fh * 3 / 2), rectWidth, h + y - (fh * 3 / 2) + (int) (PADDING / 1.5), arcWidth, arcHeight);
+        } else {
+            if (titleWidth >= 120) {
+                titleWidth = 120;
+            }
+            rectWidth = w + titleWidth + PADDING + PADDING / 2;
+            xRect = x - rectWidth;
+            xText = xRect + PADDING / 2 + rectWidth / 2 - fw;
+            g.fillRoundRect(xRect, (fh * 3 / 2), rectWidth, h + y - (fh * 3 / 2) + (int) (PADDING / 1.5), arcWidth, arcHeight);
+        }
+        return new int[] {xRect, rectWidth, xText, titleWidth};
+    }
+
+    /**
+     * Draws the legend for the color bar representing the time scale on the given graphics
+     * @param g The graphics to draw on
+     * @param y Rect y
+     * @param w Color bar width
+     * @param h Color bar height
+     * @param fw The font width
+     * @param fh The font height
+     * @param valueScale The scale factor of the values
+     * @param xText The location to start drawing the text (x-axis)
+     */
+    private void drawLegend(final Graphics2D g, final int y, final int w, final int h, final double valueScale,
+                            final int fh, final int fw, final int xText) {
         for (int i = 0; i <= intervalCount; i++) {
-            g.setColor(colors[(int) (1.0*i*n/intervalCount-1e-10)]);
-            String txt;
+            final String txt;
+            final Color color = colors[(int) (1.0 * i * colors.length / intervalCount - 1e-10)];
+            g.setColor(color);
+
             if (colorBarTitles != null && i < colorBarTitles.length) {
                 txt = colorBarTitles[i];
             } else {
                 final double val = min+i*(max-min)/intervalCount;
                 txt = String.format("%.3f", val*valueScale);
             }
-            if (intervalCount == 0) {
-                g.drawString(txt, x-fw-3, y+h/2+fh/2);
-            } else if (w < h) {
-                g.drawString(txt, x-fw-3, y+i*h/intervalCount+fh/2);
+            drawLegendText(g, y, w, h, fh, fw, xText, i, color, txt);
+        }
+    }
+
+    /**
+     * Draws the legend for the color bar representing the time scale on the given graphics
+     * @param g The graphics to draw on
+     * @param y Rect y
+     * @param w Color bar width
+     * @param h Color bar height
+     * @param minVal start time of the track
+     * @param maxVal end time of the track
+     * @param fw The font width
+     * @param fh The font height
+     * @param xText The location to start drawing the text (x-axis)
+     */
+    private void drawTimeLegend(final Graphics2D g, final int y, final int w, final int h,
+                                final double minVal, final double maxVal,
+                                final int fh, final int fw, final int xText) {
+        for (int i = 0; i <= intervalCount; i++) {
+            final String txt;
+            final Color color = colors[(int) (1.0 * i * colors.length / intervalCount - 1e-10)];
+            g.setColor(color);
+
+            if (colorBarTitles != null && i < colorBarTitles.length) {
+                txt = colorBarTitles[i];
             } else {
-                g.drawString(txt, x+i*w/intervalCount-fw/2, y+fh-3);
+                final double val = minVal + i * (maxVal - minVal) / intervalCount;
+                final long longval = (long) val;
+
+                final Date date = new Date(longval * 1000L);
+                final Instant dateInst = date.toInstant();
+
+                final ZoneId gmt = ZoneId.of("GMT");
+                final ZonedDateTime zonedDateTime = dateInst.atZone(gmt);
+
+                String formatted;
+
+                if (maxVal-minVal > 86400) {
+                    final DateTimeFormatter day = DateTimeFormatter.ofPattern(DAY_TIME_FORMAT);
+                    formatted = zonedDateTime.format(day);
+                } else {
+                    final DateTimeFormatter time = DateTimeFormatter.ofPattern(TIME_FORMAT);
+                    formatted = zonedDateTime.format(time);
+                }
+
+                txt = formatted;
             }
+            drawLegendText(g, y, w, h, fh, fw, xText, i, color, txt);
+        }
+    }
+
+    /**
+     * Draws the legend for the color bar representing the time scale on the given graphics
+     * @param g The graphics to draw on
+     * @param y Rect y
+     * @param w Color bar width
+     * @param h Color bar height
+     * @param fw The font width
+     * @param fh The font height
+     * @param xText The location to start drawing the text (x-axis)
+     * @param color The color of the text to draw
+     * @param txt The text string to draw
+     * @param i The index of the legend (so we can calculate the y location)
+     */
+    private void drawLegendText(Graphics2D g, int y, int w, int h, int fh, int fw, int xText,
+                                int i, Color color, String txt) {
+
+        if (intervalCount == 0) {
+            drawOutline(g, txt, xText, y + h / 2 + fh / 2, color);
+            g.drawString(txt, xText, y + h / 2 + fh / 2);
+        } else if (w < h) {
+            drawOutline(g, txt, xText, y + i * h / intervalCount + fh / 2, color);
+            g.drawString(txt, xText, y + i * h / intervalCount + fh / 2);
+        } else {
+            final int xLoc = xText + i * w / intervalCount - fw / 2 - (int) (PADDING / 1.3);
+            final int yLoc = y + fh - 5;
+            drawOutline(g, txt, xLoc, yLoc, color);
+            g.drawString(txt, xLoc, yLoc);
         }
     }
 }
