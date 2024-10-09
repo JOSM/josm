@@ -241,7 +241,6 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     /** maxTime saves the end time of the track as epoch seconds */
     private double maxTime;
 
-
     private void setupColors() {
         hdopAlpha = Config.getPref().getInt("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);

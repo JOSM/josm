@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 
@@ -204,6 +205,7 @@ public final class ColorScale {
      * @return This scale, for chaining
      */
     public ColorScale addTitle(String title) {
+        Objects.requireNonNull(title);
         this.title = title;
         return this;
     }
@@ -324,10 +326,8 @@ public final class ColorScale {
         }
 
         // legend title
-        if (title != null) {
-            g.setColor(LEGEND_TITLE);
-            g.drawString(title, xRect + rectWidth / 2 - titleWidth / 2, y - fh * 3 / 2 - 10);
-        }
+        g.setColor(LEGEND_TITLE);
+        g.drawString(title, xRect + rectWidth / 2 - titleWidth / 2, y - fh * 3 / 2 - 10);
 
         // legend texts
         drawLegend(g, y, w, h, valueScale, fh, fw, xText);
@@ -384,10 +384,8 @@ public final class ColorScale {
         }
 
         // legend title
-        if (title != null) {
-            g.setColor(LEGEND_TITLE);
-            g.drawString(title, xRect + rectWidth / 2 - titleWidth / 2, y - fh * 3 / 2 - padding / 2);
-        }
+        g.setColor(LEGEND_TITLE);
+        g.drawString(title, xRect + rectWidth / 2 - titleWidth / 2, y - fh * 3 / 2 - padding / 2);
 
         // legend texts
         drawTimeLegend(g, y, x, h, minVal, maxVal, fh, fw, xText);
