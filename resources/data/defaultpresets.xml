@@ -5382,6 +5382,13 @@
             <optional>
                 <text key="name" text="Name" />
                 <text key="description" text="Description" />
+                <checkgroup columns="2">
+                    <check key="bottle" text="Has bottle filler" />
+                    <check key="seasonal" text="Seasonal availability" />
+                    <check key="dog" text="Dog usage" value_on="designated" />
+                    <check key="historic" text="Historic" />
+                </checkgroup>
+                <combo key="fountain" text="Fountain type" values="bubbler,nozzle,bottle_refill,drinking,stone_block,nasone,toret,roman_wolf,sebilj,viktorija_zdenac,wallace" />
             </optional>
         </item> <!-- Drinking Water -->
         <item name="Water Point" icon="presets/accommodation/water.svg" type="node" preset_name_label="true">
