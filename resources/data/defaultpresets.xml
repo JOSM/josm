@@ -5384,7 +5384,7 @@
                 <text key="description" text="Description" />
                 <checkgroup columns="2">
                     <check key="bottle" text="Has bottle filler" />
-                    <check key="seasonal" text="Seasonal availability" />
+                    <check key="seasonal" text="Seasonal availability" disable_off="true"/>
                     <check key="dog" text="Dog usage" value_on="designated" />
                     <check key="historic" text="Historic" />
                 </checkgroup>
