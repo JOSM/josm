@@ -158,7 +158,8 @@ public final class I18n {
 
     // Matches ISO-639 two and three letters language codes + scripts
     private static final Pattern LANGUAGE_NAMES = Pattern.compile(
-            "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA, LATIN, PINYIN, LATINPINYIN, ROMAJI, HANI, HANS, HANT, BOPOMOFO) + ")))?");
+            "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA,
+            LATIN, PINYIN, LATINPINYIN, ROMAJI, HANI, HANS, HANT, BOPOMOFO) + ")))?");
 
     private static String format(String text, Object... objects) {
         if (objects.length == 0 && !text.contains("'")) {
