@@ -1289,7 +1289,12 @@ public class OsmDataLayer extends AbstractOsmDataLayer
             }
         } else if (p instanceof IRelation<?>) {
             for (IPrimitive member : ((IRelation<?>) p).getMemberPrimitivesList()) {
-                resetTiles(member);
+                if (member instanceof IRelation) {
+                    resetBounds(member.getBBox()); // Avoid recursive relation issues
+                    break;
+                } else {
+                    resetTiles(member);
+                }
             }
         } else {
             throw new IllegalArgumentException("Unsupported primitive type: " + p.getClass().getName());

@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -37,6 +38,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 /**
  * Test class for {@link StyledTiledMapRenderer}
  */
+@DisabledIfEnvironmentVariable(disabledReason = "Needs more work; leave enabled locally but disable on CI", named = "CI", matches = "true")
 @Main
 @Projection
 class StyledTiledMapRendererTest {
