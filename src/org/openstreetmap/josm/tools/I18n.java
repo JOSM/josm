@@ -731,9 +731,9 @@ public final class I18n {
                 case HANI:
                     return /* I18n: Han characters for Vietnamese or Korean language */ tr("Hani");
                 case HANS:
-                    return /* I18n: Simplified Chinese */ tr("Simplied");
+                    return /* I18n: Simplified Chinese */ tr("Simplified");
                 case HANT:
-                    return /* I18n: Traditional Chinese */ tr("Trdaditional");
+                    return /* I18n: Traditional Chinese */ tr("Traditional");
                 case BOPOMOFO:
                     return /* I18n: Mandarin Phonetic Symbols/Zhuyin */ tr("Bopomofo");
                 case ROMAJI:
