@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * Unit tests of {@link ImageMarker} class.
@@ -58,5 +61,24 @@ class ImageMarkerTest {
                 new MarkerLayer(new GpxData(), null, null, null),
                 1d, 2d);
         assertDoesNotThrow(() -> marker.actionPerformed(null));
+    }
+
+    /**
+     * Windows does not like {@code :} to appear multiple times in a path.
+     * @throws MalformedURLException if the URI fails to create and convert to a URL.
+     */
+    @Test
+    void testNonRegression23978() throws MalformedURLException {
+        final URL testURL;
+        if (PlatformManager.isPlatformWindows()) {
+            // This throws the InvalidPathException (subclass of IllegalArgumentException), and is what the initial problem was.
+            testURL = URI.create("file:/c:/foo/c:/bar/image.jpg").toURL();
+        } else {
+            // This throws an IllegalArgumentException.
+            testURL = new URL("file:/foobar/image.jpg#hashtagForIAE");
+        }
+        ImageMarker imageMarker = new ImageMarker(LatLon.ZERO, testURL,
+                new MarkerLayer(new GpxData(), null, null, null), 0, 0);
+        assertDoesNotThrow(() -> imageMarker.actionPerformed(null));
     }
 }
