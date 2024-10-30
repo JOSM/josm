@@ -132,6 +132,7 @@ public final class OAuthParameters {
                 clientSecret = null;
                 break;
             case "https://www.openhistoricalmap.org/api":
+            case "https://api.openhistoricalmap.org/api":
                 // clientId provided by 1ec5 (Minh Nguyễn)
                 clientId = "Hl5yIhFS-Egj6aY7A35ouLOuZl0EHjj8JJQQ46IO96E";
                 clientSecret = null;
