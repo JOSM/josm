@@ -15,8 +15,10 @@ public interface AnimationExtension {
      * Adjusts for size.
      * @param w width
      * @param h height
+     * @param x x origin of view area
+     * @param y y origin of view area
      */
-    void adjustForSize(int w, int h);
+    void adjustForSize(int w, int h, int x, int y);
 
     /**
      * Paints static contents.
