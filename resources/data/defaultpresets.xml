@@ -5434,6 +5434,21 @@
                 <reference ref="common_advertising" />
             </optional>
         </item> <!-- Poster box -->
+        <item name="Advertising Totem" icon="presets/leisure/totem.svg" type="node,way" preset_name_label="true">
+            <link wiki="Tag:advertising=totem"/>
+            <space />
+            <key key="advertising" value="totem" />
+            <combo key="message" text="Message type" values="commercial,local,safety,legal,map,political,showbiz,non_profit,opinion,religion" />
+            <optional>
+                <reference ref="ref_operator"/>
+                <reference ref="common_advertising" />
+                <text key="width" text="Width (meters)" />
+                <combo key="sides" text="Sides" values="2,3,4,5,6,7,8,9,10" length="3" />
+                <combo key="orientation" text="Orientation" values="front,medium,parallel,opposite,multi" />
+                <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270" values_sort="false" />
+                <combo key="visibility" text="Visibility" values="street,area"/>
+            </optional>
+        </item> <!-- Totem -->
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
   <group name="Sports" icon="presets/sport/soccer.svg">

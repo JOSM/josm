@@ -2370,8 +2370,13 @@ node[advertising=poster_box] {
     icon-image: "presets/leisure/poster_box.svg";
     set icon_z17;
 }
+node[advertising=totem] {
+    icon-image: "presets/leisure/totem.svg";
+    set icon_z17;
+}
 way[advertising=billboard],
-way[advertising=poster_box] {
+way[advertising=poster_box],
+way[advertising=totem] {
     width: 2;
     color: advertising#880000;
 }
