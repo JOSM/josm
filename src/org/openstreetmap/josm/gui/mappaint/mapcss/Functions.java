@@ -1034,12 +1034,12 @@ public final class Functions {
      * and ending at index {@code end}, (exclusive, 0-indexed).
      * @param s The base string
      * @param begin The start index
-     * @param end The end index
+     * @param end The end index. If negative, it counts from the end of the string
      * @return the substring
      * @see String#substring(int, int)
      */
     public static String substring(String s, float begin, float end) {
-        return s == null ? null : s.substring((int) begin, (int) end);
+        return s == null ? null : s.substring((int) begin, (int) (end >= 0 ? end : s.length() + end));
     }
 
     /**
