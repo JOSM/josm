@@ -1323,8 +1323,11 @@
             <space />
             <optional text="Cycleway Lane Attributes">
                 <combo key="cycleway:both:lane" text="Lane type (both)" values_context="cycleway" values="advisory,exclusive"/>
+                <check key="cycleway:both:buffer" text="Has buffer between automobiles and cycleway (both)" />
                 <combo key="cycleway:left:lane" text="Lane type (left)" values_context="cycleway" values="advisory,exclusive"/>
+                <check key="cycleway:left:buffer" text="Has buffer between automobiles and cycleway (left)" />
                 <combo key="cycleway:right:lane" text="Lane type (right)" values_context="cycleway" values="advisory,exclusive"/>
+                <check key="cycleway:right:buffer" text="Has buffer between automobiles and cycleway (right)" />
             </optional>
             <optional text="Edit Highway Attributes:">
                 <combo key="highway" text="Highway" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,living_street,service,bus_guideway,construction" values_context="Highway" values_sort="false" />

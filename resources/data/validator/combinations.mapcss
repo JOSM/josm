@@ -1065,3 +1065,75 @@ area[/^(building|building:part)$/][building:levels][building:min_level][tag("bui
   throwWarning: tr("{0} is lower or equal to {1} on {2}", "{1.key}", "{2.key}", "{0.key}");
   group: tr("suspicious tag combination");
 }
+
+/* #23932 */
+way[cycleway:right][cycleway:right!=lane][cycleway:right!=separate][/^cycleway(:right|:both|):buffer/],
+way[cycleway:left][cycleway:left!=lane][cycleway:left!=separate][/^cycleway(:left|:both|):buffer/],
+way[cycleway:both][cycleway:both!=lane][cycleway:both!=separate][/^cycleway(:right|:left|:both|):buffer/],
+way[cycleway][cycleway!=lane][cycleway!=separate][/^cycleway(:right|:left|:both|):buffer/] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{3.tag}");
+  group: tr("suspicious tag combination");
+  assertMatch: "way cycleway:right=separate cycleway:right:buffer=yes";
+  assertMatch: "way cycleway:left=shared_lane cycleway:buffer=no";
+  assertMatch: "way cycleway:both=track cycleway:left:buffer=yes";
+  assertMatch: "way cycleway=shared_busway cycleway:buffer=no";
+  assertNoMatch: "way cycleway:right=lane cycleway:right:buffer=no";
+  assertNoMatch: "way cycleway:right=separate cycleway:right:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:left:buffer=yes";
+  assertNoMatch: "way cycleway:both=lane cycleway:both:buffer=no";
+  assertNoMatch: "way cycleway:both=lane cycleway:left:buffer=yes";
+  assertNoMatch: "way cycleway:both=lane cycleway:buffer=no";
+  assertNoMatch: "way cycleway=lane cycleway:buffer=yes";
+  assertNoMatch: "way cycleway=lane cycleway:right:buffer=no";
+  assertNoMatch: "way cycleway=lane cycleway:both:buffer=no";
+}
+
+way[cycleway:right=separate][/^cycleway(:right|:both):./], 
+way[cycleway:left=separate][/^cycleway(:left|:both):./], 
+way[cycleway:both=separate][/^cycleway(:right|:left|:both):./], 
+way[cycleway=separate][/^cycleway(:right|:left|:both):./] {
+  throwWarning: tr("{0} together with {1}. Remove {1}.", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+  assertMatch: "way cycleway:right=separate cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway:right=separate cycleway:both:buffer=yes";
+  assertMatch: "way cycleway:left=separate cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway:left=separate cycleway:both:buffer=yes";
+  assertMatch: "way cycleway:both=separate cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway:both=separate cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway:both=separate cycleway:both:buffer=yes";
+  assertMatch: "way cycleway=separate cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway=separate cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway=separate cycleway:both:buffer=yes";
+  assertNoMatch: "way cycleway:right=separate cycleway:left:surface=asphalt";
+  assertNoMatch: "way cycleway:left=separate cycleway:right:buffer=yes";
+  assertNoMatch: "way cycleway:both=separate";
+  assertNoMatch: "way cycleway=separate";
+}
+
+way[/^cycleway:right:/][!cycleway:right][!cycleway:both][!cycleway],
+way[/^cycleway:left:/][!cycleway:left][!cycleway:both][!cycleway],
+way[/^cycleway:both:/][!cycleway:both][!cycleway][!cycleway:left][!cycleway:right],
+way[/^cycleway(?!:right|:left|:both|:lanes):/][!cycleway][!cycleway:both][!cycleway:left][!cycleway:right][segregated!=yes] {
+  throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
+  group: tr("missing tag");
+  suggestAlternative: "{0.tag} + {1.key}=*";
+  assertMatch: "way cycleway:right=lane cycleway:left:buffer=yes";
+  assertMatch: "way cycleway:right:buffer=yes";
+  assertMatch: "way cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway:left=lane cycleway:right:buffer=no";
+  assertMatch: "way cycleway:left:buffer=yes";
+  assertMatch: "way cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway:both:buffer=yes";
+  assertMatch: "way cycleway:both:surface=asphalt";
+  assertMatch: "way cycleway:buffer=no";
+  assertNoMatch: "way cycleway:right=lane cycleway:right:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:left:buffer=yes";
+  assertNoMatch: "way cycleway:both=lane cycleway:both:buffer=yes";
+  assertNoMatch: "way cycleway=lane cycleway:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:right=lane cycleway:both:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:right=lane cycleway:buffer=no";
+  assertNoMatch: "way cycleway=lane cycleway:surface=asphalt";
+  assertNoMatch: "way cycleway:both=lane cycleway:both:surface=asphalt";
+  assertNoMatch: "way highway=path segregated=yes cycleway:surface=needles footway:surface=paving_stones";
+  assertNoMatch: "way highway=primary oneway=yes bicycle:lanes=no|designated|yes cycleway:lanes=|lane|no";
+}
