@@ -7532,7 +7532,7 @@
                 <list_entry value="bench" short_description="A bench placed in memory of someone or something; usually has a plaque, and sometimes a statue sitting on (part of) it." />
             </combo>
             <optional>
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
                 <text key="artist_name" text="Artist Name" />
                 <combo key="material" text="Material" values="concrete,granite,metal,plastic,steel,stone,wood" />
                 <text key="start_date" text="Start date" />
@@ -7546,7 +7546,7 @@
             <text key="name" text="Name" />
             <reference ref="religious_catholic_christian" />
             <text key="start_date" text="Start date" />
-            <text key="inscription" text="Inscription" />
+            <text key="inscription" text="Inscription" multiline="true" />
         </item> <!-- Wayside Cross -->
         <item name="Wayside Shrine" icon="presets/religion/wayside_shrine.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:historic=wayside_shrine" />
@@ -7557,7 +7557,7 @@
             <check key="amenity" text="Place of worship" value_on="place_of_worship" disable_off="true" />
             <combo key="building" text="Building" values="wayside_shrine,yes" values_context="building" />
             <text key="start_date" text="Start date" />
-            <text key="inscription" text="Inscription" />
+            <text key="inscription" text="Inscription" multiline="true" />
         </item> <!-- Wayside Shrine -->
         <item name="Boundary Stone" icon="presets/landmark/boundary_stone.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:historic=boundary_stone" />
@@ -7565,7 +7565,7 @@
             <key key="historic" value="boundary_stone" />
             <optional>
                 <text key="name" text="Name" />
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
             </optional>
             <preset_link preset_name="Boundary Marker" text="Similar but different tags:" />
         </item> <!-- Boundary Stone -->
@@ -7575,7 +7575,7 @@
             <key key="historic" value="milestone" />
             <optional>
                 <text key="name" text="Name" />
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
             </optional>
         </item> <!-- Milestone -->
     </group> <!-- Historic Places -->
@@ -8964,7 +8964,7 @@
             <key key="boundary" value="marker" />
             <optional>
                 <reference ref="name_ref" />
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
             </optional>
             <preset_link preset_name="Boundary Stone" text="Similar but different tags:" />

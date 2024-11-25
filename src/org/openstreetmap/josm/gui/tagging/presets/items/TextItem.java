@@ -23,6 +23,11 @@ public abstract class TextItem extends TaggingPresetItem {
     /** The context used for translating {@link #text} */
     public String text_context; // NOSONAR
 
+    /** {@code true} if the value is a multiline value */
+    public boolean multiline; // NOSONAR
+    /** {@code true} if the value should be normalized */
+    public boolean normalize = true; // NOSONAR
+
     /** The localized version of {@link #text} */
     public String locale_text; // NOSONAR
 

@@ -820,10 +820,21 @@ public final class Utils {
      * @since 13597
      */
     public static String removeWhiteSpaces(String s) {
+        return removeWhiteSpaces(WHITE_SPACES_PATTERN, s);
+    }
+
+    /**
+     * Removes leading, trailing, and multiple inner whitespaces from the given string, to be used as a key or value.
+     * @param s The string
+     * @param whitespaces The regex for whitespaces to remove outside the leading and trailing whitespaces (see {@link #strip(String)})
+     * @return The string without leading, trailing or multiple inner whitespaces
+     * @since 19261
+     */
+    public static String removeWhiteSpaces(Pattern whitespaces, String s) {
         if (isEmpty(s)) {
             return s;
         }
-        return strip(s).replaceAll("\\s+", " ");
+        return whitespaces.matcher(strip(s)).replaceAll(" ");
     }
 
     /**
