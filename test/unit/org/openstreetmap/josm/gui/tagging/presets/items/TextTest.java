@@ -53,10 +53,12 @@ class TextTest implements TaggingPresetItemTest {
     @ParameterizedTest
     @ValueSource(strings = {"\n\n\n\t\r {0}\n\n\n", "{0}"})
     void testNonRegression24023(String inscription) {
-        // There is a bit of "extra" whitespace in the string (` \n`). It is somewhat deliberate. We probably ought to remove the ` ` at some time.
+        // There is a bit of "extra" whitespace in the string (` \n`). It is somewhat deliberate.
+        // We probably ought to remove the ` ` at some time.
         final String expected = "This is a \nsample \ninscription";
         final String toTest = MessageFormat.format(inscription, expected).replace("sample ", "sample    ");
-        final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(Collections.singleton(TaggingPresetType.NODE), Map.of("historic", "boundary_stone", "inscription", "bar"), false);
+        final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(Collections.singleton(TaggingPresetType.NODE),
+            Map.of("historic", "boundary_stone", "inscription", "bar"), false);
         assertEquals(1, presets.size());
         final TaggingPreset preset = presets.iterator().next();
         final Text text = assertInstanceOf(Text.class, preset.data.get(5));
@@ -67,7 +69,8 @@ class TextTest implements TaggingPresetItemTest {
         while (value instanceof JPanel) {
             value = (JComponent) value.getComponent(0);
         }
-        final JosmTextField textField = assertInstanceOf(JosmTextField.class, value, "Until we support multiline editing, this should be a text field");
+        final JosmTextField textField = assertInstanceOf(JosmTextField.class, value,
+            "Until we support multiline editing, this should be a text field");
         textField.setText(toTest);
         text.addCommands(changeCommands);
         assertTrue(text.multiline);
