@@ -94,6 +94,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         final String reserved = marktr("reserved");
         // CHECKSTYLE.OFF: LineLength
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
+        /* POSSIBLE SHORTCUTS: F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12 */
         for (int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i) {
             Shortcut.registerSystemShortcut("screen:toggle"+i, tr(reserved), i, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK)
                 .setAutomatic();
