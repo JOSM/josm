@@ -786,23 +786,26 @@ public class MainApplication {
         Optional<String> language = args.getSingle(Option.LANGUAGE);
         I18n.set(language.orElse(null));
 
-        try {
-            Policy.setPolicy(new Policy() {
-                // Permissions for plug-ins loaded when josm is started via webstart
-                private final PermissionCollection pc;
+        // JEP 486 (Java 24) now causes exceptions to be thrown. The security manager is terminally deprecated.
+        if (Utils.getJavaVersion() < 24) {
+            try {
+                Policy.setPolicy(new Policy() {
+                    // Permissions for plug-ins loaded when josm is started via webstart
+                    private final PermissionCollection pc;
 
-                {
-                    pc = new Permissions();
-                    pc.add(new AllPermission());
-                }
+                    {
+                        pc = new Permissions();
+                        pc.add(new AllPermission());
+                    }
 
-                @Override
-                public PermissionCollection getPermissions(CodeSource codesource) {
-                    return pc;
-                }
-            });
-        } catch (SecurityException e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to set permissions", e);
+                    @Override
+                    public PermissionCollection getPermissions(CodeSource codesource) {
+                        return pc;
+                    }
+                });
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to set permissions", e);
+            }
         }
 
         try {
