@@ -521,6 +521,42 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     }
 
     /**
+     * updates the referenced primitive of the members given by the index in <code>index</code>
+     *
+     * @param index the index to update
+     * @param newPrimitive the new primitive
+     * @since xxx
+     */
+    public void updateMemberPrimitive(int index, OsmPrimitive newPrimitive) {
+        if (index >= members.size()) {
+            return;
+        }
+
+        RelationMember newMember = new RelationMember(members.get(index).getRole(), newPrimitive);
+        updateMember(index, newMember);
+    }
+
+    /**
+     * replace the member at <code>index</code> with a new one
+     *
+     * @param index the index to update
+     * @param newMember the new member
+     * @since xxx
+     */
+    public void updateMember(int index, RelationMember newMember) {
+        if (index >= members.size()) {
+            return;
+        }
+
+        RelationMember oldMember = members.get(index);
+        if (oldMember.equals(newMember))
+            return;
+
+        setValue(index, newMember);
+        fireTableDataChanged();
+    }
+
+    /**
      * Get the currently selected relation members
      *
      * @return a collection with the currently selected relation members
