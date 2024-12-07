@@ -5572,6 +5572,7 @@
                 <link wiki="Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="driving_range" />
+                <key key="surface" value="grass" match="keyvalue" />
             </item> <!-- Driving range -->
         </group> <!-- Golf -->
         <item name="Miniature Golf" icon="presets/sport/miniature_golf.svg" type="node,closedway,multipolygon" preset_name_label="true">
