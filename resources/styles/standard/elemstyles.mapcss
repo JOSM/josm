@@ -3337,7 +3337,8 @@ area[amenity=college],
 area[amenity=kindergarten],
 area[amenity=language_school],
 area[amenity=music_school],
-area[amenity=driving_school] {
+area[amenity=driving_school],
+area[amenity=driver_training] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=animal_boarding] {
@@ -3464,7 +3465,8 @@ node[amenity=language_school] {
     icon-image: "presets/education/language_school.svg";
     set icon_z17;
 }
-node[amenity=driving_school] {
+node[amenity=driving_school],
+node[amenity=driver_training] {
     icon-image: "presets/education/driving_school.svg";
     set icon_z17;
 }
