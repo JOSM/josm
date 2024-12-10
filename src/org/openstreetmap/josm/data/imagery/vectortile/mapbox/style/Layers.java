@@ -88,7 +88,7 @@ public class Layers {
      * @param layerInfo The info to use to create the layer
      */
     public Layers(final JsonObject layerInfo) {
-        this (null, layerInfo);
+        this(null, layerInfo);
     }
 
     /**

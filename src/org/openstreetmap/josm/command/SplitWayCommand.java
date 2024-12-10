@@ -45,9 +45,10 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
+
 /**
  * Splits a way into multiple ways (all identical except for their node list).
- *
+ * <p>
  * Ways are just split at the selected nodes.  The nodes remain in their
  * original order.  Selected nodes at the end of a way are ignored.
  *
@@ -76,12 +77,13 @@ public class SplitWayCommand extends SequenceCommand {
     private final Way originalWay;
     private final List<Way> newWays;
 
+    private static final String RESTRICTION = "restriction";
     /** Map&lt;Restriction type, type to treat it as&gt; */
     private static final Map<String, String> relationSpecialTypes = new HashMap<>();
     static {
-        relationSpecialTypes.put("restriction", "restriction");
-        relationSpecialTypes.put("destination_sign", "restriction");
-        relationSpecialTypes.put("connectivity", "restriction");
+        relationSpecialTypes.put(RESTRICTION, RESTRICTION);
+        relationSpecialTypes.put("destination_sign", RESTRICTION);
+        relationSpecialTypes.put("connectivity", RESTRICTION);
     }
 
     /**
@@ -166,10 +168,10 @@ public class SplitWayCommand extends SequenceCommand {
     /**
      * Splits the nodes of {@code wayToSplit} into a list of node sequences
      * which are separated at the nodes in {@code splitPoints}.
-     *
+     * <p>
      * This method displays warning messages if {@code wayToSplit} and/or
      * {@code splitPoints} aren't consistent.
-     *
+     * <p>
      * Returns null, if building the split chunks fails.
      *
      * @param wayToSplit the way to split. Must not be null.
@@ -249,7 +251,7 @@ public class SplitWayCommand extends SequenceCommand {
     /**
      * Splits the way {@code way} into chunks of {@code wayChunks} and replies
      * the result of this process in an instance of {@link SplitWayCommand}.
-     *
+     * <p>
      * Note that changes are not applied to the data yet. You have to
      * submit the command first, i.e. {@code UndoRedoHandler.getInstance().add(result)}.
      *
@@ -462,7 +464,7 @@ public class SplitWayCommand extends SequenceCommand {
                 RelationMember rm = r.getMember(ir);
                 if (rm.getMember() == way) {
                     boolean insert = true;
-                    if (relationSpecialTypes.containsKey(type) && "restriction".equals(relationSpecialTypes.get(type))) {
+                    if (relationSpecialTypes.containsKey(type) && RESTRICTION.equals(relationSpecialTypes.get(type))) {
                         RelationInformation rValue = treatAsRestriction(r, rm, c, newWays, way, changedWayNodes);
                         if (rValue.warnme) warnings.add(WarningType.GENERIC);
                         insert = rValue.insert;
@@ -714,39 +716,11 @@ public class SplitWayCommand extends SequenceCommand {
             Relation relation = relationAnalysis.getRelation();
             Direction direction = relationAnalysis.getDirection();
 
-            int position = -1;
             for (int i = 0; i < relation.getMembersCount(); i++) {
                 // search for identical member (can't use indexOf() as it uses equals()
                 if (rm == relation.getMember(i)) {
-                    position = i;
+                    addSortedWays(i, indexOfWayToKeep, direction, newWays, relation);
                     break;
-                }
-            }
-
-            // sanity check
-            if (position < 0) {
-                throw new AssertionError("Relation member not found");
-            }
-
-            int j = position;
-            final List<Way> waysToAddBefore = newWays.subList(0, indexOfWayToKeep);
-            for (Way wayToAdd : waysToAddBefore) {
-                RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
-                j++;
-                if (direction == Direction.BACKWARDS) {
-                    relation.addMember(position + 1, em);
-                } else {
-                    relation.addMember(j - 1, em);
-                }
-            }
-            final List<Way> waysToAddAfter = newWays.subList(indexOfWayToKeep, newWays.size());
-            for (Way wayToAdd : waysToAddAfter) {
-                RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
-                j++;
-                if (direction == Direction.BACKWARDS) {
-                    relation.addMember(position, em);
-                } else {
-                    relation.addMember(j, em);
                 }
             }
         }
@@ -778,6 +752,77 @@ public class SplitWayCommand extends SequenceCommand {
                     way,
                     newWays
             );
+    }
+
+    /**
+     * Add ways in a sorted manner
+     * @param position The position of the relation member we are operating on
+     * @param indexOfWayToKeep The index of the way that is keeping history if it were in {@code newWays}
+     * @param direction The direction of the ways
+     * @param newWays The ways that are being added to the relation
+     * @param relation The relation we are operating on
+     */
+    private static void addSortedWays(final int position, final int indexOfWayToKeep, final Direction direction,
+                                      final List<Way> newWays, final Relation relation) {
+        // sanity check
+        if (position < 0) {
+            throw new AssertionError("Relation member not found");
+        }
+        final RelationMember rm = relation.getMember(position);
+        final boolean reverse = direction == Direction.BACKWARDS || needToReverseSplit(position, indexOfWayToKeep, relation, newWays);
+        final List<Way> waysToAddBefore = newWays.subList(0, indexOfWayToKeep);
+        int j = position;
+        for (Way wayToAdd : waysToAddBefore) {
+            RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
+            j++;
+            if (reverse) {
+                relation.addMember(position + 1, em);
+            } else {
+                relation.addMember(j - 1, em);
+            }
+        }
+        final List<Way> waysToAddAfter = newWays.subList(indexOfWayToKeep, newWays.size());
+        for (Way wayToAdd : waysToAddAfter) {
+            RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
+            j++;
+            if (reverse) {
+                relation.addMember(position, em);
+            } else {
+                relation.addMember(j, em);
+            }
+        }
+    }
+
+    /**
+     * This is only strictly necessary when we are splitting a route where it starts to loop back.
+     * Example: way1 -> way2 -> way2 -> way1
+     *
+     * @param position         The position of the original way in the relation
+     * @param indexOfWayToKeep The index of the way to keep in relation to {@code newWays}
+     * @param relation         The relation we are working on
+     * @param newWays          The ways that are being added
+     * @return {@code true} if we need to reverse the direction of the ways
+     */
+    private static boolean needToReverseSplit(final int position, int indexOfWayToKeep, final Relation relation, final List<Way> newWays) {
+        final RelationMember rm = relation.getMember(position);
+        if (!rm.isWay()) {
+            return false;
+        }
+        final RelationMember previous = position <= 0 ? null : relation.getMember(position - 1);
+        final RelationMember next = position + 1 >= relation.getMembersCount() ? null : relation.getMember(position + 1);
+        final Way first = indexOfWayToKeep == 0 ? rm.getWay() : newWays.get(0);
+        final Way last = indexOfWayToKeep == newWays.size() ? rm.getWay() : newWays.get(newWays.size() - 1);
+        if (previous != null && previous.isWay() && previous.getWay().isUsable()) {
+            final Way compare = previous.getWay();
+            if (!(compare.isFirstLastNode(first.firstNode()) || compare.isFirstLastNode(first.lastNode()))) {
+                return true;
+            }
+        }
+        if (next != null && next.isWay() && next.getWay().isUsable()) {
+            final Way compare = next.getWay();
+            return !(compare.isFirstLastNode(last.firstNode()) || compare.isFirstLastNode(last.lastNode()));
+        }
+        return false;
     }
 
     private static RelationInformation treatAsRestriction(Relation r,
@@ -832,7 +877,7 @@ public class SplitWayCommand extends SequenceCommand {
         if (type != null) {
             switch (type) {
             case "connectivity":
-            case "restriction":
+            case RESTRICTION:
                 return r.findRelationMembers("via");
             case "destination_sign":
                 // Prefer intersection over sign, see #12347
@@ -848,10 +893,10 @@ public class SplitWayCommand extends SequenceCommand {
     /**
      * Splits the way {@code way} at the nodes in {@code atNodes} and replies
      * the result of this process in an instance of {@link SplitWayCommand}.
-     *
+     * <p>
      * Note that changes are not applied to the data yet. You have to
      * submit the command first, i.e. {@code UndoRedoHandler.getInstance().add(result)}.
-     *
+     * <p>
      * Replies null if the way couldn't be split at the given nodes.
      *
      * @param way the way to split. Must not be null.

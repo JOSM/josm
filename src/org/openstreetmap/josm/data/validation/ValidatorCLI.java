@@ -96,15 +96,17 @@ public class ValidatorCLI implements CLIModule {
         OUTPUT(true, 'o', OptionParser.OptionCount.MULTIPLE),
         /** --change-file=&lt;change-file&gt;         Add a change file */
         CHANGE_FILE(true, 'c', OptionParser.OptionCount.MULTIPLE),
+        /** --warn                                    Set logging level to warn */
+        WARN(false, '*'),
         /** --debug                                   Set logging level to debug */
         DEBUG(false, '*'),
         /** --trace                                   Set logging level to trace */
         TRACE(false, '*'),
-        /** --language=&lt;language&gt;                Set the language */
+        /** --language=&lt;language&gt;               Set the language */
         LANGUAGE(true, 'l'),
-        /** --load-preferences=&lt;url-to-xml&gt;      Changes preferences according to the XML file */
+        /** --load-preferences=&lt;url-to-xml&gt;     Changes preferences according to the XML file */
         LOAD_PREFERENCES(true, 'p'),
-        /** --set=&lt;key&gt;=&lt;value&gt;            Set preference key to value */
+        /** --set=&lt;key&gt;=&lt;value&gt;           Set preference key to value */
         SET(true, 's');
 
         private final String name;
@@ -411,6 +413,9 @@ public class ValidatorCLI implements CLIModule {
         case HELP:
             showHelp();
             Lifecycle.exitJosm(true, 0);
+            break;
+        case WARN:
+            this.logLevel = Logging.LEVEL_WARN;
             break;
         case DEBUG:
             this.logLevel = Logging.LEVEL_DEBUG;

@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -30,7 +32,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import org.junit.jupiter.api.Test;
@@ -38,6 +42,7 @@ import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.ThreadSync;
+import org.openstreetmap.josm.tools.HttpClient;
 
 /**
  * Unit tests of {@link LoadAndZoomHandler} class.
@@ -46,8 +51,8 @@ import org.openstreetmap.josm.testutils.annotations.ThreadSync;
 @BasicWiremock
 @ExtendWith(BasicWiremock.OsmApiExtension.class)
 class LoadAndZoomHandlerTest {
-    private static final String DEFAULT_BBOX_URL = "https://localhost/load_and_zoom?left=0&bottom=0&right=0.001&top=0.001";
-    private static final String DEFAULT_BBOX_URL_2 = "https://localhost/load_and_zoom?left=0.00025&bottom=0.00025&right=0.00075&top=0.00125";
+    private static final String DEFAULT_BBOX_URL = "http://localhost/load_and_zoom?left=0&bottom=0&right=0.001&top=0.001";
+    private static final String DEFAULT_BBOX_URL_2 = "http://localhost/load_and_zoom?left=0.00025&bottom=0.00025&right=0.00075&top=0.00125";
     private static LoadAndZoomHandler newHandler(String url) throws RequestHandlerBadRequestException {
         LoadAndZoomHandler req = new LoadAndZoomHandler();
         req.myCommand = LoadAndZoomHandler.command;
@@ -236,10 +241,13 @@ class LoadAndZoomHandlerTest {
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/23821">#23821</a>
-     * @throws RequestHandlerBadRequestException If there is an issue with the handler
+     * @param wireMockRuntimeInfo The runtime info
      */
     @Test
-    void testNonRegression23821() throws RequestHandlerBadRequestException {
+    void testNonRegression23821(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+        // Start remote control on a random port to avoid failing when JOSM is open.
+        final int port = wireMockRuntimeInfo.getHttpPort() + 1;
+        Config.getPref().putInt("remote.control.port", port);
         final AtomicBoolean block = new AtomicBoolean(false);
         final Runnable runnable = () -> {
             synchronized (block) {
@@ -256,35 +264,54 @@ class LoadAndZoomHandlerTest {
         final DataSet wrongDataset = new DataSet();
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(wrongDataset,
                 "LoadAndZoomHandlerTest#testNonRegression23821", null));
-        ForkJoinTask<?> task1;
-        ForkJoinTask<?> task2;
         try {
-            GuiHelper.runInEDT(runnable);
-            MainApplication.worker.submit(runnable);
-            // The processor makes a new handler for each request
-            // It is single-threaded, so blocking on one handler would fix the problem with the other handler.
-            // But we might as well work on multi-threading, since it is easier to test. :)
-            final LoadAndZoomHandler handler1 = newHandler(DEFAULT_BBOX_URL + "&new_layer=true&layer_name=OSMData");
-            final LoadAndZoomHandler handler2 = newHandler(DEFAULT_BBOX_URL_2 + "&new_layer=false&layer_name=OSMData");
-            // Use a separate threads to avoid blocking on this thread
-            final ForkJoinPool pool = ForkJoinPool.commonPool();
-            task1 = pool.submit(() -> assertDoesNotThrow(handler1::handle));
-
-            // Make certain there is enough time for the first task to block
-            Awaitility.await().until(() -> true);
-            task2 = pool.submit(() -> assertDoesNotThrow(handler2::handle));
-        } finally {
-            // Unblock UI/worker threads
-            synchronized (block) {
-                block.set(true);
-                block.notifyAll();
+            ForkJoinTask<?> task1;
+            ForkJoinTask<?> task2;
+            try {
+                GuiHelper.runInEDT(runnable);
+                MainApplication.worker.submit(runnable);
+                // The processor makes a new handler for each request
+                // It is single-threaded, so blocking on one handler would fix the problem with the other handler.
+                // But we might as well work on multi-threading, since it is easier to test. :)
+                final HttpClient first = HttpClient.create(URI.create(DEFAULT_BBOX_URL.replace("localhost", "localhost:" + port)
+                        + "&new_layer=true&layer_name=OSMData").toURL());
+                final HttpClient second = HttpClient.create(URI.create(DEFAULT_BBOX_URL_2.replace("localhost", "localhost:" + port)
+                        + "&new_layer=false&layer_name=OSMData").toURL());
+                // Use a separate threads to avoid blocking on this thread.
+                final ForkJoinPool pool = ForkJoinPool.commonPool();
+                RemoteControl.start();
+                task1 = pool.submit(() -> assertDoesNotThrow(() -> {
+                    try {
+                        assertEquals("OK\r\n", first.connect().fetchContent());
+                    } finally {
+                        first.disconnect();
+                    }
+                }));
+                // Make certain there is enough time for the first task to block
+                Awaitility.await().until(() -> true);
+                task2 = pool.submit(() -> assertDoesNotThrow(() -> {
+                    try {
+                        assertEquals("OK\r\n", second.connect().fetchContent());
+                    } finally {
+                        second.disconnect();
+                    }
+                }));
+            } finally {
+                // Unblock UI/worker threads
+                synchronized (block) {
+                    block.set(true);
+                    block.notifyAll();
+                }
             }
+
+            task1.join();
+            task2.join();
+
+            syncThreads();
+        } finally {
+            // We have to stop remote control _after_ we join the tasks and sync threads.
+            RemoteControl.stop();
         }
-
-        task1.join();
-        task2.join();
-
-        syncThreads();
         assertEquals(2, MainApplication.getLayerManager().getLayers().size());
         final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         assertNotEquals(wrongDataset, ds);

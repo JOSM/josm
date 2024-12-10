@@ -149,7 +149,7 @@ public class SelectionListDialog extends ToggleDialog {
      * Constructs a new {@code SelectionListDialog}.
      */
     public SelectionListDialog() {
-        super(tr(SELECTION_CASING), "selectionlist", tr("Open a selection list window."),
+        super(tr(SELECTION_CASING), /* ICON(dialogs/) */ "selectionlist", tr("Open a selection list window."),
                 Shortcut.registerShortcut("subwindow:selection", tr("Windows: {0}",
                 tr(SELECTION_CASING)), KeyEvent.VK_T, Shortcut.ALT_SHIFT),
                 150, // default height

@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.openstreetmap.josm</groupId>
     <artifactId>josm-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <relativePath>./nodist/pom.xml</relativePath>
   </parent>
 
@@ -40,6 +40,8 @@
     <default-junit-includes>**/*Test.class</default-junit-includes>
     <default-junitIT-includes>**/*TestIT.class</default-junitIT-includes>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Needed just in case something adds argLine for tests before we set it -->
+    <argLine/>
   </properties>
   <packaging>jar</packaging>
   <inceptionYear>2005</inceptionYear>
@@ -459,9 +461,11 @@
             <exclude>**/*TestIT</exclude>
           </excludes>
           <skipAfterFailureCount>1</skipAfterFailureCount>
+          <useModulePath>false</useModulePath> <!-- testing with modules seems to be problematic right now -->
           <!-- We might need @{argLine} in the future if another plugin has issues -->
           <argLine>
-            -javaagent:"${settings.localRepository}"/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar
+            @{argLine}
+            -javaagent:${org.jmockit:jmockit:jar}
             --add-opens java.base/java.io=ALL-UNNAMED
             --add-opens java.base/java.lang=ALL-UNNAMED
             --add-opens java.base/java.nio=ALL-UNNAMED
@@ -740,4 +744,35 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>java-17</id>
+      <activation>
+        <jdk>[17</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <!-- We might need @{argLine} in the future if another plugin has issues -->
+              <argLine>
+                @{argLine}
+                -javaagent:${com.ginsberg:junit5-system-exit:jar}
+                -javaagent:${org.jmockit:jmockit:jar}
+                --add-opens java.base/java.io=ALL-UNNAMED
+                --add-opens java.base/java.lang=ALL-UNNAMED
+                --add-opens java.base/java.nio=ALL-UNNAMED
+                --add-opens java.base/java.text=ALL-UNNAMED
+                --add-opens java.base/java.util=ALL-UNNAMED
+                --add-opens java.base/jdk.internal.loader=ALL-UNNAMED
+                --add-opens java.desktop/java.awt=ALL-UNNAMED
+                --add-opens java.prefs/java.util.prefs=ALL-UNNAMED
+              </argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

@@ -968,13 +968,16 @@ public final class PluginHandler {
                 if (finished) {
                     continue;
                 }
+                boolean found = false;
                 for (PluginProxy proxy : pluginList) {
                     if (isDependency(proxy.getPluginInformation(), depName)) {
-                        cl.addDependency(proxy.getClassLoader());
+                        found = cl.addDependency(proxy.getClassLoader());
                         break;
                     }
                 }
-                Logging.error("unable to find dependency " + depName + " for plugin " + info.getName());
+                if (!found) {
+                    Logging.error("unable to find dependency " + depName + " for plugin " + info.getName());
+                }
             }
         }
     }

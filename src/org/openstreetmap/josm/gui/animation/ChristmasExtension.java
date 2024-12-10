@@ -28,7 +28,7 @@ public class ChristmasExtension implements AnimationExtension {
     }
 
     @Override
-    public final void adjustForSize(int w, int h) {
+    public final void adjustForSize(int w, int h, int x, int y) {
         int count = w / (2 * (Star.averageStarWidth + 1));
         while (objs.size() > count) {
             objs.remove(objs.size() - 1);

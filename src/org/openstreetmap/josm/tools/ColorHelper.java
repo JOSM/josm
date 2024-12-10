@@ -73,9 +73,13 @@ public final class ColorHelper {
      */
     public static Color getForegroundColor(Color bg) {
         // http://stackoverflow.com/a/3943023/2257172
-        return bg == null ? null :
-              (bg.getRed()*0.299 + bg.getGreen()*0.587 + bg.getBlue()*0.114) > 186 ?
-                  Color.BLACK : Color.WHITE;
+        if (bg == null) {
+            return null;
+        }
+        if (calculateContrastRatio(Color.WHITE, bg) > calculateContrastRatio(Color.BLACK, bg)) {
+            return Color.WHITE;
+        }
+        return Color.BLACK;
     }
 
     /**
@@ -127,5 +131,45 @@ public final class ColorHelper {
      */
     public static Color complement(Color clr) {
         return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
+    }
+
+    /**
+     * Calculate the relative "luminance" of a color. This is mostly useful for choosing background/foreground colours
+     * @see <a href="https://stackoverflow.com/questions/9733288/how-to-programmatically-calculate-the-contrast-ratio-between-two-colors">
+     *     constrast ratio</a>
+     */
+    private static double calculateLuminance(Color color) {
+        final double rs = color.getRed() / 255.0;
+        final double gs = color.getGreen() / 255.0;
+        final double bs = color.getBlue() / 255.0;
+        final double r = calculateLuminanceStepFunction(rs);
+        final double g = calculateLuminanceStepFunction(gs);
+        final double b = calculateLuminanceStepFunction(bs);
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    /**
+     * This is a step function for {@link #calculateLuminance(Color)}
+     * @param color The color to get the values for
+     * @return The value to use when calculating relative luminance
+     */
+    private static double calculateLuminanceStepFunction(double color) {
+        if (color <= 0.03928) {
+            return color / 12.92;
+        }
+        return Math.pow((color + 0.055) / 1.055, 2.4);
+    }
+
+    /**
+     * Calculate the contrast between two colors (e.g. {@link Color#black} and {@link Color#white}).
+     * @param first The first color to use
+     * @param second The second color to use
+     * @return The contrast ratio ((L1 + 0.05)/(L2 + 0.05))
+     * @since 19236
+     */
+    public static double calculateContrastRatio(Color first, Color second) {
+        final double fL = calculateLuminance(first);
+        final double sL = calculateLuminance(second);
+        return (Math.max(fL, sL) + 0.05) / (Math.min(fL, sL) + 0.05);
     }
 }

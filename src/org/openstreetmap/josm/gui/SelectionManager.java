@@ -19,6 +19,7 @@ import javax.swing.Action;
 
 import org.openstreetmap.josm.actions.SelectByInternalPointAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -382,15 +383,16 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 selection.add(osm);
             }
         } else if (ds != null) {
+            final BBox bbox = nc.getLatLonBounds(bounding).toBBox();
             // nodes
-            for (Node n : ds.getNodes()) {
+            for (Node n : ds.searchNodes(bbox)) {
                 if (n.isSelectable() && selectionResult.contains(nc.getPoint2D(n))) {
                     selection.add(n);
                 }
             }
 
             // ways
-            for (Way w : ds.getWays()) {
+            for (Way w : ds.searchWays(bbox)) {
                 if (!w.isSelectable() || w.isEmpty()) {
                     continue;
                 }

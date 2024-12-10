@@ -539,7 +539,6 @@ public final class DomainValidator extends AbstractValidator {
         "cuisinella", // cuisinella SALM S.A.S.
         "cymru", // cymru Nominet UK
         "cyou", // cyou Beijing Gamease Age Digital Technology Co., Ltd.
-        "dabur", // dabur Dabur India Limited
         "dad", // dad Charleston Road Registry Inc.
         "dance", // dance United TLD Holdco Ltd.
         "data", // data Dish DBS Corporation

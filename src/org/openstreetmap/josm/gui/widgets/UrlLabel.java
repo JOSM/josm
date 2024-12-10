@@ -37,7 +37,7 @@ public class UrlLabel extends JLabel implements MouseListener {
      * @param url The URL to use, also used as description
      */
     public UrlLabel(String url) {
-        this (url, url, 0);
+        this(url, url, 0);
     }
 
     /**
@@ -46,7 +46,7 @@ public class UrlLabel extends JLabel implements MouseListener {
      * @param fontPlus The font increase in 1/72 of an inch units.
      */
     public UrlLabel(String url, int fontPlus) {
-        this (url, url, fontPlus);
+        this(url, url, fontPlus);
     }
 
     /**
@@ -55,7 +55,7 @@ public class UrlLabel extends JLabel implements MouseListener {
      * @param description The description to display
      */
     public UrlLabel(String url, String description) {
-        this (url, description, 0);
+        this(url, description, 0);
     }
 
     /**

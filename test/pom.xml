@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>josm-unittest</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
 
     <parent>
         <groupId>org.openstreetmap.josm</groupId>
         <artifactId>josm-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
         <relativePath>../nodist/pom.xml</relativePath>
     </parent>
     <properties>
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>org.openstreetmap.josm</groupId>
             <artifactId>josm</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

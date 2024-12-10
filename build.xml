@@ -387,6 +387,7 @@ Build-Date: ${build.tstamp}
             <pathelement path="${build.dir}"/>
             <pathelement path="${resources.dir}"/>
         </path>
+        <ivy:retrieve log="download-only" pattern="${test.dir}/lib/[artifact].[ext]" conf="junit5-system-exit"/>
         <ivy:retrieve log="download-only" pattern="${test.dir}/lib/[artifact].[ext]" conf="jmockit"/>
         <ivy:retrieve log="download-only" pattern="${tools.dir}/[artifact].[ext]" conf="commonslang"/>
         <ivy:retrieve log="download-only" pattern="${tools.dir}/[conf].[ext]" conf="jacocoant"/>
@@ -463,6 +464,7 @@ Build-Date: ${build.tstamp}
                         <jvmarg value="-Dfile.encoding=UTF-8"/>
                         <jvmarg value="-Djava.locale.providers=SPI,CLDR" />
                         <jvmarg value="-Djava.security.manager=allow" if:set="isJava17" />
+                        <jvmarg value="-javaagent:${test.dir}/lib/junit5-system-exit.jar" if:set="isJava17"/>
                         <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
                         <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
                         <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
@@ -777,6 +779,8 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.w3c.*"/>
             <ignore classname="org.zeromq.*"/>
             <ignore classname="waffle.*"/>
+            <!-- Our installers include javafx -->
+            <ignore classname="javafx.*"/>
             <!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jaxb.*"/>

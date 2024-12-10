@@ -57,6 +57,12 @@ if [ -f "/etc/default/${JOSM_VERSION}" ]; then
     . "/etc/default/${JOSM_VERSION}"
 fi
 
+# If there is more than 8G ram, we can use up to 75% of the memory while still leaving 2G for other things.
+if [ "$(LC_ALL=C LANG=C free --mega | grep '^Mem:' | awk '{print $2}')" -gt 8192 ]; then
+    # But don't set anything if JAVA_OPTS is already set.
+    JAVA_OPTS="${JAVA_OPTS:=-XX:MaxRAMPercentage=75.0 -Xms256m}"
+fi
+
 JAVA_OPTS="-Djosm.restart=true -Djava.net.useSystemProxies=true $JAVA_OPTS"
 
 if [ -z "${JAVACMD}" ] && [ -n "${ALTERNATIVE_JDK}" ]; then

@@ -49,6 +49,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 
@@ -64,6 +65,7 @@ import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 @HTTP
 @BasicWiremock
 @BasicPreferences
+@FunctionalTest
 @Timeout(15)
 class HttpClientTest {
     /**

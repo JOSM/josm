@@ -35,7 +35,7 @@ import org.openstreetmap.josm.io.CachedFile;
 
 /**
  * Extracts web links from OSM tags.
- *
+ * <p>
  * The following rules are used:
  * <ul>
  * <li>internal rules for basic tags</li>
@@ -64,7 +64,7 @@ public final class Tag2Link {
             .collect(Collectors.joining("|"));
 
     static final ListProperty PREF_SOURCE = new ListProperty("tag2link.source",
-            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2024.7.8/index.json"));
+            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2024.10.21/index.json"));
 
     static final CachingProperty<List<String>> PREF_SEARCH_ENGINES = new ListProperty("tag2link.search",
             Arrays.asList("https://duckduckgo.com/?q=$1", "https://www.google.com/search?q=$1")).cached();

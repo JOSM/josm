@@ -17,8 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -270,31 +268,34 @@ public class PlatformHookOsx implements PlatformHook {
         Shortcut.registerSystemShortcut("system:undo", tr(reserved), KeyEvent.VK_Z, InputEvent.META_DOWN_MASK); // Reverse the effect of the user's previous operation (equivalent to the Undo command). See "The Edit Menu."
         Shortcut.registerSystemShortcut("system:redo", tr(reserved), KeyEvent.VK_Z, InputEvent.META_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK); // Reverse the effect of the last Undo command (equivalent to the Redo command). See "The Edit Menu."
 
-        auto(Shortcut.registerSystemShortcut("apple-reserved-45", tr(reserved), KeyEvent.VK_RIGHT, InputEvent.META_DOWN_MASK)); // Change the keyboard layout to current layout of Roman script.
+        //auto(Shortcut.registerSystemShortcut("apple-reserved-45", tr(reserved), KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK)); // Move cursor to end of line
         //auto(Shortcut.registerSystemCut("apple-reserved-46", tr(reserved), KeyEvent.VK_RIGHT, KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the next semantic unit, typically the end of the current line.
         //auto(Shortcut.registerSystemCut("apple-reserved-47", tr(reserved), KeyEvent.VK_RIGHT, KeyEvent.SHIFT_DOWN_MASK)); // Extend selection one character to the right.
         //auto(Shortcut.registerSystemCut("apple-reserved-48", tr(reserved), KeyEvent.VK_RIGHT, KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the end of the current word, then to the end of the next word.
 
-        Shortcut.registerSystemShortcut("system:movefocusright", tr(reserved), KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
+        Shortcut.registerSystemShortcut("system:movefocusright", tr(reserved), KeyEvent.VK_RIGHT, InputEvent.META_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
 
-        auto(Shortcut.registerSystemShortcut("apple-reserved-49", tr(reserved), KeyEvent.VK_LEFT, InputEvent.META_DOWN_MASK)); // Change the keyboard layout to current layout of system script.
+        //auto(Shortcut.registerSystemShortcut("apple-reserved-49", tr(reserved), KeyEvent.VK_LEFT, InputEvent.META_DOWN_MASK)); // Move cursor to start of line
         //auto(Shortcut.registerSystemCut("apple-reserved-50", tr(reserved), KeyEvent.VK_LEFT, KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the previous semantic unit, typically the beginning of the current line.
         //auto(Shortcut.registerSystemCut("apple-reserved-51", tr(reserved), KeyEvent.VK_LEFT, KeyEvent.SHIFT_DOWN_MASK)); // Extend selection one character to the left.
         //auto(Shortcut.registerSystemCut("apple-reserved-52", tr(reserved), KeyEvent.VK_LEFT, KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the beginning of the current word, then to the beginning of the previous word.
 
-        Shortcut.registerSystemShortcut("system:movefocusleft", tr(reserved), KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
+        Shortcut.registerSystemShortcut("system:movefocusleft", tr(reserved), KeyEvent.VK_LEFT, InputEvent.META_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
 
         //auto(Shortcut.registerSystemCut("apple-reserved-53", tr(reserved), KeyEvent.VK_UP, KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection upward in the next semantic unit, typically the beginning of the document.
         //auto(Shortcut.registerSystemCut("apple-reserved-54", tr(reserved), KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the line above, to the nearest character boundary at the same horizontal location.
         //auto(Shortcut.registerSystemCut("apple-reserved-55", tr(reserved), KeyEvent.VK_UP, KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the beginning of the current paragraph, then to the beginning of the next paragraph.
 
-        Shortcut.registerSystemShortcut("system:movefocusup", tr(reserved), KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
+        Shortcut.registerSystemShortcut("system:movefocusup", tr(reserved), KeyEvent.VK_UP, InputEvent.META_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
 
         //auto(Shortcut.registerSystemCut("apple-reserved-56", tr(reserved), KeyEvent.VK_DOWN, KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection downward in the next semantic unit, typically the end of the document.
         //auto(Shortcut.registerSystemCut("apple-reserved-57", tr(reserved), KeyEvent.VK_DOWN, KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the line below, to the nearest character boundary at the same horizontal location.
         //auto(Shortcut.registerSystemCut("apple-reserved-58", tr(reserved), KeyEvent.VK_DOWN, KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK)); // Extend selection to the end of the current paragraph, then to the end of the next paragraph (include the blank line between paragraphs in cut, copy, and paste operations).
 
-        Shortcut.registerSystemShortcut("system:movefocusdown", tr(reserved), KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
+        Shortcut.registerSystemShortcut("system:movefocusdown", tr(reserved), KeyEvent.VK_DOWN, InputEvent.META_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
+
+        auto(Shortcut.registerSystemShortcut("apple-reserved-59", tr(reserved), KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK)); // Show all windows of the front app
+        auto(Shortcut.registerSystemShortcut("apple-reserved-60", tr(reserved), KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK)); // Mission control
 
         auto(Shortcut.registerSystemShortcut("system:about", tr(reserved), 0, -1)); // About
 
@@ -373,7 +374,7 @@ public class PlatformHookOsx implements PlatformHook {
 
     @Override
     public X509Certificate getX509Certificate(NativeCertAmend certAmend)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+            throws IOException {
         for (String macAlias : certAmend.getNativeAliases()) {
             try {
                 // Get platform certificate in PEM format

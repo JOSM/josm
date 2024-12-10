@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1">
+    <path
+       d="m 2.178916,0.565894 c -1.075935,0 -1.68076,0.5527597 -1.68076,1.6821522 V 13.890451 c 0,1.056427 0.54389,1.609549 1.618835,1.609549 h 11.766018 c 1.075206,0 1.619798,-0.525446 1.619798,-1.609549 V 2.2480463 c 0,-1.1018724 -0.544592,-1.6821523 -1.653429,-1.6821523 z"
+       style="fill:#ffffff;fill-opacity:1;stroke:#0e232e;stroke-width:1.0292;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1329" />
+    <g
+       id="g3"
+       transform="translate(0,-1.25)"
+       style="fill:#808080">
+      <rect
+         style="fill:#808080"
+         id="rect3"
+         width="14"
+         height="1"
+         x="1"
+         y="10.5" />
+      <rect
+         style="fill:#808080"
+         id="rect3-9"
+         width="14"
+         height="1"
+         x="1"
+         y="12.5" />
+      <rect
+         style="fill:#808080"
+         id="rect3-99"
+         width="14"
+         height="1"
+         x="1"
+         y="14.25" />
+      <rect
+         style="fill:#808080"
+         id="rect3-5"
+         width="14"
+         height="1"
+         x="1"
+         y="8.5" />
+    </g>
+    <g
+       id="g4"
+       style="fill:#000000">
+      <circle
+         style="fill:#000000"
+         id="path1"
+         cx="4"
+         cy="11"
+         r="1" />
+      <rect
+         style="fill:#000000"
+         id="rect2"
+         width="1"
+         height="4"
+         x="4"
+         y="7" />
+      <circle
+         style="fill:#000000"
+         id="path1-5"
+         cx="7"
+         cy="13"
+         r="1" />
+      <rect
+         style="fill:#000000"
+         id="rect2-7"
+         width="1"
+         height="4"
+         x="7"
+         y="9" />
+      <circle
+         style="fill:#000000"
+         id="path1-58"
+         cx="10"
+         cy="11"
+         r="1" />
+      <rect
+         style="fill:#000000"
+         id="rect2-8"
+         width="1"
+         height="4"
+         x="10"
+         y="7" />
+      <circle
+         style="fill:#000000"
+         id="path1-0"
+         cx="12"
+         cy="13"
+         r="1" />
+      <rect
+         style="fill:#000000"
+         id="rect2-4"
+         width="1"
+         height="4"
+         x="12"
+         y="9" />
+    </g>
+    <path
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:20;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 4.0467025,4.7291014 3.3275387,4.7395404 C 3.2271908,4.9065111 3.1549086,5.1161623 3.0775965,5.3655609 2.9661795,5.724953 2.8718882,6.1555923 2.8164212,6.5847383 c -0.2090299,1.617144 -0.209539,2.365141 -0.209539,2.365141 h 0.4789451 c 0,0 -8.628e-4,-0.704859 0.2057946,-2.303885 0.051852,-0.401141 0.1414153,-0.8108752 0.2432126,-1.1392424 0.1017973,-0.3283586 0.2437216,-0.586195 0.27988,-0.6215337 0.084723,-0.082825 0.1584376,-0.1243499 0.2065452,-0.1456774 0.010698,-0.00518 0.018722,-0.00776 0.025451,-0.010439 z"
+       id="path2666" />
+    <path
+       style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.239262;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 7.3666536,1.2723163 1.4198167,4.2537023 8.8311143,4.3529113 14.230218,1.5427749 Z"
+       id="path2662" />
+    <path
+       style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.239262;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 3.8794734,6.7677903 4.5220498,4.8725269 9,5 11.981498,3.3797245 13.174293,4.7623263 c 0,0 -1.505882,0.1656935 -2.162073,0.5726324 -0.656191,0.4069389 -1.5073492,1.3866566 -1.5073492,1.3866566 0,0 -1.8531175,-0.6407989 -2.7100127,-0.6551898 C 5.1588285,6.0389897 3.981055,6.7458763 3.8794734,6.7677903 Z"
+       id="path2664" />
+  </g>
+</svg>

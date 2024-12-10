@@ -11,12 +11,14 @@ import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 
 /**
  * This test tests how fast we are at writing an OSM file.
  * <p>
  * For this, we use the neubrandenburg-file, which is a good real world example of an OSM file.
  */
+@PerformanceTest
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 class OsmWriterPerformanceTest {
     private static final int TIMES = 4;

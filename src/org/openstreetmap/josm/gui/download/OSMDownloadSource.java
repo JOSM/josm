@@ -196,6 +196,8 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         /** This is used to keep track of the components for download sources, and to dynamically update/remove them */
         private final JPanel downloadSourcesPanel;
 
+        private boolean inRestore = false;
+
         private final ChangeListener checkboxChangeListener;
 
         /**
@@ -255,13 +257,16 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
 
         @Override
         public void rememberSettings() {
-            DOWNLOAD_SOURCES.forEach(type -> type.getBooleanProperty().put(type.getCheckBox().isSelected()));
+            if (!inRestore)
+                DOWNLOAD_SOURCES.forEach(type -> type.getBooleanProperty().put(type.getCheckBox().isSelected()));
         }
 
         @Override
         public void restoreSettings() {
+            inRestore = true;
             updateSources();
             DOWNLOAD_SOURCES.forEach(type -> type.getCheckBox().setSelected(type.isEnabled()));
+            inRestore = false;
         }
 
         @Override

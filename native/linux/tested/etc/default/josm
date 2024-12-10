@@ -2,7 +2,7 @@
 # Uncomment the JAVA_OPTS lines to enable their use by /usr/bin/josm
 
 # Increase usable memory
-#JAVA_OPTS="-Xmx2048m ${JAVA_OPTS}"
+#JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -Xms256m ${JAVA_OPTS}"
 
 # Enable OpenGL pipeline (2D graphic accelerators)
 #JAVA_OPTS="-Dsun.java2d.opengl=True ${JAVA_OPTS}"

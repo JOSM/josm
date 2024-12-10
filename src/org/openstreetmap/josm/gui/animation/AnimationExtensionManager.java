@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.animation;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -27,8 +28,14 @@ public final class AnimationExtensionManager {
      */
     public static AnimationExtension getExtension() {
         if (currentExtension == null) {
-            currentExtension = Boolean.TRUE.equals(PROP_ANIMATION.get()) && isChristmas() ? new ChristmasExtension()
-                    : new NoExtension();
+            final boolean isAnimated = Boolean.TRUE.equals(PROP_ANIMATION.get());
+            if (isAnimated && isChristmas()) {
+                currentExtension = new ChristmasExtension();
+            } else if (isAnimated && isBirthday()) {
+                currentExtension = new BirthdayExtension();
+            } else {
+                currentExtension = new NoExtension();
+            }
         }
         return currentExtension;
     }
@@ -44,5 +51,14 @@ public final class AnimationExtensionManager {
 
     private static boolean isChristmas() {
         return LocalDate.now(ZoneId.systemDefault()).getDayOfYear() > 350;
+    }
+
+    /**
+     * The first commit of JOSM to svn (r1) was on 2005-09-27
+     * @return {@code true} if today is JOSM's birthday
+     */
+    private static boolean isBirthday() {
+        LocalDate l = LocalDate.now(ZoneId.systemDefault());
+        return l.getMonth() == Month.SEPTEMBER && l.getDayOfMonth() == 27;
     }
 }

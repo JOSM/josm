@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.nio.file.FileSystemNotFoundException;
 import java.time.Instant;
 import java.util.List;
 
@@ -261,7 +262,7 @@ public interface ImageMetadata {
 
     /**
      * Extract GPS metadata from image EXIF. Has no effect if the image file is not set
-     *
+     * <p>
      * If successful, fills in the LatLon, speed, elevation, image direction, and other attributes
      * @since 18592 (interface), 9270 (GpxImageEntry)
      */
@@ -271,6 +272,8 @@ public interface ImageMetadata {
             ImageUtils.applyExif(this, bufferedInputStream);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } catch (IllegalArgumentException | FileSystemNotFoundException e) {
+            throw new UncheckedIOException(new IOException(e));
         }
     }
 

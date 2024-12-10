@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
 
@@ -24,6 +25,7 @@ import org.openstreetmap.josm.testutils.annotations.Territories;
  * Performance test of {@code ValidationTask}.
  */
 @BasicPreferences
+@PerformanceTest
 @Projection
 @Territories
 class ValidationTaskPerformanceTest {

@@ -159,6 +159,15 @@ public final class BugReport implements Serializable {
         }
         if (isIncludeData()) {
             exception.printReportDataTo(out);
+            // Exceptions thrown in threads *may* be automatically wrapped by the thread handler (ForkJoinPool, etc.)
+            // We want to keep the data saved in the child exceptions, so we print that as well.
+            Throwable cause = exception.getCause();
+            while (cause != null) {
+                if (cause instanceof ReportedException) {
+                    ((ReportedException) cause).printReportDataTo(out);
+                }
+                cause = cause.getCause();
+            }
         }
         exception.printReportStackTo(out);
         if (isIncludeAllStackTraces()) {

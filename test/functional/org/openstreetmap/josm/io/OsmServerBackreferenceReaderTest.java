@@ -41,6 +41,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 import org.openstreetmap.josm.testutils.annotations.TestUser;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -51,6 +52,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Reads primitives referring to a particular primitive (ways including a node, relations referring to a relation)
  * @since 1806
  */
+@FunctionalTest
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 @org.openstreetmap.josm.testutils.annotations.OsmApi(org.openstreetmap.josm.testutils.annotations.OsmApi.APIType.DEV)
 @TestUser

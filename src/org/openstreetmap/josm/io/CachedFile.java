@@ -484,6 +484,11 @@ public class CachedFile implements Closeable {
         }
 
         String a = urlStr.replaceAll("[^A-Za-z0-9_.-]", "_");
+        /* size 11: prefix mirror_ and suffix .tmp */
+        Integer maxFileLength = Config.getPref().getInt("cache.filename.maxlength", 140)-11;
+        if (a.length() > maxFileLength) {
+            a = a.substring(0, maxFileLength-33) + "_" + Utils.md5Hex(urlStr);
+        }
         String localPath = "mirror_" + a;
         localPath = truncatePath(destDir, localPath);
         destDirFile = new File(destDir, localPath + ".tmp");

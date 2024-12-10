@@ -6,6 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
@@ -14,15 +18,18 @@ import java.util.regex.Pattern;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.event.MouseInputListener;
 
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.animation.AnimationExtension;
 import org.openstreetmap.josm.gui.animation.AnimationExtensionManager;
 import org.openstreetmap.josm.gui.datatransfer.OpenTransferHandler;
 import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
@@ -47,7 +54,7 @@ import org.openstreetmap.josm.tools.WikiReader;
  * It downloads and displays the so called <em>message of the day</em>, which
  * contains news about recent major changes, warning in case of outdated versions, etc.
  */
-public final class GettingStarted extends JPanel implements ProxyPreferenceListener {
+public final class GettingStarted extends JPanel implements ProxyPreferenceListener, MouseInputListener {
 
     private final LinkGeneral lg;
     private String content = "";
@@ -154,6 +161,11 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         scroller.setViewportBorder(new EmptyBorder(10, 100, 10, 100));
         add(scroller, BorderLayout.CENTER);
 
+        scroller.addMouseMotionListener(this);
+        scroller.addMouseListener(this);
+        lg.addMouseMotionListener(this);
+        lg.addMouseListener(this);
+
         getMOTD();
 
         setTransferHandler(new OpenTransferHandler());
@@ -176,10 +188,56 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
     }
 
     @Override
+    public void mouseMoved(MouseEvent e) {
+        final AnimationExtension extension = AnimationExtensionManager.getExtension();
+        if (extension instanceof MouseMotionListener) {
+            ((MouseMotionListener) extension).mouseMoved(e);
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        // Ignored
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        final AnimationExtension extension = AnimationExtensionManager.getExtension();
+        if (extension instanceof MouseListener) {
+            ((MouseListener) extension).mousePressed(e);
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // Ignored
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Ignored
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        final AnimationExtension extension = AnimationExtensionManager.getExtension();
+        if (extension instanceof MouseListener) {
+            ((MouseListener) extension).mouseReleased(e);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // Ignored
+    }
+
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
         if (isShowing()) {
-            AnimationExtensionManager.getExtension().adjustForSize(getWidth(), getHeight());
+            Point p = new Point(0, 0);
+            SwingUtilities.convertPointToScreen(p, this);
+            AnimationExtensionManager.getExtension().adjustForSize(getWidth(), getHeight(), p.x, p.y);
             AnimationExtensionManager.getExtension().animate();
             AnimationExtensionManager.getExtension().paint(g);
         }

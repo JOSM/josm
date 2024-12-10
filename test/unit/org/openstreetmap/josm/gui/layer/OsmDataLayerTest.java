@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
@@ -334,4 +335,19 @@ class OsmDataLayerTest {
         new OsmDataLayer(new DataSet(), null, null).destroy();
         assertTrue(Logging.getLastErrorAndWarnings().stream().noneMatch(s -> s.contains("UnsupportedFlavorException")));
     }
+
+    /**
+     * Non-regression test for #23950
+     */
+    @Test
+    void testTicket23950() {
+        final Relation first = TestUtils.newRelation("", new RelationMember("", TestUtils.newNode("")));
+        final DataSet ds = new DataSet();
+        // This is needed to cause the condition
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "StyledTiledMapRendererTest#testRecursiveRelation", null));
+        ds.addPrimitiveRecursive(first);
+        first.addMember(new RelationMember("", first));
+        ds.setSelected(first);
+    }
+
 }

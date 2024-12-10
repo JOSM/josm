@@ -59,6 +59,8 @@ function do_jpackage() {
   "${JAVA_HOME}/bin/jpackage" $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
       --main-class org.openstreetmap.josm.gui.MainApplication \
       --icon ./native/macosx/JOSM.icns --type app-image --dest app \
+      --java-options "-XX:MaxRAMPercentage=75.0" \
+      --java-options "-Xms256m" \
       --java-options "--add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web" \
       --java-options "--add-exports=java.base/sun.security.action=ALL-UNNAMED" \
       --java-options "--add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED" \

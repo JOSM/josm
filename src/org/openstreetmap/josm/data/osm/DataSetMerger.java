@@ -142,6 +142,12 @@ public class DataSetMerger {
         addConflict(new Conflict<>(my, their));
     }
 
+    private void replaceConflict(Conflict<?> oldConflict, Conflict<?> newConflict) {
+        newConflict.setMergedMap(mergedMap);
+        conflicts.remove(oldConflict);
+        conflicts.add(newConflict);
+    }
+
     protected void fixIncomplete(Way other) {
         Way myWay = (Way) getMergeTarget(other);
         if (myWay == null)
@@ -325,14 +331,21 @@ public class DataSetMerger {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
             // but, if source is modified, there is a conflict
+            Conflict<?> currentConflict = null;
             if (source.isModified()) {
-                addConflict(new Conflict<>(target, source, true));
+                currentConflict = new Conflict<>(target, source, true);
+                addConflict(currentConflict);
             }
             // or, if source has a referrer that is not in the target dataset there is a conflict
             // If target dataset refers to the deleted primitive, conflict will be added in fixReferences method
             for (OsmPrimitive referrer: source.getReferrers()) {
                 if (targetDataSet.getPrimitiveById(referrer.getPrimitiveId()) == null) {
-                    addConflict(new Conflict<>(target, source, true));
+                    final Conflict<?> newConflict = new Conflict<>(target, source, true);
+                    if (currentConflict != null) { // See #23930
+                        replaceConflict(currentConflict, newConflict);
+                    } else {
+                        addConflict(newConflict);
+                    }
                     target.setDeleted(false);
                     break;
                 }
@@ -351,6 +364,7 @@ public class DataSetMerger {
             if (target.hasEqualSemanticAttributes(source, false)) {
                 target.setModified(false);
             }
+            target.setReferrersDownloaded(target.isReferrersDownloaded() || source.isReferrersDownloaded());
         } else if (source.isDeleted() != target.isDeleted()) {
             // target is modified and deleted state differs.
             // this has to be resolved manually.

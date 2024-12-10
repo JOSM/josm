@@ -13,6 +13,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
  * Integration tests of {@link Territories} class.
  */
 @Projection
+@org.openstreetmap.josm.testutils.annotations.Territories
 class TerritoriesTestIT {
     /**
      * Test of {@link Territories#initialize} method.

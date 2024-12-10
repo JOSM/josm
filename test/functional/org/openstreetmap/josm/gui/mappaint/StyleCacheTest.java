@@ -31,6 +31,7 @@ import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Pair;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.tools.Pair;
  * Test {@link StyleCache}.
  */
 @BasicPreferences
+@FunctionalTest
 @Main
 @org.openstreetmap.josm.testutils.annotations.MapPaintStyles
 @Projection

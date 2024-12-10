@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.TreeSet;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -16,6 +17,8 @@ import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -27,20 +30,37 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public class SharpAngles extends Test {
     private static final int SHARPANGLESCODE = 3800;
     /** The code for a sharp angle */
-    private static final int SHARP_ANGLES = SHARPANGLESCODE + 0;
-    /** The maximum angle for sharp angles */
-    private double maxAngle = 45.0; // degrees
-    /** The length that at least one way segment must be shorter than */
-    private double maxLength = 10.0; // meters
+    private static final int SHARP_ANGLES = SHARPANGLESCODE;
+    /** The maximum angle for sharp angles (degrees) */
+    private double maxAngle;
+    /** The length that at least one way segment must be shorter than (meters) */
+    private double maxLength;
     /** Specific highway types to ignore */
-    private final Collection<String> ignoreHighways = new TreeSet<>(
-            Arrays.asList("platform", "rest_area", "services", "via_ferrata"));
+    private Collection<String> ignoreHighways = Collections.emptyList();
+    /** Specific railway types to ignore */
+    private Collection<String> ignoreRailway = Collections.emptyList();
 
     /**
      * Construct a new {@code IntersectionIssues} object
      */
     public SharpAngles() {
-        super(tr("Sharp angles"), tr("Check for sharp angles on roads"));
+        super(tr("Sharp angles"), tr("Check for sharp angles on man made transportation ways"));
+    }
+
+    @Override
+    public void startTest(ProgressMonitor progressMonitor) {
+        super.startTest(progressMonitor);
+        this.maxLength = Config.getPref().getDouble("validator.sharpangles.maxlength", 10.0); // meters
+        this.maxAngle = Config.getPref().getDouble("validator.sharpangles.maxangle", 45.0); // degrees
+        this.ignoreRailway = Collections.unmodifiableCollection(new TreeSet<>(
+                Config.getPref().getList("validator.sharpangles.ignorerailway",
+                        Arrays.asList("crossing_box", "loading_ramp", "platform", "roundhouse", "signal_box", "station",
+                                "traverser", "wash", "workshop"))));
+        // TODO make immutable when addIgnoredHighway is removed
+        this.ignoreHighways = new TreeSet<>(
+                Config.getPref().getList("validator.sharpangles.ignorehighway",
+                        Arrays.asList("platform", "rest_area", "services", "via_ferrata"))
+        );
     }
 
     @Override
@@ -56,13 +76,14 @@ public class SharpAngles extends Test {
     }
 
     /**
-     * Check whether or not a way should be checked for sharp angles
+     * Check whether a way should be checked for sharp angles
      * @param way The way that needs to be checked
      * @return {@code true} if the way should be checked.
      */
     public boolean shouldBeTestedForSharpAngles(Way way) {
-        return (way.hasKey("highway") && !way.hasTag("area", "yes") && !way.hasKey("via_ferrata_scale") &&
-                !ignoreHighways.contains(way.get("highway")));
+        return !way.hasTag("area", "yes") &&
+                ((way.hasKey("highway") && !way.hasKey("via_ferrata_scale") && !ignoreHighways.contains(way.get("highway")))
+                    || (way.hasKey("railway") && !ignoreRailway.contains(way.get("railway"))));
     }
 
     /**
@@ -143,8 +164,12 @@ public class SharpAngles extends Test {
     /**
      * Add a highway to ignore
      * @param highway The highway type to ignore (e.g., if you want to ignore residential roads, use "residential")
+     * @since 19162 (deprecated)
+     * @deprecated Not known to be used. Please use config preference "validator.sharpangles.ignorehighway" instead.
      */
+    @Deprecated(since = "19162", forRemoval = true)
     public void addIgnoredHighway(String highway) {
+        // Don't forget to make ignoreHighways immutable when this method is removed
         ignoreHighways.add(highway);
     }
 

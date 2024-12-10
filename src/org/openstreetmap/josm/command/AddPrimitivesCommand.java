@@ -10,8 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.swing.Icon;
-
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
@@ -68,6 +66,14 @@ public class AddPrimitivesCommand extends Command {
     @Override
     public boolean executeCommand() {
         DataSet ds = getAffectedDataSet();
+        ds.update(() -> this.executeRealCommand(ds));
+        if (toSelect != null) {
+            ds.setSelected(toSelect.stream().map(ds::getPrimitiveById).collect(Collectors.toList()));
+        }
+        return true;
+    }
+
+    private void executeRealCommand(DataSet ds) {
         if (createdPrimitives == null) { // first time execution
             List<OsmPrimitive> newPrimitives = new ArrayList<>(data.size());
             preExistingData = new ArrayList<>();
@@ -109,10 +115,6 @@ public class AddPrimitivesCommand extends Command {
                 }
             }
         }
-        if (toSelect != null) {
-            ds.setSelected(toSelect.stream().map(ds::getPrimitiveById).collect(Collectors.toList()));
-        }
-        return true;
     }
 
     @Override public void undoCommand() {
@@ -146,11 +148,6 @@ public class AddPrimitivesCommand extends Command {
     public String getDescriptionText() {
         int size = data != null ? data.size() : createdPrimitives.size();
         return trn("Added {0} object", "Added {0} objects", size, size);
-    }
-
-    @Override
-    public Icon getDescriptionIcon() {
-        return null;
     }
 
     @Override

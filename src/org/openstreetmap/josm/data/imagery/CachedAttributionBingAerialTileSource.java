@@ -9,10 +9,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -88,19 +90,20 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
     @Override
     protected Callable<List<Attribution>> getAttributionLoaderCallable() {
         final AtomicReference<List<Attribution>> attributions = new AtomicReference<>();
-        final AtomicBoolean finished = new AtomicBoolean();
+        final CountDownLatch finished = new CountDownLatch(1);
         return () -> {
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor();
             monitor.beginTask(tr("Attempting to fetch Bing attribution information"), ProgressMonitor.ALL_TICKS);
             final Timer timer = new Timer(Thread.currentThread().getName() + "-timer", true);
             timer.schedule(new AttributionTimerTask(monitor, timer, 1, attributions, finished), 0);
-            synchronized (finished) {
-                while (!finished.get() && !monitor.isCanceled()) {
-                    finished.wait(1000);
+            try {
+                while (!monitor.isCanceled() && !finished.await(1, TimeUnit.SECONDS)) {
+                    // Do nothing; we are waiting on the CountDownLatch to hit zero.
                 }
+            } finally {
+                monitor.finishTask();
+                monitor.close();
             }
-            monitor.finishTask();
-            monitor.close();
             return attributions.get();
         };
     }
@@ -113,7 +116,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
         private final Timer timer;
         private final int waitTimeSec;
         private final AtomicReference<List<Attribution>> attributions;
-        private final AtomicBoolean finished;
+        private final CountDownLatch finished;
 
         /**
          * Create a new task for fetching Bing attribution data
@@ -124,7 +127,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
          * @param finished Set to {@code true} when we have successfully fetched attributions <i>or</i> fetching has been cancelled.
          */
         AttributionTimerTask(ProgressMonitor monitor, Timer timer, int waitTimeSec,
-                             AtomicReference<List<Attribution>> attributions, AtomicBoolean finished) {
+                             AtomicReference<List<Attribution>> attributions, CountDownLatch finished) {
             this.monitor = monitor;
             this.timer = timer;
             this.waitTimeSec = waitTimeSec;
@@ -137,6 +140,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
             BingAttributionData attributionLoader = new BingAttributionData();
             try {
                 String xml = attributionLoader.updateIfRequiredString();
+                Objects.requireNonNull(xml);
                 List<Attribution> ret;
                 try (StringReader sr = new StringReader(xml)) {
                     ret = parseAttributionText(new InputSource(sr));
@@ -146,12 +150,12 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
                     attributionDownloadedTask = null;
                 }
                 this.attributions.set(ret);
-                this.finished.set(true);
+                this.finished.countDown();
             } catch (IOException ex) {
                 final String message = tr("Could not connect to Bing API. Will retry in {0} seconds.", waitTimeSec);
                 Logging.log(Logging.LEVEL_WARN, message, ex);
                 if (this.monitor.isCanceled()) {
-                    this.finished.set(true);
+                    this.finished.countDown();
                     return;
                 }
                 this.monitor.setCustomText(message);
@@ -159,10 +163,6 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
                 final int newWaitTimeSec = 2 * this.waitTimeSec;
                 this.timer.schedule(new AttributionTimerTask(this.monitor, this.timer, newWaitTimeSec, this.attributions, this.finished),
                         newWaitTimeSec * 1000L);
-            } finally {
-                synchronized (this.finished) {
-                    this.finished.notifyAll();
-                }
             }
         }
     }

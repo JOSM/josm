@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
@@ -12,6 +13,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
  */
 @HTTPS
 @Projection
+@IntegrationTest
 class MapCSSParserTestIT {
     /**
      * Checks Kothic stylesheets

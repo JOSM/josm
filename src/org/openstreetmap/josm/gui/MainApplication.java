@@ -706,6 +706,7 @@ public class MainApplication {
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
                 "\t--status-report                           "+ShowStatusReportAction.ACTION_DESCRIPTION+"\n\n"+
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
+                "\t--warn                                    "+tr("Print only warning or error messages to console")+"\n\n"+
                 "\t--skip-plugins                            "+tr("Skip loading plugins")+"\n\n"+
                 "\t--offline=" + Arrays.stream(OnlineResource.values()).map(OnlineResource::name).collect(
                         Collectors.joining("|", "<", ">")) + "\n" +
@@ -785,23 +786,26 @@ public class MainApplication {
         Optional<String> language = args.getSingle(Option.LANGUAGE);
         I18n.set(language.orElse(null));
 
-        try {
-            Policy.setPolicy(new Policy() {
-                // Permissions for plug-ins loaded when josm is started via webstart
-                private final PermissionCollection pc;
+        // JEP 486 (Java 24) now causes exceptions to be thrown. The security manager is terminally deprecated.
+        if (Utils.getJavaVersion() < 24) {
+            try {
+                Policy.setPolicy(new Policy() {
+                    // Permissions for plug-ins loaded when josm is started via webstart
+                    private final PermissionCollection pc;
 
-                {
-                    pc = new Permissions();
-                    pc.add(new AllPermission());
-                }
+                    {
+                        pc = new Permissions();
+                        pc.add(new AllPermission());
+                    }
 
-                @Override
-                public PermissionCollection getPermissions(CodeSource codesource) {
-                    return pc;
-                }
-            });
-        } catch (SecurityException e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to set permissions", e);
+                    @Override
+                    public PermissionCollection getPermissions(CodeSource codesource) {
+                        return pc;
+                    }
+                });
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to set permissions", e);
+            }
         }
 
         try {

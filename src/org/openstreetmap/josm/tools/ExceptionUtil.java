@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
@@ -578,7 +579,16 @@ public final class ExceptionUtil {
                         errorHeader.startsWith("You requested too many nodes"))) {
             message += "<br>"
                 + tr("The area you tried to download is too big or your request was too large."
-                        + "<br>Either request a smaller area or use an export file provided by the OSM community.");
+                        + "<br>Either request a smaller area or use an export file provided by the OSM community."
+                        + "<br><br>Downloading a smaller area is <em>recommended</em>!"
+                        + "<br><br>Advanced users can use one of the following options:"
+                        + "<br><ul>"
+                        + "<li><a href=\"{0}\">Overpass</a></li>"
+                        + "<li><a href=\"{1}\">Geofabrik</a></li>"
+                        + "<li><a href=\"{2}\">OSM Planet File</a></li>"
+                        + "</ul>", HelpUtil.getHelpTopicUrl("/Help/Action/Download#DownloadfromOverpassAPI"),
+                    "https://www.geofabrik.de/data/download.html",
+                    "https://planet.openstreetmap.org/");
         } else if (errorHeader != null) {
             message += tr("<br>Error message(untranslated): {0}", errorHeader);
         }

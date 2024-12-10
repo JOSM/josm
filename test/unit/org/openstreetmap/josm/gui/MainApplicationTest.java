@@ -57,6 +57,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.OsmApi;
+import org.openstreetmap.josm.testutils.annotations.Plugins;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
@@ -170,6 +171,7 @@ public class MainApplicationTest {
      * Test of {@link MainApplication#updateAndLoadEarlyPlugins} and {@link MainApplication#loadLatePlugins} methods.
      * @throws PluginListParseException if an error occurs
      */
+    @Plugins
     @Test
     void testUpdateAndLoadPlugins() throws PluginListParseException {
         final String old = System.getProperty("josm.plugins");

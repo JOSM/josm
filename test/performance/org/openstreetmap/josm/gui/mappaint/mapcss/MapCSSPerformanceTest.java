@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapRendererPerformanceTest;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
@@ -26,6 +27,7 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
  * against a test data set using a test style.
  *
  */
+@PerformanceTest
 @Projection
 class MapCSSPerformanceTest {
 

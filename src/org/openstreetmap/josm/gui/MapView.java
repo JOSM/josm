@@ -6,13 +6,16 @@ import static java.util.function.Predicate.not;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.Transparency;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -330,6 +333,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return Arrays.asList(zoomSlider, scaler);
     }
 
+    private static BufferedImage getAcceleratedImage(Component mv, int width, int height) {
+        if (GraphicsEnvironment.isHeadless()) {
+            return new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+        }
+        return mv.getGraphicsConfiguration().createCompatibleImage(width, height, Transparency.OPAQUE);
+    }
+
     // remebered geometry of the component
     private Dimension oldSize;
     private Point oldLoc;
@@ -548,13 +558,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
 
         if (null == offscreenBuffer || offscreenBuffer.getWidth() != width || offscreenBuffer.getHeight() != height) {
-            offscreenBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+            offscreenBuffer = getAcceleratedImage(this, width, height);
         }
 
         if (!canUseBuffer || nonChangedLayersBuffer == null) {
             if (null == nonChangedLayersBuffer
                     || nonChangedLayersBuffer.getWidth() != width || nonChangedLayersBuffer.getHeight() != height) {
-                nonChangedLayersBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+                nonChangedLayersBuffer = getAcceleratedImage(this, width, height);
             }
             Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
             g2.setClip(scaledClip);

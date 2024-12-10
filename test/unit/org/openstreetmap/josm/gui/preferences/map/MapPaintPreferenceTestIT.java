@@ -26,12 +26,14 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.AbstractExtendedSourceEntryTestCase;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Integration tests of {@link MapPaintPreference} class.
  */
 @HTTPS
+@IntegrationTest
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
     /**

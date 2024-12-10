@@ -149,11 +149,17 @@ public final class I18n {
     private static final String KATAKANA = "kana";
     private static final String LATIN = "latn";
     private static final String PINYIN = "pinyin";
+    private static final String LATINPINYIN = "latn-pinyin";
     private static final String ROMAJI = "rm";
+    private static final String HANI = "hani";
+    private static final String HANT = "hant";
+    private static final String HANS = "hans";
+    private static final String BOPOMOFO = "bopo";
 
     // Matches ISO-639 two and three letters language codes + scripts
     private static final Pattern LANGUAGE_NAMES = Pattern.compile(
-            "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA, LATIN, PINYIN, ROMAJI) + ")))?");
+            "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA,
+            LATIN, PINYIN, LATINPINYIN, ROMAJI, HANI, HANS, HANT, BOPOMOFO) + ")))?");
 
     private static String format(String text, Object... objects) {
         if (objects.length == 0 && !text.contains("'")) {
@@ -720,8 +726,16 @@ public final class I18n {
                     return /* I18n: a Japanese syllabary */ tr("Katakana");
                 case LATIN:
                     return /* I18n: usage of latin letters/script for usually non-latin languages */ tr("Latin");
-                case PINYIN:
+                case PINYIN: case LATINPINYIN:
                     return /* I18n: official romanization system for Standard Chinese */ tr("Pinyin");
+                case HANI:
+                    return /* I18n: Han characters for Vietnamese or Korean language */ tr("Hani");
+                case HANS:
+                    return /* I18n: Simplified Chinese */ tr("Simplified");
+                case HANT:
+                    return /* I18n: Traditional Chinese */ tr("Traditional");
+                case BOPOMOFO:
+                    return /* I18n: Mandarin Phonetic Symbols/Zhuyin */ tr("Bopomofo");
                 case ROMAJI:
                     return /* I18n: a Japanese syllabary (latin script) */  tr("Rōmaji");
                 default:

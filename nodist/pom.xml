@@ -4,20 +4,25 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.openstreetmap.josm</groupId>
     <artifactId>josm-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>US-ASCII</project.build.sourceEncoding>
         <project.reporting.outputEncoding>US-ASCII</project.reporting.outputEncoding>
         <java.lang.version>11</java.lang.version>
         <maven.compiler.release>${java.lang.version}</maven.compiler.release>
-        <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
-        <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
+        <maven.compiler.source>${java.lang.version}</maven.compiler.source>
+        <maven.compiler.target>${java.lang.version}</maven.compiler.target>
         <test.headless>true</test.headless>
         <sonar.host.url>https://josm.openstreetmap.de/sonar/</sonar.host.url>
         <sonar.projectKey>JOSM</sonar.projectKey>
         <jmockit.version>1.49.a</jmockit.version>
-        <pmd.version>7.3.0</pmd.version>
+        <pmd.version>7.6.0</pmd.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <checkstyle.version>10.18.2</checkstyle.version>
+        <spotbugs.version>4.8.6</spotbugs.version>
+        <!-- Note: 2.0.0 requires Java 17, and we'll need to upgrade to it for Java 25 LTS (see JEP 486)-->
+        <junit5-system-exit.version>1.1.2</junit5-system-exit.version>
     </properties>
     <modules>
         <module>..</module>
@@ -26,28 +31,23 @@
     </modules>
     <repositories>
         <repository>
-            <id>JOSM-central</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/central/</url>
-        </repository>
-        <repository>
-            <id>JOSM-releases</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>JOSM-snapshots</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>JOSM-osgeo</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/osgeo/</url>
+            <id>JOSM</id>
+            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>JOSM-central</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/central/</url>
+            <id>JOSM</id>
+            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
         </pluginRepository>
     </pluginRepositories>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>josm-snapshots</id>
+            <name>JOSM snapshots</name>
+            <url>https://josm.openstreetmap.de/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <pluginManagement>
             <plugins>
@@ -59,12 +59,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.3.2</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -74,7 +74,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.23.0</version>
+                    <version>3.25.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>net.sourceforge.pmd</groupId>
@@ -104,23 +104,30 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.5</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.8.5.0</version>
+                    <version>4.8.6.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.5.0</version>
+                    <dependencies>
+                      <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                      </dependency>
+                    </dependencies>
                 </plugin>
                 <!-- Used to merge compile dependencies into jars -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.5.3</version>
+                    <version>3.6.0</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -149,7 +156,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.4.2</version>
                     <configuration>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
@@ -165,7 +172,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.2.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -173,7 +180,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -186,7 +193,7 @@
                                     <version>3.6.3</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>8</version>
+                                    <version>${java.lang.version}</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -223,6 +230,16 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin> <!-- Adds properties that point at dependency jars. Useful for jmockit and junit5-system-exit -->
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencyManagement>
@@ -236,14 +253,14 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.10.3</version>
+                <version>5.11.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.openstreetmap.jmapviewer</groupId>
                 <artifactId>jmapviewer</artifactId>
-                <version>2.20</version>
+                <version>2.22</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -255,7 +272,7 @@
             <dependency>
                 <groupId>org.eclipse.parsson</groupId>
                 <artifactId>parsson</artifactId>
-                <version>1.1.6</version>
+                <version>1.1.7</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -267,19 +284,19 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.26.2</version>
+                <version>1.27.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>jakarta.annotation</groupId>
                 <artifactId>jakarta.annotation-api</artifactId>
-                <version>2.1.1</version>
+                <version>3.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.tukaani</groupId>
                 <artifactId>xz</artifactId>
-                <version>1.9</version>
+                <version>1.10</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -310,37 +327,37 @@
             <dependency>
                 <groupId>org.webjars.npm</groupId>
                 <artifactId>tag2link</artifactId>
-                <version>2024.7.8</version>
+                <version>2024.10.21</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.ant</artifactId>
-                <version>0.8.12</version>
+                <version>${jacoco.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.8.6</version>
+                <version>${spotbugs.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.ginsberg</groupId>
                 <artifactId>junit5-system-exit</artifactId>
-                <version>1.1.2</version>
+                <version>${junit5-system-exit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock</artifactId>
-                <version>3.8.0</version>
+                <version>3.9.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
-                <version>4.8.174</version>
+                <version>4.8.177</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -352,21 +369,32 @@
             <dependency>
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>
-                <version>3.16.1</version>
+                <version>3.16.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.14.0</version>
-                <scope>compile</scope>
+                <version>3.17.0</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
-                <version>4.2.1</version>
+                <version>4.2.2</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <profiles>
+        <profile>
+            <id>java-17</id>
+            <activation>
+                <jdk>[17</jdk>
+            </activation>
+            <properties>
+                <junit5-system-exit.version>2.0.0</junit5-system-exit.version>
+            </properties>
+        </profile>
+    </profiles>
 </project>
