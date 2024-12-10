@@ -3276,6 +3276,7 @@ area[amenity=university],
 area[amenity=college],
 area[amenity=kindergarten],
 area[amenity=language_school],
+area[amenity=music_school],
 area[amenity=driving_school],
 area[amenity=driver_training] {
     fill-color: amenity_light#f7efb7;
