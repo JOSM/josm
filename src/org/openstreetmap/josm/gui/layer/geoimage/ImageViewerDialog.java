@@ -892,7 +892,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
             imageChanged = currentEntry != entry;
 
-            if (centerView && entry != null && MainApplication.isDisplayingMapView() && entry.getPos() != null) {
+            if (centerView && imageChanged && entry != null && MainApplication.isDisplayingMapView() && entry.getPos() != null) {
                 MainApplication.getMap().mapView.zoomTo(entry.getPos());
             }
 
