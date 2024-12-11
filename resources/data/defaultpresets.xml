@@ -9147,7 +9147,7 @@
             <reference ref="name_wikipedia_wikidata" />
             <text key="ele" text="Elevation (meters)" length="10" />
             <optional>
-                <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" />
+                <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" values_context="volcano" />
                 <combo key="volcano:type" text="Type" values="stratovolcano,shield,scoria" />
             </optional>
         </item> <!-- Volcano -->
