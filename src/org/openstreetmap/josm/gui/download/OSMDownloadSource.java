@@ -196,7 +196,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         /** This is used to keep track of the components for download sources, and to dynamically update/remove them */
         private final JPanel downloadSourcesPanel;
 
-        private boolean inRestore = false;
+        private boolean inRestore /* = false */;
 
         private final ChangeListener checkboxChangeListener;
 
