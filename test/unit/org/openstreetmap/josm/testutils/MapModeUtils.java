@@ -4,6 +4,7 @@ package org.openstreetmap.josm.testutils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.event.MouseEvent;
+import java.util.concurrent.TimeUnit;
 
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
@@ -80,7 +81,7 @@ public final class MapModeUtils {
     public static void dragFromTo(ILatLon from, ILatLon to) {
         MainApplication.getMap().mapMode.mousePressed(mouseClickAt(from));
         // Some actions wait a period of time to avoid accidental dragging.
-        Awaitility.await().pollDelay(Durations.FIVE_HUNDRED_MILLISECONDS).atLeast(Durations.FIVE_HUNDRED_MILLISECONDS).until(() -> true);
+        Awaitility.await().pollDelay(Durations.FIVE_HUNDRED_MILLISECONDS).atLeast(490, TimeUnit.MILLISECONDS).until(() -> true);
         MainApplication.getMap().mapMode.mouseDragged(mouseClickAt(from));
         MainApplication.getMap().mapMode.mouseDragged(mouseClickAt(to));
         MainApplication.getMap().mapMode.mouseReleased(mouseClickAt(to));
