@@ -3338,7 +3338,8 @@ area[amenity=kindergarten],
 area[amenity=language_school],
 area[amenity=music_school],
 area[amenity=driving_school],
-area[amenity=driver_training] {
+area[amenity=driver_training],
+area[amenity=research_institute] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=animal_boarding] {
