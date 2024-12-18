@@ -4787,6 +4787,12 @@
             <combo key="research" text="Research" values="aerospace,physics,chemistry,biology,molecular_biology,medicine,electrical_engineering,industrial_engineering,material_engineering,telecommunication,computer_science,geo_science,astronomy,mathematics,agriculture,particle_physics" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <optional>
+                <multiselect key="isced:level" text="ISCED level" rows="2" values_sort="false">
+                    <list_entry value="7" short_description="Master's"/>
+                    <list_entry value="8" short_description="Doctorate"/>
+                </multiselect>
+            </optional>
         </item> <!-- Research Institute -->
     </group> <!-- Education -->
     <group name="Animal" icon="presets/health/animal_shelter.svg">   
