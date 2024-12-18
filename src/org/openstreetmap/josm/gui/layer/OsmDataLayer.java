@@ -1249,7 +1249,13 @@ public class OsmDataLayer extends AbstractOsmDataLayer
     }
 
     private void resetTiles(Collection<? extends IPrimitive> primitives) {
-        if (primitives.size() >= this.data.allNonDeletedCompletePrimitives().size() || primitives.size() > 100) {
+        // Clear the cache if we aren't using tiles. And return.
+        if (!MapRendererFactory.getInstance().isMapRendererActive(StyledTiledMapRenderer.class)) {
+            this.cache.clear();
+            return;
+        }
+        // Don't use anything that uses filtered collections. It becomes slow at large datasets.
+        if (primitives.size() > 100) {
             dirtyAll();
             return;
         }
