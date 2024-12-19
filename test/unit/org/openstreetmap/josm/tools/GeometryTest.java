@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -571,6 +574,52 @@ class GeometryTest {
         assertEquals(offsetInMeters, original.greatCircleDistance(actual), 0.000_000_1);
         // The docs indicate that this should not be highly precise.
         assertEquals(angle, Math.toDegrees(original.bearing(actual)), 0.000_001);
+    }
+
+    @Test
+    void testFilterInsidePolygon() {
+        final Way polygon = TestUtils.newWay("", new Node(new LatLon(39.0673254, -108.5610777)),
+                new Node(new LatLon(39.0672673, -108.561012)),
+                new Node(new LatLon(39.0673414, -108.5609747)));
+        polygon.addNode(polygon.firstNode());
+        final Node out1 = new Node(new LatLon(39.0673259, -108.5610835));
+        final Node out2 = new Node(new LatLon(39.067263, -108.5610113));
+        final Node out3 = new Node(new LatLon(39.0673434, -108.5609708));
+        final Node out4 = new Node(new LatLon(39.067336, -108.5610312));
+        final Node out5 = new Node(new LatLon(39.0672963, -108.5610448));
+        final Node in1 = new Node(new LatLon(39.0672965, -108.5610446));
+        final Node in2 = new Node(new LatLon(39.0673009, -108.5609964));
+        final Node in3 = new Node(new LatLon(39.0673315, -108.5610294));
+        int i = 1;
+        for (final Node node : Arrays.asList(out1, out2, out3, out4, out5)) {
+            node.put("name", "out" + i++);
+        }
+        i = 1;
+        for (final Node node : Arrays.asList(in1, in2, in3)) {
+            node.put("name", "in" + i++);
+        }
+        // Not closed, ignored
+        final Way win1 = TestUtils.newWay("name=win1", in1, in2, in3);
+        final Way win2 = TestUtils.newWay("name=win2", in1, in2, in3, in1);
+        final Way wout1 = TestUtils.newWay("name=wout1", out1, out2, out3, out1);
+        final Relation rin1 = TestUtils.newRelation("type=multipolygon name=rin1", new RelationMember("outer", win2));
+        // Ignored, not multipolygon
+        final Relation rin2 = TestUtils.newRelation("name=rin2", new RelationMember("outer", win2));
+        // Ignored, sole outer is not closed
+        final Relation rin3 = TestUtils.newRelation("type=multipolygon name=rin3", new RelationMember("outer", win1));
+        final Relation rout1 = TestUtils.newRelation("type=multipolygon name=rout1", new RelationMember("outer", wout1));
+        final Collection<IPrimitive> result = Geometry.filterInsidePolygon(Arrays.asList(out1, out2, out3, out4, out5, in1, in2, in3,
+                win1, win2, wout1, rin1, rin2, rin3, rout1), polygon);
+        assertAll(() -> assertTrue(result.contains(in1)),
+                () -> assertTrue(result.contains(in2)),
+                () -> assertTrue(result.contains(in3)),
+                () -> assertTrue(result.contains(win2)),
+                () -> assertTrue(result.contains(rin1)));
+        assertEquals(5, result.size(), () -> {
+            final List<IPrimitive> notExpected = new ArrayList<>(result);
+            notExpected.removeAll(Arrays.asList(in1, in2, in3, win2, rin1));
+            return notExpected.stream().map(p -> p.get("name")).collect(Collectors.joining("\n"));
+        });
     }
 
     /**

@@ -704,6 +704,7 @@ public final class Geometry {
         Area inter = new Area(a1);
         inter.intersect(a2);
 
+        // Note: Area has an equals method that takes Area; it does _not_ override the Object.equals method.
         if (inter.isEmpty() || !checkIntersection(inter, eps)) {
             return new Pair<>(PolygonIntersection.OUTSIDE, inter);
         } else if (a22d.contains(a12d) && inter.equals(a1)) {
@@ -1195,6 +1196,7 @@ public final class Geometry {
                 // a (valid) multipolygon is inside the polygon if all outer rings are inside
                 for (PolyData outer : mp.getOuterPolygons()) {
                     if (!outer.isClosed()
+                            || !polygonArea.getBounds2D().contains(outer.getBounds())
                             || PolygonIntersection.FIRST_INSIDE_SECOND != polygonIntersection(getArea(outer.getNodes()),
                                     polygonArea)) {
                         inside = false;
