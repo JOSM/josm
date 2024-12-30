@@ -1073,7 +1073,6 @@ way[cycleway:both][cycleway:both!=lane][cycleway:both!=separate][/^cycleway(:rig
 way[cycleway][cycleway!=lane][cycleway!=separate][/^cycleway(:right|:left|:both|):buffer/] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{3.tag}");
   group: tr("suspicious tag combination");
-  assertMatch: "way cycleway:right=separate cycleway:right:buffer=yes";
   assertMatch: "way cycleway:left=shared_lane cycleway:buffer=no";
   assertMatch: "way cycleway:both=track cycleway:left:buffer=yes";
   assertMatch: "way cycleway=shared_busway cycleway:buffer=no";
