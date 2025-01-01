@@ -1376,7 +1376,7 @@ public class SyncEditorLayerIndex {
     }
 
     static String getUrlStripped(Object e) {
-        return getUrl(e).replaceAll("\\?(apikey|access_token)=.*", "");
+        return getUrl(e);//.replaceAll("\\?(apikey|access_token)=[^&?]*", "");
     }
 
     static String getDate(Object e) {
