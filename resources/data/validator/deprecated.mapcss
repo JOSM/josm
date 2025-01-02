@@ -988,14 +988,6 @@ node[type][pipeline=marker] {
   fixAdd: "tourism=hotel";
   fixRemove: "amenity";
 }
-*[shop=window],
-*[shop=windows] {
-  throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "craft=window_construction";
-  group: tr("deprecated tagging");
-  fixAdd: "craft=window_construction";
-  fixRemove: "shop";
-}
 *[amenity=education] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "amenity=college";
