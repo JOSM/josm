@@ -132,8 +132,10 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     public void dataChanged(DataChangedEvent event) {
         // just trigger a repaint - the display name of the relation members may have changed
         Collection<RelationMember> sel = getSelectedMembers();
-        GuiHelper.runInEDT(this::fireTableDataChanged);
-        setSelectedMembers(sel);
+        GuiHelper.runInEDT(() -> {
+            fireTableDataChanged();
+            setSelectedMembers(sel);
+        });
     }
 
     @Override
