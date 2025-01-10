@@ -1332,7 +1332,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
             if (tooLarge()) {
                 // Too many tiles... refuse to download
-                Logging.warn("Not downloading all tiles because there is more than {0} tiles on an axis!", MAX_TILES_SPANNED);
+                Logging.warn("Not downloading all tiles because there are more than {0} tiles on an axis!", MAX_TILES_SPANNED);
                 return;
             }
             List<Tile> allTiles = allTilesCreate();
