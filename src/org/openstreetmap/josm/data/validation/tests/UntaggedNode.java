@@ -75,9 +75,9 @@ public class UntaggedNode extends Test implements KeyValueVisitor {
             /* translation note: don't translate quoted words */
             msg = marktr("Has key ''note'' or ''comment'' or ''description''");
             code = UNTAGGED_NODE_NOTE;
-        } else if (key.startsWith("created_by") || key.startsWith("converted_by")) {
+        } else if (key.startsWith("created_by")) {
             /* translation note: don't translate quoted words */
-            msg = marktr("Has key ''created_by'' or ''converted_by''");
+            msg = marktr("Has key ''created_by''");
             code = UNTAGGED_NODE_CREATED_BY;
         } else if (key.startsWith("watch")) {
             /* translation note: don't translate quoted words */

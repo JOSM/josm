@@ -918,7 +918,6 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
             discardable = new HashSet<>(Config.getPref().getList("tags.discardable",
                     Arrays.asList(
                             "created_by",
-                            "converted_by",
                             "current_id", /* prevent export of this JOSM internal information, see OsmReader */
                             "geobase:datasetName",
                             "geobase:uuid",
