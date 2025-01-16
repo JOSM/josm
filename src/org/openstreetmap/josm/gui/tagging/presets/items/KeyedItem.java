@@ -51,7 +51,7 @@ public abstract class KeyedItem extends TextItem implements RegionSpecific {
      * Note that for a match, at least one positive and no negative is required.
      * Default is "keyvalue!" for {@link Key} and "none" for {@link Text}, {@link Combo}, {@link MultiSelect} and {@link Check}.
      */
-    public String match = getDefaultMatch().getValue(); // NOSONAR
+    protected MatchType match = getDefaultMatch(); // NOSONAR
 
     /**
      * List of regions the preset is applicable for.
@@ -182,6 +182,33 @@ public abstract class KeyedItem extends TextItem implements RegionSpecific {
     }
 
     /**
+     * Allows to change the matching process, i.e., determining whether the tags of an OSM object fit into this preset.
+     * If a preset fits then it is linked in the Tags/Membership dialog.<ul>
+     * <li>none: neutral, i.e., do not consider this item for matching</li>
+     * <li>key: positive if key matches, neutral otherwise</li>
+     * <li>key!: positive if key matches, negative otherwise</li>
+     * <li>keyvalue: positive if key and value matches, neutral otherwise</li>
+     * <li>keyvalue!: positive if key and value matches, negative otherwise</li></ul>
+     * Note that for a match, at least one positive and no negative is required.
+     * Default is "keyvalue!" for {@link Key} and "none" for {@link Text}, {@link Combo}, {@link MultiSelect} and {@link Check}.
+     * @param match The match type. One of <code>none</code>, <code>key</code>, <code>key!</code>, <code>keyvalue</code>,
+     *              or <code>keyvalue!</code>.
+     * @since 19285
+     */
+    public void setMatch(String match) {
+        this.match = MatchType.ofString(match);
+    }
+
+    /**
+     * Get the match type for this item
+     * @return The match type
+     * @since 19285
+     */
+    public String match() {
+        return this.match.getValue();
+    }
+
+    /**
      * Computes the tag usage for the given key from the given primitives
      * @param sel the primitives
      * @param key the key
@@ -221,7 +248,7 @@ public abstract class KeyedItem extends TextItem implements RegionSpecific {
      * @return whether key or key+value are required
      */
     public boolean isKeyRequired() {
-        final MatchType type = MatchType.ofString(match);
+        final MatchType type = this.match;
         return MatchType.KEY_REQUIRED == type || MatchType.KEY_VALUE_REQUIRED == type;
     }
 
@@ -243,7 +270,7 @@ public abstract class KeyedItem extends TextItem implements RegionSpecific {
 
     @Override
     public Boolean matches(Map<String, String> tags) {
-        switch (MatchType.ofString(match)) {
+        switch (this.match) {
         case NONE:
             return null; // NOSONAR
         case KEY:

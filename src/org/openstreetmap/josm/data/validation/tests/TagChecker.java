@@ -420,12 +420,12 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 List<TaggingPresetItem> minData = new ArrayList<>();
                 for (TaggingPresetItem i : p.data) {
                     if (i instanceof KeyedItem) {
-                        if (!"none".equals(((KeyedItem) i).match))
+                        if (!"none".equals(((KeyedItem) i).match()))
                             minData.add(i);
                         addPresetValue((KeyedItem) i);
                     } else if (i instanceof CheckGroup) {
                         for (Check c : ((CheckGroup) i).checks) {
-                            if (!"none".equals(c.match))
+                            if (!"none".equals(c.match()))
                                 minData.add(c);
                             addPresetValue(c);
                         }
