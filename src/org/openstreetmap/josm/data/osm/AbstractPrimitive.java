@@ -952,6 +952,7 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
                             "LINZ2OSM:layer",
                             "linz2osm:objectid",
                             "LINZ2OSM:source_version",
+                            "fid",
                             "odbl",
                             "odbl:note",
                             "osmarender:nameDirection",
