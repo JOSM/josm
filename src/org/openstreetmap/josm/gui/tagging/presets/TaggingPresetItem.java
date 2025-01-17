@@ -179,7 +179,7 @@ public abstract class TaggingPresetItem {
              * The big win for CPU cost is in GC improvements, which was around 80%.
              * Overall improvement: 7.6 hours to 4.5 hours for validating a Colorado pbf extract (40% improvement).
              */
-            for (int i = 0; i < items.size(); i++) { // READ ABOVE: DO NOT REPLACE WITH ENHANCED FOR LOOP WITHOUT PROFILING!
+            for (int i = 0; i < items.size(); i++) { // NOPMD READ ABOVE: DO NOT REPLACE WITH ENHANCED FOR LOOP WITHOUT PROFILING!
                 TaggingPresetItem item = items.get(i);
                 Boolean m = item.matches(tags);
                 if (m != null && !m) {
