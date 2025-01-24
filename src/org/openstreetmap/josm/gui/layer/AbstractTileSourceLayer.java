@@ -26,7 +26,8 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -291,10 +292,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         tileLoader = getTileLoaderFactory().makeTileLoader(this, headers, minimumTileExpire);
 
         try {
-            if ("file".equalsIgnoreCase(new URL(tileSource.getBaseUrl()).getProtocol())) {
+            if ("file".equalsIgnoreCase(new URI(tileSource.getBaseUrl()).toURL().getProtocol())) {
                 tileLoader = new OsmTileLoader(this);
             }
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException | MalformedURLException e) {
             // ignore, assume that this is not a file
             Logging.log(Logging.LEVEL_DEBUG, e);
         }
@@ -514,9 +515,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private static void sendOsmTileRequest(Tile tile, String request) {
         if (tile != null) {
             try {
-                new Notification(HttpClient.create(new URL(tile.getUrl() + '/' + request))
+                new Notification(HttpClient.create(new URI(tile.getUrl() + '/' + request).toURL())
                         .connect().fetchContent()).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
-            } catch (IOException ex) {
+            } catch (URISyntaxException | IOException ex) {
                 Logging.error(ex);
             }
         }
@@ -1873,6 +1874,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
+        if (this.getInfo() != null) {
+            v.visit(this.getInfo().getBounds());
+        }
     }
 
     /**
