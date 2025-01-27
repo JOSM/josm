@@ -292,7 +292,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         tileLoader = getTileLoaderFactory().makeTileLoader(this, headers, minimumTileExpire);
 
         try {
-            if ("file".equalsIgnoreCase(new URI(tileSource.getBaseUrl()).toURL().getProtocol())) {
+            if (tileSource.getBaseUrl() != null && "file".equalsIgnoreCase(new URI(tileSource.getBaseUrl()).toURL().getProtocol())) {
                 tileLoader = new OsmTileLoader(this);
             }
         } catch (URISyntaxException | MalformedURLException e) {
