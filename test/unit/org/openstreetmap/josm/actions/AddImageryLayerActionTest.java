@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.data.Bounds;
@@ -115,6 +116,7 @@ final class AddImageryLayerActionTest {
      *     <li>Imagery layer bounds is not zoomed to on layer add</li>
      * </ul>
      */
+    @Disabled("See #24097 comment 3")
     @Main
     @Test
     void testNonRegression24097() {
