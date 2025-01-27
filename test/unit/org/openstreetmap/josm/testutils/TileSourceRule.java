@@ -151,7 +151,8 @@ public class TileSourceRule extends WireMockRule {
                 String.format("tms[20]:http://localhost:%d/%h/{z}/{x}/{y}.png", port, this.hashCode()),
                 "tms",
                 (String) null,
-                (String) null
+                (String) null,
+                this.label
             );
         }
 

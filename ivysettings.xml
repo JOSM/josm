@@ -7,5 +7,5 @@
   </resolvers>
   <!-- Remove junit5-system-exit specific statements in build.xml when we drop Java 11 as a build platform -->
   <property name="versions.junit5-system-exit" value="1.1.2" unlessset="isJava17"/>
-  <property name="versions.junit5-system-exit" value="2.0.0" ifset="isJava17"/>
+  <property name="versions.junit5-system-exit" value="2.0.2" ifset="isJava17"/>
 </ivysettings>

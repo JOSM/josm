@@ -21,7 +21,7 @@
     </configurations>
     <dependencies>
         <!-- api->default -->
-        <dependency conf="api->default" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.22"/>
+        <dependency conf="api->default" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.23"/>
         <dependency conf="api->default" org="jakarta.json" name="jakarta.json-api" rev="2.1.3"/>
         <!-- parsson is an implementation for jakarta.json -->
         <dependency conf="runtimeOnly->default" org="org.eclipse.parsson" name="parsson" rev="1.1.7"/>
@@ -36,7 +36,7 @@
         <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2024.10.21"/>
         <!-- sources->sources -->
-        <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.22"/>
+        <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.23"/>
         <dependency conf="sources->sources" org="jakarta.json" name="jakarta.json-api" rev="2.1.3"/>
         <dependency conf="sources->sources" org="org.eclipse.parsson" name="parsson" rev="1.1.7"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-jcs3-core" rev="3.2.1"/>
@@ -57,18 +57,18 @@
         <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49.a"/>
         <dependency conf="junit5-system-exit->default" org="com.ginsberg" name="junit5-system-exit" rev="${versions.junit5-system-exit}"/>
         <!-- test->default -->
-        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.8.6"/>
-        <dependency conf="test->default" org="org.wiremock" name="wiremock" rev="3.9.2"/>
-        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.177"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.11.3"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.11.3"/>
-        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.11.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.11.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.11.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.11.3"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.11.3"/>
+        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.9.0"/>
+        <dependency conf="test->default" org="org.wiremock" name="wiremock" rev="3.10.0"/>
+        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.179"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.11.4"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.11.4"/>
+        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.11.4"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.11.4"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.11.4"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.11.4"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.11.4"/>
         <dependency conf="test->default" org="net.trajano.commons" name="commons-testing" rev="2.1.0"/>
-        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.16.2"/>
+        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.18.1"/>
         <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.17.0"/>
         <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.2.2"/>
     </dependencies>
