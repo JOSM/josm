@@ -304,7 +304,7 @@ public class SystemOfMeasurement {
                 .map(LanguageInfo::getLocale)
                 .orElse(Locale.getDefault())
                 .getCountry();
-        if (country == "US")
+        if ("US".equals(country))
             // https://en.wikipedia.org/wiki/Metrication_in_the_United_States#Current_use
             // Imperial units still used in transportation and Earth sciences
             return IMPERIAL;
