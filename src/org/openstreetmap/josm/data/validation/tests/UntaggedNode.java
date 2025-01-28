@@ -111,11 +111,8 @@ public class UntaggedNode extends Test implements KeyValueVisitor {
     public boolean isFixable(TestError testError) {
         if (testError.getTester() instanceof UntaggedNode) {
             int code = testError.getCode();
-            switch (code) {
-            case UNTAGGED_NODE_BLANK:
-            case UNTAGGED_NODE_CREATED_BY:
-            case UNTAGGED_NODE_WATCH:
-            case UNTAGGED_NODE_SOURCE:
+            if (code == UNTAGGED_NODE_BLANK || code == UNTAGGED_NODE_CREATED_BY
+                || code == UNTAGGED_NODE_WATCH || code == UNTAGGED_NODE_SOURCE) {
                 return true;
             }
         }
