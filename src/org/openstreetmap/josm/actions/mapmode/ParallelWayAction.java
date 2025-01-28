@@ -197,8 +197,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     public String getModeHelpText() {
         // TODO: add more detailed feedback based on modifier state.
         // TODO: dynamic messages based on preferences. (Could be problematic translation wise)
-        switch (mode) {
-        if (mode == NORMAL) {
+        if (mode == Mode.NORMAL) {
             // CHECKSTYLE.OFF: LineLength
             return tr("Select ways as in Select mode. Drag selected ways or a single way to create a parallel copy (Alt toggles tag preservation)");
             // CHECKSTYLE.ON: LineLength
