@@ -115,9 +115,9 @@ public class ColorPreference extends ExtensibleTabPreferenceSetting implements L
                     return tr("Paint style {0}: {1}", tr(I18n.escape(info.getSource())), tr(info.getName()));
                 else
                     return tr(I18n.escape(info.getSource())) + " - " + tr(I18n.escape(info.getName()));
-            }
-            else
+            } else {
                 return tr(I18n.escape(info.getName()));
+            }
         }
 
         /**
