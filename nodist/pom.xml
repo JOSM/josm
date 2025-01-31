@@ -17,7 +17,7 @@
         <sonar.host.url>https://josm.openstreetmap.de/sonar/</sonar.host.url>
         <sonar.projectKey>JOSM</sonar.projectKey>
         <jmockit.version>1.49.a</jmockit.version>
-        <pmd.version>7.9.0</pmd.version>
+        <pmd.version>7.10.0</pmd.version>
         <jacoco.version>0.8.12</jacoco.version>
         <checkstyle.version>10.21.2</checkstyle.version>
         <spotbugs.version>4.9.0</spotbugs.version>
