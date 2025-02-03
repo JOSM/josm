@@ -247,9 +247,10 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
             return members.get(rowIndex).getMember();
         case 2:
             return getWayConnection(rowIndex);
+        default:
+            // should not happen
+            return null;
         }
-        // should not happen
-        return null;
     }
 
     @Override

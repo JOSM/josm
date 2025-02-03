@@ -110,12 +110,10 @@ public class OsmChangeReader extends OsmReader {
         while (parser.hasNext()) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                switch (parser.getLocalName()) {
-                case "comment":
+                if (parser.getLocalName().equals("comment")) {
                     text = parser.getAttributeValue(null, "text");
                     jumpToEnd();
-                    break;
-                default:
+                } else {
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {

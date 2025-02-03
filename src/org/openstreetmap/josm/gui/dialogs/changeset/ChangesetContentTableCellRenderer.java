@@ -25,6 +25,7 @@ public class ChangesetContentTableCellRenderer extends AbstractCellRenderer {
         case CREATED: setText(tr("Created")); break;
         case UPDATED: setText(tr("Updated")); break;
         case DELETED: setText(tr("Deleted")); break;
+        default: throw new IllegalStateException("Unexpected value: " + type);
         }
         setToolTipText(null);
     }

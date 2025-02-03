@@ -253,8 +253,8 @@ public class DefaultProxySelector extends ProxySelector {
             if (socksProxySocketAddress == null)
                 return NO_PROXY_LIST;
             return Collections.singletonList(new Proxy(Type.SOCKS, socksProxySocketAddress));
-        }
         // should not happen
-        return Collections.emptyList();
+        default: return Collections.emptyList();
+        }
     }
 }

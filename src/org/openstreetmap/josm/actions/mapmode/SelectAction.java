@@ -68,12 +68,12 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Move is an action that can move all kind of OsmPrimitives (except keys for now).
- *
+ * <p>
  * If an selected object is under the mouse when dragging, move all selected objects.
  * If an unselected object is under the mouse when dragging, it becomes selected
  * and will be moved.
  * If no object is under the mouse, move all selected objects (if any)
- *
+ * <p>
  * On Mac OS X, Ctrl + mouse button 1 simulates right click (map move), so the
  * feature "selection remove" is disabled on this platform.
  */
@@ -401,9 +401,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     /**
      * Look, whether any object is selected. If not, select the nearest node.
      * If there are no nodes in the dataset, do nothing.
-     *
+     * <p>
      * If the user did not press the left mouse button, do nothing.
-     *
+     * <p>
      * Also remember the starting position of the movement and change the mouse
      * cursor to movement.
      */
@@ -464,7 +464,6 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             GuiHelper.scheduleTimer(initialMoveDelay+1, evt -> updateStatusLine(), false);
             break;
         case SELECT:
-        default:
             if (!(ctrl && PlatformManager.isPlatformOsx())) {
                 // start working with rectangle or lasso
                 selectionManager.register(mv, lassoMode);

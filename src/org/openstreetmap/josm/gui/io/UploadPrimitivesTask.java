@@ -400,7 +400,6 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                 if (e.getSource() == ChangesetClosedException.Source.UPLOAD_DATA) {
                     switch (strategy.getPolicy()) {
                     case ABORT:
-                        break; /* do nothing - we return to map editing */
                     case AUTOMATICALLY_OPEN_NEW_CHANGESETS:
                         break; /* do nothing - we return to map editing */
                     case FILL_ONE_CHANGESET_AND_RETURN_TO_UPLOAD_DIALOG:
@@ -410,6 +409,8 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                         UploadDialog.getUploadDialog().setUploadedPrimitives(toUpload);
                         UploadDialog.getUploadDialog().setVisible(true);
                         break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + strategy.getPolicy());
                     }
                 } else {
                     handleFailedUpload(lastException);

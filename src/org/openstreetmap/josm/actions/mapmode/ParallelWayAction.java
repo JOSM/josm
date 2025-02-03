@@ -246,7 +246,6 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         case DRAGGING:
             newCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
             break;
-        default: throw new AssertionError();
         }
         if (newCursor != null) {
             mv.setNewCursor(newCursor, this);

@@ -134,8 +134,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 dialog.setVisible(true);
                 switch (dialog.getUserAction()) {
                     case PROCEED: return true;
-                    case CANCEL:
-                    default: return false;
+                    case CANCEL: return false;
                 }
             }
             dialog.closeDialog();
@@ -378,10 +377,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         public void cancel() {
             switch (model.getMode()) {
-            case EDITING_DATA: cancelWhenInEditingModel();
+            case EDITING_DATA:
+                cancelWhenInEditingModel();
                 break;
-            case UPLOADING_AND_SAVING: cancelSafeAndUploadTask();
+            case UPLOADING_AND_SAVING:
+                cancelSafeAndUploadTask();
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + model.getMode());
             }
         }
 
@@ -427,10 +430,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 Mode mode = (Mode) evt.getNewValue();
                 switch (mode) {
-                case EDITING_DATA: setEnabled(true);
+                case EDITING_DATA:
+                    setEnabled(true);
                     break;
-                case UPLOADING_AND_SAVING: setEnabled(false);
+                case UPLOADING_AND_SAVING:
+                    setEnabled(false);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + mode);
                 }
             }
         }
@@ -524,10 +531,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 SaveLayersModel.Mode mode = (SaveLayersModel.Mode) evt.getNewValue();
                 switch (mode) {
-                case EDITING_DATA: setEnabled(true);
+                case EDITING_DATA:
+                    setEnabled(true);
                     break;
-                case UPLOADING_AND_SAVING: setEnabled(false);
+                case UPLOADING_AND_SAVING:
+                    setEnabled(false);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + mode);
                 }
             }
         }

@@ -343,7 +343,6 @@ public final class AudioPlayer extends Thread implements AudioListener {
                             soundPlayer.pause(command, stateChange, playingUrl);
                             stateChange = State.PAUSED;
                             break;
-                        default: // Do nothing
                     }
                     command.ok(stateChange);
                 } catch (AudioException | IOException | SecurityException | IllegalArgumentException startPlayingException) {

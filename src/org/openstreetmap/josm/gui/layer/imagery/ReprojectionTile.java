@@ -137,12 +137,10 @@ public class ReprojectionTile extends Tile {
         }
         double scaleMapView = MainApplication.getMap().mapView.getScale();
         ImageWarp.Interpolation interpolation;
-        switch (Config.getPref().get("imagery.warp.pixel-interpolation", "bilinear")) {
-            case "nearest_neighbor":
-                interpolation = ImageWarp.Interpolation.NEAREST_NEIGHBOR;
-                break;
-            default:
-                interpolation = ImageWarp.Interpolation.BILINEAR;
+        if (Config.getPref().get("imagery.warp.pixel-interpolation", "bilinear").equals("nearest_neighbor")) {
+            interpolation = ImageWarp.Interpolation.NEAREST_NEIGHBOR;
+        } else {
+            interpolation = ImageWarp.Interpolation.BILINEAR;
         }
 
         Projection projCurrent = ProjectionRegistry.getProjection();

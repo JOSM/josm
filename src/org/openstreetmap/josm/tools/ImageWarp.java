@@ -163,6 +163,7 @@ public final class ImageWarp {
      * @return the warped image
      */
     public static BufferedImage warp(BufferedImage srcImg, Dimension targetDim, PointTransform invTransform, Interpolation interpolation) {
+        Objects.requireNonNull(interpolation, "interpolation");
         BufferedImage imgTarget = new BufferedImage(targetDim.width, targetDim.height, BufferedImage.TYPE_INT_ARGB);
         Rectangle2D srcRect = new Rectangle2D.Double(0, 0, srcImg.getWidth(), srcImg.getHeight());
         // These arrays reduce the amount of memory allocations (getRGB and setRGB are
@@ -174,7 +175,8 @@ public final class ImageWarp {
             for (int i = 0; i < imgTarget.getWidth(); i++) {
                 Point2D srcCoord = invTransform.transform(i, j);
                 if (srcRect.contains(srcCoord)) {
-                    int rgba;
+                    // Convert to switch expression when we switch to Java 17+.
+                    int rgba = 0; // Initialized here so the compiler doesn't complain. Otherwise, BILINEAR needs to have it start at 0.
                     switch (interpolation) {
                         case NEAREST_NEIGHBOR:
                             rgba = getColor((int) Math.round(srcCoord.getX()), (int) Math.round(srcCoord.getY()), srcImg, sharedArray);
@@ -188,7 +190,7 @@ public final class ImageWarp {
                             int c01 = getColor(x0, y0 + 1, srcImg, sharedArray);
                             int c10 = getColor(x0 + 1, y0, srcImg, sharedArray);
                             int c11 = getColor(x0 + 1, y0 + 1, srcImg, sharedArray);
-                            rgba = 0;
+                            // rgba
                             // loop over color components: blue, green, red, alpha
                             for (int ch = 0; ch <= 3; ch++) {
                                 int shift = 8 * ch;
@@ -198,8 +200,6 @@ public final class ImageWarp {
                                 rgba |= chVal << shift;
                             }
                             break;
-                        default:
-                            throw new AssertionError(Objects.toString(interpolation));
                     }
                     imgTarget.getRaster().setDataElements(i, j, imgTarget.getColorModel().getDataElements(rgba, pixel));
                 }

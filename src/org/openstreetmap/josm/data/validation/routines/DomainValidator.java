@@ -1867,8 +1867,6 @@ public final class DomainValidator extends AbstractValidator {
         case INFRASTRUCTURE_RO:
         case LOCAL_RO:
             throw new IllegalArgumentException("Cannot update the table: " + table);
-        default:
-            throw new IllegalArgumentException("Unexpected enum value: " + table);
         }
     }
 
@@ -1880,7 +1878,7 @@ public final class DomainValidator extends AbstractValidator {
      * @since 1.5.1
      */
     public static String[] getTLDEntries(ArrayType table) {
-        final String[] array;
+        String[] array = null;
         switch (table) {
         case COUNTRY_CODE_MINUS:
             array = countryCodeTLDsMinus;
@@ -1906,7 +1904,8 @@ public final class DomainValidator extends AbstractValidator {
         case LOCAL_RO:
             array = LOCAL_TLDS;
             break;
-        default:
+        }
+        if (array == null) {
             throw new IllegalArgumentException("Unexpected enum value: " + table);
         }
         return Arrays.copyOf(array, array.length); // clone the array

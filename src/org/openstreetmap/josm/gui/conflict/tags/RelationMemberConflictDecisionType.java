@@ -30,9 +30,9 @@ public enum RelationMemberConflictDecisionType {
             case KEEP:
                 return tr("Keep");
             case UNDECIDED:
-            default:
                 return tr("Undecided");
         }
+        return tr("Undecided");
     }
 
     String getLabelToolTipText() {
@@ -42,8 +42,8 @@ public enum RelationMemberConflictDecisionType {
             case KEEP:
                 return tr("Keep this relation member for the target object");
             case UNDECIDED:
-            default:
                 return tr("Not decided yet");
         }
+        return tr("Not decided yet");
     }
 }

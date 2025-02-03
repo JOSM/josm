@@ -203,6 +203,8 @@ public class ChangesetQueryDialog extends JDialog {
                         pnlAdvancedQueries.displayMessageIfInvalid();
                         return;
                     }
+                default:
+                    throw new IllegalStateException("Unexpected value: " + tpQueryPanels.getSelectedIndex());
                 }
                 setCanceled(false);
                 setVisible(false);

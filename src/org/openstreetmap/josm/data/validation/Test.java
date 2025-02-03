@@ -41,6 +41,7 @@ import org.openstreetmap.josm.tools.Stopwatch;
  *
  * @author frsantos
  */
+@SuppressWarnings("PMD.UnitTestShouldUseTestAnnotation")
 public class Test implements OsmPrimitiveVisitor {
 
     protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new NotOutsideDataSourceArea();

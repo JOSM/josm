@@ -281,9 +281,8 @@ public abstract class KeyedItem extends TextItem implements RegionSpecific {
             return (tags.containsKey(key) && getValues().contains(tags.get(key))) ? Boolean.TRUE : null;
         case KEY_VALUE_REQUIRED:
             return tags.containsKey(key) && getValues().contains(tags.get(key));
-        default:
-            throw new IllegalStateException();
         }
+        throw new IllegalStateException();
     }
 
     protected JPopupMenu getPopupMenu() {

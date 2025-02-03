@@ -30,7 +30,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This model manages a list of conflicting relation members.
- *
+ * <p>
  * It can be used as {@link javax.swing.table.TableModel}.
  */
 public class RelationMemberConflictResolverModel extends DefaultTableModel {
@@ -112,8 +112,8 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         case 3: /* original */ return d.getOriginalPrimitive();
         case 4: /* decision keep */ return RelationMemberConflictDecisionType.KEEP == d.getDecision();
         case 5: /* decision remove */ return RelationMemberConflictDecisionType.REMOVE == d.getDecision();
+        default: return null;
         }
-        return null;
     }
 
     @Override
@@ -211,7 +211,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Prepare the default decisions for the current model.
-     *
+     * <p>
      * Keep/delete decisions are made if every member has the same role and the members are in consecutive order within the relation.
      * For multiple occurrences those conditions are tested stepwise for each occurrence.
      */
@@ -221,7 +221,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Prepare the default decisions for the current model.
-     *
+     * <p>
      * Keep/delete decisions are made if every member has the same role and the members are in consecutive order within the relation.
      * For multiple occurrences those conditions are tested stepwise for each occurrence.
      *
@@ -382,6 +382,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                     // do nothing
                     break;
                 case UNDECIDED:
+                default:
                     // FIXME: this is an error
                     break;
                 }
@@ -418,6 +419,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                     return true;
                 break;
             case UNDECIDED:
+            default:
                 // FIXME: handle error
             }
         }

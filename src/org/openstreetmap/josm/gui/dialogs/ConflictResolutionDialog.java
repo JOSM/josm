@@ -196,11 +196,9 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
                         options,
                         options[1]
                 );
-                switch (ret) {
-                case JOptionPane.YES_OPTION:
+                if (ret == JOptionPane.YES_OPTION) {
                     buttonAction(1, evt);
-                    break;
-                default:
+                } else {
                     return;
                 }
             }

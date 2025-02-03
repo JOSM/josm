@@ -114,15 +114,17 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 options[0]
         );
         switch (answer) {
-        case 0:
+        case JOptionPane.OK_OPTION:
             tracks.forEach(t -> t.setColor(c.getColor()));
             GPXSettingsPanel.putLayerPrefLocal(layer, "colormode", "0"); //set Colormode to none
             break;
-        case 1:
+        case JOptionPane.NO_OPTION:
             return;
-        case 2:
+        case JOptionPane.CANCEL_OPTION:
             tracks.forEach(t -> t.setColor(null));
             break;
+        default:
+            throw new InvalidArgumentException("Unknown choice: " + answer);
         }
         table.repaint();
     }
