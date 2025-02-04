@@ -21,7 +21,7 @@
     </configurations>
     <dependencies>
         <!-- api->default -->
-        <dependency conf="api->default" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.23"/>
+        <dependency conf="api->default" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.24"/>
         <dependency conf="api->default" org="jakarta.json" name="jakarta.json-api" rev="2.1.3"/>
         <!-- parsson is an implementation for jakarta.json -->
         <dependency conf="runtimeOnly->default" org="org.eclipse.parsson" name="parsson" rev="1.1.7"/>
@@ -36,7 +36,7 @@
         <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2024.10.21"/>
         <!-- sources->sources -->
-        <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.23"/>
+        <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.24"/>
         <dependency conf="sources->sources" org="jakarta.json" name="jakarta.json-api" rev="2.1.3"/>
         <dependency conf="sources->sources" org="org.eclipse.parsson" name="parsson" rev="1.1.7"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-jcs3-core" rev="3.2.1"/>
