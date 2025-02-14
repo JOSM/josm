@@ -8,8 +8,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.tools.Utils;
 
 /**

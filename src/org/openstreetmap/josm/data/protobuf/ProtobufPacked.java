@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.protobuf;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 /**

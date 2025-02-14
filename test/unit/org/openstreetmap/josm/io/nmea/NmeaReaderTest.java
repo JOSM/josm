@@ -62,6 +62,7 @@ class NmeaReaderTest {
         assertNull(wayPoints.get(0).get(GpxConstants.PT_VDOP));
         assertNull(wayPoints.get(0).get(GpxConstants.PT_PDOP));
     }
+
     /**
      * Tests reading a nmea file with GST sentences.
      * @throws Exception if any error occurs

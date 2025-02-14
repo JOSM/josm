@@ -67,7 +67,10 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported"));
     private final JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points"));
     private final JCheckBox circleGpsPoints = new JCheckBox(tr("Draw a circle from value"));
-    private final JComboBox<String> circleDataSource = new JosmComboBox<>(new String[] {tr("Hdop"), tr("Horizontal deviation estimate"), tr("Age of correction data")}); 
+    private final JComboBox<String> circleDataSource = new JosmComboBox<>(new String[] {
+        tr("Hdop"),
+        tr("Horizontal deviation estimate"),
+        tr("Age of correction data")}); 
     private final JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
     private final JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
     private final JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
@@ -424,7 +427,9 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
 
         // circleGpsPoints
-        circleGpsPoints.addItemListener(e -> {circleDataSource.setEnabled(circleGpsPoints.isSelected());});
+        circleGpsPoints.addItemListener(e -> {
+            circleDataSource.setEnabled(circleGpsPoints.isSelected());
+        });
         circleGpsPoints.setToolTipText(tr("Draw a circle from value"));
         circleDataSource.setToolTipText(tr("Source of the circle size"));
         circleDataSource.setEnabled(false);

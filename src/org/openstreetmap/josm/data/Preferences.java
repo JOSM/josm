@@ -95,7 +95,7 @@ public class Preferences extends AbstractPreferences {
 
     /** keep subkey even if it starts with any of {@link #OBSOLETE_PREF_KEYS_START} */
     private static final List<String> KEEP_PREF_KEYS = Arrays.asList(
-        // nothing ATM
+    // nothing ATM
     );
 
     /** rename keys that equal */
