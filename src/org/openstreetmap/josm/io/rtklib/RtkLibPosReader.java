@@ -90,7 +90,8 @@ public class RtkLibPosReader implements IGpxReader {
                             currentwp.put(GpxConstants.RTKLIB_RATIO, fields[IDX_RATIO]);
                             double sdn = Double.parseDouble(fields[IDX_SDN]);
                             double sde = Double.parseDouble(fields[IDX_SDE]);
-                            currentwp.put(GpxConstants.PT_HDOP, (float) Math.sqrt(sdn*sdn + sde*sde));
+                            currentwp.put(GpxConstants.PT_STD_HDEV, (float) Math.sqrt(sdn*sdn + sde*sde));
+                            currentwp.put(GpxConstants.PT_STD_VDEV, fields[IDX_SDU]);
                             waypoints.add(currentwp);
                             success++;
                         } catch (IllegalArgumentException e) {

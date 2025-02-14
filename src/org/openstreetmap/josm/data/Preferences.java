@@ -85,51 +85,17 @@ public class Preferences extends AbstractPreferences {
 
     /** remove if key equals */
     private static final String[] OBSOLETE_PREF_KEYS = {
-        "remotecontrol.https.enabled", /* remove entry after Dec. 2019 */
-        "remotecontrol.https.port", /* remove entry after Dec. 2019 */
-        "curves.circlearc.angle-separation", // see #19076
-        "update.selected.complete-relation" // see #19124
+        // nothing ATM
     };
 
     /** remove if key starts with */
     private static final String[] OBSOLETE_PREF_KEYS_START = {
-            //only remove layer specific prefs
-            "draw.rawgps.layer.wpt.",
-            "draw.rawgps.layer.audiowpt.",
-            "draw.rawgps.lines.force.",
-            "draw.rawgps.lines.alpha-blend.",
-            "draw.rawgps.lines.",
-            "markers.show ", //uses space as separator
-            "marker.makeautomarker.",
-            "clr.layer.",
-
-            //remove both layer specific and global prefs
-            "draw.rawgps.colors",
-            "draw.rawgps.direction",
-            "draw.rawgps.alternatedirection",
-            "draw.rawgps.linewidth",
-            "draw.rawgps.max-line-length.local",
-            "draw.rawgps.max-line-length",
-            "draw.rawgps.large",
-            "draw.rawgps.large.size",
-            "draw.rawgps.hdopcircle",
-            "draw.rawgps.min-arrow-distance",
-            "draw.rawgps.colorTracksTune",
-            "draw.rawgps.colors.dynamic",
-            "draw.rawgps.lines.local",
-            "draw.rawgps.heatmap"
+        // nothing ATM
     };
 
     /** keep subkey even if it starts with any of {@link #OBSOLETE_PREF_KEYS_START} */
     private static final List<String> KEEP_PREF_KEYS = Arrays.asList(
-            "draw.rawgps.lines.alpha-blend",
-            "draw.rawgps.lines.arrows",
-            "draw.rawgps.lines.arrows.fast",
-            "draw.rawgps.lines.arrows.min-distance",
-            "draw.rawgps.lines.force",
-            "draw.rawgps.lines.max-length",
-            "draw.rawgps.lines.max-length.local",
-            "draw.rawgps.lines.width"
+        // nothing ATM
     );
 
     /** rename keys that equal */
@@ -137,27 +103,8 @@ public class Preferences extends AbstractPreferences {
 
     private static Map<String, String> getUpdatePrefKeys() {
         HashMap<String, String> m = new HashMap<>();
-        m.put("draw.rawgps.direction", "draw.rawgps.lines.arrows");
-        m.put("draw.rawgps.alternatedirection", "draw.rawgps.lines.arrows.fast");
-        m.put("draw.rawgps.min-arrow-distance", "draw.rawgps.lines.arrows.min-distance");
-        m.put("draw.rawgps.linewidth", "draw.rawgps.lines.width");
-        m.put("draw.rawgps.max-line-length.local", "draw.rawgps.lines.max-length.local");
-        m.put("draw.rawgps.max-line-length", "draw.rawgps.lines.max-length");
-        m.put("draw.rawgps.large", "draw.rawgps.points.large");
-        m.put("draw.rawgps.large.alpha", "draw.rawgps.points.large.alpha");
-        m.put("draw.rawgps.large.size", "draw.rawgps.points.large.size");
-        m.put("draw.rawgps.hdopcircle", "draw.rawgps.points.hdopcircle");
-        m.put("draw.rawgps.layer.wpt.pattern", "draw.rawgps.markers.pattern");
-        m.put("draw.rawgps.layer.audiowpt.pattern", "draw.rawgps.markers.audio.pattern");
-        m.put("draw.rawgps.colors", "draw.rawgps.colormode");
-        m.put("draw.rawgps.colorTracksTune", "draw.rawgps.colormode.velocity.tune");
-        m.put("draw.rawgps.colors.dynamic", "draw.rawgps.colormode.dynamic-range");
-        m.put("draw.rawgps.heatmap.line-extra", "draw.rawgps.colormode.heatmap.line-extra");
-        m.put("draw.rawgps.heatmap.colormap", "draw.rawgps.colormode.heatmap.colormap");
-        m.put("draw.rawgps.heatmap.use-points", "draw.rawgps.colormode.heatmap.use-points");
-        m.put("draw.rawgps.heatmap.gain", "draw.rawgps.colormode.heatmap.gain");
-        m.put("draw.rawgps.heatmap.lower-limit", "draw.rawgps.colormode.heatmap.lower-limit");
-        m.put("draw.rawgps.date-coloring-min-dt", "draw.rawgps.colormode.time.min-distance");
+        m.put("hdop.color.alpha", "circle.color.alpha");
+        m.put("points.hdopcircle", "points.circle");
         return Collections.unmodifiableMap(m);
     }
 

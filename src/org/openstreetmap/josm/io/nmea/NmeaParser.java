@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Parses NMEA 0183 data. Based on information from
- * <a href="http://www.catb.org/gpsd/NMEA.html">http://www.catb.org/gpsd</a>.
+ * <a href="https://gpsd.gitlab.io/gpsd/NMEA.html">https://gpsd.gitlab.io/gpsd</a>.
  *
  * NMEA data is in printable ASCII form and may include information such as position,
  * speed, depth, frequency allocation, etc.
@@ -133,6 +133,26 @@ public class NmeaParser {
 
         final int position;
         GSA(int position) {
+            this.position = position;
+        }
+    }
+
+    /**
+     * GST - GNSS Pseudorange Noise Statistics
+     * <p>
+     * RMS and Standard deviation estimated values.
+     */
+    enum GST {
+        TIME(1),
+        RMS_DEVIATION(2),        // Total RMS standard deviation of ranges inputs to the navigation solution
+        STDDEV_MAJOR(3),         // Standard deviation (meters) of semi-major axis of error ellipse
+        STDDEV_MINOR(4),         // Standard deviation (meters) of semi-minor axis of error ellipse
+        STDDEV_MAJOR_BEARING(5), // Orientation of semi-major axis of error ellipse (true north degrees)
+        STDDEV_LAT(6),           // Standard deviation (meters) of latitude error
+        STDDEV_LONG(7),          // Standard deviation (meters) of longitude error
+        STDDEV_HEIGHT(8);        // Standard deviation (meters) of altitude error
+        final int position;
+        GST(int position) {
             this.position = position;
         }
     }
@@ -422,6 +442,11 @@ public class NmeaParser {
                         break;
                     }
                 }
+                // Age of differential correction
+                accu = e[GGA.GPS_AGE.position];
+                if (!accu.isEmpty() && currentwp != null) {
+                    currentwp.put(GpxConstants.PT_AGEOFDGPSDATA, Float.valueOf(accu));
+                }
                 // reference ID
                 if (GGA.REF.position < e.length) {
                     accu = e[GGA.REF.position];
@@ -464,6 +489,18 @@ public class NmeaParser {
                 accu = e[GSA.PDOP.position];
                 if (!accu.isEmpty() && currentwp != null) {
                     currentwp.put(GpxConstants.PT_PDOP, Float.valueOf(accu));
+                }
+                // GST Sentence
+            } else if (isSentence(e[0], Sentence.GST)) {
+                // std horizontal deviation
+                accu = e[GST.STDDEV_MAJOR.position];
+                if (!accu.isEmpty() && currentwp != null) {
+                    currentwp.put(GpxConstants.PT_STD_HDEV, Float.valueOf(accu));
+                }
+                // std vertical deviation
+                accu = e[GST.STDDEV_HEIGHT.position];
+                if (!accu.isEmpty() && currentwp != null) {
+                    currentwp.put(GpxConstants.PT_STD_VDEV, Float.valueOf(accu));
                 }
             } else if (isSentence(e[0], Sentence.RMC)) {
                 // coordinates
