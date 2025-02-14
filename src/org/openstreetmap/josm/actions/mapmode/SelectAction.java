@@ -913,7 +913,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 final ConfirmMoveDialog ed = new ConfirmMoveDialog();
                 ed.setContent(trn(
                         "You moved {0} element by a distance of {1}. "
-                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
+                                + "Moving elements by a large distance is often an error.\n" + "Really move it?",
                         "You moved {0} elements by a distance of {1}. "
                                 + "Moving elements by a large distance is often an error.\n" + "Really move them?",
                         moveCount, moveCount, SystemOfMeasurement.getSystemOfMeasurement().getDistText(moveDistance)));
