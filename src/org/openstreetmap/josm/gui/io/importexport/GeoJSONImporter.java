@@ -35,22 +35,6 @@ public class GeoJSONImporter extends OsmImporter {
         super(FILE_FILTER);
     }
 
-    /**
-     * Parse GeoJSON dataset.
-     * @param source geojson file
-     * @return GeoJSON dataset
-     * @throws IOException in case of I/O error
-     * @throws IllegalDataException if an error was found while parsing the data from the source
-     * @deprecated since 18807, use {@link #parseDataSet(InputStream, ProgressMonitor)} instead
-     */
-    @Deprecated
-    public DataSet parseDataSet(final String source) throws IOException, IllegalDataException {
-        try (CachedFile cf = new CachedFile(source)) {
-            InputStream fileInputStream = Compression.getUncompressedFileInputStream(cf.getFile()); // NOPMD
-            return this.parseDataSet(fileInputStream, NullProgressMonitor.INSTANCE);
-        }
-    }
-
     @Override
     protected DataSet parseDataSet(InputStream in, ProgressMonitor progressMonitor) throws IllegalDataException {
         return GeoJSONReader.parseDataSet(in, progressMonitor);

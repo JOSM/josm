@@ -173,19 +173,6 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      * Returns the GPS time value. The GPS time value from the temporary copy
      * is returned if that copy exists.
      * @return the GPS time value
-     * @deprecated Use {@link #getGpsInstant}
-     */
-    @Deprecated
-    public Date getGpsTime() {
-        if (tmp != null)
-            return getDefensiveDate(tmp.gpsTime);
-        return getDefensiveDate(gpsTime);
-    }
-
-    /**
-     * Returns the GPS time value. The GPS time value from the temporary copy
-     * is returned if that copy exists.
-     * @return the GPS time value
      */
     @Override
     public Instant getGpsInstant() {
@@ -246,17 +233,6 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     @Override
     public boolean hasExifTime() {
         return exifTime != null;
-    }
-
-    /**
-     * Returns the EXIF GPS time.
-     * @return the EXIF GPS time
-     * @since 6392
-     * @deprecated Use {@link #getExifGpsInstant}
-     */
-    @Deprecated
-    public Date getExifGpsTime() {
-        return getDefensiveDate(exifGpsTime);
     }
 
     /**

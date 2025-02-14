@@ -133,18 +133,6 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     /**
      * Sets the {@link #PT_TIME} attribute to the specified time.
      *
-     * @param ts seconds from the epoch
-     * @since 13210
-     * @deprecated Use {@link #setInstant(Instant)}
-     */
-    @Deprecated
-    public void setTime(long ts) {
-        setInstant(Instant.ofEpochSecond(ts));
-    }
-
-    /**
-     * Sets the {@link #PT_TIME} attribute to the specified time.
-     *
      * @param ts milliseconds from the epoch
      * @since 14434
      */
@@ -194,19 +182,6 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      */
     public boolean hasDate() {
         return attr.get(PT_TIME) instanceof Instant;
-    }
-
-    /**
-     * Returns the waypoint time Date object.
-     *
-     * @return a copy of the Date object associated with this waypoint
-     * @since 14456
-     * @deprecated Use {@link #getInstant()}
-     */
-    @Deprecated
-    public Date getDate() {
-        Instant instant = getInstant();
-        return instant == null ? null : Date.from(instant);
     }
 
     /**

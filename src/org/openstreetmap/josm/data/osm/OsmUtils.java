@@ -33,25 +33,6 @@ public final class OsmUtils {
      */
     public static final String REVERSE_VALUE = "-1";
 
-    /**
-     * Discouraged synonym for {@link #TRUE_VALUE}
-     * @deprecated since 18801, use {@link #TRUE_VALUE} instead.
-     */
-    @Deprecated
-    public static final String trueval = TRUE_VALUE;
-    /**
-     * Discouraged synonym for {@link #FALSE_VALUE}
-     * @deprecated since 18801, use {@link #FALSE_VALUE} instead.
-     */
-    @Deprecated
-    public static final String falseval = FALSE_VALUE;
-    /**
-     * Discouraged synonym for {@link #REVERSE_VALUE}
-     * @deprecated since 18801, use {@link #REVERSE_VALUE} instead.
-     */
-    @Deprecated
-    public static final String reverseval = REVERSE_VALUE;
-
     private OsmUtils() {
         // Hide default constructor for utils classes
     }

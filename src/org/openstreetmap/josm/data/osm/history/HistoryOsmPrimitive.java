@@ -158,16 +158,6 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
     /**
      * Returns the timestamp.
      * @return the timestamp
-     * @deprecated Use {@link #getInstant()}
-     */
-    @Deprecated
-    public Date getTimestamp() {
-        return Date.from(timestamp);
-    }
-
-    /**
-     * Returns the timestamp.
-     * @return the timestamp
      */
     public Instant getInstant() {
         return timestamp;

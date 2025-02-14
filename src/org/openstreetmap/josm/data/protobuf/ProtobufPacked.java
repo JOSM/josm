@@ -18,18 +18,6 @@ public class ProtobufPacked {
     /**
      * Create a new ProtobufPacked object
      *
-     * @param ignored A reusable ByteArrayOutputStream (no longer used)
-     * @param bytes The packed bytes
-     * @deprecated since we aren't using the output stream anymore
-     */
-    @Deprecated
-    public ProtobufPacked(ByteArrayOutputStream ignored, byte[] bytes) {
-        this(bytes);
-    }
-
-    /**
-     * Create a new ProtobufPacked object
-     *
      * @param bytes The packed bytes
      * @since 18695
      */

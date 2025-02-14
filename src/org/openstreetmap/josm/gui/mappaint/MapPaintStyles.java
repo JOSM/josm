@@ -233,22 +233,6 @@ public final class MapPaintStyles {
     }
 
     /**
-     * Returns the node icon that would be displayed for the given tag.
-     * @param tag The tag to look an icon for
-     * @return {@code null} if no icon found
-     * @deprecated use {@link OsmPrimitiveImageProvider#getResource}
-     */
-    @Deprecated
-    public static ImageIcon getNodeIcon(Tag tag) {
-        if (tag != null) {
-            return OsmPrimitiveImageProvider.getResource(tag.getKey(), tag.getValue(), OsmPrimitiveType.NODE)
-                    .map(resource -> resource.getPaddedIcon(ImageProvider.ImageSizes.SMALLICON.getImageDimension()))
-                    .orElse(null);
-        }
-        return null;
-    }
-
-    /**
      * Gets the directories that should be searched for icons
      * @param source The style source the icon is from
      * @return A list of directory names

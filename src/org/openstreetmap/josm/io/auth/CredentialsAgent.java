@@ -58,19 +58,6 @@ public interface CredentialsAgent {
             throws CredentialsAgentException;
 
     /**
-     * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no
-     * Access Token is currently managed by this CredentialAgent.
-     *
-     * @return the current OAuth Access Token to access the OSM server.
-     * @throws CredentialsAgentException if something goes wrong
-     * @deprecated since 18991 -- OAuth 1.0 is being removed from the OSM API
-     */
-    @Deprecated
-    default IOAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
-        throw new CredentialsAgentException("Call to deprecated method");
-    }
-
-    /**
      * Lookup the current OAuth Access Token to access the specified server. Replies null, if no
      * Access Token is currently managed by this CredentialAgent.
      *
@@ -81,18 +68,6 @@ public interface CredentialsAgent {
      */
     @Nullable
     IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException;
-
-    /**
-     * Stores the OAuth Access Token <code>accessToken</code>.
-     *
-     * @param accessToken the access Token. null, to remove the Access Token.
-     * @throws CredentialsAgentException if something goes wrong
-     * @deprecated since 18991 -- OAuth 1.0 is being removed from the OSM API
-     */
-    @Deprecated
-    default void storeOAuthAccessToken(IOAuthToken accessToken) throws CredentialsAgentException {
-        throw new CredentialsAgentException("Call to deprecated method");
-    }
 
     /**
      * Stores the OAuth Access Token <code>accessToken</code>.
