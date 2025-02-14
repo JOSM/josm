@@ -211,20 +211,6 @@ public class LatLonTest {
     }
 
     /**
-     * Test {@link LatLon#isOutSideWorld}
-     * @deprecated to remove
-     */
-    @Test
-    @Deprecated
-    void testIsOutSideWorld() {
-        assertFalse(LatLon.ZERO.isOutSideWorld());
-        assertTrue(LatLon.NORTH_POLE.isOutSideWorld());
-        assertTrue(LatLon.SOUTH_POLE.isOutSideWorld());
-        assertTrue(new LatLon(-181, 0).isOutSideWorld());
-        assertTrue(new LatLon(181, 0).isOutSideWorld());
-    }
-
-    /**
      * Test {@link LatLon#isValid}
      */
     @Test
