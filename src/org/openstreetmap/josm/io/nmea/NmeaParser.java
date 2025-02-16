@@ -334,6 +334,8 @@ public class NmeaParser {
                     return false;
                 }
             } else {
+                // Since there is no checksum, we remove any line endings
+                chkstrings[0] = chkstrings[0].replaceAll("\\r|\\n", "");
                 noChecksum++;
             }
             // now for the content
@@ -443,9 +445,11 @@ public class NmeaParser {
                     }
                 }
                 // Age of differential correction
-                accu = e[GGA.GPS_AGE.position];
-                if (!accu.isEmpty() && currentwp != null) {
-                    currentwp.put(GpxConstants.PT_AGEOFDGPSDATA, Float.valueOf(accu));
+                if (GGA.GPS_AGE.position < e.length) {
+                    accu = e[GGA.GPS_AGE.position];
+                    if (!accu.isEmpty() && currentwp != null) {
+                        currentwp.put(GpxConstants.PT_AGEOFDGPSDATA, Float.valueOf(accu));
+                    }
                 }
                 // reference ID
                 if (GGA.REF.position < e.length) {
