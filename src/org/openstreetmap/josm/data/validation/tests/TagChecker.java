@@ -586,18 +586,6 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     /**
-     * Determines if the given key is in internal presets.
-     * @param key key
-     * @return {@code true} if the given key is in internal presets
-     * @since 9023
-     * @deprecated since 18281 -- use {@link TaggingPresets#isKeyInPresets(String)} instead
-     */
-    @Deprecated(since = "18281", forRemoval = true)
-    public static boolean isKeyInPresets(String key) {
-        return TaggingPresets.isKeyInPresets(key);
-    }
-
-    /**
      * Determines if the given tag is in internal presets.
      * @param key key
      * @param value value

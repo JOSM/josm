@@ -21,20 +21,6 @@ public enum WireType {
      */
     LENGTH_DELIMITED(2),
     /**
-     * start groups
-     *
-     * @deprecated Unknown reason. Deprecated since at least 2012.
-     */
-    @Deprecated
-    START_GROUP(3),
-    /**
-     * end groups
-     *
-     * @deprecated Unknown reason. Deprecated since at least 2012.
-     */
-    @Deprecated
-    END_GROUP(4),
-    /**
      * fixed32, sfixed32, float
      */
     THIRTY_TWO_BIT(5),

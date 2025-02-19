@@ -71,27 +71,6 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
     }
 
     /**
-     * Creates a {@code JosmComboBox} with a {@link JosmComboBoxModel} data model and
-     * the specified prototype display value.
-     * The default data model is an empty list of objects.
-     * Use <code>addItem</code> to add items. By default the first item
-     * in the data model becomes selected.
-     *
-     * @param prototypeDisplayValue the <code>Object</code> used to compute
-     *      the maximum number of elements to be displayed at once before
-     *      displaying a scroll bar
-     *
-     * @since 5450
-     * @deprecated use {@link #setPrototypeDisplayValue} instead.
-     */
-    @Deprecated(since = "18221", forRemoval = true)
-    public JosmComboBox(E prototypeDisplayValue) {
-        super(new JosmComboBoxModel<>());
-        setPrototypeDisplayValue(prototypeDisplayValue);
-        init();
-    }
-
-    /**
      * Creates a {@code JosmComboBox} that takes it items from an existing {@link JosmComboBoxModel}
      * data model.
      *
@@ -99,21 +78,6 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
      */
     public JosmComboBox(JosmComboBoxModel<E> aModel) {
         super(aModel);
-        init();
-    }
-
-    /**
-     * Creates a {@code JosmComboBox} that takes it items from an existing {@link JosmComboBoxModel}
-     * data model and sets the specified prototype display value.
-     *
-     * @param aModel the model that provides the displayed list of items
-     * @param prototypeDisplayValue use this item to size the combobox (may be null)
-     * @deprecated use {@link #setPrototypeDisplayValue} instead.
-     */
-    @Deprecated(since = "18221", forRemoval = true)
-    public JosmComboBox(JosmComboBoxModel<E> aModel, E prototypeDisplayValue) {
-        super(aModel);
-        setPrototypeDisplayValue(prototypeDisplayValue);
         init();
     }
 

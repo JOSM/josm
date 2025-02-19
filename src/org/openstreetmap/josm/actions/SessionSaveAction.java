@@ -536,22 +536,6 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
     /**
      * Sets the current session file and the layers included in that file
      * @param file file
-     * @param zip if it is a zip session file
-     * @param layers layers that are currently represented in the session file
-     * @deprecated since 18833, use {@link #setCurrentSession(File, List, SessionWriter.SessionWriterFlags...)} instead
-     */
-    @Deprecated(since = "18833")
-    public static void setCurrentSession(File file, boolean zip, List<Layer> layers) {
-        if (zip) {
-            setCurrentSession(file, layers, SessionWriter.SessionWriterFlags.IS_ZIP);
-        } else {
-            setCurrentSession(file, layers);
-        }
-    }
-
-    /**
-     * Sets the current session file and the layers included in that file
-     * @param file file
      * @param layers layers that are currently represented in the session file
      * @param flags The flags for the current session
      * @since 18833

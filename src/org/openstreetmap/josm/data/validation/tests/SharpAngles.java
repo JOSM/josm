@@ -162,18 +162,6 @@ public class SharpAngles extends Test {
     }
 
     /**
-     * Add a highway to ignore
-     * @param highway The highway type to ignore (e.g., if you want to ignore residential roads, use "residential")
-     * @since 19162 (deprecated)
-     * @deprecated Not known to be used. Please use config preference "validator.sharpangles.ignorehighway" instead.
-     */
-    @Deprecated(since = "19162", forRemoval = true)
-    public void addIgnoredHighway(String highway) {
-        // Don't forget to make ignoreHighways immutable when this method is removed
-        ignoreHighways.add(highway);
-    }
-
-    /**
      * Set the maximum angle
      * @param angle The maximum angle in degrees.
      */

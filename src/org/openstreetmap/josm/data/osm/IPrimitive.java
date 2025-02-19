@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.osm;
 
 import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -295,18 +294,6 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * used to check against edit conflicts.
      *
      * @return date of last modification
-     * @see #setTimestamp
-     * @deprecated since 17749, use {@link #getInstant} instead
-     */
-    @Deprecated(since = "17749")
-    Date getTimestamp();
-
-    /**
-     * Time of last modification to this object. This is not set by JOSM but
-     * read from the server and delivered back to the server unmodified. It is
-     * used to check against edit conflicts.
-     *
-     * @return date of last modification
      * @see #setInstant
      */
     Instant getInstant();
@@ -320,15 +307,6 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * @see #setRawTimestamp
      */
     int getRawTimestamp();
-
-    /**
-     * Sets time of last modification to this object
-     * @param timestamp date of last modification
-     * @see #getTimestamp
-     * @deprecated since 17749, use {@link #setInstant} instead
-     */
-    @Deprecated(since = "17749")
-    void setTimestamp(Date timestamp);
 
     /**
      * Sets time of last modification to this object
