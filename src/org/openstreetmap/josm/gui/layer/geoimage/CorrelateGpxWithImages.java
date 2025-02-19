@@ -616,25 +616,31 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         gbc = GBC.eol();
         gbc.gridx = 0;
-        gbc.gridy = y;
+        gbc.gridy = y++;
         panelTf.add(cbShowThumbs, gbc);
 
         gbc = GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 12, 0, 0);
         sepDirectionPosition = new JSeparator(SwingConstants.HORIZONTAL);
+        gbc.gridy = y++;
         panelTf.add(sepDirectionPosition, gbc);
 
         gbc = GBC.eol();
         gbc.gridwidth = 3;
+        gbc.gridy = y++;
         pDirectionPosition = ImageDirectionPositionPanel.forGpxTrace();
         panelTf.add(pDirectionPosition, gbc);
 
-        expertChanged(ExpertToggleAction.isExpert());
-
-        final JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
+        final JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        statusPanel.setBorder(BorderFactory.createLoweredBevelBorder());
         statusBarText = new JLabel(" ");
-        statusBarText.setFont(statusBarText.getFont().deriveFont(Font.PLAIN, 8));
-        statusBar.add(statusBarText);
+        statusBarText.setFont(statusBarText.getFont().deriveFont(Font.PLAIN, 12));
+        statusPanel.add(statusBarText);
+
+        gbc = GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(20, 12, 20, 0);
+        gbc.gridy = y;
+        panelTf.add(statusPanel, gbc);
+
+        expertChanged(ExpertToggleAction.isExpert());
 
         RepaintTheMapListener repaintTheMap = new RepaintTheMapListener(yLayer);
         pDirectionPosition.addFocusListenerOnComponent(repaintTheMap);
@@ -649,7 +655,6 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         pDirectionPosition.addItemListenerOnComponents(statusBarUpdaterWithRepaint);
 
         outerPanel = new JPanel(new BorderLayout());
-        outerPanel.add(statusBar, BorderLayout.PAGE_END);
 
         if (!GraphicsEnvironment.isHeadless()) {
             forEachLayer(CorrelateGpxWithImages::closeDialog);
