@@ -299,18 +299,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-    @Deprecated(since = "17749", forRemoval = true)
-    @Override
-    public void setTimestamp(Date timestamp) {
-        checkDatasetNotReadOnly();
-        boolean locked = writeLock();
-        try {
-            super.setTimestamp(timestamp);
-        } finally {
-            writeUnlock(locked);
-        }
-    }
-
     /* -------
     /* FLAGS
     /* ------*/
