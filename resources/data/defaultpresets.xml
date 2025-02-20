@@ -6340,7 +6340,7 @@
             <space />
             <key key="man_made" value="avalanche_protection" />
             <optional>
-                <combo key="avalanche_protection" text="Avalance protection" values="snow_bridge,dam,berm,mound,shed,gas_ignition" />
+                <combo key="avalanche_protection" text="Avalanche Protection" values="snow_bridge,dam,berm,mound,shed,gas_ignition" />
                 <check key="barrier" value_on="fence" text="Fence"/>
             </optional>
         </item> <!-- Avalanche Protection -->
