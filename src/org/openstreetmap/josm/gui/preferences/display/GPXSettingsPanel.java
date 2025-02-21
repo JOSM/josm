@@ -68,7 +68,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points"));
     private final JCheckBox circleGpsPoints = new JCheckBox(tr("Draw a circle from value"));
     private final JComboBox<String> circleDataSource = new JosmComboBox<>(new String[] {
-        tr("Hdop"),
+        tr("HDOP"),
         tr("Horizontal deviation estimate"),
         tr("Age of correction data")}); 
     private final JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
