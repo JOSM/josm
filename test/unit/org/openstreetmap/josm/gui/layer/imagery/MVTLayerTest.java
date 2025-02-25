@@ -48,7 +48,7 @@ class MVTLayerTest {
 
     @BeforeEach
     void setUp() {
-        final ImageryInfo imageryInfo = new ImageryInfo("MvtLayerTest", "file:" + TestUtils.getTestDataRoot() + "pbf/mapillary/{z}/{x}/{y}.mvt");
+        final ImageryInfo imageryInfo = new ImageryInfo("MvtLayerTest", "file:/" + TestUtils.getTestDataRoot() + "pbf/mapillary/{z}/{x}/{y}.mvt");
         imageryInfo.setImageryType(ImageryInfo.ImageryType.MVT);
         this.testLayer = new MVTLayer(imageryInfo);
     }
