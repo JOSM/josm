@@ -24,6 +24,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
@@ -49,6 +51,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -60,6 +63,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     private MapCSSStyleIndex indexData;
     private final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
     private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
+    private static final Map<IRelation<?>, Pair<List<JoinedPolygon>, List<JoinedPolygon>>> mpJoinedAreaCache = new HashMap<>();
     private static final Set<IPrimitive> toMatchForSurrounding = new HashSet<>();
     static final boolean ALL_TESTS = true;
     static final boolean ONLY_SELECTED_TESTS = false;
@@ -163,6 +167,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         env.mpAreaCache = mpAreaCache;
+        env.mpJoinedAreaCache = mpJoinedAreaCache;
         env.toMatchForSurrounding = toMatchForSurrounding;
 
         Iterator<MapCSSRule> candidates = indexData.getRuleCandidates(p);
@@ -221,6 +226,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         final List<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         env.mpAreaCache = mpAreaCache;
+        env.mpJoinedAreaCache = mpJoinedAreaCache;
         env.toMatchForSurrounding = toMatchForSurrounding;
         for (Set<MapCSSTagCheckerRule> schecks : checksCol) {
             for (MapCSSTagCheckerRule check : schecks) {
@@ -376,6 +382,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         // always clear the cache to make sure that we catch changes in geometry
         mpAreaCache.clear();
         ruleToCheckMap.clear();
+        mpJoinedAreaCache.clear();
         toMatchForSurrounding.clear();
         super.endTest();
     }
@@ -396,6 +403,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         mpAreaCache.clear();
+        mpJoinedAreaCache.clear();
         toMatchForSurrounding.clear();
 
         Set<OsmPrimitive> surrounding = new HashSet<>();

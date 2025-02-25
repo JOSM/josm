@@ -367,15 +367,15 @@ class GeometryTest {
         mp2.addMember(new RelationMember("inner", inner));
         mp2.put("type", "multipolygon");
         assertFalse(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp2, null));
-        assertFalse(Geometry.filterInsideMultipolygon(Collections.singletonList(w1), mp2).contains(w1));
+        assertFalse(Geometry.filterInsideMultipolygon(Collections.singletonList(w1), mp2, null).contains(w1));
 
         node4.setCoor(new LatLon(1.006, 0.99));
         // now w1 is inside
         assertTrue(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp2, null));
-        assertTrue(Geometry.filterInsideMultipolygon(Collections.singletonList(w1), mp2).contains(w1));
-        assertTrue(Geometry.filterInsideMultipolygon(Collections.singletonList(mp1), mp2).contains(mp1));
-        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2).contains(w1));
-        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2).contains(mp1));
+        assertTrue(Geometry.filterInsideMultipolygon(Collections.singletonList(w1), mp2, null).contains(w1));
+        assertTrue(Geometry.filterInsideMultipolygon(Collections.singletonList(mp1), mp2, null).contains(mp1));
+        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2, null).contains(w1));
+        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2, null).contains(mp1));
     }
 
     /**

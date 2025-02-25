@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -15,6 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Environment is a data object to provide access to various "global" parameters.
@@ -90,6 +93,10 @@ public class Environment {
      * Cache for multipolygon areas, can be null, used with CrossingFinder
      */
     public Map<IPrimitive, Area> mpAreaCache;
+    /**
+     * Cache for multipolygon areas as calculated by {@link MultipolygonBuilder#joinWays(Relation)}, can be {@code null}
+     */
+    public Map<IRelation<?>, Pair<List<MultipolygonBuilder.JoinedPolygon>, List<MultipolygonBuilder.JoinedPolygon>>> mpJoinedAreaCache;
 
     /**
      * Can be null, may contain primitives when surrounding objects of the primitives are tested
@@ -162,6 +169,7 @@ public class Environment {
         this.intersections = other.intersections;
         this.crossingWaysMap = other.crossingWaysMap;
         this.mpAreaCache = other.mpAreaCache;
+        this.mpJoinedAreaCache = other.mpJoinedAreaCache;
         this.toMatchForSurrounding = other.toMatchForSurrounding;
         this.selector = selector;
     }

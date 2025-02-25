@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
@@ -1191,7 +1193,7 @@ public final class Geometry {
                 if (polygonArea == null) {
                     polygonArea = getArea(polygon.getNodes());
                 }
-                Multipolygon mp = new Multipolygon((Relation) p);
+                Multipolygon mp = p.getDataSet() != null ? MultipolygonCache.getInstance().get((Relation) p) : new Multipolygon((Relation) p);
                 boolean inside = true;
                 // a (valid) multipolygon is inside the polygon if all outer rings are inside
                 for (PolyData outer : mp.getOuterPolygons()) {
@@ -1220,13 +1222,27 @@ public final class Geometry {
      * @since 15069
      */
     public static List<IPrimitive> filterInsideMultipolygon(Collection<IPrimitive> primitives, Relation multiPolygon) {
+        return filterInsideMultipolygon(primitives, multiPolygon, null);
+    }
+
+    /**
+     * Find all primitives in the given collection which are inside the given multipolygon. Members of the multipolygon are
+     * ignored. Unclosed ways and multipolygon relations with unclosed outer rings are ignored.
+     * @param primitives the primitives
+     * @param multiPolygon the multipolygon relation
+     * @param cache The cache to avoid calculating joined inner/outer ways multiple times (see {@link MultipolygonBuilder#joinWays(Relation)})
+     * @return a new list containing the found primitives, empty if multipolygon is invalid or nothing was found.
+     * @since xxx
+     */
+    public static List<IPrimitive> filterInsideMultipolygon(Collection<IPrimitive> primitives, Relation multiPolygon,
+                                                            Map<IRelation<?>, Pair<List<JoinedPolygon>, List<JoinedPolygon>>> cache) {
         List<IPrimitive> res = new ArrayList<>();
         if (primitives.isEmpty())
             return res;
 
         final Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner;
         try {
-            outerInner = MultipolygonBuilder.joinWays(multiPolygon);
+            outerInner = MultipolygonBuilder.joinWays(cache, multiPolygon);
         } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
             Logging.trace(ex);
             Logging.debug("Invalid multipolygon " + multiPolygon);
