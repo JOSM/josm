@@ -139,11 +139,12 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                     MainApplication.getMenu().restart.actionPerformed(null);
                 }
             } else if (task != null && !task.isCanceled()) {
+                Collection<PluginInformation> failed = task.getFailedPlugins();
                 JOptionPane.showMessageDialog(
                         MainApplication.getMainFrame(),
                         sb.toString(),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
+                        !failed.isEmpty() ? tr("Warning") : tr("Information"),
+                        !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE
                         );
             }
 
