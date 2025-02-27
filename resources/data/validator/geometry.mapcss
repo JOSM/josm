@@ -424,8 +424,8 @@ way[route=ferry]!:closed >[index=-1] node[amenity!=ferry_terminal][man_made!=pie
 }
 
 /* #21801 */
-way[railway][railway !~ /^(turntable|traverser|roundhouse|workshop|platform)$/] > node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) > 2]:connection,
-way[railway][railway !~ /^(turntable|traverser|roundhouse|workshop|platform)$/] >[index!=1][index!=-1] node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) == 2]:connection {
+way[railway][railway !~ /^(turntable|traverser|platform_edge|roundhouse|workshop|platform)$/] > node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) > 2]:connection,
+way[railway][railway !~ /^(turntable|traverser|platform_edge|roundhouse|workshop|platform)$/] >[index!=1][index!=-1] node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) == 2]:connection {
   set missing_switch_railway_crossing;
 }
 node.missing_switch_railway_crossing {
