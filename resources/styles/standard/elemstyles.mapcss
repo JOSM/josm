@@ -131,6 +131,76 @@ node[restriction] {
     text: auto;
 }
 
+/*********************************/
+/* conditional turn restrictions */
+/*********************************/
+
+relation["restriction:conditional" ^= "no_left_turn @ "][!setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_left_turn_red.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_left_turn @ "][setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_left_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_right_turn @ "][!setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_right_turn_red.svg";
+    icon-opacity: 0.6;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_right_turn @ "][setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_right_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_straight_on @ "][!setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_straight_on_red.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_straight_on @ "][setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_straight_on.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_u_turn @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_u_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "only_left_turn @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/only_left_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "only_right_turn @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/only_right_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "only_straight_on @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/only_straight_on.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+node["restriction:conditional"] {
+    icon-image: "presets/misc/deprecated.svg";
+    set icon_z17;
+    text: auto;
+}
+
 /******************/
 /* bridge, tunnel */
 /******************/
