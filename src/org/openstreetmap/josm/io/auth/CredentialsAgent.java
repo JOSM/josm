@@ -83,10 +83,20 @@ public interface CredentialsAgent {
     /**
      * Purges the internal credentials cache for the given requestor type.
      * @param requestorType the type of service.
-     * {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY} for a proxy server
+     * {@link RequestorType#PROXY} for a proxy server, {@link RequestorType#SERVER} for other servers.
      * @since 12992
      */
     void purgeCredentialsCache(RequestorType requestorType);
+
+    /**
+     * Purges the internal credentials cache for the given requestor type and host.
+     * @param requestorType the type of service.
+     * @param host the host.
+     * {@link RequestorType#PROXY} for a proxy server, {@link RequestorType#SERVER} for other servers.
+     */
+    default void purgeCredentialsCache(RequestorType requestorType, String host) {
+        purgeCredentialsCache(requestorType);
+    }
 
     /**
      * Provide a Panel that is shown below the API password / username fields
