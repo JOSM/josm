@@ -810,7 +810,6 @@ public final class DomainValidator extends AbstractValidator {
         "kaufen", // kaufen United TLD Holdco Ltd.
         "kddi", // kddi KDDI CORPORATION
         "kerryhotels", // kerryhotels Kerry Trading Co. Limited
-        "kerrylogistics", // kerrylogistics Kerry Trading Co. Limited
         "kerryproperties", // kerryproperties Kerry Trading Co. Limited
         "kfh", // kfh Kuwait Finance House
         "kia", // kia KIA MOTORS CORPORATION
@@ -1171,7 +1170,6 @@ public final class DomainValidator extends AbstractValidator {
         "sport", // sport Global Association of International Sports Federations (GAISF)
         "spot", // spot Amazon Registry Services, Inc.
         "srl", // srl InterNetX Corp.
-        "ss", // ss National Communication Authority (NCA)
         "stada", // stada STADA Arzneimittel AG
         "staples", // staples Staples, Inc.
         "star", // star Star India Private Limited
@@ -1327,30 +1325,24 @@ public final class DomainValidator extends AbstractValidator {
         "xn--11b4c3d", // कॉम VeriSign Sarl
         "xn--1ck2e1b", // セール Amazon Registry Services, Inc.
         "xn--1qqw23a", // 佛山 Guangzhou YU Wei Information Technology Co., Ltd.
-        "xn--2scrj9c", // ಭಾರತ National Internet eXchange of India
         "xn--30rr7y", // 慈善 Excellent First Limited
         "xn--3bst00m", // 集团 Eagle Horizon Limited
-        "xn--3ds443g", // 在线 TLD REGISTRY LIMITED
-        "xn--3hcrj9c", // ଭାରତ National Internet eXchange of India
+        "xn--3ds443g", // 在线 Beijing Tld Registry Technology Limited
         "xn--3pxu8k", // 点看 VeriSign Sarl
         "xn--42c2d9a", // คอม VeriSign Sarl
-        "xn--45br5cyl", // ভাৰত National Internet eXchange of India
-        "xn--45q11c", // 八卦 Zodiac Scorpio Limited
+        "xn--45q11c", // 八卦 Zodiac Gemini Limited
         "xn--4dbrk0ce", // ישראל The Israel Internet Association (RA)
-        "xn--4gbrim", // موقع Suhub Electronic Establishment
-        "xn--54b7fta0cc", // বাংলা Posts and Telecommunications Division
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
         "xn--55qx5d", // 公司 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
         "xn--5su34j936bgsg", // 香格里拉 Shangri‐La International Hotel Management Limited
         "xn--5tzm5g", // 网站 Global Website TLD Asia Limited
-        "xn--6frz82g", // 移动 Afilias Limited
+        "xn--6frz82g", // 移动 Identity Digital Limited
         "xn--6qq986b3xl", // 我爱你 Tycoon Treasure Limited
         "xn--80adxhks", // москва Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
         "xn--80aqecdr1a", // католик Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
         "xn--80asehdb", // онлайн CORE Association
         "xn--80aswg", // сайт CORE Association
         "xn--8y0a063a", // 联通 China United Network Communications Corporation Limited
-        "xn--90ae", // бг Imena.BG Plc (NAMES.BG Plc)
         "xn--9dbq2a", // קום VeriSign Sarl
         "xn--9et52u", // 时尚 RISE VICTORY LIMITED
         "xn--9krt00a", // 微博 Sina Corporation
@@ -1377,9 +1369,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--g2xx48c", // 购物 Minds + Machines Group Limited
         "xn--gckr3f0f", // クラウド Amazon Registry Services, Inc.
         "xn--gk3at1e", // 通販 Amazon Registry Services, Inc.
-        "xn--h2breg3eve", // भारतम् National Internet eXchange of India
-        "xn--h2brj9c8c", // भारोत National Internet eXchange of India
-        "xn--hxt814e", // 网店 Zodiac Libra Limited
+        "xn--hxt814e", // 网店 Zodiac Taurus Limited
         "xn--i1b6b1a6a2e", // संगठन Public Interest Registry
         "xn--imr513n", // 餐厅 HU YI GLOBAL INFORMATION RESOURCES (HOLDING) COMPANY. HONGKONG LIMITED
         "xn--io0a7i", // 网络 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
@@ -1391,12 +1381,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
         "xn--mgba7c0bbn0a", // العليان Crescent Holding GmbH
         "xn--mgbab2bd", // بازار CORE Association
-        "xn--mgbah1a3hjkrd", // موريتانيا Université de Nouakchott Al Aasriya
-        "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
-        "xn--mgbbh1a", // بارت National Internet eXchange of India
         "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
-        "xn--mgbcpq6gpa1a", // البحرين Telecommunications Regulatory Authority (TRA)
-        "xn--mgbgu82a", // ڀارت National Internet eXchange of India
         "xn--mgbi4ecexp", // كاثوليك Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
         "xn--mgbt3dhd", // همراه Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "xn--mk1bu44c", // 닷컴 VeriSign Sarl
@@ -1410,21 +1395,19 @@ public final class DomainValidator extends AbstractValidator {
         "xn--otu796d", // 招聘 Dot Trademark TLD Holding Company Limited
         "xn--p1acf", // рус Rusnames Limited
         "xn--pssy2u", // 大拿 VeriSign Sarl
-        "xn--q7ce6a", // ລາວ Lao National Internet Center (LANIC)
         "xn--q9jyb4c", // みんな Charleston Road Registry Inc.
         "xn--qcka1pmc", // グーグル Charleston Road Registry Inc.
         "xn--qxa6a", // ευ EURid vzw/asbl
         "xn--rhqv96g", // 世界 Stable Tone Limited
         "xn--rovu88b", // 書籍 Amazon EU S.à r.l.
-        "xn--rvc1e0am3e", // ഭാരതം National Internet eXchange of India
         "xn--ses554g", // 网址 KNET Co., Ltd
         "xn--t60b56a", // 닷넷 VeriSign Sarl
         "xn--tckwe", // コム VeriSign Sarl
         "xn--tiq49xqyj", // 天主教 Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
-        "xn--unup4y", // 游戏 Spring Fields, LLC
+        "xn--unup4y", // 游戏 Binky Moon, LLC
         "xn--vermgensberater-ctb", // VERMöGENSBERATER Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "xn--vermgensberatung-pwb", // VERMöGENSBERATUNG Deutsche Vermögensberatung Aktiengesellschaft DVAG
-        "xn--vhquv", // 企业 Dash McCook, LLC
+        "xn--vhquv", // 企业 Binky Moon, LLC
         "xn--vuq861b", // 信息 Beijing Tele-info Network Technology Co., Ltd.
         "xn--w4r85el8fhu5dnra", // 嘉里大酒店 Kerry Trading Co. Limited
         "xn--w4rs40l", // 嘉里 Kerry Trading Co. Limited
@@ -1658,6 +1641,7 @@ public final class DomainValidator extends AbstractValidator {
         "sn",                 // Senegal
         "so",                 // Somalia
         "sr",                 // Suriname
+        "ss",                 // South Sudan
         "st",                 // São Tomé and Príncipe
         "su",                 // Soviet Union (deprecated)
         "sv",                 // El Salvador
