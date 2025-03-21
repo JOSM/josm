@@ -1550,6 +1550,7 @@
             <check key="crossing:island" text="With island" />
             <reference ref="check_crossing_access" />
             <label text="In case of traffic signals:" />
+            <check key="crossing:signals" text="With signals" />
             <checkgroup columns="2">
                 <check key="button_operated" text="Button operated" />
                 <check key="traffic_signals:sound" text="Sound signals" />
@@ -2386,6 +2387,13 @@
             <reference ref="wikipedia_wikidata" />
             <reference ref="water_access" />
         </item> <!-- Water -->
+        <item name="Flowline" icon="presets/nautical/waterway_stream.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:waterway=flowline" />
+            <space />
+            <key key="waterway" value="flowline" />
+            <text key="name" text="Name" />
+            <reference ref="water_access" />
+        </item> <!-- Stream -->
         <item name="Tailings Pond" icon="presets/misc/tailings_pond.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:man_made=tailings_pond" />
             <space />
@@ -3530,6 +3538,12 @@
             <text key="ref" text="Reference (track number)" />
             <text key="width" text="Width (meters)" />
             <check key="area" text="Area" />
+        </item> <!-- Railway Platform -->
+        <item name="Railway Platform Edge" icon="presets/transport/platform_rail.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:railway=platform_edge" />
+            <space />
+            <key key="railway" value="platform_edge" />
+            <text key="ref" text="Reference (track number)" />
         </item> <!-- Railway Platform -->
         <separator/>
         <item name="Bus Station" icon="presets/transport/bus_old.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -9852,7 +9866,7 @@
             <space />
             <key key="type" value="boundary" />
             <text key="name" text="Name" />
-            <combo key="boundary" text="Boundary type" values="administrative,maritime,national_park,political,postal_code,protected_area" values_searchable="true" />
+            <combo key="boundary" text="Boundary type" values="administrative,maritime,national_park,political,postal_code,protected_area,place" values_searchable="true" />
             <optional>
                 <combo key="admin_level" text="Administrative level" values="1,2,3,4,5,6,7,8,9,10,11" />
             </optional>
