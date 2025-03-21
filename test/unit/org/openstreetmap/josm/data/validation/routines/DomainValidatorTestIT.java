@@ -109,6 +109,8 @@ class DomainValidatorTestIT {
             Map<String, String[]> htmlInfo = getHtmlInfo(htmlFile);
             Map<String, String> missingTLD = new TreeMap<>(); // stores entry and comments as String[]
             Map<String, String> missingCC = new TreeMap<>();
+            Map<String, String> allTLD = new TreeMap<>(); // stores entry and comments as String[]
+            Map<String, String> allCC = new TreeMap<>(); // stores entry and comments as String[]
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#")) {
                     final String unicodeTld; // only different from asciiTld if that was punycode
@@ -120,9 +122,20 @@ class DomainValidatorTestIT {
                     }
                     if (!dv.isValidTld(asciiTld)) {
                         String[] info = htmlInfo.get(asciiTld);
+                        String type = info[0];
+                        String comment = info[1];
+                        if ("country-code".equals(type)) { // Which list to use?
+                            allCC.put(asciiTld, unicodeTld + " " + comment);
+                            if (generateUnicodeTlds) {
+                                allCC.put(unicodeTld, asciiTld + " " + comment);
+                            }
+                        } else {
+                            allTLD.put(asciiTld, unicodeTld + " " + comment);
+                            if (generateUnicodeTlds) {
+                                allTLD.put(unicodeTld, asciiTld + " " + comment);
+                            }
+                        }
                         if (info != null) {
-                            String type = info[0];
-                            String comment = info[1];
                             if ("country-code".equals(type)) { // Which list to use?
                                 missingCC.put(asciiTld, unicodeTld + " " + comment);
                                 if (generateUnicodeTlds) {
@@ -157,6 +170,8 @@ class DomainValidatorTestIT {
                     }
                 }
             }
+            printMap(header, allTLD, "allTLD");
+            printMap(header, allCC, "allCC");
             if (!missingTLD.isEmpty()) {
                 printMap(header, missingTLD, "TLD");
                 fail("missing TLD");

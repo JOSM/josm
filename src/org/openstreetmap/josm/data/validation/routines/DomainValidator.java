@@ -1681,11 +1681,16 @@ public final class DomainValidator extends AbstractValidator {
         "vu",                 // Vanuatu
         "wf",                 // Wallis and Futuna
         "ws",                 // Samoa (formerly Western Samoa)
+        "xn--2scrj9c", // ಭಾರತ National Internet eXchange of India
         "xn--3e0b707e", // 한국 KISA (Korea Internet &amp; Security Agency)
+        "xn--3hcrj9c", // ଭାରତ National Internet eXchange of India
+        "xn--45br5cyl", // ভাৰত National Internet eXchange of India
         "xn--45brj9c", // ভারত National Internet Exchange of India
+        "xn--54b7fta0cc", // বাং Posts and Telecommunications Division
         "xn--80ao21a", // қаз Association of IT Companies of Kazakhstan
         "xn--90a3ac", // срб Serbian National Internet Domain Registry (RNIDS)
-        "xn--90ais", // ??? Reliable Software Inc.
+        "xn--90ae", // бг Imena.BG AD
+        "xn--90ais", // бел Reliable Software Inc.
         "xn--clchc0ea0b2g2a9gcd", // சிங்கப்பூர் Singapore Network Information Centre (SGNIC) Pte Ltd
         "xn--d1alf", // мкд Macedonian Academic Research Network Skopje
         "xn--e1a4c", // ею EURid vzw/asbl
@@ -1694,6 +1699,8 @@ public final class DomainValidator extends AbstractValidator {
         "xn--fpcrj9c3d", // భారత్ National Internet Exchange of India
         "xn--fzc2c9e2c", // ලංකා LK Domain Registry
         "xn--gecrj9c", // ભારત National Internet Exchange of India
+        "xn--h2breg3eve", // भारतम् National Internet eXchange of India
+        "xn--h2brj9c8c", // भारोत National Internet eXchange of India
         "xn--h2brj9c", // भारत National Internet Exchange of India
         "xn--j1amh", // укр Ukrainian Network Information Centre (UANIC), Inc.
         "xn--j6w193g", // 香港 Hong Kong Internet Registration Corporation Ltd.
@@ -1704,11 +1711,16 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mgb9awbf", // عمان Telecommunications Regulatory Authority (TRA)
         "xn--mgba3a4f16a", // ایران Institute for Research in Fundamental Sciences (IPM)
         "xn--mgbaam7a8h", // امارات Telecommunications Regulatory Authority (TRA)
+        "xn--mgbah1a3hjkrd", // موريتانيا Université de Nouakchott Al Aasriya
+        "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
         "xn--mgbayh7gpa", // الاردن National Information Technology Center (NITC)
         "xn--mgbbh1a71e", // بھارت National Internet Exchange of India
+        "xn--mgbbh1a", // بارت National Internet eXchange of India
         "xn--mgbc0a9azcg", // المغرب Agence Nationale de Réglementation des Télécommunications (ANRT)
+        "xn--mgbcpq6gpa1a", // البحرين Telecommunications Regulatory Authority (TRA)
         "xn--mgberp4a5d4ar", // السعودية Communications and Information Technology Commission
-        "xn--mgbpl2fh", // ????? Sudan Internet Society
+        "xn--mgbgu82a", // ڀارت National Internet eXchange of India
+        "xn--mgbpl2fh", // سودان Sudan Internet Society
         "xn--mgbtx2b", // عراق Communications and Media Commission (CMC)
         "xn--mgbx4cd0ab", // مليسيا MYNIC Berhad
         "xn--mix891f", // 澳門 Bureau of Telecommunications Regulation (DSRT)
@@ -1717,13 +1729,15 @@ public final class DomainValidator extends AbstractValidator {
         "xn--ogbpf8fl", // سورية National Agency for Network Services (NANS)
         "xn--p1ai", // рф Coordination Center for TLD RU
         "xn--pgbs0dh", // تونس Agence Tunisienne d&#39;Internet
+        "xn--q7ce6a", // ລາວ Lao National Internet Center (LANIC), Ministry of Technology and Communications
         "xn--qxam", // ελ ICS-FORTH GR
+        "xn--rvc1e0am3e", // ഭാരതം National Internet eXchange of India
         "xn--s9brj9c", // ਭਾਰਤ National Internet Exchange of India
         "xn--wgbh1c", // مصر National Telecommunication Regulatory Authority - NTRA
         "xn--wgbl6a", // قطر Communications Regulatory Authority
         "xn--xkc2al3hye2a", // இலங்கை LK Domain Registry
         "xn--xkc2dl3a5ee0h", // இந்தியா National Internet Exchange of India
-        "xn--y9a3aq", // ??? Internet Society
+        "xn--y9a3aq", // հայ Internet Society
         "xn--yfro4i67o", // 新加坡 Singapore Network Information Centre (SGNIC) Pte Ltd
         "xn--ygbi2ammx", // فلسطين Ministry of Telecom &amp; Information Technology (MTIT)
         "ye",                 // Yemen
