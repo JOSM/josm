@@ -1700,8 +1700,8 @@ public final class DomainValidator extends AbstractValidator {
         "xn--fzc2c9e2c", // ලංකා LK Domain Registry
         "xn--gecrj9c", // ભારત National Internet Exchange of India
         "xn--h2breg3eve", // भारतम् National Internet eXchange of India
-        "xn--h2brj9c8c", // भारोत National Internet eXchange of India
         "xn--h2brj9c", // भारत National Internet Exchange of India
+        "xn--h2brj9c8c", // भारोत National Internet eXchange of India
         "xn--j1amh", // укр Ukrainian Network Information Centre (UANIC), Inc.
         "xn--j6w193g", // 香港 Hong Kong Internet Registration Corporation Ltd.
         "xn--kprw13d", // 台湾 Taiwan Network Information Center (TWNIC)
@@ -1714,8 +1714,8 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mgbah1a3hjkrd", // موريتانيا Université de Nouakchott Al Aasriya
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
         "xn--mgbayh7gpa", // الاردن National Information Technology Center (NITC)
-        "xn--mgbbh1a71e", // بھارت National Internet Exchange of India
         "xn--mgbbh1a", // بارت National Internet eXchange of India
+        "xn--mgbbh1a71e", // بھارت National Internet Exchange of India
         "xn--mgbc0a9azcg", // المغرب Agence Nationale de Réglementation des Télécommunications (ANRT)
         "xn--mgbcpq6gpa1a", // البحرين Telecommunications Regulatory Authority (TRA)
         "xn--mgberp4a5d4ar", // السعودية Communications and Information Technology Commission
