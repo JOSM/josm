@@ -1332,6 +1332,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--42c2d9a", // คอม VeriSign Sarl
         "xn--45q11c", // 八卦 Zodiac Gemini Limited
         "xn--4dbrk0ce", // ישראל The Israel Internet Association (RA)
+        "xn--4gbrim", // موقع Helium TLDs Ltd
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
         "xn--55qx5d", // 公司 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
         "xn--5su34j936bgsg", // 香格里拉 Shangri‐La International Hotel Management Limited
