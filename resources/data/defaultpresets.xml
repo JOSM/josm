@@ -2909,7 +2909,7 @@
             <link wiki="Tag:amenity=parking_space" />
             <space />
             <key key="amenity" value="parking_space" />
-            <combo key="parking_space" text="Type of parking space" values="disabled,normal,charging" />
+            <combo key="parking_space" text="Type of parking space" values="disabled,normal,charging,hgv,bus,motorcycle,parent" />
             <reference ref="parking_name_ref" />
             <text key="capacity" text="Capacity" />
             <reference ref="access_fee_operator_surface_smoothness" />
