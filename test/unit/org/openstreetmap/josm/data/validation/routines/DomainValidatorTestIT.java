@@ -120,8 +120,8 @@ class DomainValidatorTestIT {
                     } else {
                         unicodeTld = asciiTld;
                     }
-                    if (!dv.isValidTld(asciiTld)) {
-                        String[] info = htmlInfo.get(asciiTld);
+                    String[] info = htmlInfo.get(asciiTld);
+                    if (info != null) {
                         String type = info[0];
                         String comment = info[1];
                         if ("country-code".equals(type)) { // Which list to use?
@@ -135,7 +135,7 @@ class DomainValidatorTestIT {
                                 allTLD.put(unicodeTld, asciiTld + " " + comment);
                             }
                         }
-                        if (info != null) {
+                        if (!dv.isValidTld(asciiTld)) {
                             if ("country-code".equals(type)) { // Which list to use?
                                 missingCC.put(asciiTld, unicodeTld + " " + comment);
                                 if (generateUnicodeTlds) {
