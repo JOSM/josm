@@ -310,7 +310,7 @@ public final class DomainValidator extends AbstractValidator {
         "accenture", // accenture Accenture plc
         "accountant", // accountant dot Accountant Limited
         "accountants", // accountants Binky Moon, LLC
-        "aco", // aco ACO Severin Ahlmann GmbH &amp; Co. KG
+        "aco", // aco ACO Severin Ahlmann GmbH & Co. KG
         "actor", // actor Dog Beach, LLC
         "ads", // ads Charleston Road Registry Inc.
         "adult", // adult ICM Registry AD LLC
@@ -387,7 +387,7 @@ public final class DomainValidator extends AbstractValidator {
         "bauhaus", // bauhaus Werkhaus GmbH
         "bayern", // bayern Bayern Connect GmbH
         "bbc", // bbc British Broadcasting Corporation
-        "bbt", // bbt BB&amp;T Corporation
+        "bbt", // bbt BB&T Corporation
         "bbva", // bbva BANCO BILBAO VIZCAYA ARGENTARIA, S.A.
         "bcg", // bcg The Boston Consulting Group, Inc.
         "bcn", // bcn Municipi de Barcelona
@@ -395,7 +395,7 @@ public final class DomainValidator extends AbstractValidator {
         "beauty", // beauty XYZ.COM LLC
         "beer", // beer Registry Services, LLC
         "bentley", // bentley Bentley Motors Limited
-        "berlin", // berlin dotBERLIN GmbH &amp; Co. KG
+        "berlin", // berlin dotBERLIN GmbH & Co. KG
         "best", // best BestTLD Pty Ltd
         "bestbuy", // bestbuy BBY Solutions, Inc.
         "bet", // bet Identity Digital Limited
@@ -582,7 +582,7 @@ public final class DomainValidator extends AbstractValidator {
         "drive", // drive Charleston Road Registry Inc.
         "dtv", // dtv Dish DBS Corporation
         "dubai", // dubai Dubai Smart Government Department
-        "dunlop", // dunlop The Goodyear Tire &amp; Rubber Company
+        "dunlop", // dunlop The Goodyear Tire & Rubber Company
         "dupont", // dupont DuPont Specialty Products USA, LLC
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
         "dvag", // dvag Deutsche Vermögensberatung Aktiengesellschaft DVAG
@@ -695,13 +695,13 @@ public final class DomainValidator extends AbstractValidator {
         "gmail", // gmail Charleston Road Registry Inc.
         "gmbh", // gmbh Binky Moon, LLC
         "gmo", // gmo GMO Internet, Inc.
-        "gmx", // gmx 1&amp;1 Mail &amp; Media GmbH
+        "gmx", // gmx 1&1 Mail & Media GmbH
         "godaddy", // godaddy Go Daddy East, LLC
         "gold", // gold Binky Moon, LLC
         "goldpoint", // goldpoint YODOBASHI CAMERA CO.,LTD.
         "golf", // golf Binky Moon, LLC
         "goo", // goo NTT Resonant Inc.
-        "goodyear", // goodyear The Goodyear Tire &amp; Rubber Company
+        "goodyear", // goodyear The Goodyear Tire & Rubber Company
         "goog", // goog Charleston Road Registry Inc.
         "google", // google Charleston Road Registry Inc.
         "gop", // gop Republican State Leadership Committee, Inc.
@@ -798,7 +798,7 @@ public final class DomainValidator extends AbstractValidator {
         "jio", // jio Reliance Industries Limited
         "jll", // jll Jones Lang LaSalle Incorporated
         "jmp", // jmp Matrix IP LLC
-        "jnj", // jnj Johnson &amp; Johnson Services, Inc.
+        "jnj", // jnj Johnson & Johnson Services, Inc.
         "jobs", // jobs Employ Media LLC
         "joburg", // joburg ZA Central Registry NPC trading as ZA Central Registry
         "jot", // jot Amazon Registry Services, Inc.
@@ -827,7 +827,7 @@ public final class DomainValidator extends AbstractValidator {
         "kred", // kred KredTLD Pty Ltd
         "kuokgroup", // kuokgroup Kerry Trading Co. Limited
         "kyoto", // kyoto Academic Institution: Kyoto Jyoho Gakuen
-        "lacaixa", // lacaixa Fundación Bancaria Caixa d&#x27;Estalvis i Pensions de Barcelona, "la Caixa"
+        "lacaixa", // lacaixa Fundación Bancaria Caixa d'Estalvis i Pensions de Barcelona, "la Caixa"
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
         "lamer", // lamer The Estée Lauder Companies Inc.
         "lancaster", // lancaster LANCASTER
@@ -848,7 +848,7 @@ public final class DomainValidator extends AbstractValidator {
         "lego", // lego LEGO Juris A/S
         "lexus", // lexus TOYOTA MOTOR CORPORATION
         "lgbt", // lgbt Identity Digital Limited
-        "lidl", // lidl Schwarz Domains und Services GmbH &amp; Co. KG
+        "lidl", // lidl Schwarz Domains und Services GmbH & Co. KG
         "life", // life Binky Moon, LLC
         "lifeinsurance", // lifeinsurance American Council of Life Insurers
         "lifestyle", // lifestyle Internet Naming Co.
@@ -883,7 +883,7 @@ public final class DomainValidator extends AbstractValidator {
         "maif", // maif Mutuelle Assurance Instituteur France (MAIF)
         "maison", // maison Binky Moon, LLC
         "makeup", // makeup XYZ.COM LLC
-        "man", // man MAN Truck &amp; Bus SE
+        "man", // man MAN Truck & Bus SE
         "management", // management Binky Moon, LLC
         "mango", // mango PUNTO FA S.L.
         "map", // map Charleston Road Registry Inc.
@@ -968,8 +968,8 @@ public final class DomainValidator extends AbstractValidator {
         "nra", // nra NRA Holdings Company, INC.
         "nrw", // nrw Minds + Machines GmbH
         "ntt", // ntt NIPPON TELEGRAPH AND TELEPHONE CORPORATION
-        "nyc", // nyc The City of New York by and through the New York City Department of Information Technology &amp; Telecommunications
-        "obi", // obi OBI Group Holding SE &amp; Co. KGaA
+        "nyc", // nyc The City of New York by and through the New York City Department of Information Technology & Telecommunications
+        "obi", // obi OBI Group Holding SE & Co. KGaA
         "observer", // observer Fegistry, LLC
         "office", // office Microsoft Corporation
         "okinawa", // okinawa BRregistry, Inc.
@@ -1112,12 +1112,12 @@ public final class DomainValidator extends AbstractValidator {
         "sbi", // sbi STATE BANK OF INDIA
         "sbs", // sbs Shortdot SA
         "scb", // scb The Siam Commercial Bank Public Company Limited ("SCB")
-        "schaeffler", // schaeffler Schaeffler Technologies AG &amp; Co. KG
+        "schaeffler", // schaeffler Schaeffler Technologies AG & Co. KG
         "schmidt", // schmidt SCHMIDT GROUPE S.A.S.
         "scholarships", // scholarships Scholarships.com, LLC
         "school", // school Binky Moon, LLC
         "schule", // schule Binky Moon, LLC
-        "schwarz", // schwarz Schwarz Domains und Services GmbH &amp; Co. KG
+        "schwarz", // schwarz Schwarz Domains und Services GmbH & Co. KG
         "science", // science dot Science Limited
         "scot", // scot Dot Scot Registry Limited
         "search", // search Charleston Road Registry Inc.
@@ -1129,7 +1129,7 @@ public final class DomainValidator extends AbstractValidator {
         "sener", // sener Sener Ingeniería y Sistemas, S.A.
         "services", // services Binky Moon, LLC
         "seven", // seven Seven West Media Ltd
-        "sew", // sew SEW-EURODRIVE GmbH &amp; Co KG
+        "sew", // sew SEW-EURODRIVE GmbH & Co KG
         "sex", // sex ICM Registry SX LLC
         "sexy", // sexy Internet Naming Co.
         "sfr", // sfr Societe Francaise du Radiotelephone - SFR
@@ -1250,7 +1250,7 @@ public final class DomainValidator extends AbstractValidator {
         "tui", // tui TUI AG
         "tunes", // tunes Amazon Registry Services, Inc.
         "tushu", // tushu Amazon Registry Services, Inc.
-        "tvs", // tvs T V SUNDRAM IYENGAR  &amp; SONS PRIVATE LIMITED
+        "tvs", // tvs T V SUNDRAM IYENGAR  & SONS PRIVATE LIMITED
         "ubank", // ubank National Australia Bank Limited
         "ubs", // ubs UBS AG
         "unicom", // unicom China United Network Communications Corporation Limited
@@ -1301,7 +1301,7 @@ public final class DomainValidator extends AbstractValidator {
         "wedding", // wedding Registry Services, LLC
         "weibo", // weibo Sina Corporation
         "weir", // weir Weir Group IP Limited
-        "whoswho", // whoswho Who&#x27;s Who Registry
+        "whoswho", // whoswho Who's Who Registry
         "wien", // wien punkt.wien GmbH
         "wiki", // wiki Registry Services, LLC
         "williamhill", // williamhill William Hill Organization Limited
@@ -1680,7 +1680,7 @@ public final class DomainValidator extends AbstractValidator {
         "wf",                 // Wallis and Futuna
         "ws",                 // Samoa (formerly Western Samoa)
         "xn--2scrj9c", // ಭಾರತ National Internet eXchange of India
-        "xn--3e0b707e", // 한국 KISA (Korea Internet &amp; Security Agency)
+        "xn--3e0b707e", // 한국 KISA (Korea Internet & Security Agency)
         "xn--3hcrj9c", // ଭାରତ National Internet eXchange of India
         "xn--45br5cyl", // ভাৰত National Internet eXchange of India
         "xn--45brj9c", // ভারত National Internet Exchange of India
@@ -1727,7 +1727,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--o3cw4h", // ไทย Thai Network Information Center Foundation
         "xn--ogbpf8fl", // سورية National Agency for Network Services (NANS)
         "xn--p1ai", // рф Coordination Center for TLD RU
-        "xn--pgbs0dh", // تونس Agence Tunisienne d&#x27;Internet
+        "xn--pgbs0dh", // تونس Agence Tunisienne d'Internet
         "xn--q7ce6a", // ລາວ Lao National Internet Center (LANIC), Ministry of Technology and Communications
         "xn--qxa6a", // ευ EURid vzw
         "xn--qxam", // ελ ICS-FORTH GR
@@ -1739,7 +1739,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--xkc2dl3a5ee0h", // இந்தியா National Internet Exchange of India
         "xn--y9a3aq", // հայ "Internet Society" Non-governmental Organization
         "xn--yfro4i67o", // 新加坡 Singapore Network Information Centre (SGNIC) Pte Ltd
-        "xn--ygbi2ammx", // فلسطين Ministry of Telecom &amp; Information Technology (MTIT)
+        "xn--ygbi2ammx", // فلسطين Ministry of Telecom & Information Technology (MTIT)
         "ye",                 // Yemen
         "yt",                 // Mayotte
         "za",                 // South Africa

@@ -123,7 +123,7 @@ class DomainValidatorTestIT {
                     String[] info = htmlInfo.get(asciiTld);
                     if (info != null) {
                         String type = info[0];
-                        String comment = info[1];
+                        String comment = info[1].replaceAll("&quot;","\"").replaceAll("&#x27;","'").replaceAll("&amp;","&");
                         if ("country-code".equals(type)) { // Which list to use?
                             allCC.put(asciiTld, unicodeTld + " " + comment);
                             if (generateUnicodeTlds) {
