@@ -304,14 +304,14 @@ public final class DomainValidator extends AbstractValidator {
         "abbvie", // abbvie AbbVie Inc.
         "abc", // abc Disney Enterprises, Inc.
         "able", // able Able Inc.
-        "abogado", // abogado Top Level Domain Holdings Limited
+        "abogado", // abogado Registry Services, LLC
         "abudhabi", // abudhabi Abu Dhabi Systems and Information Centre
-        "academy", // academy Half Oaks, LLC
+        "academy", // academy Binky Moon, LLC
         "accenture", // accenture Accenture plc
         "accountant", // accountant dot Accountant Limited
-        "accountants", // accountants Knob Town, LLC
+        "accountants", // accountants Binky Moon, LLC
         "aco", // aco ACO Severin Ahlmann GmbH &amp; Co. KG
-        "actor", // actor United TLD Holdco Ltd.
+        "actor", // actor Dog Beach, LLC
         "ads", // ads Charleston Road Registry Inc.
         "adult", // adult ICM Registry AD LLC
         "aeg", // aeg Aktiebolaget Electrolux
@@ -320,10 +320,10 @@ public final class DomainValidator extends AbstractValidator {
         "afl", // afl Australian Football League
         "africa", // africa ZA Central Registry NPC trading as Registry.Africa
         "agakhan", // agakhan Fondation Aga Khan (Aga Khan Foundation)
-        "agency", // agency Steel Falls, LLC
+        "agency", // agency Binky Moon, LLC
         "aig", // aig American International Group, Inc.
         "airbus", // airbus Airbus S.A.S.
-        "airforce", // airforce United TLD Holdco Ltd.
+        "airforce", // airforce Dog Beach, LLC
         "airtel", // airtel Bharti Airtel Limited
         "akdn", // akdn Fondation Aga Khan (Aga Khan Foundation)
         "alibaba", // alibaba Alibaba Group Holding Limited
@@ -331,7 +331,7 @@ public final class DomainValidator extends AbstractValidator {
         "allfinanz", // allfinanz Allfinanz Deutsche Vermögensberatung Aktiengesellschaft
         "allstate", // allstate Allstate Fire and Casualty Insurance Company
         "ally", // ally Ally Financial Inc.
-        "alsace", // alsace REGION D ALSACE
+        "alsace", // alsace REGION GRAND EST
         "alstom", // alstom ALSTOM
         "amazon", // amazon Amazon Registry Services, Inc.
         "americanexpress", // americanexpress American Express Travel Related Services Company, Inc.
@@ -344,44 +344,44 @@ public final class DomainValidator extends AbstractValidator {
         "android", // android Charleston Road Registry Inc.
         "anquan", // anquan QIHOO 360 TECHNOLOGY CO. LTD.
         "anz", // anz Australia and New Zealand Banking Group Limited
-        "aol", // aol AOL Inc.
-        "apartments", // apartments June Maple, LLC
+        "aol", // aol Yahoo Inc.
+        "apartments", // apartments Binky Moon, LLC
         "app", // app Charleston Road Registry Inc.
         "apple", // apple Apple Inc.
         "aquarelle", // aquarelle Aquarelle.com
         "arab", // arab League of Arab States
         "aramco", // aramco Aramco Services Company
-        "archi", // archi STARTING DOT LIMITED
-        "army", // army United TLD Holdco Ltd.
+        "archi", // archi Identity Digital Limited
+        "army", // army Dog Beach, LLC
         "art", // art UK Creative Ideas Limited
         "arte", // arte Association Relative à la Télévision Européenne G.E.I.E.
-        "asda", // asda Wal-Mart Stores, Inc.
+        "asda", // asda Asda Stores Limited
         "asia", // asia DotAsia Organisation Ltd.
-        "associates", // associates Baxter Hill, LLC
+        "associates", // associates Binky Moon, LLC
         "athleta", // athleta The Gap, Inc.
-        "attorney", // attorney United TLD Holdco, Ltd
-        "auction", // auction United TLD HoldCo, Ltd.
+        "attorney", // attorney Dog Beach, LLC
+        "auction", // auction Dog Beach, LLC
         "audi", // audi AUDI Aktiengesellschaft
-        "audible", // audible Amazon Registry Service, Inc.
-        "audio", // audio Uniregistry, Corp.
+        "audible", // audible Amazon Registry Services, Inc.
+        "audio", // audio XYZ.COM LLC
         "auspost", // auspost Australian Postal Corporation
         "author", // author Amazon Registry Services, Inc.
-        "auto", // auto Uniregistry, Corp.
-        "autos", // autos DERAutos, LLC
-        "aws", // aws Amazon Registry Services, Inc.
-        "axa", // axa AXA SA
+        "auto", // auto XYZ.COM LLC
+        "autos", // autos XYZ.COM LLC
+        "aws", // aws AWS Registry LLC
+        "axa", // axa AXA Group Operations SAS
         "azure", // azure Microsoft Corporation
-        "baby", // baby Johnson &amp; Johnson Services, Inc.
+        "baby", // baby XYZ.COM LLC
         "baidu", // baidu Baidu, Inc.
         "banamex", // banamex Citigroup Inc.
-        "band", // band United TLD Holdco, Ltd
+        "band", // band Dog Beach, LLC
         "bank", // bank fTLD Registry Services, LLC
         "bar", // bar Punto 2012 Sociedad Anonima Promotora de Inversion de Capital Variable
         "barcelona", // barcelona Municipi de Barcelona
         "barclaycard", // barclaycard Barclays Bank PLC
         "barclays", // barclays Barclays Bank PLC
         "barefoot", // barefoot Gallo Vineyards, Inc.
-        "bargains", // bargains Half Hallow, LLC
+        "bargains", // bargains Binky Moon, LLC
         "baseball", // baseball MLB Advanced Media DH, LLC
         "basketball", // basketball Fédération Internationale de Basketball (FIBA)
         "bauhaus", // bauhaus Werkhaus GmbH
@@ -392,237 +392,237 @@ public final class DomainValidator extends AbstractValidator {
         "bcg", // bcg The Boston Consulting Group, Inc.
         "bcn", // bcn Municipi de Barcelona
         "beats", // beats Beats Electronics, LLC
-        "beauty", // beauty L&#39;Oréal
-        "beer", // beer Top Level Domain Holdings Limited
+        "beauty", // beauty XYZ.COM LLC
+        "beer", // beer Registry Services, LLC
         "bentley", // bentley Bentley Motors Limited
         "berlin", // berlin dotBERLIN GmbH &amp; Co. KG
         "best", // best BestTLD Pty Ltd
         "bestbuy", // bestbuy BBY Solutions, Inc.
-        "bet", // bet Afilias plc
+        "bet", // bet Identity Digital Limited
         "bharti", // bharti Bharti Enterprises (Holding) Private Limited
         "bible", // bible American Bible Society
         "bid", // bid dot Bid Limited
-        "bike", // bike Grand Hollow, LLC
+        "bike", // bike Binky Moon, LLC
         "bing", // bing Microsoft Corporation
-        "bingo", // bingo Sand Cedar, LLC
-        "bio", // bio STARTING DOT LIMITED
-        "biz", // biz Neustar, Inc.
-        "black", // black Afilias Limited
-        "blackfriday", // blackfriday Uniregistry, Corp.
+        "bingo", // bingo Binky Moon, LLC
+        "bio", // bio Identity Digital Limited
+        "biz", // biz Registry Services, LLC
+        "black", // black Identity Digital Limited
+        "blackfriday", // blackfriday Registry Services, LLC
         "blockbuster", // blockbuster Dish DBS Corporation
         "blog", // blog Knock Knock WHOIS There, LLC
         "bloomberg", // bloomberg Bloomberg IP Holdings LLC
-        "blue", // blue Afilias Limited
+        "blue", // blue Identity Digital Limited
         "bms", // bms Bristol-Myers Squibb Company
         "bmw", // bmw Bayerische Motoren Werke Aktiengesellschaft
         "bnpparibas", // bnpparibas BNP Paribas
-        "boats", // boats DERBoats, LLC
+        "boats", // boats XYZ.COM LLC
         "boehringer", // boehringer Boehringer Ingelheim International GmbH
-        "bofa", // bofa NMS Services, Inc.
+        "bofa", // bofa Bank of America Corporation
         "bom", // bom Núcleo de Informação e Coordenação do Ponto BR - NIC.br
-        "bond", // bond Bond University Limited
+        "bond", // bond Shortdot SA
         "boo", // boo Charleston Road Registry Inc.
         "book", // book Amazon Registry Services, Inc.
         "booking", // booking Booking.com B.V.
         "bosch", // bosch Robert Bosch GMBH
         "bostik", // bostik Bostik SA
-        "boston", // boston Boston TLD Management, LLC
+        "boston", // boston Registry Services, LLC
         "bot", // bot Amazon Registry Services, Inc.
-        "boutique", // boutique Over Galley, LLC
-        "box", // box NS1 Limited
+        "boutique", // boutique Binky Moon, LLC
+        "box", // box Intercap Registry Inc.
         "bradesco", // bradesco Banco Bradesco S.A.
         "bridgestone", // bridgestone Bridgestone Corporation
         "broadway", // broadway Celebrate Broadway, Inc.
-        "broker", // broker DOTBROKER REGISTRY LTD
+        "broker", // broker Dog Beach, LLC
         "brother", // brother Brother Industries, Ltd.
         "brussels", // brussels DNS.be vzw
         "build", // build Plan Bee LLC
-        "builders", // builders Atomic Madison, LLC
-        "business", // business Spring Cross, LLC
+        "builders", // builders Binky Moon, LLC
+        "business", // business Binky Moon, LLC
         "buy", // buy Amazon Registry Services, INC
         "buzz", // buzz DOTSTRATEGY CO.
         "bzh", // bzh Association www.bzh
-        "cab", // cab Half Sunset, LLC
-        "cafe", // cafe Pioneer Canyon, LLC
+        "cab", // cab Binky Moon, LLC
+        "cafe", // cafe Binky Moon, LLC
         "cal", // cal Charleston Road Registry Inc.
         "call", // call Amazon Registry Services, Inc.
         "calvinklein", // calvinklein PVH gTLD Holdings LLC
-        "cam", // cam AC Webconnecting Holding B.V.
-        "camera", // camera Atomic Maple, LLC
-        "camp", // camp Delta Dynamite, LLC
+        "cam", // cam CAM Connecting SARL
+        "camera", // camera Binky Moon, LLC
+        "camp", // camp Binky Moon, LLC
         "canon", // canon Canon Inc.
         "capetown", // capetown ZA Central Registry NPC trading as ZA Central Registry
-        "capital", // capital Delta Mill, LLC
+        "capital", // capital Binky Moon, LLC
         "capitalone", // capitalone Capital One Financial Corporation
-        "car", // car Cars Registry Limited
+        "car", // car XYZ.COM LLC
         "caravan", // caravan Caravan International, Inc.
-        "cards", // cards Foggy Hollow, LLC
-        "care", // care Goose Cross, LLC
+        "cards", // cards Binky Moon, LLC
+        "care", // care Binky Moon, LLC
         "career", // career dotCareer LLC
-        "careers", // careers Wild Corner, LLC
-        "cars", // cars Uniregistry, Corp.
-        "casa", // casa Top Level Domain Holdings Limited
-        "case", // case CNH Industrial N.V.
-        "cash", // cash Delta Lake, LLC
-        "casino", // casino Binky Sky, LLC
+        "careers", // careers Binky Moon, LLC
+        "cars", // cars XYZ.COM LLC
+        "casa", // casa Registry Services, LLC
+        "case", // case Digity, LLC
+        "cash", // cash Binky Moon, LLC
+        "casino", // casino Binky Moon, LLC
         "cat", // cat Fundacio puntCAT
-        "catering", // catering New Falls. LLC
+        "catering", // catering Binky Moon, LLC
         "catholic", // catholic Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
         "cba", // cba COMMONWEALTH BANK OF AUSTRALIA
         "cbn", // cbn The Christian Broadcasting Network, Inc.
         "cbre", // cbre CBRE, Inc.
-        "center", // center Tin Mill, LLC
-        "ceo", // ceo CEOTLD Pty Ltd
-        "cern", // cern European Organization for Nuclear Research (&quot;CERN&quot;)
+        "center", // center Binky Moon, LLC
+        "ceo", // ceo XYZ.COM LLC
+        "cern", // cern European Organization for Nuclear Research ("CERN")
         "cfa", // cfa CFA Institute
-        "cfd", // cfd DOTCFD REGISTRY LTD
+        "cfd", // cfd Shortdot SA
         "chanel", // chanel Chanel International B.V.
         "channel", // channel Charleston Road Registry Inc.
-        "charity", // charity Corn Lake, LLC
-        "chase", // chase JPMorgan Chase &amp; Co.
-        "chat", // chat Sand Fields, LLC
-        "cheap", // cheap Sand Cover, LLC
+        "charity", // charity Public Interest Registry (PIR)
+        "chase", // chase JPMorgan Chase Bank, National Association
+        "chat", // chat Binky Moon, LLC
+        "cheap", // cheap Binky Moon, LLC
         "chintai", // chintai CHINTAI Corporation
-        "christmas", // christmas Uniregistry, Corp.
+        "christmas", // christmas XYZ.COM LLC
         "chrome", // chrome Charleston Road Registry Inc.
-        "church", // church Holly Fileds, LLC
+        "church", // church Binky Moon, LLC
         "cipriani", // cipriani Hotel Cipriani Srl
         "circle", // circle Amazon Registry Services, Inc.
         "cisco", // cisco Cisco Technology, Inc.
         "citadel", // citadel Citadel Domain LLC
         "citi", // citi Citigroup Inc.
         "citic", // citic CITIC Group Corporation
-        "city", // city Snow Sky, LLC
-        "claims", // claims Black Corner, LLC
-        "cleaning", // cleaning Fox Shadow, LLC
-        "click", // click Uniregistry, Corp.
-        "clinic", // clinic Goose Park, LLC
+        "city", // city Binky Moon, LLC
+        "claims", // claims Binky Moon, LLC
+        "cleaning", // cleaning Binky Moon, LLC
+        "click", // click Internet Naming Co.
+        "clinic", // clinic Binky Moon, LLC
         "clinique", // clinique The Estée Lauder Companies Inc.
-        "clothing", // clothing Steel Lake, LLC
-        "cloud", // cloud ARUBA S.p.A.
-        "club", // club .CLUB DOMAINS, LLC
+        "clothing", // clothing Binky Moon, LLC
+        "cloud", // cloud ARUBA PEC S.p.A.
+        "club", // club Registry Services, LLC
         "clubmed", // clubmed Club Méditerranée S.A.
-        "coach", // coach Koko Island, LLC
-        "codes", // codes Puff Willow, LLC
-        "coffee", // coffee Trixy Cover, LLC
+        "coach", // coach Binky Moon, LLC
+        "codes", // codes Binky Moon, LLC
+        "coffee", // coffee Binky Moon, LLC
         "college", // college XYZ.COM LLC
-        "cologne", // cologne NetCologne Gesellschaft für Telekommunikation mbH
+        "cologne", // cologne dotKoeln GmbH
         "com", // com VeriSign Global Registry Services
         "commbank", // commbank COMMONWEALTH BANK OF AUSTRALIA
-        "community", // community Fox Orchard, LLC
-        "company", // company Silver Avenue, LLC
-        "compare", // compare iSelect Ltd
-        "computer", // computer Pine Mill, LLC
+        "community", // community Binky Moon, LLC
+        "company", // company Binky Moon, LLC
+        "compare", // compare Registry Services, LLC
+        "computer", // computer Binky Moon, LLC
         "comsec", // comsec VeriSign, Inc.
-        "condos", // condos Pine House, LLC
-        "construction", // construction Fox Dynamite, LLC
-        "consulting", // consulting United TLD Holdco, LTD.
-        "contact", // contact Top Level Spectrum, Inc.
-        "contractors", // contractors Magic Woods, LLC
-        "cooking", // cooking Top Level Domain Holdings Limited
-        "cool", // cool Koko Lake, LLC
+        "condos", // condos Binky Moon, LLC
+        "construction", // construction Binky Moon, LLC
+        "consulting", // consulting Dog Beach, LLC
+        "contact", // contact Dog Beach, LLC
+        "contractors", // contractors Binky Moon, LLC
+        "cooking", // cooking Registry Services, LLC
+        "cool", // cool Binky Moon, LLC
         "coop", // coop DotCooperation LLC
-        "corsica", // corsica Collectivité Territoriale de Corse
-        "country", // country Top Level Domain Holdings Limited
+        "corsica", // corsica Collectivité de Corse
+        "country", // country Internet Naming Co.
         "coupon", // coupon Amazon Registry Services, Inc.
-        "coupons", // coupons Black Island, LLC
-        "courses", // courses OPEN UNIVERSITIES AUSTRALIA PTY LTD
+        "coupons", // coupons Binky Moon, LLC
+        "courses", // courses Registry Services, LLC
         "cpa", // cpa American Institute of Certified Public Accountants
-        "credit", // credit Snow Shadow, LLC
-        "creditcard", // creditcard Binky Frostbite, LLC
-        "creditunion", // creditunion CUNA Performance Resources, LLC
+        "credit", // credit Binky Moon, LLC
+        "creditcard", // creditcard Binky Moon, LLC
+        "creditunion", // creditunion DotCooperation, LLC
         "cricket", // cricket dot Cricket Limited
         "crown", // crown Crown Equipment Corporation
         "crs", // crs Federated Co-operatives Limited
         "cruise", // cruise Viking River Cruises (Bermuda) Ltd.
-        "cruises", // cruises Spring Way, LLC
-        "cuisinella", // cuisinella SALM S.A.S.
+        "cruises", // cruises Binky Moon, LLC
+        "cuisinella", // cuisinella SCHMIDT GROUPE S.A.S.
         "cymru", // cymru Nominet UK
-        "cyou", // cyou Beijing Gamease Age Digital Technology Co., Ltd.
+        "cyou", // cyou Shortdot SA
         "dad", // dad Charleston Road Registry Inc.
-        "dance", // dance United TLD Holdco Ltd.
+        "dance", // dance Dog Beach, LLC
         "data", // data Dish DBS Corporation
         "date", // date dot Date Limited
-        "dating", // dating Pine Fest, LLC
+        "dating", // dating Binky Moon, LLC
         "datsun", // datsun NISSAN MOTOR CO., LTD.
         "day", // day Charleston Road Registry Inc.
         "dclk", // dclk Charleston Road Registry Inc.
-        "dds", // dds Minds + Machines Group Limited
-        "deal", // deal Amazon Registry Service, Inc.
-        "dealer", // dealer Dealer Dot Com, Inc.
-        "deals", // deals Sand Sunset, LLC
-        "degree", // degree United TLD Holdco, Ltd
-        "delivery", // delivery Steel Station, LLC
+        "dds", // dds Registry Services, LLC
+        "deal", // deal Amazon Registry Services, Inc.
+        "dealer", // dealer Intercap Registry Inc.
+        "deals", // deals Binky Moon, LLC
+        "degree", // degree Dog Beach, LLC
+        "delivery", // delivery Binky Moon, LLC
         "dell", // dell Dell Inc.
         "deloitte", // deloitte Deloitte Touche Tohmatsu
         "delta", // delta Delta Air Lines, Inc.
-        "democrat", // democrat United TLD Holdco Ltd.
-        "dental", // dental Tin Birch, LLC
-        "dentist", // dentist United TLD Holdco, Ltd
-        "desi", // desi Desi Networks LLC
-        "design", // design Top Level Design, LLC
+        "democrat", // democrat Dog Beach, LLC
+        "dental", // dental Binky Moon, LLC
+        "dentist", // dentist Dog Beach, LLC
+        "desi", // desi Emergency Back-End Registry Operator Program - ICANN
+        "design", // design Registry Services, LLC
         "dev", // dev Charleston Road Registry Inc.
         "dhl", // dhl Deutsche Post AG
-        "diamonds", // diamonds John Edge, LLC
-        "diet", // diet Uniregistry, Corp.
-        "digital", // digital Dash Park, LLC
-        "direct", // direct Half Trail, LLC
-        "directory", // directory Extra Madison, LLC
-        "discount", // discount Holly Hill, LLC
+        "diamonds", // diamonds Binky Moon, LLC
+        "diet", // diet XYZ.COM LLC
+        "digital", // digital Binky Moon, LLC
+        "direct", // direct Binky Moon, LLC
+        "directory", // directory Binky Moon, LLC
+        "discount", // discount Binky Moon, LLC
         "discover", // discover Discover Financial Services
         "dish", // dish Dish DBS Corporation
-        "diy", // diy Lifestyle Domain Holdings, Inc.
+        "diy", // diy Internet Naming Co.
         "dnp", // dnp Dai Nippon Printing Co., Ltd.
         "docs", // docs Charleston Road Registry Inc.
-        "doctor", // doctor Brice Trail, LLC
-        "dog", // dog Koko Mill, LLC
-        "domains", // domains Sugar Cross, LLC
+        "doctor", // doctor Binky Moon, LLC
+        "dog", // dog Binky Moon, LLC
+        "domains", // domains Binky Moon, LLC
         "dot", // dot Dish DBS Corporation
         "download", // download dot Support Limited
         "drive", // drive Charleston Road Registry Inc.
         "dtv", // dtv Dish DBS Corporation
         "dubai", // dubai Dubai Smart Government Department
         "dunlop", // dunlop The Goodyear Tire &amp; Rubber Company
-        "dupont", // dupont E. I. du Pont de Nemours and Company
+        "dupont", // dupont DuPont Specialty Products USA, LLC
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
         "dvag", // dvag Deutsche Vermögensberatung Aktiengesellschaft DVAG
-        "dvr", // dvr Hughes Satellite Systems Corporation
-        "earth", // earth Interlink Co., Ltd.
+        "dvr", // dvr DISH Technologies L.L.C.
+        "earth", // earth Interlink Systems Innovation Institute K.K.
         "eat", // eat Charleston Road Registry Inc.
         "eco", // eco Big Room Inc.
         "edeka", // edeka EDEKA Verband kaufmännischer Genossenschaften e.V.
         "edu", // edu EDUCAUSE
-        "education", // education Brice Way, LLC
-        "email", // email Spring Madison, LLC
+        "education", // education Binky Moon, LLC
+        "email", // email Binky Moon, LLC
         "emerck", // emerck Merck KGaA
-        "energy", // energy Binky Birch, LLC
-        "engineer", // engineer United TLD Holdco Ltd.
-        "engineering", // engineering Romeo Canyon
-        "enterprises", // enterprises Snow Oaks, LLC
+        "energy", // energy Binky Moon, LLC
+        "engineer", // engineer Dog Beach, LLC
+        "engineering", // engineering Binky Moon, LLC
+        "enterprises", // enterprises Binky Moon, LLC
         "epson", // epson Seiko Epson Corporation
-        "equipment", // equipment Corn Station, LLC
+        "equipment", // equipment Binky Moon, LLC
         "ericsson", // ericsson Telefonaktiebolaget L M Ericsson
         "erni", // erni ERNI Group Holding AG
         "esq", // esq Charleston Road Registry Inc.
-        "estate", // estate Trixy Park, LLC
+        "estate", // estate Binky Moon, LLC
         "eurovision", // eurovision European Broadcasting Union (EBU)
         "eus", // eus Puntueus Fundazioa
-        "events", // events Pioneer Maple, LLC
-        "exchange", // exchange Spring Falls, LLC
-        "expert", // expert Magic Pass, LLC
-        "exposed", // exposed Victor Beach, LLC
-        "express", // express Sea Sunset, LLC
+        "events", // events Binky Moon, LLC
+        "exchange", // exchange Binky Moon, LLC
+        "expert", // expert Binky Moon, LLC
+        "exposed", // exposed Binky Moon, LLC
+        "express", // express Binky Moon, LLC
         "extraspace", // extraspace Extra Space Storage LLC
         "fage", // fage Fage International S.A.
-        "fail", // fail Atomic Pipe, LLC
+        "fail", // fail Binky Moon, LLC
         "fairwinds", // fairwinds FairWinds Partners, LLC
         "faith", // faith dot Faith Limited
-        "family", // family United TLD Holdco Ltd.
-        "fan", // fan Asiamix Digital Ltd
-        "fans", // fans Asiamix Digital Limited
-        "farm", // farm Just Maple, LLC
+        "family", // family Dog Beach, LLC
+        "fan", // fan Dog Beach, LLC
+        "fans", // fans ZDNS International Limited
+        "farm", // farm Binky Moon, LLC
         "farmers", // farmers Farmers Insurance Exchange
-        "fashion", // fashion Top Level Domain Holdings Limited
+        "fashion", // fashion Registry Services, LLC
         "fast", // fast Amazon Registry Services, Inc.
         "fedex", // fedex Federal Express Corporation
         "feedback", // feedback Top Level Spectrum, Inc.
@@ -632,29 +632,29 @@ public final class DomainValidator extends AbstractValidator {
         "fido", // fido Rogers Communications Canada Inc.
         "film", // film Motion Picture Domain Registry Pty Ltd
         "final", // final Núcleo de Informação e Coordenação do Ponto BR - NIC.br
-        "finance", // finance Cotton Cypress, LLC
-        "financial", // financial Just Cover, LLC
-        "fire", // fire Amazon Registry Service, Inc.
-        "firestone", // firestone Bridgestone Corporation
+        "finance", // finance Binky Moon, LLC
+        "financial", // financial Binky Moon, LLC
+        "fire", // fire Amazon Registry Services, Inc.
+        "firestone", // firestone Bridgestone Licensing Services, Inc.
         "firmdale", // firmdale Firmdale Holdings Limited
-        "fish", // fish Fox Woods, LLC
-        "fishing", // fishing Top Level Domain Holdings Limited
-        "fit", // fit Minds + Machines Group Limited
-        "fitness", // fitness Brice Orchard, LLC
-        "flickr", // flickr Yahoo! Domain Services Inc.
-        "flights", // flights Fox Station, LLC
+        "fish", // fish Binky Moon, LLC
+        "fishing", // fishing Registry Services, LLC
+        "fit", // fit Registry Services, LLC
+        "fitness", // fitness Binky Moon, LLC
+        "flickr", // flickr Flickr, Inc.
+        "flights", // flights Binky Moon, LLC
         "flir", // flir FLIR Systems, Inc.
-        "florist", // florist Half Cypress, LLC
-        "flowers", // flowers Uniregistry, Corp.
+        "florist", // florist Binky Moon, LLC
+        "flowers", // flowers XYZ.COM LLC
         "fly", // fly Charleston Road Registry Inc.
         "foo", // foo Charleston Road Registry Inc.
-        "food", // food Lifestyle Domain Holdings, Inc.
-        "football", // football Foggy Farms, LLC
+        "food", // food Internet Naming Co.
+        "football", // football Binky Moon, LLC
         "ford", // ford Ford Motor Company
-        "forex", // forex DOTFOREX REGISTRY LTD
-        "forsale", // forsale United TLD Holdco, LLC
+        "forex", // forex Dog Beach, LLC
+        "forsale", // forsale Dog Beach, LLC
         "forum", // forum Fegistry, LLC
-        "foundation", // foundation John Dale, LLC
+        "foundation", // foundation Public Interest Registry (PIR)
         "fox", // fox FOX Registry, LLC
         "free", // free Amazon Registry Services, Inc.
         "fresenius", // fresenius Fresenius Immobilien-Verwaltungs-GmbH
@@ -663,139 +663,139 @@ public final class DomainValidator extends AbstractValidator {
         "frontier", // frontier Frontier Communications Corporation
         "ftr", // ftr Frontier Communications Corporation
         "fujitsu", // fujitsu Fujitsu Limited
-        "fun", // fun DotSpace, Inc.
-        "fund", // fund John Castle, LLC
-        "furniture", // furniture Lone Fields, LLC
-        "futbol", // futbol United TLD Holdco, Ltd.
-        "fyi", // fyi Silver Tigers, LLC
+        "fun", // fun Radix Technologies Inc.
+        "fund", // fund Binky Moon, LLC
+        "furniture", // furniture Binky Moon, LLC
+        "futbol", // futbol Dog Beach, LLC
+        "fyi", // fyi Binky Moon, LLC
         "gal", // gal Asociación puntoGAL
-        "gallery", // gallery Sugar House, LLC
+        "gallery", // gallery Binky Moon, LLC
         "gallo", // gallo Gallo Vineyards, Inc.
         "gallup", // gallup Gallup, Inc.
-        "game", // game Uniregistry, Corp.
-        "games", // games United TLD Holdco Ltd.
+        "game", // game XYZ.COM LLC
+        "games", // games Dog Beach, LLC
         "gap", // gap The Gap, Inc.
-        "garden", // garden Top Level Domain Holdings Limited
-        "gay", // gay Top Level Design, LLC
+        "garden", // garden Registry Services, LLC
+        "gay", // gay Registry Services, LLC
         "gbiz", // gbiz Charleston Road Registry Inc.
         "gdn", // gdn Joint Stock Company "Navigation-information systems"
         "gea", // gea GEA Group Aktiengesellschaft
-        "gent", // gent COMBELL GROUP NV/SA
+        "gent", // gent Combell nv
         "genting", // genting Resorts World Inc. Pte. Ltd.
         "george", // george Wal-Mart Stores, Inc.
         "ggee", // ggee GMO Internet, Inc.
         "gift", // gift Uniregistry, Corp.
-        "gifts", // gifts Goose Sky, LLC
-        "gives", // gives United TLD Holdco Ltd.
-        "giving", // giving Giving Limited
-        "glass", // glass Black Cover, LLC
+        "gifts", // gifts Binky Moon, LLC
+        "gives", // gives Public Interest Registry (PIR)
+        "giving", // giving Public Interest Registry (PIR)
+        "glass", // glass Binky Moon, LLC
         "gle", // gle Charleston Road Registry Inc.
-        "global", // global Dot Global Domain Registry Limited
+        "global", // global Identity Digital Limited
         "globo", // globo Globo Comunicação e Participações S.A
         "gmail", // gmail Charleston Road Registry Inc.
-        "gmbh", // gmbh Extra Dynamite, LLC
+        "gmbh", // gmbh Binky Moon, LLC
         "gmo", // gmo GMO Internet, Inc.
         "gmx", // gmx 1&amp;1 Mail &amp; Media GmbH
         "godaddy", // godaddy Go Daddy East, LLC
-        "gold", // gold June Edge, LLC
+        "gold", // gold Binky Moon, LLC
         "goldpoint", // goldpoint YODOBASHI CAMERA CO.,LTD.
-        "golf", // golf Lone Falls, LLC
+        "golf", // golf Binky Moon, LLC
         "goo", // goo NTT Resonant Inc.
         "goodyear", // goodyear The Goodyear Tire &amp; Rubber Company
         "goog", // goog Charleston Road Registry Inc.
         "google", // google Charleston Road Registry Inc.
         "gop", // gop Republican State Leadership Committee, Inc.
         "got", // got Amazon Registry Services, Inc.
-        "gov", // gov General Services Administration Attn: QTDC, 2E08 (.gov Domain Registration)
+        "gov", // gov Cybersecurity and Infrastructure Security Agency
         "grainger", // grainger Grainger Registry Services, LLC
-        "graphics", // graphics Over Madison, LLC
-        "gratis", // gratis Pioneer Tigers, LLC
-        "green", // green Afilias Limited
-        "gripe", // gripe Corn Sunset, LLC
+        "graphics", // graphics Binky Moon, LLC
+        "gratis", // gratis Binky Moon, LLC
+        "green", // green Identity Digital Limited
+        "gripe", // gripe Binky Moon, LLC
         "grocery", // grocery Wal-Mart Stores, Inc.
-        "group", // group Romeo Town, LLC
+        "group", // group Binky Moon, LLC
         "gucci", // gucci Guccio Gucci S.p.a.
         "guge", // guge Charleston Road Registry Inc.
-        "guide", // guide Snow Moon, LLC
-        "guitars", // guitars Uniregistry, Corp.
-        "guru", // guru Pioneer Cypress, LLC
-        "hair", // hair L&#39;Oreal
+        "guide", // guide Binky Moon, LLC
+        "guitars", // guitars XYZ.COM LLC
+        "guru", // guru Binky Moon, LLC
+        "hair", // hair XYZ.COM LLC
         "hamburg", // hamburg Hamburg Top-Level-Domain GmbH
         "hangout", // hangout Charleston Road Registry Inc.
-        "haus", // haus United TLD Holdco, LTD.
+        "haus", // haus Dog Beach, LLC
         "hbo", // hbo HBO Registry Services, Inc.
         "hdfc", // hdfc HOUSING DEVELOPMENT FINANCE CORPORATION LIMITED
         "hdfcbank", // hdfcbank HDFC Bank Limited
-        "health", // health DotHealth, LLC
-        "healthcare", // healthcare Silver Glen, LLC
-        "help", // help Uniregistry, Corp.
+        "health", // health Registry Services, LLC
+        "healthcare", // healthcare Binky Moon, LLC
+        "help", // help Innovation Service Ltd
         "helsinki", // helsinki City of Helsinki
         "here", // here Charleston Road Registry Inc.
         "hermes", // hermes Hermes International
-        "hiphop", // hiphop Uniregistry, Corp.
+        "hiphop", // hiphop Dot Hip Hop, LLC
         "hisamitsu", // hisamitsu Hisamitsu Pharmaceutical Co.,Inc.
         "hitachi", // hitachi Hitachi, Ltd.
-        "hiv", // hiv dotHIV gemeinnuetziger e.V.
+        "hiv", // hiv Internet Naming Co.
         "hkt", // hkt PCCW-HKT DataCom Services Limited
-        "hockey", // hockey Half Willow, LLC
-        "holdings", // holdings John Madison, LLC
-        "holiday", // holiday Goose Woods, LLC
-        "homedepot", // homedepot Homer TLC, Inc.
+        "hockey", // hockey Binky Moon, LLC
+        "holdings", // holdings Binky Moon, LLC
+        "holiday", // holiday Binky Moon, LLC
+        "homedepot", // homedepot Home Depot Product Authority, LLC
         "homegoods", // homegoods The TJX Companies, Inc.
-        "homes", // homes DERHomes, LLC
+        "homes", // homes XYZ.COM LLC
         "homesense", // homesense The TJX Companies, Inc.
         "honda", // honda Honda Motor Co., Ltd.
-        "horse", // horse Top Level Domain Holdings Limited
-        "hospital", // hospital Ruby Pike, LLC
-        "host", // host DotHost Inc.
-        "hosting", // hosting Uniregistry, Corp.
+        "horse", // horse Registry Services, LLC
+        "hospital", // hospital Binky Moon, LLC
+        "host", // host Radix Technologies Inc.
+        "hosting", // hosting XYZ.COM LLC
         "hot", // hot Amazon Registry Services, Inc.
         "hotels", // hotels Booking.com B.V.
         "hotmail", // hotmail Microsoft Corporation
-        "house", // house Sugar Park, LLC
+        "house", // house Binky Moon, LLC
         "how", // how Charleston Road Registry Inc.
-        "hsbc", // hsbc HSBC Holdings PLC
+        "hsbc", // hsbc HSBC Global Services (UK) Limited
         "hughes", // hughes Hughes Satellite Systems Corporation
         "hyatt", // hyatt Hyatt GTLD, L.L.C.
         "hyundai", // hyundai Hyundai Motor Company
         "ibm", // ibm International Business Machines Corporation
         "icbc", // icbc Industrial and Commercial Bank of China Limited
         "ice", // ice IntercontinentalExchange, Inc.
-        "icu", // icu One.com A/S
+        "icu", // icu Shortdot SA
         "ieee", // ieee IEEE Global LLC
         "ifm", // ifm ifm electronic gmbh
         "ikano", // ikano Ikano S.A.
         "imamat", // imamat Fondation Aga Khan (Aga Khan Foundation)
-        "imdb", // imdb Amazon Registry Service, Inc.
-        "immo", // immo Auburn Bloom, LLC
-        "immobilien", // immobilien United TLD Holdco Ltd.
-        "inc", // inc Intercap Holdings Inc.
-        "industries", // industries Outer House, LLC
+        "imdb", // imdb Amazon Registry Services, Inc.
+        "immo", // immo Binky Moon, LLC
+        "immobilien", // immobilien Dog Beach, LLC
+        "inc", // inc Intercap Registry Inc.
+        "industries", // industries Binky Moon, LLC
         "infiniti", // infiniti NISSAN MOTOR CO., LTD.
-        "info", // info Afilias Limited
+        "info", // info Identity Digital Limited
         "ing", // ing Charleston Road Registry Inc.
-        "ink", // ink Top Level Design, LLC
-        "institute", // institute Outer Maple, LLC
+        "ink", // ink Registry Services, LLC
+        "institute", // institute Binky Moon, LLC
         "insurance", // insurance fTLD Registry Services LLC
-        "insure", // insure Pioneer Willow, LLC
+        "insure", // insure Binky Moon, LLC
         "int", // int Internet Assigned Numbers Authority
-        "international", // international Wild Way, LLC
+        "international", // international Binky Moon, LLC
         "intuit", // intuit Intuit Administrative Services, Inc.
-        "investments", // investments Holly Glen, LLC
+        "investments", // investments Binky Moon, LLC
         "ipiranga", // ipiranga Ipiranga Produtos de Petroleo S.A.
-        "irish", // irish Dot-Irish LLC
+        "irish", // irish Binky Moon, LLC
         "ismaili", // ismaili Fondation Aga Khan (Aga Khan Foundation)
         "ist", // ist Istanbul Metropolitan Municipality
-        "istanbul", // istanbul Istanbul Metropolitan Municipality / Medya A.S.
+        "istanbul", // istanbul Istanbul Metropolitan Municipality
         "itau", // itau Itau Unibanco Holding S.A.
         "itv", // itv ITV Services Limited
         "jaguar", // jaguar Jaguar Land Rover Ltd
         "java", // java Oracle Corporation
         "jcb", // jcb JCB Co., Ltd.
         "jeep", // jeep FCA US LLC.
-        "jetzt", // jetzt New TLD Company AB
-        "jewelry", // jewelry Wild Bloom, LLC
-        "jio", // jio Affinity Names, Inc.
+        "jetzt", // jetzt Binky Moon, LLC
+        "jewelry", // jewelry Binky Moon, LLC
+        "jio", // jio Reliance Industries Limited
         "jll", // jll Jones Lang LaSalle Incorporated
         "jmp", // jmp Matrix IP LLC
         "jnj", // jnj Johnson &amp; Johnson Services, Inc.
@@ -803,22 +803,22 @@ public final class DomainValidator extends AbstractValidator {
         "joburg", // joburg ZA Central Registry NPC trading as ZA Central Registry
         "jot", // jot Amazon Registry Services, Inc.
         "joy", // joy Amazon Registry Services, Inc.
-        "jpmorgan", // jpmorgan JPMorgan Chase &amp; Co.
+        "jpmorgan", // jpmorgan JPMorgan Chase Bank, National Association
         "jprs", // jprs Japan Registry Services Co., Ltd.
-        "juegos", // juegos Uniregistry, Corp.
+        "juegos", // juegos Dog Beach, LLC
         "juniper", // juniper JUNIPER NETWORKS, INC.
-        "kaufen", // kaufen United TLD Holdco Ltd.
+        "kaufen", // kaufen Dog Beach, LLC
         "kddi", // kddi KDDI CORPORATION
         "kerryhotels", // kerryhotels Kerry Trading Co. Limited
         "kerryproperties", // kerryproperties Kerry Trading Co. Limited
         "kfh", // kfh Kuwait Finance House
         "kia", // kia KIA MOTORS CORPORATION
         "kids", // kids DotKids Foundation Limited
-        "kim", // kim Afilias Limited
-        "kindle", // kindle Amazon Registry Service, Inc.
-        "kitchen", // kitchen Just Goodbye, LLC
+        "kim", // kim Identity Digital Limited
+        "kindle", // kindle Amazon Registry Services, Inc.
+        "kitchen", // kitchen Binky Moon, LLC
         "kiwi", // kiwi DOT KIWI LIMITED
-        "koeln", // koeln NetCologne Gesellschaft für Telekommunikation mbH
+        "koeln", // koeln dotKoeln GmbH
         "komatsu", // komatsu Komatsu Ltd.
         "kosher", // kosher Kosher Marketing Assets LLC
         "kpmg", // kpmg KPMG International Cooperative (KPMG International Genossenschaft)
@@ -827,84 +827,84 @@ public final class DomainValidator extends AbstractValidator {
         "kred", // kred KredTLD Pty Ltd
         "kuokgroup", // kuokgroup Kerry Trading Co. Limited
         "kyoto", // kyoto Academic Institution: Kyoto Jyoho Gakuen
-        "lacaixa", // lacaixa CAIXA D&#39;ESTALVIS I PENSIONS DE BARCELONA
+        "lacaixa", // lacaixa Fundación Bancaria Caixa d&#x27;Estalvis i Pensions de Barcelona, "la Caixa"
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
         "lamer", // lamer The Estée Lauder Companies Inc.
         "lancaster", // lancaster LANCASTER
-        "land", // land Pine Moon, LLC
+        "land", // land Binky Moon, LLC
         "landrover", // landrover Jaguar Land Rover Ltd
         "lanxess", // lanxess LANXESS Corporation
         "lasalle", // lasalle Jones Lang LaSalle Incorporated
-        "lat", // lat ECOM-LAC Federación de Latinoamérica y el Caribe para Internet y el Comercio Electrónico
+        "lat", // lat XYZ.COM LLC
         "latino", // latino Dish DBS Corporation
         "latrobe", // latrobe La Trobe University
-        "law", // law Minds + Machines Group Limited
-        "lawyer", // lawyer United TLD Holdco, Ltd
+        "law", // law Registry Services, LLC
+        "lawyer", // lawyer Dog Beach, LLC
         "lds", // lds IRI Domain Management, LLC
-        "lease", // lease Victor Trail, LLC
+        "lease", // lease Binky Moon, LLC
         "leclerc", // leclerc A.C.D. LEC Association des Centres Distributeurs Edouard Leclerc
         "lefrak", // lefrak LeFrak Organization, Inc.
-        "legal", // legal Blue Falls, LLC
+        "legal", // legal Binky Moon, LLC
         "lego", // lego LEGO Juris A/S
         "lexus", // lexus TOYOTA MOTOR CORPORATION
-        "lgbt", // lgbt Afilias Limited
+        "lgbt", // lgbt Identity Digital Limited
         "lidl", // lidl Schwarz Domains und Services GmbH &amp; Co. KG
-        "life", // life Trixy Oaks, LLC
+        "life", // life Binky Moon, LLC
         "lifeinsurance", // lifeinsurance American Council of Life Insurers
-        "lifestyle", // lifestyle Lifestyle Domain Holdings, Inc.
-        "lighting", // lighting John McCook, LLC
+        "lifestyle", // lifestyle Internet Naming Co.
+        "lighting", // lighting Binky Moon, LLC
         "like", // like Amazon Registry Services, Inc.
         "lilly", // lilly Eli Lilly and Company
-        "limited", // limited Big Fest, LLC
-        "limo", // limo Hidden Frostbite, LLC
+        "limited", // limited Binky Moon, LLC
+        "limo", // limo Binky Moon, LLC
         "lincoln", // lincoln Ford Motor Company
-        "link", // link Uniregistry, Corp.
-        "live", // live United TLD Holdco Ltd.
-        "living", // living Lifestyle Domain Holdings, Inc.
-        "llc", // llc Afilias plc
-        "llp", // llp Dot Registry LLC
+        "link", // link Nova Registry Ltd.
+        "live", // live Dog Beach, LLC
+        "living", // living Internet Naming Co.
+        "llc", // llc Identity Digital Limited
+        "llp", // llp Intercap Registry Inc.
         "loan", // loan dot Loan Limited
-        "loans", // loans June Woods, LLC
-        "locker", // locker Dish DBS Corporation
+        "loans", // loans Binky Moon, LLC
+        "locker", // locker Orange Domains LLC
         "locus", // locus Locus Analytics LLC
-        "lol", // lol Uniregistry, Corp.
+        "lol", // lol XYZ.COM LLC
         "london", // london Dot London Domains Limited
         "lotte", // lotte Lotte Holdings Co., Ltd.
-        "lotto", // lotto Afilias Limited
-        "love", // love Merchant Law Group LLP
+        "lotto", // lotto Identity Digital Limited
+        "love", // love Waterford Limited
         "lpl", // lpl LPL Holdings, Inc.
         "lplfinancial", // lplfinancial LPL Holdings, Inc.
-        "ltd", // ltd Over Corner, LLC
+        "ltd", // ltd Binky Moon, LLC
         "ltda", // ltda InterNetX Corp.
         "lundbeck", // lundbeck H. Lundbeck A/S
-        "luxe", // luxe Top Level Domain Holdings Limited
+        "luxe", // luxe Registry Services, LLC
         "luxury", // luxury Luxury Partners LLC
         "madrid", // madrid Comunidad de Madrid
         "maif", // maif Mutuelle Assurance Instituteur France (MAIF)
-        "maison", // maison Victor Frostbite, LLC
-        "makeup", // makeup L&#39;Oréal
-        "man", // man MAN SE
-        "management", // management John Goodbye, LLC
+        "maison", // maison Binky Moon, LLC
+        "makeup", // makeup XYZ.COM LLC
+        "man", // man MAN Truck &amp; Bus SE
+        "management", // management Binky Moon, LLC
         "mango", // mango PUNTO FA S.L.
         "map", // map Charleston Road Registry Inc.
-        "market", // market Unitied TLD Holdco, Ltd
-        "marketing", // marketing Fern Pass, LLC
-        "markets", // markets DOTMARKETS REGISTRY LTD
+        "market", // market Dog Beach, LLC
+        "marketing", // marketing Binky Moon, LLC
+        "markets", // markets Dog Beach, LLC
         "marriott", // marriott Marriott Worldwide Corporation
         "marshalls", // marshalls The TJX Companies, Inc.
         "mattel", // mattel Mattel Sites, Inc.
-        "mba", // mba Lone Hollow, LLC
+        "mba", // mba Binky Moon, LLC
         "mckinsey", // mckinsey McKinsey Holdings, Inc.
         "med", // med Medistry LLC
-        "media", // media Grand Glen, LLC
-        "meet", // meet Afilias Limited
-        "melbourne", // melbourne The Crown in right of the State of Victoria
+        "media", // media Binky Moon, LLC
+        "meet", // meet Charleston Road Registry Inc.
+        "melbourne", // melbourne The Crown in right of the State of Victoria, represented by its Department of State Development, Business and Innovation
         "meme", // meme Charleston Road Registry Inc.
         "memorial", // memorial Dog Beach, LLC
         "men", // men Exclusive Registry Limited
-        "menu", // menu Wedding TLD2, LLC
+        "menu", // menu Dot Menu Registry LLC
         "merckmsd", // merckmsd MSD Registry Holdings, Inc.
-        "miami", // miami Top Level Domain Holdings Limited
+        "miami", // miami Registry Services, LLC
         "microsoft", // microsoft Microsoft Corporation
         "mil", // mil DoD Network Information Center
         "mini", // mini Bayerische Motoren Werke Aktiengesellschaft
@@ -914,22 +914,22 @@ public final class DomainValidator extends AbstractValidator {
         "mlb", // mlb MLB Advanced Media DH, LLC
         "mls", // mls The Canadian Real Estate Association
         "mma", // mma MMA IARD
-        "mobi", // mobi Afilias Technologies Limited dba dotMobi
+        "mobi", // mobi Identity Digital Limited
         "mobile", // mobile Dish DBS Corporation
-        "moda", // moda United TLD Holdco Ltd.
-        "moe", // moe Interlink Co., Ltd.
+        "moda", // moda Dog Beach, LLC
+        "moe", // moe Interlink Systems Innovation Institute K.K.
         "moi", // moi Amazon Registry Services, Inc.
-        "mom", // mom Uniregistry, Corp.
+        "mom", // mom XYZ.COM LLC
         "monash", // monash Monash University
-        "money", // money Outer McCook, LLC
-        "monster", // monster Monster Worldwide, Inc.
-        "mormon", // mormon IRI Domain Management, LLC (&quot;Applicant&quot;)
-        "mortgage", // mortgage United TLD Holdco, Ltd
+        "money", // money Binky Moon, LLC
+        "monster", // monster XYZ.COM LLC
+        "mormon", // mormon IRI Domain Management, LLC ("Applicant")
+        "mortgage", // mortgage Dog Beach, LLC
         "moscow", // moscow Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
         "moto", // moto Motorola Trademark Holdings, LLC
-        "motorcycles", // motorcycles DERMotorcycles, LLC
+        "motorcycles", // motorcycles XYZ.COM LLC
         "mov", // mov Charleston Road Registry Inc.
-        "movie", // movie New Frostbite, LLC
+        "movie", // movie Binky Moon, LLC
         "msd", // msd MSD Registry Holdings, Inc.
         "mtn", // mtn MTN Dubai Limited
         "mtr", // mtr MTR Corporation Limited
@@ -938,16 +938,16 @@ public final class DomainValidator extends AbstractValidator {
         "nab", // nab National Australia Bank Limited
         "nagoya", // nagoya GMO Registry, Inc.
         "name", // name VeriSign Information Services, Inc.
-        "navy", // navy United TLD Holdco Ltd.
+        "navy", // navy Dog Beach, LLC
         "nba", // nba NBA REGISTRY, LLC
         "nec", // nec NEC Corporation
         "net", // net VeriSign Global Registry Services
         "netbank", // netbank COMMONWEALTH BANK OF AUSTRALIA
         "netflix", // netflix Netflix, Inc.
-        "network", // network Trixy Manor, LLC
+        "network", // network Binky Moon, LLC
         "neustar", // neustar NeuStar, Inc.
         "new", // new Charleston Road Registry Inc.
-        "news", // news United TLD Holdco Ltd.
+        "news", // news Dog Beach, LLC
         "next", // next Next plc
         "nextdirect", // nextdirect Next plc
         "nexus", // nexus Charleston Road Registry Inc.
@@ -957,166 +957,166 @@ public final class DomainValidator extends AbstractValidator {
         "nico", // nico DWANGO Co., Ltd.
         "nike", // nike NIKE, Inc.
         "nikon", // nikon NIKON CORPORATION
-        "ninja", // ninja United TLD Holdco Ltd.
+        "ninja", // ninja Dog Beach, LLC
         "nissan", // nissan NISSAN MOTOR CO., LTD.
         "nissay", // nissay Nippon Life Insurance Company
         "nokia", // nokia Nokia Corporation
-        "norton", // norton Symantec Corporation
-        "now", // now Amazon Registry Service, Inc.
-        "nowruz", // nowruz Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
+        "norton", // norton Gen Digital Inc.
+        "now", // now Amazon Registry Services, Inc.
+        "nowruz", // nowruz Emergency Back-End Registry Operator Program - ICANN
         "nowtv", // nowtv Starbucks (HK) Limited
         "nra", // nra NRA Holdings Company, INC.
         "nrw", // nrw Minds + Machines GmbH
         "ntt", // ntt NIPPON TELEGRAPH AND TELEPHONE CORPORATION
         "nyc", // nyc The City of New York by and through the New York City Department of Information Technology &amp; Telecommunications
         "obi", // obi OBI Group Holding SE &amp; Co. KGaA
-        "observer", // observer Top Level Spectrum, Inc.
+        "observer", // observer Fegistry, LLC
         "office", // office Microsoft Corporation
-        "okinawa", // okinawa BusinessRalliart inc.
-        "olayan", // olayan Crescent Holding GmbH
-        "olayangroup", // olayangroup Crescent Holding GmbH
+        "okinawa", // okinawa BRregistry, Inc.
+        "olayan", // olayan Competrol (Luxembourg) Sarl
+        "olayangroup", // olayangroup Competrol (Luxembourg) Sarl
         "ollo", // ollo Dish DBS Corporation
         "omega", // omega The Swatch Group Ltd
         "one", // one One.com A/S
         "ong", // ong Public Interest Registry
-        "onl", // onl I-REGISTRY Ltd., Niederlassung Deutschland
-        "online", // online DotOnline Inc.
-        "ooo", // ooo INFIBEAM INCORPORATION LIMITED
+        "onl", // onl iRegistry GmbH
+        "online", // online Radix Technologies Inc.
+        "ooo", // ooo INFIBEAM AVENUES LIMITED
         "open", // open American Express Travel Related Services Company, Inc.
         "oracle", // oracle Oracle Corporation
         "orange", // orange Orange Brand Services Limited
         "org", // org Public Interest Registry (PIR)
-        "organic", // organic Afilias Limited
+        "organic", // organic Identity Digital Limited
         "origins", // origins The Estée Lauder Companies Inc.
-        "osaka", // osaka Interlink Co., Ltd.
+        "osaka", // osaka Osaka Registry Co., Ltd.
         "otsuka", // otsuka Otsuka Holdings Co., Ltd.
         "ott", // ott Dish DBS Corporation
         "ovh", // ovh OVH SAS
         "page", // page Charleston Road Registry Inc.
         "panasonic", // panasonic Panasonic Corporation
         "paris", // paris City of Paris
-        "pars", // pars Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
-        "partners", // partners Magic Glen, LLC
-        "parts", // parts Sea Goodbye, LLC
+        "pars", // pars Emergency Back-End Registry Operator Program - ICANN
+        "partners", // partners Binky Moon, LLC
+        "parts", // parts Binky Moon, LLC
         "party", // party Blue Sky Registry Limited
         "pay", // pay Amazon Registry Services, Inc.
         "pccw", // pccw PCCW Enterprises Limited
-        "pet", // pet Afilias plc
+        "pet", // pet Identity Digital Limited
         "pfizer", // pfizer Pfizer Inc.
         "pharmacy", // pharmacy National Association of Boards of Pharmacy
         "phd", // phd Charleston Road Registry Inc.
         "philips", // philips Koninklijke Philips N.V.
         "phone", // phone Dish DBS Corporation
-        "photo", // photo Uniregistry, Corp.
-        "photography", // photography Sugar Glen, LLC
-        "photos", // photos Sea Corner, LLC
+        "photo", // photo Registry Services, LLC
+        "photography", // photography Binky Moon, LLC
+        "photos", // photos Binky Moon, LLC
         "physio", // physio PhysBiz Pty Ltd
-        "pics", // pics Uniregistry, Corp.
+        "pics", // pics XYZ.COM LLC
         "pictet", // pictet Pictet Europe S.A.
-        "pictures", // pictures Foggy Sky, LLC
+        "pictures", // pictures Binky Moon, LLC
         "pid", // pid Top Level Spectrum, Inc.
         "pin", // pin Amazon Registry Services, Inc.
         "ping", // ping Ping Registry Provider, Inc.
-        "pink", // pink Afilias Limited
+        "pink", // pink Identity Digital Limited
         "pioneer", // pioneer Pioneer Corporation
-        "pizza", // pizza Foggy Moon, LLC
-        "place", // place Snow Galley, LLC
+        "pizza", // pizza Binky Moon, LLC
+        "place", // place Binky Moon, LLC
         "play", // play Charleston Road Registry Inc.
         "playstation", // playstation Sony Computer Entertainment Inc.
-        "plumbing", // plumbing Spring Tigers, LLC
-        "plus", // plus Sugar Mill, LLC
+        "plumbing", // plumbing Binky Moon, LLC
+        "plus", // plus Binky Moon, LLC
         "pnc", // pnc PNC Domain Co., LLC
         "pohl", // pohl Deutsche Vermögensberatung Aktiengesellschaft DVAG
-        "poker", // poker Afilias Domains No. 5 Limited
+        "poker", // poker Identity Digital Limited
         "politie", // politie Politie Nederland
         "porn", // porn ICM Registry PN LLC
         "post", // post Universal Postal Union
         "pramerica", // pramerica Prudential Financial, Inc.
         "praxi", // praxi Praxi S.p.A.
-        "press", // press DotPress Inc.
-        "prime", // prime Amazon Registry Service, Inc.
-        "pro", // pro Registry Services Corporation dba RegistryPro
+        "press", // press Radix Technologies Inc.
+        "prime", // prime Amazon Registry Services, Inc.
+        "pro", // pro Identity Digital Limited
         "prod", // prod Charleston Road Registry Inc.
-        "productions", // productions Magic Birch, LLC
+        "productions", // productions Binky Moon, LLC
         "prof", // prof Charleston Road Registry Inc.
         "progressive", // progressive Progressive Casualty Insurance Company
-        "promo", // promo Afilias plc
-        "properties", // properties Big Pass, LLC
-        "property", // property Uniregistry, Corp.
+        "promo", // promo Identity Digital Limited
+        "properties", // properties Binky Moon, LLC
+        "property", // property Digital Property Infrastructure Limited
         "protection", // protection XYZ.COM LLC
         "pru", // pru Prudential Financial, Inc.
         "prudential", // prudential Prudential Financial, Inc.
-        "pub", // pub United TLD Holdco Ltd.
+        "pub", // pub Dog Beach, LLC
         "pwc", // pwc PricewaterhouseCoopers LLP
-        "qpon", // qpon dotCOOL, Inc.
+        "qpon", // qpon DOTQPON LLC.
         "quebec", // quebec PointQuébec Inc
-        "quest", // quest Quest ION Limited
+        "quest", // quest XYZ.COM LLC
         "racing", // racing Premier Registry Limited
         "radio", // radio European Broadcasting Union (EBU)
         "read", // read Amazon Registry Services, Inc.
         "realestate", // realestate dotRealEstate LLC
         "realtor", // realtor Real Estate Domains LLC
-        "realty", // realty Fegistry, LLC
-        "recipes", // recipes Grand Island, LLC
-        "red", // red Afilias Limited
+        "realty", // realty Internet Naming Co.
+        "recipes", // recipes Binky Moon, LLC
+        "red", // red Identity Digital Limited
         "redstone", // redstone Redstone Haute Couture Co., Ltd.
         "redumbrella", // redumbrella Travelers TLD, LLC
-        "rehab", // rehab United TLD Holdco Ltd.
-        "reise", // reise Foggy Way, LLC
-        "reisen", // reisen New Cypress, LLC
+        "rehab", // rehab Dog Beach, LLC
+        "reise", // reise Binky Moon, LLC
+        "reisen", // reisen Binky Moon, LLC
         "reit", // reit National Association of Real Estate Investment Trusts, Inc.
         "reliance", // reliance Reliance Industries Limited
-        "ren", // ren Beijing Qianxiang Wangjing Technology Development Co., Ltd.
+        "ren", // ren ZDNS International Limited
         "rent", // rent XYZ.COM LLC
-        "rentals", // rentals Big Hollow,LLC
-        "repair", // repair Lone Sunset, LLC
-        "report", // report Binky Glen, LLC
-        "republican", // republican United TLD Holdco Ltd.
+        "rentals", // rentals Binky Moon, LLC
+        "repair", // repair Binky Moon, LLC
+        "report", // report Binky Moon, LLC
+        "republican", // republican Dog Beach, LLC
         "rest", // rest Punto 2012 Sociedad Anonima Promotora de Inversion de Capital Variable
-        "restaurant", // restaurant Snow Avenue, LLC
+        "restaurant", // restaurant Binky Moon, LLC
         "review", // review dot Review Limited
-        "reviews", // reviews United TLD Holdco, Ltd.
+        "reviews", // reviews Dog Beach, LLC
         "rexroth", // rexroth Robert Bosch GMBH
-        "rich", // rich I-REGISTRY Ltd., Niederlassung Deutschland
+        "rich", // rich iRegistry GmbH
         "richardli", // richardli Pacific Century Asset Management (HK) Limited
         "ricoh", // ricoh Ricoh Company, Ltd.
         "ril", // ril Reliance Industries Limited
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
-        "rip", // rip United TLD Holdco Ltd.
-        "rocks", // rocks United TLD Holdco, LTD.
-        "rodeo", // rodeo Top Level Domain Holdings Limited
+        "rip", // rip Dog Beach, LLC
+        "rocks", // rocks Dog Beach, LLC
+        "rodeo", // rodeo Registry Services, LLC
         "rogers", // rogers Rogers Communications Canada Inc.
         "room", // room Amazon Registry Services, Inc.
         "rsvp", // rsvp Charleston Road Registry Inc.
         "rugby", // rugby World Rugby Strategic Developments Limited
-        "ruhr", // ruhr regiodot GmbH &amp; Co. KG
-        "run", // run Snow Park, LLC
+        "ruhr", // ruhr dotSaarland GmbH
+        "run", // run Binky Moon, LLC
         "rwe", // rwe RWE AG
-        "ryukyu", // ryukyu BusinessRalliart inc.
+        "ryukyu", // ryukyu BRregistry, Inc.
         "saarland", // saarland dotSaarland GmbH
         "safe", // safe Amazon Registry Services, Inc.
         "safety", // safety Safety Registry Services, LLC.
-        "sakura", // sakura SAKURA Internet Inc.
-        "sale", // sale United TLD Holdco, Ltd
-        "salon", // salon Outer Orchard, LLC
+        "sakura", // sakura SAKURA internet Inc.
+        "sale", // sale Dog Beach, LLC
+        "salon", // salon Binky Moon, LLC
         "samsclub", // samsclub Wal-Mart Stores, Inc.
         "samsung", // samsung SAMSUNG SDS CO., LTD
         "sandvik", // sandvik Sandvik AB
         "sandvikcoromant", // sandvikcoromant Sandvik AB
         "sanofi", // sanofi Sanofi
         "sap", // sap SAP AG
-        "sarl", // sarl Delta Orchard, LLC
+        "sarl", // sarl Binky Moon, LLC
         "sas", // sas Research IP LLC
-        "save", // save Amazon Registry Service, Inc.
+        "save", // save Amazon Registry Services, Inc.
         "saxo", // saxo Saxo Bank A/S
         "sbi", // sbi STATE BANK OF INDIA
-        "sbs", // sbs SPECIAL BROADCASTING SERVICE CORPORATION
-        "scb", // scb The Siam Commercial Bank Public Company Limited (&quot;SCB&quot;)
+        "sbs", // sbs Shortdot SA
+        "scb", // scb The Siam Commercial Bank Public Company Limited ("SCB")
         "schaeffler", // schaeffler Schaeffler Technologies AG &amp; Co. KG
-        "schmidt", // schmidt SALM S.A.S.
+        "schmidt", // schmidt SCHMIDT GROUPE S.A.S.
         "scholarships", // scholarships Scholarships.com, LLC
-        "school", // school Little Galley, LLC
-        "schule", // schule Outer Moon, LLC
+        "school", // school Binky Moon, LLC
+        "schule", // schule Binky Moon, LLC
         "schwarz", // schwarz Schwarz Domains und Services GmbH &amp; Co. KG
         "science", // science dot Science Limited
         "scot", // scot Dot Scot Registry Limited
@@ -1125,49 +1125,49 @@ public final class DomainValidator extends AbstractValidator {
         "secure", // secure Amazon Registry Services, Inc.
         "security", // security XYZ.COM LLC
         "seek", // seek Seek Limited
-        "select", // select iSelect Ltd
+        "select", // select Registry Services, LLC
         "sener", // sener Sener Ingeniería y Sistemas, S.A.
-        "services", // services Fox Castle, LLC
+        "services", // services Binky Moon, LLC
         "seven", // seven Seven West Media Ltd
         "sew", // sew SEW-EURODRIVE GmbH &amp; Co KG
         "sex", // sex ICM Registry SX LLC
-        "sexy", // sexy Uniregistry, Corp.
+        "sexy", // sexy Internet Naming Co.
         "sfr", // sfr Societe Francaise du Radiotelephone - SFR
-        "shangrila", // shangrila Shangri‐La International Hotel Management Limited
+        "shangrila", // shangrila Shangri-La International Hotel Management Limited
         "sharp", // sharp Sharp Corporation
         "shell", // shell Shell Information Technology International Inc
-        "shia", // shia Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
-        "shiksha", // shiksha Afilias Limited
-        "shoes", // shoes Binky Galley, LLC
+        "shia", // shia Emergency Back-End Registry Operator Program - ICANN
+        "shiksha", // shiksha Identity Digital Limited
+        "shoes", // shoes Binky Moon, LLC
         "shop", // shop GMO Registry, Inc.
-        "shopping", // shopping Over Keep, LLC
+        "shopping", // shopping Binky Moon, LLC
         "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
-        "show", // show Snow Beach, LLC
-        "silk", // silk Amazon Registry Service, Inc.
+        "show", // show Binky Moon, LLC
+        "silk", // silk Amazon Registry Services, Inc.
         "sina", // sina Sina Corporation
-        "singles", // singles Fern Madison, LLC
-        "site", // site DotSite Inc.
-        "ski", // ski STARTING DOT LIMITED
-        "skin", // skin L&#39;Oréal
-        "sky", // sky Sky International AG
+        "singles", // singles Binky Moon, LLC
+        "site", // site Radix Technologies Inc.
+        "ski", // ski Identity Digital Limited
+        "skin", // skin XYZ.COM LLC
+        "sky", // sky Sky UK Limited
         "skype", // skype Microsoft Corporation
-        "sling", // sling Hughes Satellite Systems Corporation
+        "sling", // sling DISH Technologies L.L.C.
         "smart", // smart Smart Communications, Inc. (SMART)
         "smile", // smile Amazon Registry Services, Inc.
-        "sncf", // sncf SNCF (Société Nationale des Chemins de fer Francais)
-        "soccer", // soccer Foggy Shadow, LLC
-        "social", // social United TLD Holdco Ltd.
+        "sncf", // sncf Société Nationale SNCF
+        "soccer", // soccer Binky Moon, LLC
+        "social", // social Dog Beach, LLC
         "softbank", // softbank SoftBank Group Corp.
-        "software", // software United TLD Holdco, Ltd
+        "software", // software Dog Beach, LLC
         "sohu", // sohu Sohu.com Limited
-        "solar", // solar Ruby Town, LLC
-        "solutions", // solutions Silver Cover, LLC
-        "song", // song Amazon EU S.à r.l.
+        "solar", // solar Binky Moon, LLC
+        "solutions", // solutions Binky Moon, LLC
+        "song", // song Amazon Registry Services, Inc.
         "sony", // sony Sony Corporation
         "soy", // soy Charleston Road Registry Inc.
         "spa", // spa Asia Spa and Wellness Promotion Council Limited
-        "space", // space DotSpace Inc.
-        "sport", // sport Global Association of International Sports Federations (GAISF)
+        "space", // space Radix Technologies Inc.
+        "sport", // sport SportAccord
         "spot", // spot Amazon Registry Services, Inc.
         "srl", // srl InterNetX Corp.
         "stada", // stada STADA Arzneimittel AG
@@ -1178,23 +1178,23 @@ public final class DomainValidator extends AbstractValidator {
         "stc", // stc Saudi Telecom Company
         "stcgroup", // stcgroup Saudi Telecom Company
         "stockholm", // stockholm Stockholms kommun
-        "storage", // storage Self Storage Company LLC
-        "store", // store DotStore Inc.
+        "storage", // storage XYZ.COM LLC
+        "store", // store Radix Technologies Inc.
         "stream", // stream dot Stream Limited
-        "studio", // studio United TLD Holdco Ltd.
-        "study", // study OPEN UNIVERSITIES AUSTRALIA PTY LTD
+        "studio", // studio Dog Beach, LLC
+        "study", // study Registry Services, LLC
         "style", // style Binky Moon, LLC
         "sucks", // sucks Vox Populi Registry Ltd.
-        "supplies", // supplies Atomic Fields, LLC
-        "supply", // supply Half Falls, LLC
-        "support", // support Grand Orchard, LLC
-        "surf", // surf Top Level Domain Holdings Limited
-        "surgery", // surgery Tin Avenue, LLC
+        "supplies", // supplies Binky Moon, LLC
+        "supply", // supply Binky Moon, LLC
+        "support", // support Binky Moon, LLC
+        "surf", // surf Registry Services, LLC
+        "surgery", // surgery Binky Moon, LLC
         "suzuki", // suzuki SUZUKI MOTOR CORPORATION
         "swatch", // swatch The Swatch Group Ltd
         "swiss", // swiss Swiss Confederation
         "sydney", // sydney State of New South Wales, Department of Premier and Cabinet
-        "systems", // systems Dash Cypress, LLC
+        "systems", // systems Binky Moon, LLC
         "tab", // tab Tabcorp Holdings Limited
         "taipei", // taipei Taipei City Government
         "talk", // talk Amazon Registry Services, Inc.
@@ -1202,49 +1202,49 @@ public final class DomainValidator extends AbstractValidator {
         "target", // target Target Domain Holdings, LLC
         "tatamotors", // tatamotors Tata Motors Ltd
         "tatar", // tatar Limited Liability Company "Coordination Center of Regional Domain of Tatarstan Republic"
-        "tattoo", // tattoo Uniregistry, Corp.
-        "tax", // tax Storm Orchard, LLC
-        "taxi", // taxi Pine Falls, LLC
-        "tci", // tci Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
+        "tattoo", // tattoo Registry Services, LLC
+        "tax", // tax Binky Moon, LLC
+        "taxi", // taxi Binky Moon, LLC
+        "tci", // tci Emergency Back-End Registry Operator Program - ICANN
         "tdk", // tdk TDK Corporation
-        "team", // team Atomic Lake, LLC
-        "tech", // tech Dot Tech LLC
-        "technology", // technology Auburn Falls, LLC
-        "tel", // tel Telnic Ltd.
+        "team", // team Binky Moon, LLC
+        "tech", // tech Radix Technologies Inc.
+        "technology", // technology Binky Moon, LLC
+        "tel", // tel Telnames Ltd.
         "temasek", // temasek Temasek Holdings (Private) Limited
-        "tennis", // tennis Cotton Bloom, LLC
+        "tennis", // tennis Binky Moon, LLC
         "teva", // teva Teva Pharmaceutical Industries Limited
-        "thd", // thd Homer TLC, Inc.
-        "theater", // theater Blue Tigers, LLC
+        "thd", // thd Home Depot Product Authority, LLC
+        "theater", // theater Binky Moon, LLC
         "theatre", // theatre XYZ.COM LLC
         "tiaa", // tiaa Teachers Insurance and Annuity Association of America
-        "tickets", // tickets Accent Media Limited
-        "tienda", // tienda Victor Manor, LLC
-        "tips", // tips Corn Willow, LLC
-        "tires", // tires Dog Edge, LLC
+        "tickets", // tickets XYZ.COM LLC
+        "tienda", // tienda Binky Moon, LLC
+        "tips", // tips Binky Moon, LLC
+        "tires", // tires Binky Moon, LLC
         "tirol", // tirol punkt Tirol GmbH
         "tjmaxx", // tjmaxx The TJX Companies, Inc.
         "tjx", // tjx The TJX Companies, Inc.
         "tkmaxx", // tkmaxx The TJX Companies, Inc.
         "tmall", // tmall Alibaba Group Holding Limited
-        "today", // today Pearl Woods, LLC
+        "today", // today Binky Moon, LLC
         "tokyo", // tokyo GMO Registry, Inc.
-        "tools", // tools Pioneer North, LLC
-        "top", // top Jiangsu Bangning Science &amp; Technology Co.,Ltd.
+        "tools", // tools Binky Moon, LLC
+        "top", // top .TOP Registry
         "toray", // toray Toray Industries, Inc.
         "toshiba", // toshiba TOSHIBA Corporation
-        "total", // total Total SA
-        "tours", // tours Sugar Station, LLC
-        "town", // town Koko Moon, LLC
+        "total", // total TotalEnergies SE
+        "tours", // tours Binky Moon, LLC
+        "town", // town Binky Moon, LLC
         "toyota", // toyota TOYOTA MOTOR CORPORATION
-        "toys", // toys Pioneer Orchard, LLC
+        "toys", // toys Binky Moon, LLC
         "trade", // trade Elite Registry Limited
-        "trading", // trading DOTTRADING REGISTRY LTD
-        "training", // training Wild Willow, LLC
-        "travel", // travel Tralliance Registry Management Company, LLC.
+        "trading", // trading Dog Beach, LLC
+        "training", // training Binky Moon, LLC
+        "travel", // travel Dog Beach, LLC
         "travelers", // travelers Travelers TLD, LLC
         "travelersinsurance", // travelersinsurance Travelers TLD, LLC
-        "trust", // trust Artemis Internet Inc
+        "trust", // trust Internet Naming Co.
         "trv", // trv Travelers TLD, LLC
         "tube", // tube Latin American Telecom LLC
         "tui", // tui TUI AG
@@ -1254,70 +1254,70 @@ public final class DomainValidator extends AbstractValidator {
         "ubank", // ubank National Australia Bank Limited
         "ubs", // ubs UBS AG
         "unicom", // unicom China United Network Communications Corporation Limited
-        "university", // university Little Station, LLC
-        "uno", // uno Dot Latin LLC
+        "university", // university Binky Moon, LLC
+        "uno", // uno Radix Technologies Inc.
         "uol", // uol UBN INTERNET LTDA.
         "ups", // ups UPS Market Driver, Inc.
-        "vacations", // vacations Atomic Tigers, LLC
-        "vana", // vana Lifestyle Domain Holdings, Inc.
+        "vacations", // vacations Binky Moon, LLC
+        "vana", // vana D3 Registry LLC
         "vanguard", // vanguard The Vanguard Group, Inc.
         "vegas", // vegas Dot Vegas, Inc.
-        "ventures", // ventures Binky Lake, LLC
+        "ventures", // ventures Binky Moon, LLC
         "verisign", // verisign VeriSign, Inc.
-        "versicherung", // versicherung dotversicherung-registry GmbH
-        "vet", // vet United TLD Holdco, Ltd
-        "viajes", // viajes Black Madison, LLC
-        "video", // video United TLD Holdco, Ltd
+        "versicherung", // versicherung tldbox GmbH
+        "vet", // vet Dog Beach, LLC
+        "viajes", // viajes Binky Moon, LLC
+        "video", // video Dog Beach, LLC
         "vig", // vig VIENNA INSURANCE GROUP AG Wiener Versicherung Gruppe
         "viking", // viking Viking River Cruises (Bermuda) Ltd.
-        "villas", // villas New Sky, LLC
-        "vin", // vin Holly Shadow, LLC
-        "vip", // vip Minds + Machines Group Limited
+        "villas", // villas Binky Moon, LLC
+        "vin", // vin Binky Moon, LLC
+        "vip", // vip Registry Services, LLC
         "virgin", // virgin Virgin Enterprises Limited
         "visa", // visa Visa Worldwide Pte. Limited
-        "vision", // vision Koko Station, LLC
+        "vision", // vision Binky Moon, LLC
         "viva", // viva Saudi Telecom Company
         "vivo", // vivo Telefonica Brasil S.A.
         "vlaanderen", // vlaanderen DNS.be vzw
-        "vodka", // vodka Top Level Domain Holdings Limited
+        "vodka", // vodka Registry Services, LLC
         "volvo", // volvo Volvo Holding Sverige Aktiebolag
         "vote", // vote Monolith Registry LLC
         "voting", // voting Valuetainment Corp.
         "voto", // voto Monolith Registry LLC
-        "voyage", // voyage Ruby House, LLC
+        "voyage", // voyage Binky Moon, LLC
         "wales", // wales Nominet UK
         "walmart", // walmart Wal-Mart Stores, Inc.
         "walter", // walter Sandvik AB
-        "wang", // wang Zodiac Registry Limited
+        "wang", // wang Zodiac Wang Limited
         "wanggou", // wanggou Amazon Registry Services, Inc.
-        "watch", // watch Sand Shadow, LLC
-        "watches", // watches Richemont DNS Inc.
-        "weather", // weather The Weather Channel, LLC
-        "weatherchannel", // weatherchannel The Weather Channel, LLC
+        "watch", // watch Binky Moon, LLC
+        "watches", // watches Identity Digital Limited
+        "weather", // weather International Business Machines Corporation
+        "weatherchannel", // weatherchannel International Business Machines Corporation
         "webcam", // webcam dot Webcam Limited
         "weber", // weber Saint-Gobain Weber SA
-        "website", // website DotWebsite Inc.
-        "wed", // wed Atgron, Inc.
-        "wedding", // wedding Top Level Domain Holdings Limited
+        "website", // website Radix Technologies Inc.
+        "wed", // wed Emergency Back-End Registry Operator Program - ICANN
+        "wedding", // wedding Registry Services, LLC
         "weibo", // weibo Sina Corporation
         "weir", // weir Weir Group IP Limited
-        "whoswho", // whoswho Who&#39;s Who Registry
+        "whoswho", // whoswho Who&#x27;s Who Registry
         "wien", // wien punkt.wien GmbH
-        "wiki", // wiki Top Level Design, LLC
+        "wiki", // wiki Registry Services, LLC
         "williamhill", // williamhill William Hill Organization Limited
         "win", // win First Registry Limited
         "windows", // windows Microsoft Corporation
-        "wine", // wine June Station, LLC
+        "wine", // wine Binky Moon, LLC
         "winners", // winners The TJX Companies, Inc.
         "wme", // wme William Morris Endeavor Entertainment, LLC
         "wolterskluwer", // wolterskluwer Wolters Kluwer N.V.
         "woodside", // woodside Woodside Petroleum Limited
-        "work", // work Top Level Domain Holdings Limited
-        "works", // works Little Dynamite, LLC
-        "world", // world Bitter Fields, LLC
+        "work", // work Registry Services, LLC
+        "works", // works Binky Moon, LLC
+        "world", // world Binky Moon, LLC
         "wow", // wow Amazon Registry Services, Inc.
         "wtc", // wtc World Trade Centers Association, Inc.
-        "wtf", // wtf Hidden Way, LLC
+        "wtf", // wtf Binky Moon, LLC
         "xbox", // xbox Microsoft Corporation
         "xerox", // xerox Xerox DNHC LLC
         "xihuan", // xihuan QIHOO 360 TECHNOLOGY CO. LTD.
@@ -1330,12 +1330,11 @@ public final class DomainValidator extends AbstractValidator {
         "xn--3ds443g", // 在线 Beijing Tld Registry Technology Limited
         "xn--3pxu8k", // 点看 VeriSign Sarl
         "xn--42c2d9a", // คอม VeriSign Sarl
-        "xn--45q11c", // 八卦 Zodiac Gemini Limited
-        "xn--4dbrk0ce", // ישראל The Israel Internet Association (RA)
+        "xn--45q11c", // 八卦 Zodiac Gemini Ltd
         "xn--4gbrim", // موقع Helium TLDs Ltd
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
-        "xn--55qx5d", // 公司 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
-        "xn--5su34j936bgsg", // 香格里拉 Shangri‐La International Hotel Management Limited
+        "xn--55qx5d", // 公司 China Internet Network Information Center (CNNIC)
+        "xn--5su34j936bgsg", // 香格里拉 Shangri-La International Hotel Management Limited
         "xn--5tzm5g", // 网站 Global Website TLD Asia Limited
         "xn--6frz82g", // 移动 Identity Digital Limited
         "xn--6qq986b3xl", // 我爱你 Tycoon Treasure Limited
@@ -1354,37 +1353,37 @@ public final class DomainValidator extends AbstractValidator {
         "xn--cck2b3b", // ストア Amazon Registry Services, Inc.
         "xn--cckwcxetd", // アマゾン Amazon Registry Services, Inc.
         "xn--cg4bki", // 삼성 SAMSUNG SDS CO., LTD
-        "xn--czr694b", // 商标 HU YI GLOBAL INFORMATION RESOURCES(HOLDING) COMPANY.HONGKONG LIMITED
-        "xn--czrs0t", // 商店 Wild Island, LLC
+        "xn--czr694b", // 商标 Internet DotTrademark Organisation Limited
+        "xn--czrs0t", // 商店 Binky Moon, LLC
         "xn--czru2d", // 商城 Zodiac Aquarius Limited
         "xn--d1acj3b", // дети The Foundation for Network Initiatives “The Smart Internet”
         "xn--eckvdtc9d", // ポイント Amazon Registry Services, Inc.
-        "xn--efvy88h", // 新闻 Xinhua News Agency Guangdong Branch 新华通讯社广东分社
+        "xn--efvy88h", // 新闻 Guangzhou YU Wei Information and Technology Co.,Ltd
         "xn--fct429k", // 家電 Amazon Registry Services, Inc.
         "xn--fhbei", // كوم VeriSign Sarl
         "xn--fiq228c5hs", // 中文网 TLD REGISTRY LIMITED
         "xn--fiq64b", // 中信 CITIC Group Corporation
-        "xn--fjq720a", // 娱乐 Will Bloom, LLC
+        "xn--fjq720a", // 娱乐 Binky Moon, LLC
         "xn--flw351e", // 谷歌 Charleston Road Registry Inc.
         "xn--fzys8d69uvgm", // 電訊盈科 PCCW Enterprises Limited
-        "xn--g2xx48c", // 购物 Minds + Machines Group Limited
+        "xn--g2xx48c", // 购物 Nawang Heli(Xiamen) Network Service Co., LTD.
         "xn--gckr3f0f", // クラウド Amazon Registry Services, Inc.
         "xn--gk3at1e", // 通販 Amazon Registry Services, Inc.
-        "xn--hxt814e", // 网店 Zodiac Taurus Limited
+        "xn--hxt814e", // 网店 Zodiac Taurus Ltd.
         "xn--i1b6b1a6a2e", // संगठन Public Interest Registry
-        "xn--imr513n", // 餐厅 HU YI GLOBAL INFORMATION RESOURCES (HOLDING) COMPANY. HONGKONG LIMITED
-        "xn--io0a7i", // 网络 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
+        "xn--imr513n", // 餐厅 Internet DotTrademark Organisation Limited
+        "xn--io0a7i", // 网络 China Internet Network Information Center (CNNIC)
         "xn--j1aef", // ком VeriSign Sarl
         "xn--jlq480n2rg", // 亚马逊 Amazon Registry Services, Inc.
         "xn--jvr189m", // 食品 Amazon Registry Services, Inc.
         "xn--kcrx77d1x4a", // 飞利浦 Koninklijke Philips N.V.
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
-        "xn--mgba7c0bbn0a", // العليان Crescent Holding GmbH
+        "xn--mgba7c0bbn0a", // العليان Competrol (Luxembourg) Sarl
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
         "xn--mgbi4ecexp", // كاثوليك Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
-        "xn--mgbt3dhd", // همراه Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
+        "xn--mgbt3dhd", // همراه Emergency Back-End Registry Operator Program - ICANN
         "xn--mk1bu44c", // 닷컴 VeriSign Sarl
         "xn--mxtq1m", // 政府 Net-Chinese Co., Ltd.
         "xn--ngbc5azd", // شبكة International Domain Registry Pty. Ltd.
@@ -1393,14 +1392,13 @@ public final class DomainValidator extends AbstractValidator {
         "xn--nqv7f", // 机构 Public Interest Registry
         "xn--nqv7fs00ema", // 组织机构 Public Interest Registry
         "xn--nyqy26a", // 健康 Stable Tone Limited
-        "xn--otu796d", // 招聘 Dot Trademark TLD Holding Company Limited
+        "xn--otu796d", // 招聘 Jiang Yu Liang Cai Technology Company Limited
         "xn--p1acf", // рус Rusnames Limited
         "xn--pssy2u", // 大拿 VeriSign Sarl
         "xn--q9jyb4c", // みんな Charleston Road Registry Inc.
         "xn--qcka1pmc", // グーグル Charleston Road Registry Inc.
-        "xn--qxa6a", // ευ EURid vzw/asbl
         "xn--rhqv96g", // 世界 Stable Tone Limited
-        "xn--rovu88b", // 書籍 Amazon EU S.à r.l.
+        "xn--rovu88b", // 書籍 Amazon Registry Services, Inc.
         "xn--ses554g", // 网址 KNET Co., Ltd
         "xn--t60b56a", // 닷넷 VeriSign Sarl
         "xn--tckwe", // コム VeriSign Sarl
@@ -1409,28 +1407,28 @@ public final class DomainValidator extends AbstractValidator {
         "xn--vermgensberater-ctb", // VERMöGENSBERATER Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "xn--vermgensberatung-pwb", // VERMöGENSBERATUNG Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "xn--vhquv", // 企业 Binky Moon, LLC
-        "xn--vuq861b", // 信息 Beijing Tele-info Network Technology Co., Ltd.
+        "xn--vuq861b", // 信息 Beijing Tele-info Technology Co., Ltd.
         "xn--w4r85el8fhu5dnra", // 嘉里大酒店 Kerry Trading Co. Limited
         "xn--w4rs40l", // 嘉里 Kerry Trading Co. Limited
         "xn--xhq521b", // 广东 Guangzhou YU Wei Information Technology Co., Ltd.
         "xn--zfr164b", // 政务 China Organizational Name Administration Center
         "xxx", // xxx ICM Registry LLC
         "xyz", // xyz XYZ.COM LLC
-        "yachts", // yachts DERYachts, LLC
-        "yahoo", // yahoo Yahoo! Domain Services Inc.
+        "yachts", // yachts XYZ.COM LLC
+        "yahoo", // yahoo Yahoo Inc.
         "yamaxun", // yamaxun Amazon Registry Services, Inc.
-        "yandex", // yandex YANDEX, LLC
+        "yandex", // yandex YANDEX LLC
         "yodobashi", // yodobashi YODOBASHI CAMERA CO.,LTD.
-        "yoga", // yoga Top Level Domain Holdings Limited
+        "yoga", // yoga Registry Services, LLC
         "yokohama", // yokohama GMO Registry, Inc.
         "you", // you Amazon Registry Services, Inc.
         "youtube", // youtube Charleston Road Registry Inc.
         "yun", // yun QIHOO 360 TECHNOLOGY CO. LTD.
-        "zappos", // zappos Amazon Registry Service, Inc.
+        "zappos", // zappos Amazon Registry Services, Inc.
         "zara", // zara Industria de Diseño Textil, S.A. (INDITEX, S.A.)
         "zero", // zero Amazon Registry Services, Inc.
         "zip", // zip Charleston Road Registry Inc.
-        "zone", // zone Outer Falls, LLC
+        "zone", // zone Binky Moon, LLC
         "zuerich", // zuerich Kanton Zürich (Canton of Zurich)
     };
 
@@ -1686,16 +1684,17 @@ public final class DomainValidator extends AbstractValidator {
         "xn--3hcrj9c", // ଭାରତ National Internet eXchange of India
         "xn--45br5cyl", // ভাৰত National Internet eXchange of India
         "xn--45brj9c", // ভারত National Internet Exchange of India
+        "xn--4dbrk0ce", // ישראל The Israel Internet Association (RA)
         "xn--54b7fta0cc", // বাং Posts and Telecommunications Division
         "xn--80ao21a", // қаз Association of IT Companies of Kazakhstan
         "xn--90a3ac", // срб Serbian National Internet Domain Registry (RNIDS)
         "xn--90ae", // бг Imena.BG AD
-        "xn--90ais", // бел Reliable Software Inc.
+        "xn--90ais", // бел Belarusian Cloud Technologies LLC
         "xn--clchc0ea0b2g2a9gcd", // சிங்கப்பூர் Singapore Network Information Centre (SGNIC) Pte Ltd
         "xn--d1alf", // мкд Macedonian Academic Research Network Skopje
-        "xn--e1a4c", // ею EURid vzw/asbl
-        "xn--fiqs8s", // 中国 China Internet Network Information Center
-        "xn--fiqz9s", // 中國 China Internet Network Information Center
+        "xn--e1a4c", // ею EURid vzw
+        "xn--fiqs8s", // 中国 China Internet Network Information Center (CNNIC)
+        "xn--fiqz9s", // 中國 China Internet Network Information Center (CNNIC)
         "xn--fpcrj9c3d", // భారత్ National Internet Exchange of India
         "xn--fzc2c9e2c", // ලංකා LK Domain Registry
         "xn--gecrj9c", // ભારત National Internet Exchange of India
@@ -1710,26 +1709,27 @@ public final class DomainValidator extends AbstractValidator {
         "xn--lgbbat1ad8j", // الجزائر CERIST
         "xn--mgb9awbf", // عمان Telecommunications Regulatory Authority (TRA)
         "xn--mgba3a4f16a", // ایران Institute for Research in Fundamental Sciences (IPM)
-        "xn--mgbaam7a8h", // امارات Telecommunications Regulatory Authority (TRA)
+        "xn--mgbaam7a8h", // امارات Telecommunications and Digital Government Regulatory Authority (TDRA)
         "xn--mgbah1a3hjkrd", // موريتانيا Université de Nouakchott Al Aasriya
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
-        "xn--mgbayh7gpa", // الاردن National Information Technology Center (NITC)
+        "xn--mgbayh7gpa", // الاردن Ministry of Digital Economy and Entrepreneurship (MoDEE)
         "xn--mgbbh1a", // بارت National Internet eXchange of India
         "xn--mgbbh1a71e", // بھارت National Internet Exchange of India
         "xn--mgbc0a9azcg", // المغرب Agence Nationale de Réglementation des Télécommunications (ANRT)
         "xn--mgbcpq6gpa1a", // البحرين Telecommunications Regulatory Authority (TRA)
-        "xn--mgberp4a5d4ar", // السعودية Communications and Information Technology Commission
+        "xn--mgberp4a5d4ar", // السعودية Communications, Space and Technology Commission
         "xn--mgbgu82a", // ڀارت National Internet eXchange of India
         "xn--mgbpl2fh", // سودان Sudan Internet Society
         "xn--mgbtx2b", // عراق Communications and Media Commission (CMC)
         "xn--mgbx4cd0ab", // مليسيا MYNIC Berhad
-        "xn--mix891f", // 澳門 Bureau of Telecommunications Regulation (DSRT)
+        "xn--mix891f", // 澳門 Macao Post and Telecommunications Bureau (CTT)
         "xn--node", // გე Information Technologies Development Center (ITDC)
         "xn--o3cw4h", // ไทย Thai Network Information Center Foundation
         "xn--ogbpf8fl", // سورية National Agency for Network Services (NANS)
         "xn--p1ai", // рф Coordination Center for TLD RU
-        "xn--pgbs0dh", // تونس Agence Tunisienne d&#39;Internet
+        "xn--pgbs0dh", // تونس Agence Tunisienne d&#x27;Internet
         "xn--q7ce6a", // ລາວ Lao National Internet Center (LANIC), Ministry of Technology and Communications
+        "xn--qxa6a", // ευ EURid vzw
         "xn--qxam", // ελ ICS-FORTH GR
         "xn--rvc1e0am3e", // ഭാരതം National Internet eXchange of India
         "xn--s9brj9c", // ਭਾਰਤ National Internet Exchange of India
@@ -1737,7 +1737,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--wgbl6a", // قطر Communications Regulatory Authority
         "xn--xkc2al3hye2a", // இலங்கை LK Domain Registry
         "xn--xkc2dl3a5ee0h", // இந்தியா National Internet Exchange of India
-        "xn--y9a3aq", // հայ Internet Society
+        "xn--y9a3aq", // հայ "Internet Society" Non-governmental Organization
         "xn--yfro4i67o", // 新加坡 Singapore Network Information Centre (SGNIC) Pte Ltd
         "xn--ygbi2ammx", // فلسطين Ministry of Telecom &amp; Information Technology (MTIT)
         "ye",                 // Yemen
