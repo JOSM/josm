@@ -4759,22 +4759,21 @@
             <reference ref="school_common"/>
             <reference ref="link_contact_address" />
         </item> <!-- College -->
-         <item name="Driving School" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Driving School" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=driving_school" />
             <space />
             <key key="amenity" value="driving_school" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="license_classes" text="License Classes" values="A;A1;B;BE;C,A;A1;B;B1;C;C1;D;D1;BE;CE;C1E;DE;D1E" />
-            <reference ref="school_common"/>
+            <multiselect key="license_classes" text="License Classes" values="AM;A1;A2;A;B;BE;B1;C1;C1E;C;CE;D1;D1E;D;DE" values_sort="false" values_no_i18n="true" />
             <reference ref="link_contact_address" />
-             <preset_link preset_name="Driver Training" text="Similar but different tags:" />
+            <preset_link preset_name="Driver Training" text="Similar but different tags:" />
         </item> <!-- Driving School -->
         <item name="Driver Training" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=driver_training" />
             <space />
             <key key="amenity" value="driver_training" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="license_classes" text="License Classes" values="A;A1;B;BE;C,A;A1;B;B1;C;C1;D;D1;BE;CE;C1E;DE;D1E" />
+            <multiselect key="license_classes" text="License Classes" values="AM;A1;A2;A;B;BE;B1;C1;C1E;C;CE;D1;D1E;D;DE" values_sort="false" values_no_i18n="true" />
             <reference ref="link_contact_address" />
             <preset_link preset_name="Driving School" text="Similar but different tags:" />
         </item> <!-- Driver Training -->
