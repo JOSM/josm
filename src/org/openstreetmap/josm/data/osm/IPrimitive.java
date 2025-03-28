@@ -325,7 +325,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
     /**
      * Determines if this primitive has no timestamp information.
      * @return {@code true} if this primitive has no timestamp information
-     * @see #getTimestamp
+     * @see #getInstant
      * @see #getRawTimestamp
      */
     boolean isTimestampEmpty();

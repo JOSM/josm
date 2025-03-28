@@ -793,7 +793,7 @@ public class SplitWayCommand extends SequenceCommand {
 
     /**
      * This is only strictly necessary when we are splitting a route where it starts to loop back.
-     * Example: way1 -> way2 -> way2 -> way1
+     * Example: way1 → way2 → way2 → way1
      *
      * @param position         The position of the original way in the relation
      * @param indexOfWayToKeep The index of the way to keep in relation to {@code newWays}

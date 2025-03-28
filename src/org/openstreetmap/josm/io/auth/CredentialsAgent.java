@@ -74,7 +74,7 @@ public interface CredentialsAgent {
      *
      * @param host The host the access token is for
      * @param accessToken the access Token. null, to remove the Access Token. This will remove all IOAuthTokens <i>not</i> managed by
-     *                    {@link #storeOAuthAccessToken(IOAuthToken)}.
+     *                    {@link #storeOAuthAccessToken(String, IOAuthToken)}.
      * @throws CredentialsAgentException if something goes wrong
      * @since 18650
      */
