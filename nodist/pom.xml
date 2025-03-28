@@ -32,20 +32,20 @@
     <repositories>
         <repository>
             <id>JOSM</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
+            <url>https://josm.openstreetmap.de/repository/public/</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>JOSM</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
+            <url>https://josm.openstreetmap.de/repository/public/</url>
         </pluginRepository>
     </pluginRepositories>
     <distributionManagement>
         <snapshotRepository>
             <id>josm-snapshots</id>
             <name>JOSM snapshots</name>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/snapshots</url>
+            <url>https://josm.openstreetmap.de/repository/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     <build>

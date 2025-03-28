@@ -24,7 +24,7 @@
         <property name="ivy.jar.dir" location="${tools.dir}/ivy"/>
         <property name="ivy.jar.file" location="${ivy.jar.dir}/ivy-${ivy.version}.jar"/>
         <mkdir dir="${ivy.jar.dir}"/>
-        <get src="https://josm.openstreetmap.de/nexus/content/repositories/public/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
+        <get src="https://josm.openstreetmap.de/repository/public/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
              dest="${ivy.jar.file}"
              skipexisting="true"
         />
