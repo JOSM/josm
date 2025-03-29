@@ -863,7 +863,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      * Returns the gpxCorrelateAction
      * @return the gpxCorrelateAction
      */
-    public CorrelateGpxWithImages getGpxCorrelateAction() {
+    public synchronized CorrelateGpxWithImages getGpxCorrelateAction() {
         if (gpxCorrelateAction == null) {
             gpxCorrelateAction = new CorrelateGpxWithImages(this);
         }
