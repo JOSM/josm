@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.openstreetmap.josm</groupId>
     <artifactId>josm-parent</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <relativePath>./nodist/pom.xml</relativePath>
   </parent>
 
