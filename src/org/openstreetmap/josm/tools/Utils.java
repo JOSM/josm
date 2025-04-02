@@ -697,18 +697,6 @@ public final class Utils {
     }
 
     /**
-     * Determines if a string is null or blank.
-     * @param string string
-     * @return {@code true} if string is null or blank
-     * @since 18208
-     * @deprecated use {@link #isStripEmpty(String)} or {@link String#isBlank()} instead
-     */
-    @Deprecated(since = "19080", forRemoval = true)
-    public static boolean isBlank(String string) {
-        return isStripEmpty(string);
-    }
-
-    /**
      * Returns the first not empty string in the given candidates, otherwise the default string.
      * @param defaultString default string returned if all candidates would be empty if stripped
      * @param candidates string candidates to consider
