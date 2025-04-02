@@ -290,9 +290,9 @@ public class MapCSSTagChecker extends Test.TagTest {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         ParseResult result;
         try (CachedFile cache = new CachedFile(url)) {
-             Pair <ZipFile, InputStream> zip = cache.findZipEntryInputStream("validator.mapcss", "");
-             try (InputStream s = zip != null ? zip.b : cache.getInputStream();
-             Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
+            Pair<ZipFile, InputStream> zip = cache.findZipEntryInputStream("validator.mapcss", "");
+            try (InputStream s = zip != null ? zip.b : cache.getInputStream();
+            Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
                 if (zip != null)
                     I18n.addTexts(cache.getFile());
                 result = MapCSSTagCheckerRule.readMapCSS(reader, assertionConsumer);

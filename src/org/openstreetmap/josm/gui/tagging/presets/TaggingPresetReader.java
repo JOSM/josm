@@ -376,20 +376,21 @@ public final class TaggingPresetReader {
         Stopwatch stopwatch = Stopwatch.createStarted();
         try (
             CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
-            // zip may be null, but Java 7 allows it: https://blogs.oracle.com/darcy/entry/project_coin_null_try_with
         ) {
-            Pair <ZipFile, InputStream> zip = cf.findZipEntryInputStream("xml", "preset");
-            if (zip != null) {
-                try {
+            Pair<ZipFile, InputStream> zip = cf.findZipEntryInputStream("xml", "preset");
+            try {
+                if (zip != null) {
                     zipIcons = cf.getFile();
                     I18n.addTexts(zipIcons);
-                } finally {
+                }
+                try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip.b)) {
+                    tp = readAll(new BufferedReader(r), validate, all);
+                }
+            } finally {
+                if (zip != null) {
                     Utils.close(zip.b);
                     Utils.close(zip.a);
                 }
-            }
-            try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip.b)) {
-                tp = readAll(new BufferedReader(r), validate, all);
             }
         }
         Logging.debug(stopwatch.toString("Reading presets"));
