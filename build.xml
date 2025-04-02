@@ -104,6 +104,9 @@
         <condition property="isJava19"><matches string="${ant.java.version}" pattern="19|[2-9][0-9]" /></condition>
         <!-- <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition> -->
         <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
+        <!-- <condition property="isJava22"><matches string="${ant.java.version}" pattern="2[2-9]|[3-9][0-9]" /></condition> -->
+        <!-- <condition property="isJava23"><matches string="${ant.java.version}" pattern="2[3-9]|[3-9][0-9]" /></condition> -->
+        <condition property="isJava24"><matches string="${ant.java.version}" pattern="2[4-9]|[3-9][0-9]" /></condition>
         <!-- Disable jacoco on Java 19+, see https://github.com/jacoco/jacoco/pull/1282 -->
         <condition property="coverageByDefault">
             <not>
@@ -463,7 +466,7 @@ Build-Date: ${build.tstamp}
                         <jvmarg value="${jacocoagent@{testfamily}@{testITsuffix}}" if:set="jacocoagent@{testfamily}@{testITsuffix}" />
                         <jvmarg value="-Dfile.encoding=UTF-8"/>
                         <jvmarg value="-Djava.locale.providers=SPI,CLDR" />
-                        <jvmarg value="-Djava.security.manager=allow" if:set="isJava17" />
+                        <jvmarg value="-Djava.security.manager=allow" if:set="isJava17" unless:set="isJava24" />
                         <jvmarg value="-javaagent:${test.dir}/lib/junit5-system-exit.jar" if:set="isJava17"/>
                         <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
                         <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
