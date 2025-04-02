@@ -315,8 +315,10 @@ public class CachedFile implements Closeable {
      * file in the ZIP file.
      */
     public String findZipEntryPath(String extension, String namepart) {
-        Pair<String, InputStream> ze = findZipEntryImpl(extension, namepart);
+        Pair<String, Pair<ZipFile, InputStream>> ze = findZipEntryImpl(extension, namepart);
         if (ze == null) return null;
+        Utils.close(ze.b.b);
+        Utils.close(ze.b.a);
         return ze.a;
     }
 
@@ -327,15 +329,16 @@ public class CachedFile implements Closeable {
      * @return InputStream to the matching file. <code>null</code> if this cached file
      * doesn't represent a zip file or if there was no matching
      * file in the ZIP file.
-     * @since 6148
+     * The returned ZipFile must be closed after use.
+     * @since 19372
      */
-    public InputStream findZipEntryInputStream(String extension, String namepart) {
-        Pair<String, InputStream> ze = findZipEntryImpl(extension, namepart);
+    public Pair<ZipFile, InputStream> findZipEntryInputStream(String extension, String namepart) {
+        Pair<String, Pair<ZipFile, InputStream>> ze = findZipEntryImpl(extension, namepart);
         if (ze == null) return null;
         return ze.b;
     }
 
-    private Pair<String, InputStream> findZipEntryImpl(String extension, String namepart) {
+    private Pair<String, Pair<ZipFile, InputStream>> findZipEntryImpl(String extension, String namepart) {
         File file = null;
         try {
             file = getFile();
@@ -344,9 +347,9 @@ public class CachedFile implements Closeable {
         }
         if (file == null)
             return null;
-        Pair<String, InputStream> res = null;
+        Pair<String, Pair <ZipFile, InputStream>> res = null;
         try {
-            ZipFile zipFile = new ZipFile(file, StandardCharsets.UTF_8); // NOPMD
+            ZipFile zipFile = new ZipFile(file, StandardCharsets.UTF_8);
             ZipEntry resentry = null;
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -357,8 +360,8 @@ public class CachedFile implements Closeable {
                 }
             }
             if (resentry != null) {
-                InputStream is = zipFile.getInputStream(resentry); // NOPMD
-                res = Pair.create(resentry.getName(), is);
+                InputStream is = zipFile.getInputStream(resentry);
+                res = Pair.create(resentry.getName(), Pair.create(zipFile, is));
             } else {
                 Utils.close(zipFile);
             }

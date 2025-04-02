@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -288,17 +289,21 @@ public class MapCSSTagChecker extends Test.TagTest {
     public synchronized ParseResult addMapCSS(String url, Consumer<String> assertionConsumer) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         ParseResult result;
-        try (CachedFile cache = new CachedFile(url);
-             InputStream zip = cache.findZipEntryInputStream("validator.mapcss", "");
-             InputStream s = zip != null ? zip : cache.getInputStream();
+        try (CachedFile cache = new CachedFile(url)) {
+             Pair <ZipFile, InputStream> zip = cache.findZipEntryInputStream("validator.mapcss", "");
+             try (InputStream s = zip != null ? zip.b : cache.getInputStream();
              Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
-            if (zip != null)
-                I18n.addTexts(cache.getFile());
-            result = MapCSSTagCheckerRule.readMapCSS(reader, assertionConsumer);
-            checks.remove(url);
-            checks.putAll(url, result.parseChecks);
-            urlTitles.put(url, findURLTitle(url));
-            indexData = null;
+                if (zip != null)
+                    I18n.addTexts(cache.getFile());
+                result = MapCSSTagCheckerRule.readMapCSS(reader, assertionConsumer);
+                checks.remove(url);
+                checks.putAll(url, result.parseChecks);
+                urlTitles.put(url, findURLTitle(url));
+                indexData = null;
+            } finally {
+                if (zip != null)
+                    Utils.close(zip.a);
+            }
         }
         return result;
     }
