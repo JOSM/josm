@@ -25,8 +25,10 @@ dpkg_java() {
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-17-openjdk/bin/java /usr/lib/jvm/java-17-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
         # Released versions in decreased order
-        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-22-openjdk/bin/java /usr/lib/jvm/java-22-openjdk-$ARCH/bin/java"
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-24-openjdk/bin/java /usr/lib/jvm/java-24-openjdk-$ARCH/bin/java"
         # EOL versions in decreased order
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-23-openjdk/bin/java /usr/lib/jvm/java-23-openjdk-$ARCH/bin/java"
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-22-openjdk/bin/java /usr/lib/jvm/java-22-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-20-openjdk/bin/java /usr/lib/jvm/java-20-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-19-openjdk/bin/java /usr/lib/jvm/java-19-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-18-openjdk/bin/java /usr/lib/jvm/java-18-openjdk-$ARCH/bin/java"
@@ -36,7 +38,7 @@ dpkg_java() {
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-13-openjdk/bin/java /usr/lib/jvm/java-13-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-12-openjdk/bin/java /usr/lib/jvm/java-12-openjdk-$ARCH/bin/java"
         # Development version(s)
-        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-23-openjdk/bin/java /usr/lib/jvm/java-23-openjdk-$ARCH/bin/java"
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-25-openjdk/bin/java /usr/lib/jvm/java-25-openjdk-$ARCH/bin/java"
     fi
 }
 
