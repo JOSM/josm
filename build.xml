@@ -801,7 +801,6 @@ Build-Date: ${build.tstamp}
             <classpath>
                 <pathelement path="${build.dir}"/>
                 <pathelement path="${test.dir}/build/unit"/>
-                <pathelement path="${commons-lang3.jar}"/>
             </classpath>
         </javac>
     </target>
@@ -816,7 +815,6 @@ Build-Date: ${build.tstamp}
                 <classpath>
                     <pathelement path="${build.dir}"/>
                     <pathelement path="${script-build.dir}"/>
-                    <pathelement path="${commons-lang3.jar}"/>
                 </classpath>
                 <arg value="--type"/>
                 <arg value="@{type}"/>
@@ -841,7 +839,6 @@ Build-Date: ${build.tstamp}
             <classpath>
                 <pathelement path="${build.dir}"/>
                 <pathelement path="${script-build.dir}"/>
-                <pathelement path="${commons-lang3.jar}"/>
             </classpath>
             <arg value="--noeli"/>
             <arg value="-p"/>

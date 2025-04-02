@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -453,38 +451,38 @@ public class SyncEditorLayerIndex {
                 + (getOverlay(e) ? " overlay=\"true\"" : "")
                 + ">\n");
             String t;
-            if (isNotBlank(t = getName(e)))
+            if (!Utils.isStripEmpty(t = getName(e)))
                 stream.write("        <name>"+cdata(t, true)+"</name>\n");
-            if (isNotBlank(t = getId(e)))
+            if (!Utils.isStripEmpty(t = getId(e)))
                 stream.write("        <id>"+t+"</id>\n");
-            if (isNotBlank(t = getCategory(e)))
+            if (!Utils.isStripEmpty(t = getCategory(e)))
                 stream.write("        <category>"+t+"</category>\n");
-            if (isNotBlank(t = getDate(e)))
+            if (!Utils.isStripEmpty(t = getDate(e)))
                 stream.write("        <date>"+t+"</date>\n");
-            if (isNotBlank(t = getCountryCode(e)))
+            if (!Utils.isStripEmpty(t = getCountryCode(e)))
                 stream.write("        <country-code>"+t+"</country-code>\n");
             if ((getDefault(e)))
                 stream.write("        <default>true</default>\n");
             stream.write(maininfo(e, "        "));
-            if (isNotBlank(t = getAttributionText(e)))
+            if (!Utils.isStripEmpty(t = getAttributionText(e)))
                 stream.write("        <attribution-text mandatory=\"true\">"+cdata(t, true)+"</attribution-text>\n");
-            if (isNotBlank(t = getAttributionUrl(e)))
+            if (!Utils.isStripEmpty(t = getAttributionUrl(e)))
                 stream.write("        <attribution-url>"+cdata(t)+"</attribution-url>\n");
-            if (isNotBlank(t = getLogoImage(e)))
+            if (!Utils.isStripEmpty(t = getLogoImage(e)))
                 stream.write("        <logo-image>"+cdata(t, true)+"</logo-image>\n");
-            if (isNotBlank(t = getLogoUrl(e)))
+            if (!Utils.isStripEmpty(t = getLogoUrl(e)))
                 stream.write("        <logo-url>"+cdata(t)+"</logo-url>\n");
-            if (isNotBlank(t = getTermsOfUseText(e)))
+            if (!Utils.isStripEmpty(t = getTermsOfUseText(e)))
                 stream.write("        <terms-of-use-text>"+cdata(t, true)+"</terms-of-use-text>\n");
-            if (isNotBlank(t = getTermsOfUseUrl(e)))
+            if (!Utils.isStripEmpty(t = getTermsOfUseUrl(e)))
                 stream.write("        <terms-of-use-url>"+cdata(t)+"</terms-of-use-url>\n");
-            if (isNotBlank(t = getPermissionReferenceUrl(e)))
+            if (!Utils.isStripEmpty(t = getPermissionReferenceUrl(e)))
                 stream.write("        <permission-ref>"+cdata(t)+"</permission-ref>\n");
-            if (isNotBlank(t = getPrivacyPolicyUrl(e)))
+            if (!Utils.isStripEmpty(t = getPrivacyPolicyUrl(e)))
                 stream.write("        <privacy-policy-url>"+cdata(t)+"</privacy-policy-url>\n");
             if ((getValidGeoreference(e)))
                 stream.write("        <valid-georeference>true</valid-georeference>\n");
-            if (isNotBlank(t = getIcon(e)))
+            if (!Utils.isStripEmpty(t = getIcon(e)))
                 stream.write("        <icon>"+cdata(t)+"</icon>\n");
             for (Entry<String, String> d : getDescriptions(e).entrySet()) {
                 stream.write("        <description lang=\""+d.getKey()+"\">"+cdata(d.getValue(), true)+"</description>\n");
@@ -541,15 +539,15 @@ public class SyncEditorLayerIndex {
             if (!e.isValid()) {
                 myprintln("~~~ JOSM-Entry missing fields (" + String.join(", ", e.getMissingFields()) + "): " + getDescription(e));
             }
-            if (isBlank(getUrl(e))) {
+            if (Utils.isStripEmpty(getUrl(e))) {
                 myprintln("~~~ JOSM-Entry without URL: " + getDescription(e));
                 continue;
             }
-            if (isBlank(e.getDate()) && e.getDate() != null) {
+            if (Utils.isStripEmpty(e.getDate()) && e.getDate() != null) {
                 myprintln("~~~ JOSM-Entry with empty Date: " + getDescription(e));
                 continue;
             }
-            if (isBlank(getName(e))) {
+            if (Utils.isStripEmpty(getName(e))) {
                 myprintln("~~~ JOSM-Entry without Name: " + getDescription(e));
                 continue;
             }
@@ -624,7 +622,7 @@ public class SyncEditorLayerIndex {
                     eliUrls.remove(urle);
                     le.remove(urle);
                     lj.remove(urlhttps);
-                } else if (isNotBlank(ide)) {
+                } else if (!Utils.isStripEmpty(ide)) {
                     checkUrlsEquality(ide, e, urle, le, lj);
                 }
             }
@@ -884,9 +882,9 @@ public class SyncEditorLayerIndex {
         String et = getPrivacyPolicyUrl(e);
         String jt = getPrivacyPolicyUrl(j);
         if (!Objects.equals(et, jt)) {
-            if (isBlank(jt)) {
+            if (Utils.isStripEmpty(jt)) {
                 myprintln("- Missing JOSM privacy policy URL ("+et+"): "+getDescription(j));
-            } else if (isNotBlank(et)) {
+            } else if (!Utils.isStripEmpty(et)) {
                 myprintln("* Privacy policy URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
             } else if (!optionNoEli) {
                 myprintln("+ Missing ELI privacy policy URL ('"+jt+"'): "+getDescription(j));
@@ -898,13 +896,13 @@ public class SyncEditorLayerIndex {
         String et = getPermissionReferenceUrl(e);
         String jt = getPermissionReferenceUrl(j);
         String jt2 = getTermsOfUseUrl(j);
-        if (isBlank(jt)) jt = jt2;
+        if (Utils.isStripEmpty(jt)) jt = jt2;
         if (!Objects.equals(et, jt)) {
-            if (isBlank(jt)) {
+            if (Utils.isStripEmpty(jt)) {
                 myprintln("- Missing JOSM license URL ("+et+"): "+getDescription(j));
-            } else if (isNotBlank(et)) {
+            } else if (!Utils.isStripEmpty(et)) {
                 String ethttps = et.replace("http:", "https:");
-                if (isBlank(jt2) || !(jt2.equals(ethttps) || jt2.equals(et+"/") || jt2.equals(ethttps+"/"))) {
+                if (Utils.isStripEmpty(jt2) || !(jt2.equals(ethttps) || jt2.equals(et+"/") || jt2.equals(ethttps+"/"))) {
                     if (jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
                         myprintln("+ License URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
                     } else {
@@ -926,9 +924,9 @@ public class SyncEditorLayerIndex {
         String et = getAttributionUrl(e);
         String jt = getAttributionUrl(j);
         if (!Objects.equals(et, jt)) {
-            if (isBlank(jt)) {
+            if (Utils.isStripEmpty(jt)) {
                 myprintln("- Missing JOSM attribution URL ("+et+"): "+getDescription(j));
-            } else if (isNotBlank(et)) {
+            } else if (!Utils.isStripEmpty(et)) {
                 String ethttps = et.replace("http:", "https:");
                 if (jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
                     myprintln("+ Attribution URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
@@ -945,9 +943,9 @@ public class SyncEditorLayerIndex {
         String et = getAttributionText(e);
         String jt = getAttributionText(j);
         if (!Objects.equals(et, jt)) {
-            if (isBlank(jt)) {
+            if (Utils.isStripEmpty(jt)) {
                 myprintln("- Missing JOSM attribution text ("+et+"): "+getDescription(j));
-            } else if (isNotBlank(et)) {
+            } else if (!Utils.isStripEmpty(et)) {
                 myprintln("* Attribution text differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
             } else if (!optionNoEli) {
                 myprintln("+ Missing ELI attribution text ('"+jt+"'): "+getDescription(j));
@@ -959,14 +957,14 @@ public class SyncEditorLayerIndex {
         String et = getProjections(e).stream().sorted().collect(Collectors.joining(" "));
         String jt = getProjections(j).stream().sorted().collect(Collectors.joining(" "));
         if (!Objects.equals(et, jt)) {
-            if (isBlank(jt)) {
+            if (Utils.isStripEmpty(jt)) {
                 String t = getType(e);
                 if ("wms_endpoint".equals(t) || "tms".equals(t)) {
                     myprintln("+ ELI projections for type "+t+": "+getDescription(j));
                 } else {
                     myprintln("- Missing JOSM projections ("+et+"): "+getDescription(j));
                 }
-            } else if (isNotBlank(et)) {
+            } else if (!Utils.isStripEmpty(et)) {
                 if ("EPSG:3857 EPSG:4326".equals(et) || "EPSG:3857".equals(et) || "EPSG:4326".equals(et)) {
                     myprintln("+ ELI has minimal projections ('"+et+"' != '"+jt+"'): "+getDescription(j));
                 } else {
@@ -1166,8 +1164,8 @@ public class SyncEditorLayerIndex {
     void compareIcons(ImageryInfo j, JsonObject e) {
         String ij = getIcon(j);
         String ie = getIcon(e);
-        boolean ijok = isNotBlank(ij);
-        boolean ieok = isNotBlank(ie);
+        boolean ijok = !Utils.isStripEmpty(ij);
+        boolean ieok = !Utils.isStripEmpty(ie);
         if (ijok && !ieok) {
             if (!optionNoEli) {
                 myprintln("+ No ELI icon: "+getDescription(j));
@@ -1190,8 +1188,8 @@ public class SyncEditorLayerIndex {
     void compareCategories(ImageryInfo j, JsonObject e) {
         String cj = getCategory(j);
         String ce = getCategory(e);
-        boolean cjok = isNotBlank(cj);
-        boolean ceok = isNotBlank(ce);
+        boolean cjok = !Utils.isStripEmpty(cj);
+        boolean ceok = !Utils.isStripEmpty(ce);
         if (cjok && !ceok) {
             if (!optionNoEli) {
                 myprintln("+ No ELI category: "+getDescription(j));
@@ -1248,16 +1246,16 @@ public class SyncEditorLayerIndex {
                 urls.add(url);
             }
             String jt = getPermissionReferenceUrl(j);
-            if (isNotBlank(jt) && !"Public Domain".equalsIgnoreCase(jt))
+            if (!Utils.isStripEmpty(jt) && !"Public Domain".equalsIgnoreCase(jt))
                 urls.add(jt);
             jt = getTermsOfUseUrl(j);
-            if (isNotBlank(jt))
+            if (!Utils.isStripEmpty(jt))
                 urls.add(jt);
             jt = getAttributionUrl(j);
-            if (isNotBlank(jt))
+            if (!Utils.isStripEmpty(jt))
                 urls.add(jt);
             jt = getIcon(j);
-            if (isNotBlank(jt)) {
+            if (!Utils.isStripEmpty(jt)) {
                 if (!jt.startsWith("data:image/"))
                     urls.add(jt);
                 else {
@@ -1291,7 +1289,7 @@ public class SyncEditorLayerIndex {
             if (josmMirrors.containsKey(url)) {
                 continue;
             }
-            if (isBlank(id)) {
+            if (Utils.isStripEmpty(id)) {
                 myprintln("~ No JOSM-ID: "+getDescription(j));
             } else if (josmIds.containsKey(id)) {
                 myprintln("~ JOSM-ID "+id+" not unique: "+getDescription(j));
@@ -1299,7 +1297,7 @@ public class SyncEditorLayerIndex {
                 josmIds.put(id, j);
             }
             String d = getDate(j);
-            if (isNotBlank(d)) {
+            if (!Utils.isStripEmpty(d)) {
                 Pattern patternD = Pattern.compile("^(-|(\\d\\d\\d\\d)(-(\\d\\d)(-(\\d\\d))?)?)(;(-|(\\d\\d\\d\\d)(-(\\d\\d)(-(\\d\\d))?)?))?$");
                 Matcher m = patternD.matcher(d);
                 if (!m.matches()) {
@@ -1316,13 +1314,13 @@ public class SyncEditorLayerIndex {
                     }
                 }
             }
-            if (isNotBlank(getAttributionUrl(j)) && isBlank(getAttributionText(j))) {
+            if (!Utils.isStripEmpty(getAttributionUrl(j)) && Utils.isStripEmpty(getAttributionText(j))) {
                 myprintln("~ Attribution link without text: "+getDescription(j));
             }
-            if (isNotBlank(getLogoUrl(j)) && isBlank(getLogoImage(j))) {
+            if (!Utils.isStripEmpty(getLogoUrl(j)) && Utils.isStripEmpty(getLogoImage(j))) {
                 myprintln("~ Logo link without image: "+getDescription(j));
             }
-            if (isNotBlank(getTermsOfUseText(j)) && isBlank(getTermsOfUseUrl(j))) {
+            if (!Utils.isStripEmpty(getTermsOfUseText(j)) && Utils.isStripEmpty(getTermsOfUseUrl(j))) {
                 myprintln("~ Terms of Use text without link: "+getDescription(j));
             }
             List<Shape> js = getShapes(j);
@@ -1354,7 +1352,7 @@ public class SyncEditorLayerIndex {
             List<String> knownCategories = Arrays.asList(
                     "photo", "elevation", "map", "historicmap", "osmbasedmap", "historicphoto", "qa", "other");
             String cat = getCategory(j);
-            if (isBlank(cat)) {
+            if (Utils.isStripEmpty(cat)) {
                 myprintln("~ No category: "+getDescription(j));
             } else if (!knownCategories.contains(cat)) {
                 myprintln("~ Strange category "+cat+": "+getDescription(j));

@@ -204,6 +204,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.awaitility</groupId>
@@ -299,8 +300,6 @@
                 <argument>${scripts.src.dir}/SyncEditorLayerIndex.java</argument>
                 <argument>${basedir}</argument>
               </arguments>
-              <!-- We need commons-lang3, which isn't needed elsewhere in core (besides a test or two) -->
-              <classpathScope>test</classpathScope>
             </configuration>
             <goals>
               <goal>exec</goal>
