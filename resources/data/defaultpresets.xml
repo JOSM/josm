@@ -7224,7 +7224,7 @@
             <reference ref="ref_operator" />
             <preset_link preset_name="Power Substation" />
         </item> <!-- Transformer Tower -->
-        <item name="Terminal" icon="presets/power/terminal.svg" type="node" preset_name_label="true">
+        <item name="Terminal" icon="presets/power/terminal.svg" type="node" preset_name_label="true" name_context="power">
             <link wiki="Tag:power=terminal" />
             <space />
             <key key="power" value="terminal" />
