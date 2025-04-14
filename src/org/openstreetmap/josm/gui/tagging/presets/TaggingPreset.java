@@ -18,7 +18,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -449,7 +448,8 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             }
         };
         JPanel linkPanel = new JPanel(new GridBagLayout());
-        TaggingPresetItem previous = null;
+        List<PresetLink> alternativeTags = new ArrayList<>(); //list to store PresetLinks with alternative="true"
+        List<PresetLink> editAlsoTags = new ArrayList<>(); //list to store other presetLinks
         for (TaggingPresetItem i : data) {
             if (i instanceof Link) {
                 i.addToPanel(linkPanel, itemGuiSupport);
@@ -457,15 +457,34 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             } else {
                 if (i instanceof PresetLink) {
                     PresetLink link = (PresetLink) i;
-                    if (!(previous instanceof PresetLink && Objects.equals(((PresetLink) previous).text, link.text))) {
-                        itemPanel.add(link.createLabel(), GBC.eol().insets(0, 8, 0, 0));
+                    if (link.isAlternative()) {
+                        alternativeTags.add(link);
+                    } else {
+                        editAlsoTags.add(link);
                     }
                 }
-                if (i.addToPanel(itemPanel, itemGuiSupport)) {
+                if (!(i instanceof PresetLink) && (i.addToPanel(itemPanel, itemGuiSupport))) {
                     p.hasElements = true;
                 }
             }
-            previous = i;
+        }
+
+        if (!alternativeTags.isEmpty()) {
+            PresetLink link = new PresetLink();
+            itemPanel.add(link.createAlternativeLabel(), GBC.eol().insets(0, 8, 0, 0));
+            for (PresetLink links : alternativeTags) {
+                links.addToPanel(itemPanel, itemGuiSupport);
+                p.hasElements = true;
+            }
+        }
+
+        if (!editAlsoTags.isEmpty()) {
+            PresetLink link = new PresetLink();
+            itemPanel.add(link.createLabel(), GBC.eol().insets(0, 8, 0, 0));
+            for (PresetLink links : editAlsoTags) {
+                links.addToPanel(itemPanel, itemGuiSupport);
+                p.hasElements = true;
+            }
         }
         p.add(itemPanel, GBC.eol().fill());
         p.add(linkPanel, GBC.eol().fill());
