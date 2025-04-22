@@ -26,7 +26,7 @@ public final class UrlPatterns {
         /** URL of remote geojson files, optionally compressed */
         COMPRESSED_FILE(".*/(.*\\.(json|geojson)(\\."+COMPRESSED+")?)"),
         /** URL of generic service providing geojson as output format */
-        FORMAT_GEOJSON (".*format=geojson.*");
+        FORMAT_GEOJSON (".*f(ormat)?=geojson.*");
 
         private final String urlPattern;
 
