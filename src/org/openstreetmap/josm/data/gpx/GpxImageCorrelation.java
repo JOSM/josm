@@ -575,7 +575,7 @@ public final class GpxImageCorrelation {
     /**
      * Finds the last image in the sorted image list which is before the given time
      * @param images list of images
-     * @param searchTime time to search
+     * @param searchedTime time to search
      * @return index of last image before given time
      */
     private static int getLastIndexOfListBefore(List<? extends GpxImageEntry> images, long searchedTime) {
