@@ -200,6 +200,11 @@ public final class GpxImageCorrelation {
         return trks;
     }
 
+    /**
+     * Gets the elevation value from a WayPoint's attributes.
+     * @param wp the WayPoint
+     * @return the WayPoint's elevation (in meters)
+     */
     static Double getElevation(WayPoint wp) {
         if (wp != null) {
             String value = wp.getString(GpxConstants.PT_ELE);
@@ -214,6 +219,12 @@ public final class GpxImageCorrelation {
         return null;
     }
 
+    /**
+     * Gets the horizontal positioning estimated error value from a WayPoint's attributes.
+     * @param wp the WayPoint
+     * @return the WayPoint's horizontal positioning error (in meters)
+     * @since 19387
+     */
     static Double getHPosErr(WayPoint wp) {
         if (wp != null) {
             if (wp.attr.get(GpxConstants.PT_STD_HDEV) instanceof Float) {
@@ -231,6 +242,14 @@ public final class GpxImageCorrelation {
         return null;
     }
 
+    /**
+     * Retrieves GPS Dilution of Precision (DOP) from a WayPoint's attributes.
+     * Checks for Position DOP (PDOP) first, then falls back to Horizontal DOP (HDOP) if PDOP isn't available.
+     * Converts Float values to Double for consistent return type.
+     * @param wp the WayPoint
+     * @return the WayPoint's DOP value as Double (PDOP preferred, HDOP fallback)
+     * @since 19387
+     */
     static Double getGpsDop(WayPoint wp) {
         if (wp != null) {
             if (wp.attr.get(GpxConstants.PT_PDOP) != null) {
@@ -252,6 +271,13 @@ public final class GpxImageCorrelation {
         return null;
     }
 
+    /**
+     * Gets the track direction angle value from a waypoint in a GNSS track.
+     * This angle is the GNSS receiver movement direction.
+     * @param wp the waypoint
+     * @return the waypoint direction (in degrees)
+     * @since 19387
+     */
     static Double getGpsTrack(WayPoint wp) {
         if (wp != null) {
             String trackvalue = wp.getString(GpxConstants.PT_COURSE);
@@ -267,6 +293,19 @@ public final class GpxImageCorrelation {
         return null;
     }
 
+    /**
+     * Determines the GPS processing method based on previous and current GNSS fix modes.
+     * This method compares the positioning modes of the previous and current GNSS fixes,
+     * selects the most basic processing method (lowest index in positioningModes list),
+     * and formats the output string according to predefined conventions.
+     * Because the returned processing method depends on a time correlation between an image
+     * and a waypoint timestamp, the term 'CORRELATION' is added. 
+     * @param prevGpsFixMode the previous GNSS fix mode (e.g., "SINGLE", "DGNSS", "RTK_FIX")
+     * @param curGpsFixMode the current GNSS fix mode
+     * @param positioningModes list of positioning modes ordered by accuracy
+     * @return formatted processing method string
+     * @since 19387
+     */
     static String getGpsProcMethod(String prevGpsFixMode, final String curGpsFixMode,
                                     final List<String> positioningModes) {
         String gpsProcMethod = null;
@@ -291,6 +330,17 @@ public final class GpxImageCorrelation {
         return gpsProcMethod;
     }
 
+    /**
+     * Determines if the GNSS mode is 2d or 3d, based on previous and current GNSS fix modes.
+     * This method compares the positioning modes of the previous and current GNSS fixes,
+     * selects the most basic processing method (lowest index in positioningModes list),
+     * and return the lowest value between 2d or 3d mode, or null if it's not a gnss mode (e.g. estimated, manual).
+     * @param prevGpsFixMode the previous GNSS mode
+     * @param curGpsFixMode the current GNSS mode
+     * @param positioningModes list of positioning modes ordered by accuracy
+     * @return 2 for 2d, 3 for 3d, or null
+     * @since 19387
+     */
     static Integer getGps2d3dMode(String prevGpsFixMode, final String curGpsFixMode,
                                 final List<String> positioningModes) {
         Integer lowestMode = null;
@@ -512,10 +562,22 @@ public final class GpxImageCorrelation {
     }
     // CHECKSTYLE.ON: ParameterNumber
 
+    /**
+     * Computes an adjusted direction by applying an angular offset and normalizing the result between 0° and 360°.
+     * @param direction initial direction angle (in radians)
+     * @param angleOffset angular offset to apply (in degrees)
+     * @return resulting direction normalized to the range [0, 360) degrees
+     */
     private static double computeDirection(double direction, double angleOffset) {
         return (Utils.toDegrees(direction) + angleOffset) % 360d;
     }
 
+    /**
+     * Finds the last image in the sorted image list which is before the given time
+     * @param images list of images
+     * @param searchTime time to search
+     * @return index of last image before given time
+     */
     private static int getLastIndexOfListBefore(List<? extends GpxImageEntry> images, long searchedTime) {
         int lstSize = images.size();
 
