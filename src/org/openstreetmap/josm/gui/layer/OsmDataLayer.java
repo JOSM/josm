@@ -978,12 +978,17 @@ public class OsmDataLayer extends AbstractOsmDataLayer
         addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_SYM, "wpt_symbol", null);
         addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_TYPE, null, null);
 
+        // Angle info
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_COURSE, "gps:course");
+
         // Accuracy info
         addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_FIX, "gps:fix", null);
         addIntegerIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_SAT, "gps:sat");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_HDOP, "gps:hdop");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_VDOP, "gps:vdop");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_PDOP, "gps:pdop");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_STD_HDEV, "gps:stdhdev");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_STD_VDEV, "gps:stdvdev");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
         addIntegerIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_DGPSID, "gps:dgpsid");
 

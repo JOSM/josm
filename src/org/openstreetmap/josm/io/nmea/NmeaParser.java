@@ -466,7 +466,7 @@ public class NmeaParser {
                     accu = e[VTG.COURSE.position];
                     if (!accu.isEmpty() && currentwp != null) {
                         Double.parseDouble(accu);
-                        currentwp.put("course", accu);
+                        currentwp.put(GpxConstants.PT_COURSE, accu);
                     }
                 }
                 // SPEED
@@ -542,7 +542,7 @@ public class NmeaParser {
                 accu = e[RMC.COURSE.position];
                 if (!accu.isEmpty() && !currentwp.attr.containsKey("course")) {
                     Double.parseDouble(accu);
-                    currentwp.put("course", accu);
+                    currentwp.put(GpxConstants.PT_COURSE, accu);
                 }
 
                 // TODO fix?
