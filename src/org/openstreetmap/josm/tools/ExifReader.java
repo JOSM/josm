@@ -149,8 +149,7 @@ public final class ExifReader {
     public static Instant readGpsInstant(GpsDirectory dirGps) {
         if (dirGps != null) {
             try {
-                Instant dateTimeStamp = dirGps.getGpsDate().toInstant();
-                return dateTimeStamp;
+                return dirGps.getGpsDate().toInstant();
             } catch (UncheckedParseException | DateTimeException e) {
                 Logging.error(e);
             }
@@ -421,9 +420,8 @@ public final class ExifReader {
     public static Double readHpositioningError(GpsDirectory dirGps) {
         if (dirGps != null) {
             Double hposerr = dirGps.getDoubleObject(GpsDirectory.TAG_H_POSITIONING_ERROR);
-            if (hposerr != null) {
-                return hposerr.doubleValue();
-            }
+            if (hposerr != null)
+                return hposerr;
         }
         return null;
     }
@@ -464,9 +462,8 @@ public final class ExifReader {
     public static Integer readGpsDiffMode(GpsDirectory dirGps) {
         if (dirGps != null) {
             Integer gpsDiffMode = dirGps.getInteger(GpsDirectory.TAG_DIFFERENTIAL);
-            if (gpsDiffMode != null) {
-                return gpsDiffMode.intValue();
-            }
+            if (gpsDiffMode != null)
+                return gpsDiffMode;
         }
         return null;
     }
@@ -507,9 +504,8 @@ public final class ExifReader {
     public static Integer readGpsMeasureMode(GpsDirectory dirGps) {
         if (dirGps != null) {
             Integer gps2d3dMode = dirGps.getInteger(GpsDirectory.TAG_MEASURE_MODE);
-            if (gps2d3dMode != null) {
-                return gps2d3dMode.intValue();
-            }
+            if (gps2d3dMode != null)
+                return gps2d3dMode;
         }
         return null;
     }
@@ -543,7 +539,7 @@ public final class ExifReader {
         if (dirGps != null) {
             Double gpsDop = dirGps.getDoubleObject(GpsDirectory.TAG_DOP);
             if (gpsDop != null) {
-                return gpsDop.doubleValue();
+                return gpsDop;
             }
         }
         return null;
@@ -577,9 +573,8 @@ public final class ExifReader {
     public static String readGpsDatum(GpsDirectory dirGps) {
         if (dirGps != null) {
             String gpsDatum = dirGps.getString(GpsDirectory.TAG_MAP_DATUM);
-            if (gpsDatum != null) {
-                return gpsDatum.toString();
-            }
+            if (gpsDatum != null)
+                return gpsDatum;
         }
         return null;
     }
@@ -636,9 +631,8 @@ public final class ExifReader {
     public static String readGpsProcessingMethod(GpsDirectory dirGps) {
         if (dirGps != null) {
             String gpsProcessingMethod = dirGps.getDescription(GpsDirectory.TAG_PROCESSING_METHOD);
-            if (gpsProcessingMethod != null) {
-                return gpsProcessingMethod.toString();
-            }
+            if (gpsProcessingMethod != null)
+                return gpsProcessingMethod;
         }
         return null;
     }

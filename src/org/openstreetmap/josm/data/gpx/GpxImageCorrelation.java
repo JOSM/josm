@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
@@ -237,16 +238,14 @@ public final class GpxImageCorrelation {
                     Float pdopvalue = (Float) wp.attr.get(GpxConstants.PT_PDOP);
                     return pdopvalue.doubleValue();
                 } else if (wp.attr.get(GpxConstants.PT_PDOP) instanceof Double) {
-                    Double pdopvalue = (Double) wp.attr.get(GpxConstants.PT_PDOP);
-                    return pdopvalue.doubleValue();
+                    return (Double) wp.attr.get(GpxConstants.PT_PDOP);
                 }
             } else if (wp.attr.get(GpxConstants.PT_HDOP) != null) {
                 if (wp.attr.get(GpxConstants.PT_HDOP) instanceof Float) {
                     Float hdopvalue = (Float) wp.attr.get(GpxConstants.PT_HDOP);
                     return hdopvalue.doubleValue();
                 } else if (wp.attr.get(GpxConstants.PT_HDOP) instanceof Double) {
-                    Double hdopvalue = (Double) wp.attr.get(GpxConstants.PT_HDOP);
-                    return hdopvalue.doubleValue();
+                    return (Double) wp.attr.get(GpxConstants.PT_HDOP);
                 }
             }
         }
@@ -278,11 +277,11 @@ public final class GpxImageCorrelation {
             if (lowestProcIndex < 0) {
                 return null;
             }
-            gpsProcMethod = "GNSS" + " " + positioningModes.get(lowestProcIndex).toUpperCase() + " " + "CORRELATION";
+            gpsProcMethod = "GNSS" + " " + positioningModes.get(lowestProcIndex).toUpperCase(Locale.ENGLISH) + " " + "CORRELATION";
             if (lowestProcIndex < lowestGnssModeIdx) {
-                gpsProcMethod = positioningModes.get(lowestProcIndex).toUpperCase() + " " + "CORRELATION";
+                gpsProcMethod = positioningModes.get(lowestProcIndex).toUpperCase(Locale.ENGLISH) + " " + "CORRELATION";
             } else {
-                gpsProcMethod = "GNSS" + " " + positioningModes.get(lowestProcIndex).toUpperCase() + " " + "CORRELATION";
+                gpsProcMethod = "GNSS" + " " + positioningModes.get(lowestProcIndex).toUpperCase(Locale.ENGLISH) + " " + "CORRELATION";
             }
             gpsProcMethod = gpsProcMethod.replace("FLOAT RTK", "RTK_FLOAT");
             gpsProcMethod = gpsProcMethod.replace(" RTK ", " RTK_FIX ");

@@ -481,8 +481,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     }
 
     static String loadGpsDatum() {
-        String gpsDatum = Config.getPref().get("geoimage.datum", "WGS-84");
-        return gpsDatum;
+        return Config.getPref().get("geoimage.datum", "WGS-84");
     }
 
     @Override
