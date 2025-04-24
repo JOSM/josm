@@ -262,7 +262,7 @@ public interface ImageMetadata {
 
     /**
      * Sets the EXIF horizontal positioning error.
-     * @param exifHposErr the EXIF horizontal positionning error
+     * @param exifHPosErr the EXIF horizontal positionning error
      * @since 19387
      */
     void setExifHPosErr(Double exifHPosErr);

@@ -227,7 +227,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     }
 
     /**
-     * Return the exif GPS coordinates datum value.
+     * Return the EXIF GPS coordinates datum value.
      * @return The datum value
      * @since 19387
      */
@@ -239,7 +239,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     }
 
     /**
-     * Return the exif GPS processing method string
+     * Return the EXIF GPS processing method string
      * @return the processing method string
      * @since 19387
      */
@@ -549,6 +549,10 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         this.gpsTime = gpsTime;
     }
 
+    /**
+     * Sets the EXIF coordinate.
+     * @param exifCoor the coordinate
+     */
     public void setExifCoor(LatLon exifCoor) {
         this.exifCoor = exifCoor;
     }
@@ -570,8 +574,8 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     }
 
     /**
-     * Sets the exif GPS track (move direction angle)
-     * @param exifGpsTrack the exif GPS track angle
+     * Sets the EXIF GPS track (move direction angle)
+     * @param exifGpsTrack the EXIF GPS track angle
      * @since 19387
      */
     @Override
@@ -580,8 +584,8 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     }
 
     /**
-     * Sets the exif horizontal positioning error
-     * @param exifHposErr the Exif horizontal positionning error
+     * Sets the EXIF horizontal positioning error
+     * @param exifHPosErr the EXIF horizontal positionning error
      * @since 19387
      */
     @Override
