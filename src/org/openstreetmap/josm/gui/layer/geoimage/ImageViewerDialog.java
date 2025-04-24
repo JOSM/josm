@@ -594,7 +594,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private class ImageExtendedInfoAction extends JosmAction {
         ImageExtendedInfoAction() {
             super(null, new ImageProvider("info"), tr("Display image extended metadata"), Shortcut.registerShortcut(
-                    "geoimage:extendedinfos", tr(GEOIMAGE_FILLER, tr("Toggle Osd extended informations")),
+                    "geoimage:extendedinfos", tr(GEOIMAGE_FILLER, tr("Toggle display of extended information")),
                     KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
             false, null, false);
         }
