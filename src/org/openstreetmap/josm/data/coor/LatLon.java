@@ -169,18 +169,6 @@ public class LatLon extends Coordinate implements ILatLon {
     }
 
     /**
-     * Determines if the other point has almost the same lat/lon values.
-     * @param other other lat/lon
-     * @return <code>true</code> if the other point has almost the same lat/lon
-     * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
-     * @deprecated since 18464 (use {@link ILatLon#equalsEpsilon(ILatLon)} instead)
-     */
-    @Deprecated(since = "18464", forRemoval = true)
-    public boolean equalsEpsilon(LatLon other) {
-        return ILatLon.super.equalsEpsilon(other);
-    }
-
-    /**
      * Determines if this lat/lon is within the given bounding box.
      * @param b bounding box
      * @return <code>true</code> if this is within the given bounding box.
@@ -197,39 +185,6 @@ public class LatLon extends Coordinate implements ILatLon {
      */
     public boolean isIn(Area a) {
         return a == null || a.contains(x, y);
-    }
-
-    /**
-     * Computes the distance between this lat/lon and another point on the earth.
-     * Uses <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>.
-     * @param other the other point.
-     * @return distance in metres.
-     * @deprecated since 18494 (use {@link ILatLon#greatCircleDistance(ILatLon)} instead)
-     */
-    @Deprecated(since = "18494", forRemoval = true)
-    public double greatCircleDistance(LatLon other) {
-        return ILatLon.super.greatCircleDistance(other);
-    }
-
-    /**
-     * Returns bearing from this point to another.
-     *
-     * Angle starts from north and increases clockwise, PI/2 means east.
-     *
-     * Please note that reverse bearing (from other point to this point) should NOT be
-     * calculated from return value of this method, because great circle path
-     * between the two points have different bearings at each position.
-     *
-     * To get bearing from another point to this point call other.bearing(this)
-     *
-     * @param other the "destination" position
-     * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
-     * @since 9796
-     * @deprecated since 18494 (use {@link ILatLon#bearing(ILatLon)} instead)
-     */
-    @Deprecated(since = "18494", forRemoval = true)
-    public double bearing(LatLon other) {
-        return ILatLon.super.bearing(other);
     }
 
     /**
