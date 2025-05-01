@@ -120,6 +120,7 @@ public final class I18n {
         //languages.put("eu", PluralMode.MODE_NOTONE);
         languages.put("fa", PluralMode.MODE_NONE);
         languages.put("fi", PluralMode.MODE_NOTONE);
+        languages.put("fo", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
         //languages.put("he", PluralMode.MODE_NOTONE);
@@ -657,7 +658,7 @@ public final class I18n {
 
     private static int pluralEval(long n) {
         switch (pluralMode) {
-        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, es, et, eu, fi, gl, is, it, iw_IL, mr, nb, nl, sv */
+        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, eo, es, et, eu, fi, fo, gl, is, it, iw_IL, mr, nb, nl, sv */
             return (n != 1) ? 1 : 0;
         case MODE_NONE: /* id, vi, ja, km, tr, zh_CN, zh_TW */
             return 0;
