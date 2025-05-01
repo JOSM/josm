@@ -311,6 +311,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             AutoFilterManager.getInstance().enableAutoFilterRule(AutoFilterManager.PROP_AUTO_FILTER_RULE.get());
         }
         setTransferHandler(new OsmTransferHandler());
+        setOpaque(true);
     }
 
     /**
