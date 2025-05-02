@@ -234,8 +234,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     private final transient Set<MapViewPaintable> temporaryLayers = new LinkedHashSet<>();
 
-    private transient BufferedImage nonChangedLayersBuffer;
-    private transient BufferedImage offscreenBuffer;
+    private transient BufferedImage nonChangedLayersBuffer = getAcceleratedImage(MapView.this, 1, 1);
+    private transient BufferedImage offscreenBuffer = getAcceleratedImage(MapView.this, 1, 1);
     // Layers that wasn't changed since last paint
     private final transient List<Layer> nonChangedLayers = new ArrayList<>();
     private int lastViewID;
@@ -335,7 +335,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     private static BufferedImage getAcceleratedImage(Component mv, int width, int height) {
-        if (GraphicsEnvironment.isHeadless()) {
+        if (GraphicsEnvironment.isHeadless() || null == mv.getGraphicsConfiguration()) {
             return new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
         }
         return mv.getGraphicsConfiguration().createCompatibleImage(width, height, Transparency.OPAQUE);
@@ -558,13 +558,12 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 && lastClipBounds.contains(g.getClipBounds())
                 && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
 
-        if (null == offscreenBuffer || offscreenBuffer.getWidth() != width || offscreenBuffer.getHeight() != height) {
+        if (offscreenBuffer.getWidth() != width || offscreenBuffer.getHeight() != height) {
             offscreenBuffer = getAcceleratedImage(this, width, height);
         }
 
-        if (!canUseBuffer || nonChangedLayersBuffer == null) {
-            if (null == nonChangedLayersBuffer
-                    || nonChangedLayersBuffer.getWidth() != width || nonChangedLayersBuffer.getHeight() != height) {
+        if (!canUseBuffer) {
+            if (nonChangedLayersBuffer.getWidth() != width || nonChangedLayersBuffer.getHeight() != height) {
                 nonChangedLayersBuffer = getAcceleratedImage(this, width, height);
             }
             Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
