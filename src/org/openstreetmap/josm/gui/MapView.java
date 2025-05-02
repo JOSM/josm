@@ -575,6 +575,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             for (int i = 0; i < nonChangedLayersCount; i++) {
                 paintLayer(visibleLayers.get(i), g2);
             }
+            g2.dispose();
         } else {
             // Maybe there were more unchanged layers then last time - draw them to buffer
             if (nonChangedLayers.size() != nonChangedLayersCount) {
@@ -584,6 +585,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
                     paintLayer(visibleLayers.get(i), g2);
                 }
+                g2.dispose();
             }
         }
 
@@ -628,6 +630,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         if (playHeadMarker != null) {
             playHeadMarker.paint(tempG, this);
         }
+
+        tempG.dispose();
 
         try {
             g.setTransform(new AffineTransform(1, 0, 0, 1, trOrig.getTranslateX(), trOrig.getTranslateY()));
