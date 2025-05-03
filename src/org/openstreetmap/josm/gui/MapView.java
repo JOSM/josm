@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static java.util.function.Predicate.not;
 
+import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -10,10 +11,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
+import java.awt.ImageCapabilities;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Transparency;
 import java.awt.event.ComponentAdapter;
@@ -22,9 +22,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -234,8 +233,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     private final transient Set<MapViewPaintable> temporaryLayers = new LinkedHashSet<>();
 
-    private transient BufferedImage nonChangedLayersBuffer = getAcceleratedImage(MapView.this, 1, 1);
-    private transient BufferedImage offscreenBuffer = getAcceleratedImage(MapView.this, 1, 1);
+    private transient VolatileImage nonChangedLayersBuffer;
+    private transient VolatileImage offscreenBuffer;
     // Layers that wasn't changed since last paint
     private final transient List<Layer> nonChangedLayers = new ArrayList<>();
     private int lastViewID;
@@ -334,11 +333,27 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return Arrays.asList(zoomSlider, scaler);
     }
 
-    private static BufferedImage getAcceleratedImage(Component mv, int width, int height) {
-        if (GraphicsEnvironment.isHeadless() || null == mv.getGraphicsConfiguration()) {
-            return new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+    private static VolatileImage getAcceleratedImage(Component mv, int width, int height) {
+        VolatileImage volatileImage;
+        // Creating a VolatileImage is impossible if 1) we’re headless or 2) our component is isolated (i.e., not in a
+        // container). The former is inherent to VolatileImage creation; the latter is not, so we need to check that to
+        // produce optimal VolatileImages.
+        if (null != mv.getGraphicsConfiguration()) {
+            // TODO: allow user to toggle between SW-backed and HW-backed?
+            var volatileImageCapabilities = new ImageCapabilities(true);
+            try {
+                volatileImage = mv.getGraphicsConfiguration().createCompatibleVolatileImage(width, height, volatileImageCapabilities, Transparency.OPAQUE);
+            } catch (AWTException e) {
+                //
+                volatileImage = mv.getGraphicsConfiguration().createCompatibleVolatileImage(width, height, Transparency.OPAQUE);
+            }
+        } else {
+            volatileImage = mv.createVolatileImage(width, height);
         }
-        return mv.getGraphicsConfiguration().createCompatibleImage(width, height, Transparency.OPAQUE);
+        if (null != volatileImage) {
+            volatileImage.setAccelerationPriority(1);
+        }
+        return volatileImage;
     }
 
     // remebered geometry of the component
@@ -516,32 +531,116 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     private void drawMapContent(Graphics2D g) {
-        // In HiDPI-mode, the Graphics g will have a transform that scales
-        // everything by a factor of 2.0 or so. At the same time, the value returned
-        // by getWidth()/getHeight will be reduced by that factor.
-        //
-        // This would work as intended, if we were to draw directly on g. But
-        // with a temporary buffer image, we need to move the scale transform to
-        // the Graphics of the buffer image and (in the end) transfer the content
-        // of the temporary buffer pixel by pixel onto g, without scaling.
-        // (Otherwise, we would upscale a small buffer image and the result would be
-        // blurry, with 2x2 pixel blocks.)
-        AffineTransform trOrig = g.getTransform();
-        double uiScaleX = g.getTransform().getScaleX();
-        double uiScaleY = g.getTransform().getScaleY();
-        // width/height in full-resolution screen pixels
-        int width = (int) Math.round(getWidth() * uiScaleX);
-        int height = (int) Math.round(getHeight() * uiScaleY);
-        // This transformation corresponds to the original transformation of g,
-        // except for the translation part. It will be applied to the temporary
-        // buffer images.
-        AffineTransform trDef = AffineTransform.getScaleInstance(uiScaleX, uiScaleY);
-        // The goal is to create the temporary image at full pixel resolution,
-        // so scale up the clip shape
-        Shape scaledClip = trDef.createTransformedShape(g.getClip());
-
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
+        int nonChangedLayersCount = getNonChangedLayersCount(visibleLayers);
+        drawUnchangedLayers(g, visibleLayers, nonChangedLayersCount);
+        drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+    }
 
+    private void drawOffscreenBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
+        do {
+            if (null == offscreenBuffer
+                    || offscreenBuffer.getWidth() != getWidth()
+                    || offscreenBuffer.getHeight() != getHeight()
+                    || VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())) {
+                offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+            }
+            Graphics2D tempG = offscreenBuffer.createGraphics();
+            tempG.setClip(g.getClip());
+            do {
+                var validationNonChangedLayersBuffer = nonChangedLayersBuffer.validate(getGraphicsConfiguration());
+                if (VolatileImage.IMAGE_RESTORED == validationNonChangedLayersBuffer) {
+                    drawUnchangedLayers(g, visibleLayers, nonChangedLayersCount);
+                } else if (VolatileImage.IMAGE_INCOMPATIBLE == validationNonChangedLayersBuffer) {
+                    nonChangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                    drawUnchangedLayers(g, visibleLayers, nonChangedLayersCount);
+                }
+                tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
+            } while (nonChangedLayersBuffer.contentsLost());
+
+            for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
+                paintLayer(visibleLayers.get(i), tempG);
+            }
+
+            try {
+                drawTemporaryLayers(tempG, getLatLonBounds(g.getClipBounds()));
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
+            }
+
+            // draw world borders
+            try {
+                drawWorldBorders(tempG);
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                // getProjection() needs to be inside lambda to catch errors.
+                BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
+            }
+
+            MapFrame map = MainApplication.getMap();
+            if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
+                AutoFilterManager.getInstance().drawOSDText(tempG);
+            } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
+                map.filterDialog.drawOSDText(tempG);
+            }
+
+            if (playHeadMarker != null) {
+                playHeadMarker.paint(tempG, this);
+            }
+
+            tempG.dispose();
+
+            var validationOffscreenBuffer = offscreenBuffer.validate(getGraphicsConfiguration());
+            if (VolatileImage.IMAGE_RESTORED == validationOffscreenBuffer) {
+                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+            } else if (VolatileImage.IMAGE_INCOMPATIBLE == validationOffscreenBuffer) {
+                offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+            }
+            g.drawImage(offscreenBuffer, 0, 0, null);
+        } while (offscreenBuffer.contentsLost());
+        offscreenBuffer.flush();
+    }
+
+    private int drawUnchangedLayers(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
+        boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
+                && nonChangedLayers.size() <= nonChangedLayersCount
+                && lastViewID == getViewID()
+                && lastClipBounds.contains(g.getClipBounds())
+                && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
+        if (!canUseBuffer || (canUseBuffer && nonChangedLayers.size() != nonChangedLayersCount)) {
+            do {
+                if (null == nonChangedLayersBuffer
+                        || nonChangedLayersBuffer.getWidth() != getWidth()
+                        || nonChangedLayersBuffer.getHeight() != getHeight()
+                        || VolatileImage.IMAGE_INCOMPATIBLE == nonChangedLayersBuffer.validate(getGraphicsConfiguration())) {
+
+                    nonChangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                }
+                Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
+                g2.setClip(g.getClip());
+                if (!canUseBuffer) {
+                    g2.setColor(PaintColors.getBackgroundColor());
+                    g2.fillRect(0, 0, getWidth(), getHeight());
+                    for (int i = 0; i < nonChangedLayersCount; i++) {
+                        paintLayer(visibleLayers.get(i), g2);
+                    }
+                } else {
+                    // Maybe there were more unchanged layers then last time - draw them to buffer
+                    for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
+                        paintLayer(visibleLayers.get(i), g2);
+                    }
+                }
+                g2.dispose();
+            } while (nonChangedLayersBuffer.contentsLost());
+        }
+        nonChangedLayers.clear();
+        nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
+        lastViewID = getViewID();
+        lastClipBounds = g.getClipBounds();
+        return nonChangedLayersCount;
+    }
+
+    private int getNonChangedLayersCount(List<Layer> visibleLayers) {
         int nonChangedLayersCount = 0;
         Set<MapViewPaintable> invalidated = invalidatedListener.collectInvalidatedLayers();
         for (Layer l: visibleLayers) {
@@ -551,119 +650,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 nonChangedLayersCount++;
             }
         }
-
-        boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
-                && nonChangedLayers.size() <= nonChangedLayersCount
-                && lastViewID == getViewID()
-                && lastClipBounds.contains(g.getClipBounds())
-                && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
-
-        if (offscreenBuffer.getWidth() != width || offscreenBuffer.getHeight() != height) {
-            offscreenBuffer = getAcceleratedImage(this, width, height);
-        }
-
-        if (!canUseBuffer) {
-            if (nonChangedLayersBuffer.getWidth() != width || nonChangedLayersBuffer.getHeight() != height) {
-                nonChangedLayersBuffer = getAcceleratedImage(this, width, height);
-            }
-            Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
-            g2.setClip(scaledClip);
-            g2.setTransform(trDef);
-            g2.setColor(PaintColors.getBackgroundColor());
-            g2.fillRect(0, 0, width, height);
-
-            for (int i = 0; i < nonChangedLayersCount; i++) {
-                paintLayer(visibleLayers.get(i), g2);
-            }
-            g2.dispose();
-        } else {
-            // Maybe there were more unchanged layers then last time - draw them to buffer
-            if (nonChangedLayers.size() != nonChangedLayersCount) {
-                Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
-                g2.setClip(scaledClip);
-                g2.setTransform(trDef);
-                for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
-                    paintLayer(visibleLayers.get(i), g2);
-                }
-                g2.dispose();
-            }
-        }
-
-        nonChangedLayers.clear();
-        nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
-        lastViewID = getViewID();
-        lastClipBounds = g.getClipBounds();
-
-        Graphics2D tempG = offscreenBuffer.createGraphics();
-        tempG.setClip(scaledClip);
-        tempG.setTransform(new AffineTransform());
-        tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
-        tempG.setTransform(trDef);
-
-        for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
-            paintLayer(visibleLayers.get(i), tempG);
-        }
-
-        try {
-            drawTemporaryLayers(tempG, getLatLonBounds(new Rectangle(
-                    (int) Math.round(g.getClipBounds().x * uiScaleX),
-                    (int) Math.round(g.getClipBounds().y * uiScaleY))));
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
-        }
-
-        // draw world borders
-        try {
-            drawWorldBorders(tempG);
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            // getProjection() needs to be inside lambda to catch errors.
-            BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
-        }
-
-        MapFrame map = MainApplication.getMap();
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
-            AutoFilterManager.getInstance().drawOSDText(tempG);
-        } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
-            map.filterDialog.drawOSDText(tempG);
-        }
-
-        if (playHeadMarker != null) {
-            playHeadMarker.paint(tempG, this);
-        }
-
-        tempG.dispose();
-
-        try {
-            g.setTransform(new AffineTransform(1, 0, 0, 1, trOrig.getTranslateX(), trOrig.getTranslateY()));
-            g.drawImage(offscreenBuffer, 0, 0, null);
-        } catch (ClassCastException e) {
-            // See #11002 and duplicate tickets. On Linux with Java >= 8 Many users face this error here:
-            //
-            // java.lang.ClassCastException: sun.awt.image.BufImgSurfaceData cannot be cast to sun.java2d.xr.XRSurfaceData
-            //   at sun.java2d.xr.XRPMBlitLoops.cacheToTmpSurface(XRPMBlitLoops.java:145)
-            //   at sun.java2d.xr.XrSwToPMBlit.Blit(XRPMBlitLoops.java:353)
-            //   at sun.java2d.pipe.DrawImage.blitSurfaceData(DrawImage.java:959)
-            //   at sun.java2d.pipe.DrawImage.renderImageCopy(DrawImage.java:577)
-            //   at sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:67)
-            //   at sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:1014)
-            //   at sun.java2d.pipe.ValidatePipe.copyImage(ValidatePipe.java:186)
-            //   at sun.java2d.SunGraphics2D.drawImage(SunGraphics2D.java:3318)
-            //   at sun.java2d.SunGraphics2D.drawImage(SunGraphics2D.java:3296)
-            //   at org.openstreetmap.josm.gui.MapView.paint(MapView.java:834)
-            //
-            // It seems to be this JDK bug, but Oracle does not seem to be fixing it:
-            // https://bugs.openjdk.java.net/browse/JDK-7172749
-            //
-            // According to bug reports it can happen for a variety of reasons such as:
-            // - long period of time
-            // - change of screen resolution
-            // - addition/removal of a secondary monitor
-            //
-            // But the application seems to work fine after, so let's just log the error
-            Logging.error(e);
-        } finally {
-            g.setTransform(trOrig);
-        }
+        return nonChangedLayersCount;
     }
 
     private void drawTemporaryLayers(Graphics2D tempG, Bounds box) {
