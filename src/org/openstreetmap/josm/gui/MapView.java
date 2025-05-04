@@ -7,7 +7,6 @@ import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -333,22 +332,24 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return Arrays.asList(zoomSlider, scaler);
     }
 
-    private static VolatileImage getAcceleratedImage(Component mv, int width, int height) {
+    private VolatileImage getAcceleratedBuffer() {
         VolatileImage volatileImage;
+        var width = getWidth();
+        var height = getHeight();
         // Creating a VolatileImage is impossible if 1) we’re headless or 2) our component is isolated (i.e., not in a
         // container). The former is inherent to VolatileImage creation; the latter is not, so we need to check that to
         // produce optimal VolatileImages.
-        if (null != mv.getGraphicsConfiguration()) {
+        if (null != getGraphicsConfiguration()) {
             // TODO: allow user to toggle between SW-backed and HW-backed?
             var volatileImageCapabilities = new ImageCapabilities(true);
             try {
-                volatileImage = mv.getGraphicsConfiguration().createCompatibleVolatileImage(width, height, volatileImageCapabilities, Transparency.OPAQUE);
+                volatileImage = getGraphicsConfiguration().createCompatibleVolatileImage(width, height, volatileImageCapabilities, Transparency.OPAQUE);
             } catch (AWTException e) {
                 //
-                volatileImage = mv.getGraphicsConfiguration().createCompatibleVolatileImage(width, height, Transparency.OPAQUE);
+                volatileImage = getGraphicsConfiguration().createCompatibleVolatileImage(width, height, Transparency.OPAQUE);
             }
         } else {
-            volatileImage = mv.createVolatileImage(width, height);
+            volatileImage = createVolatileImage(width, height);
         }
         if (null != volatileImage) {
             volatileImage.setAccelerationPriority(1);
@@ -538,7 +539,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                     || VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())
                     || offscreenBuffer.getWidth() != getWidth()
                     || offscreenBuffer.getHeight() != getHeight()) {
-                offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                offscreenBuffer = getAcceleratedBuffer();
             }
             var g2 = offscreenBuffer.createGraphics();
             g2.setClip(g.getClip());
@@ -589,7 +590,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         do {
             if (null == unchangedLayersBuffer
                     || VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
-                unchangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                unchangedLayersBuffer = getAcceleratedBuffer();
                 canUseBuffer = false;
             }
             if (!canUseBuffer || (unchangedLayers.size() != nonChangedLayersCount)) {
