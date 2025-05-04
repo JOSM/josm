@@ -604,9 +604,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private void renderUnchangedLayersBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
         boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
-                && unchangedLayers.size() <= nonChangedLayersCount
                 && lastViewID == getViewID()
                 && lastClipBounds.contains(g.getClipBounds())
+                && unchangedLayers.size() <= nonChangedLayersCount
                 && unchangedLayers.equals(visibleLayers.subList(0, unchangedLayers.size()));
         if (!canUseBuffer || unchangedLayers.size() != nonChangedLayersCount) {
             do {
