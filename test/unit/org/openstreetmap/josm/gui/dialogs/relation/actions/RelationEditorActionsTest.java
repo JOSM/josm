@@ -48,7 +48,8 @@ class RelationEditorActionsTest extends AbstractRelationEditorActionTest {
         new OKAction(relationEditorAccess).actionPerformed(null);
         new CancelAction(relationEditorAccess).actionPerformed(null);
 
-        new CopyMembersAction(relationEditorAccess).actionPerformed(null);
+        new CopyMembersAction(relationEditorAccess, true).actionPerformed(null);
+        new CopyMembersAction(relationEditorAccess, false).actionPerformed(null);
         new PasteMembersAction(relationEditorAccess).actionPerformed(null);
 
         new SelectAction(relationEditorAccess).actionPerformed(null);

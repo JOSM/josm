@@ -308,8 +308,14 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         key = Shortcut.getCopyKeyStroke();
         if (key != null) {
             // handle uncommon situation, that user has no keystroke assigned to copy
-            registerCopyPasteAction(new CopyMembersAction(actionAccess),
+            registerCopyPasteAction(new CopyMembersAction(actionAccess, true),
                     "COPY_MEMBERS", key, getRootPane(), memberTable, selectionTable);
+        }
+        key = Shortcut.getCutKeyStroke();
+        if (key != null) {
+            // handle uncommon situation, that user has no keystroke assigned to cut
+            registerCopyPasteAction(new CopyMembersAction(actionAccess, false),
+                    "CUT_MEMBERS", key, getRootPane(), memberTable, selectionTable);
         }
         tagEditorPanel.setNextFocusComponent(memberTable);
         selectionTable.setFocusable(false);
