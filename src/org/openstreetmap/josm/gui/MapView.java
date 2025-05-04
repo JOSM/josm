@@ -616,7 +616,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                         || VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
                     unchangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
                 }
-                Graphics2D g2 = unchangedLayersBuffer.createGraphics();
+                var g2 = unchangedLayersBuffer.createGraphics();
                 g2.setClip(g.getClip());
                 if (!canUseBuffer) {
                     g2.setColor(PaintColors.getBackgroundColor());
