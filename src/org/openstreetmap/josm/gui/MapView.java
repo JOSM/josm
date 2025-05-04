@@ -85,12 +85,12 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
- * This is a component used in the {@link MapFrame} for browsing the map. It use is to
+ * This is a component used in the {@link MapFrame} for browsing the map. It’s used to
  * provide the MapMode's enough capabilities to operate.<br><br>
  *
  * {@code MapView} holds meta-data about the data set currently displayed, as scale level,
  * center point viewed, what scrolling mode or editing mode is selected or with
- * what projection the map is viewed etc..<br><br>
+ * what projection the map is viewed, etc.<br><br>
  *
  * {@code MapView} is able to administrate several layers.
  *
@@ -356,7 +356,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return volatileImage;
     }
 
-    // remebered geometry of the component
+    // Remembered geometry of the component
     private Dimension oldSize;
     private Point oldLoc;
 
@@ -455,7 +455,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     /**
      * Checks if virtual nodes should be drawn. Default is <code>false</code>
-     * @return The virtual nodes property.
+     * @return The virtual node’s property.
      * @see Rendering#render
      */
     public boolean isVirtualNodesEnabled() {
@@ -625,7 +625,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                         paintLayer(layer, g2);
                     }
                 } else {
-                    // Maybe there were more unchanged layers then last time - draw them to buffer
+                    // If there were more unchanged layers than last time, draw them to the buffer
                     for (var layer : visibleLayers.subList(unchangedLayers.size(), nonChangedLayersCount)) {
                         paintLayer(layer, g2);
                     }
