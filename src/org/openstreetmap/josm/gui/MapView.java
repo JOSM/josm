@@ -602,7 +602,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         } while (offscreenBuffer.contentsLost());
     }
 
-    private int renderUnchangedLayersBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
+    private void renderUnchangedLayersBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
         boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
                 && unchangedLayers.size() <= nonChangedLayersCount
                 && lastViewID == getViewID()
@@ -637,7 +637,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         unchangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
         lastViewID = getViewID();
         lastClipBounds = g.getClipBounds();
-        return nonChangedLayersCount;
     }
 
     private int getUnchangedLayersCount(List<Layer> visibleLayers) {
