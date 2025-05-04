@@ -533,41 +533,17 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private void drawMapContent(Graphics2D g) {
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
         int unchangedLayersCount = getUnchangedLayersCount(visibleLayers);
-        renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
-        renderOffscreenBuffer(g, visibleLayers, unchangedLayersCount);
-        do {
-            var offscreenBufferValidation = offscreenBuffer.validate(getGraphicsConfiguration());
-            if (VolatileImage.IMAGE_RESTORED == offscreenBufferValidation) {
-                renderOffscreenBuffer(g, visibleLayers, unchangedLayersCount);
-            } else if (VolatileImage.IMAGE_INCOMPATIBLE == offscreenBufferValidation) {
-                offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
-                renderOffscreenBuffer(g, visibleLayers, unchangedLayersCount);
-            }
-            g.drawImage(offscreenBuffer, 0, 0, null);
-        } while (offscreenBuffer.contentsLost());
-        offscreenBuffer.flush();
-    }
-
-    private void renderOffscreenBuffer(Graphics2D g, List<Layer> visibleLayers, int unchangedLayersCount) {
         do {
             if (null == offscreenBuffer
+                    || VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())
                     || offscreenBuffer.getWidth() != getWidth()
-                    || offscreenBuffer.getHeight() != getHeight()
-                    || VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())) {
+                    || offscreenBuffer.getHeight() != getHeight()) {
                 offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
             }
             var g2 = offscreenBuffer.createGraphics();
             g2.setClip(g.getClip());
-            do {
-                var unchangedLayersBufferValidation = unchangedLayersBuffer.validate(getGraphicsConfiguration());
-                if (VolatileImage.IMAGE_RESTORED == unchangedLayersBufferValidation) {
-                    renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
-                } else if (VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBufferValidation) {
-                    unchangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
-                    renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
-                }
-                g2.drawImage(unchangedLayersBuffer, 0, 0, null);
-            } while (unchangedLayersBuffer.contentsLost());
+            renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
+            g2.drawImage(unchangedLayersBuffer, 0, 0, null);
 
             for (var layer : visibleLayers.subList(unchangedLayersCount, visibleLayers.size())) {
                 paintLayer(layer, g2);
@@ -599,7 +575,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
 
             g2.dispose();
-        } while (offscreenBuffer.contentsLost());
+            g.drawImage(offscreenBuffer, 0, 0, null);
+        } while (offscreenBuffer.contentsLost() || unchangedLayersBuffer.contentsLost());
+        offscreenBuffer.flush();
     }
 
     private void renderUnchangedLayersBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
@@ -608,14 +586,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 && lastClipBounds.contains(g.getClipBounds())
                 && unchangedLayers.size() <= nonChangedLayersCount
                 && unchangedLayers.equals(visibleLayers.subList(0, unchangedLayers.size()));
-        if (!canUseBuffer || unchangedLayers.size() != nonChangedLayersCount) {
-            do {
-                if (null == unchangedLayersBuffer
-                        || unchangedLayersBuffer.getWidth() != getWidth()
-                        || unchangedLayersBuffer.getHeight() != getHeight()
-                        || VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
-                    unchangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
-                }
+        do {
+            if (null == unchangedLayersBuffer
+                    || VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
+                unchangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                canUseBuffer = false;
+            }
+            if (!canUseBuffer || (unchangedLayers.size() != nonChangedLayersCount)) {
                 var g2 = unchangedLayersBuffer.createGraphics();
                 g2.setClip(g.getClip());
                 if (!canUseBuffer) {
@@ -631,8 +608,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                     }
                 }
                 g2.dispose();
-            } while (unchangedLayersBuffer.contentsLost());
-        }
+            }
+        } while (unchangedLayersBuffer.contentsLost());
         unchangedLayers.clear();
         unchangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
         lastViewID = getViewID();
