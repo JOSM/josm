@@ -608,7 +608,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 && lastViewID == getViewID()
                 && lastClipBounds.contains(g.getClipBounds())
                 && unchangedLayers.equals(visibleLayers.subList(0, unchangedLayers.size()));
-        if (!canUseBuffer || (canUseBuffer && unchangedLayers.size() != nonChangedLayersCount)) {
+        if (!canUseBuffer || unchangedLayers.size() != nonChangedLayersCount) {
             do {
                 if (null == unchangedLayersBuffer
                         || unchangedLayersBuffer.getWidth() != getWidth()
