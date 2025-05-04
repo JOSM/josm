@@ -535,6 +535,17 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         int nonChangedLayersCount = getNonChangedLayersCount(visibleLayers);
         drawUnchangedLayers(g, visibleLayers, nonChangedLayersCount);
         drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+        do {
+            var bufferValidation = offscreenBuffer.validate(getGraphicsConfiguration());
+            if (VolatileImage.IMAGE_RESTORED == bufferValidation) {
+                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+            } else if (VolatileImage.IMAGE_INCOMPATIBLE == bufferValidation) {
+                offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+            }
+            g.drawImage(offscreenBuffer, 0, 0, null);
+        } while (offscreenBuffer.contentsLost());
+        offscreenBuffer.flush();
     }
 
     private void drawOffscreenBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
@@ -588,17 +599,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
 
             tempG.dispose();
-
-            var validationOffscreenBuffer = offscreenBuffer.validate(getGraphicsConfiguration());
-            if (VolatileImage.IMAGE_RESTORED == validationOffscreenBuffer) {
-                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
-            } else if (VolatileImage.IMAGE_INCOMPATIBLE == validationOffscreenBuffer) {
-                offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
-                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
-            }
-            g.drawImage(offscreenBuffer, 0, 0, null);
         } while (offscreenBuffer.contentsLost());
-        offscreenBuffer.flush();
     }
 
     private int drawUnchangedLayers(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
@@ -613,7 +614,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                         || nonChangedLayersBuffer.getWidth() != getWidth()
                         || nonChangedLayersBuffer.getHeight() != getHeight()
                         || VolatileImage.IMAGE_INCOMPATIBLE == nonChangedLayersBuffer.validate(getGraphicsConfiguration())) {
-
                     nonChangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
                 }
                 Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
