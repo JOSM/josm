@@ -569,8 +569,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 g2.drawImage(unchangedLayersBuffer, 0, 0, null);
             } while (unchangedLayersBuffer.contentsLost());
 
-            for (int i = unchangedLayersCount; i < visibleLayers.size(); i++) {
-                paintLayer(visibleLayers.get(i), g2);
+            for (var layer : visibleLayers.subList(unchangedLayersCount, visibleLayers.size())) {
+                paintLayer(layer, g2);
             }
 
             try {
@@ -621,13 +621,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 if (!canUseBuffer) {
                     g2.setColor(PaintColors.getBackgroundColor());
                     g2.fillRect(0, 0, getWidth(), getHeight());
-                    for (int i = 0; i < nonChangedLayersCount; i++) {
-                        paintLayer(visibleLayers.get(i), g2);
+                    for (var layer : visibleLayers.subList(0, nonChangedLayersCount)) {
+                        paintLayer(layer, g2);
                     }
                 } else {
                     // Maybe there were more unchanged layers then last time - draw them to buffer
-                    for (int i = unchangedLayers.size(); i < nonChangedLayersCount; i++) {
-                        paintLayer(visibleLayers.get(i), g2);
+                    for (var layer : visibleLayers.subList(unchangedLayers.size(), nonChangedLayersCount)) {
+                        paintLayer(layer, g2);
                     }
                 }
                 g2.dispose();
