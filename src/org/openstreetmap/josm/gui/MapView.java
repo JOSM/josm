@@ -233,10 +233,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     private final transient Set<MapViewPaintable> temporaryLayers = new LinkedHashSet<>();
 
-    private transient VolatileImage nonChangedLayersBuffer;
+    private transient VolatileImage unchangedLayersBuffer;
     private transient VolatileImage offscreenBuffer;
     // Layers that wasn't changed since last paint
-    private final transient List<Layer> nonChangedLayers = new ArrayList<>();
+    private final transient List<Layer> unchangedLayers = new ArrayList<>();
     private int lastViewID;
     private final AtomicBoolean paintPreferencesChanged = new AtomicBoolean(true);
     private Rectangle lastClipBounds = new Rectangle();
@@ -532,23 +532,23 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private void drawMapContent(Graphics2D g) {
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
-        int nonChangedLayersCount = getNonChangedLayersCount(visibleLayers);
-        drawUnchangedLayers(g, visibleLayers, nonChangedLayersCount);
-        drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+        int unchangedLayersCount = getUnchangedLayersCount(visibleLayers);
+        renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
+        renderOffscreenBuffer(g, visibleLayers, unchangedLayersCount);
         do {
-            var bufferValidation = offscreenBuffer.validate(getGraphicsConfiguration());
-            if (VolatileImage.IMAGE_RESTORED == bufferValidation) {
-                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
-            } else if (VolatileImage.IMAGE_INCOMPATIBLE == bufferValidation) {
+            var offscreenBufferValidation = offscreenBuffer.validate(getGraphicsConfiguration());
+            if (VolatileImage.IMAGE_RESTORED == offscreenBufferValidation) {
+                renderOffscreenBuffer(g, visibleLayers, unchangedLayersCount);
+            } else if (VolatileImage.IMAGE_INCOMPATIBLE == offscreenBufferValidation) {
                 offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
-                drawOffscreenBuffer(g, visibleLayers, nonChangedLayersCount);
+                renderOffscreenBuffer(g, visibleLayers, unchangedLayersCount);
             }
             g.drawImage(offscreenBuffer, 0, 0, null);
         } while (offscreenBuffer.contentsLost());
         offscreenBuffer.flush();
     }
 
-    private void drawOffscreenBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
+    private void renderOffscreenBuffer(Graphics2D g, List<Layer> visibleLayers, int unchangedLayersCount) {
         do {
             if (null == offscreenBuffer
                     || offscreenBuffer.getWidth() != getWidth()
@@ -556,32 +556,32 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                     || VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())) {
                 offscreenBuffer = getAcceleratedImage(this, getWidth(), getHeight());
             }
-            Graphics2D tempG = offscreenBuffer.createGraphics();
-            tempG.setClip(g.getClip());
+            var g2 = offscreenBuffer.createGraphics();
+            g2.setClip(g.getClip());
             do {
-                var validationNonChangedLayersBuffer = nonChangedLayersBuffer.validate(getGraphicsConfiguration());
-                if (VolatileImage.IMAGE_RESTORED == validationNonChangedLayersBuffer) {
-                    drawUnchangedLayers(g, visibleLayers, nonChangedLayersCount);
-                } else if (VolatileImage.IMAGE_INCOMPATIBLE == validationNonChangedLayersBuffer) {
-                    nonChangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
-                    drawUnchangedLayers(g, visibleLayers, nonChangedLayersCount);
+                var unchangedLayersBufferValidation = unchangedLayersBuffer.validate(getGraphicsConfiguration());
+                if (VolatileImage.IMAGE_RESTORED == unchangedLayersBufferValidation) {
+                    renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
+                } else if (VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBufferValidation) {
+                    unchangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                    renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
                 }
-                tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
-            } while (nonChangedLayersBuffer.contentsLost());
+                g2.drawImage(unchangedLayersBuffer, 0, 0, null);
+            } while (unchangedLayersBuffer.contentsLost());
 
-            for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
-                paintLayer(visibleLayers.get(i), tempG);
+            for (int i = unchangedLayersCount; i < visibleLayers.size(); i++) {
+                paintLayer(visibleLayers.get(i), g2);
             }
 
             try {
-                drawTemporaryLayers(tempG, getLatLonBounds(g.getClipBounds()));
+                drawTemporaryLayers(g2, getLatLonBounds(g.getClipBounds()));
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
             }
 
             // draw world borders
             try {
-                drawWorldBorders(tempG);
+                drawWorldBorders(g2);
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 // getProjection() needs to be inside lambda to catch errors.
                 BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
@@ -589,34 +589,34 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
             MapFrame map = MainApplication.getMap();
             if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
-                AutoFilterManager.getInstance().drawOSDText(tempG);
+                AutoFilterManager.getInstance().drawOSDText(g2);
             } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
-                map.filterDialog.drawOSDText(tempG);
+                map.filterDialog.drawOSDText(g2);
             }
 
             if (playHeadMarker != null) {
-                playHeadMarker.paint(tempG, this);
+                playHeadMarker.paint(g2, this);
             }
 
-            tempG.dispose();
+            g2.dispose();
         } while (offscreenBuffer.contentsLost());
     }
 
-    private int drawUnchangedLayers(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
+    private int renderUnchangedLayersBuffer(Graphics2D g, List<Layer> visibleLayers, int nonChangedLayersCount) {
         boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
-                && nonChangedLayers.size() <= nonChangedLayersCount
+                && unchangedLayers.size() <= nonChangedLayersCount
                 && lastViewID == getViewID()
                 && lastClipBounds.contains(g.getClipBounds())
-                && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
-        if (!canUseBuffer || (canUseBuffer && nonChangedLayers.size() != nonChangedLayersCount)) {
+                && unchangedLayers.equals(visibleLayers.subList(0, unchangedLayers.size()));
+        if (!canUseBuffer || (canUseBuffer && unchangedLayers.size() != nonChangedLayersCount)) {
             do {
-                if (null == nonChangedLayersBuffer
-                        || nonChangedLayersBuffer.getWidth() != getWidth()
-                        || nonChangedLayersBuffer.getHeight() != getHeight()
-                        || VolatileImage.IMAGE_INCOMPATIBLE == nonChangedLayersBuffer.validate(getGraphicsConfiguration())) {
-                    nonChangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
+                if (null == unchangedLayersBuffer
+                        || unchangedLayersBuffer.getWidth() != getWidth()
+                        || unchangedLayersBuffer.getHeight() != getHeight()
+                        || VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
+                    unchangedLayersBuffer = getAcceleratedImage(this, getWidth(), getHeight());
                 }
-                Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
+                Graphics2D g2 = unchangedLayersBuffer.createGraphics();
                 g2.setClip(g.getClip());
                 if (!canUseBuffer) {
                     g2.setColor(PaintColors.getBackgroundColor());
@@ -626,31 +626,31 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                     }
                 } else {
                     // Maybe there were more unchanged layers then last time - draw them to buffer
-                    for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
+                    for (int i = unchangedLayers.size(); i < nonChangedLayersCount; i++) {
                         paintLayer(visibleLayers.get(i), g2);
                     }
                 }
                 g2.dispose();
-            } while (nonChangedLayersBuffer.contentsLost());
+            } while (unchangedLayersBuffer.contentsLost());
         }
-        nonChangedLayers.clear();
-        nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
+        unchangedLayers.clear();
+        unchangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
         lastViewID = getViewID();
         lastClipBounds = g.getClipBounds();
         return nonChangedLayersCount;
     }
 
-    private int getNonChangedLayersCount(List<Layer> visibleLayers) {
-        int nonChangedLayersCount = 0;
+    private int getUnchangedLayersCount(List<Layer> visibleLayers) {
+        int unchangedLayersCount = 0;
         Set<MapViewPaintable> invalidated = invalidatedListener.collectInvalidatedLayers();
         for (Layer l: visibleLayers) {
             if (invalidated.contains(l)) {
                 break;
             } else {
-                nonChangedLayersCount++;
+                unchangedLayersCount++;
             }
         }
-        return nonChangedLayersCount;
+        return unchangedLayersCount;
     }
 
     private void drawTemporaryLayers(Graphics2D tempG, Bounds box) {
@@ -813,11 +813,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         if (mapMover != null) {
             mapMover.destroy();
         }
-        nonChangedLayers.clear();
+        unchangedLayers.clear();
         synchronized (temporaryLayers) {
             temporaryLayers.clear();
         }
-        nonChangedLayersBuffer = null;
+        unchangedLayersBuffer = null;
         offscreenBuffer = null;
         setTransferHandler(null);
         GuiHelper.destroyComponents(this, false);
