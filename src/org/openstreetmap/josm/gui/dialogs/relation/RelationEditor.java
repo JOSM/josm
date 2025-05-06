@@ -152,8 +152,8 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
 
     @Override
     public final boolean isDirtyRelation(boolean ignoreUninterestingTags) {
-        if (relation != null && relation.getDataSet() == null &&
-            relationSnapshot != null && relationSnapshot.getDataSet() == null) {
+        if (relation == null || relation.getDataSet() == null ||
+            relationSnapshot == null || relationSnapshot.getDataSet() == null) {
             return false;
         }
 
