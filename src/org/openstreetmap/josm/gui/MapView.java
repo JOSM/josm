@@ -396,7 +396,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         if (isBufferAccelerated) {
             buffer.setAccelerationPriority(1);
         } else {
-            Logging.warn("HW acceleration unavailable on screen device {0}",
+            Logging.info("HW acceleration unavailable on screen device {0}",
                     graphicsConfiguration.getDevice().getIDstring());
         }
         return buffer;
