@@ -10,6 +10,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.ImageCapabilities;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -98,6 +101,9 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public class MapView extends NavigatableComponent
 implements PropertyChangeListener, PreferenceChangedListener,
 LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
+
+    private static final boolean IS_HEADLESS = GraphicsEnvironment.isHeadless();
+    private static final Rectangle VIRTUAL_DESKTOP_BOUNDS = getVirtualDesktopBounds();
 
     static {
         MapPaintStyles.addMapPaintStylesUpdateListener(new MapPaintStylesUpdateListener() {
@@ -275,7 +281,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 mapMover = new MapMover(MapView.this);
             }
         });
-
+        addPropertyChangeListener("graphicsConfiguration", event -> {
+            var graphicsConfiguration = (GraphicsConfiguration) event.getNewValue();
+            if (null == graphicsConfiguration) {
+                return;
+            }
+            offscreenBuffer = getAcceleratedBuffer(graphicsConfiguration);
+            unchangedLayersBuffer = getAcceleratedBuffer(graphicsConfiguration);
+        });
         // listens to selection changes to redraw the map
         SelectionEventManager.getInstance().addSelectionListenerForEdt(repaintSelectionChangedListener);
 
@@ -310,6 +323,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
         setTransferHandler(new OsmTransferHandler());
         setOpaque(true);
+
+        if (!IS_HEADLESS) {
+            var defaultScreenDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            var defaultGraphicsConfiguration = defaultScreenDevice.getDefaultConfiguration();
+            offscreenBuffer = getAcceleratedBuffer(defaultGraphicsConfiguration);
+            unchangedLayersBuffer = getAcceleratedBuffer(defaultGraphicsConfiguration);
+        }
     }
 
     /**
@@ -332,29 +352,50 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return Arrays.asList(zoomSlider, scaler);
     }
 
-    private VolatileImage getAcceleratedBuffer() {
-        VolatileImage volatileImage;
-        var width = getWidth();
-        var height = getHeight();
-        // Creating a VolatileImage is impossible if 1) we’re headless or 2) our component is isolated (i.e., not in a
-        // container). The former is inherent to VolatileImage creation; the latter is not, so we need to check that to
-        // produce optimal VolatileImages.
-        if (null != getGraphicsConfiguration()) {
-            // TODO: allow user to toggle between SW-backed and HW-backed?
-            var volatileImageCapabilities = new ImageCapabilities(true);
-            try {
-                volatileImage = getGraphicsConfiguration().createCompatibleVolatileImage(width, height, volatileImageCapabilities, Transparency.OPAQUE);
-            } catch (AWTException e) {
-                //
-                volatileImage = getGraphicsConfiguration().createCompatibleVolatileImage(width, height, Transparency.OPAQUE);
-            }
+    private static Rectangle getVirtualDesktopBounds() {
+        var localGraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        var localScreenDevices = localGraphicsEnvironment.getScreenDevices();
+        var virtualDesktopBounds = new Rectangle();
+        for (var screenDevice : localScreenDevices) {
+            var gcBounds = getHiDPIDeviceBounds(screenDevice);
+            virtualDesktopBounds = virtualDesktopBounds.union(gcBounds);
+        }
+        virtualDesktopBounds.setLocation(0,0);
+        return virtualDesktopBounds;
+    }
+
+    private static Rectangle getHiDPIDeviceBounds(GraphicsDevice screenDevice) {
+        var defaultGraphicsConfiguration = screenDevice.getDefaultConfiguration();
+        // bounds for a DPI-aware GC return bounds with correctly scaled dimensions but unscaled screen-space
+        // coordinates, for whatever reason
+        // in fact, *everything* that returns screen-space coordinates does so without scaling 😭
+        var defaultTransform = defaultGraphicsConfiguration.getDefaultTransform();
+        var scaleX = defaultTransform.getScaleX();
+        var scaleY = defaultTransform.getScaleY();
+        var gcBounds = defaultGraphicsConfiguration.getBounds();
+        gcBounds.setLocation((int) Math.round(gcBounds.x / scaleX), (int) Math.round(gcBounds.y / scaleY));
+        return gcBounds;
+    }
+
+    private VolatileImage getAcceleratedBuffer(GraphicsConfiguration graphicsConfiguration) {
+        // hardware-accelerated pipelines typically initialize on at least the default device, so we use that and hope
+        // for the best 😭
+        var width = VIRTUAL_DESKTOP_BOUNDS.width;
+        var height = VIRTUAL_DESKTOP_BOUNDS.height;
+        var bufferCapabilities = new ImageCapabilities(true);
+        VolatileImage buffer;
+        try {
+            buffer = graphicsConfiguration.createCompatibleVolatileImage(width, height, bufferCapabilities, Transparency.OPAQUE);
+        } catch (AWTException e) {
+            buffer = graphicsConfiguration.createCompatibleVolatileImage(width, height, Transparency.OPAQUE);
+        }
+        var isBufferAccelerated = buffer.getCapabilities().isAccelerated();
+        if (isBufferAccelerated) {
+            buffer.setAccelerationPriority(1);
         } else {
-            volatileImage = createVolatileImage(width, height);
+            Logging.warn("HW acceleration unavailable on screen device {0}", graphicsConfiguration.getDevice());
         }
-        if (null != volatileImage) {
-            volatileImage.setAccelerationPriority(1);
-        }
-        return volatileImage;
+        return buffer;
     }
 
     // Remembered geometry of the component
@@ -522,11 +563,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             return;
         }
 
-        try {
-            drawMapContent((Graphics2D) g);
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            throw BugReport.intercept(e).put("visibleLayers", layerManager::getVisibleLayersInZOrder)
-                    .put("temporaryLayers", temporaryLayers);
+        if (!IS_HEADLESS) {
+            try {
+                drawMapContent((Graphics2D) g);
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                throw BugReport.intercept(e).put("visibleLayers", layerManager::getVisibleLayersInZOrder)
+                        .put("temporaryLayers", temporaryLayers);
+            }
         }
         super.paint(g);
     }
@@ -535,14 +578,12 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
         int unchangedLayersCount = getUnchangedLayersCount(visibleLayers);
         do {
-            if (null == offscreenBuffer
-                    || VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())
-                    || offscreenBuffer.getWidth() != getWidth()
-                    || offscreenBuffer.getHeight() != getHeight()) {
-                offscreenBuffer = getAcceleratedBuffer();
+            if (VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())) {
+                offscreenBuffer = getAcceleratedBuffer(getGraphicsConfiguration());
             }
             var g2 = offscreenBuffer.createGraphics();
-            g2.setClip(g.getClip());
+            // TODO: clip to content visible in screen-space *only*
+            g2.setClip(getBounds());
             renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
             g2.drawImage(unchangedLayersBuffer, 0, 0, null);
 
@@ -588,14 +629,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 && unchangedLayers.size() <= nonChangedLayersCount
                 && unchangedLayers.equals(visibleLayers.subList(0, unchangedLayers.size()));
         do {
-            if (null == unchangedLayersBuffer
-                    || VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
-                unchangedLayersBuffer = getAcceleratedBuffer();
+            if (VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
+                unchangedLayersBuffer = getAcceleratedBuffer(getGraphicsConfiguration());
                 canUseBuffer = false;
             }
             if (!canUseBuffer || (unchangedLayers.size() != nonChangedLayersCount)) {
                 var g2 = unchangedLayersBuffer.createGraphics();
-                g2.setClip(g.getClip());
+                g2.setClip(getBounds());
                 if (!canUseBuffer) {
                     g2.setColor(PaintColors.getBackgroundColor());
                     g2.fillRect(0, 0, getWidth(), getHeight());
