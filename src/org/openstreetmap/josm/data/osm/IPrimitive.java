@@ -38,7 +38,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
     /**
      * Set the status of the referrers
      * @param referrersDownloaded {@code true} if all referrers for this object have been downloaded
-     * @since xxx
+     * @since 19078
      */
     default void setReferrersDownloaded(boolean referrersDownloaded) {
         throw new UnsupportedOperationException(this.getClass().getName() + " does not support referrers status");
@@ -87,7 +87,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * Determines if this primitive is fully downloaded
      * @return {@code true} if the primitive is fully downloaded and all parents and children should be available.
      * {@code false} otherwise.
-     * @since xxx
+     * @since 19078
      */
     default boolean isReferrersDownloaded() {
         return false;

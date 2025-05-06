@@ -163,7 +163,7 @@ public class MultipolygonBuilder {
      * @param multipolygon the multipolygon to join.
      * @return a pair of outer and inner multipolygon rings.
      * @throws JoinedPolygonCreationException if the creation fails.
-     * @since xxx
+     * @since 19336
      */
     public static Pair<List<JoinedPolygon>, List<JoinedPolygon>> joinWays(
             Map<IRelation<?>, Pair<List<JoinedPolygon>, List<JoinedPolygon>>> cache, Relation multipolygon) {

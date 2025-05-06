@@ -51,7 +51,7 @@ public interface IRelationEditor {
      *
      * @param ignoreUninterestingTags whether to ignore uninteresting tag changes
      * @return true if the currently edited relation has been changed elsewhere.
-     * @since xxx
+     * @since 19398
      */
     boolean isDirtyRelation(boolean ignoreUninterestingTags);
 
@@ -61,7 +61,7 @@ public interface IRelationEditor {
      * Reloading data from the relation would cause the pending changes to be lost.
      *
      * @return true if the currently edited relation has been changed in the editor.
-     * @since xxx
+     * @since 19398
      */
     boolean isDirtyEditor();
 
