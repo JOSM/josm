@@ -301,7 +301,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     /**
      * Get the bounds for this downloader
      * @return The bounds for this downloader
-     * @since xxx
+     * @since 19078
      */
     protected Collection<Bounds> getBounds() {
         return Collections.singleton(new Bounds(this.lat1, this.lon1, this.lat2, this.lon2));

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * Birthday animation game extension.
  * @author Pauline Thiele
- * @since xxx
+ * @since 19254
  */
 public class BirthdayExtension extends JPanel implements AnimationExtension, MouseListener, MouseMotionListener {
     private static final int SIZE = 40;

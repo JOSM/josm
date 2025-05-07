@@ -1232,7 +1232,7 @@ public final class Geometry {
      * @param multiPolygon the multipolygon relation
      * @param cache The cache to avoid calculating joined inner/outer ways multiple times (see {@link MultipolygonBuilder#joinWays(Relation)})
      * @return a new list containing the found primitives, empty if multipolygon is invalid or nothing was found.
-     * @since xxx
+     * @since 19336
      */
     public static List<IPrimitive> filterInsideMultipolygon(Collection<IPrimitive> primitives, Relation multiPolygon,
                                                             Map<IRelation<?>, Pair<List<JoinedPolygon>, List<JoinedPolygon>>> cache) {
