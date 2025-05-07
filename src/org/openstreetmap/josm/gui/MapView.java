@@ -364,7 +364,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         for (GraphicsDevice screenDevice : localSDs) {
             Rectangle sdBounds = getHiDPIDeviceBounds(screenDevice);
             virtualDesktopBounds = virtualDesktopBounds.union(sdBounds);
-            break;
         }
         virtualDesktopBounds.setLocation(0,0);
         return virtualDesktopBounds;
