@@ -588,7 +588,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         nonChangedLayers.clear();
-        nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
+        if (nonChangedLayersCount > 0)
+            nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
         lastViewID = getViewID();
         lastClipBounds = g.getClipBounds();
 
