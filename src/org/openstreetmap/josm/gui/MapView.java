@@ -590,7 +590,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
             Graphics2D g2 = offscreenBuffer.createGraphics();
             // TODO: clip to content visible in screen-space *only*
-            g2.setClip(getBounds());
+            g2.setClip(getVisibleRect());
             renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
             g2.drawImage(unchangedLayersBuffer, 0, 0, null);
 
@@ -642,7 +642,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
             if (!canUseBuffer || (unchangedLayers.size() != unchangedLayersCount)) {
                 Graphics2D g2 = unchangedLayersBuffer.createGraphics();
-                g2.setClip(getBounds());
+                g2.setClip(getVisibleRect());
                 if (!canUseBuffer) {
                     g2.setColor(PaintColors.getBackgroundColor());
                     g2.fillRect(0, 0, getWidth(), getHeight());
