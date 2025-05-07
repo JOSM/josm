@@ -104,7 +104,7 @@ implements PropertyChangeListener, PreferenceChangedListener,
 LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private static final boolean IS_HEADLESS = GraphicsEnvironment.isHeadless();
-    private static Rectangle virtualDesktopBounds = getVirtualDesktopBounds();
+    private static final Rectangle VIRTUAL_DESKTOP_BOUNDS = getVirtualDesktopBounds();
 
     static {
         MapPaintStyles.addMapPaintStylesUpdateListener(new MapPaintStylesUpdateListener() {
@@ -288,9 +288,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 return;
             }
             Rectangle currentVirtualDesktopBounds = getVirtualDesktopBounds();
-            if (virtualDesktopBounds.equals(currentVirtualDesktopBounds)) {
+            if (VIRTUAL_DESKTOP_BOUNDS.equals(currentVirtualDesktopBounds)) {
                 return;
             }
+            VIRTUAL_DESKTOP_BOUNDS.setRect(currentVirtualDesktopBounds);
             offscreenBuffer = getAcceleratedBuffer(gc);
             unchangedLayersBuffer = getAcceleratedBuffer(gc);
         });
@@ -385,8 +386,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private VolatileImage getAcceleratedBuffer(GraphicsConfiguration graphicsConfiguration) {
         // hardware-accelerated pipelines typically initialize on at least the default device, so we use that and hope
         // for the best 😭
-        int width = virtualDesktopBounds.width;
-        int height = virtualDesktopBounds.height;
+        int width = VIRTUAL_DESKTOP_BOUNDS.width;
+        int height = VIRTUAL_DESKTOP_BOUNDS.height;
         ImageCapabilities bufferCaps = new ImageCapabilities(true);
         VolatileImage buffer;
         try {
