@@ -61,7 +61,7 @@ public class ImageMarker extends ButtonMarker {
             if (this.isLatLonKnown()) {
                 remoteEntry.setPos(this);
             }
-            if (!Utils.isBlank(this.getText())) {
+            if (!Utils.isStripEmpty(this.getText())) {
                 remoteEntry.setDisplayName(this.getText());
             }
             return remoteEntry;

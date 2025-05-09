@@ -48,6 +48,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 import org.openstreetmap.josm.testutils.annotations.TestUser;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -56,6 +57,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link MultiFetchServerObjectReader}.
  */
+@FunctionalTest
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 @Timeout(value = 1, unit = TimeUnit.MINUTES)
 @org.openstreetmap.josm.testutils.annotations.OsmApi(org.openstreetmap.josm.testutils.annotations.OsmApi.APIType.DEV)

@@ -53,9 +53,9 @@ public class TagTransferable implements Transferable {
             if (string.length() > 0) {
                 string.append('\n');
             }
-            string.append(e.getKey());
-            string.append('=');
-            string.append(e.getValue());
+            string.append(e.getKey())
+                .append('=')
+                .append(e.getValue());
         }
         return string.toString();
     }

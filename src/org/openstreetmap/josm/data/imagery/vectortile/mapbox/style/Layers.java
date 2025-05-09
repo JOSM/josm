@@ -58,6 +58,7 @@ public class Layers {
         SKY
     }
 
+    private static final String DEFAULT_COLOR = "#000000";
     private static final char SEMI_COLON = ';';
     private static final Pattern CURLY_BRACES = Pattern.compile("(\\{(.*?)})");
     private static final String PAINT = "paint";
@@ -87,7 +88,7 @@ public class Layers {
      * @param layerInfo The info to use to create the layer
      */
     public Layers(final JsonObject layerInfo) {
-        this (null, layerInfo);
+        this(null, layerInfo);
     }
 
     /**
@@ -185,7 +186,7 @@ public class Layers {
         final StringBuilder sb = new StringBuilder(36);
         // line-blur, default 0 (px)
         // line-color, default #000000, disabled by line-pattern
-        final String color = paintObject.getString("line-color", "#000000");
+        final String color = paintObject.getString("line-color", DEFAULT_COLOR);
         sb.append(StyleKeys.COLOR).append(':').append(color).append(SEMI_COLON);
         // line-opacity, default 1 (0-1)
         final JsonNumber opacity = paintObject.getJsonNumber("line-opacity");
@@ -209,10 +210,10 @@ public class Layers {
         // line-dasharray, array of number >= 0, units in line widths, disabled by line-pattern
         if (paintObject.containsKey("line-dasharray")) {
             final JsonArray dashArray = paintObject.getJsonArray("line-dasharray");
-            sb.append(StyleKeys.DASHES).append(':');
-            sb.append(dashArray.stream().filter(JsonNumber.class::isInstance).map(JsonNumber.class::cast)
-              .map(JsonNumber::toString).collect(Collectors.joining(",")));
-            sb.append(SEMI_COLON);
+            sb.append(StyleKeys.DASHES).append(':')
+                .append(dashArray.stream().filter(JsonNumber.class::isInstance).map(JsonNumber.class::cast)
+                    .map(JsonNumber::toString).collect(Collectors.joining(",")))
+                .append(SEMI_COLON);
         }
         // line-gap-width
         // line-gradient
@@ -234,7 +235,7 @@ public class Layers {
         final StringBuilder sb = new StringBuilder(150).append("symbol-shape:circle;")
           // circle-blur
           // circle-color
-          .append("symbol-fill-color:").append(paintObject.getString("circle-color", "#000000")).append(SEMI_COLON);
+          .append("symbol-fill-color:").append(paintObject.getString("circle-color", DEFAULT_COLOR)).append(SEMI_COLON);
         // circle-opacity
         final JsonNumber fillOpacity = paintObject.getJsonNumber("circle-opacity");
         sb.append("symbol-fill-opacity:").append(fillOpacity != null ? fillOpacity.numberValue().toString() : "1").append(SEMI_COLON);
@@ -245,7 +246,7 @@ public class Layers {
         sb.append("symbol-size:").append(radius != null ? (2 * radius.numberValue().doubleValue()) : "10").append(SEMI_COLON)
           // circle-sort-key
           // circle-stroke-color
-          .append("symbol-stroke-color:").append(paintObject.getString("circle-stroke-color", "#000000")).append(SEMI_COLON);
+          .append("symbol-stroke-color:").append(paintObject.getString("circle-stroke-color", DEFAULT_COLOR)).append(SEMI_COLON);
         // circle-stroke-opacity
         final JsonNumber strokeOpacity = paintObject.getJsonNumber("circle-stroke-opacity");
         sb.append("symbol-stroke-opacity:").append(strokeOpacity != null ? strokeOpacity.numberValue().toString() : "1").append(SEMI_COLON);
@@ -272,11 +273,11 @@ public class Layers {
         boolean iconImage = false;
         if (layoutObject.containsKey("icon-image")) {
             sb.append(/* NO-ICON */"icon-image:concat(");
-            if (!Utils.isBlank(this.styleId)) {
+            if (!Utils.isStripEmpty(this.styleId)) {
                 sb.append('"').append(this.styleId).append('/').append("\",");
             }
             Matcher matcher = CURLY_BRACES.matcher(layoutObject.getString("icon-image"));
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
             int previousMatch;
             if (matcher.lookingAt()) {
                 matcher.appendReplacement(stringBuffer, "tag(\"$2\"),\"");
@@ -298,15 +299,14 @@ public class Layers {
             } else if (!matcher.hitEnd()) {
                 stringBuffer.append('"');
             }
-            StringBuffer tail = new StringBuffer();
+            StringBuilder tail = new StringBuilder();
             matcher.appendTail(tail);
             if (tail.length() > 0) {
                 String current = stringBuffer.toString();
                 if (!"\"".equals(current) && !current.endsWith(",\"")) {
                     stringBuffer.append(",\"");
                 }
-                stringBuffer.append(tail);
-                stringBuffer.append('"');
+                stringBuffer.append(tail).append('"');
             }
 
             sb.append(stringBuffer).append(')').append(SEMI_COLON);
@@ -374,9 +374,9 @@ public class Layers {
                         .orElseGet(() -> fontMatches.stream().filter(font -> font.getPSName().equals(fontString)).findAny()
                         .orElseGet(() -> fontMatches.stream().filter(font -> font.getFamily().equals(fontString)).findAny().orElse(null))));
                     if (setFont != null) {
-                        sb.append(StyleKeys.FONT_FAMILY).append(':').append('"').append(setFont.getFamily()).append('"').append(SEMI_COLON);
-                        sb.append(StyleKeys.FONT_WEIGHT).append(':').append(setFont.isBold() ? "bold" : "normal").append(SEMI_COLON);
-                        sb.append(StyleKeys.FONT_STYLE).append(':').append(setFont.isItalic() ? "italic" : "normal").append(SEMI_COLON);
+                        sb.append(StyleKeys.FONT_FAMILY).append(':').append('"').append(setFont.getFamily()).append('"').append(SEMI_COLON)
+                            .append(StyleKeys.FONT_WEIGHT).append(':').append(setFont.isBold() ? "bold" : "normal").append(SEMI_COLON)
+                            .append(StyleKeys.FONT_STYLE).append(':').append(setFont.isItalic() ? "italic" : "normal").append(SEMI_COLON);
                         break;
                     }
                 }
@@ -438,13 +438,13 @@ public class Layers {
         StringBuilder sb = new StringBuilder(50)
           // fill-antialias
           // fill-color
-          .append(StyleKeys.FILL_COLOR).append(':').append(paintObject.getString(StyleKeys.FILL_COLOR, "#000000")).append(SEMI_COLON);
+          .append(StyleKeys.FILL_COLOR).append(':').append(paintObject.getString(StyleKeys.FILL_COLOR, DEFAULT_COLOR)).append(SEMI_COLON);
         // fill-opacity
         final JsonNumber opacity = paintObject.getJsonNumber(StyleKeys.FILL_OPACITY);
         sb.append(StyleKeys.FILL_OPACITY).append(':').append(opacity != null ? opacity.numberValue().toString() : "1").append(SEMI_COLON)
           // fill-outline-color
           .append(StyleKeys.COLOR).append(':').append(paintObject.getString("fill-outline-color",
-          paintObject.getString("fill-color", "#000000"))).append(SEMI_COLON);
+          paintObject.getString("fill-color", DEFAULT_COLOR))).append(SEMI_COLON);
         // fill-pattern
         // fill-sort-key
         // fill-translate

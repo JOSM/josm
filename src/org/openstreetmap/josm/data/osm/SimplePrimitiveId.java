@@ -166,7 +166,8 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
             case MULTIPOLYGON:
             case RELATION:
                 return "r" + primitive.getUniqueId();
+            default:
+                throw new IllegalArgumentException("Unknown primitive type: " + primitive.getType());
         }
-        throw new IllegalArgumentException("Unknown primitive type: " + primitive.getType());
     }
 }

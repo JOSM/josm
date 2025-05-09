@@ -81,7 +81,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
      * @return true if text has been pasted and valid ids have been read
      */
     public boolean tryToPasteFrom(String contents) {
-        if (!Utils.isBlank(contents)) {
+        if (!Utils.isStripEmpty(contents)) {
             setText(contents.trim());
             clearTextIfInvalid();
             return readIds();

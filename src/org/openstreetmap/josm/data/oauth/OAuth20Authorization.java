@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.oauth;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,6 +17,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.remotecontrol.handler.AuthorizationHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -55,7 +63,36 @@ public class OAuth20Authorization implements IOAuthAuthorization {
         String url = parameters.getAuthorizationUrl(state, scopes)
                 + "&code_challenge_method=S256&code_challenge=" + s256CodeChallenge;
         AuthorizationHandler.addAuthorizationConsumer(state, new OAuth20AuthorizationHandler(state, codeVerifier, parameters, consumer));
-        OpenBrowser.displayUrl(url);
+        GuiHelper.runInEDT(() -> showUrlOpenFailure(url, OpenBrowser.displayUrl(url)));
+    }
+
+    /**
+     * Show a message if a URL fails to open
+     * @param url The URL that failed to open
+     * @param error The message indicating why the URL failed to open; if {@code null}, no message is shown.
+     */
+    private static void showUrlOpenFailure(String url, String error) {
+        if (error != null) {
+            final HtmlPanel textField = new HtmlPanel("<html><body>"
+                    + tr("The web browser failed to open with the following error: \"{0}\".<br>\n"
+                            + "Please open the following url:<br>\n"
+                            + "<a href=\"{1}\">{1}</a><br>\n"
+                            + "Should we copy the URL to the clipboard?", error, url)
+                    + "</body></html>");
+            textField.enableClickableHyperlinks();
+            final JScrollPane scrollPane = new JScrollPane(textField);
+            // Ensure that the scroll pane doesn't extend too much or too little.
+            // For now, assume that the user hasn't made the main JOSM frame beyond monitors.
+            scrollPane.setPreferredSize(new Dimension(Math.min(textField.getPreferredSize().width + 32,
+                    MainApplication.getMainFrame().getWidth() - 240 /* warning image + buffer */),
+                    textField.getPreferredSize().height + scrollPane.getHorizontalScrollBar().getPreferredSize().height * 2));
+            GuiHelper.prepareResizeableOptionPane(scrollPane, scrollPane.getPreferredSize());
+            int answer = JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), scrollPane, tr("Failed to open browser"),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            if (answer == JOptionPane.YES_OPTION) {
+                ClipboardUtils.copyString(url);
+            }
+        }
     }
 
     private static class OAuth20AuthorizationHandler implements AuthorizationHandler.AuthorizationConsumer {

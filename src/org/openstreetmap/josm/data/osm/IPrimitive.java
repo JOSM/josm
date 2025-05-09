@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.osm;
 
 import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +34,15 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * @param modified true, if this primitive is to be modified
      */
     void setModified(boolean modified);
+
+    /**
+     * Set the status of the referrers
+     * @param referrersDownloaded {@code true} if all referrers for this object have been downloaded
+     * @since 19078
+     */
+    default void setReferrersDownloaded(boolean referrersDownloaded) {
+        throw new UnsupportedOperationException(this.getClass().getName() + " does not support referrers status");
+    }
 
     /**
      * Checks if object is known to the server.
@@ -74,6 +82,16 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * @param deleted  true, if this primitive is deleted; false, otherwise
      */
     void setDeleted(boolean deleted);
+
+    /**
+     * Determines if this primitive is fully downloaded
+     * @return {@code true} if the primitive is fully downloaded and all parents and children should be available.
+     * {@code false} otherwise.
+     * @since 19078
+     */
+    default boolean isReferrersDownloaded() {
+        return false;
+    }
 
     /**
      * Determines if this primitive is incomplete.
@@ -276,18 +294,6 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * used to check against edit conflicts.
      *
      * @return date of last modification
-     * @see #setTimestamp
-     * @deprecated since 17749, use {@link #getInstant} instead
-     */
-    @Deprecated
-    Date getTimestamp();
-
-    /**
-     * Time of last modification to this object. This is not set by JOSM but
-     * read from the server and delivered back to the server unmodified. It is
-     * used to check against edit conflicts.
-     *
-     * @return date of last modification
      * @see #setInstant
      */
     Instant getInstant();
@@ -301,15 +307,6 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * @see #setRawTimestamp
      */
     int getRawTimestamp();
-
-    /**
-     * Sets time of last modification to this object
-     * @param timestamp date of last modification
-     * @see #getTimestamp
-     * @deprecated since 17749, use {@link #setInstant} instead
-     */
-    @Deprecated
-    void setTimestamp(Date timestamp);
 
     /**
      * Sets time of last modification to this object
@@ -328,7 +325,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
     /**
      * Determines if this primitive has no timestamp information.
      * @return {@code true} if this primitive has no timestamp information
-     * @see #getTimestamp
+     * @see #getInstant
      * @see #getRawTimestamp
      */
     boolean isTimestampEmpty();
@@ -380,11 +377,11 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * accessed from very specific (language variant) to more generic (default name).
      *
      * @return the name of this primitive, <code>null</code> if no name exists
-     * @see LanguageInfo#getLanguageCodes
+     * @see LanguageInfo#getOSMLocaleCodes
      */
     default String getLocalName() {
-        for (String s : LanguageInfo.getLanguageCodes(null)) {
-            String val = get("name:" + s);
+        for (String s : LanguageInfo.getOSMLocaleCodes("name:")) {
+            String val = get(s);
             if (val != null)
                 return val;
         }

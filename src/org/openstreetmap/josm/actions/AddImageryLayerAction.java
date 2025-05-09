@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             scrollPane.setPreferredSize(new Dimension(400, 400));
             final JPanel panel = new JPanel(new GridBagLayout());
             panel.add(scrollPane, GBC.eol().fill());
-            panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+            panel.add(formats, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             setContent(panel);
         }
     }
@@ -114,7 +115,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 info.setDate(userDate);
                 // TODO persist new {time} value (via ImageryLayerInfo.save?)
             }
-            switch(info.getImageryType()) {
+            switch (info.getImageryType()) {
             case WMS_ENDPOINT:
                 // convert to WMS type
                 if (Utils.isEmpty(info.getDefaultLayers())) {
@@ -167,7 +168,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             final ImageryInfo infoToAdd = convertImagery(info);
             if (infoToAdd != null) {
                 layer = ImageryLayer.create(infoToAdd);
-                getLayerManager().addLayer(layer);
+                getLayerManager().addLayer(layer, false);
                 AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
             }
         } catch (IllegalArgumentException | ReportedException ex) {
@@ -232,8 +233,8 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             scrollPane.setPreferredSize(new Dimension(400, 400));
             final JPanel panel = new JPanel(new GridBagLayout());
             panel.add(scrollPane, GBC.eol().fill());
-            panel.add(checkBounds, GBC.eol().fill(GBC.HORIZONTAL));
-            panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+            panel.add(checkBounds, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            panel.add(formats, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             dialog.setContent(panel);
 
             if (dialog.showDialog().getValue() != 1) {

@@ -91,7 +91,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     /** paint large dots for points **/
     private boolean large;
     private int largesize;
-    private boolean hdopCircle;
+    private boolean drawCircle;
+    private int circleDataSource;
     /** paint direction arrow with alternate math. may be faster **/
     private boolean arrowsFast;
     /** don't draw arrows nearer to each other than this **/
@@ -137,8 +138,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private ColorScale dateScale;
     private ColorScale directionScale;
 
-    /** Opacity for hdop points **/
-    private int hdopAlpha;
+    /** Opacity for circle points **/
+    private int circleAlpha;
 
     // lookup array to draw arrows without doing any math
     private static final int ll0 = 9;
@@ -236,16 +237,21 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     // The heat map was invalidated since the last draw.
     private boolean gpxLayerInvalidated;
 
+    /** minTime saves the start time of the track as epoch seconds */
+    private double minTime;
+    /** maxTime saves the end time of the track as epoch seconds */
+    private double maxTime;
+
     private void setupColors() {
-        hdopAlpha = Config.getPref().getInt("hdop.color.alpha", -1);
+        circleAlpha = Config.getPref().getInt("circle.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);
         /* Colors (without custom alpha channel, if given) for HDOP painting. */
         hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP"));
         qualityScale = ColorScale.createFixedScale(rtkLibQualityColors).addTitle(tr("Quality")).addColorBarTitles(rtkLibQualityNames);
-        fixScale = ColorScale.createFixedScale(gpsFixQualityColors).addTitle(tr("GPS fix")).addColorBarTitles(gpsFixQualityNames);
-        refScale = ColorScale.createCyclicScale(1).addTitle(tr("GPS ref"));
-        dateScale = ColorScale.createHSBScale(256).addTitle(tr("Time"));
-        directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction"));
+        fixScale = ColorScale.createFixedScale(gpsFixQualityColors).addTitle(tr("GPS fix value")).addColorBarTitles(gpsFixQualityNames);
+        refScale = ColorScale.createCyclicScale(1).addTitle(tr("GPS Ref-ID"));
+        dateScale = ColorScale.createHSBScale(256).addTitle(tr("Track date"));
+        directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction [°]"));
 
         systemOfMeasurementChanged(null, null);
     }
@@ -253,7 +259,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     @Override
     public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
         SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
-        velocityScale.addTitle(tr("Velocity, {0}", som.speedName));
+        velocityScale.addTitle(tr("Velocity [{0}]", som.speedName));
         layer.invalidate();
     }
 
@@ -374,7 +380,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         }
         large = optBool("points.large");
         largesize = optInt("points.large.size");
-        hdopCircle = optBool("points.hdopcircle");
+        drawCircle = optBool("points.circle");
+        circleDataSource = optInt("points.circle.data.source");
         colored = getColorMode();
         velocityTune = optInt("colormode.velocity.tune");
         colorModeDynamic = optBool("colormode.dynamic-range");
@@ -592,8 +599,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 for (Line segment : getLinesIterable(null)) {
                     for (WayPoint trkPnt : segment) {
                         Object val = trkPnt.get(GpxConstants.PT_HDOP);
-                        if (val != null) {
-                            double hdop = ((Float) val).doubleValue();
+                        if (val instanceof Float) {
+                            double hdop = ((Float) val);
                             if (hdop > maxval) {
                                 maxval = hdop;
                             }
@@ -622,6 +629,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Interval interval = data.getMinMaxTimeForAllTracks().orElse(new Interval(Instant.EPOCH, Instant.now()));
             minval = interval.getStart().getEpochSecond();
             maxval = interval.getEnd().getEpochSecond();
+            this.minTime = minval;
+            this.maxTime = maxval;
+
             dateScale.setRange(minval, maxval);
         }
 
@@ -641,7 +651,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             if (!refs.isEmpty()) {
                 Collections.sort(refs);
                 String[] a = {};
-                refScale = ColorScale.createCyclicScale(refs.size()).addTitle(tr("GPS ref")).addColorBarTitles(refs.toArray(a));
+                refScale = ColorScale.createCyclicScale(refs.size()).addTitle(tr("GPS ref ID")).addColorBarTitles(refs.toArray(a));
                 refScale.setRange(0, refs.size());
             }
         }
@@ -848,10 +858,10 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     }
 
     /****************************************************************
-     ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
+     ************ STEP 3d - DRAW LARGE POINTS AND CIRCLES ***********
      ****************************************************************/
     private void drawPointsStep3d(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
-        if (large || hdopCircle) {
+        if (large || drawCircle) {
             final int halfSize = largesize / 2;
             for (WayPoint trkPnt : visibleSegments) {
                 LatLon c = trkPnt.getCoor();
@@ -860,20 +870,24 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 }
                 Point screen = mv.getPoint(trkPnt);
 
-                if (hdopCircle && trkPnt.get(GpxConstants.PT_HDOP) != null) {
-                    // hdop value
-                    float hdop = ((Number) trkPnt.get(GpxConstants.PT_HDOP)).floatValue();
-                    if (hdop < 0) {
-                        hdop = 0;
+                if (drawCircle) {
+                    float circleSize;
+                    //hdop
+                    if (circleDataSource == 0 && trkPnt.get(GpxConstants.PT_HDOP) != null) {
+                        // circleSize value
+                        circleSize = ((Number) trkPnt.get(GpxConstants.PT_HDOP)).floatValue();
+                        drawCircle(g, mv, trkPnt, screen, circleSize);
                     }
-                    Color customColoringTransparent = hdopAlpha < 0 ? trkPnt.customColoring :
-                            new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (hdopAlpha << 24), true);
-                    g.setColor(customColoringTransparent);
-                    // hdop circles
-                    int hdopp = mv.getPoint(new LatLon(
-                            trkPnt.getCoor().lat(),
-                            trkPnt.getCoor().lon() + 2d * 6 * hdop * 360 / 40000000d)).x - screen.x;
-                    g.drawArc(screen.x - hdopp / 2, screen.y - hdopp / 2, hdopp, hdopp, 0, 360);
+                    //horizontal standard deviation estimate
+                    if (circleDataSource == 1 && trkPnt.get(GpxConstants.PT_STD_HDEV) != null) {
+                        circleSize = ((Number) trkPnt.get(GpxConstants.PT_STD_HDEV)).floatValue();
+                        drawCircle(g, mv, trkPnt, screen, circleSize);
+                    }
+                    //age of correction
+                    if (circleDataSource == 2 && trkPnt.get(GpxConstants.PT_AGEOFDGPSDATA) != null) {
+                        circleSize = ((Number) trkPnt.get(GpxConstants.PT_AGEOFDGPSDATA)).floatValue();
+                        drawCircle(g, mv, trkPnt, screen, circleSize);
+                    }
                 }
                 if (large) {
                     // color the large GPS points like the gps lines
@@ -892,7 +906,21 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     g.fillRect(screen.x - halfSize, screen.y - halfSize, largesize, largesize);
                 }
             } // end for trkpnt
-        } // end if large || hdopcircle
+        } // end if large || drawCircle
+    }
+
+    private void drawCircle(Graphics2D g, MapView mv, WayPoint trkPnt, Point screen, float circleSize) {
+        if (circleSize < 0) {
+            circleSize = 0;
+        }
+        Color customColoringTransparent = circleAlpha < 0 ? trkPnt.customColoring :
+                new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (circleAlpha << 24), true);
+        g.setColor(customColoringTransparent);
+        // circles
+        int circleSizep = mv.getPoint(new LatLon(
+                trkPnt.getCoor().lat(),
+                trkPnt.getCoor().lon() + 2d * 6 * circleSize * 360 / 40000000d)).x - screen.x;
+        g.drawArc(screen.x - circleSizep / 2, screen.y - circleSizep / 2, circleSizep, circleSizep, 0, 360);
     }
 
     /****************************************************************
@@ -1465,7 +1493,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private static void drawHeatGrayDotMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm, int drawSize) {
 
         // typical rendering rate -> use realtime preview instead of accurate display
-        final double maxSegm = 25_000, nrSegms = listSegm.size();
+        final double maxSegm = 25_000;
+        final double nrSegms = listSegm.size();
 
         // determine random drop rate
         final double randomDrop = Math.min(nrSegms > maxSegm ? (nrSegms - maxSegm) / nrSegms : 0, 0.70f);
@@ -1510,8 +1539,10 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Point fromPnt, Point toPnt, int drawSize, double rmsSizeX, double rmsSizeY, double dropRate) {
 
         // collect frequently used items
-        final long fromX = (long) fromPnt.getX(); final long deltaX = (long) (toPnt.getX() - fromX);
-        final long fromY = (long) fromPnt.getY(); final long deltaY = (long) (toPnt.getY() - fromY);
+        final long fromX = (long) fromPnt.getX();
+        final long fromY = (long) fromPnt.getY();
+        final long deltaX = (long) (toPnt.getX() - fromX);
+        final long deltaY = (long) (toPnt.getY() - fromY);
 
         // use same random values for each point
         final Random heatMapRandom = new Random(fromX+fromY+deltaX+deltaY);
@@ -1615,18 +1646,20 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         g.setComposite(AlphaComposite.SrcOver.derive(1.00f));
 
         if (colored == ColorMode.HDOP) {
-            hdopScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
+            hdopScale.drawColorBar(g, w-10, 50, 20, 100, 1.0);
         } else if (colored == ColorMode.QUALITY) {
-            qualityScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
+            qualityScale.drawColorBar(g, w-10, 50, 20, 100, 1.0);
         } else if (colored == ColorMode.FIX) {
-            fixScale.drawColorBar(g, w-30, 50, 20, 175, 1.0);
+            fixScale.drawColorBar(g, w-10, 50, 20, 175, 1.0);
         } else if (colored == ColorMode.REF) {
-            refScale.drawColorBar(g, w-30, 50, 20, 175, 1.0);
+            refScale.drawColorBar(g, w-10, 50, 20, 175, 1.0);
         } else if (colored == ColorMode.VELOCITY) {
             SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
-            velocityScale.drawColorBar(g, w-30, 50, 20, 100, som.speedValue);
+            velocityScale.drawColorBar(g, w-10, 50, 20, 100, som.speedValue);
         } else if (colored == ColorMode.DIRECTION) {
-            directionScale.drawColorBar(g, w-30, 50, 20, 100, 180.0/Math.PI);
+            directionScale.drawColorBar(g, w-10, 50, 20, 100, 180.0/Math.PI);
+        } else if (colored == ColorMode.TIME) {
+            dateScale.drawColorBarTime(g, w-10, 50, 20, 100, this.minTime, this.maxTime);
         }
     }
 

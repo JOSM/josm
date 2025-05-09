@@ -341,7 +341,7 @@ public abstract class CrossingWays extends Test {
                         .filter(w -> !w.isDeleted() && isPrimitiveUsable(w)).collect(Collectors.toList()));
                 if (this instanceof CrossingWays.Boundaries) {
                     List<Relation> relations = ds.searchRelations(wt.getBBox()).stream()
-                            .filter(p -> isPrimitiveUsable(p)).collect(Collectors.toList());
+                            .filter(this::isPrimitiveUsable).collect(Collectors.toList());
                     for (Relation r: relations) {
                         for (Way w : r.getMemberPrimitives(Way.class)) {
                             if (!w.isIncomplete())
@@ -359,7 +359,7 @@ public abstract class CrossingWays extends Test {
     }
 
     static boolean isWaterArea(OsmPrimitive w) {
-        return w.hasTag("natural", "water") || w.hasTag("waterway", "riverbank") || w.hasTag(LANDUSE, "reservoir");
+        return w.hasTag("natural", "water") || w.hasTag(WATERWAY, "riverbank") || w.hasTag(LANDUSE, "reservoir");
     }
 
     static boolean isHighway(OsmPrimitive w) {

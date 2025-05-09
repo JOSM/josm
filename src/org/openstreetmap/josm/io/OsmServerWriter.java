@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.ChangesetClosedException.Source;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -97,8 +99,10 @@ public class OsmServerWriter {
             progressMonitor.setTicksCount(primitives.size());
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
+                if (progressMonitor.isCanceled())
+                    break;
                 String msg;
-                switch(OsmPrimitiveType.from(osm)) {
+                switch (OsmPrimitiveType.from(osm)) {
                 case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
                 case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
                 case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
@@ -155,6 +159,7 @@ public class OsmServerWriter {
             progressMonitor.beginTask(tr("Starting to upload in chunks..."));
             List<OsmPrimitive> chunk = new ArrayList<>(chunkSize);
             Iterator<? extends OsmPrimitive> it = primitives.iterator();
+            int maxChunkSize = api.getCapabilities().getMaxChangesetSize();
             int numChunks = (int) Math.ceil((double) primitives.size() / (double) chunkSize);
             int i = 0;
             while (it.hasNext()) {
@@ -162,8 +167,7 @@ public class OsmServerWriter {
                 if (canceled) return;
                 int j = 0;
                 chunk.clear();
-                while (it.hasNext() && j < chunkSize) {
-                    if (canceled) return;
+                while (it.hasNext() && j < chunkSize && processed.size() + j < maxChunkSize) {
                     j++;
                     chunk.add(it.next());
                 }
@@ -172,6 +176,10 @@ public class OsmServerWriter {
                                 "({0}/{1}) Uploading {2} objects...",
                                 chunk.size(), i, numChunks, chunk.size()));
                 processed.addAll(api.uploadDiff(chunk, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
+                // see #23738: server will close CS if maximum changeset size was reached
+                if (processed.size() >= maxChunkSize) {
+                    throw new ChangesetClosedException(api.getChangeset().getId(), Instant.now(), Source.UPLOAD_DATA);
+                }
             }
         } finally {
             progressMonitor.finishTask();
@@ -206,7 +214,7 @@ public class OsmServerWriter {
                 api.updateChangeset(changeset, monitor.createSubTaskMonitor(0, false));
             }
             api.setChangeset(changeset);
-            switch(strategy.getStrategy()) {
+            switch (strategy.getStrategy()) {
             case SINGLE_REQUEST_STRATEGY:
                 uploadChangesAsDiffUpload(primitives, monitor.createSubTaskMonitor(0, false));
                 break;

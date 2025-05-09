@@ -112,7 +112,7 @@ public class RenderBenchmarkCollector {
     }
 
     public static long getCurrentTimeMilliseconds() {
-        return System.nanoTime() / 1000000; // System.currentTimeMillis has low accuracy, sometimes multiples of 16ms
+        return System.nanoTime() / 1_000_000; // System.currentTimeMillis has low accuracy, sometimes multiples of 16ms
     }
 
     /**
@@ -120,7 +120,7 @@ public class RenderBenchmarkCollector {
      * @author Michael Zangl
      */
     public static class LoggingBenchmark extends RenderBenchmarkCollector.CapturingBenchmark {
-        private final PrintStream outStream = System.err;
+        private static final PrintStream outStream = System.err;
         private double circum;
 
         @Override

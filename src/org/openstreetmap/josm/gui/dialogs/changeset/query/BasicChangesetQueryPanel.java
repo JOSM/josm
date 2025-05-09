@@ -164,7 +164,7 @@ public class BasicChangesetQueryPanel extends JPanel {
             q = BasicQuery.MOST_RECENT_CHANGESETS;
         } else {
             try {
-                q = BasicQuery.valueOf(BasicQuery.class, value);
+                q = BasicQuery.valueOf(value);
             } catch (IllegalArgumentException e) {
                 Logging.log(Logging.LEVEL_WARN, tr("Unexpected value for preference ''{0}'', got ''{1}''. Resetting to default query.",
                         "changeset-query.basic.query", value), e);
@@ -193,7 +193,7 @@ public class BasicChangesetQueryPanel extends JPanel {
         UserIdentityManager im = UserIdentityManager.getInstance();
         if (q == null)
             return query;
-        switch(q) {
+        switch (q) {
         case MOST_RECENT_CHANGESETS:
             break;
         case MY_OPEN_CHANGESETS:

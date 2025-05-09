@@ -15,10 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
-import org.apache.commons.compress.utils.CountingInputStream;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -30,6 +26,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.data.osm.pbf.Blob;
@@ -44,11 +41,86 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
  * Read OSM data from an OSM PBF file
  * @since 18695
  */
 public final class OsmPbfReader extends AbstractReader {
+    /**
+     * This could be replaced by {@link org.apache.commons.io.input.BoundedInputStream} from Apache Commons IO.
+     * However, Commons IO is not <i>currently</i> (2024-05-13) a required JOSM dependency, so we should avoid using it
+     * for now. Commons IO is a <i>transitive</i> dependency, currently pulled in by {@link org.apache.commons.compress}
+     * (see {@link org.apache.commons.compress.utils.BoundedInputStream}).
+     */
+    private static final class BoundedInputStream extends InputStream {
+        private final InputStream source;
+        private long count;
+        private long mark;
+
+        BoundedInputStream(InputStream source) {
+            this.source = source;
+        }
+
+        @Override
+        public int read() throws IOException {
+            final int read = this.source.read();
+            if (read > 0) {
+                count++;
+            }
+            return read;
+        }
+
+        @Override
+        public int read(@Nonnull byte[] b, int off, int len) throws IOException {
+            final int read = this.source.read(b, off, len);
+            if (read > 0) {
+                this.count += read;
+            }
+            return read;
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            long skipped = super.skip(n);
+            this.count += skipped;
+            return skipped;
+        }
+
+        @Override
+        public int available() throws IOException {
+            return this.source.available();
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.source.close();
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            this.source.mark(readlimit);
+            this.mark = this.count;
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            this.source.reset();
+            this.count = this.mark;
+        }
+
+        @Override
+        public boolean markSupported() {
+            return this.source.markSupported();
+        }
+
+        long getCount() {
+            return this.count;
+        }
+    }
+
     private static final long[] EMPTY_LONG = new long[0];
     /**
      * Nano degrees
@@ -86,11 +158,11 @@ public final class OsmPbfReader extends AbstractReader {
     }
 
     private void parse(InputStream source) throws IllegalDataException, IOException {
-        final CountingInputStream inputStream;
+        final BoundedInputStream inputStream;
         if (source.markSupported()) {
-            inputStream = new CountingInputStream(source);
+            inputStream = new BoundedInputStream(source);
         } else {
-            inputStream = new CountingInputStream(new BufferedInputStream(source));
+            inputStream = new BoundedInputStream(new BufferedInputStream(source));
         }
         try (ProtobufParser parser = new ProtobufParser(inputStream)) {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -104,7 +176,7 @@ public final class OsmPbfReader extends AbstractReader {
                         throw new IllegalDataException("Too many header blocks in protobuf");
                     }
                     // OSM PBF is fun -- it has *nested* pbf data
-                    Blob blob = parseBlob(blobHeader, inputStream, parser, baos);
+                    final Blob blob = parseBlob(blobHeader, inputStream, parser, baos);
                     headerBlock = parseHeaderBlock(blob, baos);
                     checkRequiredFeatures(headerBlock);
                     blobHeader = null;
@@ -112,7 +184,7 @@ public final class OsmPbfReader extends AbstractReader {
                     if (headerBlock == null) {
                         throw new IllegalStateException("A header block must occur before the first data block");
                     }
-                    Blob blob = parseBlob(blobHeader, inputStream, parser, baos);
+                    final Blob blob = parseBlob(blobHeader, inputStream, parser, baos);
                     parseDataBlock(baos, headerBlock, blob);
                     blobHeader = null;
                 } // Other software *may* extend the FileBlocks (from just "OSMHeader" and "OSMData"), so don't throw an error.
@@ -131,14 +203,14 @@ public final class OsmPbfReader extends AbstractReader {
      * @throws IllegalDataException If the OSM PBF is (probably) corrupted
      */
     @Nonnull
-    private static BlobHeader parseBlobHeader(CountingInputStream cis, ByteArrayOutputStream baos, ProtobufParser parser)
+    private static BlobHeader parseBlobHeader(BoundedInputStream cis, ByteArrayOutputStream baos, ProtobufParser parser)
             throws IOException, IllegalDataException {
         String type = null;
         byte[] indexData = null;
         int datasize = Integer.MIN_VALUE;
         int length = 0;
-        long start = cis.getBytesRead();
-        while (parser.hasNext() && (length == 0 || cis.getBytesRead() - start < length)) {
+        long start = cis.getCount();
+        while (parser.hasNext() && (length == 0 || cis.getCount() - start < length)) {
             final ProtobufRecord current = new ProtobufRecord(baos, parser);
             switch (current.getField()) {
                 case 1:
@@ -151,7 +223,7 @@ public final class OsmPbfReader extends AbstractReader {
                     datasize = current.asUnsignedVarInt().intValue();
                     break;
                 default:
-                    start = cis.getBytesRead();
+                    start = cis.getCount();
                     length += current.asUnsignedVarInt().intValue();
                     if (length > MAX_BLOBHEADER_SIZE) { // There is a hard limit of 64 KiB for the BlobHeader. It *should* be less than 32 KiB.
                         throw new IllegalDataException("OSM PBF BlobHeader is too large. PBF is probably corrupted. (" +
@@ -179,46 +251,46 @@ public final class OsmPbfReader extends AbstractReader {
      * @throws IOException If one of the streams has an issue
      */
     @Nonnull
-    private static Blob parseBlob(BlobHeader header, CountingInputStream cis, ProtobufParser parser, ByteArrayOutputStream baos)
+    private static Blob parseBlob(BlobHeader header, BoundedInputStream cis, ProtobufParser parser, ByteArrayOutputStream baos)
             throws IOException {
-        long start = cis.getBytesRead();
+        long start = cis.getCount();
         int size = Integer.MIN_VALUE;
         Blob.CompressionType type = null;
-        ProtobufRecord current;
         // Needed since size and compression type + compression data may be in a different order
-        byte [] bytes = null;
-        while (parser.hasNext() && cis.getBytesRead() - start < header.dataSize()) {
-            current = new ProtobufRecord(baos, parser);
-            switch (current.getField()) {
-                case 1:
-                    type = Blob.CompressionType.raw;
-                    bytes = current.getBytes();
-                    break;
-                case 2:
-                    size = current.asUnsignedVarInt().intValue();
-                    break;
-                case 3:
-                    type = Blob.CompressionType.zlib;
-                    bytes = current.getBytes();
-                    break;
-                case 4:
-                    type = Blob.CompressionType.lzma;
-                    bytes = current.getBytes();
-                    break;
-                case 5:
-                    type = Blob.CompressionType.bzip2;
-                    bytes = current.getBytes();
-                    break;
-                case 6:
-                    type = Blob.CompressionType.lz4;
-                    bytes = current.getBytes();
-                    break;
-                case 7:
-                    type = Blob.CompressionType.zstd;
-                    bytes = current.getBytes();
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown compression type: " + current.getField());
+        byte[] bytes = null;
+        while (parser.hasNext() && cis.getCount() - start < header.dataSize()) {
+            try (ProtobufRecord current = new ProtobufRecord(baos, parser)) {
+                switch (current.getField()) {
+                    case 1:
+                        type = Blob.CompressionType.raw;
+                        bytes = current.getBytes();
+                        break;
+                    case 2:
+                        size = current.asUnsignedVarInt().intValue();
+                        break;
+                    case 3:
+                        type = Blob.CompressionType.zlib;
+                        bytes = current.getBytes();
+                        break;
+                    case 4:
+                        type = Blob.CompressionType.lzma;
+                        bytes = current.getBytes();
+                        break;
+                    case 5:
+                        type = Blob.CompressionType.bzip2;
+                        bytes = current.getBytes();
+                        break;
+                    case 6:
+                        type = Blob.CompressionType.lz4;
+                        bytes = current.getBytes();
+                        break;
+                    case 7:
+                        type = Blob.CompressionType.zstd;
+                        bytes = current.getBytes();
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown compression type: " + current.getField());
+                }
             }
         }
         if (type == null) {
@@ -309,7 +381,7 @@ public final class OsmPbfReader extends AbstractReader {
     private void parseDataBlock(ByteArrayOutputStream baos, HeaderBlock headerBlock, Blob blob) throws IOException, IllegalDataException {
         String[] stringTable = null; // field 1, note that stringTable[0] is a delimiter, so it is always blank and unused
         // field 2 -- we cannot parse these live just in case the following fields come later
-        List<ProtobufRecord> primitiveGroups = new ArrayList<>();
+        final List<ProtobufRecord> primitiveGroups = new ArrayList<>();
         int granularity = 100; // field 17
         long latOffset = 0; // field 19
         long lonOffset = 0; // field 20
@@ -317,7 +389,7 @@ public final class OsmPbfReader extends AbstractReader {
         try (InputStream inputStream = blob.inputStream();
              ProtobufParser parser = new ProtobufParser(inputStream)) {
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
                         stringTable = parseStringTable(baos, protobufRecord.getBytes());
@@ -354,7 +426,7 @@ public final class OsmPbfReader extends AbstractReader {
             }
         }
         for (ProtobufRecord primitiveGroup : primitiveGroups) {
-            try {
+            try (primitiveGroup) {
                 ds.beginUpdate();
                 parsePrimitiveGroup(baos, primitiveGroup.getBytes(), primitiveBlockRecord);
             } finally {
@@ -380,7 +452,7 @@ public final class OsmPbfReader extends AbstractReader {
             double top = Double.NaN;
             double bottom = Double.NaN;
             while (bboxParser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, bboxParser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, bboxParser);
                 if (protobufRecord.getType() == WireType.VARINT) {
                     double value = protobufRecord.asSignedVarInt().longValue() * NANO_DEGREES;
                     switch (protobufRecord.getField()) {
@@ -419,9 +491,9 @@ public final class OsmPbfReader extends AbstractReader {
     private static String[] parseStringTable(ByteArrayOutputStream baos, byte[] bytes) throws IOException {
         try (ByteArrayInputStream is = new ByteArrayInputStream(bytes);
              ProtobufParser parser = new ProtobufParser(is)) {
-            List<String> list = new ArrayList<>();
+            final List<String> list = new ArrayList<>();
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 if (protobufRecord.getField() == 1) {
                     list.add(protobufRecord.asString().intern()); // field is technically repeated bytes
                 }
@@ -445,7 +517,7 @@ public final class OsmPbfReader extends AbstractReader {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
              ProtobufParser parser = new ProtobufParser(bais)) {
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1: // Nodes, repeated
                         parseNode(baos, protobufRecord.getBytes(), primitiveBlockRecord);
@@ -481,13 +553,13 @@ public final class OsmPbfReader extends AbstractReader {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
              ProtobufParser parser = new ProtobufParser(bais)) {
             long id = Long.MIN_VALUE;
-            List<String> keys = new ArrayList<>();
-            List<String> values = new ArrayList<>();
+            final List<String> keys = new ArrayList<>();
+            final List<String> values = new ArrayList<>();
             Info info = null;
             long lat = Long.MIN_VALUE;
             long lon = Long.MIN_VALUE;
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
                         id = protobufRecord.asSignedVarInt().intValue();
@@ -517,11 +589,13 @@ public final class OsmPbfReader extends AbstractReader {
             if (id == Long.MIN_VALUE || lat == Long.MIN_VALUE || lon == Long.MIN_VALUE) {
                 throw new IllegalDataException("OSM PBF did not provide all the required node information");
             }
-            NodeData node = new NodeData(id);
+            final NodeData node = new NodeData(id);
             node.setCoor(calculateLatLon(primitiveBlockRecord, lat, lon));
             addTags(node, keys, values);
             if (info != null) {
                 setOsmPrimitiveData(primitiveBlockRecord, node, info);
+            } else {
+                ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
             }
             buildPrimitive(node);
         }
@@ -546,7 +620,7 @@ public final class OsmPbfReader extends AbstractReader {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
              ProtobufParser parser = new ProtobufParser(bais)) {
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1: // packed node ids, DELTA encoded
                         long[] tids = decodePackedSInt64(new ProtobufPacked(protobufRecord.getBytes()).getArray());
@@ -571,6 +645,7 @@ public final class OsmPbfReader extends AbstractReader {
                 }
             }
         }
+
         int keyValIndex = 0; // This index must not reset between nodes, and must always increment
         if (ids.length == lats.length && lats.length == lons.length && (denseInfo == null || denseInfo.length == lons.length)) {
             long id = 0;
@@ -578,13 +653,13 @@ public final class OsmPbfReader extends AbstractReader {
             long lon = 0;
             for (int i = 0; i < ids.length; i++) {
                 final NodeData node;
+                id += ids[i];
+                node = new NodeData(id);
                 if (denseInfo != null) {
-                    Info info = denseInfo[i];
-                    id += ids[i];
-                    node = new NodeData(id);
+                    final Info info = denseInfo[i];
                     setOsmPrimitiveData(primitiveBlockRecord, node, info);
                 } else {
-                    node = new NodeData(ids[i]);
+                    ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
                 }
                 lat += lats[i];
                 lon += lons[i];
@@ -636,7 +711,7 @@ public final class OsmPbfReader extends AbstractReader {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
              ProtobufParser parser = new ProtobufParser(bais)) {
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
                         id = protobufRecord.asUnsignedVarInt().longValue();
@@ -667,8 +742,8 @@ public final class OsmPbfReader extends AbstractReader {
         if (refs.length == 0 || id == Long.MIN_VALUE) {
             throw new IllegalDataException("A way with either no id or no nodes was found");
         }
-        WayData wayData = new WayData(id);
-        List<Long> nodeIds = new ArrayList<>(refs.length);
+        final WayData wayData = new WayData(id);
+        final List<Long> nodeIds = new ArrayList<>(refs.length);
         long ref = 0;
         for (long tRef : refs) {
             ref += tRef;
@@ -678,6 +753,8 @@ public final class OsmPbfReader extends AbstractReader {
         addTags(wayData, keys, values);
         if (info != null) {
             setOsmPrimitiveData(primitiveBlockRecord, wayData, info);
+        } else {
+            ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
         }
         buildPrimitive(wayData);
     }
@@ -694,8 +771,8 @@ public final class OsmPbfReader extends AbstractReader {
     private void parseRelation(ByteArrayOutputStream baos, byte[] bytes, PrimitiveBlockRecord primitiveBlockRecord)
             throws IllegalDataException, IOException {
         long id = Long.MIN_VALUE;
-        List<String> keys = new ArrayList<>();
-        List<String> values = new ArrayList<>();
+        final List<String> keys = new ArrayList<>();
+        final List<String> values = new ArrayList<>();
         Info info = null;
         long[] rolesStringId = EMPTY_LONG; // Technically int
         long[] memids = EMPTY_LONG;
@@ -703,7 +780,7 @@ public final class OsmPbfReader extends AbstractReader {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
              ProtobufParser parser = new ProtobufParser(bais)) {
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
                         id = protobufRecord.asUnsignedVarInt().longValue();
@@ -740,9 +817,11 @@ public final class OsmPbfReader extends AbstractReader {
         if (keys.size() != values.size() || rolesStringId.length != memids.length || memids.length != types.length || id == Long.MIN_VALUE) {
             throw new IllegalDataException("OSM PBF contains a bad relation definition");
         }
-        RelationData data = new RelationData(id);
+        final RelationData data = new RelationData(id);
         if (info != null) {
             setOsmPrimitiveData(primitiveBlockRecord, data, info);
+        } else {
+            ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
         }
         addTags(data, keys, values);
         OsmPrimitiveType[] valueTypes = OsmPrimitiveType.values();
@@ -777,7 +856,7 @@ public final class OsmPbfReader extends AbstractReader {
             Integer userSid = null;
             boolean visible = true;
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
                         version = protobufRecord.asUnsignedVarInt().intValue();
@@ -795,7 +874,7 @@ public final class OsmPbfReader extends AbstractReader {
                         userSid = protobufRecord.asUnsignedVarInt().intValue();
                         break;
                     case 6:
-                        visible = protobufRecord.asUnsignedVarInt().byteValue() == 0;
+                        visible = protobufRecord.asUnsignedVarInt().byteValue() == 1;
                         break;
                     default: // Fall through, since the PBF format could be extended
                 }
@@ -916,7 +995,7 @@ public final class OsmPbfReader extends AbstractReader {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
              ProtobufParser parser = new ProtobufParser(bais)) {
             while (parser.hasNext()) {
-                ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
+                final ProtobufRecord protobufRecord = new ProtobufRecord(baos, parser);
                 switch (protobufRecord.getField()) {
                     case 1:
                         long[] tVersion = new ProtobufPacked(protobufRecord.getBytes()).getArray();
@@ -946,18 +1025,21 @@ public final class OsmPbfReader extends AbstractReader {
                 }
             }
         }
-        if (version.length == timestamp.length && timestamp.length == changeset.length && changeset.length == uid.length &&
-                uid.length == userSid.length && (visible == EMPTY_LONG || visible.length == userSid.length)) {
-            Info[] infos = new Info[version.length];
+        if (version.length > 0) {
+            final Info[] infos = new Info[version.length];
             long lastTimestamp = 0; // delta encoded
             long lastChangeset = 0; // delta encoded
             long lastUid = 0; // delta encoded,
             long lastUserSid = 0; // delta encoded, string id for username
             for (int i = 0; i < version.length; i++) {
-                lastTimestamp += timestamp[i];
-                lastChangeset += changeset[i];
-                lastUid += uid[i];
-                lastUserSid += userSid[i];
+                if (timestamp.length > i)
+                    lastTimestamp += timestamp[i];
+                if (changeset.length > i)
+                    lastChangeset += changeset[i];
+                if (uid.length > i && userSid.length > i) {
+                    lastUid += uid[i];
+                    lastUserSid += userSid[i];
+                }
                 infos[i] = new Info((int) version[i], lastTimestamp, lastChangeset, (int) lastUid, (int) lastUserSid,
                         visible == EMPTY_LONG || visible[i] == 1);
             }

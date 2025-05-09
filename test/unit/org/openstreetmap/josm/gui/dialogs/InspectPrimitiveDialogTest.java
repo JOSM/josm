@@ -77,6 +77,7 @@ class InspectPrimitiveDialogTest {
         way.addNode(way.firstNode()); // close way
         assertEqualsNewline(
             "Way: 1\n" +
+                "  State: referrers-not-all-downloaded\n" +
                 "  Data Set: "+Integer.toHexString(ds.hashCode())+"\n" +
                 "  Edited at: <new object>\n" +
                 "  Edited by: <new object>\n" +

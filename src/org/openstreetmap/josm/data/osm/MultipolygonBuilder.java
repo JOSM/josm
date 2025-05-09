@@ -70,7 +70,7 @@ public class MultipolygonBuilder {
             for (int waypos = 0; waypos < this.ways.size(); waypos++) {
                 Way way = this.ways.get(waypos);
 
-                if (!this.reversed.get(waypos)) {
+                if (Boolean.FALSE.equals(this.reversed.get(waypos))) {
                     for (int pos = 0; pos < way.getNodesCount() - 1; pos++) {
                         ringNodes.add(way.getNode(pos));
                     }
@@ -154,10 +154,39 @@ public class MultipolygonBuilder {
      * @throws JoinedPolygonCreationException if the creation fails.
      */
     public static Pair<List<JoinedPolygon>, List<JoinedPolygon>> joinWays(Relation multipolygon) {
+        return joinWays(null, multipolygon);
+    }
+
+    /**
+     * Joins the given {@code multipolygon} to a pair of outer and inner multipolygon rings.
+     *
+     * @param multipolygon the multipolygon to join.
+     * @return a pair of outer and inner multipolygon rings.
+     * @throws JoinedPolygonCreationException if the creation fails.
+     * @since 19336
+     */
+    public static Pair<List<JoinedPolygon>, List<JoinedPolygon>> joinWays(
+            Map<IRelation<?>, Pair<List<JoinedPolygon>, List<JoinedPolygon>>> cache, Relation multipolygon) {
+        if (cache != null) {
+            return cache.computeIfAbsent(multipolygon, MultipolygonBuilder::joinWaysActual);
+        }
+        return joinWaysActual(multipolygon);
+    }
+
+    /**
+     * Perform the actual join ways calculation
+     *
+     * @param multipolygon the multipolygon to join.
+     * @return a pair of outer and inner multipolygon rings.
+     * @throws JoinedPolygonCreationException if the creation fails.
+     */
+    private static Pair<List<JoinedPolygon>, List<JoinedPolygon>> joinWaysActual(IRelation<?> multipolygon) {
         CheckParameterUtil.ensureThat(multipolygon.isMultipolygon(), "multipolygon.isMultipolygon");
-        final Map<String, Set<Way>> members = multipolygon.getMembers().stream()
-                .filter(RelationMember::isWay)
-                .collect(Collectors.groupingBy(RelationMember::getRole, Collectors.mapping(RelationMember::getWay, Collectors.toSet())));
+        CheckParameterUtil.ensureThat(multipolygon instanceof Relation,
+                "This method currently only supports Relation objects due to potential breakage");
+        final Map<String, Set<Way>> members = ((Relation) multipolygon).getMembers().stream()
+                .filter(IRelationMember::isWay)
+                .collect(Collectors.groupingBy(IRelationMember::getRole, Collectors.mapping(RelationMember::getWay, Collectors.toSet())));
         final List<JoinedPolygon> outerRings = joinWays(members.getOrDefault("outer", Collections.emptySet()));
         final List<JoinedPolygon> innerRings = joinWays(members.getOrDefault("inner", Collections.emptySet()));
         return Pair.create(outerRings, innerRings);
@@ -211,7 +240,7 @@ public class MultipolygonBuilder {
 
                 //add cur way to the list
                 collectedWays.add(curWay);
-                collectedWaysReverse.add(Boolean.valueOf(curWayReverse));
+                collectedWaysReverse.add(curWayReverse);
 
                 if (nextNode == startNode) {
                     //way finished

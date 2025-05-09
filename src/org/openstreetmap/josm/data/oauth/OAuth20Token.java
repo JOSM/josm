@@ -81,7 +81,7 @@ public final class OAuth20Token implements IOAuthToken {
 
     @Override
     public void sign(HttpClient client) throws OAuthException {
-        if (!Utils.isBlank(this.oauthParameters.getApiUrl())
+        if (!Utils.isStripEmpty(this.oauthParameters.getApiUrl())
                 && !this.oauthParameters.getApiUrl().contains(client.getURL().getHost())) {
             String host = URI.create(this.oauthParameters.getAccessTokenUrl()).getHost();
             throw new IllegalArgumentException("Cannot sign URL with token for different host: Expected " + host

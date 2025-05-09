@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Executor that displays the progress monitor to the user.
- *
+ * <p>
  * Similar to Executors.newSingleThreadExecutor(), but displays the
  * progress monitor whenever a new task is executed.
  * @since 12675 (moved from {@code gui.progress} package}
@@ -28,7 +28,7 @@ public class ProgressMonitorExecutor extends ThreadPoolExecutor {
      */
     public ProgressMonitorExecutor(final String nameFormat, final int threadPriority) {
         super(1, 1, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<>(),
                 Utils.newThreadFactory(nameFormat, threadPriority));
     }
 

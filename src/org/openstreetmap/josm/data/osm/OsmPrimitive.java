@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,9 +31,9 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
  * The base class for OSM objects ({@link Node}, {@link Way}, {@link Relation}).
- *
+ * <p>
  * It can be created, deleted and uploaded to the OSM-Server.
- *
+ * <p>
  * Although OsmPrimitive is designed as a base class, it is not to be meant to subclass
  * it by any other than from the package {@link org.openstreetmap.josm.data.osm}. The available primitives are a fixed
  * set that are given by the server environment and not an extendable data stuff.
@@ -95,7 +94,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Creates a new primitive for the given id.
-     *
+     * <p>
      * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
@@ -123,11 +122,11 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Creates a new primitive for the given id and version.
-     *
+     * <p>
      * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
-     *
+     * <p>
      * If id is not &gt; 0 version is ignored and set to 0.
      *
      * @param id the id
@@ -224,7 +223,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Sets the id and the version of this primitive if it is known to the OSM API.
-     *
+     * <p>
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
      *
@@ -260,7 +259,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * Clears the metadata, including id and version known to the OSM API.
      * The id is a new unique id. The version, changeset and timestamp are set to 0.
      * incomplete and deleted are set to false. It's preferred to use copy constructor with clearMetadata set to true instead
-     *
+     * <p>
      * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@link DataSet}.
      *
      * @throws DataIntegrityProblemException If primitive was already added to the dataset
@@ -294,18 +293,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
             if (dataSet != null) {
                 dataSet.fireChangesetIdChanged(this, old, changesetId);
             }
-        } finally {
-            writeUnlock(locked);
-        }
-    }
-
-    @Deprecated
-    @Override
-    public void setTimestamp(Date timestamp) {
-        checkDatasetNotReadOnly();
-        boolean locked = writeLock();
-        try {
-            super.setTimestamp(timestamp);
         } finally {
             writeUnlock(locked);
         }
@@ -361,21 +348,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      */
     public void setPreserved(boolean isPreserved) {
         updateFlags(FLAG_PRESERVED, isPreserved);
-    }
-
-    @Override
-    public boolean isDisabled() {
-        return (flags & FLAG_DISABLED) != 0;
-    }
-
-    @Override
-    public boolean isDisabledAndHidden() {
-        return ((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0);
-    }
-
-    @Override
-    public boolean isPreserved() {
-        return (flags & FLAG_PRESERVED) != 0;
     }
 
     @Override
@@ -492,11 +464,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-    @Override
-    public boolean isHighlighted() {
-        return (flags & FLAG_HIGHLIGHTED) != 0;
-    }
-
     /*---------------
      * DIRECTION KEYS
      *---------------*/
@@ -526,16 +493,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         updateFlagsNoLock(FLAG_ANNOTATED, hasKeys() && getWorkInProgressKeys().stream().anyMatch(this::hasKey));
     }
 
-    @Override
-    public boolean isTagged() {
-        return (flags & FLAG_TAGGED) != 0;
-    }
-
-    @Override
-    public boolean isAnnotated() {
-        return (flags & FLAG_ANNOTATED) != 0;
-    }
-
     protected void updateDirectionFlags() {
         boolean hasDirections = false;
         boolean directionReversed = false;
@@ -549,16 +506,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
         updateFlagsNoLock(FLAG_DIRECTION_REVERSED, directionReversed);
         updateFlagsNoLock(FLAG_HAS_DIRECTIONS, hasDirections);
-    }
-
-    @Override
-    public boolean hasDirectionKeys() {
-        return (flags & FLAG_HAS_DIRECTIONS) != 0;
-    }
-
-    @Override
-    public boolean reversedDirection() {
-        return (flags & FLAG_DIRECTION_REVERSED) != 0;
     }
 
     /*------------
@@ -752,18 +699,18 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     private void doVisitReferrers(Consumer<OsmPrimitive> visitor) {
-        if (this.referrers == null)
-            return;
-        else if (this.referrers instanceof OsmPrimitive) {
-            OsmPrimitive ref = (OsmPrimitive) this.referrers;
-            if (ref.dataSet == dataSet) {
-                visitor.accept(ref);
-            }
-        } else if (this.referrers instanceof OsmPrimitive[]) {
-            OsmPrimitive[] refs = (OsmPrimitive[]) this.referrers;
-            for (OsmPrimitive ref: refs) {
+        if (this.referrers != null) {
+            if (this.referrers instanceof OsmPrimitive) {
+                OsmPrimitive ref = (OsmPrimitive) this.referrers;
                 if (ref.dataSet == dataSet) {
                     visitor.accept(ref);
+                }
+            } else if (this.referrers instanceof OsmPrimitive[]) {
+                OsmPrimitive[] refs = (OsmPrimitive[]) this.referrers;
+                for (OsmPrimitive ref : refs) {
+                    if (ref.dataSet == dataSet) {
+                        visitor.accept(ref);
+                    }
                 }
             }
         }
@@ -830,7 +777,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     /**
      * Merges the technical and semantic attributes from <code>other</code> onto this.
-     *
+     * <p>
      * Both this and other must be new, or both must be assigned an OSM ID. If both this and <code>other</code>
      * have an assigned OSM id, the IDs have to be the same.
      *
@@ -851,12 +798,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
                 throw new DataIntegrityProblemException(
                         tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 
-            setKeys(other.hasKeys() ? other.getKeys() : null);
-            timestamp = other.timestamp;
-            version = other.version;
             setIncomplete(other.isIncomplete());
-            flags = other.flags;
-            user = other.user;
+            super.cloneFrom(other);
+            setKeys(other.hasKeys() ? other.getKeys() : null);
+            version = other.version;
             changesetId = other.changesetId;
         } finally {
             writeUnlock(locked);

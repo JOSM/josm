@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static java.util.function.Predicate.not;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -134,12 +135,12 @@ public final class AlignInCircleAction extends JosmAction {
      * All other nodes are uniformly distributed.
      * <p>
      * Case 1: One unclosed way.
-     * --&gt; allow action, and align selected way nodes
+     * → allow action, and align selected way nodes
      * If nodes contained by this way are selected, there are fix.
      * If nodes outside from the way are selected there are ignored.
      * <p>
      * Case 2: One or more ways are selected and can be joined into a polygon
-     * --&gt; allow action, and align selected ways nodes
+     * → allow action, and align selected ways nodes
      * If 1 node outside of way is selected, it became center
      * If 1 node outside and 1 node inside are selected there define center and radius
      * If no outside node and 2 inside nodes are selected those 2 nodes define diameter
@@ -148,10 +149,10 @@ public final class AlignInCircleAction extends JosmAction {
      * (first referrer is the selected way)
      * <p>
      * Case 3: Only nodes are selected
-     * --&gt; Align these nodes, all are fix
+     * → Align these nodes, all are fix
      * <p>
      * Case 4: Circularize selected ways
-     * --&gt; Circularize each way of the selection.
+     * → Circularize each way of the selection.
      * @param ds data set in which the command operates
      * @return the resulting command to execute to perform action, or null if nothing was changed
      * @throws InvalidSelection if selection cannot be used
@@ -271,9 +272,9 @@ public final class AlignInCircleAction extends JosmAction {
         }
         fixNodes.addAll(collectNodesWithExternReferrers(ways));
 
-        // Check if one or more nodes are outside of download area
-        if (nodes.stream().anyMatch(Node::isOutsideDownloadArea))
-            throw new InvalidSelection(tr("One or more nodes involved in this action is outside of the downloaded area."));
+        // Check if one or more nodes does not have all parents available
+        if (nodes.stream().anyMatch(not(Node::isReferrersDownloaded)))
+            throw new InvalidSelection(tr("One or more nodes involved in this action may have additional referrers."));
 
 
         if (center == null) {

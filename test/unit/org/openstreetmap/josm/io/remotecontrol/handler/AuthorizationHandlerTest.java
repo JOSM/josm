@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
  * Test class for {@link AuthorizationHandler}
  */
 class AuthorizationHandlerTest {
-    private static class TestAuthorizationConsumer implements AuthorizationHandler.AuthorizationConsumer {
+    private static final class TestAuthorizationConsumer implements AuthorizationHandler.AuthorizationConsumer {
         boolean validated;
         boolean handled;
         @Override

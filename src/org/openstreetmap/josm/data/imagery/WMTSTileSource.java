@@ -73,7 +73,6 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tile Source handling WMTS providers
@@ -112,7 +111,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     private int cachedTileSize = -1;
 
-    private static class TileMatrix {
+    private static final class TileMatrix {
         private String identifier;
         private double scaleDenominator;
         private EastNorth topLeftCorner;
@@ -122,7 +121,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private int matrixHeight = -1;
     }
 
-    private static class TileMatrixSetBuilder {
+    private static final class TileMatrixSetBuilder {
         // sorted by zoom level
         SortedSet<TileMatrix> tileMatrix = new TreeSet<>((o1, o2) -> -1 * Double.compare(o1.scaleDenominator, o2.scaleDenominator));
         private String crs;
@@ -193,7 +192,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
     }
 
-    private static class Dimension {
+    private static final class Dimension {
         private String identifier;
         private String defaultValue;
         private final List<String> values = new ArrayList<>();
@@ -453,7 +452,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 setMaxAge(Config.getPref().getLong("wmts.capabilities.cache.max_age", 7 * CachedFile.DAYS)).
                 setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince).
                 getInputStream()) {
-            byte[] data = Utils.readBytesFromStream(in);
+            byte[] data = in.readAllBytes();
             if (data.length == 0) {
                 cf.clear();
                 throw new IllegalArgumentException("Could not read data from: " + url);

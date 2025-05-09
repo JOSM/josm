@@ -29,6 +29,7 @@ import javax.swing.text.Document;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -289,8 +290,9 @@ public class JosmTextField extends JTextField implements Destroyable, ComponentL
     public void drawHint(Graphics g) {
         int x;
         try {
-            x = modelToView(0).x;
+            x = (int) Math.round(modelToView2D(0).getX());
         } catch (BadLocationException exc) {
+            Logging.trace(exc);
             return; // can't happen
         }
         // Taken from http://stackoverflow.com/a/24571681/2257172

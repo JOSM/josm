@@ -58,17 +58,7 @@ public class PluginClassLoader extends DynamicURLClassLoader {
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         Class<?> result = findLoadedClass(name);
         if (result == null) {
-            for (PluginClassLoader dep : dependencies) {
-                try {
-                    result = dep.loadClass(name, resolve);
-                    if (result != null) {
-                        return result;
-                    }
-                } catch (ClassNotFoundException e) {
-                    Logging.trace("Plugin class not found in dep {0}: {1}", dep, e.getMessage());
-                    Logging.trace(e);
-                }
-            }
+            result = findClassInDependencies(name, resolve);
             try {
                 // Will delegate to parent.loadClass(name, resolve) if needed
                 result = super.loadClass(name, resolve);
@@ -92,7 +82,30 @@ public class PluginClassLoader extends DynamicURLClassLoader {
         throw new ClassNotFoundException(name);
     }
 
+    /**
+     * Try to find the specified class in this classes dependencies
+     * @param name The name of the class to find
+     * @param resolve {@code true} to resolve the class
+     * @return the class, if found, otherwise {@code null}
+     */
+    @SuppressWarnings("PMD.CloseResource") // NOSONAR We do *not* want to close class loaders in this method...
+    private Class<?> findClassInDependencies(String name, boolean resolve) {
+        for (PluginClassLoader dep : dependencies) {
+            try {
+                Class<?> result = dep.loadClass(name, resolve);
+                if (result != null) {
+                    return result;
+                }
+            } catch (ClassNotFoundException e) {
+                Logging.trace("Plugin class not found in dep {0}: {1}", dep, e.getMessage());
+                Logging.trace(e);
+            }
+        }
+        return null;
+    }
+
     @Override
+    @SuppressWarnings("PMD.CloseResource") // NOSONAR We do *not* want to close class loaders in this method...
     public URL findResource(String name) {
         URL resource = super.findResource(name);
         if (resource == null) {

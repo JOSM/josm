@@ -39,7 +39,7 @@ public class UidInputFieldValidator extends AbstractTextComponentValidator {
     @Override
     public void validate() {
         String value = getComponent().getText();
-        if (Utils.isBlank(value)) {
+        if (Utils.isStripEmpty(value)) {
             feedbackInvalid("");
             return;
         }
@@ -62,7 +62,7 @@ public class UidInputFieldValidator extends AbstractTextComponentValidator {
      */
     public int getUid() {
         String value = getComponent().getText();
-        if (Utils.isBlank(value)) return 0;
+        if (Utils.isStripEmpty(value)) return 0;
         try {
             int uid = Integer.parseInt(value.trim());
             return Math.max(uid, 0);

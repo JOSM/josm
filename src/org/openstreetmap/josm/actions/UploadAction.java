@@ -265,14 +265,16 @@ public class UploadAction extends AbstractUploadAction {
      */
     public void uploadData(final OsmDataLayer layer, APIDataSet apiData) {
         if (apiData.isEmpty()) {
-            new Notification(tr("No changes to upload.")).show();
+            new Notification(tr("No changes to upload.")).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
             return;
         }
         checkPreUploadConditionsAsync(layer, apiData, passed -> GuiHelper.runInEDT(() -> {
             if (Boolean.TRUE.equals(passed)) {
                 realUploadData(layer, apiData);
             } else {
-                new Notification(tr("One of the upload verification processes failed")).show();
+                new Notification(tr("One of the upload verification processes failed"))
+                        .setIcon(JOptionPane.WARNING_MESSAGE)
+                        .show();
             }
         }));
     }
@@ -341,7 +343,7 @@ public class UploadAction extends AbstractUploadAction {
         if (!isEnabled())
             return;
         if (MainApplication.getMap() == null) {
-            new Notification(tr("Nothing to upload. Get some data first.")).show();
+            new Notification(tr("Nothing to upload. Get some data first.")).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
             return;
         }
         APIDataSet apiData = new APIDataSet(getLayerManager().getEditDataSet());

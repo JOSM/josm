@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public interface PlatformHook {
     /**
      * Visitor to construct a PlatformHook from a given {@link Platform} object.
      */
-    PlatformVisitor<PlatformHook> CONSTRUCT_FROM_PLATFORM = new PlatformVisitor<PlatformHook>() {
+    PlatformVisitor<PlatformHook> CONSTRUCT_FROM_PLATFORM = new PlatformVisitor<>() {
         @Override
         public PlatformHook visitUnixoid() {
             return new PlatformHookUnixoid();
@@ -64,7 +64,7 @@ public interface PlatformHook {
     /**
       * The preStartupHook will be called extremely early. It is
       * guaranteed to be called before the GUI setup has started.
-      *
+      * <p>
       * Reason: On OSX we need to inform the Swing libraries
       * that we want to be integrated with the OS before we setup our GUI.
       */
@@ -83,22 +83,21 @@ public interface PlatformHook {
     }
 
     /**
-      * The startupHook will be called early, but after the GUI
-      * setup has started.
-      *
-      * Reason: On OSX we need to register some callbacks with the
-      * OS, so we'll receive events from the system menu.
-      * @param javaCallback Java expiration callback, providing GUI feedback
-      * @param webStartCallback WebStart migration callback, providing GUI feedback
-      * @since 18985
-      */
-    default void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback,
-            SanityCheckCallback sanityCheckCallback) {
+     * The startupHook will be called early, but after the GUI
+     * setup has started.
+     * <p>
+     * Reason: On OSX we need to register some callbacks with the
+     * OS, so we'll receive events from the system menu.
+     * @param javaCallback Java expiration callback, providing GUI feedback
+     * @param sanityCheckCallback Sanity check callback, providing GUI feedback
+     * @since 18985
+     */
+    default void startupHook(JavaExpirationCallback javaCallback, SanityCheckCallback sanityCheckCallback) {
         startupSanityChecks(sanityCheckCallback);
     }
 
     /**
-      * The openURL hook will be used to open an URL in the
+      * The openURL hook will be used to open a URL in the
       * default web browser.
      * @param url The URL to open
      * @throws IOException if any I/O error occurs
@@ -110,17 +109,17 @@ public interface PlatformHook {
       * Shortcut class after the modifier groups have been read
       * from the config, but before any shortcuts are read from
       * it or registered from within the application.
-      *
+      * <p>
       * Please note that you are not allowed to register any
       * shortcuts from this hook, but only "systemCuts"!
-      *
+      * <p>
       * BTW: SystemCuts should be named "system:&lt;whatever&gt;",
       * and it'd be best if you'd recycle the names already used
-      * by the Windows and OSX hooks. Especially the later has
+      * by the Windows and OSX hooks. Especially the latter has
       * really many of them.
-      *
+      * <p>
       * You should also register any and all shortcuts that the
-      * operation system handles itself to block JOSM from trying
+      * operating system handles itself to block JOSM from trying
       * to use them---as that would just not work. Call setAutomatic
       * on them to prevent the keyboard preferences from allowing the
       * user to change them.
@@ -248,7 +247,7 @@ public interface PlatformHook {
 
     /**
      * Returns extended modifier key used as the appropriate accelerator key for menu shortcuts.
-     * It is advised everywhere to use {@link Toolkit#getMenuShortcutKeyMask()} to get the cross-platform modifier, but:
+     * It was advised everywhere to use {@link Toolkit#getMenuShortcutKeyMask()} to get the cross-platform modifier, but:
      * <ul>
      * <li>it returns KeyEvent.CTRL_MASK instead of KeyEvent.CTRL_DOWN_MASK. We used the extended
      *    modifier for years, and Oracle recommends to use it instead, so it's best to keep it</li>
@@ -258,8 +257,10 @@ public interface PlatformHook {
      * @since 12748 (as a replacement to {@code GuiHelper.getMenuShortcutKeyMaskEx()})
      */
     default int getMenuShortcutKeyMaskEx() {
-        // To remove when switching to Java 10+, and use Toolkit.getMenuShortcutKeyMaskEx instead
-        return KeyEvent.CTRL_DOWN_MASK;
+        if (!GraphicsEnvironment.isHeadless()) {
+            return Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+        }
+        return InputEvent.CTRL_DOWN_MASK;
     }
 
     /**
@@ -276,19 +277,6 @@ public interface PlatformHook {
          * @param eolDate the EOL/expiration date
          */
         void askUpdateJava(String updVersion, String url, String eolDate, boolean major);
-    }
-
-    /**
-     * Called when Oracle Java WebStart is detected at startup.
-     * @since 17679
-     */
-    @FunctionalInterface
-    interface WebStartMigrationCallback {
-        /**
-         * Asks user to migrate to OpenWebStart.
-         * @param url download URL
-         */
-        void askMigrateWebStart(String url);
     }
 
     /**
@@ -378,16 +366,9 @@ public interface PlatformHook {
     }
 
     /**
-     * Checks if we run Oracle Web Start, proposes to user to migrate to OpenWebStart.
-     * @param callback WebStart migration callback
-     * @since 17679
+     * Check startup preconditions
+     * @param sanityCheckCallback The callback to inform the user about failed checks
      */
-    default void checkWebStartMigration(WebStartMigrationCallback callback) {
-        if (Utils.isRunningJavaWebStart()) {
-            callback.askMigrateWebStart(Config.getPref().get("openwebstart.download.url", "https://openwebstart.com/download/"));
-        }
-    }
-
     default void startupSanityChecks(SanityCheckCallback sanityCheckCallback) {
         final String arch = System.getProperty("os.arch");
         final List<String> messages = new ArrayList<>();
@@ -422,7 +403,8 @@ public interface PlatformHook {
         }
         if (missingArguments.length() > 0) {
             final String args = missingArguments.toString();
-            messages.add(tr("Missing JVM Arguments:<br>{0}", args));
+            messages.add(tr("Missing JVM Arguments:<br>{0}<br>" +
+                    "These arguments should be added in the command line or start script before the -jar parameter.", args));
         }
         if (!messages.isEmpty()) {
             if (canContinue) {

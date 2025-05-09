@@ -35,7 +35,7 @@ public final class JosmUrls implements IUrls {
         // hide constructor
     }
 
-    private static class InstanceHolder {
+    private static final class InstanceHolder {
         static final JosmUrls INSTANCE = new JosmUrls();
     }
 

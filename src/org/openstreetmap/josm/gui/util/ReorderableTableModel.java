@@ -41,7 +41,7 @@ public interface ReorderableTableModel<T> extends ReorderableModel<T> {
      * @see #selectedIndices()
      */
     default int[] getSelectedIndices() {
-        return TableHelper.getSelectedIndices(getSelectionModel());
+        return getSelectionModel().getSelectedIndices();
     }
 
     /**

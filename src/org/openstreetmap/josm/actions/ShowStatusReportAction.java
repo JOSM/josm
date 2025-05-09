@@ -112,9 +112,8 @@ public final class ShowStatusReportAction extends JosmAction {
                 DisplayMode dm = gd.getDisplayMode();
                 if (dm != null) {
                     AffineTransform transform = gd.getDefaultConfiguration().getDefaultTransform();
-                    // Java 11: use DisplayMode#toString
-                    text.format(Locale.ROOT, " %d\u00D7%d (scaling %.2f\u00D7%.2f)",
-                            dm.getWidth(), dm.getHeight(), transform.getScaleX(), transform.getScaleY());
+                    text.format(Locale.ROOT, " %s (scaling %.2f\u00D7%.2f)",
+                            dm, transform.getScaleX(), transform.getScaleY());
                 }
             }
             text.println();

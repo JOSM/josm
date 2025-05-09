@@ -17,11 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link CertificateAmendment} class.
  */
 @HTTPS
+@IntegrationTest
 @Timeout(20)
 class CertificateAmendmentTestIT {
     private static final List<String> errorsToIgnore = new ArrayList<>();
@@ -74,7 +76,7 @@ class CertificateAmendmentTestIT {
      */
     @Test
     void testDutchGovernment() throws IOException {
-        connect("https://geodata.nationaalgeoregister.nl", true);
+        connect("https://www.nationaalgeoregister.nl", true);
     }
 
     /**

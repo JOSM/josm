@@ -3,9 +3,9 @@
 <ivysettings>
   <settings defaultResolver="josm-nexus"/>
   <resolvers>
-    <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
+    <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/repository/public/" />
   </resolvers>
-  <!-- Remove error_prone 2.10.0 specific statements in build.xml when we drop Java 8 as a build platform -->
-  <property name="versions.error_prone" value="2.10.0" unlessset="isJava11"/>
-  <property name="versions.error_prone" value="2.24.1" ifset="isJava11"/>
+  <!-- Remove junit5-system-exit specific statements in build.xml when we drop Java 11 as a build platform -->
+  <property name="versions.junit5-system-exit" value="1.1.2" unlessset="isJava17"/>
+  <property name="versions.junit5-system-exit" value="2.0.2" ifset="isJava17"/>
 </ivysettings>

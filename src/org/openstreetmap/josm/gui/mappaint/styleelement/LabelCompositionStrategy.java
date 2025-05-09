@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.styleelement;
 
+import static java.util.function.Predicate.not;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -144,19 +146,7 @@ public interface LabelCompositionStrategy {
         /**
          * The list of default name tags from which a label candidate is derived.
          */
-        private static final String[] DEFAULT_NAME_TAGS = {
-            "name:" + LanguageInfo.getJOSMLocaleCode(),
-            "name",
-            "int_name",
-            "distance",
-            "railway:position",
-            "ref",
-            "operator",
-            "brand",
-            "addr:unit",
-            "addr:flats",
-            "addr:housenumber"
-        };
+        private static final String[] DEFAULT_NAME_TAGS = getDefaultNameTags();
 
         /**
          * The list of default name complement tags from which a label candidate is derived.
@@ -176,12 +166,28 @@ public interface LabelCompositionStrategy {
             initNameTagsFromPreferences();
         }
 
+        /* Is joining an array really that complicated in Java? */
+        private static String[] getDefaultNameTags() {
+            final ArrayList<String> tags = new ArrayList<>(Arrays.asList(LanguageInfo.getOSMLocaleCodes("name:")));
+            tags.addAll(Arrays.asList("name",
+                    "int_name",
+                    "distance",
+                    "railway:position",
+                    "ref",
+                    "operator",
+                    "brand",
+                    "addr:unit",
+                    "addr:flats",
+                    "addr:housenumber"));
+            return tags.toArray(String[]::new);
+        }
+
         private static List<String> buildNameTags(List<String> nameTags) {
             if (nameTags == null) {
                 return new ArrayList<>();
             }
             return nameTags.stream()
-                    .filter(tag -> !Utils.isStripEmpty(tag))
+                    .filter(not(Utils::isStripEmpty))
                     .collect(Collectors.toList());
         }
 

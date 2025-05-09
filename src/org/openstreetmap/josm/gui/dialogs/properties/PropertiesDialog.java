@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -100,9 +101,9 @@ import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationPopupMenus;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
@@ -292,18 +293,18 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         boolean top = Config.getPref().getBoolean("properties.presets.top", true);
         boolean presetsVisible = Config.getPref().getBoolean("properties.presets.visible", true);
         if (presetsVisible && top) {
-            bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
+            bothTables.add(presets, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(5, 2, 5, 2).anchor(GridBagConstraints.NORTHWEST));
             double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
-            bothTables.add(pluginHook, GBC.eol().insets(0, 1, 1, 1).anchor(GBC.NORTHEAST).weight(epsilon, epsilon));
+            bothTables.add(pluginHook, GBC.eol().insets(0, 1, 1, 1).anchor(GridBagConstraints.NORTHEAST).weight(epsilon, epsilon));
         }
         bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
-        bothTables.add(tagTableFilter, GBC.eol().fill(GBC.HORIZONTAL));
-        bothTables.add(tagTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
-        bothTables.add(tagTable, GBC.eol().fill(GBC.BOTH));
-        bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
-        bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
+        bothTables.add(tagTableFilter, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        bothTables.add(tagTable.getTableHeader(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        bothTables.add(tagTable, GBC.eol().fill(GridBagConstraints.BOTH));
+        bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        bothTables.add(membershipTable, GBC.eol().fill(GridBagConstraints.BOTH));
         if (presetsVisible && !top) {
-            bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
+            bothTables.add(presets, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 2, 5, 2));
         }
 
         setupBlankSpaceMenu();
@@ -1503,7 +1504,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
     /**
      * Clears the row selection when it is filtered away by the row sorter.
      */
-    private class RemoveHiddenSelection implements ListSelectionListener, RowSorterListener {
+    private final class RemoveHiddenSelection implements ListSelectionListener, RowSorterListener {
 
         void removeHiddenSelection() {
             try {
@@ -1526,7 +1527,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
         }
     }
 
-    private class HoverPreviewPropListener implements ValueChangeListener<Boolean> {
+    private final class HoverPreviewPropListener implements ValueChangeListener<Boolean> {
         @Override
         public void valueChanged(ValueChangeEvent<? extends Boolean> e) {
             if (Boolean.TRUE.equals(e.getProperty().get()) && isDialogShowing()) {
@@ -1541,7 +1542,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
      * Ensure HoverListener is re-added when selection priority is disabled while something is selected.
      * Otherwise user would need to change selection to see the preference change take effect.
      */
-    private class HoverPreviewPreferSelectionPropListener implements ValueChangeListener<Boolean> {
+    private final class HoverPreviewPreferSelectionPropListener implements ValueChangeListener<Boolean> {
         @Override
         public void valueChanged(ValueChangeEvent<? extends Boolean> e) {
             if (Boolean.FALSE.equals(e.getProperty().get()) &&

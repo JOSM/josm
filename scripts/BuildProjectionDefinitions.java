@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -84,6 +85,19 @@ public final class BuildProjectionDefinitions {
                 .collect(Collectors.toList());
     }
 
+    static boolean touchCustomEpsg(String baseDir) throws IOException {
+        final Path path = Paths.get(baseDir).resolve(OUTPUT_EPSG_FILE);
+        if (!Files.exists(path)) {
+            Files.createDirectories(path.getParent());
+            Files.createFile(path);
+            Logger.getLogger(BuildProjectionDefinitions.class.getCanonicalName())
+                    .info("Could not generate custom-epsg; an empty custom-epsg file was not available on the classpath. " +
+                            "This should now be fixed, please rerun the command.");
+            return true;
+        }
+        return false;
+    }
+
     static void initMap(String baseDir, String file, Map<String, ProjectionDefinition> map) throws IOException {
         final Path path = Paths.get(baseDir).resolve(PROJ_DIR).resolve(file);
         final List<ProjectionDefinition> list;
@@ -106,6 +120,9 @@ public final class BuildProjectionDefinitions {
     }
 
     static void buildList(String baseDir) throws IOException {
+        if (touchCustomEpsg(baseDir)) {
+            return;
+        }
         initMap(baseDir, JOSM_EPSG_FILE, epsgJosm);
         initMap(baseDir, PROJ4_EPSG_FILE, epsgProj4);
         initMap(baseDir, PROJ4_ESRI_FILE, esriProj4);
@@ -242,7 +259,7 @@ public final class BuildProjectionDefinitions {
                 "EPSG:103471", // lcc/GRS80     - NAD_1983_HARN_WISCRS_Wood_County_Feet [NAD 1983 HARN Wisconsin CRS Wood (US feet)]
                 "EPSG:103474", // lcc/GRS80     - NAD_1983_CORS96_StatePlane_Nebraska_FIPS_2600 [NAD 1983 (CORS96) SPCS Nebraska]
                 "EPSG:103475"  // lcc/GRS80     - NAD_1983_CORS96_StatePlane_Nebraska_FIPS_2600_Ft_US [NAD 1983 (CORS96) SPCS Nebraska (US Feet)]
-                ).contains(pd.code)) {
+        ).contains(pd.code)) {
             result = false;
         }
         // CHECKSTYLE.ON: LineLength

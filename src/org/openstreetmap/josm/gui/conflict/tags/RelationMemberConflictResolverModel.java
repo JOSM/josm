@@ -30,7 +30,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This model manages a list of conflicting relation members.
- *
+ * <p>
  * It can be used as {@link javax.swing.table.TableModel}.
  */
 public class RelationMemberConflictResolverModel extends DefaultTableModel {
@@ -105,21 +105,21 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         if (decisions == null) return null;
 
         RelationMemberConflictDecision d = decisions.get(row);
-        switch(column) {
+        switch (column) {
         case 0: /* relation */ return d.getRelation();
         case 1: /* pos */ return Integer.toString(d.getPos() + 1); // position in "user space" starting at 1
         case 2: /* role */ return d.getRole();
         case 3: /* original */ return d.getOriginalPrimitive();
-        case 4: /* decision keep */ return RelationMemberConflictDecisionType.KEEP.equals(d.getDecision());
-        case 5: /* decision remove */ return RelationMemberConflictDecisionType.REMOVE.equals(d.getDecision());
+        case 4: /* decision keep */ return RelationMemberConflictDecisionType.KEEP == d.getDecision();
+        case 5: /* decision remove */ return RelationMemberConflictDecisionType.REMOVE == d.getDecision();
+        default: return null;
         }
-        return null;
     }
 
     @Override
     public void setValueAt(Object value, int row, int column) {
         RelationMemberConflictDecision d = decisions.get(row);
-        switch(column) {
+        switch (column) {
         case 2: /* role */
             d.setRole((String) value);
             break;
@@ -199,19 +199,19 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         references = references == null ? new LinkedList<>() : references;
         decisions.clear();
         this.relations = new HashSet<>(references.size());
-        final Collection<OsmPrimitive> primitives = new HashSet<>();
+        final Collection<OsmPrimitive> newPrimitives = new HashSet<>();
         for (RelationToChildReference reference: references) {
             decisions.add(new RelationMemberConflictDecision(reference.getParent(), reference.getPosition()));
             relations.add(reference.getParent());
-            primitives.add(reference.getChild());
+            newPrimitives.add(reference.getChild());
         }
-        this.primitives = primitives;
+        this.primitives = newPrimitives;
         refresh();
     }
 
     /**
      * Prepare the default decisions for the current model.
-     *
+     * <p>
      * Keep/delete decisions are made if every member has the same role and the members are in consecutive order within the relation.
      * For multiple occurrences those conditions are tested stepwise for each occurrence.
      */
@@ -221,7 +221,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Prepare the default decisions for the current model.
-     *
+     * <p>
      * Keep/delete decisions are made if every member has the same role and the members are in consecutive order within the relation.
      * For multiple occurrences those conditions are tested stepwise for each occurrence.
      *
@@ -248,7 +248,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 if (decision.getRelation() == relation) {
                     final OsmPrimitive primitive = decision.getOriginalPrimitive();
                     if (!decisionsByPrimitive.containsKey(primitive)) {
-                        decisionsByPrimitive.put(primitive, new ArrayList<RelationMemberConflictDecision>());
+                        decisionsByPrimitive.put(primitive, new ArrayList<>());
                     }
                     decisionsByPrimitive.get(primitive).add(decision);
                 }
@@ -262,12 +262,12 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                         .map(List::iterator)
                         .collect(Collectors.toList());
                 while (iterators.stream().allMatch(Iterator::hasNext)) {
-                    final List<RelationMemberConflictDecision> decisions = new ArrayList<>();
+                    final List<RelationMemberConflictDecision> conflictDecisions = new ArrayList<>();
                     final Collection<String> roles = new HashSet<>();
                     final Collection<Integer> indices = new TreeSet<>();
                     for (Iterator<RelationMemberConflictDecision> it : iterators) {
                         final RelationMemberConflictDecision decision = it.next();
-                        decisions.add(decision);
+                        conflictDecisions.add(decision);
                         roles.add(decision.getRole());
                         indices.add(decision.getPos());
                     }
@@ -275,8 +275,8 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                         // roles do not match or not consecutive members in relation, leave undecided
                         continue;
                     }
-                    decisions.get(0).decide(RelationMemberConflictDecisionType.KEEP);
-                    for (RelationMemberConflictDecision decision : decisions.subList(1, decisions.size())) {
+                    conflictDecisions.get(0).decide(RelationMemberConflictDecisionType.KEEP);
+                    for (RelationMemberConflictDecision decision : conflictDecisions.subList(1, conflictDecisions.size())) {
                         decision.decide(RelationMemberConflictDecisionType.REMOVE);
                     }
                 }
@@ -371,7 +371,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             if (decision == null) {
                 modifiedMemberList.add(member);
             } else {
-                switch(decision.getDecision()) {
+                switch (decision.getDecision()) {
                 case KEEP:
                     final RelationMember newMember = new RelationMember(decision.getRole(), newPrimitive);
                     modifiedMemberList.add(newMember);
@@ -382,6 +382,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                     // do nothing
                     break;
                 case UNDECIDED:
+                default:
                     // FIXME: this is an error
                     break;
                 }
@@ -409,7 +410,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             if (decision == null) {
                 continue;
             }
-            switch(decision.getDecision()) {
+            switch (decision.getDecision()) {
             case REMOVE: return true;
             case KEEP:
                 if (!relation.getMember(i).getRole().equals(decision.getRole()))
@@ -418,6 +419,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                     return true;
                 break;
             case UNDECIDED:
+            default:
                 // FIXME: handle error
             }
         }

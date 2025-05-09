@@ -2,11 +2,13 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -83,6 +85,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
     private static final BooleanProperty SAVE_LOCAL_FILES_PROPERTY = new BooleanProperty("session.savelocal", true);
     private static final BooleanProperty SAVE_PLUGIN_INFORMATION_PROPERTY = new BooleanProperty("session.saveplugins", false);
     private static final String TOOLTIP_DEFAULT = tr("Save the current session.");
+    private static final String SAVE_SESSION = marktr("Save Session");
 
     protected transient FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
     protected transient FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
@@ -119,7 +122,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
      * @param installAdapters False, if you don't want to install layer changed and selection changed adapters
      */
     protected SessionSaveAction(boolean toolbar, boolean installAdapters) {
-        this(tr("Save Session"), "session", TOOLTIP_DEFAULT,
+        this(tr(SAVE_SESSION), "session", TOOLTIP_DEFAULT,
                 Shortcut.registerShortcut("system:savesession", tr("File: {0}", tr("Save Session...")), KeyEvent.VK_S, Shortcut.ALT_CTRL),
                 toolbar, "save-session", installAdapters);
         setHelpId(ht("/Action/SessionSave"));
@@ -182,7 +185,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
                 .filter(layer -> exporters.get(layer) != null && exporters.get(layer).shallExport())
                 .collect(Collectors.toList());
 
-        boolean zipRequired = layersOut.stream().map(l -> exporters.get(l))
+        boolean zipRequired = layersOut.stream().map(exporters::get)
                 .anyMatch(ex -> ex != null && ex.requiresZip()) || pluginsWantToSave();
 
         saveAs = !doGetFile(saveAs, zipRequired);
@@ -332,9 +335,9 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
         AbstractFileChooser fc;
 
         if (zipRequired) {
-            fc = createAndOpenFileChooser(false, false, tr("Save Session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");
+            fc = createAndOpenFileChooser(false, false, tr(SAVE_SESSION), joz, JFileChooser.FILES_ONLY, "lastDirectory");
         } else {
-            fc = createAndOpenFileChooser(false, false, tr("Save Session"), Arrays.asList(jos, joz), jos,
+            fc = createAndOpenFileChooser(false, false, tr(SAVE_SESSION), Arrays.asList(jos, joz), jos,
                     JFileChooser.FILES_ONLY, "lastDirectory");
         }
 
@@ -365,7 +368,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
          * Constructs a new {@code SessionSaveAsDialog}.
          */
         public SessionSaveAsDialog() {
-            super(MainApplication.getMainFrame(), tr("Save Session"), tr("Save As"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr(SAVE_SESSION), tr("Save As"), tr("Cancel"));
             configureContextsensitiveHelp("Action/SessionSaveAs", true /* show help button */);
             initialize();
             setButtonIcons("save_as", "cancel");
@@ -441,10 +444,10 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
                 if (exportPanel == null) continue;
                 JPanel wrapper = new JPanel(new GridBagLayout());
                 wrapper.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-                wrapper.add(exportPanel, GBC.std().fill(GBC.HORIZONTAL));
-                ip.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(2, 2, 4, 2));
+                wrapper.add(exportPanel, GBC.std().fill(GridBagConstraints.HORIZONTAL));
+                ip.add(wrapper, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(2, 2, 4, 2));
             }
-            ip.add(GBC.glue(0, 1), GBC.eol().fill(GBC.VERTICAL));
+            ip.add(GBC.glue(0, 1), GBC.eol().fill(GridBagConstraints.VERTICAL));
             JScrollPane sp = new JScrollPane(ip);
             sp.setBorder(BorderFactory.createEmptyBorder());
             JPanel p = new JPanel(new GridBagLayout());
@@ -474,7 +477,7 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             lbl.setEnabled(false);
             p.add(include, GBC.std());
             p.add(lbl, GBC.std());
-            p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+            p.add(GBC.glue(1, 0), GBC.std().fill(GridBagConstraints.HORIZONTAL));
             return p;
         }
     }
@@ -527,22 +530,6 @@ public class SessionSaveAction extends DiskAccessAction implements MapFrameListe
             if (!SaveActionBase.confirmOverwrite(sessionFile)) {
                 throw new UserCancelException();
             }
-        }
-    }
-
-    /**
-     * Sets the current session file and the layers included in that file
-     * @param file file
-     * @param zip if it is a zip session file
-     * @param layers layers that are currently represented in the session file
-     * @deprecated since 18833, use {@link #setCurrentSession(File, List, SessionWriter.SessionWriterFlags...)} instead
-     */
-    @Deprecated
-    public static void setCurrentSession(File file, boolean zip, List<Layer> layers) {
-        if (zip) {
-            setCurrentSession(file, layers, SessionWriter.SessionWriterFlags.IS_ZIP);
-        } else {
-            setCurrentSession(file, layers);
         }
     }
 

@@ -57,7 +57,7 @@ public final class PrimitiveComparator {
     }
 
     static <T extends IPrimitive> Comparator<T> doOrderingNodesWaysRelations() {
-        return comparingInt(osm -> osm.getType().ordinal());
+        return comparing(PrimitiveId::getType);
     }
 
     /**

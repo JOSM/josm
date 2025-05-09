@@ -49,7 +49,7 @@ public final class I18n {
     /**
      * Enumeration of possible plural modes. It allows us to identify and implement logical conditions of
      * plural forms defined on <a href="https://help.launchpad.net/Translations/PluralForms">Launchpad</a>.
-     * See <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html">CLDR</a>
+     * See <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html">CLDR</a>
      * for another complete list.
      * @see #pluralEval
      */
@@ -61,28 +61,31 @@ public final class I18n {
         /** Plural = Greater than 1. For some latin languages (French, Brazilian Portuguese) */
         MODE_GREATERONE,
         /* Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ar">Arabic</a>.*/
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ar">Arabic</a>.*/
         MODE_AR,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cs">Czech</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cs">Czech</a>. */
         MODE_CS,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#pl">Polish</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#pl">Polish</a>. */
         MODE_PL,
         /* Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ro">Romanian</a>.*
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ro">Romanian</a>.*
         MODE_RO,*/
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#lt">Lithuanian</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#lt">Lithuanian</a>. */
         MODE_LT,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ru">Russian</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ru">Russian</a>. */
         MODE_RU,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sk">Slovak</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sk">Slovak</a>. */
+        MODE_CY,
+        /** Special mode for
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cy">Welsh</a>. */
         MODE_SK,
         /* Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sl">Slovenian</a>.*
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sl">Slovenian</a>.*
         MODE_SL,*/
     }
 
@@ -104,17 +107,20 @@ public final class I18n {
         languages.put("ca", PluralMode.MODE_NOTONE);
         languages.put("ca@valencia", PluralMode.MODE_NOTONE);
         languages.put("cs", PluralMode.MODE_CS);
+        languages.put("cy", PluralMode.MODE_CY);
         languages.put("da", PluralMode.MODE_NOTONE);
         languages.put("de", PluralMode.MODE_NOTONE);
         languages.put("el", PluralMode.MODE_NOTONE);
         languages.put("en_AU", PluralMode.MODE_NOTONE);
-        //languages.put("en_CA", PluralMode.MODE_NOTONE);
+        languages.put("en_CA", PluralMode.MODE_NOTONE);
         languages.put("en_GB", PluralMode.MODE_NOTONE);
+        languages.put("eo", PluralMode.MODE_NOTONE);
         languages.put("es", PluralMode.MODE_NOTONE);
         languages.put("et", PluralMode.MODE_NOTONE);
         //languages.put("eu", PluralMode.MODE_NOTONE);
         languages.put("fa", PluralMode.MODE_NONE);
         languages.put("fi", PluralMode.MODE_NOTONE);
+        languages.put("fo", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
         //languages.put("he", PluralMode.MODE_NOTONE);
@@ -138,7 +144,7 @@ public final class I18n {
         //languages.put("sl", PluralMode.MODE_SL);
         languages.put("sr@latin", PluralMode.MODE_RU);
         languages.put("sv", PluralMode.MODE_NOTONE);
-        //languages.put("tr", PluralMode.MODE_NONE);
+        languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
         //languages.put("vi", PluralMode.MODE_NONE);
         languages.put("zh_CN", PluralMode.MODE_NONE);
@@ -149,11 +155,17 @@ public final class I18n {
     private static final String KATAKANA = "kana";
     private static final String LATIN = "latn";
     private static final String PINYIN = "pinyin";
+    private static final String LATINPINYIN = "latn-pinyin";
     private static final String ROMAJI = "rm";
+    private static final String HANI = "hani";
+    private static final String HANT = "hant";
+    private static final String HANS = "hans";
+    private static final String BOPOMOFO = "bopo";
 
     // Matches ISO-639 two and three letters language codes + scripts
     private static final Pattern LANGUAGE_NAMES = Pattern.compile(
-            "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA, LATIN, PINYIN, ROMAJI) + ")))?");
+            "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA,
+            LATIN, PINYIN, LATINPINYIN, ROMAJI, HANI, HANS, HANT, BOPOMOFO) + ")))?");
 
     private static String format(String text, Object... objects) {
         if (objects.length == 0 && !text.contains("'")) {
@@ -377,17 +389,13 @@ public final class I18n {
 
     static String setupJavaLocaleProviders() {
         // Look up SPI providers first (for JosmDecimalFormatSymbolsProvider).
-        // Enable CLDR locale provider on Java 8 to get additional languages, such as Khmer.
-        // https://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
-        // FIXME: This must be updated after we switch to Java 9.
-        // See https://docs.oracle.com/javase/9/docs/api/java/util/spi/LocaleServiceProvider.html
         try {
             try {
                 // First check we're able to open a stream to our own SPI file
                 // Java will fail on Windows if the jar file is in a folder with a space character!
                 I18n.class.getResourceAsStream("/META-INF/services/java.text.spi.DecimalFormatSymbolsProvider").close();
                 // Don't call Utils.updateSystemProperty to avoid spurious log at startup
-                return System.setProperty("java.locale.providers", "SPI,JRE,CLDR");
+                return System.setProperty("java.locale.providers", "SPI,CLDR");
             } catch (RuntimeException | IOException e) {
                 // Don't call Logging class, it may not be fully initialized yet
                 System.err.println("Unable to set SPI locale provider: " + e.getMessage());
@@ -397,7 +405,7 @@ public final class I18n {
             System.err.println("Unable to set locale providers: " + e.getMessage());
         }
         try {
-            return System.setProperty("java.locale.providers", "JRE,CLDR");
+            return System.setProperty("java.locale.providers", "CLDR");
         } catch (SecurityException e) {
             // Don't call Logging class, it may not be fully initialized yet
             System.err.println("Unable to set locale providers: " + e.getMessage());
@@ -649,8 +657,8 @@ public final class I18n {
     }
 
     private static int pluralEval(long n) {
-        switch(pluralMode) {
-        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, es, et, eu, fi, gl, is, it, iw_IL, mr, nb, nl, sv */
+        switch (pluralMode) {
+        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, eo, es, et, eu, fi, fo, gl, is, it, iw_IL, mr, nb, nl, sv */
             return (n != 1) ? 1 : 0;
         case MODE_NONE: /* id, vi, ja, km, tr, zh_CN, zh_TW */
             return 0;
@@ -674,6 +682,8 @@ public final class I18n {
                     && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2);
         case MODE_SK:
             return (n == 1) ? 1 : (((n >= 2) && (n <= 4)) ? 2 : 0);
+        case MODE_CY:
+            return (n == 1) ? 0 : ((n == 2) ? 1 : (n != 8 && n != 11) ? 2 : 3);
         //case MODE_SL:
         //    return (((n % 100) == 1) ? 1 : (((n % 100) == 2) ? 2 : ((((n % 100) == 3)
         //            || ((n % 100) == 4)) ? 3 : 0)));
@@ -724,8 +734,16 @@ public final class I18n {
                     return /* I18n: a Japanese syllabary */ tr("Katakana");
                 case LATIN:
                     return /* I18n: usage of latin letters/script for usually non-latin languages */ tr("Latin");
-                case PINYIN:
+                case PINYIN: case LATINPINYIN:
                     return /* I18n: official romanization system for Standard Chinese */ tr("Pinyin");
+                case HANI:
+                    return /* I18n: Han characters for Vietnamese or Korean language */ tr("Hani");
+                case HANS:
+                    return /* I18n: Simplified Chinese */ tr("Simplified");
+                case HANT:
+                    return /* I18n: Traditional Chinese */ tr("Traditional");
+                case BOPOMOFO:
+                    return /* I18n: Mandarin Phonetic Symbols/Zhuyin */ tr("Bopomofo");
                 case ROMAJI:
                     return /* I18n: a Japanese syllabary (latin script) */  tr("Rōmaji");
                 default:

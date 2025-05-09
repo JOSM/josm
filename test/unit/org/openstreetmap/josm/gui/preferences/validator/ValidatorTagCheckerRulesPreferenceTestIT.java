@@ -24,11 +24,13 @@ import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
 import org.openstreetmap.josm.gui.preferences.AbstractExtendedSourceEntryTestCase;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link ValidatorTagCheckerRulesPreference} class.
  */
 @HTTPS
+@IntegrationTest
 @Timeout(20)
 class ValidatorTagCheckerRulesPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
     /**

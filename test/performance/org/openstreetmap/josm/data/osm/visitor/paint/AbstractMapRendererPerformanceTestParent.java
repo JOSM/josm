@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
 
@@ -31,6 +32,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Abstract superclass of {@code StyledMapRendererPerformanceTest} and {@code WireframeMapRendererPerformanceTest}.
  */
+@PerformanceTest
 @Projection
 @Territories
 @Timeout(value = 15, unit = TimeUnit.MINUTES)

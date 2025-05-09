@@ -65,6 +65,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
                     comp.setForeground(ConflictColors.FGCOLOR_MEMBER_REMOVE.get());
                     comp.setBackground(ConflictColors.BGCOLOR_MEMBER_REMOVE.get());
                     break;
+                default: throw new AssertionError("Unknown decision type: " + model.getDecision(row).getDecision());
                 }
             }
         }

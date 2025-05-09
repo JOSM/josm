@@ -17,6 +17,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 17862
  */
 public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparable<IWaySegment<N, W>> {
+    protected static final String NOT_A_SEGMENT = "Node pair is not a single segment of the way!";
 
     private final W way;
     private final int lowerIndex;
@@ -96,18 +97,20 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
      * @param first first node
      * @param second second node
      * @return way segment
-     * @throws IllegalArgumentException if the node pair is not part of way
+     * @throws IllegalArgumentException if the node pair is not a single segment of the way
      */
     public static <N extends INode, W extends IWay<N>> IWaySegment<N, W> forNodePair(W way, N first, N second) {
         int endIndex = way.getNodesCount() - 1;
         while (endIndex > 0) {
             final int indexOfFirst = way.getNodes().subList(0, endIndex).lastIndexOf(first);
+            if (indexOfFirst < 0)
+                break;
             if (second.equals(way.getNode(indexOfFirst + 1))) {
                 return new IWaySegment<>(way, indexOfFirst);
             }
             endIndex--;
         }
-        throw new IllegalArgumentException("Node pair is not part of way!");
+        throw new IllegalArgumentException(NOT_A_SEGMENT);
     }
 
     /**
@@ -161,16 +164,18 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
 
     @Override
     public int compareTo(IWaySegment o) {
+        if (o == null)
+            return -1;
         final W thisWay;
         final IWay<?> otherWay;
         try {
             thisWay = toWay();
-            otherWay = o == null ? null : o.toWay();
+            otherWay = o.toWay();
         } catch (ReflectiveOperationException e) {
             Logging.error(e);
             return -1;
         }
-        return o == null ? -1 : (equals(o) ? 0 : thisWay.compareTo(otherWay));
+        return equals(o) ? 0 : thisWay.compareTo(otherWay);
     }
 
     /**

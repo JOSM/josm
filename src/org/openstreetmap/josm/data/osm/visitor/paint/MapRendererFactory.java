@@ -191,6 +191,11 @@ public final class MapRendererFactory {
                 tr("Styled Map Renderer"),
                 tr("Renders the map using style rules in a set of style sheets.")
         );
+        register(
+                StyledTiledMapRenderer.class,
+                tr("Styled Map Renderer (tiled)"),
+                tr("Renders the map using style rules in a set of style sheets by tile.")
+        );
     }
 
     /**
@@ -318,6 +323,17 @@ public final class MapRendererFactory {
      * @return true, if currently the wireframe map renderer is active. Otherwise, false
      */
     public boolean isWireframeMapRendererActive() {
-        return WireframeMapRenderer.class.equals(activeRenderer);
+        return isMapRendererActive(WireframeMapRenderer.class);
+    }
+
+    /**
+     * <p>Replies true, if currently the specified map renderer is active. Otherwise, false.</p>
+     *
+     * @param clazz The class that we are checking to see if it is the current renderer
+     * @return true, if currently the wireframe map renderer is active. Otherwise, false
+     * @since 19176
+     */
+    public boolean isMapRendererActive(Class<? extends AbstractMapRenderer> clazz) {
+        return clazz.equals(activeRenderer);
     }
 }

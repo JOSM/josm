@@ -102,9 +102,9 @@ public enum Compression {
             case XZ:
                 return getXZInputStream(in);
             case NONE:
-            default:
                 return in;
         }
+        return in;
     }
 
     /**
@@ -218,9 +218,9 @@ public enum Compression {
             case XZ:
                 return new XZCompressorOutputStream(out);
             case NONE:
-            default:
                 return out;
         }
+        return out;
     }
 
     /**

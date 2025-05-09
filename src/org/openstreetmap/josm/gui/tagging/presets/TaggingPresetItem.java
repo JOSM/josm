@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -170,12 +171,31 @@ public abstract class TaggingPresetItem {
      */
     public static boolean matches(Iterable<? extends TaggingPresetItem> data, Map<String, String> tags) {
         boolean atLeastOnePositiveMatch = false;
-        for (TaggingPresetItem item : data) {
-            Boolean m = item.matches(tags);
-            if (m != null && !m)
-                return false;
-            else if (m != null) {
-                atLeastOnePositiveMatch = true;
+        if (data instanceof List && data instanceof RandomAccess) {
+            List<? extends TaggingPresetItem> items = (List<? extends TaggingPresetItem>) data;
+            /* This is a memory allocation optimization, mostly for ArrayList.
+             * In test runs, this reduced the memory cost for this method by 99%.
+             * This appears to have also improved CPU cost for this method by ~10% as well.
+             * The big win for CPU cost is in GC improvements, which was around 80%.
+             * Overall improvement: 7.6 hours to 4.5 hours for validating a Colorado pbf extract (40% improvement).
+             */
+            for (int i = 0; i < items.size(); i++) { // NOPMD READ ABOVE: DO NOT REPLACE WITH ENHANCED FOR LOOP WITHOUT PROFILING!
+                TaggingPresetItem item = items.get(i);
+                Boolean m = item.matches(tags);
+                if (m != null && !m) {
+                    return false;
+                } else if (m != null) {
+                    atLeastOnePositiveMatch = true;
+                }
+            }
+        } else {
+            for (TaggingPresetItem item : data) {
+                Boolean m = item.matches(tags);
+                if (m != null && !m) {
+                    return false;
+                } else if (m != null) {
+                    atLeastOnePositiveMatch = true;
+                }
             }
         }
         return atLeastOnePositiveMatch;

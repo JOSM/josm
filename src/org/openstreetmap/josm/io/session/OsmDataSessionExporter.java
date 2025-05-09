@@ -34,11 +34,15 @@ public class OsmDataSessionExporter extends GenericSessionExporter<OsmDataLayer>
     /**
      * Exports OSM data to the given output stream.
      * @param data data set
-     * @param out output stream
-     * @since 15386
+     * @param out output stream (must be closed by caller; note: if caller has access, caller should use
+     *            {@link org.apache.commons.io.output.CloseShieldOutputStream} when calling this method to
+     *            avoid potential future issues)
      */
+    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"}) // All the closeables in this method will close the input OutputStream.
     public static void exportData(DataSet data, OutputStream out) {
+        // This writer will close out when it is closed
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+        // The PrintWriter will close the writer when it is closed, and the OsmWriter will close the PrintWriter when it is closed.
         OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, data.getVersion());
         data.getReadLock().lock();
         try {

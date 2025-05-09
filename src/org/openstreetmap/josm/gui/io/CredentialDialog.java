@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Dialog box to request username and password from the user.
- *
+ * <p>
  * The credentials can be for the OSM API (basic authentication), a different
  * host or an HTTP proxy.
  */
@@ -369,7 +369,7 @@ public class CredentialDialog extends JDialog {
         }
     }
 
-    private static class SelectAllOnFocusHandler extends FocusAdapter {
+    private static final class SelectAllOnFocusHandler extends FocusAdapter {
         @Override
         public void focusGained(FocusEvent e) {
             if (e.getSource() instanceof JTextField) {

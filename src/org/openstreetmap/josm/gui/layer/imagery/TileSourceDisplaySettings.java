@@ -80,6 +80,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     /**
      * Create a new {@link TileSourceDisplaySettings}
      */
+    @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation") // See https://github.com/pmd/pmd/issues/5069
     public TileSourceDisplaySettings() {
         this(new String[] {PREFERENCE_PREFIX});
     }

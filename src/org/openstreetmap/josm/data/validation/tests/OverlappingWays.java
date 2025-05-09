@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -121,7 +122,7 @@ public class OverlappingWays extends Test {
         if (ways <= 1)
             return;
 
-        List<Way> currentWays = duplicated.stream().map(ws -> ws.getWay()).collect(Collectors.toList());
+        List<Way> currentWays = duplicated.stream().map(IWaySegment::getWay).collect(Collectors.toList());
         Collection<WaySegment> highlight;
         if ((highlight = seenWays.get(currentWays)) != null) {
             /* this combination of ways was seen before, just add highlighted segment */

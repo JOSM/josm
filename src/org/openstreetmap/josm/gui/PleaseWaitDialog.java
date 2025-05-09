@@ -106,7 +106,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      */
     @Override
     public void setCustomText(String text) {
-        if (Utils.isBlank(text)) {
+        if (Utils.isStripEmpty(text)) {
             customText.setVisible(false);
             adjustLayout();
             return;
@@ -131,7 +131,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      */
     @Override
     public void appendLogMessage(String message) {
-        if (Utils.isBlank(message))
+        if (Utils.isStripEmpty(message))
             return;
         if (!spLog.isVisible()) {
             spLog.setVisible(true);

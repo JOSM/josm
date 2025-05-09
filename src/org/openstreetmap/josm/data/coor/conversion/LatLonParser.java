@@ -60,7 +60,7 @@ public final class LatLonParser {
             + "(?:[NE]|(?<neg2>[SW]))?";
     private static final Pattern P_DMS = Pattern.compile("^" + DMS + "$");
 
-    private static class LatLonHolder {
+    private static final class LatLonHolder {
         private double lat = Double.NaN;
         private double lon = Double.NaN;
     }

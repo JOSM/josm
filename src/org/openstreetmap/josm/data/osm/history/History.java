@@ -293,8 +293,11 @@ public class History {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("History ["
-                + (type != null ? ("type=" + type + ", ") : "") + "id=" + id);
+        StringBuilder result = new StringBuilder("History [");
+        if (type != null) {
+            result.append("type=").append(type).append(", ");
+        }
+        result.append("id=").append(id);
         if (versions != null) {
             result.append(", versions=\n");
             for (HistoryOsmPrimitive v : versions) {

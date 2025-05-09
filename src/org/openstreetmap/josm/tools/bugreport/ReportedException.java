@@ -31,7 +31,6 @@ import org.openstreetmap.josm.tools.StreamUtils;
  * @see BugReport
  * @since 10285
  */
-@SuppressWarnings("OverrideThrowableToString")
 public class ReportedException extends RuntimeException {
     /**
      * How many entries of a collection to include in the bug report.
@@ -167,11 +166,7 @@ public class ReportedException extends RuntimeException {
      * @return <code>true</code> if they are considered the same.
      */
     public boolean isSame(ReportedException e) {
-        if (!getMessage().equals(e.getMessage())) {
-            return false;
-        }
-
-        return hasSameStackTrace(new CauseTraceIterator(), e.getCause());
+        return getMessage().equals(e.getMessage()) && hasSameStackTrace(new CauseTraceIterator(), e.getCause());
     }
 
     private static boolean hasSameStackTrace(CauseTraceIterator causeTraceIterator, Throwable e2) {
@@ -191,11 +186,8 @@ public class ReportedException extends RuntimeException {
         Throwable c2 = e2.getCause();
         if ((c1 == null) != (c2 == null)) {
             return false;
-        } else if (c1 != null) {
-            return hasSameStackTrace(causeTraceIterator, c2);
-        } else {
-            return true;
         }
+        return c1 == null || hasSameStackTrace(causeTraceIterator, c2);
     }
 
     /**
@@ -230,7 +222,7 @@ public class ReportedException extends RuntimeException {
             } else if (value instanceof Collection) {
                 string = makeCollectionNice((Collection<?>) value);
             } else if (value.getClass().isArray()) {
-                string = makeCollectionNice(Arrays.asList(value));
+                string = makeCollectionNice(Collections.singleton(value));
             } else {
                 string = value.toString();
             }
@@ -282,7 +274,7 @@ public class ReportedException extends RuntimeException {
      * @since 10819
      */
     public boolean isOutOfMemory() {
-        return StreamUtils.toStream(CauseTraceIterator::new).anyMatch(t -> t instanceof OutOfMemoryError);
+        return StreamUtils.toStream(CauseTraceIterator::new).anyMatch(OutOfMemoryError.class::isInstance);
     }
 
     /**
@@ -292,7 +284,7 @@ public class ReportedException extends RuntimeException {
      */
     private final class CauseTraceIterator implements Iterator<Throwable> {
         private Throwable current = getCause();
-        private final Set<Throwable> dejaVu = Collections.newSetFromMap(new IdentityHashMap<Throwable, Boolean>());
+        private final Set<Throwable> dejaVu = Collections.newSetFromMap(new IdentityHashMap<>());
 
         @Override
         public boolean hasNext() {

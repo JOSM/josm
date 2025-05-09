@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.date;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,6 +17,7 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.concurrent.ForkJoinPool;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,6 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.tools.UncheckedParseException;
+import org.openstreetmap.josm.tools.Utils;
 
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
@@ -152,14 +155,20 @@ public class DateUtilsTest {
      */
     @Test
     void testFormatTime() {
-        assertEquals("12:00 AM", DateUtils.formatTime(new Date(0), DateFormat.SHORT));
-        assertEquals("1:00 AM", DateUtils.formatTime(new Date(60 * 60 * 1000), DateFormat.SHORT));
-        assertEquals("12:00 AM", DateUtils.formatTime(new Date(999), DateFormat.SHORT));
+        // Somewhere between Java 17 and Java 21, a non-breaking space replaced the original space between the time and AM/PM.
+        final var separator = Utils.getJavaVersion() >= 21 ? '\u202f' : ' ';
+        final var twelveAM = "12:00" + separator + "AM";
+        assertEquals(twelveAM, DateUtils.formatTime(new Date(0), DateFormat.SHORT));
+        assertEquals("1:00" + separator + "AM", DateUtils.formatTime(new Date(60 * 60 * 1000), DateFormat.SHORT));
+        assertEquals(twelveAM, DateUtils.formatTime(new Date(999), DateFormat.SHORT));
         // ignore seconds
-        assertEquals("12:00 AM", DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
+        assertEquals(twelveAM, DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
 
         setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-        assertEquals("1:00:00 AM CET", DateUtils.formatTime(new Date(0), DateFormat.LONG));
+        String p1 = "1:00:00" + separator + "AM GMT+01:00";
+        String p2 = "1:00:00" + separator + "AM CET";
+        assertThat("This is mostly dependent upon java.locale.providers.", DateUtils.formatTime(new Date(0), DateFormat.LONG),
+            CoreMatchers.anyOf(CoreMatchers.is(p1), CoreMatchers.is(p2)));
     }
 
     /**
@@ -306,5 +315,14 @@ public class DateUtilsTest {
         } finally {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
+    }
+
+    /**
+     * Some Java version use narrow no-break space ("NNBSP") instead of a space.
+     * @param time The time string with NNBSP instead of a space
+     * @return The time with spaces instead of NNBSP
+     */
+    private static String replaceWhitespace(String time) {
+        return time.replace((char) 8239 /* "NNBSP" */, ' ');
     }
 }

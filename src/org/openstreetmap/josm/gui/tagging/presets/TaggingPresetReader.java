@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipFile;
 
 import javax.swing.JOptionPane;
 
@@ -47,6 +48,7 @@ import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -106,6 +108,11 @@ public final class TaggingPresetReader {
         }
     }
 
+    /**
+     * A {@link LinkedHashSet} with the ability to get the "last" object.
+     * Note that this is unnecessary in Java 21 (see JEP 431).
+     * @param <E> The object type in the set
+     */
     static class HashSetWithLast<E> extends LinkedHashSet<E> {
         private static final long serialVersionUID = 1L;
         protected transient E last;
@@ -369,15 +376,21 @@ public final class TaggingPresetReader {
         Stopwatch stopwatch = Stopwatch.createStarted();
         try (
             CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
-            // zip may be null, but Java 7 allows it: https://blogs.oracle.com/darcy/entry/project_coin_null_try_with
-            InputStream zip = cf.findZipEntryInputStream("xml", "preset")
         ) {
-            if (zip != null) {
-                zipIcons = cf.getFile();
-                I18n.addTexts(zipIcons);
-            }
-            try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip)) {
-                tp = readAll(new BufferedReader(r), validate, all);
+            Pair<ZipFile, InputStream> zip = cf.findZipEntryInputStream("xml", "preset");
+            try {
+                if (zip != null) {
+                    zipIcons = cf.getFile();
+                    I18n.addTexts(zipIcons);
+                }
+                try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip.b)) {
+                    tp = readAll(new BufferedReader(r), validate, all);
+                }
+            } finally {
+                if (zip != null) {
+                    Utils.close(zip.b);
+                    Utils.close(zip.a);
+                }
             }
         }
         Logging.debug(stopwatch.toString("Reading presets"));

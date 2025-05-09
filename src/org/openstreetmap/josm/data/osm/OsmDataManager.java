@@ -20,7 +20,7 @@ public final class OsmDataManager implements IOsmDataManager {
         // hide constructor
     }
 
-    private static class InstanceHolder {
+    private static final class InstanceHolder {
         static final OsmDataManager INSTANCE = new OsmDataManager();
     }
 

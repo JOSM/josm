@@ -35,7 +35,7 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
     @Override
     public String getDescriptionText() {
         String msg;
-        switch(OsmPrimitiveType.from(conflict.getMy())) {
+        switch (OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Resolve version conflict for node {0}"); break;
         case WAY: msg = marktr("Resolve version conflict for way {0}"); break;
         case RELATION: msg = marktr("Resolve version conflict for relation {0}"); break;

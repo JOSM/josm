@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import java.net.URI;
 import java.util.List;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -22,8 +23,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.testutils.mockers.OpenBrowserMocker;
-
-import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Unit tests of {@link BugReportSender} class.
@@ -33,19 +32,13 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @HTTP
 class BugReportSenderTest {
     /**
-     * HTTP mock
-     */
-    @BasicWiremock
-    WireMockServer wireMockServer;
-
-    /**
      * Unit test for {@link BugReportSender#BugReportSender}.
      * @throws InterruptedException if the thread is interrupted
      */
     @Test
-    void testBugReportSender() throws InterruptedException {
-        Config.getPref().put("josm.url", wireMockServer.baseUrl());
-        wireMockServer.stubFor(post(urlEqualTo("/josmticket"))
+    void testBugReportSender(WireMockRuntimeInfo wireMockRuntimeInfo) throws InterruptedException {
+        Config.getPref().put("josm.url", wireMockRuntimeInfo.getHttpBaseUrl());
+        wireMockRuntimeInfo.getWireMock().register(post(urlEqualTo("/josmticket"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
@@ -65,10 +58,11 @@ class BugReportSenderTest {
 
         assertFalse(sender.isAlive());
         assertNull(sender.getErrorMessage(), sender.getErrorMessage());
-        wireMockServer.verify(exactly(1), postRequestedFor(urlEqualTo("/josmticket")).withRequestBody(containing("pdata=")));
+        wireMockRuntimeInfo.getWireMock().verifyThat(exactly(1),
+                postRequestedFor(urlEqualTo("/josmticket")).withRequestBody(containing("pdata=")));
 
         List<URI> calledURIs = OpenBrowserMocker.getCalledURIs();
         assertEquals(1, calledURIs.size());
-        assertEquals(wireMockServer.url("/josmticket?pdata_stored=6bccff5c0417217bfbbe5fff"), calledURIs.get(0).toString());
+        assertEquals(wireMockRuntimeInfo.getHttpBaseUrl() + "/josmticket?pdata_stored=6bccff5c0417217bfbbe5fff", calledURIs.get(0).toString());
     }
 }

@@ -7,10 +7,12 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 
 /**
  * Tests the {@link GettingStarted} class.
  */
+@FunctionalTest
 class GettingStartedTest {
     /**
      * Tests that image links are replaced.

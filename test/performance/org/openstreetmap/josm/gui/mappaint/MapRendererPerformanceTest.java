@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
 
@@ -55,6 +56,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @BasicPreferences
 @Main
+@PerformanceTest
 @Projection
 @Territories
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
@@ -179,7 +181,7 @@ public class MapRendererPerformanceTest {
         MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
     }
 
-    private static class PerformanceTester {
+    private static final class PerformanceTester {
         public double scale = 0;
         public LatLon center = LL_CITY;
         public Bounds bounds;

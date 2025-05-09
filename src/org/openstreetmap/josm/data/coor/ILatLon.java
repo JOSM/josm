@@ -72,7 +72,7 @@ public interface ILatLon {
      * @param other other lat/lon
      * @return <code>true</code> if the other point has almost the same lat/lon
      * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
-     * @since 18464 (extracted from {@link LatLon})
+     * @since 18464
      */
     default boolean equalsEpsilon(ILatLon other) {
         return equalsEpsilon(other, MAX_SERVER_PRECISION);
@@ -84,7 +84,7 @@ public interface ILatLon {
      * @param precision The precision to use
      * @return <code>true</code> if the other point has almost the same lat/lon
      * values, only differing by no more than 1 / precision.
-     * @since 18464 (extracted from {@link LatLon})
+     * @since 18464
      */
     default boolean equalsEpsilon(ILatLon other, double precision) {
         double p = precision / 2;
@@ -96,7 +96,7 @@ public interface ILatLon {
      * Uses <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>.
      * @param other the other point.
      * @return distance in metres.
-     * @since 18494 (extracted from {@link LatLon})
+     * @since 18494
      */
     default double greatCircleDistance(ILatLon other) {
         double sinHalfLat = sin(toRadians(other.lat() - this.lat()) / 2);
@@ -127,7 +127,7 @@ public interface ILatLon {
      *
      * @param other the "destination" position
      * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
-     * @since 18494 (extracted from {@link LatLon}, added in 9796)
+     * @since 18494
      */
     default double bearing(ILatLon other) {
         double lat1 = toRadians(this.lat());

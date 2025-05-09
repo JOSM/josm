@@ -232,8 +232,6 @@ public class AutoScaleAction extends JosmAction {
         case NEXT:
             setHelpId(ht("/Action/ZoomToNext"));
             break;
-        default:
-            throw new IllegalArgumentException("Unknown mode: " + mode);
         }
         installAdapters();
     }
@@ -438,7 +436,7 @@ public class AutoScaleAction extends JosmAction {
     /**
      * Adapter for zoom change events
      */
-    private class ZoomChangeAdapter implements ZoomChangeListener {
+    private final class ZoomChangeAdapter implements ZoomChangeListener {
         @Override
         public void zoomChanged() {
             updateEnabledState();

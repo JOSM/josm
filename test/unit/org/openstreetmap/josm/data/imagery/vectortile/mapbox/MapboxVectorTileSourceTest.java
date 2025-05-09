@@ -26,7 +26,7 @@ import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
  * @since 17862
  */
 class MapboxVectorTileSourceTest implements TileSourceTest {
-    private static class SelectLayerDialogMocker extends ExtendedDialogMocker {
+    private static final class SelectLayerDialogMocker extends ExtendedDialogMocker {
         int index;
         @Override
         protected void act(final ExtendedDialog instance) {

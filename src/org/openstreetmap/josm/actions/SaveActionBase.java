@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.SaveToFile;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -182,9 +183,14 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     @Override
-    protected void updateEnabledState() {
+    protected final void updateEnabledState() {
         Layer activeLayer = getLayerManager().getActiveLayer();
-        setEnabled(activeLayer != null && activeLayer.isSavable());
+        boolean en = activeLayer != null && activeLayer.isSavable();
+        // see #12669 and #23648
+        if (en && this instanceof SaveAction && activeLayer instanceof SaveToFile) {
+            en = activeLayer.getAssociatedFile() == null || ((SaveToFile) activeLayer).requiresSaveToFile();
+        }
+        setEnabled(en);
     }
 
     /**

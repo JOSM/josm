@@ -118,6 +118,7 @@ enum ImageResizeMode {
      * @param dim the desired image dimension
      * @return a cache key
      */
+    @SuppressWarnings("EnumOrdinal")
     int cacheKey(Dimension dim) {
         return (ordinal() << 28) | ((dim.width & 0xfff) << 16) | (dim.height & 0xfff);
     }

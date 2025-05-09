@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -133,23 +134,21 @@ public class TagTable extends JosmTable implements EndEditListener {
     /**
      * Action to be run when the user invokes a delete action on the table, for
      * instance by pressing DEL.
-     *
+     * <p>
      * Depending on the shape on the current selection the action deletes individual
      * values or entire tags from the model.
-     *
+     * <p>
      * If the current selection consists of cells in the second column only, the keys of
      * the selected tags are set to the empty string.
-     *
+     * <p>
      * If the current selection consists of cell in the third column only, the values of the
      * selected tags are set to the empty string.
-     *
+     * <p>
      *  If the current selection consists of cells in the second and the third column,
      *  the selected tags are removed from the model.
-     *
+     * <p>
      *  This action listens to the table selection. It becomes enabled when the selection
      *  is non-empty, otherwise it is disabled.
-     *
-     *
      */
     class DeleteAction extends AbstractAction implements ListSelectionListener {
 
@@ -189,7 +188,7 @@ public class TagTable extends JosmTable implements EndEditListener {
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            switch(getSelectedColumnCount()) {
+            switch (getSelectedColumnCount()) {
             case 1:
                 if (getSelectedColumn() == 0) {
                     deleteTagNames();
@@ -350,7 +349,7 @@ public class TagTable extends JosmTable implements EndEditListener {
         //
         addAction = new AddAction();
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_DOWN_MASK), "addTag");
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK), "addTag");
         getActionMap().put("addTag", addAction);
 
         pasteAction = new PasteAction();
@@ -565,7 +564,7 @@ public class TagTable extends JosmTable implements EndEditListener {
     /**
      * This is a custom implementation of the CellEditorRemover used in JTable
      * to handle the client property <code>terminateEditOnFocusLost</code>.
-     *
+     * <p>
      * This implementation also checks whether focus is transferred to one of a list
      * of dedicated components, see {@link TagTable#doNotStopCellEditingWhenFocused}.
      * A typical example for such a component is a button in {@link TagEditorPanel}

@@ -60,8 +60,7 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
     }
 
     protected static <T extends Enum<T> & UrlPattern> String[] patterns(Class<T> urlPatternEnum) {
-        // Do not use a method reference until we switch to Java 11, as we face JDK-8141508 with Java 8
-        return Arrays.stream(urlPatternEnum.getEnumConstants()).map(/* JDK-8141508 */ t -> t.pattern()).toArray(String[]::new);
+        return Arrays.stream(urlPatternEnum.getEnumConstants()).map(UrlPattern::pattern).toArray(String[]::new);
     }
 
     protected final void rememberErrorMessage(String message) {

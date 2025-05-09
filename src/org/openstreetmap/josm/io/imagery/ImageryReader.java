@@ -111,7 +111,7 @@ public class ImageryReader implements Closeable {
         }
     }
 
-    private static class Parser extends DefaultHandler {
+    private static final class Parser extends DefaultHandler {
         private static final String MAX_ZOOM = "max-zoom";
         private static final String MIN_ZOOM = "min-zoom";
         private static final String TILE_SIZE = "tile-size";
@@ -365,7 +365,7 @@ public class ImageryReader implements Closeable {
                 break;
             case MIRROR_ATTRIBUTE:
                 if (mirrorEntry != null) {
-                    switch(qName) {
+                    switch (qName) {
                     case "type":
                         Optional<ImageryType> type = Arrays.stream(ImageryType.values())
                                 .filter(t -> Objects.equals(accumulator.toString(), t.getTypeString()))
@@ -411,7 +411,7 @@ public class ImageryReader implements Closeable {
                 }
                 break;
             case ENTRY_ATTRIBUTE:
-                switch(qName) {
+                switch (qName) {
                 case "name":
                     entry.setName(lang == null ? LanguageInfo.getJOSMLocaleCode(null) : lang, accumulator.toString());
                     break;

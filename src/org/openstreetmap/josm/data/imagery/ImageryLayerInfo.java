@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import static java.util.function.Predicate.not;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
@@ -167,7 +168,8 @@ public class ImageryLayerInfo {
                 reader.setFastFail(fastFail);
                 Collection<ImageryInfo> result = reader.parse();
                 // See #23485 (remove invalid source entries)
-                result.removeIf(info -> !info.isValid());
+                result.stream().filter(not(ImageryInfo::isValid)).forEach(info -> Logging.error("Not adding invalid imagery: {0}", info));
+                result.removeIf(not(ImageryInfo::isValid));
                 newLayers.addAll(result);
             } catch (IOException ex) {
                 loadError = true;

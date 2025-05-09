@@ -74,7 +74,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     private boolean typesInSelectionDirty = true;
     private final transient PresetClassifications classifications = new PresetClassifications();
 
-    private static class ResultListCellRenderer implements ListCellRenderer<TaggingPreset> {
+    private static final class ResultListCellRenderer implements ListCellRenderer<TaggingPreset> {
         private final DefaultListCellRenderer def = new DefaultListCellRenderer();
         @Override
         public Component getListCellRendererComponent(JList<? extends TaggingPreset> list, TaggingPreset tp, int index,

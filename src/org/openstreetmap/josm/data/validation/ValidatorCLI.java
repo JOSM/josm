@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import org.apache.commons.compress.utils.FileNameUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.Preferences;
@@ -78,9 +77,9 @@ public class ValidatorCLI implements CLIModule {
 
     /** The input file(s) */
     private final List<String> input = new ArrayList<>();
-    /** The change files. input file -> list of change files */
+    /** The change files. input file → list of change files */
     private final Map<String, List<String>> changeFiles = new HashMap<>();
-    /** The output file(s). If {@code null}, use input filename as base (replace extension with geojson). input -> output */
+    /** The output file(s). If {@code null}, use input filename as base (replace extension with geojson). input → output */
     private final Map<String, String> output = new HashMap<>();
 
     private static final Supplier<ProgressMonitor> progressMonitorFactory = CLIProgressMonitor::new;
@@ -97,15 +96,17 @@ public class ValidatorCLI implements CLIModule {
         OUTPUT(true, 'o', OptionParser.OptionCount.MULTIPLE),
         /** --change-file=&lt;change-file&gt;         Add a change file */
         CHANGE_FILE(true, 'c', OptionParser.OptionCount.MULTIPLE),
+        /** --warn                                    Set logging level to warn */
+        WARN(false, '*'),
         /** --debug                                   Set logging level to debug */
         DEBUG(false, '*'),
         /** --trace                                   Set logging level to trace */
         TRACE(false, '*'),
-        /** --language=&lt;language&gt;                Set the language */
+        /** --language=&lt;language&gt;               Set the language */
         LANGUAGE(true, 'l'),
-        /** --load-preferences=&lt;url-to-xml&gt;      Changes preferences according to the XML file */
+        /** --load-preferences=&lt;url-to-xml&gt;     Changes preferences according to the XML file */
         LOAD_PREFERENCES(true, 'p'),
-        /** --set=&lt;key&gt;=&lt;value&gt;            Set preference key to value */
+        /** --set=&lt;key&gt;=&lt;value&gt;           Set preference key to value */
         SET(true, 's');
 
         private final String name;
@@ -264,24 +265,25 @@ public class ValidatorCLI implements CLIModule {
                     .findFirst().orElseThrow(() -> new JosmRuntimeException(tr("Could not find a layer for {0}", inputFile)));
             final DataSet dataSet = dataLayer.getDataSet();
             if (this.changeFiles.containsKey(inputFile)) {
-                ProgressMonitor changeFilesMonitor = progressMonitorFactory.get();
+                final ProgressMonitor changeFilesMonitor = progressMonitorFactory.get();
                 for (String changeFile : this.changeFiles.getOrDefault(inputFile, Collections.emptyList())) {
                     try (InputStream changeStream = Compression.getUncompressedFileInputStream(Paths.get(changeFile))) {
                         dataSet.mergeFrom(OsmChangeReader.parseDataSet(changeStream, changeFilesMonitor));
                     }
                 }
             }
-            Path path = Paths.get(outputFile);
+            final Path path = Paths.get(outputFile);
             if (path.toFile().isFile() && !Files.deleteIfExists(path)) {
                 Logging.error("Could not delete {0}, attempting to append", outputFile);
             }
-            GeoJSONMapRouletteWriter geoJSONMapRouletteWriter = new GeoJSONMapRouletteWriter(dataSet);
+            final GeoJSONMapRouletteWriter geoJSONMapRouletteWriter = new GeoJSONMapRouletteWriter(dataSet);
             OsmValidator.initializeTests();
 
             try (OutputStream fileOutputStream = Files.newOutputStream(path)) {
                 // The first writeErrors catches anything that was written, for whatever reason. This is probably never
                 // going to be called.
-                ValidationTask validationTask = new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
+                final ValidationTask validationTask =
+                        new ValidationTask(errors -> writeErrors(geoJSONMapRouletteWriter, fileOutputStream, errors),
                         progressMonitorFactory.get(), OsmValidator.getEnabledTests(false),
                         dataSet.allPrimitives(), Collections.emptyList(), false);
                 // This avoids keeping errors in memory
@@ -319,14 +321,35 @@ public class ValidatorCLI implements CLIModule {
      * @return The default output name for the input file (extension stripped, ".geojson" added)
      */
     private static String getDefaultOutputName(final String inputString) {
-        final String extension = FileNameUtils.getExtension(inputString);
+        final String[] parts = getFileParts(inputString);
+        final String extension = parts[1];
         if (!Arrays.asList("zip", "bz", "xz", "geojson").contains(extension)) {
-            return FileNameUtils.getBaseName(inputString) + ".geojson";
+            return parts[0] + ".geojson";
         } else if ("geojson".equals(extension)) {
             // Account for geojson input files
-            return FileNameUtils.getBaseName(inputString) + ".validated.geojson";
+            return parts[0] + ".validated.geojson";
         }
-        return FileNameUtils.getBaseName(FileNameUtils.getBaseName(inputString)) + ".geojson";
+        return parts[0] + ".geojson";
+    }
+
+    /**
+     * Split a string into a filename + extension. Example:
+     * "foo.bar.txt" → ["foo.bar", "txt"]
+     * <p>
+     * Please note that future versions of Java may make this method redundant. It is not as of Java 21 (look for
+     * something like {@code Path#getExtension}, see <a href="https://bugs.openjdk.org/browse/JDK-8298318">JDK-8298318</a>.
+     * That may be in Java 22.
+     * @param inputString The string to get the filename and extension from
+     * @return The filename and the (optional) extension
+     */
+    private static String[] getFileParts(String inputString) {
+        final int split = inputString.lastIndexOf('.');
+        final int path = inputString.lastIndexOf(File.separatorChar);
+        if (split == -1 || path > split) {
+            return new String[] {inputString, ""};
+        } else {
+            return new String[]{inputString.substring(0, split), inputString.substring(split + 1)};
+        }
     }
 
     /**
@@ -390,6 +413,9 @@ public class ValidatorCLI implements CLIModule {
         case HELP:
             showHelp();
             Lifecycle.exitJosm(true, 0);
+            break;
+        case WARN:
+            this.logLevel = Logging.LEVEL_WARN;
             break;
         case DEBUG:
             this.logLevel = Logging.LEVEL_DEBUG;

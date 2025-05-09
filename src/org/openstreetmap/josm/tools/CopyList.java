@@ -138,7 +138,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess {
         return new Itr();
     }
 
-    private class Itr implements Iterator<E> {
+    private final class Itr implements Iterator<E> {
         /**
          * Index of element to be returned by subsequent call to next.
          */
@@ -197,7 +197,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess {
             }
         }
 
-        final void checkForComodification() {
+        void checkForComodification() {
             if (modCount != expectedModCount)
                 throw new ConcurrentModificationException();
         }

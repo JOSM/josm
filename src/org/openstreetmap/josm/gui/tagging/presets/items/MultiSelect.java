@@ -94,7 +94,11 @@ public class MultiSelect extends ComboMultiSelect {
         }
         p.add(sp, GBC.eol().fill(GBC.HORIZONTAL)); // NOSONAR
 
-        list.addListSelectionListener(l -> support.fireItemValueModified(this, key, getSelectedItem().value));
+        list.addListSelectionListener(l -> {
+            if (!l.getValueIsAdjusting()) {
+                support.fireItemValueModified(this, key, getSelectedItem().value);
+            }
+        });
         list.setToolTipText(getKeyTooltipText());
         list.applyComponentOrientation(OrientationAction.getValueOrientation(key));
 

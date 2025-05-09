@@ -26,7 +26,8 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -291,10 +292,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         tileLoader = getTileLoaderFactory().makeTileLoader(this, headers, minimumTileExpire);
 
         try {
-            if ("file".equalsIgnoreCase(new URL(tileSource.getBaseUrl()).getProtocol())) {
+            if (tileSource.getBaseUrl() != null && "file".equalsIgnoreCase(new URI(tileSource.getBaseUrl()).toURL().getProtocol())) {
                 tileLoader = new OsmTileLoader(this);
             }
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException | MalformedURLException e) {
             // ignore, assume that this is not a file
             Logging.log(Logging.LEVEL_DEBUG, e);
         }
@@ -514,9 +515,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private static void sendOsmTileRequest(Tile tile, String request) {
         if (tile != null) {
             try {
-                new Notification(HttpClient.create(new URL(tile.getUrl() + '/' + request))
-                        .connect().fetchContent()).show();
-            } catch (IOException ex) {
+                new Notification(HttpClient.create(new URI(tile.getUrl() + '/' + request).toURL())
+                        .connect().fetchContent()).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
+            } catch (URISyntaxException | IOException ex) {
                 Logging.error(ex);
             }
         }
@@ -663,13 +664,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * The value should be sum(2^x for x in (-5 to 2)) - 1
      * -1 to exclude current zoom level
      * <p>
+     * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
+     * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
+     * <p>
      * Check call to tryLoadFromDifferentZoom
      * @see #tryLoadFromDifferentZoom(Graphics2D, int, List, int)
      * @see #drawInViewArea(Graphics2D, MapView, ProjectionBounds)
-     *
-     * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
-     * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
-     * @see TileSet#overloadTiles()
+     * @see AbstractTileSourceLayer.TileSet#overloadTiles()
      */
     private static int calculateRealTiles(int visibleTiles, int maxXtiles, int maxYtiles) {
         return (int) Math.ceil(
@@ -962,6 +963,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public void loadAllErrorTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
         ts.loadAllErrorTiles(force);
+        invalidate();
+    }
+
+    /**
+     * Remove all cached error tiles
+     * @since 19192
+     */
+    public void clearErrorTiles() {
+        tileCache.clearErrorTiles();
         invalidate();
     }
 
@@ -1323,7 +1333,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
             if (tooLarge()) {
                 // Too many tiles... refuse to download
-                Logging.warn("Not downloading all tiles because there is more than {0} tiles on an axis!", MAX_TILES_SPANNED);
+                Logging.warn("Not downloading all tiles because there are more than {0} tiles on an axis!", MAX_TILES_SPANNED);
                 return;
             }
             List<Tile> allTiles = allTilesCreate();
@@ -1480,7 +1490,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     /**
      * Data container to hold information about a {@code TileSet} class.
      */
-    private static class TileSetInfo {
+    private static final class TileSetInfo {
         boolean hasVisibleTiles;
         boolean hasOverzoomedTiles;
         boolean hasLoadingTiles;
@@ -1864,6 +1874,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
+        if (this.getInfo() != null) {
+            v.visit(this.getInfo().getBounds());
+        }
     }
 
     /**
@@ -2025,7 +2038,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private class TileSourcePainter extends CompatibilityModeLayerPainter {
+    private final class TileSourcePainter extends CompatibilityModeLayerPainter {
         /** The memory handle that will hold our tile source. */
         private MemoryHandle<?> memory;
 
@@ -2071,7 +2084,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
         }
 
-        protected long getEstimatedCacheSize() {
+        private long getEstimatedCacheSize() {
             return 4L * tileSource.getTileSize() * tileSource.getTileSize() * estimateTileCacheSize();
         }
 

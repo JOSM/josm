@@ -43,7 +43,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
+import org.openstreetmap.josm.data.osm.visitor.paint.AbstractMapRenderer;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -68,12 +68,12 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Move is an action that can move all kind of OsmPrimitives (except keys for now).
- *
+ * <p>
  * If an selected object is under the mouse when dragging, move all selected objects.
  * If an unselected object is under the mouse when dragging, it becomes selected
  * and will be moved.
  * If no object is under the mouse, move all selected objects (if any)
- *
+ * <p>
  * On Mac OS X, Ctrl + mouse button 1 simulates right click (map move), so the
  * feature "selection remove" is disabled on this platform.
  */
@@ -205,7 +205,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     public SelectAction(MapFrame mapFrame) {
         super(tr("Select mode"), "move/move", tr("Select, move, scale and rotate objects"),
                 Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select mode")), KeyEvent.VK_S, Shortcut.DIRECT),
-                ImageProvider.getCursor("normal", "selection"));
+                ImageProvider.getCursor(NORMAL, "selection"));
         mv = mapFrame.mapView;
         setHelpId(ht("/Action/Select"));
         selectionManager = new SelectionManager(this, false, mv);
@@ -315,7 +315,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      */
     private Cursor getCursor(OsmPrimitive nearbyStuff) {
         String c = "rect";
-        switch(mode) {
+        switch (mode) {
         case MOVE:
             if (virtualManager.hasVirtualNode()) {
                 c = "virtual_node";
@@ -401,9 +401,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     /**
      * Look, whether any object is selected. If not, select the nearest node.
      * If there are no nodes in the dataset, do nothing.
-     *
+     * <p>
      * If the user did not press the left mouse button, do nothing.
-     *
+     * <p>
      * Also remember the starting position of the movement and change the mouse
      * cursor to movement.
      */
@@ -437,7 +437,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
         determineMapMode(nearestPrimitive != null);
 
-        switch(mode) {
+        switch (mode) {
         case ROTATE:
         case SCALE:
             //  if nothing was selected, select primitive under cursor for scaling or rotating
@@ -464,7 +464,6 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             GuiHelper.scheduleTimer(initialMoveDelay+1, evt -> updateStatusLine(), false);
             break;
         case SELECT:
-        default:
             if (!(ctrl && PlatformManager.isPlatformOsx())) {
                 // start working with rectangle or lasso
                 selectionManager.register(mv, lassoMode);
@@ -518,7 +517,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         if ((mode == Mode.MOVE) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay))
             return;
 
-        if (mode != Mode.ROTATE && mode != Mode.SCALE && (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0) {
+        if (mode != Mode.ROTATE && mode != Mode.SCALE && (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) == 0) {
             // button is pressed in rotate mode
             return;
         }
@@ -914,7 +913,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 final ConfirmMoveDialog ed = new ConfirmMoveDialog();
                 ed.setContent(trn(
                         "You moved {0} element by a distance of {1}. "
-                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
+                                + "Moving elements by a large distance is often an error.\n" + "Really move it?",
                         "You moved {0} elements by a distance of {1}. "
                                 + "Moving elements by a large distance is often an error.\n" + "Really move them?",
                         moveCount, moveCount, SystemOfMeasurement.getSystemOfMeasurement().getDistText(moveDistance)));
@@ -1115,7 +1114,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     private final transient CycleManager cycleManager = new CycleManager();
     private final transient VirtualManager virtualManager = new VirtualManager();
 
-    private class CycleManager {
+    private final class CycleManager {
 
         private Collection<OsmPrimitive> cycleList = Collections.emptyList();
         private boolean cyclePrims;
@@ -1254,7 +1253,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         }
     }
 
-    private class VirtualManager {
+    private final class VirtualManager {
 
         private Node virtualNode;
         private Collection<WaySegment> virtualWays = new LinkedList<>();
@@ -1293,7 +1292,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     wnp.b = w.getNode(ws.getUpperIndex());
                     MapViewPoint p1 = mv.getState().getPointFor(wnp.a);
                     MapViewPoint p2 = mv.getState().getPointFor(wnp.b);
-                    if (WireframeMapRenderer.isLargeSegment(p1, p2, virtualSpace)) {
+                    if (AbstractMapRenderer.isLargeSegment(p1, p2, virtualSpace)) {
                         Point2D pc = new Point2D.Double((p1.getInViewX() + p2.getInViewX()) / 2, (p1.getInViewY() + p2.getInViewY()) / 2);
                         if (p.distanceSq(pc) < virtualSnapDistSq2) {
                             // Check that only segments on top of each other get added to the

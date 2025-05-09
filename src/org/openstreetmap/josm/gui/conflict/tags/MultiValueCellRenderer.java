@@ -131,6 +131,8 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
             toolTipText = tr("All values joined as ''{0}'' are going to be applied for key ''{1}''",
                     decision.getChosenValue(), decision.getKey());
             break;
+        default:
+            throw new AssertionError("Unknown decision type in renderToolTipText(): " + decision.getDecisionType());
         }
         setToolTipText(toolTipText);
         cbDecisionRenderer.setToolTipText(toolTipText);
@@ -154,7 +156,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         boolean conflict = tagModel.getKeysWithConflicts().contains(tagModel.getKey(row));
         renderColors(decision, isSelected, conflict);
         renderToolTipText(decision);
-        switch(column) {
+        switch (column) {
         case 0:
             if (decision.isDecided()) {
                 setIcon(iconDecided);
@@ -170,7 +172,9 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         case 2:
             renderValue(decision);
             return cbDecisionRenderer;
+
+        default:
+            return this;
         }
-        return this;
     }
 }

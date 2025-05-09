@@ -77,7 +77,7 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
         return super.build();
     }
 
-    private class EntryListModel extends AbstractEntryListModel {
+    private final class EntryListModel extends AbstractEntryListModel {
 
         @Override
         public String getElementAt(int index) {
@@ -91,8 +91,8 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
 
         @Override
         public void add() {
-            dataKeys.add(new ArrayList<String>());
-            dataValues.add(new ArrayList<String>());
+            dataKeys.add(new ArrayList<>());
+            dataValues.add(new ArrayList<>());
             dataLabels.add("");
             fireIntervalAdded(this, getSize() - 1, getSize() - 1);
         }
@@ -106,10 +106,10 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
         }
     }
 
-    private class MapTableModel extends AbstractTableModel {
+    private final class MapTableModel extends AbstractTableModel {
 
         private List<List<String>> data() {
-            return entryIdx == null ? Collections.<List<String>>emptyList() : Arrays.asList(dataKeys.get(entryIdx), dataValues.get(entryIdx));
+            return entryIdx == null ? Collections.emptyList() : Arrays.asList(dataKeys.get(entryIdx), dataValues.get(entryIdx));
         }
 
         private int size() {

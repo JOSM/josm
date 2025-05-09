@@ -31,12 +31,13 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBoxModel;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * ChangesetManagementPanel allows to configure changeset to be used in the next upload.
- *
+ * <p>
  * It is displayed as one of the configuration panels in the {@link UploadDialog}.
- *
+ * <p>
  * ChangesetManagementPanel is a source for {@link java.beans.PropertyChangeEvent}s. Clients can listen to
  * <ul>
  *   <li>{@link #SELECTED_CHANGESET_PROP}  - the new value in the property change event is
@@ -49,6 +50,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class ChangesetManagementPanel extends JPanel implements ItemListener, ChangesetCacheListener {
     static final String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
     static final String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
+    private static final String UPLOAD_CHANGESET_CLOSE = "upload.changeset.close";
 
     private JosmComboBox<Changeset> cbOpenChangesets;
     private JosmComboBoxModel<Changeset> model;
@@ -141,7 +143,7 @@ public class ChangesetManagementPanel extends JPanel implements ItemListener, Ch
         cbOpenChangesets.addItemListener(this);
         cbOpenChangesets.addItemListener(closeChangesetAction);
 
-        cbCloseAfterUpload.setSelected(Config.getPref().getBoolean("upload.changeset.close", true));
+        cbCloseAfterUpload.setSelected(Config.getPref().getBoolean(UPLOAD_CHANGESET_CLOSE, true));
         cbCloseAfterUpload.addItemListener(new CloseAfterUploadItemStateListener());
 
         ChangesetCache.getInstance().addChangesetCacheListener(this);
@@ -194,14 +196,14 @@ public class ChangesetManagementPanel extends JPanel implements ItemListener, Ch
         public void itemStateChanged(ItemEvent e) {
             if (e.getItemSelectable() != cbCloseAfterUpload)
                 return;
-            switch(e.getStateChange()) {
+            switch (e.getStateChange()) {
             case ItemEvent.SELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, false, true);
-                Config.getPref().putBoolean("upload.changeset.close", true);
+                Config.getPref().putBoolean(UPLOAD_CHANGESET_CLOSE, true);
                 break;
             case ItemEvent.DESELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, true, false);
-                Config.getPref().putBoolean("upload.changeset.close", false);
+                Config.getPref().putBoolean(UPLOAD_CHANGESET_CLOSE, false);
                 break;
             default: // Do nothing
             }
@@ -261,7 +263,7 @@ public class ChangesetManagementPanel extends JPanel implements ItemListener, Ch
         try {
             ChangesetCache.getInstance().refreshChangesetsFromServer();
         } catch (OsmTransferException e) {
-            return;
+            Logging.trace(e);
         }
     }
 

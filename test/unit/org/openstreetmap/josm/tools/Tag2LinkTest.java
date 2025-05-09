@@ -41,7 +41,7 @@ class Tag2LinkTest {
     /**
      * Unit test for links that may come in multiple forms.
      * Example: <a href="https://wiki.osm.org/wiki/Key:contact:facebook">https://wiki.openstreetmap.org/wiki/Key:contact:facebook</a>
-     *
+     * <p>
      * See also JOSM #21794
      * @param value The tag value for "contact:facebook"
      */
@@ -53,8 +53,8 @@ class Tag2LinkTest {
             this.testInitialize();
         }
         Tag2Link.getLinksForTag("contact:facebook", value, this::addLink);
-        this.checkLinks("Open unavatar.now.sh // https://unavatar.now.sh/facebook/FacebookUserName",
-                "Open facebook.com // https://www.facebook.com/FacebookUserName",
+        this.checkLinks("Open facebook.com // https://www.facebook.com/FacebookUserName",
+                "Open unavatar.now.sh // https://unavatar.now.sh/facebook/FacebookUserName",
                 "Open messenger.com // https://www.messenger.com/t/FacebookUserName");
     }
 
@@ -145,8 +145,8 @@ class Tag2LinkTest {
 
     /**
      * Unit test of function {@link Tag2Link#getLinksForTag}.
-     *
-     * Non-regression test for https://josm.openstreetmap.de/ticket/19754#comment:9
+     * <p>
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19754#comment:9">comment:9:ticket:19754</a>
      */
     @Test
     void testMultipleSources() {

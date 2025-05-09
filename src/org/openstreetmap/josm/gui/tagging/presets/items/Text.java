@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -47,6 +48,7 @@ import org.xml.sax.SAXException;
  * Text field type.
  */
 public class Text extends KeyedItem {
+    private static final Pattern MULTILINE_WHITESPACE_PATTERN = Pattern.compile("[\\s&&[^\n]]+");
 
     private static int auto_increment_selected; // NOSONAR
 
@@ -240,7 +242,13 @@ public class Text extends KeyedItem {
             return;
         }
 
-        v = Utils.removeWhiteSpaces(v);
+        if (this.normalize) {
+            if (this.multiline) {
+                v = Utils.removeWhiteSpaces(MULTILINE_WHITESPACE_PATTERN, v);
+            } else {
+                v = Utils.removeWhiteSpaces(v);
+            }
+        }
 
         if (!"false".equals(use_last_as_default) || auto_increment != null) {
             LAST_VALUES.put(key, v);

@@ -167,7 +167,7 @@ public class PreferencesReader {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 String localName = parser.getLocalName();
-                switch(localName) {
+                switch (localName) {
                 case "tag":
                     StringSetting setting;
                     if (defaults && isNil()) {
@@ -239,7 +239,7 @@ public class PreferencesReader {
                 int event = parser.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     String localName = parser.getLocalName();
-                    switch(localName) {
+                    switch (localName) {
                     case "entry":
                         if (entries == null) {
                             entries = new ArrayList<>();

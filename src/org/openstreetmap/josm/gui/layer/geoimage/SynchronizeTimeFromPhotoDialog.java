@@ -162,7 +162,7 @@ class SynchronizeTimeFromPhotoDialog extends ExtendedDialog {
 
         JPanel panelLst = new JPanel(new BorderLayout());
 
-        JList<String> imgList = new JList<>(new AbstractListModel<String>() {
+        JList<String> imgList = new JList<>(new AbstractListModel<>() {
             @Override
             public String getElementAt(int i) {
                 return images.get(i).getDisplayName();

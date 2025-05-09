@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.I18n;
 public class TestError implements Comparable<TestError> {
     /**
      * Used to switch users over to new ignore system, UNIQUE_CODE_MESSAGE_STATE
-     * 1_704_067_200L -> 2024-01-01
+     * 1_704_067_200L → 2024-01-01
      * We can probably remove this and the supporting code in 2025.
      */
     private static boolean switchOver = Instant.now().isAfter(Instant.ofEpochMilli(1_704_067_200L));

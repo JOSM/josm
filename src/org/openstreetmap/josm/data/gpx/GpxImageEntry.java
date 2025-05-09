@@ -32,6 +32,9 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     private Integer exifOrientation;
     private LatLon exifCoor;
     private Double exifImgDir;
+    private Double exifGpsTrack;
+    private Double exifHPosErr;
+    private Double exifGpsDop;
     private Instant exifTime;
     private Projections cameraProjection = Projections.UNKNOWN;
     /**
@@ -57,6 +60,14 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     private Double speed;
     /** Elevation (altitude) in meters */
     private Double elevation;
+    /** GPS Differential mode */
+    private Integer gpsDiffMode;
+    /** GPS Measure mode */
+    private Integer gps2d3dMode;
+    /** GPS Datum */
+    private String exifGpsDatum;
+    /** GPS processing method */
+    private String exifGpsProcMethod;
     /** The time after correlation with a gpx track */
     private Instant gpsTime;
 
@@ -88,6 +99,13 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         exifOrientation = other.exifOrientation;
         exifCoor = other.exifCoor;
         exifImgDir = other.exifImgDir;
+        exifGpsTrack = other.exifGpsTrack;
+        exifHPosErr = other.exifHPosErr;
+        gpsDiffMode = other.gpsDiffMode;
+        gps2d3dMode = other.gps2d3dMode;
+        exifGpsDop = other.exifGpsDop;
+        exifGpsDatum = other.exifGpsDatum;
+        exifGpsProcMethod = other.exifGpsProcMethod;
         exifTime = other.exifTime;
         isNewGpsData = other.isNewGpsData;
         exifGpsTime = other.exifGpsTime;
@@ -170,16 +188,66 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     }
 
     /**
-     * Returns the GPS time value. The GPS time value from the temporary copy
-     * is returned if that copy exists.
-     * @return the GPS time value
-     * @deprecated Use {@link #getGpsInstant}
+     * Return the GPS Differential mode value. The GPS Differential mode value from the temporary
+     * copy is returned if that copy exists. 
+     * @return the differential mode value
+     * @since 19387
      */
-    @Deprecated
-    public Date getGpsTime() {
+    @Override
+    public Integer getGpsDiffMode() {
         if (tmp != null)
-            return getDefensiveDate(tmp.gpsTime);
-        return getDefensiveDate(gpsTime);
+            return tmp.gpsDiffMode;
+        return gpsDiffMode;
+    }
+
+    /**
+     * Return the GPS 2d or 3d mode value. The GPS mode value form the temporary
+     * copy is returned if that copy exists. 
+     * @return the GPS 2d/3d mode value
+     * @since 19387
+     */
+    @Override
+    public Integer getGps2d3dMode() {
+        if (tmp != null)
+            return tmp.gps2d3dMode;
+        return gps2d3dMode;
+    }
+
+    /**
+     * Return the GPS DOP value. The GPS DOP value from the temporary
+     * copy is returned if that copy exists. 
+     * @return the DOP value
+     * @since 19387
+     */
+    @Override
+    public Double getExifGpsDop() {
+        if (tmp != null)
+            return tmp.exifGpsDop;
+        return exifGpsDop;
+    }
+
+    /**
+     * Return the EXIF GPS coordinates datum value.
+     * @return The datum value
+     * @since 19387
+     */
+    @Override
+    public String getExifGpsDatum() {
+        if (tmp != null)
+            return tmp.exifGpsDatum;
+        return exifGpsDatum;
+    }
+
+    /**
+     * Return the EXIF GPS processing method string
+     * @return the processing method string
+     * @since 19387
+     */
+    @Override
+    public String getExifGpsProcMethod() {
+        if (tmp != null)
+            return tmp.exifGpsProcMethod;
+        return exifGpsProcMethod;
     }
 
     /**
@@ -251,17 +319,6 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Returns the EXIF GPS time.
      * @return the EXIF GPS time
-     * @since 6392
-     * @deprecated Use {@link #getExifGpsInstant}
-     */
-    @Deprecated
-    public Date getExifGpsTime() {
-        return getDefensiveDate(exifGpsTime);
-    }
-
-    /**
-     * Returns the EXIF GPS time.
-     * @return the EXIF GPS time
      * @since 17715
      */
     @Override
@@ -295,6 +352,32 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         if (tmp != null)
             return tmp.exifImgDir;
         return exifImgDir;
+    }
+    
+    /**
+     * Convenient way to determine if this entry has a EXIF GPS track angle value,
+     * without the cost of building a defensive copy.
+     * @return {@code true} if this entry has a EXIF track angle value
+     * @since 19387
+     */
+    @Override
+    public Double getExifGpsTrack() {
+        if (tmp != null)
+            return tmp.exifGpsTrack;
+        return exifGpsTrack;
+    }
+
+    /**
+     * Convenient way to determine if this entry has a EXIF GPS horizontal positionning error value,
+     * without the cost of building a defensive copy.
+     * @return {@code true} if this entry has a EXIF GPS horizontal positionning error value
+     * @since 19387
+     */
+    @Override
+    public Double getExifHPosErr() {
+        if (tmp != null)
+            return tmp.exifHPosErr;
+        return exifHPosErr;
     }
 
     @Override
@@ -370,6 +453,56 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     }
 
     /**
+     * Sets GPS Differential mode.
+     * @param gpsDiffMode GPS Differential mode
+     * @since 19387
+     */
+    @Override
+    public void setGpsDiffMode(Integer gpsDiffMode) {
+        this.gpsDiffMode = gpsDiffMode;
+    }
+
+    /**
+     * Sets GPS 2d/3d mode.
+     * @param gps2d3dMode GPS 2d/3d mode value
+     * @since 19387
+     */
+    @Override
+    public void setGps2d3dMode(Integer gps2d3dMode) {
+        this.gps2d3dMode = gps2d3dMode;
+    }
+
+    /**
+     * Sets GPS DOP value.
+     * @param exifGpsDop GPS DOP value
+     * @since 19387
+     */
+    @Override
+    public void setExifGpsDop(Double exifGpsDop) {
+        this.exifGpsDop = exifGpsDop;
+    }
+
+    /**
+     * Sets the GPS Datum.
+     * @param exifGpsDatum GPS Datum
+     * @since 19387
+     */
+    @Override
+    public void setExifGpsDatum(String exifGpsDatum) {
+        this.exifGpsDatum = exifGpsDatum;
+    }
+
+    /**
+     * Sets the GPS Processing Method.
+     * @param exifGpsProcMethod GPS Processing Method
+     * @since 19387
+     */
+    @Override
+    public void setExifGpsProcMethod(String exifGpsProcMethod) {
+        this.exifGpsProcMethod = exifGpsProcMethod;
+    }
+
+    /**
      * Sets associated file.
      * @param file associated file
      */
@@ -416,6 +549,10 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         this.gpsTime = gpsTime;
     }
 
+    /**
+     * Sets the EXIF coordinate.
+     * @param exifCoor the coordinate
+     */
     public void setExifCoor(LatLon exifCoor) {
         this.exifCoor = exifCoor;
     }
@@ -434,6 +571,26 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     @Override
     public void setExifImgDir(Double exifDir) {
         this.exifImgDir = exifDir;
+    }
+
+    /**
+     * Sets the EXIF GPS track (move direction angle)
+     * @param exifGpsTrack the EXIF GPS track angle
+     * @since 19387
+     */
+    @Override
+    public void setExifGpsTrack(Double exifGpsTrack) {
+        this.exifGpsTrack = exifGpsTrack;
+    }
+
+    /**
+     * Sets the EXIF horizontal positioning error
+     * @param exifHPosErr the EXIF horizontal positionning error
+     * @since 19387
+     */
+    @Override
+    public void setExifHPosErr(Double exifHPosErr) {
+        this.exifHPosErr = exifHPosErr;
     }
 
     /**
@@ -531,9 +688,10 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     @Override
     public int hashCode() {
         return Objects.hash(height, width, isNewGpsData,
-            elevation, exifCoor, exifGpsTime, exifImgDir, exifOrientation, exifTime,
-            iptcCaption, iptcHeadline, iptcKeywords, iptcObjectName,
-            file, gpsTime, pos, speed, tmp, cameraProjection);
+            elevation, exifCoor, exifGpsTime, exifImgDir, exifGpsTrack, exifHPosErr,
+            exifGpsDop, gpsDiffMode, gps2d3dMode, exifGpsDatum, exifGpsProcMethod,
+            exifOrientation, exifTime, iptcCaption, iptcHeadline, iptcKeywords,
+            iptcObjectName, file, gpsTime, pos, speed, tmp, cameraProjection);
     }
 
     @Override
@@ -550,6 +708,13 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             && Objects.equals(exifCoor, other.exifCoor)
             && Objects.equals(exifGpsTime, other.exifGpsTime)
             && Objects.equals(exifImgDir, other.exifImgDir)
+            && Objects.equals(exifGpsTrack, other.exifGpsTrack)
+            && Objects.equals(exifHPosErr, other.exifHPosErr)
+            && Objects.equals(gpsDiffMode, other.gpsDiffMode)
+            && Objects.equals(gps2d3dMode, other.gps2d3dMode)
+            && Objects.equals(exifGpsDop, other.exifGpsDop)
+            && Objects.equals(exifGpsDatum, other.exifGpsDatum)
+            && Objects.equals(exifGpsProcMethod, other.exifGpsProcMethod)
             && Objects.equals(exifOrientation, other.exifOrientation)
             && Objects.equals(exifTime, other.exifTime)
             && Objects.equals(iptcCaption, other.iptcCaption)
@@ -594,6 +759,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      * Copy the values from the temporary variable to the main instance. The
      * temporary variable is deleted.
      * @see #discardTmp()
+     * @since 19387 exifGpsTrack, exifHPosErr, gpsDiffMode, gps2d3dMode, exifGpsDop, exifGpsDatum, exifGpsProcMethod added
      */
     public void applyTmp() {
         if (tmp != null) {
@@ -602,6 +768,13 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             elevation = tmp.elevation;
             gpsTime = tmp.gpsTime;
             exifImgDir = tmp.exifImgDir;
+            exifGpsTrack = tmp.exifGpsTrack;
+            exifHPosErr = tmp.exifHPosErr;
+            gpsDiffMode = tmp.gpsDiffMode;
+            gps2d3dMode = tmp.gps2d3dMode;
+            exifGpsDop = tmp.exifGpsDop;
+            exifGpsDatum = tmp.exifGpsDatum;
+            exifGpsProcMethod = tmp.exifGpsProcMethod;
             isNewGpsData = isNewGpsData || tmp.isNewGpsData;
             tmp = null;
         }

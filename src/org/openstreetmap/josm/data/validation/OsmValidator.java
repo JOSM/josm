@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.ConditionalKeys;
 import org.openstreetmap.josm.data.validation.tests.ConnectivityRelations;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
+import org.openstreetmap.josm.data.validation.tests.CycleDetector;
 import org.openstreetmap.josm.data.validation.tests.DirectionNodes;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
 import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
@@ -154,8 +155,9 @@ public final class OsmValidator {
         // 3700 .. 3799 is automatically removed since it clashed with pt_assistant.
         SharpAngles.class, // 3800 .. 3899
         ConnectivityRelations.class, // 3900 .. 3999
-        DirectionNodes.class, // 4000-4099
+        DirectionNodes.class, // 4000 .. 4099
         RightAngleBuildingTest.class, // 4100 .. 4199
+        CycleDetector.class, // 4200 .. 4299
     };
 
     /**

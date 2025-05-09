@@ -48,20 +48,22 @@ public class AddTMSLayerPanel extends AddImageryPanel {
                 tr("{0} is replaced by a random selection from the given comma separated list, e.g. {1}", "{switch:...}", "{switch:a,b,c}")
         )) + "</html>"), GBC.eol().fill());
 
-        add(rawUrl, GBC.eop().fill());
+        add(rawUrl, GBC.eol().fill(GBC.HORIZONTAL));
         rawUrl.setLineWrap(true);
         rawUrl.addKeyListener(keyAdapter);
 
         add(new JLabel(tr("{0} Enter maximum zoom (optional)", "3.")), GBC.eol());
         tmsZoom.addKeyListener(keyAdapter);
-        add(tmsZoom, GBC.eop().fill());
+        add(tmsZoom, GBC.eol().fill(GBC.HORIZONTAL));
 
         add(new JLabel(tr("{0} Edit generated {1} URL (optional)", "4.", "TMS")), GBC.eol());
-        add(tmsUrl, GBC.eop().fill());
+        add(tmsUrl, GBC.eol().fill(GBC.HORIZONTAL));
         tmsUrl.setLineWrap(true);
 
+        addCommonSettings();
+
         add(new JLabel(tr("{0} Enter name for this layer", "5.")), GBC.eol());
-        add(name, GBC.eop().fill());
+        add(name, GBC.eop().fill(GBC.HORIZONTAL));
 
         registerValidableComponent(tmsUrl);
     }
@@ -80,6 +82,8 @@ public class AddTMSLayerPanel extends AddImageryPanel {
     public ImageryInfo getImageryInfo() {
         ImageryInfo ret = new ImageryInfo(getImageryName(), getTmsUrl());
         ret.setImageryType(ImageryType.TMS);
+        ret.setCustomHttpHeaders(getCommonHeaders());
+        ret.setGeoreferenceValid(getCommonIsValidGeoreference());
         return ret;
 
     }

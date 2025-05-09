@@ -13,8 +13,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
@@ -56,8 +54,7 @@ class ChangesetTest {
 
         // Add a map with too long values => IllegalArgumentException
         keys = new HashMap<>();
-        // Java 11: use String.repeat
-        keys.put("test", IntStream.range(0, MAX_CHANGESET_TAG_LENGTH + 1).mapToObj(i -> "x").collect(Collectors.joining()));
+        keys.put("test", "x".repeat(MAX_CHANGESET_TAG_LENGTH + 1));
         try {
             cs.setKeys(keys);
             fail("Should have thrown an IllegalArgumentException as we gave a too long value.");

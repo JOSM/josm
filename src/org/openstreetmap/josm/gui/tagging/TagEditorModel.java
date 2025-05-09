@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static java.util.function.Predicate.not;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.beans.PropertyChangeListener;
@@ -59,7 +60,7 @@ public class TagEditorModel extends AbstractTableModel {
     /**
      * Creates a new tag editor model. Internally allocates two selection models
      * for row selection and column selection.
-     *
+     * <p>
      * To create a {@link javax.swing.JTable} with this model:
      * <pre>
      *    TagEditorModel model = new TagEditorModel();
@@ -156,7 +157,7 @@ public class TagEditorModel extends AbstractTableModel {
     public void setValueAt(Object value, int row, int col) {
         TagModel tag = get(row);
         if (tag != null) {
-            switch(col) {
+            switch (col) {
             case 0:
                 updateTagName(tag, (String) value);
                 break;
@@ -218,10 +219,10 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * adds a tag given by a name/value pair to the tag editor model.
-     *
+     * <p>
      * If there is no tag with name <code>name</code> yet, a new {@link TagModel} is created
      * and append to this model.
-     *
+     * <p>
      * If there is a tag with name <code>name</code>, <code>value</code> is merged to the list
      * of values for this tag.
      *
@@ -531,7 +532,7 @@ public class TagEditorModel extends AbstractTableModel {
     public List<String> getKeys() {
         return tags.stream()
                 .map(TagModel::getName)
-                .filter(name -> !Utils.isStripEmpty(name))
+                .filter(not(Utils::isStripEmpty))
                 .collect(Collectors.toList());
     }
 

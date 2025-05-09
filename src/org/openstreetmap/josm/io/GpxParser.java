@@ -141,7 +141,7 @@ class GpxParser extends DefaultHandler {
     @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes attributes) throws SAXException {
         elements.push(new String[] {namespaceURI, localName, qName});
-        switch(currentState) {
+        switch (currentState) {
             case INIT:
                 startElementInit(attributes);
                 break;
@@ -615,6 +615,7 @@ class GpxParser extends DefaultHandler {
             case "urlname":
             case "cmt":
             case "desc":
+            case "dgpsid":
             case "fix":
                 currentWayPoint.put(localName, accumulator.toString());
                 break;
@@ -780,7 +781,7 @@ class GpxParser extends DefaultHandler {
     }
 
     /**
-     * convert url/urlname to link element (GPX 1.0 -&gt; GPX 1.1).
+     * convert url/urlname to link element (GPX 1.0 → GPX 1.1).
      * @param attr attributes
      */
     private static void convertUrlToLink(Map<String, Object> attr) {

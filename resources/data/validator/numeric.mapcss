@@ -67,7 +67,7 @@
   assertNoMatch: "node building:levels=0"; /* valid because there can be building:levels:underground > 0 or roof:levels > 0 */
 }
 
-*[roof:height][roof:height =~ /^0*(\.0*)?( (m|ft))?$/][roof:shape=flat] {
+*[roof:height][siunit_length(tag("roof:height")) == 0][roof:shape=flat] {
   throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{2.tag}");
   group: tr("unnecessary tag");
   fixRemove: "{0.key}";
@@ -661,4 +661,14 @@ node[fire_hydrant:pressure="#"] {
   assertMatch: "node name=12";
   assertMatch: "node name=3.5";
   assertNoMatch: "node name=\"1. Chemnitzer Billardclub 1952 e.V.\"";
+}
+
+/* #23621 */
+node[natural=tree][circumference][siunit_length(tag(circumference)) > 45] {
+  throwWarning: tr("Unusually large value of {0}, possibly centimeter units are meant?", "{1.key}");
+  assertMatch: "node natural=tree circumference=200";
+  assertMatch: "node natural=tree circumference=82.4";
+  assertNoMatch: "node natural=tree circumference=18.4";
+  assertNoMatch: "node natural=tree circumference=\"100 cm\"";
+  assertNoMatch: "node natural=tree circumference=43"; /* Current world record */
 }

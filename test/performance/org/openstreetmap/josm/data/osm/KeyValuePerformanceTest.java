@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -27,6 +28,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This test measures the performance of {@link OsmPrimitive#get(String)} and related.
  * @author Michael Zangl
  */
+@PerformanceTest
 @Projection
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 class KeyValuePerformanceTest {

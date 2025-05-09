@@ -71,8 +71,7 @@ public class MainInitialization implements InitializationSequence {
             }),
             new InitializationTask(tr("Starting file watcher"), FileWatcher.getDefaultInstance()::start),
             new InitializationTask(tr("Executing platform startup hook"),
-                    () -> PlatformManager.getPlatform().startupHook(MainApplication::askUpdateJava,
-                            MainApplication::askMigrateWebStart, MainApplication::sanityCheckFailed)),
+                    () -> PlatformManager.getPlatform().startupHook(MainApplication::askUpdateJava, MainApplication::sanityCheckFailed)),
             new InitializationTask(tr("Building main menu"), application::initializeMainWindow),
             new InitializationTask(tr("Updating user interface"), () -> {
                 UndoRedoHandler.getInstance().addCommandQueueListener(application.redoUndoListener);
@@ -157,7 +156,7 @@ public class MainInitialization implements InitializationSequence {
         );
     }
 
-    private static class JosmSettingsAdapter implements SettingsAdapter {
+    private static final class JosmSettingsAdapter implements SettingsAdapter {
 
         @Override
         public String get(String key, String def) {

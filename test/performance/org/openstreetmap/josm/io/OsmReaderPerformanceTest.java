@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 
 /**
  * This test tests how fast we are at reading an OSM file.
@@ -24,6 +25,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
  *
  * @author Michael Zangl
  */
+@PerformanceTest
 @Timeout(value = 15, unit = TimeUnit.MINUTES)
 class OsmReaderPerformanceTest {
     private static final int TIMES = 4;

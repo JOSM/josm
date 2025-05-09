@@ -25,8 +25,10 @@ dpkg_java() {
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-17-openjdk/bin/java /usr/lib/jvm/java-17-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
         # Released versions in decreased order
-        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-22-openjdk/bin/java /usr/lib/jvm/java-22-openjdk-$ARCH/bin/java"
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-24-openjdk/bin/java /usr/lib/jvm/java-24-openjdk-$ARCH/bin/java"
         # EOL versions in decreased order
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-23-openjdk/bin/java /usr/lib/jvm/java-23-openjdk-$ARCH/bin/java"
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-22-openjdk/bin/java /usr/lib/jvm/java-22-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-20-openjdk/bin/java /usr/lib/jvm/java-20-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-19-openjdk/bin/java /usr/lib/jvm/java-19-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-18-openjdk/bin/java /usr/lib/jvm/java-18-openjdk-$ARCH/bin/java"
@@ -36,7 +38,7 @@ dpkg_java() {
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-13-openjdk/bin/java /usr/lib/jvm/java-13-openjdk-$ARCH/bin/java"
         JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-12-openjdk/bin/java /usr/lib/jvm/java-12-openjdk-$ARCH/bin/java"
         # Development version(s)
-        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-23-openjdk/bin/java /usr/lib/jvm/java-23-openjdk-$ARCH/bin/java"
+        JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-25-openjdk/bin/java /usr/lib/jvm/java-25-openjdk-$ARCH/bin/java"
     fi
 }
 
@@ -55,6 +57,12 @@ JOSM_VERSION="josm"
 if [ -f "/etc/default/${JOSM_VERSION}" ]; then
     # shellcheck source=/etc/default/josm
     . "/etc/default/${JOSM_VERSION}"
+fi
+
+# If there is more than 8G ram, we can use up to 75% of the memory while still leaving 2G for other things.
+if [ "$(LC_ALL=C LANG=C free --mega | grep '^Mem:' | awk '{print $2}')" -gt 8192 ]; then
+    # But don't set anything if JAVA_OPTS is already set.
+    JAVA_OPTS="${JAVA_OPTS:=-XX:MaxRAMPercentage=75.0 -Xms256m}"
 fi
 
 JAVA_OPTS="-Djosm.restart=true -Djava.net.useSystemProxies=true $JAVA_OPTS"

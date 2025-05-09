@@ -366,6 +366,83 @@ public class ImageData implements Data {
     }
 
     /**
+     * Update the GPS track direction of the image and trigger update.
+     * @param img the image to update
+     * @param trackDirection the new GPS track direction
+     * @since 19387
+     */
+    public void updateImageGpsTrack(ImageEntry img, double trackDirection) {
+        img.setExifGpsTrack(trackDirection);
+        afterImageUpdated(img);
+    }
+
+    /**
+     * Update the image horizontal positioning error and trigger update.
+     * @param img the image to update
+     * @param hposerr the new horizontal positionning error
+     * @since 19387
+     */
+    public void updateImageHPosErr(ImageEntry img, double hposerr) {
+        img.setExifHPosErr(hposerr);
+        afterImageUpdated(img);
+    }
+
+    /**
+     * Update the image GPS differential mode and trigger update.
+     * @param img the image to update
+     * @param gpsDiffMode the new GPS differential mode
+     * @since 19387
+     */
+    public void updateImageGpsDiffMode(ImageEntry img, Integer gpsDiffMode) {
+        img.setGpsDiffMode(gpsDiffMode);
+        afterImageUpdated(img);
+    }
+
+    /**
+     * Update the image GPS 2d/3d mode value and trigger update.
+     * @param img the image to update
+     * @param gps2d3dMode the new 2d/3d GPS mode
+     * @since 19387
+     */
+    public void updateImageGps2d3dMode(ImageEntry img, Integer gps2d3dMode) {
+        img.setGps2d3dMode(gps2d3dMode);
+        afterImageUpdated(img);
+    }
+
+    /**
+     * Update the image GPS DOP value and trigger update.
+     * @param img the image to update
+     * @param exifGpsDop the new GPS DOP value
+     * @since 19387
+     */
+    public void updateImageExifGpsDop(ImageEntry img, Double exifGpsDop) {
+        img.setExifGpsDop(exifGpsDop);
+        afterImageUpdated(img);
+    }
+
+    /**
+     * Update the image GPS datum and trigger update.
+     * @param img the image to update
+     * @param exifGpsDatum the new datum string value
+     * @since 19387
+     */
+    public void updateImageExifGpsDatum(ImageEntry img, String exifGpsDatum) {
+        img.setExifGpsDatum(exifGpsDatum);
+        afterImageUpdated(img);
+    }
+
+    /**
+     * Update the image GPS processing method and trigger update.
+     * @param img the image to update
+     * @param exifGpsProcMethod the new GPS processing method
+     * @since 19387
+     */
+    public void updateImageExifGpsProcMethod(ImageEntry img, String exifGpsProcMethod) {
+        img.setExifGpsProcMethod(exifGpsProcMethod);
+        afterImageUpdated(img);
+    }
+
+    /**
      * Manually trigger the {@link ImageDataUpdateListener#imageDataUpdated(ImageData)}
      */
     public void notifyImageUpdate() {
@@ -378,7 +455,7 @@ public class ImageData implements Data {
     }
 
     /**
-     * Set the layer for use with {@link org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog#displayImages(Layer, List)}
+     * Set the layer for use with {@link org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog#displayImages(List)}
      * @param layer The layer to use for organization
      * @since 18591
      */

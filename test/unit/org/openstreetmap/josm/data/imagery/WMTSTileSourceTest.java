@@ -15,13 +15,14 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -44,7 +45,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 
 /**
@@ -55,9 +55,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @Projection
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
 class WMTSTileSourceTest {
-    @BasicWiremock
-    WireMockServer tileServer;
-
     private final ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
     private final ImageryInfo testImageryPSEUDO_MERCATOR = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-pseudo-mercator.xml");
     private final ImageryInfo testImageryTOPO_PL = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-TOPO.xml");
@@ -366,11 +363,11 @@ class WMTSTileSourceTest {
     }
 
     @Test
-    void testDefaultLayer() throws Exception {
+    void testDefaultLayer(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         // https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml
         // do not use withFileBody as it needs different directory layout :(
 
-        tileServer.stubFor(
+        wireMockRuntimeInfo.getWireMock().register(
                 WireMock.get("/getcapabilities.xml")
                 .willReturn(
                         WireMock.aResponse()
@@ -380,8 +377,8 @@ class WMTSTileSourceTest {
                         )
                 );
 
-        tileServer.stubFor(
-                WireMock.get("//maps")
+        wireMockRuntimeInfo.getWireMock().register(
+                WireMock.get("/other/maps")
                 .willReturn(
                         WireMock.aResponse().withBody(
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
@@ -391,7 +388,7 @@ class WMTSTileSourceTest {
                 "<id>landsat</id>\n" +
                 "<type>wmts</type>\n" +
                 "<category>photo</category>\n" +
-                "<url><![CDATA[" + tileServer.url("/getcapabilities.xml") + "]]></url>\n" +
+                "<url><![CDATA[" + wireMockRuntimeInfo.getHttpBaseUrl() + "/getcapabilities.xml]]></url>\n" +
                 "<default-layers>" +
                 "<layer name=\"GEOGRAPHICALGRIDSYSTEMS.MAPS\" />" +
                 "</default-layers>" +
@@ -399,7 +396,7 @@ class WMTSTileSourceTest {
                 "</imagery>"
                 )));
 
-        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(tileServer.url("//maps")));
+        Config.getPref().putList("imagery.layers.sites", Collections.singletonList(wireMockRuntimeInfo.getHttpBaseUrl() + "/other/maps"));
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
 
         assertEquals(1, ImageryLayerInfo.instance.getDefaultLayers().size());
@@ -487,12 +484,12 @@ class WMTSTileSourceTest {
     @ValueSource(strings = {"image/jpgpng", "image/png8", "image/png; mode=8bit", "image/jpeg", "image/jpg"})
     void testSupportedMimeTypesUrlEncode(String mimeType, @TempDir File temporaryDirectory)
             throws IOException, WMTSGetCapabilitiesException, ReflectiveOperationException {
-        final String data = FileUtils.readFileToString(new File(TestUtils.getTestDataRoot() +
-                "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml"), StandardCharsets.UTF_8)
+        final String data = Files.readString(Paths.get(TestUtils.getTestDataRoot() +
+                        "wmts", "bug13975-multiple-tile-matrices-for-one-layer-projection.xml"), StandardCharsets.UTF_8)
                 .replace("image/jpgpng", mimeType);
-        File file = new File(temporaryDirectory, "testSupportedMimeTypes.xml");
-        FileUtils.writeStringToFile(file, data, StandardCharsets.UTF_8);
-        WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(file.toURI().toURL().toExternalForm(), Collections.emptyMap());
+        Path file = temporaryDirectory.toPath().resolve("testSupportedMimeTypes.xml");
+        Files.writeString(file, data, StandardCharsets.UTF_8);
+        WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(file.toUri().toURL().toExternalForm(), Collections.emptyMap());
         assertEquals(2, capabilities.getLayers().size());
         Field format = WMTSTileSource.Layer.class.getDeclaredField("format");
         ReflectionUtils.setObjectsAccessible(format);

@@ -33,7 +33,6 @@ import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 
 /**
  * Test parts of {@link PluginHandler} class when the reported JOSM version is too old for the plugin.
@@ -109,13 +108,13 @@ class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    void testUpdatePluginsDownloadBoth(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+    void testUpdatePluginsDownloadBoth() throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Arrays.asList("dummy_plugin", "baz_plugin"));
 
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
@@ -171,13 +170,13 @@ class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    void testUpdatePluginsSkipOne(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+    void testUpdatePluginsSkipOne() throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Arrays.asList("dummy_plugin", "baz_plugin"));
 
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
@@ -243,13 +242,13 @@ class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    void testUpdatePluginsUnexpectedlyJOSMTooOld(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+    void testUpdatePluginsUnexpectedlyJOSMTooOld() throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew, Collections.singletonMap("Plugin-Mainversion", "5500"))
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Collections.singletonList("baz_plugin"));
 
         // setting up blank ExtendedDialogMocker which would raise an exception if any attempt to show
@@ -298,7 +297,7 @@ class PluginHandlerJOSMTooOldTest {
      */
     @Test
     @AssumeRevision("Revision: 7200\n")
-    void testUpdatePluginsMultiVersionInsufficient(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+    void testUpdatePluginsMultiVersionInsufficient() throws IOException {
         TestUtils.assumeWorkingJMockit();
 
         final PluginServer pluginServer = new PluginServer(
@@ -307,7 +306,7 @@ class PluginHandlerJOSMTooOldTest {
                 "7499_Plugin-Url", "346;" + pluginServerRule.url("/dont/bother.jar")
             ))
         );
-        pluginServer.applyToWireMockServer(wireMockRuntimeInfo);
+        pluginServer.applyToWireMockServer(pluginServerRule.getRuntimeInfo());
         Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
         new ExtendedDialogMocker(Collections.singletonMap(u202f("JOSM version 7\u202F500 required for plugin qux_plugin."), "Download Plugin"));

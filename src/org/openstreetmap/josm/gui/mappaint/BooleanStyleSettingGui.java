@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.swing.AbstractAction;
@@ -39,7 +39,7 @@ public class BooleanStyleSettingGui implements StyleSettingGui {
                 public void actionPerformed(ActionEvent e) {
                     setting.setValue(isSelected());
                     if (!noRepaint) {
-                        MainApplication.worker.submit(new MapPaintStyleLoader(Arrays.asList(setting.parentStyle)));
+                        MainApplication.worker.submit(new MapPaintStyleLoader(Collections.singletonList(setting.parentStyle)));
                     }
                 }
             });

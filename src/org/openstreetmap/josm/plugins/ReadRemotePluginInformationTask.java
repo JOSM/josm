@@ -252,7 +252,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
         File cacheFile = createSiteCacheFile(pluginDir, site);
         getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
-        try (PrintWriter writer = new PrintWriter(cacheFile, StandardCharsets.UTF_8.name())) {
+        try (PrintWriter writer = new PrintWriter(cacheFile, StandardCharsets.UTF_8)) {
             writer.write(list);
             writer.flush();
         } catch (IOException e) {

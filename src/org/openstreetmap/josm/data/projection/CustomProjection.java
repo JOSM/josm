@@ -37,10 +37,11 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * Custom projection.
- *
+ * <p>
  * Inspired by PROJ.4 and Proj4J.
  * @since 5072
  */
@@ -58,7 +59,7 @@ public class CustomProjection extends AbstractProjection {
 
     /**
      * pref String that defines the projection
-     *
+     * <p>
      * null means fall back mode (Mercator)
      */
     protected String pref;
@@ -233,7 +234,9 @@ public class CustomProjection extends AbstractProjection {
             try {
                 update(null);
             } catch (ProjectionConfigurationException ex1) {
-                throw BugReport.intercept(ex1).put("name", name).put("code", code).put("pref", pref);
+                ReportedException reportedException = BugReport.intercept(ex1).put("name", name).put("code", code).put("pref", pref);
+                reportedException.addSuppressed(ex);
+                throw reportedException;
             }
         }
     }
@@ -873,7 +876,7 @@ public class CustomProjection extends AbstractProjection {
 
     /**
      * Return true, if a geographic coordinate reference system is represented.
-     *
+     * <p>
      * I.e. if it returns latitude/longitude values rather than Cartesian
      * east/north coordinates on a flat surface.
      * @return true, if it is geographic

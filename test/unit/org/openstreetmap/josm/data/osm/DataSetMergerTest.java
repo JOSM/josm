@@ -1,8 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -10,17 +12,32 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.session.SessionReader;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Unit tests for class {@link DataSetMerger}.
@@ -1356,4 +1373,63 @@ class DataSetMergerTest {
         assertEquals(w1b, visitor.getConflicts().iterator().next().getMy());
     }
 
+    static Stream<BiConsumer<Node, Node>> testTicket23846() {
+        return Stream.of(
+                (firstNode, secondNode) -> firstNode.setModified(true),
+                (firstNode, secondNode) -> { /* No modifications */ }
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testTicket23846(BiConsumer<Node, Node> nodeSetup) {
+        final Node firstNode = new Node(1234, 1);
+        final Node secondNode = new Node(1234, 1);
+        final DataSetMerger merge = new DataSetMerger(my, their);
+        firstNode.setCoor(LatLon.ZERO);
+        secondNode.setCoor(LatLon.ZERO);
+        nodeSetup.accept(firstNode, secondNode);
+        my.addPrimitive(firstNode);
+        their.addPrimitive(secondNode);
+        secondNode.setReferrersDownloaded(true);
+        assertFalse(firstNode.isReferrersDownloaded());
+        assertTrue(secondNode.isReferrersDownloaded());
+        merge.merge();
+        assertTrue(firstNode.isReferrersDownloaded());
+        assertTrue(secondNode.isReferrersDownloaded());
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/23930">#23930</a>
+     */
+    @Test
+    void testTicket23930() throws IOException, IllegalDataException {
+        final File file = new File(TestUtils.getRegressionDataFile(23930, "JOSM_conflict.joz"));
+        final SessionReader reader = new SessionReader();
+        reader.loadSession(file, true, NullProgressMonitor.INSTANCE);
+        final List<OsmDataLayer> layers = reader.getLayers().stream()
+                .filter(OsmDataLayer.class::isInstance).map(OsmDataLayer.class::cast).collect(Collectors.toList());
+        final DataSet newWay = layers.stream().filter(layer -> layer.getName().equals("new_way.osm"))
+                .map(OsmDataLayer::getDataSet).findFirst().orElseThrow();
+        final DataSet nodeDeleted = layers.stream().filter(layer -> layer.getName().equals("node_deleted.osm"))
+                .map(OsmDataLayer::getDataSet).findFirst().orElseThrow();
+        final DataSetMerger merge = new DataSetMerger(nodeDeleted, newWay);
+        Logging.clearLastErrorAndWarnings();
+        assertDoesNotThrow(() -> merge.merge(NullProgressMonitor.INSTANCE));
+        assertTrue(Logging.getLastErrorAndWarnings().isEmpty(), String.join("\n", Logging.getLastErrorAndWarnings()));
+        final ConflictCollection conflicts = merge.getConflicts();
+        // There are a few differences in the files
+        // 1. New node in layer 2: No need for conflict
+        // 2. node 2427358529: layer 1 deletes it, layer 2 modifies it (conflict required)
+        // 3. new way in layer 2 with new node and node 2427358529 (conflict required)
+        // 4. Modification of way 32277602 in layer 1 removing node 2427358529 (conflict required)
+        // Therefore, conflicts are as follows:
+        // 1. A deleted node (n2427358529) with referrers (w32277602 and new way) and new tags ("fix tag=recheck position")
+        assertEquals(1, conflicts.size());
+        final Conflict<?> conflict = conflicts.iterator().next();
+        final Node myNode = assertInstanceOf(Node.class, conflict.getMy());
+        final Node theirNode = assertInstanceOf(Node.class, conflict.getTheir());
+        assertFalse(theirNode.isDeleted());
+        assertFalse(myNode.isDeleted());
+    }
 }

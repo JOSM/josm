@@ -22,7 +22,6 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 
@@ -75,18 +74,18 @@ public final class ExifReader {
                     continue;
                 }
                 for (Tag tag : dirIt.getTags()) {
-                    if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
-                            !tag.getDescription().matches("\\[[0-9]+ .+\\]")) {
+                    if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
+                            !tag.getDescription().matches("\\[\\d+ .+]")) {
                         dateTimeOrig = tag.getDescription();
-                    } else if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME /* 0x0132 */) {
                         dateTime = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
                         dateTimeDig = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME_ORIGINAL /* 0x9291 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_SUBSECOND_TIME_ORIGINAL /* 0x9291 */) {
                         subSecOrig = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME /* 0x9290 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_SUBSECOND_TIME /* 0x9290 */) {
                         subSec = tag.getDescription();
-                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME_DIGITIZED /* 0x9292 */) {
+                    } else if (tag.getTagType() == ExifDirectoryBase.TAG_SUBSECOND_TIME_DIGITIZED /* 0x9292 */) {
                         subSecDig = tag.getDescription();
                     }
                 }
@@ -125,6 +124,40 @@ public final class ExifReader {
     }
 
     /**
+     * Returns the GPS date/time from the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS date/time read in the EXIF section, or {@code null} if not found
+     * @since 19387
+     */
+    public static Instant readGpsInstant(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readGpsInstant(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+ 
+    /**
+     * Returns the GPS date/time from the given JPEG file.
+     * @param dirGps The EXIF GPS directory
+     * @return The GPS date/time read in the EXIF section, or {@code null} if not found
+     * @since 19387
+     */
+    public static Instant readGpsInstant(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            try {
+                return dirGps.getGpsDate().toInstant();
+            } catch (UncheckedParseException | DateTimeException e) {
+                Logging.error(e);
+            }
+        }
+        return null;
+    }
+ 
+    /**
      * Returns the image orientation of the given JPEG file.
      * @param filename The JPEG file to read
      * @return The image orientation as an {@code int}. Default value is 1. Possible values are listed in EXIF spec as follows:<br><ol>
@@ -144,7 +177,7 @@ public final class ExifReader {
         try {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
             final Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            return dir == null ? null : dir.getInteger(ExifIFD0Directory.TAG_ORIENTATION);
+            return dir == null ? null : dir.getInteger(ExifDirectoryBase.TAG_ORIENTATION);
         } catch (JpegProcessingException | IOException e) {
             Logging.error(e);
         }
@@ -214,6 +247,41 @@ public final class ExifReader {
             Rational direction = dirGps.getRational(GpsDirectory.TAG_IMG_DIRECTION);
             if (direction != null) {
                 return direction.doubleValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS track direction of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS track direction of the image when it was captures (in degrees between 0.0 and 359.99),
+     * or {@code null} if not found
+     * @since 19387
+     */
+    public static Double readGpsTrackDirection(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readGpsTrackDirection(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the GPS track direction of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The GPS track direction of the image when it was captured (in degrees between 0.0 and 359.99),
+     * or {@code null} if missing or if {@code dirGps} is null
+     * @since 19387
+     */
+    public static Double readGpsTrackDirection(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Rational trackDirection = dirGps.getRational(GpsDirectory.TAG_TRACK);
+            if (trackDirection != null) {
+                return trackDirection.doubleValue();
             }
         }
         return null;
@@ -315,11 +383,256 @@ public final class ExifReader {
             Double ele = dirGps.getDoubleObject(GpsDirectory.TAG_ALTITUDE);
             if (ele != null) {
                 final Integer d = dirGps.getInteger(GpsDirectory.TAG_ALTITUDE_REF);
-                if (d != null && d.intValue() == 1) {
+                if (d != null && d == 1) {
                     ele *= -1;
                 }
                 return ele;
             }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS horizontal positionning error of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS horizontal positionning error of the camera when the image was captured (in m),
+     *         or {@code null} if not found
+     * @since 19387
+     */
+    public static Double readHpositioningError(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readHpositioningError(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS horizontal positionning error of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The GPS horizontal positionning error of the camera when the image was captured (in m),
+     *         or {@code null} if missing or if {@code dirGps} is null
+     * @since 19387
+     */
+    public static Double readHpositioningError(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Double hposerr = dirGps.getDoubleObject(GpsDirectory.TAG_H_POSITIONING_ERROR);
+            if (hposerr != null)
+                return hposerr;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS differential mode of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS differential mode of the camera when the image was captured,
+     * <ul>
+     *  <li>0 : no differential correction</li>
+     *  <li>1 : differential correction</li>
+     *  <li>or {@code null} if not found</li>
+     * </ul>
+     * @since 19387
+     */
+    public static Integer readGpsDiffMode(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readGpsDiffMode(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS differential mode of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The GPS differential mode of the camera when the image was captured,
+     * <ul>
+     *  <li>0 : no differential correction</li>
+     *  <li>1 : differential correction</li>
+     *  <li>or {@code null} if missing or if {@code dirGps} is null</li>
+     * </ul>
+     * @since 19387
+     */    
+    public static Integer readGpsDiffMode(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Integer gpsDiffMode = dirGps.getInteger(GpsDirectory.TAG_DIFFERENTIAL);
+            if (gpsDiffMode != null)
+                return gpsDiffMode;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS 2d/3d mode of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS 2d/3d mode of the camera when the image was captured,
+     * <ul>
+     *  <li>2 : 2d mode</li>
+     *  <li>2 : 3d mode</li>
+     *  <li>or {@code null} if not found</li>
+     * </ul>
+     * @since 19387
+     */
+    public static Integer readGpsMeasureMode(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readGpsMeasureMode(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS 2d/3d mode of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The 2d/3d mode of the camera when the image was captured,
+     * <ul>
+     *  <li>2 : 2d mode</li>
+     *  <li>3 : 3d mode</li>
+     *  <li>or {@code null} if missing or if {@code dirGps} is null</li>
+     * </ul>
+     * @since 19387
+     */    
+    public static Integer readGpsMeasureMode(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Integer gps2d3dMode = dirGps.getInteger(GpsDirectory.TAG_MEASURE_MODE);
+            if (gps2d3dMode != null)
+                return gps2d3dMode;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS DOP value of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS DOP value of the camera when the image was captured,
+     *         or {@code null} if not found
+     * @since 19387
+     */
+    public static Double readGpsDop(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readGpsDop(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS DOP value of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The GPS DOP value of the camera when the image was captured,
+     *         or {@code null} if missing or if {@code dirGps} is null
+     * @since 19387
+     */
+    public static Double readGpsDop(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Double gpsDop = dirGps.getDoubleObject(GpsDirectory.TAG_DOP);
+            if (gpsDop != null) {
+                return gpsDop;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS datum value of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS datum value of the camera when the image was captured,
+     *         or {@code null} if not found
+     * @since 19387
+     */
+    public static String readGpsDatum(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readGpsDatum(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the GPS datum value of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The GPS datum value of the camera when the image was captured,
+     *         or {@code null} if missing or if {@code dirGps} is null
+     * @since 19387
+     */
+    public static String readGpsDatum(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            String gpsDatum = dirGps.getString(GpsDirectory.TAG_MAP_DATUM);
+            if (gpsDatum != null)
+                return gpsDatum;
+        }
+        return null;
+    }
+
+    /**
+     * Return the GPS processing method of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The GPS processing method. Possible values from the EXIF specs are:
+     * <ul>
+     * <li>GPS</li>
+     * <li>QZSS</li>
+     * <li>GALILEO</li>
+     * <li>GLONASS</li>
+     * <li>BEIDOU</li>
+     * <li>NAVIC</li>
+     * <li>CELLID</li>
+     * <li>WLAN</li>
+     * <li>MANUAL</li>
+     * </ul>
+     * Other values, and combined space separated values are possible too.
+     * or {@code null} if missing
+     * @since 19387
+     */
+    public static String readGpsProcessingMethod(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readGpsProcessingMethod(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Logging.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Return the GPS processing method of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The GPS processing method. Possible values from the EXIF specs are:
+     * <ul>
+     * <li>GPS</li>
+     * <li>QZSS</li>
+     * <li>GALILEO</li>
+     * <li>GLONASS</li>
+     * <li>BEIDOU</li>
+     * <li>NAVIC</li>
+     * <li>CELLID</li>
+     * <li>WLAN</li>
+     * <li>MANUAL</li>
+     * </ul>
+     * Other values, and combined space separated values are possible too.
+     * or {@code null} if missing or if {@code dirGps} is null
+     * @since 19387
+     */
+    public static String readGpsProcessingMethod(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            String gpsProcessingMethod = dirGps.getDescription(GpsDirectory.TAG_PROCESSING_METHOD);
+            if (gpsProcessingMethod != null)
+                return gpsProcessingMethod;
         }
         return null;
     }
@@ -366,7 +679,7 @@ public final class ExifReader {
 
     /**
      * Returns a Transform that fixes the image orientation.
-     *
+     * <p>
      * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated as 1.
      * @param orientation the exif-orientation of the image
      * @param width the original width of the image
@@ -375,7 +688,8 @@ public final class ExifReader {
      */
     public static AffineTransform getRestoreOrientationTransform(final int orientation, final int width, final int height) {
         final int q;
-        final double ax, ay;
+        final double ax;
+        final double ay;
         switch (orientation) {
         case 8:
             q = -1;
@@ -403,7 +717,7 @@ public final class ExifReader {
     /**
      * Check, if the given orientation switches width and height of the image.
      * E.g. 90 degree rotation
-     *
+     * <p>
      * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
      * as 1.
      * @param orientation the exif-orientation of the image
@@ -415,7 +729,7 @@ public final class ExifReader {
 
     /**
      * Check, if the given orientation requires any correction to the image.
-     *
+     * <p>
      * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
      * as 1.
      * @param orientation the exif-orientation of the image

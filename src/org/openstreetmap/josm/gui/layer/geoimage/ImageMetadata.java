@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.nio.file.FileSystemNotFoundException;
 import java.time.Instant;
 import java.util.List;
 
@@ -115,19 +116,68 @@ public interface ImageMetadata {
     boolean hasExifGpsTime();
 
     /**
-     * Get the exif coordinates
+     * Get the EXIF coordinates
      * @return The location of the image
      */
     ILatLon getExifCoor();
 
     /**
-     * Get the exif direction
+     * Get the EXIF direction
      * @return The image direction
      */
     Double getExifImgDir();
 
     /**
-     * Get the last time the source was modified
+     * Get the EXIF GPS track direction.
+     * @return The GPS track direction
+     * @since 19387
+     */
+    Double getExifGpsTrack();
+
+    /**
+     * Get the EXIF Horizontal positioning error.
+     * @return The image horizontal positioning error
+     * @since 19387
+     */
+    Double getExifHPosErr();
+
+    /**
+     * Get the GPS Differential mode.
+     * @return The image gnss fix mode
+     * @since 19387
+     */
+    Integer getGpsDiffMode();
+    
+    /**
+     * Get the GPS 2d/3d mode.
+     * @return The image gnss 2d/3d mode
+     * @since 19387
+     */
+    Integer getGps2d3dMode();
+
+    /**
+     * Get the EXIF GPS DOP value.
+     * @return The image GPS DOP value
+     * @since 19387
+     */
+    Double getExifGpsDop();
+
+    /**
+     * Get the GPS datum value.
+     * @return The image GPS datum value
+     * @since 19387
+     */
+    String getExifGpsDatum();
+
+    /**
+     * Get the EXIF GPS processing method.
+     * @return The image GPS processing method
+     * @since 19387
+     */
+    String getExifGpsProcMethod();
+
+    /**
+     * Get the last time the source was modified.
      * @return The last time the source was modified
      */
     Instant getLastModified();
@@ -192,16 +242,65 @@ public interface ImageMetadata {
     void setGpsTime(Instant gpsTime);
 
     /**
-     * Set the exif coordinates
-     * @param exifCoor The exif coordinates
+     * Sets the EXIF coordinates
+     * @param exifCoor The EXIF coordinates
      */
     void setExifCoor(ILatLon exifCoor);
 
     /**
-     * Set the exif direction
+     * Sets the EXIF direction
      * @param exifDir The direction
      */
     void setExifImgDir(Double exifDir);
+
+    /**
+     * Sets the EXIF GPS track direction.
+     * @param exifGpsTrack The GPS track direction
+     * @since 19387
+     */
+    void setExifGpsTrack(Double exifGpsTrack);
+
+    /**
+     * Sets the EXIF horizontal positioning error.
+     * @param exifHPosErr the EXIF horizontal positionning error
+     * @since 19387
+     */
+    void setExifHPosErr(Double exifHPosErr);
+
+    /**
+     * Sets the EXIF GPS DOP value.
+     * @param exifGpsDop the EXIF GPS DOP value
+     * @since 19387
+     */
+    void setExifGpsDop(Double exifGpsDop);
+
+    /**
+     * Sets the GPS Differential mode.
+     * @param gpsDiffMode GPS Differential mode
+     * @since 19387
+     */
+    void setGpsDiffMode(Integer gpsDiffMode);
+
+    /**
+     * Sets the GPS 2d/3d mode.
+     * @param gps2d3dMode GPS 2d/3d mode
+     * @since 19387
+     */
+    void setGps2d3dMode(Integer gps2d3dMode);
+
+    /**
+     * Sets the GPS datum value.
+     * @param exifGpsDatum GPS datum
+     * @since 19387
+     */
+    void setExifGpsDatum(String exifGpsDatum);
+
+    /**
+     * Sets the GPS processing method.
+     * @param exifGpsProcMethod GPS processing method
+     * @since 19387
+     */
+    void setExifGpsProcMethod(String exifGpsProcMethod);
 
     /**
      * Sets the IPTC caption.
@@ -261,7 +360,7 @@ public interface ImageMetadata {
 
     /**
      * Extract GPS metadata from image EXIF. Has no effect if the image file is not set
-     *
+     * <p>
      * If successful, fills in the LatLon, speed, elevation, image direction, and other attributes
      * @since 18592 (interface), 9270 (GpxImageEntry)
      */
@@ -271,6 +370,8 @@ public interface ImageMetadata {
             ImageUtils.applyExif(this, bufferedInputStream);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } catch (IllegalArgumentException | FileSystemNotFoundException e) {
+            throw new UncheckedIOException(new IOException(e));
         }
     }
 

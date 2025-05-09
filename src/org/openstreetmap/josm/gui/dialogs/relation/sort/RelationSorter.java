@@ -47,7 +47,7 @@ public class RelationSorter {
      * Class that sorts the {@code street} members of
      * {@code type=associatedStreet} and {@code type=street} relations.
      */
-    private static class AssociatedStreetRoleStreetSorter implements AdditionalSorter {
+    private static final class AssociatedStreetRoleStreetSorter implements AdditionalSorter {
 
         @Override
         public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
@@ -64,7 +64,7 @@ public class RelationSorter {
      * Class that sorts the {@code address} and {@code house} members of
      * {@code type=associatedStreet} and {@code type=street} relations.
      */
-    private static class AssociatedStreetRoleAddressHouseSorter implements AdditionalSorter {
+    private static final class AssociatedStreetRoleAddressHouseSorter implements AdditionalSorter {
 
         @Override
         public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
@@ -92,7 +92,7 @@ public class RelationSorter {
      * Class that sorts the {@code platform} and {@code stop} members of
      * {@code type=public_transport} relations.
      */
-    private static class PublicTransportRoleStopPlatformSorter implements AdditionalSorter {
+    private static final class PublicTransportRoleStopPlatformSorter implements AdditionalSorter {
 
         @Override
         public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
@@ -139,7 +139,7 @@ public class RelationSorter {
      * Class that sorts the {@code from}, {@code via} and {@code to} members of
      * {@code type=restriction} relations.
      */
-    private static class FromViaToSorter implements AdditionalSorter {
+    private static final class FromViaToSorter implements AdditionalSorter {
 
         private static final List<String> ROLES = Arrays.asList("from", "via", "to");
 

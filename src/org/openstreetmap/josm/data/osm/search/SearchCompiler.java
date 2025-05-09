@@ -159,7 +159,7 @@ public class SearchCompiler {
 
         @Override
         public Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError {
-            switch(keyword) {
+            switch (keyword) {
             case MODIFIED:
                 return new Modified();
             case DELETED:
@@ -1139,8 +1139,8 @@ public class SearchCompiler {
 
                     value = Normalizer.normalize(value, Normalizer.Form.NFC);
 
-                    Matcher keyMatcher = searchRegex.matcher(key);
-                    Matcher valMatcher = searchRegex.matcher(value);
+                    final Matcher keyMatcher = searchRegex.matcher(key);
+                    final Matcher valMatcher = searchRegex.matcher(value);
 
                     boolean keyMatchFound = keyMatcher.find();
                     boolean valMatchFound = valMatcher.find();
@@ -1622,7 +1622,7 @@ public class SearchCompiler {
     /**
      * Matches objects that are new (i.e. have not been uploaded to the server)
      */
-    private static class New extends Match {
+    private static final class New extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isNew();
@@ -1637,7 +1637,7 @@ public class SearchCompiler {
     /**
      * Matches all objects that have been modified, created, or undeleted
      */
-    private static class Modified extends Match {
+    private static final class Modified extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isModified() || osm.isNewOrUndeleted();
@@ -1652,7 +1652,7 @@ public class SearchCompiler {
     /**
      * Matches all objects that have been deleted
      */
-    private static class Deleted extends Match {
+    private static final class Deleted extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isDeleted();
@@ -1667,7 +1667,7 @@ public class SearchCompiler {
     /**
      * Matches all objects currently selected
      */
-    private static class Selected extends Match {
+    private static final class Selected extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.getDataSet().isSelected(osm);
@@ -1684,7 +1684,7 @@ public class SearchCompiler {
      * Typically, some members of a relation are incomplete until they are
      * fetched from the server.
      */
-    private static class Incomplete extends Match {
+    private static final class Incomplete extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm.isIncomplete() || (osm instanceof Relation && ((Relation) osm).hasIncompleteMembers());
@@ -1701,7 +1701,7 @@ public class SearchCompiler {
      * fixme, etc.). The complete list of uninteresting tags can be found here:
      * org.openstreetmap.josm.data.osm.OsmPrimitive.getUninterestingKeys()
      */
-    private static class Untagged extends Match {
+    private static final class Untagged extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return !osm.isTagged() && !osm.isIncomplete();
@@ -1716,7 +1716,7 @@ public class SearchCompiler {
     /**
      * Matches ways which are closed (i.e. first and last node are the same)
      */
-    private static class Closed extends Match {
+    private static final class Closed extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm instanceof Way && ((Way) osm).isClosed();
@@ -1817,7 +1817,7 @@ public class SearchCompiler {
         protected Long getNumber(OsmPrimitive osm) {
             if (!(osm instanceof Way))
                 return null;
-            Way way = (Way) osm;
+            final Way way = (Way) osm;
             return (long) way.getLength();
         }
 

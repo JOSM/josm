@@ -146,7 +146,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        validprefixes = namespaces.stream().map(n -> n.getPrefix()).collect(Collectors.toList());
+        validprefixes = namespaces.stream().map(XMLNamespace::getPrefix).collect(Collectors.toList());
 
         data.creator = JOSM_CREATOR_NAME;
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
@@ -387,7 +387,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
      */
     private void wayPoint(WayPoint pnt, int mode) {
         String type;
-        switch(mode) {
+        switch (mode) {
         case WAY_POINT:
             type = "wpt";
             break;

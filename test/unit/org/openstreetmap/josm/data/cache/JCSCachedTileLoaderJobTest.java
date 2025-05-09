@@ -20,6 +20,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.apache.commons.jcs3.engine.behavior.ICacheElement;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.tools.Logging;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 
 /**
@@ -46,8 +46,7 @@ class JCSCachedTileLoaderJobTest {
     /**
      * mocked tile server
      */
-    @BasicWiremock
-    WireMockServer tileServer;
+    WireMockRuntimeInfo tileServer;
 
     private static class TestCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, CacheEntry> {
         private final String url;
@@ -84,7 +83,7 @@ class JCSCachedTileLoaderJobTest {
         }
     }
 
-    private static class Listener implements ICachedLoaderListener {
+    private static final class Listener implements ICachedLoaderListener {
         private CacheEntryAttributes attributes;
         private boolean ready;
         private LoadResult result;
@@ -104,20 +103,23 @@ class JCSCachedTileLoaderJobTest {
 
     /**
      * Always clear cache before tests
-     * @throws Exception when clearing fails
      */
     @BeforeEach
-    void clearCache() throws Exception {
+    void clearCache() {
         getCache().clear();
+    }
+
+    @BeforeEach
+    void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        this.tileServer = wireMockRuntimeInfo;
     }
 
     /**
      * Test status codes
-     * @throws InterruptedException in case of thread interruption
      * @throws IOException in case of I/O error
      */
     @Test
-    void testStatusCodes() throws IOException, InterruptedException {
+    void testStatusCodes() throws IOException {
         doTestStatusCode(200);
         doTestStatusCode(401);
         doTestStatusCode(402);
@@ -154,7 +156,7 @@ class JCSCachedTileLoaderJobTest {
     }
 
     private void doTestStatusCode(int responseCode) throws IOException {
-        tileServer.stubFor(get(urlEqualTo("/httpstat/" + responseCode)).willReturn(aResponse().withStatus(responseCode)));
+        tileServer.getWireMock().register(get(urlEqualTo("/httpstat/" + responseCode)).willReturn(aResponse().withStatus(responseCode)));
         TestCachedTileLoaderJob job = getStatusLoaderJob(responseCode);
         Listener listener = submitJob(job);
         assertEquals(responseCode, listener.attributes.getResponseCode());
@@ -195,9 +197,9 @@ class JCSCachedTileLoaderJobTest {
                 );
         createHeadGetStub(urlEqualTo("/test"), expires, testStart, "eTag", "mock entry");
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test");
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test");
         Listener listener = submitJob(job, false);
-        tileServer.verify(0, getRequestedFor(anyUrl()));
+        tileServer.getWireMock().verifyThat(0, getRequestedFor(anyUrl()));
         assertArrayEquals("cached entry".getBytes(StandardCharsets.UTF_8), listener.data);
     }
 
@@ -216,9 +218,9 @@ class JCSCachedTileLoaderJobTest {
                 );
         createHeadGetStub(urlEqualTo("/test"), expires, testStart, "eTag", "mock entry");
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test");
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test");
         Listener listener = submitJob(job, true);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
     }
 
@@ -230,11 +232,11 @@ class JCSCachedTileLoaderJobTest {
     @Test
     void testSettingMinimumExpiryWhenNoExpires() throws IOException {
         long testStart = System.currentTimeMillis();
-        tileServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withBody("mock entry")));
+        tileServer.getWireMock().register(get(urlEqualTo("/test")).willReturn(aResponse().withBody("mock entry")));
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test");
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test");
         Listener listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
 
         assertTrue(listener.attributes.getExpirationTime() >= testStart + JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME,
                 "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
@@ -259,16 +261,16 @@ class JCSCachedTileLoaderJobTest {
     void testSettingExpireByMaxAge() throws IOException {
         long testStart = System.currentTimeMillis();
         long expires = TimeUnit.DAYS.toSeconds(1);
-        tileServer.stubFor(get(urlEqualTo("/test"))
+        tileServer.getWireMock().register(get(urlEqualTo("/test"))
                 .willReturn(aResponse()
                         .withHeader("Cache-control", "max-age=" + expires)
                         .withBody("mock entry")
                         )
                 );
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test");
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test");
         Listener listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
 
         assertTrue(listener.attributes.getExpirationTime() >= testStart + TimeUnit.SECONDS.toMillis(expires),
                 "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
@@ -297,9 +299,9 @@ class JCSCachedTileLoaderJobTest {
 
         createHeadGetStub(urlEqualTo("/test"), (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10), testStart, "eTag", "mock entry");
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test", minimumExpiryTimeSeconds);
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test", minimumExpiryTimeSeconds);
         Listener listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
 
@@ -330,9 +332,9 @@ class JCSCachedTileLoaderJobTest {
 
         createHeadGetStub(urlEqualTo("/test"), (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10), testStart, "eTag", "mock entry");
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test", minimumExpiryTimeSeconds);
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test", minimumExpiryTimeSeconds);
         Listener listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
 
@@ -366,7 +368,7 @@ class JCSCachedTileLoaderJobTest {
         long testStart = System.currentTimeMillis();
         int minimumExpiryTimeSeconds = 0;
 
-        tileServer.stubFor(get(urlEqualTo("/test"))
+        tileServer.getWireMock().register(get(urlEqualTo("/test"))
                 .willReturn(aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)))
                         .withHeader("Cache-Control", "max-age=" +
@@ -374,16 +376,16 @@ class JCSCachedTileLoaderJobTest {
                         .withBody("mock entry")
                         )
                 );
-        tileServer.stubFor(head(urlEqualTo("/test"))
+        tileServer.getWireMock().register(head(urlEqualTo("/test"))
                 .willReturn(aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)))
                         .withHeader("Cache-Control", "max-age=" +
                                 TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)))
                         )
                 );
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test", minimumExpiryTimeSeconds);
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test", minimumExpiryTimeSeconds);
         Listener listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
 
@@ -412,7 +414,7 @@ class JCSCachedTileLoaderJobTest {
         long testStart = System.currentTimeMillis();
         int minimumExpiryTimeSeconds = 0;
 
-        tileServer.stubFor(get(urlEqualTo("/test"))
+        tileServer.getWireMock().register(get(urlEqualTo("/test"))
                 .willReturn(aResponse()
                         .withHeader("Cache-Control", "" +
                                 "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)) + "," +
@@ -421,16 +423,16 @@ class JCSCachedTileLoaderJobTest {
                         .withBody("mock entry")
                         )
                 );
-        tileServer.stubFor(head(urlEqualTo("/test"))
+        tileServer.getWireMock().register(head(urlEqualTo("/test"))
                 .willReturn(aResponse()
                         .withHeader("Cache-Control", "" +
                                 "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)) + "," +
                                 "s-max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2))
                         )
                 ));
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test", minimumExpiryTimeSeconds);
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test", minimumExpiryTimeSeconds);
         Listener listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
         assertTrue(
@@ -460,7 +462,7 @@ class JCSCachedTileLoaderJobTest {
                 createEntryAttributes(-1 * expires, 200, testStart, "eTag--gzip") // Jetty adds --gzip to etags when compressing output
                 );
 
-        tileServer.stubFor(get(urlEqualTo("/test"))
+        tileServer.getWireMock().register(get(urlEqualTo("/test"))
                 .willReturn(aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))
                         .withHeader("Last-Modified", Long.toString(testStart))
@@ -468,7 +470,7 @@ class JCSCachedTileLoaderJobTest {
                         .withBody("mock entry")
                         )
                 );
-        tileServer.stubFor(head(urlEqualTo("/test"))
+        tileServer.getWireMock().register(head(urlEqualTo("/test"))
                 .willReturn(aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))
                         .withHeader("Last-Modified", Long.toString(testStart))
@@ -476,14 +478,14 @@ class JCSCachedTileLoaderJobTest {
                         )
                 );
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test");
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test");
         Listener listener = submitJob(job, false); // cache entry is expired, no need to force refetch
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
         // cache entry should be retrieved from cache
         listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
         // invalidate entry in cache
@@ -493,17 +495,17 @@ class JCSCachedTileLoaderJobTest {
         cache.put("test", cacheEntry.getVal(), attributes);
 
         // because cache entry is invalid - HEAD request shall be made
-        tileServer.verify(0, headRequestedFor(urlEqualTo("/test"))); // no head requests were made until now
+        tileServer.getWireMock().verifyThat(0, headRequestedFor(urlEqualTo("/test"))); // no head requests were made until now
         listener = submitJob(job, false);
-        tileServer.verify(1, headRequestedFor(urlEqualTo("/test"))); // verify head requests were made
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test"))); // verify no more get requests were made
+        tileServer.getWireMock().verifyThat(1, headRequestedFor(urlEqualTo("/test"))); // verify head requests were made
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test"))); // verify no more get requests were made
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
         assertTrue(listener.attributes.getExpirationTime() >= testStart + expires);
 
         // cache entry should be retrieved from cache
         listener = submitJob(job, false); // cache entry is expired, no need to force refetch
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
     }
 
@@ -512,7 +514,7 @@ class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testCheckUsing304() throws IOException {
+    void testCheckUsing304() throws IOException {
         ICacheAccess<String, CacheEntry> cache = getCache();
         long expires = TimeUnit.DAYS.toMillis(1);
         long testStart = System.currentTimeMillis();
@@ -521,7 +523,7 @@ class JCSCachedTileLoaderJobTest {
                 createEntryAttributes(-1 * expires, 200, testStart, "eTag")
                 );
 
-        tileServer.stubFor(get(urlEqualTo("/test"))
+        tileServer.getWireMock().register(get(urlEqualTo("/test"))
                 .willReturn(status(304)
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))
                         .withHeader("Last-Modified", Long.toString(testStart))
@@ -529,17 +531,17 @@ class JCSCachedTileLoaderJobTest {
                         )
                 );
 
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test");
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/test", "test");
         Listener listener = submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("cached dummy".getBytes(StandardCharsets.UTF_8), listener.data);
         assertTrue(testStart + expires <= listener.attributes.getExpirationTime());
         submitJob(job, false);
-        tileServer.verify(1, getRequestedFor(urlEqualTo("/test"))); // no more requests were made
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test"))); // no more requests were made
     }
 
     private void createHeadGetStub(UrlPattern url, long expires, long lastModified, String eTag, String body) {
-        tileServer.stubFor(get(url)
+        tileServer.getWireMock().register(get(url)
                 .willReturn(aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(lastModified + expires))
                         .withHeader("Last-Modified", Long.toString(lastModified))
@@ -547,7 +549,7 @@ class JCSCachedTileLoaderJobTest {
                         .withBody(body)
                         )
                 );
-        tileServer.stubFor(head(url)
+        tileServer.getWireMock().register(head(url)
                 .willReturn(aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(lastModified + expires))
                         .withHeader("Last-Modified", Long.toString(lastModified))
@@ -566,7 +568,7 @@ class JCSCachedTileLoaderJobTest {
     }
 
     private TestCachedTileLoaderJob getStatusLoaderJob(int responseCode) {
-        return new TestCachedTileLoaderJob(tileServer.url("/httpstat/" + responseCode), "key_" + responseCode);
+        return new TestCachedTileLoaderJob(tileServer.getHttpBaseUrl() + "/httpstat/" + responseCode, "key_" + responseCode);
     }
 
     private static ICacheAccess<String, CacheEntry> getCache() {

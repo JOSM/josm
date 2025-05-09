@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,11 +58,11 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel("<html>" +
                 tr("Please select the order of the selected layers:<br>Tracks will be cut, when timestamps of higher layers are overlapping.") +
-                "</html>"), GBC.std(0, 0).fill(GBC.HORIZONTAL).span(2));
+                "</html>"), GBC.std(0, 0).fill(GridBagConstraints.HORIZONTAL).span(2));
 
         c = new JCheckBox(tr("Connect overlapping tracks on cuts"));
         c.setSelected(Config.getPref().getBoolean("mergelayer.gpx.connect", true));
-        p.add(c, GBC.std(0, 1).fill(GBC.HORIZONTAL).span(2));
+        p.add(c, GBC.std(0, 1).fill(GridBagConstraints.HORIZONTAL).span(2));
 
         model = new GpxLayersTableModel(layers);
         t = new JTable(model);
@@ -84,8 +85,8 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
         btnDown = new JButton(tr("Move layer down"));
         btnDown.setIcon(ImageProvider.get("dialogs", "down", ImageSizes.SMALLICON));
 
-        p.add(btnUp, GBC.std(0, 3).fill(GBC.HORIZONTAL));
-        p.add(btnDown, GBC.std(1, 3).fill(GBC.HORIZONTAL));
+        p.add(btnUp, GBC.std(0, 3).fill(GridBagConstraints.HORIZONTAL));
+        p.add(btnDown, GBC.std(1, 3).fill(GridBagConstraints.HORIZONTAL));
 
         btnUp.addActionListener(new MoveLayersActionListener(true));
         btnDown.addActionListener(new MoveLayersActionListener(false));
@@ -151,7 +152,7 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
         }
     }
 
-    private class RowSelectionChangedListener implements ListSelectionListener {
+    private final class RowSelectionChangedListener implements ListSelectionListener {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {

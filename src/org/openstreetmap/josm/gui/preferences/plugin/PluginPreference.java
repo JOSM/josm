@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.plugin;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -70,6 +71,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 168
  */
 public final class PluginPreference extends ExtensibleTabPreferenceSetting {
+    private static final String HTML_START = "<html>";
+    private static final String HTML_END = "</html>";
+    private static final String UPDATE_PLUGINS = marktr("Update plugins");
 
     /**
      * Factory used to create a new {@code PluginPreference}.
@@ -111,8 +115,8 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                     "The following {0} plugins have been downloaded <strong>successfully</strong>:",
                     downloaded.size(),
                     downloaded.size()
-                    ));
-            sb.append("<ul>");
+                    ))
+                .append("<ul>");
             for (PluginInformation pi: downloaded) {
                 sb.append("<li>").append(pi.name).append(" (").append(pi.version).append(")</li>");
             }
@@ -124,8 +128,8 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                     "Downloading the following {0} plugins has <strong>failed</strong>:",
                     failed.size(),
                     failed.size()
-                    ));
-            sb.append("<ul>");
+                    ))
+                .append("<ul>");
             for (PluginInformation pi: failed) {
                 sb.append("<li>").append(pi.name).append("</li>");
             }
@@ -148,16 +152,16 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
     public static void notifyDownloadResults(final Component parent, PluginDownloadTask task, boolean restartRequired) {
         final Collection<PluginInformation> failed = task.getFailedPlugins();
         final StringBuilder sb = new StringBuilder();
-        sb.append("<html>")
+        sb.append(HTML_START)
           .append(buildDownloadSummary(task));
         if (restartRequired) {
             sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
         }
-        sb.append("</html>");
+        sb.append(HTML_END);
         GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
                 parent,
                 sb.toString(),
-                tr("Update plugins"),
+                tr(UPDATE_PLUGINS),
                 !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
                         HelpUtil.ht("/Preferences/Plugins")
                 ));
@@ -374,7 +378,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
      */
     class UpdateSelectedPluginsAction extends AbstractAction {
         UpdateSelectedPluginsAction() {
-            putValue(NAME, tr("Update plugins"));
+            putValue(NAME, tr(UPDATE_PLUGINS));
             putValue(SHORT_DESCRIPTION, tr("Update the selected plugins"));
             new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
         }
@@ -387,8 +391,11 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                         tr("Plugins up to date"),
                         JOptionPane.INFORMATION_MESSAGE,
                         null // FIXME: provide help context
-                        ));
-            } catch (InterruptedException | InvocationTargetException e) {
+                ));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Logging.error(e);
+            } catch (InvocationTargetException e) {
                 Logging.error(e);
             }
         }
@@ -400,7 +407,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
             final PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(
                     pnlPluginPreferences,
                     toUpdate,
-                    tr("Update plugins")
+                    tr(UPDATE_PLUGINS)
                     );
             // the async task for downloading plugin information
             final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(
@@ -443,7 +450,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                         if (!PluginHandler.checkRequiredPluginsPreconditions(null, enabledPlugins, pi, false)) {
                             // Time to find the missing plugins...
                             toAdd.addAll(pi.getRequiredPlugins().stream().filter(plugin -> PluginHandler.getPlugin(plugin) == null)
-                                    .map(plugin -> model.getPluginInformation(plugin))
+                                    .map(model::getPluginInformation)
                                     .collect(Collectors.toSet()));
                         }
                     }
@@ -501,10 +508,10 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
             JTextArea textField = new JTextArea(10, 0);
             JCheckBox deleteNotInList = new JCheckBox(tr("Disable all other plugins"));
 
-            JLabel helpLabel = new JLabel("<html>" + String.join("<br/>",
+            JLabel helpLabel = new JLabel(HTML_START + String.join("<br/>",
                     tr("Enter a list of plugins you want to download."),
                     tr("You should add one plugin id per line, version information is ignored."),
-                    tr("You can copy+paste the list of a status report here.")) + "</html>");
+                    tr("You can copy+paste the list of a status report here.")) + HTML_END);
 
             if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(GuiHelper.getFrameForComponent(getTabPane()),
                     new Object[] {helpLabel, new JScrollPane(textField), deleteNotInList},
@@ -555,7 +562,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
 
         private boolean confirmIgnoreNotFound(List<String> notFound) {
             String list = "<ul><li>" + String.join("</li><li>", notFound) + "</li></ul>";
-            String message = "<html>" + tr("The following plugins were not found. Continue anyway?") + list + "</html>";
+            String message = HTML_START + tr("The following plugins were not found. Continue anyway?") + list + HTML_END;
             return JOptionPane.showConfirmDialog(GuiHelper.getFrameForComponent(getTabPane()),
                     message) == JOptionPane.OK_OPTION;
         }

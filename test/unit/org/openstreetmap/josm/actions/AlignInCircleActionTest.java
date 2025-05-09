@@ -44,6 +44,8 @@ final class AlignInCircleActionTest {
     void testWaySelected() throws Exception {
         DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleBefore.osm")), null);
         DataSet ds2 = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleAfter1.osm")), null);
+        ds.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
+        ds2.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
 
         Way roundabout = null;
         for (Way w : ds.getWays()) {
@@ -75,6 +77,7 @@ final class AlignInCircleActionTest {
     @Test
     void testTicket20041() throws Exception {
         DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleAfter1.osm")), null);
+        ds.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
 
         Way roundabout = null;
         for (Way w : ds.getWays()) {
@@ -96,6 +99,8 @@ final class AlignInCircleActionTest {
     void testNodesSelected() throws Exception {
         DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleBefore.osm")), null);
         DataSet ds2 = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleAfter2.osm")), null);
+        ds.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
+        ds2.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
 
         Way circularWay = null;
         for (Way w : ds.getWays()) {
@@ -128,6 +133,8 @@ final class AlignInCircleActionTest {
     void testOpenWaysSelected() throws Exception {
         DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleTwoWaysBefore.osm")), null);
         DataSet ds2 = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleTwoWaysAfter.osm")), null);
+        ds.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
+        ds2.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
 
         Set<Way> junctions = ds.getWays().stream().filter(w -> "roundabout".equals(w.get("junction"))).collect(Collectors.toSet());
         assertEquals(2, junctions.size());

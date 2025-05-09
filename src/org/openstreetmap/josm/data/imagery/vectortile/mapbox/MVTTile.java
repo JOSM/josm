@@ -55,13 +55,11 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
             this.layers = new ArrayList<>(protobufRecords.size());
             for (ProtobufRecord protoBufRecord : protobufRecords) {
                 if (protoBufRecord.getField() == Layer.LAYER_FIELD) {
-                    try (ProtobufParser tParser = new ProtobufParser(protoBufRecord.getBytes())) {
+                    try (protoBufRecord; // Cleanup bytes
+                         ProtobufParser tParser = new ProtobufParser(protoBufRecord.getBytes())) {
                         this.layers.add(new Layer(tParser.allRecords()));
                     } catch (IOException e) {
                         Logging.error(e);
-                    } finally {
-                        // Cleanup bytes
-                        protoBufRecord.close();
                     }
                 }
             }

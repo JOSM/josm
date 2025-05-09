@@ -87,6 +87,11 @@ public abstract class AbstractReader {
     }
 
     /**
+     * A lookup table to avoid calling {@link String#intern()} unnecessarily.
+     */
+    private final Map<String, String> tagMap = new HashMap<>();
+
+    /**
      * The dataset to add parsed objects to.
      */
     protected DataSet ds = new DataSet();
@@ -369,6 +374,7 @@ public abstract class AbstractReader {
                     }
                 }
             }
+            this.tagMap.clear();
             progressMonitor.finishTask();
             progressMonitor.removeCancelListener(cancelListener);
         }
@@ -516,20 +522,17 @@ public abstract class AbstractReader {
     }
 
     protected final void parseVersion(PrimitiveData current, int version) throws IllegalDataException {
-        switch (ds.getVersion()) {
-        case "0.6":
+        if (ds.getVersion().equals("0.6")) {
             if (version <= 0 && !current.isNew()) {
                 throw new IllegalDataException(
                         tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.",
-                        Long.toString(current.getUniqueId()), version));
+                                Long.toString(current.getUniqueId()), version));
             } else if (version < 0 && current.isNew()) {
                 Logging.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.",
                         current.getUniqueId(), version, 0, "0.6"));
                 version = 0;
             }
-            break;
-        default:
-            // should not happen. API version has been checked before
+        } else { // should not happen. API version has been checked before
             throw new IllegalDataException(tr("Unknown or unsupported API version. Got {0}.", ds.getVersion()));
         }
         current.setVersion(version);
@@ -604,7 +607,7 @@ public abstract class AbstractReader {
             // Drop the tag on import, but flag the primitive as modified
             ((AbstractPrimitive) t).setModified(true);
         } else {
-            t.put(key.intern(), value.intern());
+            t.put(this.tagMap.computeIfAbsent(key, Utils::intern), this.tagMap.computeIfAbsent(value, Utils::intern));
         }
     }
 

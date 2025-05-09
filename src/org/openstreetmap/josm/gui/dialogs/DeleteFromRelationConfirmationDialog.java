@@ -214,7 +214,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      * The table model which manages the list of relation-to-child references
      */
     public static class RelationMemberTableModel extends DefaultTableModel {
-        private static class RelationToChildReferenceComparator implements Comparator<RelationToChildReference>, Serializable {
+        private static final class RelationToChildReferenceComparator implements Comparator<RelationToChildReference>, Serializable {
             private static final long serialVersionUID = 1L;
             @Override
             public int compare(RelationToChildReference o1, RelationToChildReference o2) {
@@ -291,7 +291,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (data == null) return null;
             RelationToChildReference ref = data.get(rowIndex);
-            switch(columnIndex) {
+            switch (columnIndex) {
             case 0: return ref.getChild();
             case 1: return ref.getParent();
             case 2: return ref.getPosition()+1;
@@ -422,7 +422,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
                 return null;
             }
             Pair<Relation, Boolean> ref = this.data.get(rowIndex);
-            switch(columnIndex) {
+            switch (columnIndex) {
             case 0: return ref.a;
             case 1: return ref.b;
             default:

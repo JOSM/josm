@@ -694,9 +694,9 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         }
     }
 
-    private class LayerNameCellRenderer extends DefaultTableCellRenderer {
+    private final class LayerNameCellRenderer extends DefaultTableCellRenderer {
 
-        protected boolean isActiveLayer(Layer layer) {
+        boolean isActiveLayer(Layer layer) {
             return getLayerManager().getActiveLayer() == layer;
         }
 

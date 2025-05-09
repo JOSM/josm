@@ -95,7 +95,7 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     /**
      * Creates a changeset with the data obtained from the given preset, i.e.,
      * the {@link AbstractPrimitive#getChangesetId() changeset id}, {@link AbstractPrimitive#getUser() user}, and
-     * {@link AbstractPrimitive#getTimestamp() timestamp}.
+     * {@link AbstractPrimitive#getInstant() timestamp}.
      * @param primitive the primitive to use
      * @return the created changeset
      */

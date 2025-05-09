@@ -1034,12 +1034,12 @@ public final class Functions {
      * and ending at index {@code end}, (exclusive, 0-indexed).
      * @param s The base string
      * @param begin The start index
-     * @param end The end index
+     * @param end The end index. If negative, it counts from the end of the string
      * @return the substring
      * @see String#substring(int, int)
      */
     public static String substring(String s, float begin, float end) {
-        return s == null ? null : s.substring((int) begin, (int) end);
+        return s == null ? null : s.substring((int) begin, (int) (end >= 0 ? end : s.length() + end));
     }
 
     /**
@@ -1182,6 +1182,25 @@ public final class Functions {
      */
     public static String XML_encode(String s) {
         return s == null ? null : XmlWriter.encode(s);
+    }
+
+    /**
+     * Convert a length unit to meters
+     * <p>
+     * Tries to convert a length unit to meter value or returns {@code null} when impossible
+     * @param s arbitrary string representing a length
+     * @return the length converted to meters
+     * @since 19089
+     */
+    public static String siunit_length(String s) {
+        if (s == null)
+            return null;
+        try {
+            return Utils.unitToMeter(s).toString();
+        } catch (IllegalArgumentException e) {
+            Logging.debug(e);
+        }
+        return null;
     }
 
     /**

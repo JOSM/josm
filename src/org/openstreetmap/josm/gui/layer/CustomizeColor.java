@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Action to show a dialog for picking a color.
- *
+ * <p>
  * By calling this action, the user can choose a color to customize the painting
  * of a certain {@link GpxLayer} or {@link org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer}.
  */
@@ -83,14 +83,16 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
                 options[0]
         );
         switch (answer) {
-        case 0:
+        case JOptionPane.OK_OPTION:
             colorLayers.forEach(l -> l.setColor(c.getColor()));
             break;
-        case 1:
+        case JOptionPane.NO_OPTION:
             return;
-        case 2:
+        case JOptionPane.CANCEL_OPTION:
             colorLayers.forEach(l -> l.setColor(null));
             break;
+        default:
+            throw new IllegalStateException("Unexpected value: " + answer);
         }
         // TODO: Make the layer dialog listen to property change events so that this is not needed any more.
         LayerListDialog.getInstance().repaint();

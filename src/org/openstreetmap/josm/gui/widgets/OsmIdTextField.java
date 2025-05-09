@@ -94,7 +94,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
         public boolean readOsmIds() {
             String value = getComponent().getText();
             char c;
-            if (Utils.isBlank(value)) {
+            if (Utils.isStripEmpty(value)) {
                 return false;
             }
             ids.clear();

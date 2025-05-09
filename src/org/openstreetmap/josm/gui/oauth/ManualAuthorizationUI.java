@@ -52,19 +52,6 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
      * Constructs a new {@code ManualAuthorizationUI} for the given API URL.
      * @param apiUrl The OSM API URL
      * @param executor the executor used for running the HTTP requests for the authorization
-     * @since 5422
-     * @deprecated since 18991, use {@link ManualAuthorizationUI#ManualAuthorizationUI(String, Executor, OAuthVersion)}
-     * instead.
-     */
-    @Deprecated
-    public ManualAuthorizationUI(String apiUrl, Executor executor) {
-        this(apiUrl, executor, OAuthVersion.OAuth10a);
-    }
-
-    /**
-     * Constructs a new {@code ManualAuthorizationUI} for the given API URL.
-     * @param apiUrl The OSM API URL
-     * @param executor the executor used for running the HTTP requests for the authorization
      * @param oAuthVersion The OAuthVersion to use for this UI
      * @since 18991
      */
@@ -192,7 +179,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
                 setAccessToken(null);
             } else {
                 try {
-                    setAccessToken(new OAuth20Token(getOAuthParameters(), "{\"token_type\":\"bearer\", \"access_token\""
+                    setAccessToken(new OAuth20Token(getOAuthParameters(), "{\"token_type\":\"bearer\", \"access_token\":\""
                             + tfAccessTokenKey.getText().trim() + "\"}"));
                 } catch (OAuth20Exception e) {
                     throw new JosmRuntimeException(e);

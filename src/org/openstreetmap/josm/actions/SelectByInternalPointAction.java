@@ -103,18 +103,18 @@ public final class SelectByInternalPointAction {
     public static void performSelection(EastNorth internalPoint, boolean doAdd, boolean doRemove) {
         final Collection<OsmPrimitive> surroundingObjects = getSurroundingObjects(internalPoint);
         final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-        if (surroundingObjects.isEmpty()) {
-            return;
-        } else if (doRemove) {
-            final Collection<OsmPrimitive> newSelection = new ArrayList<>(ds.getSelected());
-            newSelection.removeAll(surroundingObjects);
-            ds.setSelected(newSelection);
-        } else if (doAdd) {
-            final Collection<OsmPrimitive> newSelection = new ArrayList<>(ds.getSelected());
-            newSelection.add(surroundingObjects.iterator().next());
-            ds.setSelected(newSelection);
-        } else {
-            ds.setSelected(surroundingObjects.iterator().next());
+        if (!surroundingObjects.isEmpty()) {
+            if (doRemove) {
+                final Collection<OsmPrimitive> newSelection = new ArrayList<>(ds.getSelected());
+                newSelection.removeAll(surroundingObjects);
+                ds.setSelected(newSelection);
+            } else if (doAdd) {
+                final Collection<OsmPrimitive> newSelection = new ArrayList<>(ds.getSelected());
+                newSelection.add(surroundingObjects.iterator().next());
+                ds.setSelected(newSelection);
+            } else {
+                ds.setSelected(surroundingObjects.iterator().next());
+            }
         }
     }
 }

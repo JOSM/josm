@@ -103,6 +103,7 @@ import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.actions.TaggingPresetSearchAction;
+import org.openstreetmap.josm.actions.TiledRenderToggleAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
 import org.openstreetmap.josm.actions.UnJoinNodeWayAction;
 import org.openstreetmap.josm.actions.UndoAction;
@@ -248,6 +249,8 @@ public class MainMenu extends JMenuBar {
     /* View menu */
     /** View / Wireframe View */
     public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
+    /** View / Tiled Rendering */
+    public final TiledRenderToggleAction tiledRenderToggleAction = new TiledRenderToggleAction();
     /** View / Hatch area outside download */
     public final DrawBoundariesOfDownloadedDataAction drawBoundariesOfDownloadedDataAction = new DrawBoundariesOfDownloadedDataAction();
     /** View / Advanced info */
@@ -799,6 +802,12 @@ public class MainMenu extends JMenuBar {
         viewMenu.add(wireframe);
         wireframe.setAccelerator(wireFrameToggleAction.getShortcut().getKeyStroke());
         wireFrameToggleAction.addButtonModel(wireframe.getModel());
+        // -- tiled render toggle action -- not intended to be permanently an "Expert" mode option
+        final JCheckBoxMenuItem tiledRender = new JCheckBoxMenuItem(tiledRenderToggleAction);
+        viewMenu.add(tiledRender);
+        tiledRenderToggleAction.addButtonModel(tiledRender.getModel());
+        ExpertToggleAction.addVisibilitySwitcher(tiledRender);
+        // -- hatch toggle action
         final JCheckBoxMenuItem hatchAreaOutsideDownloadMenuItem = drawBoundariesOfDownloadedDataAction.getCheckbox();
         viewMenu.add(hatchAreaOutsideDownloadMenuItem);
         ExpertToggleAction.addVisibilitySwitcher(hatchAreaOutsideDownloadMenuItem);

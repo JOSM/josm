@@ -44,8 +44,12 @@ interface TaggingPresetValidation {
      * @param changedTags the list of tags that are set by this preset
      */
     static void validateAsync(OsmPrimitive original, JLabel validationLabel, List<Tag> changedTags) {
-        OsmPrimitive primitive = applyChangedTags(original, changedTags);
-        MainApplication.worker.execute(() -> validate(primitive, validationLabel));
+        MainApplication.worker.execute(() -> {
+            // applyChangedTags can be very expensive if a relation gets involved, so it must be done in
+            // a separate thread. This is becuase it clones all potentially affected objects.
+            OsmPrimitive primitive = applyChangedTags(original, changedTags);
+            validate(primitive, validationLabel);
+        });
     }
 
     /**

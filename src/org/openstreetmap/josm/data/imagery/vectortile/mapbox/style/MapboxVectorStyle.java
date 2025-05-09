@@ -142,7 +142,7 @@ public class MapboxVectorStyle {
                 MainApplication.worker.execute(() -> this.save((source == null ? data.hashCode() : source.getName()) + ".mapcss", style));
                 this.sources.put(source, new ElemStyles(Collections.singleton(style)));
             }
-            if (!Utils.isBlank(this.spriteUrl)) {
+            if (!Utils.isStripEmpty(this.spriteUrl)) {
                 MainApplication.worker.execute(this::fetchSprites);
             }
         } else {
@@ -250,7 +250,7 @@ public class MapboxVectorStyle {
     }
 
     /**
-     * Get the generated layer->style mapping
+     * Get the generated layer → style mapping
      * @return The mapping (use to enable/disable a paint style)
      */
     public Map<Source, ElemStyles> getSources() {

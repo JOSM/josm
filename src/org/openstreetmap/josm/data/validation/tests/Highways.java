@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class Highways extends Test {
     protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_MAXSPEED = 2705;
     protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_HIGHWAY = 2706;
     protected static final int SOURCE_WRONG_LINK = 2707;
+    protected static final int DIFFERENT_LAYERS = 2708;
 
     protected static final String SOURCE_MAXSPEED = "source:maxspeed";
 
@@ -58,7 +60,7 @@ public class Highways extends Test {
 
     private static final Set<String> KNOWN_SOURCE_MAXSPEED_CONTEXTS = new HashSet<>(Arrays.asList(
             "urban", "rural", "zone", "zone10", "zone:10", "zone20", "zone:20", "zone30", "zone:30", "zone40", "zone:40", "zone60", "zone:60",
-            "nsl_single", "nsl_dual", "motorway", "trunk", "living_street", "bicycle_road"));
+            "nsl_single", "nsl_dual", "motorway", "trunk", "living_street", "bicycle_road", "expressway"));
 
     private static final Set<String> ISO_COUNTRIES = new HashSet<>(Arrays.asList(Locale.getISOCountries()));
 
@@ -89,6 +91,9 @@ public class Highways extends Test {
                 // Check maxspeed but not context against highway for nodes
                 // as maxspeed is not set on highways here but on signs, speed cameras, etc.
                 testSourceMaxspeed(n, false);
+            }
+            if (n.isReferredByWays(2)) {
+                testDifferentLayers(n);
             }
         }
     }
@@ -297,5 +302,66 @@ public class Highways extends Test {
                 Logging.trace("TODO: test context highway - https://josm.openstreetmap.de/ticket/9400");
             }
         }
+    }
+
+    /**
+     * See #9304: Find Highways connected to bridges or tunnels at the wrong place.
+     * @param connection the connection node of two or more different ways
+     */
+    private void testDifferentLayers(Node connection) {
+        if (connection.hasTag("highway", "elevator"))
+            return;
+        List<Way> ways = connection.getParentWays();
+        ways.removeIf(w -> !w.hasTag("highway") || w.hasTag("highway", "steps") || isSpecialArea(w));
+        if (ways.size() < 2 || ways.stream().noneMatch(w -> w.hasKey("layer")))
+            return;
+        // check if connection has ways with different layers
+        Map<String, List<Way>> layerCount = new HashMap<>();
+        for (Way w : ways) {
+            String layer = w.get("layer");
+            if (layer == null)
+                layer = "0";
+            layerCount.computeIfAbsent(layer, k-> new ArrayList<>()).add(w);
+        }
+        if (layerCount.size() == 1)
+            return; // all on the same layer
+
+        for (Entry<String, List<Way>> entry : layerCount.entrySet()) {
+            if ("0".equals(entry.getKey()))
+                continue;
+            if (checkLayer(connection, entry.getValue())) {
+                errors.add(TestError.builder(this, Severity.WARNING, DIFFERENT_LAYERS)
+                        .message(tr("Node connects highways on different layers"))
+                        .primitives(connection)
+                        .build());
+                return;
+            }
+        }
+    }
+
+    /**
+     * Check if way is an area on a layer above or below 0.
+     * @param w the way
+     * @return true if way is an area on a layer above or below 0
+     */
+    private static boolean isSpecialArea(Way w) {
+        return w.hasAreaTags() && OsmUtils.getLayer(w) != null;
+    }
+
+    /**
+     * Check if there are at least two neighbouring nodes on the given ways.
+     * If so, the connection node can be considered to be at a specific layer, else it marks the end of such a layer
+     * @param connection the connection node
+     * @param ways the ways with the same layer attribute connected to that node
+     * @return true if the node can be considered to be at a specific layer
+     */
+    private static boolean checkLayer(Node connection, List<Way> ways) {
+        int count = 0;
+        for (Way w : ways) {
+            if (!w.isFirstLastNode(connection))
+                return true; // connection node has two neighbouring nodes
+            count++;
+        }
+        return count > 1;
     }
 }

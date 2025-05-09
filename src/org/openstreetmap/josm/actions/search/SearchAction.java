@@ -83,7 +83,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
             @Override
             public Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError {
-                switch(keyword) {
+                switch (keyword) {
                 case "inview":
                     return new InView(false);
                 case "allinview":
@@ -290,7 +290,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     /**
      * Select the search result and display a status text for it.
      */
-    private static class SelectSearchReceiver implements SearchReceiver {
+    private static final class SelectSearchReceiver implements SearchReceiver {
 
         @Override
         public void receiveSearchResult(OsmData<?, ?, ?, ?> ds, Collection<IPrimitive> result,
@@ -315,7 +315,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     map.statusLine.setHelpText(msg);
                 }
                 if (!GraphicsEnvironment.isHeadless()) {
-                    new Notification(msg).show();
+                    new Notification(msg).setIcon(JOptionPane.INFORMATION_MESSAGE).show();
                 }
             } else {
                 map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
@@ -397,7 +397,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 if (setting.allElements) {
                     all = ds.allPrimitives();
                 } else {
-                    all = ds.getPrimitives(p -> p.isSelectable()); // Do not use method reference before Java 11!
+                    all = ds.getPrimitives(IPrimitive::isSelectable);
                 }
                 final ProgressMonitor subMonitor = getProgressMonitor().createSubTaskMonitor(all.size(), false);
                 subMonitor.beginTask(trn("Searching in {0} object", "Searching in {0} objects", all.size(), all.size()));

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io.session;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -65,7 +67,7 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
         lbl.setLabelFor(export);
         p.add(export, GBC.std());
         p.add(lbl, GBC.std());
-        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GridBagConstraints.HORIZONTAL));
         return p;
     }
 
@@ -92,7 +94,8 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
         return layerEl;
     }
 
-    @SuppressWarnings("resource")
+    // The new closable resources in this method will close the input OutputStream
+    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"})
     protected void addDataFile(OutputStream out) {
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         MarkerWriter w = new MarkerWriter(new PrintWriter(writer));
@@ -131,7 +134,7 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
                     data.getLayerPrefs().put(k, v);
                 }
             });
-            data.put(GpxData.META_DESC, "exported JOSM marker layer");
+            data.put(GpxConstants.META_DESC, "exported JOSM marker layer");
             for (Marker m : layer.data) {
                 data.waypoints.add(m.convertToWayPoint());
             }

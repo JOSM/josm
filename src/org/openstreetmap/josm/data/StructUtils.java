@@ -266,13 +266,11 @@ public final class StructUtils {
         return fields.toArray(new Field[] {});
     }
 
-    @SuppressWarnings("rawtypes")
-    private static String mapToJson(Map map) {
+    private static String mapToJson(Map<?, ?> map) {
         StringWriter stringWriter = new StringWriter();
         try (JsonWriter writer = Json.createWriter(stringWriter)) {
             JsonObjectBuilder object = Json.createObjectBuilder();
-            for (Object o: map.entrySet()) {
-                Map.Entry e = (Map.Entry) o;
+            for (Map.Entry<?, ?> e: map.entrySet()) {
                 Object evalue = e.getValue();
                 object.add(e.getKey().toString(), evalue.toString());
             }
@@ -281,12 +279,11 @@ public final class StructUtils {
         return stringWriter.toString();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static Map mapFromJson(String s) {
-        Map ret;
+    private static Map<String, String> mapFromJson(String s) {
+        Map<String, String> ret;
         try (JsonReader reader = Json.createReader(new StringReader(s))) {
             JsonObject object = reader.readObject();
-            ret = new HashMap(Utils.hashMapInitialCapacity(object.size()));
+            ret = new HashMap<>(Utils.hashMapInitialCapacity(object.size()));
             for (Map.Entry<String, JsonValue> e: object.entrySet()) {
                 JsonValue value = e.getValue();
                 if (value instanceof JsonString) {
@@ -300,14 +297,12 @@ public final class StructUtils {
         return ret;
     }
 
-    @SuppressWarnings("rawtypes")
-    private static String multiMapToJson(MultiMap map) {
+    private static String multiMapToJson(MultiMap<?, ?> map) {
         StringWriter stringWriter = new StringWriter();
         try (JsonWriter writer = Json.createWriter(stringWriter)) {
             JsonObjectBuilder object = Json.createObjectBuilder();
-            for (Object o: map.entrySet()) {
-                Map.Entry e = (Map.Entry) o;
-                Set evalue = (Set) e.getValue();
+            for (Map.Entry<?, ?> e : map.entrySet()) {
+                Set<?> evalue = (Set<?>) e.getValue();
                 JsonArrayBuilder a = Json.createArrayBuilder();
                 for (Object evo: evalue) {
                     a.add(evo.toString());
@@ -319,12 +314,11 @@ public final class StructUtils {
         return stringWriter.toString();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static MultiMap multiMapFromJson(String s) {
-        MultiMap ret;
+    private static MultiMap<String, String> multiMapFromJson(String s) {
+        MultiMap<String, String> ret;
         try (JsonReader reader = Json.createReader(new StringReader(s))) {
             JsonObject object = reader.readObject();
-            ret = new MultiMap(object.size());
+            ret = new MultiMap<>(object.size());
             for (Map.Entry<String, JsonValue> e: object.entrySet()) {
                 JsonValue value = e.getValue();
                 if (value instanceof JsonArray) {

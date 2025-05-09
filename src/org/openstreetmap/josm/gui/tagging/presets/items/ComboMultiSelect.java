@@ -149,7 +149,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     /**
      * allow escaped comma in comma separated list:
-     * "A\, B\, C,one\, two" --&gt; ["A, B, C", "one, two"]
+     * "A\, B\, C,one\, two" → ["A, B, C", "one, two"]
      * @param delimiter the delimiter, e.g. a comma. separates the entries and
      *      must be escaped within one entry
      * @param s the string

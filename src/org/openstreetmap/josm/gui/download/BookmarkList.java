@@ -241,7 +241,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
      * Creates a bookmark list as well as the Buttons add and remove.
      */
     public BookmarkList() {
-        setModel(new DefaultListModel<Bookmark>());
+        setModel(new DefaultListModel<>());
         load();
         setVisibleRowCount(7);
         setCellRenderer(new BookmarkCellRenderer());

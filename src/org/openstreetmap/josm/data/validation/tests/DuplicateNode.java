@@ -79,7 +79,7 @@ public class DuplicateNode extends Test {
         public boolean equals(Object k, Object t) {
             LatLon coorK = getLatLon(k);
             LatLon coorT = getLatLon(t);
-            return coorK == coorT || (coorK != null && coorT != null && coorK.equals(coorT));
+            return Objects.equals(coorK, coorT);
         }
 
         @Override

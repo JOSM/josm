@@ -54,7 +54,7 @@ class SessionSaveActionTest {
         GpxLayer gpx = SessionWriterTest.createGpxLayer();
 
         JOptionPaneSimpleMocker mocker = new JOptionPaneSimpleMocker(Collections.singletonMap(overrideStr, 0));
-        SessionSaveAction.setCurrentSession(jos, false, Arrays.asList(gpx, osm)); //gpx and OSM layer
+        SessionSaveAction.setCurrentSession(jos, Arrays.asList(gpx, osm)); //gpx and OSM layer
         MainApplication.getLayerManager().addLayer(gpx); //only gpx layer
         saveAction.actionPerformed(null); //Complain that OSM layer was removed
         assertEquals(1, mocker.getInvocationLog().size());

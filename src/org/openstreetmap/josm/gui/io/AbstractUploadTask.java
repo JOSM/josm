@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -9,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.time.Instant;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -40,10 +40,13 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Abstract base class for the task of uploading primitives via OSM API.
- *
+ * <p>
  * Mainly handles conflicts and certain error situations.
  */
 public abstract class AbstractUploadTask extends PleaseWaitRunnable {
+    private static final String CANCEL_TR = marktr("Cancel");
+    private static final String CANCEL = "cancel";
+    private static final String UPDATE_DATA = "updatedata";
 
     /**
      * Constructs a new {@code AbstractUploadTask}.
@@ -97,7 +100,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
 
     /**
      * Synchronizes the local state of the dataset with the state on the server.
-     *
+     * <p>
      * Reuses the functionality of {@link UpdateDataAction}.
      *
      * @see UpdateDataAction#actionPerformed(ActionEvent)
@@ -120,7 +123,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion,
             String myVersion) {
         String lbl;
-        switch(primitiveType) {
+        switch (primitiveType) {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         case NODE:     lbl = tr("Synchronize node {0} only", id); break;
         case WAY:      lbl = tr("Synchronize way {0} only", id); break;
@@ -131,15 +134,15 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         ButtonSpec[] spec = {
                 new ButtonSpec(
                         lbl,
-                        new ImageProvider("updatedata"),
+                        new ImageProvider(UPDATE_DATA),
                         null, null),
                 new ButtonSpec(
                         tr("Synchronize entire dataset"),
-                        new ImageProvider("updatedata"),
+                        new ImageProvider(UPDATE_DATA),
                         null, null),
                 new ButtonSpec(
-                        tr("Cancel"),
-                        new ImageProvider("cancel"),
+                        tr(CANCEL_TR),
+                        new ImageProvider(CANCEL),
                         null, null)
         };
         String msg = tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
@@ -163,10 +166,10 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 spec[0],
                 "/Concepts/Conflict"
         );
-        switch(ret) {
+        switch (ret) {
         case 0: synchronizePrimitive(primitiveType, id); break;
         case 1: synchronizeDataSet(); break;
-        default: return;
+        default: // Do nothing (just return)
         }
     }
 
@@ -179,11 +182,11 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         ButtonSpec[] spec = {
                 new ButtonSpec(
                         tr("Synchronize entire dataset"),
-                        new ImageProvider("updatedata"),
+                        new ImageProvider(UPDATE_DATA),
                         null, null),
                 new ButtonSpec(
-                        tr("Cancel"),
-                        new ImageProvider("cancel"),
+                        tr(CANCEL_TR),
+                        new ImageProvider(CANCEL),
                         null, null)
         };
         String msg = tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
@@ -243,8 +246,8 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                         null /* no specific help context */
                 ),
                 new ButtonSpec(
-                        tr("Cancel"),
-                        new ImageProvider("cancel"),
+                        tr(CANCEL_TR),
+                        new ImageProvider(CANCEL),
                         tr("Click to cancel and to resume editing the map"),
                         null /* no specific help context */
                 )
@@ -266,7 +269,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         if (ret == 0) {
             if (msg.contains("to delete")) {
                 DownloadReferrersAction.downloadReferrers(MainApplication.getLayerManager().getEditLayer(),
-                        Arrays.asList(conflict.a));
+                        Collections.singletonList(conflict.a));
             }
             if (msg.contains("to upload") && !conflict.b.isEmpty()) {
                 MainApplication.worker.submit(new DownloadPrimitivesTask(

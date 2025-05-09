@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -245,7 +246,7 @@ public final class Shortcut {
      */
     public void setAccelerator(AbstractAction action) {
         if (getKeyStroke() != null) {
-            action.putValue(AbstractAction.ACCELERATOR_KEY, getKeyStroke());
+            action.putValue(Action.ACCELERATOR_KEY, getKeyStroke());
         }
     }
 
@@ -265,7 +266,7 @@ public final class Shortcut {
      */
     public static String getKeyText(KeyStroke keyStroke) {
         if (keyStroke == null) return "";
-        String modifText = KeyEvent.getModifiersExText(keyStroke.getModifiers());
+        String modifText = InputEvent.getModifiersExText(keyStroke.getModifiers());
         if (modifText.isEmpty()) return KeyEvent.getKeyText(keyStroke.getKeyCode());
         return modifText + '+' + KeyEvent.getKeyText(keyStroke.getKeyCode());
     }
@@ -306,7 +307,7 @@ public final class Shortcut {
     // here we store our shortcuts
     private static final ShortcutCollection shortcuts = new ShortcutCollection();
 
-    private static class ShortcutCollection extends CopyOnWriteArrayList<Shortcut> {
+    private static final class ShortcutCollection extends CopyOnWriteArrayList<Shortcut> {
         private static final long serialVersionUID = 1L;
         @Override
         public boolean add(Shortcut shortcut) {
@@ -397,15 +398,15 @@ public final class Shortcut {
         initdone = true;
         int commandDownMask = PlatformManager.getPlatform().getMenuShortcutKeyMaskEx();
         groups.put(NONE, -1);
-        groups.put(MNEMONIC, KeyEvent.ALT_DOWN_MASK);
+        groups.put(MNEMONIC, InputEvent.ALT_DOWN_MASK);
         groups.put(DIRECT, 0);
-        groups.put(ALT, KeyEvent.ALT_DOWN_MASK);
-        groups.put(SHIFT, KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT, InputEvent.ALT_DOWN_MASK);
+        groups.put(SHIFT, InputEvent.SHIFT_DOWN_MASK);
         groups.put(CTRL, commandDownMask);
-        groups.put(ALT_SHIFT, KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(ALT_CTRL, KeyEvent.ALT_DOWN_MASK | commandDownMask);
-        groups.put(CTRL_SHIFT, commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK | commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_SHIFT, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL, InputEvent.ALT_DOWN_MASK | commandDownMask);
+        groups.put(CTRL_SHIFT, commandDownMask | InputEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL_SHIFT, InputEvent.ALT_DOWN_MASK | commandDownMask | InputEvent.SHIFT_DOWN_MASK);
 
         // (1) System reserved shortcuts
         PlatformManager.getPlatform().initSystemShortcuts();
@@ -566,10 +567,10 @@ public final class Shortcut {
 
     private static int findNewOsxModifier(int requestedGroup) {
         switch (requestedGroup) {
-            case CTRL: return KeyEvent.CTRL_DOWN_MASK;
-            case ALT_CTRL: return KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK;
-            case CTRL_SHIFT: return KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK;
-            case ALT_CTRL_SHIFT: return KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK;
+            case CTRL: return InputEvent.CTRL_DOWN_MASK;
+            case ALT_CTRL: return InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK;
+            case CTRL_SHIFT: return InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK;
+            case ALT_CTRL_SHIFT: return InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK;
             default: return 0;
         }
     }

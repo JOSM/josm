@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * UploadStrategySelectionPanel is a panel for selecting an upload strategy.
- *
+ * <p>
  * Clients can listen for property change events for the property
  * {@link #UPLOAD_STRATEGY_SPECIFICATION_PROP}.
  */
@@ -211,7 +211,7 @@ public class UploadStrategySelectionPanel extends JPanel {
         UploadStrategy strategy = getUploadStrategy();
         UploadStrategySpecification spec = new UploadStrategySpecification();
         if (strategy != null) {
-            switch(strategy) {
+            switch (strategy) {
             case CHUNKED_DATASET_STRATEGY:
                 spec.setStrategy(strategy).setChunkSize(getChunkSize());
                 break;
@@ -388,11 +388,13 @@ public class UploadStrategySelectionPanel extends JPanel {
             UploadStrategy strategy = getUploadStrategy();
             if (strategy == null)
                 return;
-            switch(strategy) {
+            switch (strategy) {
             case CHUNKED_DATASET_STRATEGY:
                 tfChunkSize.setEnabled(true);
                 tfChunkSize.requestFocusInWindow();
                 break;
+            case SINGLE_REQUEST_STRATEGY:
+            case INDIVIDUAL_OBJECTS_STRATEGY:
             default:
                 tfChunkSize.setEnabled(false);
             }

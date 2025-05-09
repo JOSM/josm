@@ -97,8 +97,7 @@ public final class Blob {
                 throw new IOException(this.compressionType + " pbf is not currently supported");
             case zlib:
                 return new InflaterInputStream(bais);
-            default:
-                throw new IOException("unknown compression type is not currently supported: " + this.compressionType.name());
         }
+        throw new IOException("unknown compression type is not currently supported: " + this.compressionType.name());
     }
 }

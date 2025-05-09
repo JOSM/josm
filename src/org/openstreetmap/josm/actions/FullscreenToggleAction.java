@@ -56,7 +56,7 @@ public class FullscreenToggleAction extends ToggleAction {
         toggleSelectedState(e);
         Config.getPref().putBoolean("draw.fullscreen", isSelected());
         notifySelectedState();
-        setMode();
+        safeSetMode();
     }
 
     /**
@@ -64,7 +64,17 @@ public class FullscreenToggleAction extends ToggleAction {
      */
     public void initial() {
         if (isSelected()) {
-            setMode();
+            safeSetMode();
+        }
+    }
+
+    protected void safeSetMode() {
+        try {
+            this.setMode();
+        } catch (Exception exception) {
+            // Something happened. Disable fullscreen.
+            Config.getPref().put("draw.fullscreen", null);
+            throw exception;
         }
     }
 

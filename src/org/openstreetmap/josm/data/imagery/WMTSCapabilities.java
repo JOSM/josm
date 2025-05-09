@@ -24,7 +24,11 @@ public class WMTSCapabilities {
      * @param transferMode either KVP (key-value pairs in URL parameters) or RESTful (part of path)
      */
     public WMTSCapabilities(String baseUrl, TransferMode transferMode) {
-        this.baseUrl = baseUrl;
+        if (!baseUrl.endsWith("?") && !baseUrl.endsWith("&") && !baseUrl.endsWith("/")) {
+            this.baseUrl = baseUrl + (baseUrl.contains("?") ? "&" : "?");
+        } else {
+            this.baseUrl = baseUrl;
+        }
         this.transferMode = transferMode;
     }
 

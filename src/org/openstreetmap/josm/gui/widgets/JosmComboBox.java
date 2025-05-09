@@ -66,28 +66,7 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
      * in the data model becomes selected.
      */
     public JosmComboBox() {
-        super(new JosmComboBoxModel<E>());
-        init();
-    }
-
-    /**
-     * Creates a {@code JosmComboBox} with a {@link JosmComboBoxModel} data model and
-     * the specified prototype display value.
-     * The default data model is an empty list of objects.
-     * Use <code>addItem</code> to add items. By default the first item
-     * in the data model becomes selected.
-     *
-     * @param prototypeDisplayValue the <code>Object</code> used to compute
-     *      the maximum number of elements to be displayed at once before
-     *      displaying a scroll bar
-     *
-     * @since 5450
-     * @deprecated use {@link #setPrototypeDisplayValue} instead.
-     */
-    @Deprecated
-    public JosmComboBox(E prototypeDisplayValue) {
-        super(new JosmComboBoxModel<E>());
-        setPrototypeDisplayValue(prototypeDisplayValue);
+        super(new JosmComboBoxModel<>());
         init();
     }
 
@@ -103,21 +82,6 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
     }
 
     /**
-     * Creates a {@code JosmComboBox} that takes it items from an existing {@link JosmComboBoxModel}
-     * data model and sets the specified prototype display value.
-     *
-     * @param aModel the model that provides the displayed list of items
-     * @param prototypeDisplayValue use this item to size the combobox (may be null)
-     * @deprecated use {@link #setPrototypeDisplayValue} instead.
-     */
-    @Deprecated
-    public JosmComboBox(JosmComboBoxModel<E> aModel, E prototypeDisplayValue) {
-        super(aModel);
-        setPrototypeDisplayValue(prototypeDisplayValue);
-        init();
-    }
-
-    /**
      * Creates a {@code JosmComboBox} that contains the elements
      * in the specified array. By default the first item in the array
      * (and therefore the data model) becomes selected.
@@ -125,7 +89,7 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
      * @param items  an array of objects to insert into the combo box
      */
     public JosmComboBox(E[] items) {
-        super(new JosmComboBoxModel<E>());
+        super(new JosmComboBoxModel<>());
         init();
         for (E elem : items) {
             getModel().addElement(elem);
@@ -205,7 +169,7 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
 
     /**
      * Selects an item and/or sets text
-     *
+     * <p>
      * Selects the item whose {@code toString()} equals {@code text}. If an item could not be found,
      * selects nothing and sets the text anyway.
      *
@@ -233,16 +197,16 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
     /**
      * Sets the hint to display when no text has been entered.
      *
-     * @param hint the hint to set
+     * @param newHint the hint to set
      * @return the old hint
      * @since 18221
      */
-    public String setHint(String hint) {
-        String old = hint;
-        this.hint = hint;
+    public String setHint(String newHint) {
+        String old = this.hint;
+        this.hint = newHint;
         JosmTextField tf = getEditorComponent();
         if (tf != null)
-            tf.setHint(hint);
+            tf.setHint(newHint);
         return old;
     }
 
@@ -287,7 +251,7 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
      * the editor becomes too big.  With this method we can set the editor height to a fixed value.
      * <p>
      * Set this to -1 to get the default behaviour back.
-     *
+     * <p>
      * See also: #6157
      *
      * @param height the preferred height or -1
@@ -309,7 +273,7 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
     @SuppressWarnings("rawtypes")
     public JList getList() {
         Object popup = getUI().getAccessibleChild(this, 0);
-        if (popup != null && popup instanceof javax.swing.plaf.basic.ComboPopup) {
+        if (popup instanceof javax.swing.plaf.basic.ComboPopup) {
             return ((javax.swing.plaf.basic.ComboPopup) popup).getList();
         }
         return null;
@@ -420,7 +384,8 @@ public class JosmComboBox<E> extends JComboBox<E> implements PopupMenuListener, 
             // Calculate how many rows fit into the free space.  Rows may have variable heights.
             int rowCount = Math.min(configMaximumRowCount, getItemCount());
             ListCellRenderer<? super E> r = jList.getCellRenderer();  // must take this from list, not combo: flatlaf bug
-            int i, h = 0;
+            int i;
+            int h = 0;
             for (i = 0; i < rowCount; ++i) {
                 Component c = r.getListCellRendererComponent(jList, getModel().getElementAt(i), i, false, false);
                 h += c.getPreferredSize().height;

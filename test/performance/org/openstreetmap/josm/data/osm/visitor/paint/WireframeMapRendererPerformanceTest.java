@@ -3,10 +3,12 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 
 /**
  * Performance test of {@code WireframeMapRenderer}.
  */
+@PerformanceTest
 class WireframeMapRendererPerformanceTest extends AbstractMapRendererPerformanceTestParent {
 
     @BeforeAll

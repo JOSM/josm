@@ -56,7 +56,7 @@ public class StrokeProperty extends AbstractToStringProperty<BasicStroke> {
 
     /**
      * Return s new BasicStroke object with given thickness and style
-     * @param code = 3.5 -&gt; thickness=3.5px; 3.5 10 5 -&gt; thickness=3.5px, dashed: 10px filled + 5px empty
+     * @param code = 3.5 → thickness=3.5px; 3.5 10 5 → thickness=3.5px, dashed: 10px filled + 5px empty
      * @return stroke for drawing
      */
     public static BasicStroke getFromString(String code) {

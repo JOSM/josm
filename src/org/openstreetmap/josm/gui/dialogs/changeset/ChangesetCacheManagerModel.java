@@ -89,7 +89,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @return the list of selected changesets
      */
     public List<Changeset> getSelectedChangesets() {
-        return Arrays.stream(TableHelper.getSelectedIndices(selectionModel))
+        return Arrays.stream(selectionModel.getSelectedIndices())
                 .map(sorter::convertRowIndexToModel).mapToObj(data::get).collect(Collectors.toList());
     }
 

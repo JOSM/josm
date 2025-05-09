@@ -151,7 +151,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     private boolean isNotImage(Map<String, List<String>> headers, int statusCode) {
         if (statusCode == 200 && headers.containsKey("Content-Type") && !headers.get("Content-Type").isEmpty()) {
-            String contentType = headers.get("Content-Type").stream().findAny().get();
+            String contentType = headers.get("Content-Type").stream().findAny().orElse(null);
             if (contentType != null && !contentType.startsWith("image") && !MVTFile.MIMETYPE.contains(contentType.toLowerCase(Locale.ROOT))) {
                 Logging.warn("Image not returned for tile: " + url + " content type was: " + contentType);
                 // not an image - do not store response in cache, so next time it will be queried again from the server
@@ -197,7 +197,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 }
             }
 
-            switch(result) {
+            switch (result) {
             case SUCCESS:
                 handleNoTileAtZoom();
                 if (attributes != null) {
@@ -215,6 +215,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 break;
             case CANCELED:
                 tile.loadingCanceled();
+                break;
+            default: // This should be removed when we move to Java 17+
                 // do nothing
             }
 

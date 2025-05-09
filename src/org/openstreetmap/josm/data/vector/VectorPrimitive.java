@@ -59,11 +59,6 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
     }
 
     @Override
-    public boolean isTagged() {
-        return (flags & FLAG_TAGGED) != 0;
-    }
-
-    @Override
     public boolean isAnnotated() {
         return this.getInterestingTags().size() - this.getKeys().size() > 0;
     }

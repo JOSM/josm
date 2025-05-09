@@ -608,7 +608,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
-     * Replies the savable state of this layer (i.e., if it can be saved through a "File-&gt;Save" dialog).
+     * Replies the savable state of this layer (i.e., if it can be saved through a "File → Save" dialog).
      * @return true if this layer can be saved to a file
      * @since 5459
      */

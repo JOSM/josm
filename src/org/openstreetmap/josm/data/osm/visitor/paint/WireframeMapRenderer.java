@@ -177,6 +177,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Primiti
                     way.accept(this);
                 }
             }
+            displaySegments();
         }
         displaySegments();
 
@@ -351,18 +352,19 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Primiti
         }
         g.setColor(col);
 
+        Bounds viewArea = mapState.getViewArea().getLatLonBoundsBox();
         for (IRelationMember<?> m : r.getMembers()) {
             if (m.getMember().isIncomplete() || !m.getMember().isDrawable()) {
                 continue;
             }
 
-            if (m.isNode()) {
+            if (m.isNode() && viewArea.contains((INode) m.getMember())) {
                 MapViewPoint p = mapState.getPointFor((INode) m.getMember());
                 if (p.isInView()) {
                     g.draw(new Ellipse2D.Double(p.getInViewX()-4, p.getInViewY()-4, 9, 9));
                 }
 
-            } else if (m.isWay()) {
+            } else if (m.isWay() && viewArea.intersects(m.getMember().getBBox())) {
                 GeneralPath path = new GeneralPath();
 
                 boolean first = true;

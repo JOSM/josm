@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -272,8 +273,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
     protected void displayNotification() {
         new Notification(tr("Your work has been saved automatically."))
-        .setDuration(Notification.TIME_SHORT)
-        .show();
+                .setIcon(ImageProvider.get("save"))
+                .setDuration(Notification.TIME_SHORT)
+                .show();
     }
 
     @Override

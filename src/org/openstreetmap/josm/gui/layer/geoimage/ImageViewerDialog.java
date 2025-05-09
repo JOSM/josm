@@ -88,6 +88,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private final ImageZoomAction imageZoomAction = new ImageZoomAction();
     private final ImageCenterViewAction imageCenterViewAction = new ImageCenterViewAction();
+    private final ImageExtendedInfoAction imageExtendedInfoAction = new ImageExtendedInfoAction();
     private final ImageNextAction imageNextAction = new ImageNextAction();
     private final ImageRemoveAction imageRemoveAction = new ImageRemoveAction();
     private final ImageRemoveFromDiskAction imageRemoveFromDiskAction = new ImageRemoveFromDiskAction();
@@ -103,6 +104,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private final ImageDisplay imgDisplay = new ImageDisplay(imageryFilterSettings);
     private Future<?> imgLoadingFuture;
     private boolean centerView;
+    private boolean extendedImgInfo;
 
     // Only one instance of that class is present at one time
     private static volatile ImageViewerDialog dialog;
@@ -163,6 +165,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private JButton btnOpenExternal;
     private JButton btnDeleteFromDisk;
     private JToggleButton tbCentre;
+    private JToggleButton tbImgExtInfo;
     /** The layer tab (used to select images when multiple layers provide images, makes for easy switching) */
     private final HideableTabbedPane layers = new HideableTabbedPane();
 
@@ -234,6 +237,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         tbCentre.setSelected(centerView);
         tbCentre.setPreferredSize(buttonDim);
 
+        extendedImgInfo = Config.getPref().getBoolean("geoimage.viewer.extendedinfo", false);
+        tbImgExtInfo = new JToggleButton(imageExtendedInfoAction);
+        tbImgExtInfo.setSelected(extendedImgInfo);
+        tbImgExtInfo.setPreferredSize(buttonDim);
+
         JButton btnZoomBestFit = new JButton(imageZoomAction);
         btnZoomBestFit.setPreferredSize(buttonDim);
 
@@ -242,7 +250,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         JPanel buttons = new JPanel();
         addButtonGroup(buttons, this.btnFirst, this.btnPrevious, this.btnNext, this.btnLast);
-        addButtonGroup(buttons, this.tbCentre, btnZoomBestFit);
+        addButtonGroup(buttons, this.tbCentre, btnZoomBestFit, this.tbImgExtInfo);
         addButtonGroup(buttons, this.btnDelete, this.btnDeleteFromDisk);
         addButtonGroup(buttons, this.btnCopyPath, this.btnOpenExternal);
         addButtonGroup(buttons, createButton(visibilityAction, buttonDim));
@@ -583,6 +591,23 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
     }
 
+    private class ImageExtendedInfoAction extends JosmAction {
+        ImageExtendedInfoAction() {
+            super(null, new ImageProvider("info"), tr("Display image extended metadata"), Shortcut.registerShortcut(
+                    "geoimage:extendedinfos", tr(GEOIMAGE_FILLER, tr("Toggle display of extended information")),
+                    KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
+            false, null, false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final JToggleButton button = (JToggleButton) e.getSource();
+            extendedImgInfo = button.isEnabled() && button.isSelected();
+            Config.getPref().putBoolean("geoimage.viewer.extendedinfo", extendedImgInfo);
+            refresh(false);
+        }
+    }
+    
     private class ImageRemoveAction extends JosmAction {
         ImageRemoveAction() {
             super(null, new ImageProvider(DIALOG_FOLDER, "delete"), tr("Remove photo from layer"), Shortcut.registerShortcut(
@@ -892,7 +917,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
             imageChanged = currentEntry != entry;
 
-            if (centerView && entry != null && MainApplication.isDisplayingMapView() && entry.getPos() != null) {
+            if (centerView && imageChanged && entry != null && MainApplication.isDisplayingMapView() && entry.getPos() != null) {
                 MainApplication.getMap().mapView.zoomTo(entry.getPos());
             }
 
@@ -999,20 +1024,49 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         if (entry.getSpeed() != null) {
             osd.append(tr("\nSpeed: {0} km/h", Math.round(entry.getSpeed())));
         }
-        if (entry.getExifImgDir() != null) {
-            osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
-        }
-
         DateTimeFormatter dtf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM)
-                // Set timezone to UTC since UTC is assumed when parsing the EXIF timestamp,
-                // see see org.openstreetmap.josm.tools.ExifReader.readTime(com.drew.metadata.Metadata)
-                .withZone(ZoneOffset.UTC);
-
+                    // Set timezone to UTC since UTC is assumed when parsing the EXIF timestamp,
+                    // see see org.openstreetmap.josm.tools.ExifReader.readTime(com.drew.metadata.Metadata)
+                    .withZone(ZoneOffset.UTC);
         if (entry.hasExifTime()) {
-            osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifInstant())));
+            if (Config.getPref().getBoolean("geoimage.viewer.extendedinfo", false)) {
+                osd.append(tr("\nEXIF DTO time: {0}", dtf.format(entry.getExifInstant())));
+            } else {
+                osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifInstant())));        
+            }
         }
-        if (entry.hasGpsTime()) {
-            osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsInstant())));
+
+        if (Config.getPref().getBoolean("geoimage.viewer.extendedinfo", false)) {
+            if (entry.getExifGpsInstant() != null) {
+                osd.append(tr("\nEXIF GPS time: {0}", dtf.format(entry.getExifGpsInstant())));
+            }
+            if (entry.hasGpsTime()) {
+                osd.append(tr("\nCorr GPS time: {0}", dtf.format(entry.getGpsInstant())));
+            }            
+            if (entry.getExifImgDir() != null) {
+                osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
+            }
+            if (entry.getExifGpsTrack() != null) {
+                osd.append(tr("\nGPS direction: {0}\u00b0", Math.round(entry.getExifGpsTrack())));
+            }
+            if (entry.getExifHPosErr() != null) {
+                osd.append(tr("\nHpos errror: {0}m", entry.getExifHPosErr()));
+            }
+            if (entry.getGps2d3dMode() != null) {
+                osd.append(tr("\n2d/3d mode: {0}d", entry.getGps2d3dMode()));
+            }
+            if (entry.getGpsDiffMode() != null) {
+                osd.append(tr("\nDifferential: {0}", entry.getGpsDiffMode()));
+            }
+            if (entry.getExifGpsDop() != null) {
+                osd.append(tr("\nDOP: {0}", entry.getExifGpsDop()));
+            }
+            if (entry.getExifGpsDatum() != null) {
+                osd.append(tr("\nDatum: {0}", entry.getExifGpsDatum().toString()));
+            }
+            if (entry.getExifGpsProcMethod() != null) {
+                osd.append(tr("\nProc. method: {0}", entry.getExifGpsProcMethod().toString()));
+            }
         }
         Optional.ofNullable(entry.getIptcCaption()).map(s -> tr("\nCaption: {0}", s)).ifPresent(osd::append);
         Optional.ofNullable(entry.getIptcHeadline()).map(s -> tr("\nHeadline: {0}", s)).ifPresent(osd::append);
@@ -1145,6 +1199,19 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
     }
 
+    /**
+     * Reload the image or reload only the image info. Call this if want to update the OSD.
+     * @param imageChanged reload the image if true. Reload only the OSD if false.
+     * @since 19387
+     */
+    public void refresh(boolean imageChanged) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            this.updateButtonsNonNullEntry(currentEntry, imageChanged);
+        } else {
+            GuiHelper.runInEDT(this::refresh);
+        }
+    }
+    
     private void registerOnLayer(Layer layer) {
         if (layer instanceof IGeoImageLayer) {
             layer.addPropertyChangeListener(l -> {

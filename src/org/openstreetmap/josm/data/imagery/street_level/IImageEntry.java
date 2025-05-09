@@ -219,12 +219,68 @@ public interface IImageEntry<I extends IImageEntry<I>> {
     Double getElevation();
 
     /**
+     * Return the GPS Differential mode value. The differential mode value from the temporary
+     * copy is returned if that copy exists. 
+     * @return the fix mode value
+     * @since 19387
+     */
+    Integer getGpsDiffMode();
+
+    /**
+     * Return the GPS 2d/3d mode value. The 2d/3d mode value from the temporary
+     * copy is returned if that copy exists.
+     * @return the 2d/3d mode value
+     * @since 19387
+     */
+    Integer getGps2d3dMode();
+
+    /**
+     * Return the GPS DOP value. The GPS DOP value from the temporary
+     * copy is return if that copy exists.
+     * @return the GPS DOP value
+     * @since 19387
+     */
+    Double getExifGpsDop();
+
+    /**
+     * Return the GPS datum value. The GPS datum value from the temporary
+     * copy is return if that copy exists. 
+     * @return the GPS datum value
+     * @since 19387
+     */
+    String getExifGpsDatum();
+
+    /**
+     * Return the GPS processing method. The processing method value from the temporary
+     * copy is return if that copy exists.
+     * @return the GPS processing method
+     * @since 19387
+     */
+    String getExifGpsProcMethod();
+
+    /**
      * Returns the image direction. The image direction from the temporary
      * copy is returned if that copy exists.
      * @return The image camera angle
      */
     Double getExifImgDir();
+    
+    /**
+     * Returns the image GPS track direction. The GPS track direction from the temporary
+     * copy is returned if that copy exists.
+     * @return the image GPS track direction angle
+     * @since 19387
+     */
+    Double getExifGpsTrack();
 
+    /**
+     * Returns the image horizontal positionning error. The image positionning error
+     * from the temporary copy is returned if that copy exists.
+     * @return the image horizontal positionning error
+     * @since 19387
+     */
+    Double getExifHPosErr();
+    
     /**
      * Convenient way to determine if this entry has a EXIF time, without the cost of building a defensive copy.
      * @return {@code true} if this entry has a EXIF time
@@ -250,6 +306,14 @@ public interface IImageEntry<I extends IImageEntry<I>> {
      * @return the GPS time value
      */
     Instant getGpsInstant();
+
+    /**
+     * Returns the Exif GPS Time value. The Exif GPS time value from the temporary copy
+     * is returned if that copy exists.
+     * @return the Exif GPS time value
+     * @since 19387
+     */
+    Instant getExifGpsInstant();
 
     /**
      * Returns the IPTC caption.

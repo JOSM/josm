@@ -15,6 +15,7 @@ import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -33,7 +34,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class ConflictResolutionDialog extends ExtendedDialog implements PropertyChangeListener {
     /** the conflict resolver component */
     private final ConflictResolver resolver = new ConflictResolver();
-    private final JLabel titleLabel = new JLabel("", null, JLabel.CENTER);
+    private final JLabel titleLabel = new JLabel("", null, SwingConstants.CENTER);
 
     private final ApplyResolutionAction applyResolutionAction = new ApplyResolutionAction();
 
@@ -195,11 +196,9 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
                         options,
                         options[1]
                 );
-                switch(ret) {
-                case JOptionPane.YES_OPTION:
+                if (ret == JOptionPane.YES_OPTION) {
                     buttonAction(1, evt);
-                    break;
-                default:
+                } else {
                     return;
                 }
             }

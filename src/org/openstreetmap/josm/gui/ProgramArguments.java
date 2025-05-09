@@ -36,6 +36,8 @@ public class ProgramArguments {
         VERSION(false),
         /** {@code --status-report} Show status report with useful information that can be attached to bugs */
         STATUS_REPORT(false),
+        /** --warn                                     Print only warning messages to console */
+        WARN(false),
         /** --debug                                    Print debugging messages to console */
         DEBUG(false),
         /** --trace                                    Print detailed debugging messages to console */
@@ -186,6 +188,8 @@ public class ProgramArguments {
             return Logging.LEVEL_TRACE;
         } else if (hasOption(Option.DEBUG)) {
             return Logging.LEVEL_DEBUG;
+        } else if (hasOption(Option.WARN)) {
+            return Logging.LEVEL_WARN;
         } else {
             return Logging.LEVEL_INFO;
         }

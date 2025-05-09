@@ -7,6 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A popup menu designed for text components. It displays the following actions:
@@ -97,10 +99,22 @@ public class TextContextualPopupMenu extends JPopupMenu {
         if (!undoRedo) {
             component.getDocument().addUndoableEditListener(undoEditListener);
             if (!GraphicsEnvironment.isHeadless()) {
-                component.getInputMap().put(
-                        KeyStroke.getKeyStroke(KeyEvent.VK_Z, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), undoAction);
-                component.getInputMap().put(
-                        KeyStroke.getKeyStroke(KeyEvent.VK_Y, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), redoAction);
+                final Optional<Shortcut> undoShortcut = Shortcut.listAll().stream()
+                        .filter(shortcut -> "system:undo".equals(shortcut.getShortText())).findFirst();
+                final Optional<Shortcut> redoShortcut = Shortcut.listAll().stream()
+                        .filter(shortcut -> "system:redo".equals(shortcut.getShortText())).findFirst();
+                if (undoShortcut.isPresent()) {
+                    component.getInputMap().put(undoShortcut.get().getKeyStroke(), undoAction);
+                } else {
+                    component.getInputMap().put(
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Z, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), undoAction);
+                }
+                if (redoShortcut.isPresent()) {
+                    component.getInputMap().put(redoShortcut.get().getKeyStroke(), redoAction);
+                } else {
+                    component.getInputMap().put(
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Y, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), redoAction);
+                }
             }
             undoRedo = true;
         }

@@ -136,7 +136,7 @@ public class JoinAreasAction extends JosmAction {
     }
 
     // HelperClass
-    // Saves a relation and a role an OsmPrimitve was part of until it was stripped from all relations
+    // Saves a relation and a role an OsmPrimitive was part of until it was stripped from all relations
     private static class RelationRole {
         public final Relation rel;
         public final String role;
@@ -539,6 +539,7 @@ public class JoinAreasAction extends JosmAction {
                     ways.size()) + "<br/>"
                     + tr("This can lead to nodes being deleted accidentally.") + "<br/>"
                     + tr("Are you really sure to continue?")
+                    + ' '
                     + tr("Please abort if you are not sure"),
                 tr("The selected area is incomplete. Continue?"),
                 allNodes, null);
@@ -672,7 +673,7 @@ public class JoinAreasAction extends JosmAction {
             commitCommands(marktr("Removed duplicate nodes"));
             // remove now unconnected nodes without tags
             List<Node> toRemove = oldNodes.stream().filter(
-                    n -> (n.isNew() || !n.isOutsideDownloadArea()) && !n.hasKeys() && n.getReferrers().isEmpty())
+                    n -> n.isReferrersDownloaded() && !n.hasKeys() && n.getReferrers().isEmpty())
                     .collect(Collectors.toList());
             if (!toRemove.isEmpty()) {
                 cmds.add(new DeleteCommand(toRemove));
@@ -897,7 +898,7 @@ public class JoinAreasAction extends JosmAction {
      * @param description The description of what the commands do
      */
     private void commitCommands(String description) {
-        switch(cmds.size()) {
+        switch (cmds.size()) {
         case 0:
             return;
         case 1:

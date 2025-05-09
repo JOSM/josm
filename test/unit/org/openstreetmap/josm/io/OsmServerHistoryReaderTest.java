@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -16,8 +17,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-
 /**
  * Unit tests of {@link OsmServerHistoryReader} class.
  */
@@ -26,17 +25,11 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @HTTP
 class OsmServerHistoryReaderTest {
     /**
-     * HTTP mock.
-     */
-    @BasicWiremock
-    WireMockServer wireMockServer;
-
-    /**
      * Setup tests.
      */
     @BeforeEach
-    void setUp() {
-        Config.getPref().put("osm-server.url", wireMockServer.url("/__files/api"));
+    void setUp(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        Config.getPref().put("osm-server.url", wireMockRuntimeInfo.getHttpBaseUrl() + "/__files/api");
     }
 
     /**

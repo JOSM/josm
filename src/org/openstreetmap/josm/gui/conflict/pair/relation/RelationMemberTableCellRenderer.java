@@ -124,7 +124,7 @@ public class RelationMemberTableCellRenderer extends JLabel implements TableCell
         } else {
             renderBackground(getModel(table), member, row, column, isSelected);
             renderForeground(getModel(table), member, row, column, isSelected);
-            switch(column) {
+            switch (column) {
             case 0:
                 renderRowId(row);
                 break;

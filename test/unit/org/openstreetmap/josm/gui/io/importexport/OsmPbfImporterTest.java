@@ -23,8 +23,10 @@ import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.protobuf.ProtobufTest;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -158,4 +160,56 @@ class OsmPbfImporterTest {
         // the data doesn't include any "real" data, but the problematic code path is exercised by the header parsing code.
         assertDoesNotThrow(() -> importer.parseDataSet(new ByteArrayInputStream(badData), NullProgressMonitor.INSTANCE));
     }
+
+    @Test
+    void testNonRegression23599a() throws IOException, IllegalDataException {
+        final DataSet dataSet;
+        try (InputStream inputStream = TestUtils.getRegressionDataStream(23599, "visible.osm.pbf")) {
+            dataSet = importer.parseDataSet(inputStream, NullProgressMonitor.INSTANCE);
+        }
+        assertTrue(dataSet.getNodes().stream().allMatch(OsmPrimitive::isVisible));
+        assertTrue(dataSet.getWays().stream().allMatch(OsmPrimitive::isVisible));
+        assertTrue(dataSet.getRelations().stream().allMatch(OsmPrimitive::isVisible));
+
+    }
+
+    @Test
+    void testNonRegression23599b() throws IOException, IllegalDataException {
+        final DataSet dataSet;
+        // osmconvert w1194668585.orig.osm -o=w1194668585.full.osm.pbf
+        try (InputStream inputStream = TestUtils.getRegressionDataStream(23599, "w1194668585.full.osm.pbf")) {
+            dataSet = importer.parseDataSet(inputStream, NullProgressMonitor.INSTANCE);
+        }
+        assertNotNull(dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY));
+        assertEquals(145987123, dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY).getChangesetId());
+        assertEquals(4, dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY).getVersion());
+        assertEquals(UploadPolicy.NORMAL, dataSet.getUploadPolicy());
+    }
+
+    @Test
+    void testNonRegression23599c() throws IOException, IllegalDataException {
+        final DataSet dataSet;
+        // osmconvert --drop-author w1194668585.orig.osm -o=w1194668585.full.osm.pbf
+        try (InputStream inputStream = TestUtils.getRegressionDataStream(23599, "w1194668585.drop-author.osm.pbf")) {
+            dataSet = importer.parseDataSet(inputStream, NullProgressMonitor.INSTANCE);
+        }
+        assertNotNull(dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY));
+        assertEquals(0, dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY).getChangesetId());
+        assertEquals(4, dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY).getVersion());
+        assertEquals(UploadPolicy.NORMAL, dataSet.getUploadPolicy());
+    }
+
+    @Test
+    void testNonRegression23599d() throws IOException, IllegalDataException {
+        final DataSet dataSet;
+        // osmconvert --drop-version w1194668585.orig.osm -o=w1194668585.full.osm.pbf
+        try (InputStream inputStream = TestUtils.getRegressionDataStream(23599, "w1194668585.drop-version.osm.pbf")) {
+            dataSet = importer.parseDataSet(inputStream, NullProgressMonitor.INSTANCE);
+        }
+        assertNotNull(dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY));
+        assertEquals(0, dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY).getChangesetId());
+        assertEquals(0, dataSet.getPrimitiveById(1194668585L, OsmPrimitiveType.WAY).getVersion());
+        assertEquals(UploadPolicy.DISCOURAGED, dataSet.getUploadPolicy());
+    }
+
 }

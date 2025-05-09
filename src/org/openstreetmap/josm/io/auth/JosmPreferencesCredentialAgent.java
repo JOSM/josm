@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.json.JsonException;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.data.oauth.IOAuthToken;
@@ -23,6 +22,8 @@ import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.json.JsonException;
 
 /**
  * This is the default credentials agent in JOSM. It keeps username and password for both
@@ -40,7 +41,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             return null;
         String user;
         String password;
-        switch(requestorType) {
+        switch (requestorType) {
         case SERVER:
             if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
                 user = Config.getPref().get("osm-server.username", null);
@@ -72,7 +73,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
     public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
         if (requestorType == null)
             return;
-        switch(requestorType) {
+        switch (requestorType) {
         case SERVER:
             if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
                 Config.getPref().put("osm-server.username", credentials.getUserName());
@@ -113,7 +114,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             }
             String token = Config.getPref().get(hostKey, null);
             String parameters = Config.getPref().get(parametersKey, null);
-            if (!Utils.isBlank(token) && !Utils.isBlank(parameters) && OAuthVersion.OAuth20 == oauthType) {
+            if (!Utils.isStripEmpty(token) && !Utils.isStripEmpty(parameters) && OAuthVersion.OAuth20 == oauthType) {
                 try {
                     OAuth20Parameters oAuth20Parameters = new OAuth20Parameters(parameters);
                     return new OAuth20Token(oAuth20Parameters, token);

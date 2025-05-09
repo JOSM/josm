@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import javax.swing.JLabel;
 import java.awt.Component;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.tools.Logging;
-
-import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Unit tests of {@link ApiUrlTestTask} class.
@@ -30,13 +30,15 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @BasicWiremock
 @HTTP
 class ApiUrlTestTaskTest {
-    /**
-     * HTTP mock.
-     */
-    @BasicWiremock
-    WireMockServer wireMockServer;
+    private WireMockRuntimeInfo wireMockServer;
+
 
     private static final Component PARENT = new JLabel();
+
+    @BeforeEach
+    void setup(WireMockRuntimeInfo wireMockServer) {
+        this.wireMockServer = wireMockServer;
+    }
 
     /**
      * Unit test of {@link ApiUrlTestTask#ApiUrlTestTask} - null url.
@@ -51,7 +53,7 @@ class ApiUrlTestTaskTest {
      */
     @Test
     void testNominalUrl() {
-        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, wireMockServer.url("/__files/api"));
+        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, wireMockServer.getHttpBaseUrl() + "/__files/api");
         task.run();
         assertTrue(task.isSuccess());
     }
@@ -88,10 +90,10 @@ class ApiUrlTestTaskTest {
     @Test
     void testAlertInvalidServerResult() {
         Logging.clearLastErrorAndWarnings();
-        wireMockServer.stubFor(get(urlEqualTo("/does-not-exist/0.6/capabilities"))
+        wireMockServer.getWireMock().register(get(urlEqualTo("/does-not-exist/0.6/capabilities"))
                 .willReturn(aResponse().withStatus(404)));
 
-        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, wireMockServer.url("/does-not-exist"));
+        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, wireMockServer.getHttpBaseUrl() + "/does-not-exist");
         task.run();
         assertFalse(task.isSuccess());
         assertThat(Logging.getLastErrorAndWarnings().toString(), containsString(
@@ -104,11 +106,12 @@ class ApiUrlTestTaskTest {
     @Test
     void testAlertInvalidCapabilities() {
         Logging.clearLastErrorAndWarnings();
-        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, wireMockServer.url("/__files/invalid_api"));
+        final String url = wireMockServer.getHttpBaseUrl() + "/__files/invalid_api";
+        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, url);
         task.run();
         assertFalse(task.isSuccess());
         assertThat(Logging.getLastErrorAndWarnings().toString(), containsString(
                 "The OSM API server at 'XXX' did not return a valid response.<br>It is likely that 'XXX' is not an OSM API server."
-                        .replace("XXX", wireMockServer.url("/__files/invalid_api"))));
+                        .replace("XXX", url)));
     }
 }

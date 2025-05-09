@@ -94,6 +94,16 @@ public class GenericRelationEditorTest {
             }
 
             @Override
+            public boolean isDirtyRelation(boolean ignoreUninterestingTags) {
+                return false;
+            }
+
+            @Override
+            public boolean isDirtyEditor() {
+                return false;
+            }
+
+            @Override
             public Relation getRelationSnapshot() {
                 return r;
             }
@@ -323,9 +333,9 @@ public class GenericRelationEditorTest {
         return (T) current;
     }
 
-    private static class PasteMembersActionMock extends MockUp<PasteMembersAction> {
+    private static final class PasteMembersActionMock extends MockUp<PasteMembersAction> {
         @Mock
-        protected void updateEnabledState() {
+        public void updateEnabledState() {
             // Do nothing
         }
     }

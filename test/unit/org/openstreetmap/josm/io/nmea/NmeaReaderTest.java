@@ -63,6 +63,26 @@ class NmeaReaderTest {
         assertNull(wayPoints.get(0).get(GpxConstants.PT_PDOP));
     }
 
+    /**
+     * Tests reading a nmea file with GST sentences.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    void testReader2() throws Exception {
+        final NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get("nodist/data/btnmea_GST.nmea")));
+        in.parse(true);
+        assertEquals(9, in.getNumberOfCoordinates());
+        assertEquals(0, in.getParserMalformed());
+
+        final List<WayPoint> wayPoints = new ArrayList<>(in.data.tracks.iterator().next().getSegments().iterator().next().getWayPoints());
+        assertEquals("43.294", wayPoints.get(0).get(GpxConstants.PT_ELE));
+        assertEquals("12", wayPoints.get(0).get(GpxConstants.PT_SAT));
+        assertEquals("rtk", wayPoints.get(0).get(GpxConstants.PT_FIX));
+        assertEquals("0.52", wayPoints.get(0).get(GpxConstants.PT_HDOP).toString().trim());
+        assertEquals("0.78", wayPoints.get(0).get(GpxConstants.PT_VDOP).toString().trim());
+        assertEquals("0.94", wayPoints.get(0).get(GpxConstants.PT_PDOP).toString().trim());
+    }
+    
     private static void compareWithReference(int ticket, String filename, int numCoor) throws IOException, SAXException {
         GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getRegressionDataFile(ticket, filename+".gpx"));
         NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get(TestUtils.getRegressionDataFile(ticket, filename+".nmea"))));

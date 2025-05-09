@@ -3,6 +3,7 @@ package org.openstreetmap.josm.command;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -18,7 +19,6 @@ import org.openstreetmap.josm.testutils.annotations.I18n;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link Command} class.
@@ -89,6 +89,7 @@ public class CommandTest {
             node.setOsmId(id, 1);
             node.setCoor(LatLon.ZERO);
             node.put("existing", "existing");
+            node.setReferrersDownloaded(true);
             layer.data.addPrimitive(node);
             return node;
         }
@@ -99,11 +100,12 @@ public class CommandTest {
          * @param nodes The nodes
          * @return The way.
          */
-        public Way createWay(int id, Node...nodes) {
+        public Way createWay(int id, Node... nodes) {
             Way way = new Way();
             way.setOsmId(id, 1);
             way.setNodes(Arrays.asList(nodes));
             way.put("existing", "existing");
+            way.setReferrersDownloaded(true);
             layer.data.addPrimitive(way);
             return way;
         }
@@ -114,12 +116,13 @@ public class CommandTest {
          * @param members The members
          * @return The relation.
          */
-        public Relation createRelation(int id, RelationMember...members) {
+        public Relation createRelation(int id, RelationMember... members) {
             Relation relation = new Relation(id, 1);
             for (RelationMember member : members) {
                 relation.addMember(member);
             }
             relation.put("existing", "existing");
+            relation.setReferrersDownloaded(true);
             layer.data.addPrimitive(relation);
             return relation;
         }

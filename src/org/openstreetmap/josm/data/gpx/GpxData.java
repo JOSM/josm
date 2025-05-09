@@ -101,14 +101,16 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
     private final Map<String, String> layerPrefs = new HashMap<>();
 
     private final GpxTrackChangeListener proxy = e -> invalidate();
-    private boolean modified, updating, initializing;
+    private boolean modified;
+    private boolean updating;
+    private boolean initializing;
     private boolean suppressedInvalidate;
 
     /**
      * Tracks. Access is discouraged, use {@link #getTracks()} to read.
      * @see #getTracks()
      */
-    public final Collection<IGpxTrack> tracks = new ListeningCollection<IGpxTrack>(privateTracks, this::invalidate) {
+    public final Collection<IGpxTrack> tracks = new ListeningCollection<>(privateTracks, this::invalidate) {
 
         @Override
         protected void removed(IGpxTrack cursor) {
@@ -417,8 +419,8 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
             } else {
                 OptionalLong i1 = getTrackFirstWaypointMin(t1);
                 OptionalLong i2 = getTrackFirstWaypointMin(t2);
-                boolean i1absent = !i1.isPresent();
-                boolean i2absent = !i2.isPresent();
+                boolean i1absent = i1.isEmpty();
+                boolean i2absent = i2.isEmpty();
                 if (i1absent && i2absent) {
                     return 0;
                 } else if (i1absent && !i2absent) {
@@ -536,7 +538,7 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
             .flatMap(trk -> trk.getSegments().stream().map(seg -> {
                     HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
                     ensureUniqueName(attrs, counts, srcLayerName);
-                    return new GpxTrack(Arrays.asList(seg), attrs);
+                    return new GpxTrack(Collections.singletonList(seg), attrs);
                 }))
             .collect(Collectors.toCollection(ArrayList<GpxTrack>::new));
 
@@ -547,7 +549,7 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
     /**
      * Split tracks into layers, the result is one layer for each track.
      * If this layer currently has only one GpxTrack this is a no-operation.
-     *
+     * <p>
      * The new GpxLayers are added to the LayerManager, the original GpxLayer
      * is untouched as to preserve potential route or wpt parts.
      *
@@ -1257,7 +1259,8 @@ public class GpxData extends WithAttributes implements Data, IGpxLayerPrefs {
      * @since 15496
      */
     public static class XMLNamespace {
-        private final String uri, prefix;
+        private final String uri;
+        private final String prefix;
         private String location;
 
         /**

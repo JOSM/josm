@@ -35,7 +35,7 @@ public enum OnlineResource {
      * Replies the localized name.
      * @return the localized name
      */
-    public final String getLocName() {
+    public String getLocName() {
         return locName;
     }
 
@@ -44,7 +44,7 @@ public enum OnlineResource {
      * @return the offline icon
      * @since 17041
      */
-    public final String getOfflineIcon() {
+    public String getOfflineIcon() {
         switch (this) {
             case OSM_API:
                 return /* ICON() */ "offline_osm_api";
@@ -56,9 +56,8 @@ public enum OnlineResource {
                 return /* ICON() */ "offline_certificates";
             case ALL:
                 return /* ICON() */ "offline_all";
-            default:
-                return null;
         }
+        return null;
     }
 
     /**
@@ -66,7 +65,7 @@ public enum OnlineResource {
      * @param url the URL to check
      * @return whether the given URL matches this online resource
      */
-    public final boolean matches(String url) {
+    public boolean matches(String url) {
         final String baseUrl;
         switch (this) {
             case ALL:

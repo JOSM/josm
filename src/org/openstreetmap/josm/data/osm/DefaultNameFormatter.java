@@ -225,9 +225,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 preset.nameTemplate.appendText(name, (TemplateEngineDataProvider) node);
             }
             if (node.isLatLonKnown() && Boolean.TRUE.equals(PROPERTY_SHOW_COOR.get())) {
-                name.append(" \u200E(");
-                name.append(CoordinateFormatManager.getDefaultFormat().toString(node, ", "));
-                name.append(")\u200C");
+                name.append(" \u200E(")
+                    .append(CoordinateFormatManager.getDefaultFormat().toString(node, ", "))
+                    .append(")\u200C");
             }
         }
         decorateNameWithId(name, node);

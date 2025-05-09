@@ -10,10 +10,12 @@ import java.net.URL;
 import org.junit.jupiter.api.Test;
 
 import jakarta.json.Json;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link PlatformHook} class.
  */
+@IntegrationTest
 class PlatformHookTestIT {
     /**
      * Test that we always support the latest Ubuntu version.

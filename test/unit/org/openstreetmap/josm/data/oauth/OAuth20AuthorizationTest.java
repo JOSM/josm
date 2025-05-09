@@ -16,11 +16,25 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.data.oauth.osm.OsmScopes;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
+import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.mockers.OpenBrowserMocker;
+import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
+
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.extension.Parameters;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.ResponseTransformerV2;
 import com.github.tomakehurst.wiremock.http.FixedDelayDistribution;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
@@ -32,22 +46,9 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.AnythingPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import mockit.Mock;
 import mockit.MockUp;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.data.oauth.osm.OsmScopes;
-import org.openstreetmap.josm.data.preferences.JosmUrls;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-import org.openstreetmap.josm.testutils.annotations.HTTP;
-import org.openstreetmap.josm.testutils.mockers.OpenBrowserMocker;
-import org.openstreetmap.josm.tools.HttpClient;
-import org.openstreetmap.josm.tools.Logging;
 
 @BasicPreferences
 @HTTP
@@ -69,11 +70,13 @@ class OAuth20AuthorizationTest {
         SOCKET_TIMEOUT
     }
 
-    private static class OAuthServerWireMock extends ResponseTransformer {
+    private static final class OAuthServerWireMock implements ResponseTransformerV2 {
         String stateToReturn;
         ConnectionProblems connectionProblems = ConnectionProblems.NONE;
+
         @Override
-        public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
+        public Response transform(Response response, ServeEvent serveEvent) {
+            final var request = serveEvent.getRequest();
             try {
                 if (request.getUrl().startsWith("/oauth2/authorize")) {
                     return authorizationRequest(request, response);
@@ -157,10 +160,10 @@ class OAuth20AuthorizationTest {
 
     /**
      * Set up the default wiremock information
-     * @param wireMockRuntimeInfo The info to set up
      */
     @BeforeEach
-    void setupWireMock(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    void setupWireMock() {
+        final WireMockRuntimeInfo wireMockRuntimeInfo = wml.getRuntimeInfo();
         Config.getPref().put("osm-server.url", wireMockRuntimeInfo.getHttpBaseUrl() + "/api/");
         new MockUp<JosmUrls>() {
             @Mock
@@ -188,15 +191,16 @@ class OAuth20AuthorizationTest {
         authorization.authorize(new OAuth20Parameters(CLIENT_ID_VALUE, parameters.getClientSecret(),
                 wireMockRuntimeInfo.getHttpBaseUrl() + "/oauth2", wireMockRuntimeInfo.getHttpBaseUrl() + "/api",
                 parameters.getRedirectUri()), consumer::set, OsmScopes.read_gpx);
+        GuiHelper.runInEDTAndWait(() -> { /* Sync EDT thread */ });
         assertEquals(1, OpenBrowserMocker.getCalledURIs().size());
         final URL url = assertDoesNotThrow(() -> OpenBrowserMocker.getCalledURIs().get(0).toURL());
         return HttpClient.create(url);
     }
 
     @Test
-    void testAuthorize(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+    void testAuthorize() throws IOException {
         final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
-        final HttpClient client = generateClient(wireMockRuntimeInfo, consumer);
+        final HttpClient client = generateClient(wml.getRuntimeInfo(), consumer);
         try {
             HttpClient.Response response = client.connect();
             assertEquals(200, response.getResponseCode());
@@ -211,10 +215,10 @@ class OAuth20AuthorizationTest {
     }
 
     @Test
-    void testAuthorizeBadState(WireMockRuntimeInfo wireMockRuntimeInfo) throws IOException {
+    void testAuthorizeBadState() throws IOException {
         oauthServer.stateToReturn = "Bad_State";
         final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
-        final HttpClient client = generateClient(wireMockRuntimeInfo, consumer);
+        final HttpClient client = generateClient(wml.getRuntimeInfo(), consumer);
         try {
             HttpClient.Response response = client.connect();
             assertEquals(400, response.getResponseCode());
@@ -227,14 +231,14 @@ class OAuth20AuthorizationTest {
     }
 
     @Test
-    void testSocketTimeout(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void testSocketTimeout() throws Exception {
         // 1s before timeout
         Config.getPref().putInt("socket.timeout.connect", 1);
         Config.getPref().putInt("socket.timeout.read", 1);
         oauthServer.connectionProblems = ConnectionProblems.SOCKET_TIMEOUT;
 
         final AtomicReference<Optional<IOAuthToken>> consumer = new AtomicReference<>();
-        final HttpClient client = generateClient(wireMockRuntimeInfo, consumer)
+        final HttpClient client = generateClient(wml.getRuntimeInfo(), consumer)
                 .setConnectTimeout(15_000).setReadTimeout(30_000);
         try {
             HttpClient.Response response = client.connect();

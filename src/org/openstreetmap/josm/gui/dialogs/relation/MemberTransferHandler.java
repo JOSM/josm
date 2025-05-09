@@ -100,7 +100,7 @@ public class MemberTransferHandler extends TransferHandler {
             throws UnsupportedFlavorException, IOException {
         final RelationMemberTransferable.Data memberData = (RelationMemberTransferable.Data)
                 support.getTransferable().getTransferData(RelationMemberTransferable.RELATION_MEMBER_DATA);
-        importData(destination, insertRow, memberData.getRelationMemberData(), new AbstractRelationMemberConverter<RelationMemberData>() {
+        importData(destination, insertRow, memberData.getRelationMemberData(), new AbstractRelationMemberConverter<>() {
             @Override
             protected RelationMember getMember(MemberTable destination, RelationMemberData data, OsmPrimitive p) {
                 return new RelationMember(data.getRole(), p);
@@ -112,7 +112,7 @@ public class MemberTransferHandler extends TransferHandler {
             throws UnsupportedFlavorException, IOException {
         final PrimitiveTransferData data = (PrimitiveTransferData)
                 support.getTransferable().getTransferData(PrimitiveTransferData.DATA_FLAVOR);
-        importData(destination, insertRow, data.getDirectlyAdded(), new AbstractRelationMemberConverter<PrimitiveData>() {
+        importData(destination, insertRow, data.getDirectlyAdded(), new AbstractRelationMemberConverter<>() {
             @Override
             protected RelationMember getMember(MemberTable destination, PrimitiveData data, OsmPrimitive p) {
                 return destination.getMemberTableModel().getRelationMemberForPrimitive(p);

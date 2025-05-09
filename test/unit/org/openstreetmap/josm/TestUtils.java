@@ -495,7 +495,7 @@ public final class TestUtils {
     public static void assumeWorkingEqualsVerifier() {
         // See https://github.com/raphw/byte-buddy/blob/master/byte-buddy-dep/src/main/java/net/bytebuddy/ClassFileVersion.java
         // for currently supported Java versions.
-        if (Utils.getJavaVersion() >= 19) {
+        if (Utils.getJavaVersion() >= 22) {
             // Byte Buddy often supports new class file versions for current EA releases if its experimental flag is set to true
             System.setProperty("net.bytebuddy.experimental", "true");
         } else {
@@ -591,8 +591,8 @@ public final class TestUtils {
                 FileInputStream streamB = new FileInputStream(fileB);
             ) {
                 assertArrayEquals(
-                    Utils.readBytesFromStream(streamA),
-                    Utils.readBytesFromStream(streamB)
+                    streamA.readAllBytes(),
+                    streamB.readAllBytes()
                 );
             }
         } catch (IOException e) {

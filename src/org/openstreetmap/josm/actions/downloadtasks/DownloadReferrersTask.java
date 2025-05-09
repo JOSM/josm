@@ -123,6 +123,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
 
         DataSetMerger visitor = new DataSetMerger(targetLayer.getDataSet(), parents);
         visitor.merge();
+        this.children.stream().map(p -> targetLayer.getDataSet().getPrimitiveById(p))
+                .forEach(p -> p.setReferrersDownloaded(true));
+
         SwingUtilities.invokeLater(targetLayer::onPostDownloadFromServer);
         if (visitor.getConflicts().isEmpty())
             return;
@@ -171,7 +174,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                         return;
                     String msg;
                     String id = Long.toString(p.getUniqueId());
-                    switch(p.getType()) {
+                    switch (p.getType()) {
                     case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i, children.size(), id); break;
                     case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i, children.size(), id); break;
                     case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i, children.size(), id); break;

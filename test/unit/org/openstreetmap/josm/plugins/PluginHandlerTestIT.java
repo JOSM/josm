@@ -41,9 +41,12 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Plugins;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.testutils.annotations.ThreadSync;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -53,10 +56,13 @@ import org.openstreetmap.josm.tools.Utils;
  */
 @BasicPreferences
 @HTTPS
+@IntegrationTest
 @Main
 @Projection
 @Territories
 @Timeout(value = 10, unit = TimeUnit.MINUTES)
+@ThreadSync
+@Plugins
 public class PluginHandlerTestIT {
 
     private static final List<String> errorsToIgnore = new ArrayList<>();
@@ -243,18 +249,6 @@ public class PluginHandlerTestIT {
             if (deprecatedPlugins.contains(pi.name) || uncooperatingPlugins.contains(pi.name)) {
                 System.out.println("Ignoring " + pi.name + " (deprecated, unmaintained, or uncooperative)");
                 it.remove();
-            }
-        }
-
-        // On Java < 11 and headless mode, filter plugins requiring JavaFX as Monocle is not available
-        int javaVersion = Utils.getJavaVersion();
-        if (GraphicsEnvironment.isHeadless() && javaVersion < 11) {
-            for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
-                PluginInformation pi = it.next();
-                if (pi.getRequiredPlugins().contains("javafx")) {
-                    System.out.println("Ignoring " + pi.name + " (requiring JavaFX and we're using Java < 11 in headless mode)");
-                    it.remove();
-                }
             }
         }
 

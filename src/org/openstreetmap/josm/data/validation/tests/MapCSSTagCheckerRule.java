@@ -150,9 +150,9 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
                         check.deletion = true;
                     } else if (val != null && "suggestAlternative".equals(ai.key)) {
                         check.alternatives.add(val);
-                    } else if (val != null && "assertMatch".equals(ai.key)) {
+                    } else if (val != null && "assertMatch".equals(ai.key) && !assertions.containsKey(val)) {
                         assertions.put(val, Boolean.TRUE);
-                    } else if (val != null && "assertNoMatch".equals(ai.key)) {
+                    } else if (val != null && "assertNoMatch".equals(ai.key) && !assertions.containsKey(val)) {
                         assertions.put(val, Boolean.FALSE);
                     } else if (val != null && "group".equals(ai.key)) {
                         check.group = val;

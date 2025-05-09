@@ -182,7 +182,7 @@ class NotificationManager {
         pauseTimer.restart();
     }
 
-    private class PauseFinishedEvent implements ActionListener {
+    private final class PauseFinishedEvent implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -193,7 +193,7 @@ class NotificationManager {
         }
     }
 
-    private class UnfreezeEvent implements ActionListener {
+    private final class UnfreezeEvent implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {

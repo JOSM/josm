@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.tools.HttpClient;
 
 /**
@@ -16,6 +18,8 @@ import org.openstreetmap.josm.tools.HttpClient;
  * See <a href="https://josm.openstreetmap.de/wiki/ImageryCompare">JOSM wiki</a>
  */
 @BasicPreferences
+@FunctionalTest
+@IntegrationTest
 @Timeout(60)
 class ImageryCompareTestIT {
 

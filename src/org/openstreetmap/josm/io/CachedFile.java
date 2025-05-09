@@ -242,7 +242,7 @@ public class CachedFile implements Closeable {
      * @throws IOException in case of an I/O error
      */
     public byte[] getByteContent() throws IOException {
-        return Utils.readBytesFromStream(getInputStream());
+        return getInputStream().readAllBytes();
     }
 
     /**
@@ -315,8 +315,10 @@ public class CachedFile implements Closeable {
      * file in the ZIP file.
      */
     public String findZipEntryPath(String extension, String namepart) {
-        Pair<String, InputStream> ze = findZipEntryImpl(extension, namepart);
+        Pair<String, Pair<ZipFile, InputStream>> ze = findZipEntryImpl(extension, namepart);
         if (ze == null) return null;
+        Utils.close(ze.b.b);
+        Utils.close(ze.b.a);
         return ze.a;
     }
 
@@ -327,15 +329,16 @@ public class CachedFile implements Closeable {
      * @return InputStream to the matching file. <code>null</code> if this cached file
      * doesn't represent a zip file or if there was no matching
      * file in the ZIP file.
-     * @since 6148
+     * The returned ZipFile must be closed after use.
+     * @since 19372
      */
-    public InputStream findZipEntryInputStream(String extension, String namepart) {
-        Pair<String, InputStream> ze = findZipEntryImpl(extension, namepart);
+    public Pair<ZipFile, InputStream> findZipEntryInputStream(String extension, String namepart) {
+        Pair<String, Pair<ZipFile, InputStream>> ze = findZipEntryImpl(extension, namepart);
         if (ze == null) return null;
         return ze.b;
     }
 
-    private Pair<String, InputStream> findZipEntryImpl(String extension, String namepart) {
+    private Pair<String, Pair<ZipFile, InputStream>> findZipEntryImpl(String extension, String namepart) {
         File file = null;
         try {
             file = getFile();
@@ -344,7 +347,7 @@ public class CachedFile implements Closeable {
         }
         if (file == null)
             return null;
-        Pair<String, InputStream> res = null;
+        Pair<String, Pair<ZipFile, InputStream>> res = null;
         try {
             ZipFile zipFile = new ZipFile(file, StandardCharsets.UTF_8); // NOPMD
             ZipEntry resentry = null;
@@ -358,7 +361,7 @@ public class CachedFile implements Closeable {
             }
             if (resentry != null) {
                 InputStream is = zipFile.getInputStream(resentry); // NOPMD
-                res = Pair.create(resentry.getName(), is);
+                res = Pair.create(resentry.getName(), Pair.create(zipFile, is));
             } else {
                 Utils.close(zipFile);
             }
@@ -484,6 +487,11 @@ public class CachedFile implements Closeable {
         }
 
         String a = urlStr.replaceAll("[^A-Za-z0-9_.-]", "_");
+        /* size 11: prefix mirror_ and suffix .tmp */
+        Integer maxFileLength = Config.getPref().getInt("cache.filename.maxlength", 140)-11;
+        if (a.length() > maxFileLength) {
+            a = a.substring(0, maxFileLength-33) + "_" + Utils.md5Hex(urlStr);
+        }
         String localPath = "mirror_" + a;
         localPath = truncatePath(destDir, localPath);
         destDirFile = new File(destDir, localPath + ".tmp");

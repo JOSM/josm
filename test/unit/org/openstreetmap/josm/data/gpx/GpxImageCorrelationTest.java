@@ -350,4 +350,81 @@ class GpxImageCorrelationTest {
         wp.put(GpxConstants.PT_ELE, "150.0");
         assertEquals(Double.valueOf(150.0d), GpxImageCorrelation.getElevation(wp));
     }
+
+    /**
+     * Unit test of {@link GpxImageCorrelation#getHPosErr}
+     */
+    @Test
+    void testGetHorizontalPosError() {
+        assertNull(GpxImageCorrelation.getHPosErr(null));
+        WayPoint wp = new WayPoint(LatLon.ZERO);
+        assertNull(GpxImageCorrelation.getHPosErr(wp));
+        wp.put(GpxConstants.PT_STD_HDEV, 1.5f);
+        assertEquals(1.5f, GpxImageCorrelation.getHPosErr(wp));
+    }
+
+    /**
+     * Unit test of {@link GpxImageCorrelation#getGpsDop}
+     */
+    @Test
+    void testGetGpsDop() {
+        assertNull(GpxImageCorrelation.getGpsDop(null));
+        WayPoint wp = new WayPoint(LatLon.ZERO);
+        assertNull(GpxImageCorrelation.getGpsDop(wp));
+        wp.put(GpxConstants.PT_HDOP, 2.1f);
+        assertEquals(2.1f, GpxImageCorrelation.getGpsDop(wp));
+        wp.put(GpxConstants.PT_PDOP, 0.9f);
+        assertEquals(0.9f, GpxImageCorrelation.getGpsDop(wp));
+        wp.put(GpxConstants.PT_PDOP, 1.2d);
+        assertEquals(1.2d, GpxImageCorrelation.getGpsDop(wp));
+    }
+
+    /**
+     * Unit test of {@link GpxImageCorrelation#getGpsTrack}
+     */
+    @Test
+    void testGetGpsTrack() {
+        assertNull(GpxImageCorrelation.getHPosErr(null));
+        WayPoint wp = new WayPoint(LatLon.ZERO);
+        assertNull(GpxImageCorrelation.getGpsTrack(wp));
+        wp.put(GpxConstants.PT_COURSE, "");
+        assertNull(GpxImageCorrelation.getGpsTrack(wp));
+        wp.put(GpxConstants.PT_COURSE, "not a number");
+        assertNull(GpxImageCorrelation.getGpsTrack(wp));
+        wp.put(GpxConstants.PT_COURSE, "167.0");
+        assertEquals(Double.valueOf(167.0d), GpxImageCorrelation.getGpsTrack(wp), 0.01d);
+    }
+
+    /**
+     * Unit test of {@link GpxImageCorrelation#getGpsProcMethod}
+     */
+    @Test
+    void testGetGpsProcMethod() {
+        final List<String> positionningModes = Arrays.asList("none", "manual", "estimated", "2d", "3d", "dgps", "float rtk", "rtk");
+        assertNull(GpxImageCorrelation.getGpsProcMethod(null, null, positionningModes));
+        assertNull(GpxImageCorrelation.getGpsProcMethod("", "", positionningModes));
+        assertNull(GpxImageCorrelation.getGpsProcMethod("3d", null, positionningModes));
+        assertNull(GpxImageCorrelation.getGpsProcMethod("", "dgps", positionningModes));
+        assertEquals("MANUAL CORRELATION", GpxImageCorrelation.getGpsProcMethod("manual", "rtk", positionningModes));
+        assertEquals("ESTIMATED CORRELATION", GpxImageCorrelation.getGpsProcMethod("estimated", "2d", positionningModes));
+        assertEquals("GNSS DGPS CORRELATION", GpxImageCorrelation.getGpsProcMethod("rtk", "dgps", positionningModes));
+        assertEquals("GNSS RTK_FLOAT CORRELATION", GpxImageCorrelation.getGpsProcMethod("float rtk", "rtk", positionningModes));
+        assertEquals("GNSS RTK_FIX CORRELATION", GpxImageCorrelation.getGpsProcMethod("rtk", "rtk", positionningModes));
+    }
+
+    /**
+     * Unit test of {@link GpxImageCorrelation#getGps2d3dMode}
+     */
+    @Test
+    void testGetGps2d3dMode() {
+        final List<String> positionningModes = Arrays.asList("none", "manual", "estimated", "2d", "3d", "dgps", "float rtk", "rtk");
+        assertNull(GpxImageCorrelation.getGps2d3dMode(null, null, positionningModes));
+        assertNull(GpxImageCorrelation.getGps2d3dMode("", "", positionningModes));
+        assertNull(GpxImageCorrelation.getGps2d3dMode("3d", null, positionningModes));
+        assertNull(GpxImageCorrelation.getGps2d3dMode("", "dgps", positionningModes));
+        assertNull(GpxImageCorrelation.getGps2d3dMode("estimated", "rtk", positionningModes));
+        assertEquals(2, GpxImageCorrelation.getGps2d3dMode("2d", "2d", positionningModes));
+        assertEquals(2, GpxImageCorrelation.getGps2d3dMode("2d", "3d", positionningModes));
+        assertEquals(3, GpxImageCorrelation.getGps2d3dMode("3d", "dgps", positionningModes));
+    }
 }

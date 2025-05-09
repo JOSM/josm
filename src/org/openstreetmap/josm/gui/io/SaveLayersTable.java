@@ -25,11 +25,15 @@ class SaveLayersTable extends JTable implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
             Mode mode = (Mode) evt.getNewValue();
-            switch(mode) {
-            case EDITING_DATA: setEnabled(true);
-            break;
-            case UPLOADING_AND_SAVING: setEnabled(false);
-            break;
+            switch (mode) {
+            case EDITING_DATA:
+                setEnabled(true);
+                break;
+            case UPLOADING_AND_SAVING:
+                setEnabled(false);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + mode);
             }
         }
     }

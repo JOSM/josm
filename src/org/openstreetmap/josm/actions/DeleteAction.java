@@ -16,6 +16,9 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.command.DeleteCommand.DeletionCallback;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
@@ -72,7 +75,7 @@ public final class DeleteAction extends JosmAction {
     public DeleteAction() {
         super(tr("Delete"), "dialogs/delete", tr("Delete selected objects."),
                 Shortcut.registerShortcut("system:delete", tr("Edit: {0}", tr("Delete")), KeyEvent.VK_DELETE, Shortcut.DIRECT), true);
-        setHelpId(ht("/Action/Delete"));
+        setHelpId(ht("/Action/EditDelete"));
     }
 
     @Override
@@ -103,13 +106,27 @@ public final class DeleteAction extends JosmAction {
      */
     public static boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives,
             Collection<? extends OsmPrimitive> ignore) {
+        final boolean nodes = primitives.stream().anyMatch(INode.class::isInstance);
+        final boolean ways = primitives.stream().anyMatch(IWay.class::isInstance);
+        final boolean relations = primitives.stream().anyMatch(IRelation.class::isInstance);
+        final String type;
+        if (nodes && !ways && !relations) {
+            type = tr("You are about to delete nodes which can have other referrers not yet downloaded.");
+        } else if (!nodes && ways && !relations) {
+            type = tr("You are about to delete ways which can have other referrers not yet downloaded.");
+        } else if (!nodes && !ways && relations) {
+            type = tr("You are about to delete relations which can have other referrers not yet downloaded.");
+        } else {
+            // OK. We have multiple types being deleted.
+            type = tr("You are about to delete primitives which can have other referrers not yet downloaded.");
+        }
         return Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() -> checkAndConfirmOutlyingOperation("delete",
                 tr("Delete confirmation"),
-                tr("You are about to delete nodes which can have other referrers not yet downloaded."
+                tr("{0}"
                         + "<br>"
                         + "This can cause problems because other objects (that you do not see) might use them."
                         + "<br>"
-                        + "Do you really want to delete?"),
+                        + "Do you really want to delete?", type),
                 tr("You are about to delete incomplete objects."
                         + "<br>"
                         + "This will cause problems because you don''t see the real object."

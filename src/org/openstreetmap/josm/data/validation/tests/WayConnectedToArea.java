@@ -51,16 +51,16 @@ public class WayConnectedToArea extends Test {
     }
 
     private void testForError(Way w, Node wayNode, OsmPrimitive p) {
-        if (wayNode.isOutsideDownloadArea()
-                || wayNode.getReferrers().stream().anyMatch(p1 -> p1.hasTag("route", "ferry"))) {
-            return;
-        } else if (isArea(p)) {
-            addPossibleError(w, wayNode, p, p);
-        } else {
-            p.referrers(Relation.class)
-                    .filter(r -> r.isMultipolygon() && isArea(r))
-                    .findFirst()
-                    .ifPresent(r -> addPossibleError(w, wayNode, p, r));
+        if (!wayNode.isOutsideDownloadArea()
+                && wayNode.getReferrers().stream().noneMatch(p1 -> p1.hasTag("route", "ferry"))) {
+            if (isArea(p)) {
+                addPossibleError(w, wayNode, p, p);
+            } else {
+                p.referrers(Relation.class)
+                        .filter(r -> r.isMultipolygon() && isArea(r))
+                        .findFirst()
+                        .ifPresent(r -> addPossibleError(w, wayNode, p, r));
+            }
         }
     }
 

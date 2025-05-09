@@ -71,7 +71,7 @@ public interface Proj {
      * This is a fallback for when the projection bounds are not specified
      * explicitly.
      *
-     * In this area, the round trip lat/lon -&gt; east/north -&gt; lat/lon should
+     * In this area, the round trip lat/lon → east/north → lat/lon should
      * return the starting value with small error. In addition, regions with
      * extreme distortions should be excluded, if possible.
      *

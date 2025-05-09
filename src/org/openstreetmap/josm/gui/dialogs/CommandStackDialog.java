@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -119,10 +120,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
 
         treesPanel.add(spacer, GBC.eol());
         spacer.setVisible(false);
-        treesPanel.add(undoTree, GBC.eol().fill(GBC.HORIZONTAL));
+        treesPanel.add(undoTree, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         separator.setVisible(false);
-        treesPanel.add(separator, GBC.eol().fill(GBC.HORIZONTAL));
-        treesPanel.add(redoTree, GBC.eol().fill(GBC.HORIZONTAL));
+        treesPanel.add(separator, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        treesPanel.add(redoTree, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         treesPanel.add(Box.createRigidArea(new Dimension(0, 0)), GBC.std().weight(0, 1));
         treesPanel.setBackground(redoTree.getBackground());
 
@@ -145,7 +146,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         InputMapUtils.addEnterAction(redoTree, selectAndZoomAction);
     }
 
-    private static class CommandCellRenderer extends DefaultTreeCellRenderer {
+    private static final class CommandCellRenderer extends DefaultTreeCellRenderer {
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row,
                 boolean hasFocus) {

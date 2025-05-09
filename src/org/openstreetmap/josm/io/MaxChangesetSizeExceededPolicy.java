@@ -5,6 +5,7 @@ package org.openstreetmap.josm.io;
  * This determines what to do when the max changeset size was exceeded by a upload.
  * @since 12687 (moved from {@code gui.io} package)
  */
+@SuppressWarnings("PMD.LongVariable")
 public enum MaxChangesetSizeExceededPolicy {
     /**
      * Abort uploading. Send the user back to map editing.

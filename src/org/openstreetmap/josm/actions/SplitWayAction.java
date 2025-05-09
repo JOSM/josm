@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -142,6 +143,14 @@ public class SplitWayAction extends JosmAction {
                     .setIcon(JOptionPane.WARNING_MESSAGE)
                     .show();
             return;
+        } else if (!checkAndConfirmOutlyingOperation("splitway", tr("Split way confirmation"),
+                tr("You are about to split a way that may have referrers that are not yet downloaded.")
+                        + "<br/>"
+                        + tr("This can lead to broken relations.") + "<br/>"
+                        + tr("Do you really want to split?"),
+                tr("The selected area is incomplete. Continue?"),
+                applicableWays, null)) {
+            return;
         }
 
         // Finally, applicableWays contains only one perfect way
@@ -210,8 +219,8 @@ public class SplitWayAction extends JosmAction {
 
             setButtonIcons("ok", "cancel");
             final JPanel pane = new JPanel(new GridBagLayout());
-            pane.add(new JLabel(getTitle()), GBC.eol().fill(GBC.HORIZONTAL));
-            pane.add(list, GBC.eop().fill(GBC.HORIZONTAL));
+            pane.add(new JLabel(getTitle()), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            pane.add(list, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             setContent(pane);
             setDefaultCloseOperation(HIDE_ON_CLOSE);
         }
@@ -236,7 +245,7 @@ public class SplitWayAction extends JosmAction {
         }
 
         protected void setHighlightedWaySegments(Collection<WaySegment> segments) {
-            DataSet ds = selectedWay.getDataSet();
+            final DataSet ds = selectedWay.getDataSet();
             if (ds != null) {
                 ds.setHighlightedWaySegments(segments);
                 MainApplication.getMap().mapView.repaint();
@@ -246,7 +255,7 @@ public class SplitWayAction extends JosmAction {
         @Override
         public void setVisible(boolean visible) {
             super.setVisible(visible);
-            DataSet ds = selectedWay.getDataSet();
+            final DataSet ds = selectedWay.getDataSet();
             if (visible) {
                 DISPLAY_COUNT.incrementAndGet();
                 list.setSelectedValue(wayToKeep, true);
@@ -275,7 +284,7 @@ public class SplitWayAction extends JosmAction {
             }
         }
 
-        private class SplitWayDataSetListener implements DataSetListener {
+        private final class SplitWayDataSetListener implements DataSetListener {
 
             @Override
             public void primitivesAdded(PrimitivesAddedEvent event) {
@@ -358,7 +367,7 @@ public class SplitWayAction extends JosmAction {
 
         // Special case - one of the selected ways touches (not cross) way that we want to split
         if (selectedNodes.size() == 1) {
-            Node n = selectedNodes.get(0);
+            final Node n = selectedNodes.get(0);
             List<Way> referredWays = n.getParentWays();
             Way inTheMiddle = null;
             for (Way w: referredWays) {

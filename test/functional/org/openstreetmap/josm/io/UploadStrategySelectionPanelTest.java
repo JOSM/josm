@@ -14,8 +14,10 @@ import javax.swing.JTextField;
 import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.gui.io.UploadStrategySelectionPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 import org.openstreetmap.josm.tools.Logging;
 
+@FunctionalTest
 @Disabled
 class UploadStrategySelectionPanelTest extends JFrame {
 

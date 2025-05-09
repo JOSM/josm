@@ -19,6 +19,7 @@ import javax.swing.Action;
 
 import org.openstreetmap.josm.actions.SelectByInternalPointAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -78,7 +79,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      *
      * @author Michael Zangl
      */
-    private class SelectionHintLayer extends AbstractMapViewPaintable {
+    private final class SelectionHintLayer extends AbstractMapViewPaintable {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
@@ -185,7 +186,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1 && MainApplication.getLayerManager().getActiveDataSet() != null) {
             SelectByInternalPointAction.performSelection(MainApplication.getMap().mapView.getEastNorth(e.getX(), e.getY()),
-                    (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0,
+                    (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0,
                     (e.getModifiersEx() & PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()) != 0);
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             mousePosStart = mousePos = e.getPoint();
@@ -200,7 +201,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        int buttonPressed = e.getModifiersEx() & (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
+        int buttonPressed = e.getModifiersEx() & (InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK);
 
         if (buttonPressed != 0) {
             if (mousePosStart == null) {
@@ -209,11 +210,11 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             selectionAreaChanged();
         }
 
-        if (buttonPressed == MouseEvent.BUTTON1_DOWN_MASK) {
+        if (buttonPressed == InputEvent.BUTTON1_DOWN_MASK) {
             mousePos = e.getPoint();
             addLassoPoint(e.getPoint());
             selectionAreaChanged();
-        } else if (buttonPressed == (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) {
+        } else if (buttonPressed == (InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) {
             moveSelection(e.getX()-mousePos.x, e.getY()-mousePos.y);
             mousePos = e.getPoint();
             selectionAreaChanged();
@@ -252,7 +253,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         }
 
         // Left mouse was released while right is still pressed.
-        boolean rightMouseStillPressed = (e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) != 0;
+        boolean rightMouseStillPressed = (e.getModifiersEx() & InputEvent.BUTTON3_DOWN_MASK) != 0;
 
         if (!rightMouseStillPressed) {
             selectingDone(e);
@@ -316,7 +317,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if ("active".equals(evt.getPropertyName()) && !(Boolean) evt.getNewValue()) {
+        if ("active".equals(evt.getPropertyName()) && Boolean.FALSE.equals(evt.getNewValue())) {
             abortSelecting();
         }
     }
@@ -382,15 +383,16 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 selection.add(osm);
             }
         } else if (ds != null) {
+            final BBox bbox = nc.getLatLonBounds(bounding).toBBox();
             // nodes
-            for (Node n : ds.getNodes()) {
+            for (Node n : ds.searchNodes(bbox)) {
                 if (n.isSelectable() && selectionResult.contains(nc.getPoint2D(n))) {
                     selection.add(n);
                 }
             }
 
             // ways
-            for (Way w : ds.getWays()) {
+            for (Way w : ds.searchWays(bbox)) {
                 if (!w.isSelectable() || w.isEmpty()) {
                     continue;
                 }

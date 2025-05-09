@@ -12,11 +12,13 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -195,15 +197,13 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     public String getModeHelpText() {
         // TODO: add more detailed feedback based on modifier state.
         // TODO: dynamic messages based on preferences. (Could be problematic translation wise)
-        switch (mode) {
-        case NORMAL:
+        if (mode == Mode.NORMAL) {
             // CHECKSTYLE.OFF: LineLength
             return tr("Select ways as in Select mode. Drag selected ways or a single way to create a parallel copy (Alt toggles tag preservation)");
             // CHECKSTYLE.ON: LineLength
-        case DRAGGING:
+        } else { // mode == DRAGGING
             return tr("Hold Ctrl to toggle snapping");
         }
-        return ""; // impossible ..
     }
 
     @Override
@@ -224,7 +224,9 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     }
 
     private boolean updateModifiersState(int modifiers) {
-        boolean oldAlt = alt, oldShift = shift, oldCtrl = ctrl;
+        boolean oldAlt = alt;
+        boolean oldShift = shift;
+        boolean oldCtrl = ctrl;
         updateKeyModifiersEx(modifiers);
         return oldAlt != alt || oldShift != shift || oldCtrl != ctrl;
     }
@@ -244,7 +246,6 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         case DRAGGING:
             newCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
             break;
-        default: throw new AssertionError();
         }
         if (newCursor != null) {
             mv.setNewCursor(newCursor, this);
@@ -284,7 +285,9 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
 
         // Since the created way is left selected, we need to unselect again here
         if (pWays != null && pWays.getWays() != null) {
-            getLayerManager().getEditDataSet().clearSelection(pWays.getWays());
+            final List<Way> ways = new ArrayList<>(pWays.getWays());
+            ways.removeIf(w -> w.getDataSet() == null);
+            getLayerManager().getEditDataSet().clearSelection(ways);
             pWays = null;
         }
 
@@ -615,7 +618,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         }
     }
 
-    private class ParallelWayLayer extends AbstractMapViewPaintable {
+    private final class ParallelWayLayer extends AbstractMapViewPaintable {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             if (mode == Mode.DRAGGING) {

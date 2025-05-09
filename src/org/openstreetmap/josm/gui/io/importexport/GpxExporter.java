@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.io.importexport;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -54,20 +55,21 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
     private static final String GPL_WARNING = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
+    private static final String PUBLIC_DOMAIN = "public domain";
 
     private static final String[] LICENSES = {
             "Creative Commons By-SA",
             "Open Database License (ODbL)",
-            "public domain",
+            PUBLIC_DOMAIN,
             "GNU Lesser Public License (LGPL)",
             "BSD License (MIT/X11)"};
 
     private static final String[] URLS = {
             "https://creativecommons.org/licenses/by-sa/3.0",
-            "http://opendatacommons.org/licenses/odbl/1.0",
-            "public domain",
+            "https://opendatacommons.org/licenses/odbl/1-0/",
+            PUBLIC_DOMAIN,
             "https://www.gnu.org/copyleft/lesser.html",
-            "http://www.opensource.org/licenses/bsd-license.php"};
+            "https://opensource.org/license/BSD-2-Clause"};
 
     /**
      * Constructs a new {@code GpxExporter}.
@@ -107,10 +109,9 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         GpxData gpxData;
         if (quiet) {
             gpxData = getGpxData(layer, file);
-            try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
-                GpxWriter w = new GpxWriter(fo);
+            try (OutputStream fo = Compression.getCompressedFileOutputStream(file);
+                 GpxWriter w = new GpxWriter(fo)) {
                 w.write(gpxData);
-                w.close();
                 fo.flush();
             }
             return;
@@ -134,7 +135,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         desc.setWrapStyleWord(true);
         desc.setLineWrap(true);
         desc.setText(gpxData.getString(META_DESC));
-        p.add(new JScrollPane(desc), GBC.eop().fill(GBC.BOTH));
+        p.add(new JScrollPane(desc), GBC.eop().fill(GridBagConstraints.BOTH));
 
         JCheckBox author = new JCheckBox(tr("Add author information"), Config.getPref().getBoolean("lastAddAuthor", true));
         p.add(author, GBC.eol());
@@ -142,19 +143,19 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         JLabel nameLabel = new JLabel(tr("Real name"));
         p.add(nameLabel, GBC.std().insets(10, 0, 5, 0));
         JosmTextField authorName = new JosmTextField();
-        p.add(authorName, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(authorName, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         nameLabel.setLabelFor(authorName);
 
         JLabel emailLabel = new JLabel(tr("E-Mail"));
         p.add(emailLabel, GBC.std().insets(10, 0, 5, 0));
         JosmTextField email = new JosmTextField();
-        p.add(email, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(email, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         emailLabel.setLabelFor(email);
 
         JLabel copyrightLabel = new JLabel(tr("Copyright (URL)"));
         p.add(copyrightLabel, GBC.std().insets(10, 0, 5, 0));
         JosmTextField copyright = new JosmTextField();
-        p.add(copyright, GBC.std().fill(GBC.HORIZONTAL));
+        p.add(copyright, GBC.std().fill(GridBagConstraints.HORIZONTAL));
         copyrightLabel.setLabelFor(copyright);
 
         JButton predefined = new JButton(tr("Predefined"));
@@ -163,32 +164,32 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         JLabel copyrightYearLabel = new JLabel(tr("Copyright year"));
         p.add(copyrightYearLabel, GBC.std().insets(10, 0, 5, 5));
         JosmTextField copyrightYear = new JosmTextField("");
-        p.add(copyrightYear, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(copyrightYear, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         copyrightYearLabel.setLabelFor(copyrightYear);
 
         JLabel warning = new JLabel("<html><font size='-2'>&nbsp;</html");
-        p.add(warning, GBC.eol().fill(GBC.HORIZONTAL).insets(15, 0, 0, 0));
+        p.add(warning, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(15, 0, 0, 0));
         addDependencies(gpxData, author, authorName, email, copyright, predefined, copyrightYear, nameLabel, emailLabel,
                 copyrightLabel, copyrightYearLabel, warning);
 
         p.add(new JLabel(tr("Keywords")), GBC.eol());
         JosmTextField keywords = new JosmTextField();
         keywords.setText(gpxData.getString(META_KEYWORDS));
-        p.add(keywords, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(keywords, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         boolean sel = Config.getPref().getBoolean("gpx.export.colors", true);
         JCheckBox colors = new JCheckBox(tr("Save track colors in GPX file"), sel);
-        p.add(colors, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(colors, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         JCheckBox garmin = new JCheckBox(tr("Use Garmin compatible GPX extensions"),
                 Config.getPref().getBoolean("gpx.export.colors.garmin", false));
         garmin.setEnabled(sel);
-        p.add(garmin, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 0, 0, 0));
+        p.add(garmin, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(20, 0, 0, 0));
 
         boolean hasPrefs = !gpxData.getLayerPrefs().isEmpty();
         JCheckBox layerPrefs = new JCheckBox(tr("Save layer specific preferences"),
                 hasPrefs && Config.getPref().getBoolean("gpx.export.prefs", true));
         layerPrefs.setEnabled(hasPrefs);
-        p.add(layerPrefs, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(layerPrefs, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
 
         ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Export options"),
@@ -196,9 +197,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             .setButtonIcons("exportgpx", "cancel")
             .setContent(p);
 
-        colors.addActionListener(l -> {
-            garmin.setEnabled(colors.isSelected());
-        });
+        colors.addActionListener(l -> garmin.setEnabled(colors.isSelected()));
 
         garmin.addActionListener(l -> {
             if (garmin.isSelected() && !ConditionalOptionPaneUtil.showConfirmationDialog(
@@ -267,10 +266,9 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             gpxData.put(META_KEYWORDS, keywords.getText());
         }
 
-        try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
-            GpxWriter w = new GpxWriter(fo);
+        try (OutputStream fo = Compression.getCompressedFileOutputStream(file);
+            GpxWriter w = new GpxWriter(fo)) {
             w.write(gpxData, cFormat, layerPrefs.isSelected());
-            w.close();
             fo.flush();
         }
     }
@@ -408,7 +406,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             StringBuilder license = new StringBuilder();
             for (int i : l.getSelectedIndices()) {
                 if (i == 2) {
-                    license = new StringBuilder("public domain");
+                    license = new StringBuilder(PUBLIC_DOMAIN);
                     break;
                 }
                 if (license.length() > 0) {

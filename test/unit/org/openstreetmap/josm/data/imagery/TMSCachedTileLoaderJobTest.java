@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,6 @@ import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 
 /**
@@ -42,12 +42,16 @@ class TMSCachedTileLoaderJobTest {
     /**
      * mocked tile server
      */
-    @BasicWiremock
-    WireMockServer tileServer;
+    private WireMockRuntimeInfo wireMockRuntimeInfo;
 
     @BeforeEach
-    void clearCache() throws Exception {
+    void clearCache() {
         getCache().clear();
+    }
+
+    @BeforeEach
+    void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        this.wireMockRuntimeInfo = wireMockRuntimeInfo;
     }
 
     private static ICacheAccess<String, BufferedImageCacheEntry> getCache() {
@@ -98,7 +102,7 @@ class TMSCachedTileLoaderJobTest {
         }
     }
 
-    private static class Listener implements TileLoaderListener {
+    private static final class Listener implements TileLoaderListener {
         private CacheEntryAttributes attributes;
         private boolean ready;
         private byte[] data;
@@ -125,7 +129,7 @@ class TMSCachedTileLoaderJobTest {
         }
 
         @Override
-        public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
+        public String getTileUrl(int zoom, int tilex, int tiley) {
             return url;
         }
     }
@@ -218,19 +222,19 @@ class TMSCachedTileLoaderJobTest {
     @Test
     void testNoCacheHeaders() throws IOException {
         long testStart = System.currentTimeMillis();
-        tileServer.stubFor(
+        wireMockRuntimeInfo.getWireMock().register(
                 WireMock.get(WireMock.urlEqualTo("/test"))
                 .willReturn(WireMock.aResponse()
                         .withBody("mock entry")
                         )
                 );
 
-        TestCachedTileLoaderJob job = submitJob(new MockTile(tileServer.url("/test")), "test", false);
+        TestCachedTileLoaderJob job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", false);
         assertExpirationAtLeast(testStart + TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get(), job);
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
-        job = submitJob(new MockTile(tileServer.url("/test")), "test", false); // submit another job for the same tile
+        job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", false); // submit another job for the same tile
         // only one request to tile server should be made, second should come from cache
-        tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
+        wireMockRuntimeInfo.getWireMock().verifyThat(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
     }
 
@@ -256,18 +260,18 @@ class TMSCachedTileLoaderJobTest {
 
     private void noCacheHeadersMinimumExpires(int minimumExpires) throws IOException {
         long testStart = System.currentTimeMillis();
-        tileServer.stubFor(
+        wireMockRuntimeInfo.getWireMock().register(
                 WireMock.get(WireMock.urlEqualTo("/test"))
                 .willReturn(WireMock.aResponse()
                         .withBody("mock entry")
                         )
                 );
-        TestCachedTileLoaderJob job = submitJob(new MockTile(tileServer.url("/test")), "test", minimumExpires, false);
+        TestCachedTileLoaderJob job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", minimumExpires, false);
         assertExpirationAtLeast(testStart + minimumExpires, job);
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
-        job = submitJob(new MockTile(tileServer.url("/test")), "test", false); // submit another job for the same tile
+        job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", false); // submit another job for the same tile
         // only one request to tile server should be made, second should come from cache
-        tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
+        wireMockRuntimeInfo.getWireMock().verifyThat(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
     }
 
@@ -279,19 +283,19 @@ class TMSCachedTileLoaderJobTest {
     void testShortExpire() throws IOException {
         long testStart = System.currentTimeMillis();
         long expires = TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get() / 2;
-        tileServer.stubFor(
+        wireMockRuntimeInfo.getWireMock().register(
                 WireMock.get(WireMock.urlEqualTo("/test"))
                 .willReturn(WireMock.aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))
                         .withBody("mock entry")
                         )
                 );
-        TestCachedTileLoaderJob job = submitJob(new MockTile(tileServer.url("/test")), "test", false);
+        TestCachedTileLoaderJob job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", false);
         assertExpirationAtLeast(testStart + TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get(), job);
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
-        job = submitJob(new MockTile(tileServer.url("/test")), "test", false); // submit another job for the same tile
+        job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", false); // submit another job for the same tile
         // only one request to tile server should be made, second should come from cache
-        tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
+        wireMockRuntimeInfo.getWireMock().verifyThat(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
     }
 
@@ -311,21 +315,21 @@ class TMSCachedTileLoaderJobTest {
     void testLongExpire() throws IOException {
         long testStart = System.currentTimeMillis();
         long expires = TMSCachedTileLoaderJob.MAXIMUM_EXPIRES.get() * 2;
-        tileServer.stubFor(
+        wireMockRuntimeInfo.getWireMock().register(
                 WireMock.get(WireMock.urlEqualTo("/test"))
                 .willReturn(WireMock.aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))
                         .withBody("mock entry")
                         )
                 );
-        TestCachedTileLoaderJob job = submitJob(new MockTile(tileServer.url("/test")), "test", false);
+        TestCachedTileLoaderJob job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", false);
         // give 1 second margin
         assertExpirationAtMost(testStart + TMSCachedTileLoaderJob.MAXIMUM_EXPIRES.get() + TimeUnit.SECONDS.toMillis(1), job);
 
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
-        job = submitJob(new MockTile(tileServer.url("/test")), "test", false); // submit another job for the same tile
+        job = submitJob(new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/test"), "test", false); // submit another job for the same tile
         // only one request to tile server should be made, second should come from cache
-        tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
+        wireMockRuntimeInfo.getWireMock().verifyThat(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
     }
 }

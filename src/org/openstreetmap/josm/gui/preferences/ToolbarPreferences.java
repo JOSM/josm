@@ -97,6 +97,8 @@ import org.openstreetmap.josm.tools.Utils;
 public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPresetListener {
 
     private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
+    private static final String TOOLBAR = "toolbar";
+    private static final String DIALOGS = "dialogs";
 
     /**
      * The prefix for imagery toolbar entries.
@@ -362,7 +364,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         public String saveAction(ActionDefinition action) {
             result.setLength(0);
 
-            String val = (String) action.getAction().getValue("toolbar");
+            String val = (String) action.getAction().getValue(TOOLBAR);
             if (val == null)
                 return null;
             escape(val);
@@ -394,8 +396,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 }
                 tmp = action.getIcon();
                 if (!tmp.isEmpty()) {
-                    result.append(first ? "{" : ",");
-                    result.append("icon=");
+                    result.append(first ? "{" : ",")
+                            .append("icon=");
                     escape(tmp);
                     first = false;
                 }
@@ -408,7 +410,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         }
     }
 
-    private static class ActionParametersTableModel extends AbstractTableModel {
+    private static final class ActionParametersTableModel extends AbstractTableModel {
 
         private transient ActionDefinition currentAction = ActionDefinition.getSeparator();
 
@@ -493,7 +495,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         }
     }
 
-    private class ToolbarPopupMenu extends JPopupMenu {
+    private final class ToolbarPopupMenu extends JPopupMenu {
         private transient ActionDefinition act;
 
         private void setActionAndAdapt(ActionDefinition action) {
@@ -512,7 +514,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 String res = parser.saveAction(act);
                 // remove the button from toolbar preferences
                 t.remove(res);
-                Config.getPref().putList("toolbar", t);
+                Config.getPref().putList(TOOLBAR, t);
                 MainApplication.getToolbar().refreshToolbarControl();
             }
         });
@@ -521,7 +523,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             @Override
             public void actionPerformed(ActionEvent e) {
                 final PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
-                SwingUtilities.invokeLater(() -> p.selectPreferencesTabByName("toolbar"));
+                SwingUtilities.invokeLater(() -> p.selectPreferencesTabByName(TOOLBAR));
                 p.setVisible(true);
             }
         });
@@ -749,7 +751,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             }
         }
 
-        private class ActionDefinitionModel extends DefaultListModel<ActionDefinition> implements ReorderableTableModel<ActionDefinition> {
+        private final class ActionDefinitionModel extends DefaultListModel<ActionDefinition> implements ReorderableTableModel<ActionDefinition> {
             @Override
             public ListSelectionModel getSelectionModel() {
                 return selectedList.getSelectionModel();
@@ -795,7 +797,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
          * @param rootActionsNode root actions node
          */
         public Settings(DefaultMutableTreeNode rootActionsNode) {
-            super(/* ICON(preferences/) */ "toolbar", tr("Toolbar"), tr("Customize the elements on the toolbar."));
+            super(/* ICON(preferences/) */ TOOLBAR, tr("Toolbar"), tr("Customize the elements on the toolbar."));
             actionsTreeModel = new DefaultTreeModel(rootActionsNode);
             actionsTree = new JTree(actionsTreeModel);
         }
@@ -804,11 +806,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             JButton b = new JButton();
             switch (name) {
                 case "up":
-                    b.setIcon(ImageProvider.get("dialogs", "up", ImageSizes.LARGEICON));
+                    b.setIcon(ImageProvider.get(DIALOGS, "up", ImageSizes.LARGEICON));
                     b.setToolTipText(tr("Move the currently selected members up"));
                     break;
                 case "down":
-                    b.setIcon(ImageProvider.get("dialogs", "down", ImageSizes.LARGEICON));
+                    b.setIcon(ImageProvider.get(DIALOGS, "down", ImageSizes.LARGEICON));
                     b.setToolTipText(tr("Move the currently selected members down"));
                     break;
                 case "<":
@@ -816,7 +818,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                     b.setToolTipText(tr("Add all objects selected in the current dataset before the first selected member"));
                     break;
                 case ">":
-                    b.setIcon(ImageProvider.get("dialogs", "delete", ImageSizes.LARGEICON));
+                    b.setIcon(ImageProvider.get(DIALOGS, "delete", ImageSizes.LARGEICON));
                     b.setToolTipText(tr("Remove"));
                     break;
                 default:
@@ -856,11 +858,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 }
             });
 
-            ListCellRenderer<ActionDefinition> renderer = new ListCellRenderer<ActionDefinition>() {
+            ListCellRenderer<ActionDefinition> renderer = new ListCellRenderer<>() {
                 private final DefaultListCellRenderer def = new DefaultListCellRenderer();
+
                 @Override
                 public Component getListCellRendererComponent(JList<? extends ActionDefinition> list,
-                        ActionDefinition action, int index, boolean isSelected, boolean cellHasFocus) {
+                                                              ActionDefinition action, int index, boolean isSelected, boolean cellHasFocus) {
                     String s;
                     Icon i;
                     if (!action.isSeparator()) {
@@ -1013,7 +1016,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
             if (t.isEmpty()) {
                 t = Collections.singletonList(EMPTY_TOOLBAR_MARKER);
             }
-            Config.getPref().putList("toolbar", t);
+            Config.getPref().putList(TOOLBAR, t);
             MainApplication.getToolbar().refreshToolbarControl();
             return false;
         }
@@ -1049,7 +1052,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 if (menuItem.getAction() != null) {
                     Action action = menuItem.getAction();
                     userObject = action;
-                    Object tb = action.getValue("toolbar");
+                    Object tb = action.getValue(TOOLBAR);
                     if (tb == null) {
                         Logging.info(tr("Toolbar action without name: {0}",
                         action.getClass().getName()));
@@ -1100,7 +1103,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
     "tagginggroup_Man Made/Man Made"};
 
     public static Collection<String> getToolString() {
-        Collection<String> toolStr = Config.getPref().getList("toolbar", Arrays.asList(deftoolbar));
+        Collection<String> toolStr = Config.getPref().getList(TOOLBAR, Arrays.asList(deftoolbar));
         if (Utils.isEmpty(toolStr)) {
             toolStr = Arrays.asList(deftoolbar);
         }
@@ -1140,7 +1143,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
      * @return The parameter (for better chaining)
      */
     public Action register(Action action) {
-        String toolbar = (String) action.getValue("toolbar");
+        String toolbar = (String) action.getValue(TOOLBAR);
         if (toolbar == null) {
             Logging.info(tr("Registered toolbar action without name: {0}",
                 action.getClass().getName()));
@@ -1164,7 +1167,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
      * @since 11654
      */
     public Action unregister(Action action) {
-        Object toolbar = action.getValue("toolbar");
+        Object toolbar = action.getValue(TOOLBAR);
         if (toolbar instanceof String) {
             return regactions.remove(toolbar);
         }
@@ -1242,7 +1245,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
                 t.add(definitionText); // add to the end
             }
         }
-        Config.getPref().putList("toolbar", t);
+        Config.getPref().putList(TOOLBAR, t);
         MainApplication.getToolbar().refreshToolbarControl();
     }
 
@@ -1272,7 +1275,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory, TaggingPres
         String tt = Optional.ofNullable(action.getDisplayTooltip()).orElse("");
 
         if (sc == null || paramCode != 0) {
-            String name = Optional.ofNullable((String) action.getAction().getValue("toolbar")).orElseGet(action::getDisplayName);
+            String name = Optional.ofNullable((String) action.getAction().getValue(TOOLBAR)).orElseGet(action::getDisplayName);
             if (paramCode != 0) {
                 name = name+paramCode;
             }

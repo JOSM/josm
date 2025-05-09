@@ -76,7 +76,7 @@ public class OnlineResourceMenu extends JMenu {
         }
     }
 
-    private class ToggleMenuListener implements MenuListener {
+    private final class ToggleMenuListener implements MenuListener {
         @Override
         public void menuSelected(MenuEvent e) {
             for (Component component : getMenuComponents()) {

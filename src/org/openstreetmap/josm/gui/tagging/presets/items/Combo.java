@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.AbstractAction;
@@ -103,9 +103,7 @@ public class Combo extends ComboMultiSelect {
         }
         addEntry(PresetListEntry.ENTRY_EMPTY);
 
-        usage.map.forEach((value, count) -> {
-            addEntry(new PresetListEntry(value, this));
-        });
+        usage.map.forEach((value, count) -> addEntry(new PresetListEntry(value, this)));
 
         combobox = new JosmComboBox<>(dropDownModel);
         AutoCompComboBoxEditor<AutoCompletionItem> editor = new AutoCompComboBoxEditor<>();
@@ -124,13 +122,13 @@ public class Combo extends ComboMultiSelect {
         combobox.setEditable(editable);
 
         autoCompModel = new AutoCompComboBoxModel<>(Comparator.<AutoCompletionItem>naturalOrder());
-        getAllForKeys(Arrays.asList(key)).forEach(autoCompModel::addElement);
+        getAllForKeys(Collections.singletonList(key)).forEach(autoCompModel::addElement);
         getDisplayValues().forEach(s -> autoCompModel.addElement(new AutoCompletionItem(s, AutoCompletionPriority.IS_IN_STANDARD)));
 
         AutoCompTextField<AutoCompletionItem> tf = editor.getEditorComponent();
         tf.setModel(autoCompModel);
 
-        if (TaggingPresetItem.DISPLAY_KEYS_AS_HINT.get()) {
+        if (Boolean.TRUE.equals(TaggingPresetItem.DISPLAY_KEYS_AS_HINT.get())) {
             combobox.setHint(key);
         }
         if (length > 0) {
@@ -217,7 +215,7 @@ public class Combo extends ComboMultiSelect {
             return (PresetListEntry) sel;
         if (sel instanceof String) {
             // free edit.  If the free edit corresponds to a known entry, use that entry.  This is
-            // to avoid that we write a display_value to the tag's value, eg. if the user did an
+            // to avoid that we write a display_value to the tag's value, e.g. if the user did an
             // undo.
             PresetListEntry selItem = dropDownModel.find((String) sel);
             if (selItem != null)

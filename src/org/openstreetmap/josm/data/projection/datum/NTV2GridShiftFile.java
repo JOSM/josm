@@ -170,28 +170,28 @@ public class NTV2GridShiftFile implements Serializable {
     private static NTV2SubGrid[] createSubGridTree(NTV2SubGrid... subGrid) {
         int topLevelCount = 0;
         Map<String, List<NTV2SubGrid>> subGridMap = new HashMap<>();
-        for (int i = 0; i < subGrid.length; i++) {
-            if ("NONE".equalsIgnoreCase(subGrid[i].getParentSubGridName())) {
+        for (NTV2SubGrid ntv2SubGrid : subGrid) {
+            if ("NONE".equalsIgnoreCase(ntv2SubGrid.getParentSubGridName())) {
                 topLevelCount++;
             }
-            subGridMap.put(subGrid[i].getSubGridName(), new ArrayList<NTV2SubGrid>());
+            subGridMap.put(ntv2SubGrid.getSubGridName(), new ArrayList<>());
         }
         NTV2SubGrid[] topLevelSubGrid = new NTV2SubGrid[topLevelCount];
         topLevelCount = 0;
-        for (int i = 0; i < subGrid.length; i++) {
-            if ("NONE".equalsIgnoreCase(subGrid[i].getParentSubGridName())) {
-                topLevelSubGrid[topLevelCount++] = subGrid[i];
+        for (NTV2SubGrid ntv2SubGrid : subGrid) {
+            if ("NONE".equalsIgnoreCase(ntv2SubGrid.getParentSubGridName())) {
+                topLevelSubGrid[topLevelCount++] = ntv2SubGrid;
             } else {
-                List<NTV2SubGrid> parent = subGridMap.get(subGrid[i].getParentSubGridName());
-                parent.add(subGrid[i]);
+                List<NTV2SubGrid> parent = subGridMap.get(ntv2SubGrid.getParentSubGridName());
+                parent.add(ntv2SubGrid);
             }
         }
         NTV2SubGrid[] nullArray = new NTV2SubGrid[0];
-        for (int i = 0; i < subGrid.length; i++) {
-            List<NTV2SubGrid> subSubGrids = subGridMap.get(subGrid[i].getSubGridName());
+        for (NTV2SubGrid ntv2SubGrid : subGrid) {
+            List<NTV2SubGrid> subSubGrids = subGridMap.get(ntv2SubGrid.getSubGridName());
             if (!subSubGrids.isEmpty()) {
                 NTV2SubGrid[] subGridArray = subSubGrids.toArray(nullArray);
-                subGrid[i].setSubGridArray(subGridArray);
+                ntv2SubGrid.setSubGridArray(subGridArray);
             }
         }
         return topLevelSubGrid;

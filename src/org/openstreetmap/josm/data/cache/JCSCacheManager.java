@@ -173,7 +173,7 @@ public final class JCSCacheManager {
      * @return cache access object
      */
     public static <K, V> CacheAccess<K, V> getCache(String cacheName) {
-        return getCache(cacheName, DEFAULT_MAX_OBJECTS_IN_MEMORY.get().intValue(), 0, null);
+        return getCache(cacheName, DEFAULT_MAX_OBJECTS_IN_MEMORY.get(), 0, null);
     }
 
     /**

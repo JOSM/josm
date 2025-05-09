@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
 import java.awt.BorderLayout;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.swing.JFrame;
 
@@ -23,8 +21,7 @@ class NodeListMergerTestFT extends JFrame {
         for (int i = 0; i < 20; i++) {
             n1.put("key" + i, "value" + i);
         }
-        // Java 11: use String.repeat
-        String note = IntStream.range(0, 50).mapToObj(i -> " A very long text ").collect(Collectors.joining());
+        String note = " A very long text ".repeat(50);
         n1.put("note", note);
         w1.addNode(new Node(2));
         w1.addNode(new Node(3));

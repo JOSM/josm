@@ -37,7 +37,7 @@ public class CLIProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     protected void doBeginTask() {
-        if (!Utils.isBlank(this.title)) {
+        if (!Utils.isStripEmpty(this.title)) {
             Logging.info(tr("Beginning task {2}: {0}{1}", this.title, this.customText,
                     Optional.ofNullable(this.taskId).map(ProgressTaskId::getId).map(id -> ' ' + id).orElse("")));
         }

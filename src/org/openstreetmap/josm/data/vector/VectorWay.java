@@ -56,12 +56,12 @@ public class VectorWay extends VectorPrimitive implements IWay<VectorNode> {
 
     @Override
     public int getNodesCount() {
-        return this.getNodes().size();
+        return this.nodes.size();
     }
 
     @Override
     public VectorNode getNode(int index) {
-        return this.getNodes().get(index);
+        return this.nodes.get(index);
     }
 
     @Override
@@ -82,12 +82,12 @@ public class VectorWay extends VectorPrimitive implements IWay<VectorNode> {
 
     @Override
     public List<Long> getNodeIds() {
-        return this.getNodes().stream().map(VectorNode::getId).collect(Collectors.toList());
+        return this.nodes.stream().map(VectorNode::getId).collect(Collectors.toList());
     }
 
     @Override
     public long getNodeId(int idx) {
-        return this.getNodes().get(idx).getId();
+        return this.nodes.get(idx).getId();
     }
 
     @Override

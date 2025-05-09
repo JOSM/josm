@@ -54,7 +54,7 @@ public final class DownloadOsmInViewAction extends JosmAction {
                 && !NetworkManager.isOffline(OnlineResource.OSM_API));
     }
 
-    private static class DownloadOsmInViewTask extends DownloadOsmTask {
+    private static final class DownloadOsmInViewTask extends DownloadOsmTask {
         Future<?> download(Bounds downloadArea) {
             return download(new DownloadTask(new DownloadParams(), new BoundingBoxDownloader(downloadArea), null, false), downloadArea);
         }

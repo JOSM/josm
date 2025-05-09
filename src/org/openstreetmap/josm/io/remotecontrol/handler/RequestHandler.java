@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -97,7 +98,7 @@ public abstract class RequestHandler {
     /**
      * Handle a specific command sent as remote control.
      * Any time-consuming operation must be performed asynchronously to avoid delaying the HTTP response.
-     *
+     * <p>
      * This method of the subclass will do the real work.
      *
      * @throws RequestHandlerErrorException if an error occurs while processing request
@@ -108,7 +109,7 @@ public abstract class RequestHandler {
     /**
      * Get a specific message to ask the user for permission for the operation
      * requested via remote control.
-     *
+     * <p>
      * This message will be displayed to the user if the preference
      * remotecontrol.always-confirm is true.
      *
@@ -120,7 +121,7 @@ public abstract class RequestHandler {
      * Get a PermissionPref object containing the name of a special permission
      * preference to individually allow the requested operation and an error
      * message to be displayed when a disabled operation is requested.
-     *
+     * <p>
      * Default is not to check any special preference. Override this in a
      * subclass to define permission preference and error message.
      *
@@ -200,18 +201,26 @@ public abstract class RequestHandler {
         /* Does the user want to confirm everything?
          * If yes, display specific confirmation message.
          */
-        if (GLOBAL_CONFIRMATION.get()) {
+        if (Boolean.TRUE.equals(GLOBAL_CONFIRMATION.get())) {
             // Ensure dialog box does not exceed main window size
-            int maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth() * 0.6);
-            String message = "<html><div>" + getPermissionMessage() +
+            final int maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth() * 0.6);
+            final String message = "<html><div>" + getPermissionMessage() +
                     "<br/>" + tr("Do you want to allow this?") + "</div></html>";
-            JLabel label = new JLabel(message);
-            if (label.getPreferredSize().width > maxWidth) {
-                label.setText(message.replaceFirst("<div>", "<div style=\"width:" + maxWidth + "px;\">"));
+            final Object[] choices = {tr("Yes, always"), tr("Yes, once"), tr("No")};
+            final int choice;
+            final Integer tChoice = GuiHelper.runInEDTAndWaitAndReturn(() -> {
+                final JLabel label = new JLabel(message);
+                if (label.getPreferredSize().width > maxWidth) {
+                    label.setText(message.replaceFirst("<div>", "<div style=\"width:" + maxWidth + "px;\">"));
+                }
+                return JOptionPane.showOptionDialog(MainApplication.getMainFrame(), label, tr("Confirm Remote Control action"),
+                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
+            });
+            if (tChoice == null) {
+                // I have no clue how this would ever happen, but just in case.
+                throw new RequestHandlerForbiddenException(MessageFormat.format("RemoteControl: ''{0}'' forbidden due to NPE", myCommand));
             }
-            Object[] choices = {tr("Yes, always"), tr("Yes, once"), tr("No")};
-            int choice = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), label, tr("Confirm Remote Control action"),
-                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
+            choice = tChoice;
             if (choice != JOptionPane.YES_OPTION && choice != JOptionPane.NO_OPTION) { // Yes/no refer to always/once
                 String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by user''s choice", myCommand);
                 throw new RequestHandlerForbiddenException(err);
@@ -239,7 +248,7 @@ public abstract class RequestHandler {
     /**
      * Parse the request parameters as key=value pairs.
      * The result will be stored in {@code this.args}.
-     *
+     * <p>
      * Can be overridden by subclass.
      * @throws URISyntaxException if request URL is invalid
      */

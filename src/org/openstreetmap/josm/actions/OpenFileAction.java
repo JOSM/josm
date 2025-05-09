@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -42,6 +43,8 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.importexport.AllFormatsImporter;
 import org.openstreetmap.josm.gui.io.importexport.FileImporter;
 import org.openstreetmap.josm.gui.io.importexport.Options;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
@@ -83,7 +86,7 @@ public class OpenFileAction extends DiskAccessAction {
         final AbstractFileChooser fc;
         // If the user explicitly wants native file dialogs, let them use it.
         // Rather unfortunately, this means that they will not be able to select files and directories.
-        if (FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get()
+        if (Boolean.TRUE.equals(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get())
                 // This is almost redundant, as the JDK currently doesn't support this with (all?) native file choosers.
                 && !NativeFileChooser.supportsSelectionMode(FILES_AND_DIRECTORIES)) {
             fc = createAndOpenFileChooser(true, true, null);
@@ -166,7 +169,7 @@ public class OpenFileAction extends DiskAccessAction {
                 } else {
                     String message = tr("Unable to locate file  ''{0}''.", file.getPath());
                     Logging.warn(message);
-                    new Notification(message).show();
+                    new Notification(message).setIcon(JOptionPane.WARNING_MESSAGE).show();
                 }
             }
         }
@@ -273,6 +276,7 @@ public class OpenFileAction extends DiskAccessAction {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             if (Utils.isEmpty(files)) return;
+            List<Layer> oldLayers = MainApplication.getLayerManager().getLayers();
 
             /*
              * Find the importer with the chosen file filter
@@ -377,6 +381,27 @@ public class OpenFileAction extends DiskAccessAction {
                 int maxsize = Math.max(0, Config.getPref().getInt("file-open.history.max-size", 15));
                 PreferencesUtils.putListBounded(Config.getPref(), "file-open.history", maxsize, new ArrayList<>(fileHistory));
             }
+            if (!canceled && !GraphicsEnvironment.isHeadless()) {
+                checkNewLayers(oldLayers);
+            }
+        }
+
+        private static void checkNewLayers(List<Layer> oldLayers) {
+            // We do have to wrap the EDT call in a worker call, since layers may be created in the EDT.
+            // And the layer(s) must be added to the layer list in order for the dialog to work properly.
+            MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
+                List<Layer> newLayers = MainApplication.getLayerManager().getLayers();
+                // see #23728: open first image of topmost new image layer
+                for (Layer l : newLayers) {
+                    if (oldLayers.contains(l))
+                        return;
+                    if (l instanceof GeoImageLayer) {
+                        GeoImageLayer imageLayer = (GeoImageLayer) l;
+                        imageLayer.jumpToNextMarker();
+                        return;
+                    }
+                }
+            }));
         }
 
         /**

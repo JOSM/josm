@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -45,6 +46,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.JosmAction;
@@ -99,25 +101,26 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * @since 6752
      */
     public static final BooleanProperty PROP_DYNAMIC_BUTTONS = new BooleanProperty("dialog.dynamic.buttons", false);
+    private static final String SELECTED = "selected";
 
     private final transient ParametrizedEnumProperty<ButtonHidingType> propButtonHiding =
-            new ParametrizedEnumProperty<ToggleDialog.ButtonHidingType>(ButtonHidingType.class, ButtonHidingType.DYNAMIC) {
-        @Override
-        protected String getKey(String... params) {
-            return preferencePrefix + ".buttonhiding";
-        }
+            new ParametrizedEnumProperty<>(ButtonHidingType.class, ButtonHidingType.DYNAMIC) {
+                @Override
+                protected String getKey(String... params) {
+                    return preferencePrefix + ".buttonhiding";
+                }
 
-        @Override
-        protected ButtonHidingType parse(String s) {
-            try {
-                return super.parse(s);
-            } catch (IllegalArgumentException e) {
-                // Legacy settings
-                Logging.trace(e);
-                return Boolean.parseBoolean(s) ? ButtonHidingType.DYNAMIC : ButtonHidingType.ALWAYS_SHOWN;
-            }
-        }
-    };
+                @Override
+                protected ButtonHidingType parse(String s) {
+                    try {
+                        return super.parse(s);
+                    } catch (IllegalArgumentException e) {
+                        // Legacy settings
+                        Logging.trace(e);
+                        return Boolean.parseBoolean(s) ? ButtonHidingType.DYNAMIC : ButtonHidingType.ALWAYS_SHOWN;
+                    }
+                }
+            };
 
     /** The action to toggle this dialog */
     protected final ToggleDialogAction toggleAction;
@@ -353,8 +356,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         if (windowMenuItem != null) {
             windowMenuItem.setState(true);
         }
-        toggleAction.putValue("selected", Boolean.FALSE);
-        toggleAction.putValue("selected", Boolean.TRUE);
+        toggleAction.putValue(SELECTED, Boolean.FALSE);
+        toggleAction.putValue(SELECTED, Boolean.TRUE);
     }
 
     /**
@@ -381,7 +384,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @Override
     public void buttonHidden() {
-        if (Boolean.TRUE.equals(toggleAction.getValue("selected"))) {
+        if (Boolean.TRUE.equals(toggleAction.getValue(SELECTED))) {
             toggleAction.actionPerformed(null);
         }
     }
@@ -401,7 +404,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             windowMenuItem.setState(false);
         }
         setIsShowing(false);
-        toggleAction.putValue("selected", Boolean.FALSE);
+        toggleAction.putValue(SELECTED, Boolean.FALSE);
     }
 
     /**
@@ -550,7 +553,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
             // scale down the dialog icon
             ImageIcon icon = ImageProvider.get("dialogs", iconName, ImageProvider.ImageSizes.SMALLICON);
-            lblTitle = new JLabel("", icon, JLabel.TRAILING);
+            lblTitle = new JLabel("", icon, SwingConstants.TRAILING);
             lblTitle.setIconTextGap(8);
 
             JPanel conceal = new JPanel();
@@ -568,7 +571,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             };
             lblTitleWeak.setPreferredSize(new Dimension(Integer.MAX_VALUE, 20));
             lblTitleWeak.setMinimumSize(new Dimension(0, 20));
-            add(lblTitleWeak, GBC.std().fill(GBC.HORIZONTAL));
+            add(lblTitleWeak, GBC.std().fill(GridBagConstraints.HORIZONTAL));
 
             buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN
                 ? /* ICON(misc/)*/ "buttonhide" :  /* ICON(misc/)*/ "buttonshow"));

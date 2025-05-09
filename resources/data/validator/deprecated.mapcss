@@ -2529,5 +2529,58 @@ area[parking:orientation][orientation]["parking:orientation"!=*orientation] {
   group: tr("deprecated tagging");
   suggestAlternative: "{1.key}";
 }
+/* From the canvec import */
+*[natural=landform][landform=esker] {
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "geological=esker");
+  group: tr("deprecated tagging");
+  suggestAlternative: "natural=ridge or geological=esker";
+}
+*[natural=landform][landform=moraine] {
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "geological=moraine");
+  group: tr("deprecated tagging");
+  suggestAlternative: "geological=moraine";
+}
+*[natural=landform][landform=beach] {
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "natural=beach");
+  group: tr("deprecated tagging");
+  suggestAlternative: "natural=beach";
+}
+*[natural=landform][landform=tundra_polygon] {
+  throwWarning: tr("{0} should be replaced by {1}", "{1.tag}", "natural=tundra");
+  group: tr("deprecated tagging");
+  suggestAlternative: "natural=tundra or natural=fell";
+}
+
+way[cycleway=opposite],
+way[cycleway:left=opposite],
+way[cycleway:right=opposite],
+way[cycleway:both=opposite] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  fixAdd: "oneway:bicycle=no";
+  fixRemove: "{0.key}";
+  /* No automated addition of e.g. cycleway:both=no for cycleway=opposite as it may already be tagged with e.g. cycleway:left=lane */
+}
+way[cycleway:left][cycleway:left^=opposite_],
+way[cycleway:right][cycleway:right^=opposite_] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  /* No fix: unambiguous definition */
+}
+way[cycleway][cycleway^=opposite_]:righthandtraffic {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "oneway:bicycle=no + cycleway:right=* + cycleway:left=* + cycleway:left:oneway=-1";
+}
+way[cycleway][cycleway^=opposite_]!:righthandtraffic {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "oneway:bicycle=no + cycleway:right=* + cycleway:left=* + cycleway:right:oneway=-1";
+}
+*[residential=condominium] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "residential=apartments + condo=*"
+}
 
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

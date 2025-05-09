@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -73,7 +75,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                     Object trackUrl = track.get("url");
                     if (trackUrl instanceof String) {
                         String sTrackUrl = (String) trackUrl;
-                        if (!Utils.isBlank(sTrackUrl) && !sTrackUrl.startsWith("http")) {
+                        if (!Utils.isStripEmpty(sTrackUrl) && !sTrackUrl.startsWith("http")) {
                             track.put("url", browseUrl + sTrackUrl);
                         }
                     }
@@ -215,6 +217,23 @@ public class BoundingBoxDownloader extends OsmServerReader {
                     ds = parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
                 }
             }
+            // From https://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_map_data_by_bounding_box:_GET_/api/0.6/map,
+            // relations are not recursed up, so they *may* have parent relations.
+            // Nodes inside the download area should have all relations and ways that refer to them.
+            // Ways should have all relations that refer to them and all child nodes, but those child nodes may not
+            //    have their parent referrers.
+            // Relations will have the *first* parent relations downloaded, but those are not split out in the returns.
+            // So we always assume that a relation has referrers that need to be downloaded unless it has no child relations.
+            // Our "full" overpass query doesn't return the same data as a standard download, so we cannot
+            // mark relations with no child relations as fully downloaded *yet*.
+            if (this.considerAsFullDownload()) {
+                final Collection<Bounds> bounds = this.getBounds();
+                // We cannot use OsmPrimitive#isOutsideDownloadArea yet since some download methods haven't added
+                // the download bounds to the dataset yet. This is specifically the case for overpass downloads.
+                ds.getNodes().stream().filter(n -> bounds.stream().anyMatch(b -> b.contains(n)))
+                        .forEach(i -> i.setReferrersDownloaded(true));
+                ds.getWays().forEach(i -> i.setReferrersDownloaded(true));
+            }
             return ds;
         } catch (OsmTransferException e) {
             throw e;
@@ -279,4 +298,12 @@ public class BoundingBoxDownloader extends OsmServerReader {
         return true;
     }
 
+    /**
+     * Get the bounds for this downloader
+     * @return The bounds for this downloader
+     * @since 19078
+     */
+    protected Collection<Bounds> getBounds() {
+        return Collections.singleton(new Bounds(this.lat1, this.lon1, this.lat2, this.lon2));
+    }
 }

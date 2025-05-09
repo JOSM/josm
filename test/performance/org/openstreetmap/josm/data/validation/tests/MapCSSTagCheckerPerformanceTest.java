@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.PerformanceTest;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 import org.openstreetmap.josm.testutils.annotations.Territories;
 
@@ -13,6 +14,7 @@ import org.openstreetmap.josm.testutils.annotations.Territories;
  * Performance test of {@code MapCSSTagChecker}.
  */
 @BasicPreferences
+@PerformanceTest
 @Projection
 @Territories
 class MapCSSTagCheckerPerformanceTest {

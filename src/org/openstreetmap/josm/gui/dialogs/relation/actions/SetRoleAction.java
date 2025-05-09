@@ -44,7 +44,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
     }
 
     protected boolean isEmptyRole() {
-        return Utils.isBlank(tfRole.getText());
+        return Utils.isStripEmpty(tfRole.getText());
     }
 
     protected boolean confirmSettingEmptyRole(int onNumMembers) {
@@ -69,7 +69,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
                 options,
                 options[0]
         );
-        switch(ret) {
+        switch (ret) {
         case JOptionPane.YES_OPTION:
         case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION:
             return true;

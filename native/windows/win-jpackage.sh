@@ -51,6 +51,8 @@ do
     jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/windows/logo.ico --type $type --dest app \
+    --java-options "-XX:MaxRAMPercentage=75.0" \
+    --java-options "-Xms256m" \
     --java-options "--add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web" \
     --java-options "--add-exports=java.base/sun.security.action=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED" \
@@ -81,7 +83,7 @@ do
     --file-associations native/file-associations/osm.properties \
     --file-associations native/file-associations/xz.properties \
     --file-associations native/file-associations/zip.properties \
-    --add-launcher "JOSM HWConsole"=native/windows/MLConsole.properties \
+    --add-launcher "JOSM (Debug)"=native/windows/MLConsole.properties \
     --add-modules java.compiler,java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom,javafx.controls,javafx.media,javafx.swing,javafx.web
 done
 

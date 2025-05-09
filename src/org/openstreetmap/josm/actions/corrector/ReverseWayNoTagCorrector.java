@@ -101,7 +101,7 @@ public final class ReverseWayNoTagCorrector {
                 null,
                 null
         );
-        switch(ret) {
+        switch (ret) {
             case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION:
             case JOptionPane.YES_OPTION:
                 return true;

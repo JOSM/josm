@@ -20,7 +20,7 @@ public final class TextTagParser {
     // properties need JOSM restart to apply, modified rarely enough
     private static final int MAX_KEY_LENGTH = Config.getPref().getInt("tags.paste.max-key-length", 50);
     private static final int MAX_KEY_COUNT = Config.getPref().getInt("tags.paste.max-key-count", 30);
-    private static final String KEY_PATTERN = Config.getPref().get("tags.paste.tag-pattern", "[0-9a-zA-Z:_]*");
+    private static final String KEY_PATTERN = Config.getPref().get("tags.paste.tag-pattern", "[0-9a-zA-Z:_-]*");
     private static final int MAX_VALUE_LENGTH = 255;
 
     private TextTagParser() {
@@ -128,7 +128,7 @@ public final class TextTagParser {
 
     /**
      * Check tags for correctness and display warnings if needed
-     * @param tags - map key-&gt;value to check
+     * @param tags - map key → value to check
      * @param callback warning callback
      * @return true if the tags should be pasted
      * @since 12683

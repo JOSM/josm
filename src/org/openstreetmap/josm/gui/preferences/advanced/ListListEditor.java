@@ -49,7 +49,7 @@ public class ListListEditor extends AbstractTableListEditor<List<String>> {
         return super.build();
     }
 
-    private class EntryListModel extends AbstractEntryListModel {
+    private final class EntryListModel extends AbstractEntryListModel {
 
         @Override
         public String getElementAt(int index) {
@@ -63,7 +63,7 @@ public class ListListEditor extends AbstractTableListEditor<List<String>> {
 
         @Override
         public void add() {
-            data.add(new ArrayList<String>());
+            data.add(new ArrayList<>());
             fireIntervalAdded(this, getSize() - 1, getSize() - 1);
         }
 
@@ -74,7 +74,7 @@ public class ListListEditor extends AbstractTableListEditor<List<String>> {
         }
     }
 
-    private class ListTableModel extends AbstractTableModel {
+    private final class ListTableModel extends AbstractTableModel {
 
         private List<String> data() {
             return entryIdx == null ? Collections.<String>emptyList() : data.get(entryIdx);

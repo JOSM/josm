@@ -23,19 +23,19 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * For all purposes of loading dynamic resources, the Plugin's class loader should be used
  * (or else, the plugin jar will not be within the class path).
- *
+ * <p>
  * A plugin may subclass this abstract base class (but it is optional).
- *
+ * <p>
  * The actual implementation of this class is optional, as all functions will be called
  * via reflection. This is to be able to change this interface without the need of
  * recompiling or even breaking the plugins. If your class does not provide a
  * function here (or does provide a function with a mismatching signature), it will not
  * be called. That simple.
- *
+ * <p>
  * Or in other words: See this base class as an documentation of what automatic callbacks
  * are provided (you can register yourself to more callbacks in your plugin class
  * constructor).
- *
+ * <p>
  * Subclassing Plugin and overriding some functions makes it easy for you to keep sync
  * with the correct actual plugin architecture of JOSM.
  *
@@ -46,7 +46,7 @@ public abstract class Plugin implements MapFrameListener {
     /**
      * This is the info available for this plugin. You can access this from your
      * constructor.
-     *
+     * <p>
      * (The actual implementation to request the info from a static variable
      * is a bit hacky, but it works).
      */
@@ -54,7 +54,7 @@ public abstract class Plugin implements MapFrameListener {
 
     private final IBaseDirectories pluginBaseDirectories = new PluginBaseDirectories();
 
-    private class PluginBaseDirectories implements IBaseDirectories {
+    private final class PluginBaseDirectories implements IBaseDirectories {
         private File preferencesDir;
         private File cacheDir;
         private File userdataDir;

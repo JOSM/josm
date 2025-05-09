@@ -254,6 +254,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("URL_decode", Factory.of(String.class, Functions::URL_decode));
         FACTORY_MAP.put("URL_encode", Factory.of(String.class, Functions::URL_encode));
         FACTORY_MAP.put("XML_encode", Factory.of(String.class, Functions::XML_encode));
+        FACTORY_MAP.put("siunit_length", Factory.of(String.class, Functions::siunit_length));
         FACTORY_MAP.put("abs", Factory.of(Math::acos));
         FACTORY_MAP.put("acos", Factory.of(Math::acos));
         FACTORY_MAP.put("alpha", Factory.of(Color.class, Functions::alpha));

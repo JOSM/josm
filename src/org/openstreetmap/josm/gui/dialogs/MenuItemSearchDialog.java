@@ -92,7 +92,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
         }
     }
 
-    private static class CellRenderer implements ListCellRenderer<JMenuItem> {
+    private static final class CellRenderer implements ListCellRenderer<JMenuItem> {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends JMenuItem> list, JMenuItem value, int index,

@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.file.FileSystemException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,6 +142,19 @@ public final class ExceptionDialogUtil {
                 tr("IO Exception"),
                 ht("/ErrorMessages#NestedIOException")
         );
+    }
+
+    /**
+     * Explains a {@link IOException}
+     *
+     * @param e the exception
+     */
+    private static void explainIOException(Exception e) {
+        if (e instanceof FileSystemException && e.getMessage().contains("The device is not ready")) {
+            showErrorDialog(ExceptionUtil.explainException(e), tr("File System Exception"), null);
+        } else {
+            explainGeneric(e);
+        }
     }
 
     /**
@@ -490,6 +504,11 @@ public final class ExceptionDialogUtil {
         }
         if (e instanceof OsmTransferException) {
             explainOsmTransferException((OsmTransferException) e);
+            return;
+        }
+        FileSystemException fileSystemException = ExceptionUtil.getNestedException(e, FileSystemException.class);
+        if (fileSystemException != null) {
+            explainIOException(fileSystemException);
             return;
         }
         explainGeneric(e);

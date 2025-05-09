@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.Pair;
  * try {
  *   ... your code ...
  * } catch (RuntimeException t) {
- *   throw BugReport.intercept(t).put("id", id).put("tag", () -&gt; x.getTag());
+ *   throw BugReport.intercept(t).put("id", id).put("tag", () → x.getTag());
  * }
  * </pre>
  *
@@ -159,6 +159,15 @@ public final class BugReport implements Serializable {
         }
         if (isIncludeData()) {
             exception.printReportDataTo(out);
+            // Exceptions thrown in threads *may* be automatically wrapped by the thread handler (ForkJoinPool, etc.)
+            // We want to keep the data saved in the child exceptions, so we print that as well.
+            Throwable cause = exception.getCause();
+            while (cause != null) {
+                if (cause instanceof ReportedException) {
+                    ((ReportedException) cause).printReportDataTo(out);
+                }
+                cause = cause.getCause();
+            }
         }
         exception.printReportStackTo(out);
         if (isIncludeAllStackTraces()) {

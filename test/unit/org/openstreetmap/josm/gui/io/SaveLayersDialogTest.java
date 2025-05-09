@@ -161,14 +161,14 @@ class SaveLayersDialogTest {
         }
     }
 
-    private static class GraphicsEnvironmentMock extends MockUp<GraphicsEnvironment> {
+    private static final class GraphicsEnvironmentMock extends MockUp<GraphicsEnvironment> {
         @Mock
         public static boolean isHeadless(Invocation invocation) {
             return false;
         }
     }
 
-    private static class SaveLayersDialogMock extends MockUp<SaveLayersDialog> {
+    private static final class SaveLayersDialogMock extends MockUp<SaveLayersDialog> {
         private final SaveLayersModel model = new SaveLayersModel();
         private int getUserActionCalled = 0;
         @Mock

@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +20,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import net.trajano.commons.testing.UtilityClassTestUtil;
 import org.junit.jupiter.api.Test;
+
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link Utils} class.
@@ -351,15 +351,6 @@ class UtilsTest {
     }
 
     /**
-     * Tests if readBytesFromStream handles null streams (might happen when there is no data on error stream)
-     * @throws IOException in case of I/O error
-     */
-    @Test
-    void testNullStreamForReadBytesFromStream() throws IOException {
-        assertEquals(0, Utils.readBytesFromStream(null).length, "Empty on null stream");
-    }
-
-    /**
      * Test of {@link Utils#getLevenshteinDistance} method.
      */
     @Test
@@ -522,6 +513,7 @@ class UtilsTest {
         map4.put("ooo", "bar");
         map4.put("sss", "baz");
         map4.put("mmm", ":-)");
+        map4.put("xxx", null); // see #23748
         assertEquals(map4, Utils.toUnmodifiableMap(map4));
     }
 
@@ -546,5 +538,29 @@ class UtilsTest {
 
         assertEquals(-1.0, Utils.getStandardDeviation(new double[]{}));
         assertEquals(-1.0, Utils.getStandardDeviation(new double[]{0}));
+    }
+
+    /**
+     * Test of {@link Utils#unitToMeter(String)}
+     */
+    @Test
+    void testUnitToMeter() {
+        assertEquals(1.2, Utils.unitToMeter("1.2"));
+        assertEquals(1.3, Utils.unitToMeter("  1,3 m "));
+        assertEquals(1.4, Utils.unitToMeter("1.4m"));
+        assertEquals(1.5, Utils.unitToMeter("150cm"));
+        assertEquals(1.6, Utils.unitToMeter("1600.0mm"));
+        assertEquals(1700, Utils.unitToMeter("1.7km"));
+        assertEquals(-1800, Utils.unitToMeter("-1.8km"));
+        assertEquals(3.048, Utils.unitToMeter("10ft"));
+        assertEquals(6.096, Utils.unitToMeter("20'"));
+        assertEquals(2.54, Utils.unitToMeter("100in"));
+        assertEquals(5.08, Utils.unitToMeter("200\""));
+        assertEquals(1852, Utils.unitToMeter("1nmi"));
+        assertEquals(1609.344, Utils.unitToMeter("1mi"));
+        assertEquals(3.0734, Utils.unitToMeter("10ft1in"));
+        assertEquals(6.1468, Utils.unitToMeter("20'2\""));
+        assertEquals(-6.1468, Utils.unitToMeter("-20'2\""));
+        assertThrows(IllegalArgumentException.class, () -> Utils.unitToMeter("Hallo"));
     }
 }

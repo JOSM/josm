@@ -118,7 +118,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     private boolean destroyed;
 
-    private class UpdateImageThread extends Thread {
+    private final class UpdateImageThread extends Thread {
         private boolean restart;
 
         @SuppressWarnings("DoNotCall") // we are calling `run` from the thread we want it to be running on (aka recursive)
@@ -145,7 +145,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e == null ||
             e.getKey().equals(AGPIFO_STYLE.getKey())) {
-            dragButton = AGPIFO_STYLE.get() ? 1 : 3;
+            dragButton = Boolean.TRUE.equals(AGPIFO_STYLE.get()) ? 1 : 3;
             zoomButton = dragButton == 1 ? 3 : 1;
         }
     }
@@ -319,7 +319,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         }
     }
 
-    private class ImgDisplayMouseListener extends MouseAdapter {
+    private final class ImgDisplayMouseListener extends MouseAdapter {
 
         private MouseEvent lastMouseEvent;
         private Point mousePointInImg;
@@ -433,7 +433,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             if (currentImage == null)
                 return;
 
-            if (ZOOM_ON_CLICK.get()) {
+            if (Boolean.TRUE.equals(ZOOM_ON_CLICK.get())) {
                 // click notions are less coherent than wheel, refresh mousePointInImg on each click
                 lastMouseEvent = null;
 
@@ -771,7 +771,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         } else {
             errorMessage = null;
         }
-        if (!Utils.isBlank(errorMessage)) {
+        if (!Utils.isStripEmpty(errorMessage)) {
             Rectangle2D errorStringSize = g.getFontMetrics(g.getFont()).getStringBounds(errorMessage, g);
             if (Boolean.TRUE.equals(ERROR_MESSAGE_BACKGROUND.get())) {
                 int height = g.getFontMetrics().getHeight();

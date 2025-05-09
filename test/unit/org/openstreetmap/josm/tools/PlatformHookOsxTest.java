@@ -5,13 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -34,7 +35,7 @@ class PlatformHookOsxTest {
      */
     @Test
     void testStartupHook() {
-        hook.startupHook((a, b, c, d) -> System.out.println("java callback"), u -> System.out.println("webstart callback"),
+        hook.startupHook((a, b, c, d) -> System.out.println("java callback"),
                 (a, b, c) -> System.out.println("sanity check callback"));
     }
 
@@ -50,9 +51,9 @@ class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#openUrl}
      * @throws IOException if an error occurs
      */
+    @EnabledOnOs(OS.MAC)
     @Test
     void testOpenUrl() throws IOException {
-        assumeTrue(PlatformManager.isPlatformOsx());
         hook.openUrl(Config.getUrls().getJOSMWebsite());
     }
 

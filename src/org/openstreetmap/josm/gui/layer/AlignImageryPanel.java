@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -19,7 +20,6 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
@@ -89,10 +89,12 @@ public class AlignImageryPanel extends JPanel {
     public static void addNagPanelIfNeeded(ImageryInfo infoToAdd) {
         BooleanProperty showAgain = new BooleanProperty("message.imagery.nagPanel." + infoToAdd.getUrl(), true);
         MapFrame map = MainApplication.getMap();
-        if (MainApplication.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid()
-                && map.getTopPanel(AlignImageryPanel.class) == null) {
-            double w = GuiHelper.getScreenSize().getWidth();
-            map.addTopPanel(new AlignImageryPanel(w > 1300, showAgain, infoToAdd));
+        if (MainApplication.isDisplayingMapView() && Boolean.TRUE.equals(showAgain.get())
+                && !infoToAdd.isGeoreferenceValid() && map.getTopPanel(AlignImageryPanel.class) == null) {
+            SwingUtilities.invokeLater(() -> {
+                double w = map.getWidth();
+                map.addTopPanel(new AlignImageryPanel(w > 1300, showAgain, infoToAdd));
+            });
         }
     }
 }

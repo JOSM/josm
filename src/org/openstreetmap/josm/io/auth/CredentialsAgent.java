@@ -58,19 +58,6 @@ public interface CredentialsAgent {
             throws CredentialsAgentException;
 
     /**
-     * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no
-     * Access Token is currently managed by this CredentialAgent.
-     *
-     * @return the current OAuth Access Token to access the OSM server.
-     * @throws CredentialsAgentException if something goes wrong
-     * @deprecated since 18991 -- OAuth 1.0 is being removed from the OSM API
-     */
-    @Deprecated
-    default IOAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
-        throw new CredentialsAgentException("Call to deprecated method");
-    }
-
-    /**
      * Lookup the current OAuth Access Token to access the specified server. Replies null, if no
      * Access Token is currently managed by this CredentialAgent.
      *
@@ -85,21 +72,9 @@ public interface CredentialsAgent {
     /**
      * Stores the OAuth Access Token <code>accessToken</code>.
      *
-     * @param accessToken the access Token. null, to remove the Access Token.
-     * @throws CredentialsAgentException if something goes wrong
-     * @deprecated since 18991 -- OAuth 1.0 is being removed from the OSM API
-     */
-    @Deprecated
-    default void storeOAuthAccessToken(IOAuthToken accessToken) throws CredentialsAgentException {
-        throw new CredentialsAgentException("Call to deprecated method");
-    }
-
-    /**
-     * Stores the OAuth Access Token <code>accessToken</code>.
-     *
      * @param host The host the access token is for
      * @param accessToken the access Token. null, to remove the Access Token. This will remove all IOAuthTokens <i>not</i> managed by
-     *                    {@link #storeOAuthAccessToken(IOAuthToken)}.
+     *                    {@link #storeOAuthAccessToken(String, IOAuthToken)}.
      * @throws CredentialsAgentException if something goes wrong
      * @since 18650
      */
@@ -108,10 +83,20 @@ public interface CredentialsAgent {
     /**
      * Purges the internal credentials cache for the given requestor type.
      * @param requestorType the type of service.
-     * {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY} for a proxy server
+     * {@link RequestorType#PROXY} for a proxy server, {@link RequestorType#SERVER} for other servers.
      * @since 12992
      */
     void purgeCredentialsCache(RequestorType requestorType);
+
+    /**
+     * Purges the internal credentials cache for the given requestor type and host.
+     * @param requestorType the type of service.
+     * @param host the host.
+     * {@link RequestorType#PROXY} for a proxy server, {@link RequestorType#SERVER} for other servers.
+     */
+    default void purgeCredentialsCache(RequestorType requestorType, String host) {
+        purgeCredentialsCache(requestorType);
+    }
 
     /**
      * Provide a Panel that is shown below the API password / username fields

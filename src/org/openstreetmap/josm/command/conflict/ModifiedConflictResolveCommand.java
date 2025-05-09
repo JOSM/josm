@@ -35,7 +35,7 @@ public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
     @Override
     public String getDescriptionText() {
         String msg;
-        switch(OsmPrimitiveType.from(conflict.getMy())) {
+        switch (OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Set the ''modified'' flag for node {0}"); break;
         case WAY: msg = marktr("Set the ''modified'' flag for way {0}"); break;
         case RELATION: msg = marktr("Set the ''modified'' flag for relation {0}"); break;

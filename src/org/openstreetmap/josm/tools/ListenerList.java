@@ -39,7 +39,7 @@ public class ListenerList<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj != null && obj.getClass() == WeakListener.class) {
+            if (obj instanceof WeakListener) {
                 return Objects.equals(listener.get(), ((WeakListener<?>) obj).listener.get());
             } else {
                 return false;
@@ -71,16 +71,15 @@ public class ListenerList<T> {
 
     /**
      * Adds a listener. The listener will not prevent the object from being garbage collected.
-     *
+     * <p>
      * This should be used with care. It is better to add good cleanup code.
      * @param listener The listener.
      */
     public synchronized void addWeakListener(T listener) {
         if (ensureNotInList(listener)) {
             // clean the weak listeners, just to be sure...
-            while (weakListeners.remove(new WeakListener<T>(null))) {
-                // continue
-            }
+            WeakListener<T> nullListener = new WeakListener<>(null);
+            weakListeners.removeIf(nullListener::equals);
             weakListeners.add(new WeakListener<>(listener));
         }
     }
@@ -223,7 +222,7 @@ public class ListenerList<T> {
         }
     }
 
-    private static class UncheckedListenerList<T> extends ListenerList<T> {
+    private static final class UncheckedListenerList<T> extends ListenerList<T> {
         @Override
         protected void failAdd(T listener) {
             Logging.warn("Listener was already added: {0}", listener);

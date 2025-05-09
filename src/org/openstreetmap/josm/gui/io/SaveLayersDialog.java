@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -131,10 +132,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             if (!layersWithUnsavedChanges.isEmpty()) {
                 dialog.getModel().populate(layersWithUnsavedChanges);
                 dialog.setVisible(true);
-                switch(dialog.getUserAction()) {
+                switch (dialog.getUserAction()) {
                     case PROCEED: return true;
-                    case CANCEL:
-                    default: return false;
+                    case CANCEL: return false;
                 }
             }
             dialog.closeDialog();
@@ -181,14 +181,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         JPanel pnl = new JPanel(new GridBagLayout());
 
         model.addPropertyChangeListener(saveAndProceedAction);
-        pnl.add(saveAndProceedActionButton, GBC.std(0, 0).insets(5, 5, 0, 0).fill(GBC.HORIZONTAL));
+        pnl.add(saveAndProceedActionButton, GBC.std(0, 0).insets(5, 5, 0, 0).fill(GridBagConstraints.HORIZONTAL));
 
-        pnl.add(new JButton(saveSessionAction), GBC.std(1, 0).insets(5, 5, 5, 0).fill(GBC.HORIZONTAL));
+        pnl.add(new JButton(saveSessionAction), GBC.std(1, 0).insets(5, 5, 5, 0).fill(GridBagConstraints.HORIZONTAL));
 
         model.addPropertyChangeListener(discardAndProceedAction);
-        pnl.add(new JButton(discardAndProceedAction), GBC.std(0, 1).insets(5, 5, 0, 5).fill(GBC.HORIZONTAL));
+        pnl.add(new JButton(discardAndProceedAction), GBC.std(0, 1).insets(5, 5, 0, 5).fill(GridBagConstraints.HORIZONTAL));
 
-        pnl.add(new JButton(cancelAction), GBC.std(1, 1).insets(5, 5, 5, 5).fill(GBC.HORIZONTAL));
+        pnl.add(new JButton(cancelAction), GBC.std(1, 1).insets(5, 5, 5, 5).fill(GridBagConstraints.HORIZONTAL));
 
         JPanel pnl2 = new JPanel(new BorderLayout());
         pnl2.add(pnlUploadLayers, BorderLayout.CENTER);
@@ -266,7 +266,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.weightx = 1.0;
             gc.weighty = 0.0;
             add(lblMessage, gc);
-            lblMessage.setHorizontalAlignment(JLabel.LEADING);
+            lblMessage.setHorizontalAlignment(SwingConstants.LEADING);
             lstLayers.setCellRenderer(new LayerCellRenderer());
             gc.gridx = 0;
             gc.gridy = 1;
@@ -376,11 +376,15 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         }
 
         public void cancel() {
-            switch(model.getMode()) {
-            case EDITING_DATA: cancelWhenInEditingModel();
+            switch (model.getMode()) {
+            case EDITING_DATA:
+                cancelWhenInEditingModel();
                 break;
-            case UPLOADING_AND_SAVING: cancelSafeAndUploadTask();
+            case UPLOADING_AND_SAVING:
+                cancelSafeAndUploadTask();
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + model.getMode());
             }
         }
 
@@ -425,11 +429,15 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 Mode mode = (Mode) evt.getNewValue();
-                switch(mode) {
-                case EDITING_DATA: setEnabled(true);
+                switch (mode) {
+                case EDITING_DATA:
+                    setEnabled(true);
                     break;
-                case UPLOADING_AND_SAVING: setEnabled(false);
+                case UPLOADING_AND_SAVING:
+                    setEnabled(false);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + mode);
                 }
             }
         }
@@ -522,11 +530,15 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 SaveLayersModel.Mode mode = (SaveLayersModel.Mode) evt.getNewValue();
-                switch(mode) {
-                case EDITING_DATA: setEnabled(true);
+                switch (mode) {
+                case EDITING_DATA:
+                    setEnabled(true);
                     break;
-                case UPLOADING_AND_SAVING: setEnabled(false);
+                case UPLOADING_AND_SAVING:
+                    setEnabled(false);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + mode);
                 }
             }
         }

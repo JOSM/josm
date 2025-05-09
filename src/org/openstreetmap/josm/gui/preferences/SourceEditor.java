@@ -58,6 +58,7 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
@@ -111,6 +112,8 @@ import org.xml.sax.SAXException;
  * @since 1743
  */
 public abstract class SourceEditor extends JPanel {
+    private static final String DELETE = "delete";
+    private static final String DIALOGS = "dialogs";
 
     /** the type of source entry **/
     protected final SourceType sourceType;
@@ -218,8 +221,8 @@ public abstract class SourceEditor extends JPanel {
 
         RemoveActiveSourcesAction removeActiveSourcesAction = new RemoveActiveSourcesAction();
         tblActiveSources.getSelectionModel().addListSelectionListener(removeActiveSourcesAction);
-        tblActiveSources.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
-        tblActiveSources.getActionMap().put("delete", removeActiveSourcesAction);
+        tblActiveSources.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), DELETE);
+        tblActiveSources.getActionMap().put(DELETE, removeActiveSourcesAction);
 
         MoveUpDownAction moveUp = null;
         MoveUpDownAction moveDown = null;
@@ -296,7 +299,7 @@ public abstract class SourceEditor extends JPanel {
         gbc.fill = GBC.VERTICAL;
         gbc.insets = new Insets(0, 0, 0, 6);
 
-        JToolBar sideButtonTB = new JToolBar(JToolBar.VERTICAL);
+        JToolBar sideButtonTB = new JToolBar(SwingConstants.VERTICAL);
         sideButtonTB.setFloatable(false);
         sideButtonTB.setBorderPainted(false);
         sideButtonTB.setOpaque(false);
@@ -362,8 +365,8 @@ public abstract class SourceEditor extends JPanel {
 
         RemoveIconPathAction removeIconPathAction = new RemoveIconPathAction();
         tblIconPaths.getSelectionModel().addListSelectionListener(removeIconPathAction);
-        tblIconPaths.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
-        tblIconPaths.getActionMap().put("delete", removeIconPathAction);
+        tblIconPaths.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), DELETE);
+        tblIconPaths.getActionMap().put(DELETE, removeIconPathAction);
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -720,7 +723,7 @@ public abstract class SourceEditor extends JPanel {
         public void removeIdxs(Collection<Integer> idxs) {
             data = IntStream.range(0, data.size())
                     .filter(i -> !idxs.contains(i))
-                    .mapToObj(i -> data.get(i))
+                    .mapToObj(data::get)
                     .collect(Collectors.toList());
             fireTableDataChanged();
         }
@@ -763,7 +766,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     private static void prepareFileChooser(String url, AbstractFileChooser fc) {
-        if (Utils.isBlank(url)) return;
+        if (Utils.isStripEmpty(url)) return;
         URL sourceUrl;
         try {
             sourceUrl = new URL(url);
@@ -908,7 +911,7 @@ public abstract class SourceEditor extends JPanel {
         NewActiveSourceAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.NEW_SOURCE_ENTRY_TOOLTIP));
-            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this);
+            new ImageProvider(DIALOGS, "add").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -938,7 +941,7 @@ public abstract class SourceEditor extends JPanel {
         RemoveActiveSourcesAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.REMOVE_SOURCE_TOOLTIP));
-            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this);
+            new ImageProvider(DIALOGS, DELETE).getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -961,7 +964,7 @@ public abstract class SourceEditor extends JPanel {
         EditActiveSourceAction() {
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.EDIT_SOURCE_TOOLTIP));
-            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this);
+            new ImageProvider(DIALOGS, "edit").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -1007,7 +1010,7 @@ public abstract class SourceEditor extends JPanel {
 
         MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
-            new ImageProvider("dialogs", isDown ? "down" : "up").getResource().attachImageIcon(this, true);
+            new ImageProvider(DIALOGS, isDown ? "down" : "up").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
             updateEnabledState();
         }
@@ -1109,7 +1112,7 @@ public abstract class SourceEditor extends JPanel {
         ReloadSourcesAction(String url, List<SourceProvider> sourceProviders) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
-            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
+            new ImageProvider(DIALOGS, "refresh").getResource().attachImageIcon(this);
             this.url = url;
             this.sourceProviders = sourceProviders;
             setEnabled(!NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
@@ -1251,7 +1254,7 @@ public abstract class SourceEditor extends JPanel {
         NewIconPathAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, tr("Add a new icon path"));
-            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this);
+            new ImageProvider(DIALOGS, "add").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -1265,7 +1268,7 @@ public abstract class SourceEditor extends JPanel {
         RemoveIconPathAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, tr("Remove the selected icon paths"));
-            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this);
+            new ImageProvider(DIALOGS, DELETE).getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -1288,7 +1291,7 @@ public abstract class SourceEditor extends JPanel {
         EditIconPathAction() {
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, tr("Edit the selected icon path"));
-            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this);
+            new ImageProvider(DIALOGS, "edit").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -1607,11 +1610,7 @@ public abstract class SourceEditor extends JPanel {
 
         public void setInitialValue(String initialValue) {
             this.value = initialValue;
-            if (initialValue == null) {
-                this.tfFileName.setText("");
-            } else {
-                this.tfFileName.setText(initialValue);
-            }
+            this.tfFileName.setText(Objects.requireNonNullElse(initialValue, ""));
         }
 
         @Override
