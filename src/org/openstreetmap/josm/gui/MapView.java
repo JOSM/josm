@@ -288,10 +288,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 return;
             }
             Rectangle currentVirtualDesktopBounds = getVirtualDesktopBounds();
-            if (virtualDesktopBounds.equals(currentVirtualDesktopBounds)) {
-                return;
+            if (!virtualDesktopBounds.equals(currentVirtualDesktopBounds)) {
+                virtualDesktopBounds = currentVirtualDesktopBounds;
             }
-            virtualDesktopBounds = currentVirtualDesktopBounds;
             offscreenBuffer = getAcceleratedBuffer(gc);
             unchangedLayersBuffer = getAcceleratedBuffer(gc);
         });
