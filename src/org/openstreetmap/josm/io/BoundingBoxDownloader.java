@@ -233,6 +233,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 ds.getNodes().stream().filter(n -> bounds.stream().anyMatch(b -> b.contains(n)))
                         .forEach(i -> i.setReferrersDownloaded(true));
                 ds.getWays().forEach(i -> i.setReferrersDownloaded(true));
+                ds.getRelations().stream().filter(r -> r.getMembers().stream().noneMatch(rm -> rm.isRelation()))
+                        .forEach(i -> i.setReferrersDownloaded(true));
             }
             return ds;
         } catch (OsmTransferException e) {
