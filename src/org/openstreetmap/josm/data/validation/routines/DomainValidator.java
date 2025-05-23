@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2025051500, Last Updated Thu May 15 07:07:02 2025 UTC
+        // Taken from Version 2025052300, Last Updated Fri May 23 07:07:02 2025 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -1029,7 +1029,6 @@ public final class DomainValidator extends AbstractValidator {
         "politie", // politie Politie Nederland
         "porn", // porn ICM Registry PN LLC
         "post", // post Universal Postal Union
-        "pramerica", // pramerica Prudential Financial, Inc.
         "praxi", // praxi Praxi S.p.A.
         "press", // press Radix Technologies Inc.
         "prime", // prime Amazon Registry Services, Inc.
