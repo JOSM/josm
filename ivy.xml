@@ -34,7 +34,7 @@
         <dependency conf="api->default" org="com.formdev" name="svgSalamander" rev="1.1.4"/>
         <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.28.2"/>
         <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
-        <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2025.3.21"/>
+        <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2025.5.21"/>
         <!-- sources->sources -->
         <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.25"/>
         <dependency conf="sources->sources" org="jakarta.json" name="jakarta.json-api" rev="2.1.3"/>
