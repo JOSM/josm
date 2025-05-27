@@ -23,6 +23,10 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
@@ -41,7 +45,9 @@ import org.xml.sax.SAXException;
  * Uploads the current selection to the server.
  * @since 2250
  */
-public class UploadSelectionAction extends AbstractUploadAction {
+public class UploadSelectionAction extends AbstractUploadAction implements DataSetListenerAdapter.Listener {
+    private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
+
     /**
      * Constructs a new {@code UploadSelectionAction}.
      */
@@ -55,6 +61,7 @@ public class UploadSelectionAction extends AbstractUploadAction {
                 // CHECKSTYLE.ON: LineLength
                 true);
         setHelpId(ht("/Action/UploadSelection"));
+        DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IMMEDIATELY);
     }
 
     @Override
@@ -320,5 +327,17 @@ public class UploadSelectionAction extends AbstractUploadAction {
                 lastException = e;
             }
         }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
+
+    }
+
+    @Override
+    public void processDatasetEvent(AbstractDatasetChangedEvent event) {
+        updateEnabledStateOnCurrentSelection();
     }
 }
