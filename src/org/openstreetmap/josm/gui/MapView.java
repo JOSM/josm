@@ -3,17 +3,19 @@ package org.openstreetmap.josm.gui;
 
 import static java.util.function.Predicate.not;
 
+import java.awt.AWTException;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.ImageCapabilities;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Transparency;
 import java.awt.event.ComponentAdapter;
@@ -24,7 +26,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -86,12 +88,12 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
- * This is a component used in the {@link MapFrame} for browsing the map. It use is to
+ * This is a component used in the {@link MapFrame} for browsing the map. It’s used to
  * provide the MapMode's enough capabilities to operate.<br><br>
  *
  * {@code MapView} holds meta-data about the data set currently displayed, as scale level,
  * center point viewed, what scrolling mode or editing mode is selected or with
- * what projection the map is viewed etc..<br><br>
+ * what projection the map is viewed, etc.<br><br>
  *
  * {@code MapView} is able to administrate several layers.
  *
@@ -100,6 +102,9 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public class MapView extends NavigatableComponent
 implements PropertyChangeListener, PreferenceChangedListener,
 LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
+
+    private static final boolean IS_HEADLESS = GraphicsEnvironment.isHeadless();
+    private static Rectangle virtualDesktopBounds = getVirtualDesktopBounds();
 
     static {
         MapPaintStyles.addMapPaintStylesUpdateListener(new MapPaintStylesUpdateListener() {
@@ -234,10 +239,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     private final transient Set<MapViewPaintable> temporaryLayers = new LinkedHashSet<>();
 
-    private transient BufferedImage nonChangedLayersBuffer;
-    private transient BufferedImage offscreenBuffer;
+    private transient VolatileImage unchangedLayersBuffer;
+    private transient VolatileImage offscreenBuffer;
     // Layers that wasn't changed since last paint
-    private final transient List<Layer> nonChangedLayers = new ArrayList<>();
+    private final transient List<Layer> unchangedLayers = new ArrayList<>();
     private int lastViewID;
     private final AtomicBoolean paintPreferencesChanged = new AtomicBoolean(true);
     private Rectangle lastClipBounds = new Rectangle();
@@ -277,7 +282,18 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 mapMover = new MapMover(MapView.this);
             }
         });
-
+        addPropertyChangeListener("graphicsConfiguration", event -> {
+            GraphicsConfiguration gc = (GraphicsConfiguration) event.getNewValue();
+            if (null == gc) {
+                return;
+            }
+            Rectangle currentVirtualDesktopBounds = getVirtualDesktopBounds();
+            if (!virtualDesktopBounds.equals(currentVirtualDesktopBounds)) {
+                virtualDesktopBounds = currentVirtualDesktopBounds;
+            }
+            offscreenBuffer = getAcceleratedBuffer(gc);
+            unchangedLayersBuffer = getAcceleratedBuffer(gc);
+        });
         // listens to selection changes to redraw the map
         SelectionEventManager.getInstance().addSelectionListenerForEdt(repaintSelectionChangedListener);
 
@@ -311,6 +327,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             AutoFilterManager.getInstance().enableAutoFilterRule(AutoFilterManager.PROP_AUTO_FILTER_RULE.get());
         }
         setTransferHandler(new OsmTransferHandler());
+        setOpaque(true);
+
+        if (!IS_HEADLESS) {
+            GraphicsDevice defaultSD = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            GraphicsConfiguration defaultGC = defaultSD.getDefaultConfiguration();
+            offscreenBuffer = getAcceleratedBuffer(defaultGC);
+            unchangedLayersBuffer = getAcceleratedBuffer(defaultGC);
+        }
     }
 
     /**
@@ -333,14 +357,55 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return Arrays.asList(zoomSlider, scaler);
     }
 
-    private static BufferedImage getAcceleratedImage(Component mv, int width, int height) {
-        if (GraphicsEnvironment.isHeadless()) {
-            return new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+    private static Rectangle getVirtualDesktopBounds() {
+        GraphicsEnvironment localGE = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] localSDs = localGE.getScreenDevices();
+        Rectangle virtualDesktopBounds = new Rectangle();
+        for (GraphicsDevice screenDevice : localSDs) {
+            Rectangle sdBounds = getHiDPIDeviceBounds(screenDevice);
+            virtualDesktopBounds = virtualDesktopBounds.union(sdBounds);
         }
-        return mv.getGraphicsConfiguration().createCompatibleImage(width, height, Transparency.OPAQUE);
+        virtualDesktopBounds.setLocation(0, 0);
+        return virtualDesktopBounds;
     }
 
-    // remebered geometry of the component
+    private static Rectangle getHiDPIDeviceBounds(GraphicsDevice screenDevice) {
+        GraphicsConfiguration defaultGC = screenDevice.getDefaultConfiguration();
+        // bounds for a DPI-aware GC return bounds with correctly scaled dimensions but unscaled screen-space
+        // coordinates, for whatever reason
+        // in fact, *everything* that returns screen-space coordinates does so without scaling 😭
+        AffineTransform defaultTransform = defaultGC.getDefaultTransform();
+        double scaleX = defaultTransform.getScaleX();
+        double scaleY = defaultTransform.getScaleY();
+        Rectangle gcBounds = defaultGC.getBounds();
+        gcBounds.setLocation((int) Math.round(gcBounds.x / scaleX), (int) Math.round(gcBounds.y / scaleY));
+        return gcBounds;
+    }
+
+    private VolatileImage getAcceleratedBuffer(GraphicsConfiguration graphicsConfiguration) {
+        // hardware-accelerated pipelines typically initialize on at least the default device, so we use that and hope
+        // for the best 😭
+        int width = virtualDesktopBounds.width;
+        int height = virtualDesktopBounds.height;
+        ImageCapabilities bufferCaps = new ImageCapabilities(true);
+        VolatileImage buffer;
+        try {
+            buffer = graphicsConfiguration.createCompatibleVolatileImage(width, height, bufferCaps,
+                    Transparency.OPAQUE);
+        } catch (AWTException e) {
+            buffer = graphicsConfiguration.createCompatibleVolatileImage(width, height, Transparency.OPAQUE);
+        }
+        boolean isBufferAccelerated = buffer.getCapabilities().isAccelerated();
+        if (isBufferAccelerated) {
+            buffer.setAccelerationPriority(1);
+        } else {
+            Logging.info("HW acceleration unavailable on screen device {0}",
+                    graphicsConfiguration.getDevice().getIDstring());
+        }
+        return buffer;
+    }
+
+    // Remembered geometry of the component
     private Dimension oldSize;
     private Point oldLoc;
 
@@ -439,7 +504,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     /**
      * Checks if virtual nodes should be drawn. Default is <code>false</code>
-     * @return The virtual nodes property.
+     * @return The virtual node’s property.
      * @see Rendering#render
      */
     public boolean isVirtualNodesEnabled() {
@@ -505,162 +570,111 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             return;
         }
 
-        try {
-            drawMapContent((Graphics2D) g);
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            throw BugReport.intercept(e).put("visibleLayers", layerManager::getVisibleLayersInZOrder)
-                    .put("temporaryLayers", temporaryLayers);
+        if (!IS_HEADLESS) {
+            try {
+                drawMapContent((Graphics2D) g);
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                throw BugReport.intercept(e).put("visibleLayers", layerManager::getVisibleLayersInZOrder)
+                        .put("temporaryLayers", temporaryLayers);
+            }
         }
         super.paint(g);
     }
 
     private void drawMapContent(Graphics2D g) {
-        // In HiDPI-mode, the Graphics g will have a transform that scales
-        // everything by a factor of 2.0 or so. At the same time, the value returned
-        // by getWidth()/getHeight will be reduced by that factor.
-        //
-        // This would work as intended, if we were to draw directly on g. But
-        // with a temporary buffer image, we need to move the scale transform to
-        // the Graphics of the buffer image and (in the end) transfer the content
-        // of the temporary buffer pixel by pixel onto g, without scaling.
-        // (Otherwise, we would upscale a small buffer image and the result would be
-        // blurry, with 2x2 pixel blocks.)
-        AffineTransform trOrig = g.getTransform();
-        double uiScaleX = g.getTransform().getScaleX();
-        double uiScaleY = g.getTransform().getScaleY();
-        // width/height in full-resolution screen pixels
-        int width = (int) Math.round(getWidth() * uiScaleX);
-        int height = (int) Math.round(getHeight() * uiScaleY);
-        // This transformation corresponds to the original transformation of g,
-        // except for the translation part. It will be applied to the temporary
-        // buffer images.
-        AffineTransform trDef = AffineTransform.getScaleInstance(uiScaleX, uiScaleY);
-        // The goal is to create the temporary image at full pixel resolution,
-        // so scale up the clip shape
-        Shape scaledClip = trDef.createTransformedShape(g.getClip());
-
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
+        int unchangedLayersCount = getUnchangedLayersCount(visibleLayers);
+        do {
+            if (VolatileImage.IMAGE_INCOMPATIBLE == offscreenBuffer.validate(getGraphicsConfiguration())) {
+                offscreenBuffer = getAcceleratedBuffer(getGraphicsConfiguration());
+            }
+            Graphics2D g2 = offscreenBuffer.createGraphics();
+            // TODO: clip to content visible in screen-space *only*
+            g2.setClip(getVisibleRect());
+            renderUnchangedLayersBuffer(g, visibleLayers, unchangedLayersCount);
+            g2.drawImage(unchangedLayersBuffer, 0, 0, null);
 
-        int nonChangedLayersCount = 0;
+            for (Layer layer : visibleLayers.subList(unchangedLayersCount, visibleLayers.size())) {
+                paintLayer(layer, g2);
+            }
+
+            try {
+                drawTemporaryLayers(g2, getLatLonBounds(g.getClipBounds()));
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
+            }
+
+            // draw world borders
+            try {
+                drawWorldBorders(g2);
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                // getProjection() needs to be inside lambda to catch errors.
+                BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
+            }
+
+            MapFrame map = MainApplication.getMap();
+            if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
+                AutoFilterManager.getInstance().drawOSDText(g2);
+            } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
+                map.filterDialog.drawOSDText(g2);
+            }
+
+            if (playHeadMarker != null) {
+                playHeadMarker.paint(g2, this);
+            }
+
+            g2.dispose();
+            g.drawImage(offscreenBuffer, 0, 0, null);
+        } while (offscreenBuffer.contentsLost() || unchangedLayersBuffer.contentsLost());
+        offscreenBuffer.flush();
+    }
+
+    private void renderUnchangedLayersBuffer(Graphics2D g, List<Layer> visibleLayers, int unchangedLayersCount) {
+        boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
+                && lastViewID == getViewID()
+                && lastClipBounds.contains(g.getClipBounds())
+                && unchangedLayers.size() <= unchangedLayersCount
+                && unchangedLayers.equals(visibleLayers.subList(0, unchangedLayers.size()));
+        do {
+            if (VolatileImage.IMAGE_INCOMPATIBLE == unchangedLayersBuffer.validate(getGraphicsConfiguration())) {
+                unchangedLayersBuffer = getAcceleratedBuffer(getGraphicsConfiguration());
+                canUseBuffer = false;
+            }
+            if (!canUseBuffer || (unchangedLayers.size() != unchangedLayersCount)) {
+                Graphics2D g2 = unchangedLayersBuffer.createGraphics();
+                g2.setClip(getVisibleRect());
+                if (!canUseBuffer) {
+                    g2.setColor(PaintColors.getBackgroundColor());
+                    g2.fillRect(0, 0, getWidth(), getHeight());
+                    for (Layer layer : visibleLayers.subList(0, unchangedLayersCount)) {
+                        paintLayer(layer, g2);
+                    }
+                } else {
+                    // If there were more unchanged layers than last time, draw them to the buffer
+                    for (Layer layer : visibleLayers.subList(unchangedLayers.size(), unchangedLayersCount)) {
+                        paintLayer(layer, g2);
+                    }
+                }
+                g2.dispose();
+            }
+        } while (unchangedLayersBuffer.contentsLost());
+        unchangedLayers.clear();
+        unchangedLayers.addAll(visibleLayers.subList(0, unchangedLayersCount));
+        lastViewID = getViewID();
+        lastClipBounds = g.getClipBounds();
+    }
+
+    private int getUnchangedLayersCount(List<Layer> visibleLayers) {
+        int unchangedLayersCount = 0;
         Set<MapViewPaintable> invalidated = invalidatedListener.collectInvalidatedLayers();
         for (Layer l: visibleLayers) {
             if (invalidated.contains(l)) {
                 break;
             } else {
-                nonChangedLayersCount++;
+                unchangedLayersCount++;
             }
         }
-
-        boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
-                && nonChangedLayers.size() <= nonChangedLayersCount
-                && lastViewID == getViewID()
-                && lastClipBounds.contains(g.getClipBounds())
-                && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
-
-        if (null == offscreenBuffer || offscreenBuffer.getWidth() != width || offscreenBuffer.getHeight() != height) {
-            offscreenBuffer = getAcceleratedImage(this, width, height);
-        }
-
-        if (!canUseBuffer || nonChangedLayersBuffer == null) {
-            if (null == nonChangedLayersBuffer
-                    || nonChangedLayersBuffer.getWidth() != width || nonChangedLayersBuffer.getHeight() != height) {
-                nonChangedLayersBuffer = getAcceleratedImage(this, width, height);
-            }
-            Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
-            g2.setClip(scaledClip);
-            g2.setTransform(trDef);
-            g2.setColor(PaintColors.getBackgroundColor());
-            g2.fillRect(0, 0, width, height);
-
-            for (int i = 0; i < nonChangedLayersCount; i++) {
-                paintLayer(visibleLayers.get(i), g2);
-            }
-        } else {
-            // Maybe there were more unchanged layers then last time - draw them to buffer
-            if (nonChangedLayers.size() != nonChangedLayersCount) {
-                Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
-                g2.setClip(scaledClip);
-                g2.setTransform(trDef);
-                for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
-                    paintLayer(visibleLayers.get(i), g2);
-                }
-            }
-        }
-
-        nonChangedLayers.clear();
-        if (nonChangedLayersCount > 0)
-            nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
-        lastViewID = getViewID();
-        lastClipBounds = g.getClipBounds();
-
-        Graphics2D tempG = offscreenBuffer.createGraphics();
-        tempG.setClip(scaledClip);
-        tempG.setTransform(new AffineTransform());
-        tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
-        tempG.setTransform(trDef);
-
-        for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
-            paintLayer(visibleLayers.get(i), tempG);
-        }
-
-        try {
-            drawTemporaryLayers(tempG, getLatLonBounds(new Rectangle(
-                    (int) Math.round(g.getClipBounds().x * uiScaleX),
-                    (int) Math.round(g.getClipBounds().y * uiScaleY))));
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
-        }
-
-        // draw world borders
-        try {
-            drawWorldBorders(tempG);
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            // getProjection() needs to be inside lambda to catch errors.
-            BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
-        }
-
-        MapFrame map = MainApplication.getMap();
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
-            AutoFilterManager.getInstance().drawOSDText(tempG);
-        } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
-            map.filterDialog.drawOSDText(tempG);
-        }
-
-        if (playHeadMarker != null) {
-            playHeadMarker.paint(tempG, this);
-        }
-
-        try {
-            g.setTransform(new AffineTransform(1, 0, 0, 1, trOrig.getTranslateX(), trOrig.getTranslateY()));
-            g.drawImage(offscreenBuffer, 0, 0, null);
-        } catch (ClassCastException e) {
-            // See #11002 and duplicate tickets. On Linux with Java >= 8 Many users face this error here:
-            //
-            // java.lang.ClassCastException: sun.awt.image.BufImgSurfaceData cannot be cast to sun.java2d.xr.XRSurfaceData
-            //   at sun.java2d.xr.XRPMBlitLoops.cacheToTmpSurface(XRPMBlitLoops.java:145)
-            //   at sun.java2d.xr.XrSwToPMBlit.Blit(XRPMBlitLoops.java:353)
-            //   at sun.java2d.pipe.DrawImage.blitSurfaceData(DrawImage.java:959)
-            //   at sun.java2d.pipe.DrawImage.renderImageCopy(DrawImage.java:577)
-            //   at sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:67)
-            //   at sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:1014)
-            //   at sun.java2d.pipe.ValidatePipe.copyImage(ValidatePipe.java:186)
-            //   at sun.java2d.SunGraphics2D.drawImage(SunGraphics2D.java:3318)
-            //   at sun.java2d.SunGraphics2D.drawImage(SunGraphics2D.java:3296)
-            //   at org.openstreetmap.josm.gui.MapView.paint(MapView.java:834)
-            //
-            // It seems to be this JDK bug, but Oracle does not seem to be fixing it:
-            // https://bugs.openjdk.java.net/browse/JDK-7172749
-            //
-            // According to bug reports it can happen for a variety of reasons such as:
-            // - long period of time
-            // - change of screen resolution
-            // - addition/removal of a secondary monitor
-            //
-            // But the application seems to work fine after, so let's just log the error
-            Logging.error(e);
-        } finally {
-            g.setTransform(trOrig);
-        }
+        return unchangedLayersCount;
     }
 
     private void drawTemporaryLayers(Graphics2D tempG, Bounds box) {
@@ -823,11 +837,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         if (mapMover != null) {
             mapMover.destroy();
         }
-        nonChangedLayers.clear();
+        unchangedLayers.clear();
         synchronized (temporaryLayers) {
             temporaryLayers.clear();
         }
-        nonChangedLayersBuffer = null;
+        unchangedLayersBuffer = null;
         offscreenBuffer = null;
         setTransferHandler(null);
         GuiHelper.destroyComponents(this, false);
