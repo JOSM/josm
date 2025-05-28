@@ -884,6 +884,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
         SelectAction.checkCommandForLargeDistance(lastCommand);
 
+        // check if move was cancelled
+        if (UndoRedoHandler.getInstance().getLastCommand() != lastCommand)
+            return;
+
         final int moveCount = lastCommand.getParticipatingPrimitives().size();
         final int max = Config.getPref().getInt("warn.move.maxelements", 20);
         if (moveCount > max) {
