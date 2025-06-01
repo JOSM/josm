@@ -1507,12 +1507,14 @@ public class OsmDataLayer extends AbstractOsmDataLayer
 
     @Override
     public void primitiveHovered(PrimitiveHoverEvent e) {
-        List<IPrimitive> primitives = new ArrayList<>(2);
-        primitives.add(e.getHoveredPrimitive());
-        primitives.add(e.getPreviousPrimitive());
-        primitives.removeIf(Objects::isNull);
-        resetTiles(primitives);
-        this.invalidate();
+        if (MapRendererFactory.getInstance().isMapRendererActive(StyledTiledMapRenderer.class)) {
+            List<IPrimitive> primitives = new ArrayList<>(2);
+            primitives.add(e.getHoveredPrimitive());
+            primitives.add(e.getPreviousPrimitive());
+            primitives.removeIf(Objects::isNull);
+            resetTiles(primitives);
+            this.invalidate();
+        }
     }
 
     @Override
