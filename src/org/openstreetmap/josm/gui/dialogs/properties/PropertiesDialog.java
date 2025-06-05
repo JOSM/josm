@@ -823,7 +823,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, PropertyChangeListe
 
         tagTable.setVisible(hasTags);
         tagTable.getTableHeader().setVisible(hasTags);
-        tagTableFilter.setVisible(hasTags);
+        boolean filterVisible = Config.getPref().getBoolean("properties.filter.visible", true);
+        tagTableFilter.setVisible(hasTags && filterVisible);
         selectSth.setVisible(!hasSelection);
         pluginHook.setVisible(hasSelection);
     }
