@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2025032000, Last Updated Thu Mar 20 07:07:01 2025 UTC
+        // Taken from Version 2025052300, Last Updated Fri May 23 07:07:02 2025 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -394,7 +394,6 @@ public final class DomainValidator extends AbstractValidator {
         "beats", // beats Beats Electronics, LLC
         "beauty", // beauty XYZ.COM LLC
         "beer", // beer Registry Services, LLC
-        "bentley", // bentley Bentley Motors Limited
         "berlin", // berlin dotBERLIN GmbH & Co. KG
         "best", // best BestTLD Pty Ltd
         "bestbuy", // bestbuy BBY Solutions, Inc.
@@ -830,7 +829,6 @@ public final class DomainValidator extends AbstractValidator {
         "lacaixa", // lacaixa Fundación Bancaria Caixa d'Estalvis i Pensions de Barcelona, "la Caixa"
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
         "lamer", // lamer The Estée Lauder Companies Inc.
-        "lancaster", // lancaster LANCASTER
         "land", // land Binky Moon, LLC
         "landrover", // landrover Jaguar Land Rover Ltd
         "lanxess", // lanxess LANXESS Corporation
@@ -1031,7 +1029,6 @@ public final class DomainValidator extends AbstractValidator {
         "politie", // politie Politie Nederland
         "porn", // porn ICM Registry PN LLC
         "post", // post Universal Postal Union
-        "pramerica", // pramerica Prudential Financial, Inc.
         "praxi", // praxi Praxi S.p.A.
         "press", // press Radix Technologies Inc.
         "prime", // prime Amazon Registry Services, Inc.
