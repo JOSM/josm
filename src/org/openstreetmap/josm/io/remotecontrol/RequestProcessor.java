@@ -74,7 +74,7 @@ public class RequestProcessor extends Thread {
      * changes.
      */
     public static String getProtocolVersion() {
-        String OsmServerUrl = OsmApi.getOsmApi().getServerUrl();
+        String osmServerUrl = OsmApi.getOsmApi().getServerUrl();
         String defaultOsmApiUrl = JosmUrls.getInstance().getDefaultOsmApiUrl();
         return Json.createObjectBuilder()
                 .add("protocolversion", Json.createObjectBuilder()
@@ -82,7 +82,7 @@ public class RequestProcessor extends Thread {
                         .add("minor", RemoteControl.protocolMinorVersion))
                 .add("application", JOSM_REMOTE_CONTROL)
                 .add("version", Version.getInstance().getVersion())
-                .add("osm_server", OsmServerUrl.equals(defaultOsmApiUrl) ? "default" : "custom")
+                .add("osm_server", osmServerUrl.equals(defaultOsmApiUrl) ? "default" : "custom")
                 .build().toString();
     }
 
