@@ -28,7 +28,9 @@ import java.util.stream.Stream;
 import jakarta.json.Json;
 
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AuthorizationHandler;
@@ -71,13 +73,18 @@ public class RequestProcessor extends Thread {
      * interface extensions. Change major number in case of incompatible
      * changes.
      */
-    public static final String PROTOCOLVERSION = Json.createObjectBuilder()
-            .add("protocolversion", Json.createObjectBuilder()
-                    .add("major", RemoteControl.protocolMajorVersion)
-                    .add("minor", RemoteControl.protocolMinorVersion))
-            .add("application", JOSM_REMOTE_CONTROL)
-            .add("version", Version.getInstance().getVersion())
-            .build().toString();
+    public static String getProtocolVersion() {
+        String OsmServerUrl = OsmApi.getOsmApi().getServerUrl();
+        String defaultOsmApiUrl = JosmUrls.getInstance().getDefaultOsmApiUrl();
+        return Json.createObjectBuilder()
+                .add("protocolversion", Json.createObjectBuilder()
+                        .add("major", RemoteControl.protocolMajorVersion)
+                        .add("minor", RemoteControl.protocolMinorVersion))
+                .add("application", JOSM_REMOTE_CONTROL)
+                .add("version", Version.getInstance().getVersion())
+                .add("osm_server", OsmServerUrl.equals(defaultOsmApiUrl) ? "default" : "custom")
+                .build().toString();
+    }
 
     /** The socket this processor listens on */
     private final Socket request;

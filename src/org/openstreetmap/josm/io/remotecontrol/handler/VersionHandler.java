@@ -19,7 +19,7 @@ public class VersionHandler extends RequestHandler {
     @Override
     protected void handleRequest() throws RequestHandlerErrorException,
             RequestHandlerBadRequestException {
-        content = RequestProcessor.PROTOCOLVERSION;
+        content = RequestProcessor.getProtocolVersion();
         contentType = "application/json";
         if (args.containsKey("jsonp")) {
             content = args.get("jsonp") + " && " + args.get("jsonp") + '(' + content + ')';
