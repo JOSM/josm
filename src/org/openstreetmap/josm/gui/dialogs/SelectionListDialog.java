@@ -105,6 +105,7 @@ public class SelectionListDialog extends ToggleDialog {
     private final ShowHistoryAction actShowHistory = new ShowHistoryAction();
     private final ZoomToJOSMSelectionAction actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
     private final ZoomToListSelection actZoomToListSelection = new ZoomToListSelection();
+    private boolean autoZoomMode = false;
 
     /** the popup menu and its handler */
     private final ListPopupMenu popupMenu;
@@ -164,6 +165,7 @@ public class SelectionListDialog extends ToggleDialog {
         popupMenuHandler = setupPopupMenuHandler();
 
         lstPrimitives.addListSelectionListener(e -> {
+            if (autoZoomMode) { actZoomToListSelection.actionPerformed(null); }
             actZoomToListSelection.valueChanged(e);
             popupMenuHandler.setPrimitives(model.getSelected());
         });
@@ -234,6 +236,7 @@ public class SelectionListDialog extends ToggleDialog {
 
     private PopupMenuHandler setupPopupMenuHandler() {
         PopupMenuHandler handler = new PopupMenuHandler(popupMenu);
+        handler.addAction(new AutoZoomSwitchAction());
         handler.addAction(actZoomToJOSMSelection);
         handler.addAction(actZoomToListSelection);
         handler.addSeparator();
@@ -461,6 +464,21 @@ public class SelectionListDialog extends ToggleDialog {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
+        }
+    }
+
+    /** Turns on/off auto zoom mode */
+    class AutoZoomSwitchAction extends AbstractAction {
+        AutoZoomSwitchAction() {
+            putValue(NAME, tr("Autozoom on/off"));
+            putValue(SHORT_DESCRIPTION, tr("Autozoom on/off!"));
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
+            setEnabled(true);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            autoZoomMode = !autoZoomMode;
         }
     }
 
