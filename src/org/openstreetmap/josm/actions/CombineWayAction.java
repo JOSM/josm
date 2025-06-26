@@ -343,7 +343,7 @@ public class CombineWayAction extends JosmAction {
     private static boolean checkAndConfirmCombineOutlyingWays(Collection<Way> ways) {
         DownloadReferrersAction action = MainApplication.getMenu().downloadReferrers;
         final String downloadHint = tr("You should use {0}->{1}({2}) first.",
-                MainApplication.getMenu().editMenu.getText(), action.getValue(NAME), action.getShortcut().toString());
+                MainApplication.getMenu().fileMenu.getText(), action.getValue(NAME), action.getShortcut().toString());
         return Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() -> checkAndConfirmOutlyingOperation("combine",
                 tr("Combine confirmation"),
                 tr("You are about to combine ways which can be members of relations not yet downloaded."
