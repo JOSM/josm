@@ -449,7 +449,7 @@ public class CoordinateInfoViewer extends HistoryBrowserPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             OsmPrimitive primitive = getPrimitiveFromDataSet(PointInTimeType.REFERENCE_POINT_IN_TIME);
-            if (!(primitive instanceof Node)) {
+            if (!(primitive instanceof Node) || ((Node)primitive).getEastNorth() == null) {
                 return;
             }
             HistoryOsmPrimitive historyPrimitive = model.getPointInTime(PointInTimeType.REFERENCE_POINT_IN_TIME);
