@@ -91,7 +91,11 @@ if [ "$JAVACMD" ]; then
     JAVAFX_HOME="${JAVAFX_HOME:-/usr/share/openjfx/lib}"
     JOSM_PATH="${JOSM_PATH:-/usr/share/${JOSM_VERSION}/${JOSM_VERSION}.jar}"
     if [[ "${JAVA_VERSION}" -ge 11 ]]; then
-        JAVA_OPTS="--module-path ${JAVAFX_HOME} --add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
+        if [[ -e "${JAVAFX_HOME}" ]]; then
+            JAVA_OPTS="--module-path ${JAVAFX_HOME} --add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
+        else
+            JAVA_OPTS="--add-modules java.scripting,java.sql $JAVA_OPTS"
+        fi
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.base/sun.security.action=ALL-UNNAMED"
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED"
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED"
