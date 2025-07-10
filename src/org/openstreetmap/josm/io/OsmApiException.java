@@ -195,7 +195,7 @@ public class OsmApiException extends OsmTransferException {
             String eb = errorBody != null ? tr(errorBody.trim()) : "";
             if (!eb.isEmpty() && !eb.equals(eh)) {
                 sb.append(", Error Body=<")
-                .append(eb.replaceAll("<[^>]+>",""))
+                .append(eb.replaceAll("<[^>]+>", ""))
                 .append('>');
             }
         } catch (IllegalArgumentException e) {
