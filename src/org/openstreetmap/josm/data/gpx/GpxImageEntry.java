@@ -344,12 +344,10 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      */
     @Override
     public Instant getTimeSourceInstant(TimeSource timeSource) {
-        switch (timeSource) {
-            case EXIFGPSTIME:
-                return getExifGpsInstant();
-            case EXIFCAMTIME:
-                return getExifInstant();
-        }
+        if (timeSource == TimeSource.EXIFGPSTIME)
+            return getExifGpsInstant();
+        else if (timeSource == TimeSource.EXIFCAMTIME)
+            return getExifInstant();
         return null;
     }
 
