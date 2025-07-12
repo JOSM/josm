@@ -49,7 +49,7 @@
         <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.28.2"/>
         <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2025.6.21"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
         <!-- commonslang->default -->
-        <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.17.0"/>
+        <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.18.0"/>
         <!-- jacocoant->default -->
         <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.12">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
@@ -69,7 +69,7 @@
         <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.11.4"/>
         <dependency conf="test->default" org="net.trajano.commons" name="commons-testing" rev="2.1.0"/>
         <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.18.1"/>
-        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.17.0"/>
+        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.18.0"/>
         <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.2.2"/>
     </dependencies>
 </ivy-module>
