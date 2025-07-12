@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.List;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.gpx.TimeSource;
 import org.openstreetmap.josm.data.imagery.street_level.Projections;
 
 /**
@@ -114,6 +115,14 @@ public interface ImageMetadata {
      * @since 18592 (interface), 6450 (GpxImageEntry)
      */
     boolean hasExifGpsTime();
+
+    /**
+     * Return the time value selected with the parameter.
+     * @param timeSource the wanted time value, exifCamTime or exifGpsTime
+     * @return exifInstant or exifGpsInstant value
+     * @since 19426
+     */
+    Instant getTimeSourceInstant(TimeSource timeSource);
 
     /**
      * Get the EXIF coordinates

@@ -76,6 +76,7 @@ public final class GpxImageCorrelation {
         final GpxImageDirectionPositionSettings dirpos = settings.getDirectionPositionSettings();
         final GpxImageDatumSettings datumSettings = settings.getDatumSettings();
         final long offset = settings.getOffset();
+        final TimeSource imgTimeSource = settings.getImgTimeSource();
 
         boolean isFirst = true;
         long prevWpTime = 0;
@@ -144,7 +145,7 @@ public final class GpxImageCorrelation {
                         }
                     }
                     WayPoint nextWp = i < size - 1 ? wps.get(i + 1) : null;
-                    ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset,
+                    ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, imgTimeSource, offset,
                                        interpolate, tagTime, nextWp, dirpos, datumSettings);
                     prevWp = curWp;
                     prevWpTime = curWpTime;
@@ -152,7 +153,7 @@ public final class GpxImageCorrelation {
             }
         }
         if (trkTag && prevWp != null) {
-            ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, offset,
+            ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, imgTimeSource, offset,
                                false, trkTagTime, null, dirpos, datumSettings);
         }
         Logging.debug("Correlated {0} total points", ret);
@@ -361,6 +362,7 @@ public final class GpxImageCorrelation {
                                         long prevWpTime,
                                         WayPoint curWp,
                                         long curWpTime,
+                                        TimeSource imgTimeSource,
                                         long offset,
                                         boolean interpolate,
                                         int tagTime,
@@ -375,7 +377,7 @@ public final class GpxImageCorrelation {
         if (isLast) {
             i = images.size() - 1;
         } else {
-            i = getLastIndexOfListBefore(images, curWpTime);
+            i = getLastIndexOfListBefore(images, curWpTime, imgTimeSource);
         }
 
         if (Logging.isDebugEnabled()) {
@@ -426,7 +428,7 @@ public final class GpxImageCorrelation {
             while (i >= 0) {
                 final GpxImageEntry curImg = images.get(i);
                 final GpxImageEntry curTmp = curImg.getTmp();
-                final long time = curImg.getExifInstant().toEpochMilli();
+                final long time = curImg.getTimeSourceInstant(imgTimeSource).toEpochMilli();
                 if ((!isLast && time > curWpTime) || time < prevWpTime) {
                     break;
                 }
@@ -459,7 +461,7 @@ public final class GpxImageCorrelation {
             LatLon nextCoorForDirection = nextWp.getCoor();
             while (i >= 0) {
                 final GpxImageEntry curImg = images.get(i);
-                final long imgTime = curImg.getExifInstant().toEpochMilli();
+                final long imgTime = curImg.getTimeSourceInstant(imgTimeSource).toEpochMilli();
                 if (imgTime < prevWpTime) {
                     break;
                 }
@@ -547,7 +549,7 @@ public final class GpxImageCorrelation {
                             curTmp.setExifGpsDatum("WGS-84");
                     }
 
-                    curTmp.setGpsTime(curImg.getExifInstant().minusMillis(offset));
+                    curTmp.setGpsTime(curImg.getTimeSourceInstant(imgTimeSource).minusMillis(offset));
                     curTmp.flagNewGpsData();
                     curImg.tmpUpdated();
 
@@ -578,15 +580,15 @@ public final class GpxImageCorrelation {
      * @param searchedTime time to search
      * @return index of last image before given time
      */
-    private static int getLastIndexOfListBefore(List<? extends GpxImageEntry> images, long searchedTime) {
+    private static int getLastIndexOfListBefore(List<? extends GpxImageEntry> images, long searchedTime, TimeSource imgTimeSource) {
         int lstSize = images.size();
 
         // No photos or the first photo taken is later than the search period
-        if (lstSize == 0 || searchedTime < images.get(0).getExifInstant().toEpochMilli())
+        if (lstSize == 0 || searchedTime < images.get(0).getTimeSourceInstant(imgTimeSource).toEpochMilli())
             return -1;
 
         // The search period is later than the last photo
-        if (searchedTime > images.get(lstSize - 1).getExifInstant().toEpochMilli())
+        if (searchedTime > images.get(lstSize - 1).getTimeSourceInstant(imgTimeSource).toEpochMilli())
             return lstSize-1;
 
         // The searched index is somewhere in the middle, do a binary search from the beginning
@@ -595,18 +597,18 @@ public final class GpxImageCorrelation {
         int endIndex = lstSize-1;
         while (endIndex - startIndex > 1) {
             curIndex = (endIndex + startIndex) / 2;
-            if (searchedTime > images.get(curIndex).getExifInstant().toEpochMilli()) {
+            if (searchedTime > images.get(curIndex).getTimeSourceInstant(imgTimeSource).toEpochMilli()) {
                 startIndex = curIndex;
             } else {
                 endIndex = curIndex;
             }
         }
-        if (searchedTime < images.get(endIndex).getExifInstant().toEpochMilli())
+        if (searchedTime < images.get(endIndex).getTimeSourceInstant(imgTimeSource).toEpochMilli())
             return startIndex;
 
         // This final loop is to check if photos with the exact same EXIF time follows
-        while ((endIndex < (lstSize - 1)) && (images.get(endIndex).getExifInstant().toEpochMilli()
-                == images.get(endIndex + 1).getExifInstant().toEpochMilli())) {
+        while ((endIndex < (lstSize - 1)) && (images.get(endIndex).getTimeSourceInstant(imgTimeSource).toEpochMilli()
+                == images.get(endIndex + 1).getTimeSourceInstant(imgTimeSource).toEpochMilli())) {
             endIndex++;
         }
         return endIndex;

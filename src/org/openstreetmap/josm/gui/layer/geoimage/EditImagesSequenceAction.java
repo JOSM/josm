@@ -16,6 +16,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelationSettings;
+import org.openstreetmap.josm.data.gpx.TimeSource;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.geoimage.CorrelateGpxWithImages.RepaintTheMapListener;
@@ -82,7 +83,7 @@ public class EditImagesSequenceAction extends JosmAction {
             // Create a temporary copy for each image
             dateImgLst.forEach(ie -> ie.createTmp().unflagNewGpsData());
             GpxImageCorrelation.matchGpxTrack(dateImgLst, yLayer.getFauxGpxData(),
-                            new GpxImageCorrelationSettings(0, false, pDirectionPosition.getSettings()));
+                            new GpxImageCorrelationSettings(0, false, TimeSource.EXIFCAMTIME, pDirectionPosition.getSettings()));
             yLayer.updateBufferAndRepaint();
         }
     }

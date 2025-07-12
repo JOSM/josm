@@ -336,6 +336,23 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         return exifGpsTime != null;
     }
 
+    /**
+     * Return the time value selected with the parameter.
+     * @param timeSource the wanted time value, exifCamTime or exifGpsTime
+     * @return exifInstant or exifGpsInstant value
+     * @since 19426
+     */
+    @Override
+    public Instant getTimeSourceInstant(TimeSource timeSource) {
+        switch (timeSource) {
+            case EXIFGPSTIME:
+                return getExifGpsInstant();
+            case EXIFCAMTIME:
+                return getExifInstant();
+        }
+        return null;
+    }
+
     private static Date getDefensiveDate(Instant date) {
         if (date == null)
             return null;
