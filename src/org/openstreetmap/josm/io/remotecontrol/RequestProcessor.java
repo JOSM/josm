@@ -37,6 +37,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.AuthorizationHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.FeaturesHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.ExportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadDataHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadObjectHandler;
@@ -172,6 +173,7 @@ public class RequestProcessor extends Thread {
             addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
             addRequestHandlerClass(LoadDataHandler.command, LoadDataHandler.class, true);
             addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
+            addRequestHandlerClass(ExportHandler.command, ExportHandler.class, true);
             addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
             PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.ALLOW_WEB_RESOURCES);
             addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
@@ -332,7 +334,7 @@ public class RequestProcessor extends Thread {
                 handler.setSender(sender);
                 handler.handle();
                 sendHeader(out, "200 OK", handler.getContentType(), false);
-                out.write("Content-length: " + handler.getContent().length()
+                out.write("Content-length: " + handler.getContent().getBytes().length
                         + "\r\n");
                 out.write("\r\n");
                 out.write(handler.getContent());

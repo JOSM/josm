@@ -26,6 +26,9 @@ public class PermissionPrefWithDefault {
     /** Import data from URL */
     public static final PermissionPrefWithDefault IMPORT_DATA =
             new PermissionPrefWithDefault("remotecontrol.permission.import", true, tr("Import data from URL"));
+    /** Export data from JOSM */
+    public static final PermissionPrefWithDefault EXPORT_DATA =
+            new PermissionPrefWithDefault("remotecontrol.permission.export", false, tr("Export data from JOSM"));
     /** Open local files */
     public static final PermissionPrefWithDefault OPEN_FILES =
             new PermissionPrefWithDefault("remotecontrol.permission.open-files", false, tr("Open local files"));
