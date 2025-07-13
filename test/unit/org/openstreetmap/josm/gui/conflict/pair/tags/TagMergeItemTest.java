@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -80,13 +81,7 @@ class TagMergeItemTest {
     @Test
     void testDecide1() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
-        try {
-            item.decide(null);
-            fail("expected IllegalArgumentException not thrown");
-        } catch (IllegalArgumentException e) {
-            // OK
-            Logging.trace(e);
-        }
+        assertThrows(IllegalArgumentException.class, () -> item.decide(null));
     }
 
     @Test
@@ -127,25 +122,13 @@ class TagMergeItemTest {
 
         Node n1 = new Node(1);
         n1.put("key", "oldvalue");
-        try {
-            item.applyToMyPrimitive(n1);
-            fail("expected IllegalStateException");
-        } catch (IllegalStateException e) {
-            // OK
-            Logging.trace(e);
-        }
+        assertThrows(IllegalStateException.class, () -> item.applyToMyPrimitive(n1));
     }
 
     @Test
     void testApplyToMyPrimitive4() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
 
-        try {
-            item.applyToMyPrimitive(null);
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // OK
-            Logging.trace(e);
-        }
+        assertThrows(IllegalArgumentException.class, () -> item.applyToMyPrimitive(null));
     }
 }

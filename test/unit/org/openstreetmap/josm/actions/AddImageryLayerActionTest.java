@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -99,11 +100,9 @@ final class AddImageryLayerActionTest {
     @Test
     void testActionPerformedDisabled() {
         assertTrue(MainApplication.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
-        try {
-            new AddImageryLayerAction(new ImageryInfo("foo")).actionPerformed(null);
-        } catch (IllegalArgumentException expected) {
-            assertEquals("Parameter 'info.url' must not be null", expected.getMessage());
-        }
+        final AddImageryLayerAction action = new AddImageryLayerAction(new ImageryInfo("foo"));
+        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, () -> action.actionPerformed(null));
+        assertEquals("Parameter 'info.url' must not be null", expected.getMessage());
         assertTrue(MainApplication.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
     }
 
