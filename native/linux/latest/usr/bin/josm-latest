@@ -92,10 +92,21 @@ if [ "$JAVACMD" ]; then
     JOSM_PATH="${JOSM_PATH:-/usr/share/${JOSM_VERSION}/${JOSM_VERSION}.jar}"
     if [[ "${JAVA_VERSION}" -ge 11 ]]; then
         if [[ -e "${JAVAFX_HOME}" ]]; then
-            JAVA_OPTS="--module-path ${JAVAFX_HOME} --add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
+            if [[ -n "${JOSM_MODULEPATH}" ]]; then
+                JOSM_MODULEPATH="${JOSM_MODULEPATH}:${JAVAFX_HOME}"
+            else
+                JOSM_MODULEPATH="${JAVAFX_HOME}"
+            fi
+
+            JAVA_OPTS="--add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web ${JAVA_OPTS}"
         else
-            JAVA_OPTS="--add-modules java.scripting,java.sql $JAVA_OPTS"
+            JAVA_OPTS="--add-modules java.scripting,java.sql ${JAVA_OPTS}"
         fi
+
+        if [[ -n "${JOSM_MODULEPATH}" ]]; then
+            JAVA_OPTS="--module-path ${JOSM_MODULEPATH} ${JAVA_OPTS}"
+        fi
+        
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.base/sun.security.action=ALL-UNNAMED"
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED"
         JAVA_OPTS="$JAVA_OPTS --add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED"
