@@ -28,8 +28,8 @@ public class NewLocalAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null)
-        layer.setUploadDiscouraged(true)
+        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
+        layer.setUploadDiscouraged(true);
         getLayerManager().addLayer(layer);
     }
 }
