@@ -76,6 +76,7 @@ import org.openstreetmap.josm.actions.MirrorAction;
 import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.actions.MoveNodeAction;
 import org.openstreetmap.josm.actions.NewAction;
+import org.openstreetmap.josm.actions.NewLocalAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction;
@@ -167,6 +168,8 @@ public class MainMenu extends JMenuBar {
     /* File menu */
     /** File / New Layer **/
     public final NewAction newAction = new NewAction();
+    /** File / New Local Layer **/
+    public final NewLocalAction newLocalAction = new NewLocalAction();
     /** File / Open... **/
     public final OpenFileAction openFile = new OpenFileAction();
     /** File / Open Recent &gt; **/
@@ -740,6 +743,7 @@ public class MainMenu extends JMenuBar {
         gpsMenu.setVisible(false);
 
         add(fileMenu, newAction);
+        add(fileMenu, newLocalAction);
         add(fileMenu, openFile);
         fileMenu.add(recentlyOpened);
         add(fileMenu, openLocation);

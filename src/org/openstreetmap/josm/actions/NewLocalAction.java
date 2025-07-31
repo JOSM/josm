@@ -21,7 +21,7 @@ public class NewLocalAction extends JosmAction {
      * Constructs a {@code NewLocalAction}.
      */
     public NewLocalAction() {
-        super(tr("New Local Layer"), "new", tr("Create a new local map layer."),
+        super(tr("New Local Layer"), "new_local", tr("Create a new local map layer."),
                 Shortcut.registerShortcut("system:new_local", tr("File: {0}", tr("New Local Layer")), KeyEvent.VK_N, Shortcut.CTRL_SHIFT), true, false);
         setHelpId(ht("/Action/NewLocalLayer"));
     }
