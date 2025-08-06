@@ -1005,7 +1005,7 @@ way[highway=living_street][maxspeed][maxspeed!~/mph/][get(split(" ", tag(maxspee
   assertNoMatch: "way highway=living_street maxspeed=20";
   assertNoMatch: "way highway=living_street maxspeed=\"15 mph\"";
   assertNoMatch: "way highway=living_street maxspeed=walk";
-  assertMatch: "way highway=living_street maxspeed=30";
+  assertMatch: "way highway=living_street maxspeed=50";
   assertMatch: "way highway=living_street maxspeed=\"20 mph\"";
 }
 
