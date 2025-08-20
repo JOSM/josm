@@ -86,6 +86,7 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
         case JOptionPane.OK_OPTION:
             colorLayers.forEach(l -> l.setColor(c.getColor()));
             break;
+        case JOptionPane.CLOSED_OPTION:
         case JOptionPane.NO_OPTION:
             return;
         case JOptionPane.CANCEL_OPTION:
