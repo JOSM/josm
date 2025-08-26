@@ -171,12 +171,14 @@ abstract class SavingAction extends AbstractRelationEditorAction {
                         warnDoubleConflict();
                         return false;
                     }
+                    getEditor().setIsSaving(true); // see #24444
                     applyExistingConflictingRelation(getTagModel());
                     hideEditor();
                     return false;
                 } else
                     return false;
             } else {
+                getEditor().setIsSaving(true); // see #24444
                 applyExistingNonConflictingRelation(getTagModel());
             }
         }

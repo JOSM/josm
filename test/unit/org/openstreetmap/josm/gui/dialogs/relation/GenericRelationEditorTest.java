@@ -122,6 +122,11 @@ public class GenericRelationEditorTest {
             public OsmDataLayer getLayer() {
                 return layer;
             }
+
+            @Override
+            public void setIsSaving(boolean b) {
+                // do nothing
+            }
         };
     }
 

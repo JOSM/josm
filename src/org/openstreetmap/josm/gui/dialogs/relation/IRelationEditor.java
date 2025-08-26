@@ -66,6 +66,13 @@ public interface IRelationEditor {
     boolean isDirtyEditor();
 
     /**
+     * Set the isSaving flag to the given value. See #24444
+     * @param b the flag value
+     * @since 19438
+     */
+    void setIsSaving(boolean b);
+
+    /**
      * Reloads data from relation.
      */
     void reloadDataFromRelation();

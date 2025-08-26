@@ -160,6 +160,10 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      * A list of listeners that need to be notified on clipboard content changes.
      */
     private final ArrayList<FlavorListener> clipboardListeners = new ArrayList<>();
+    /**
+     * Flag that signals that this instance of the relation editor is currently saving the relation
+     */
+    private boolean isSaving;
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
@@ -1070,7 +1074,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
             } else if (isDirtyRelation()) {
                 if (!isDirtyEditor()) {
                     reloadDataFromRelation();
-                } else {
+                } else if (!isSaving) {
                     new Notification(tr("Relation modified outside of relation editor with pending changes. Conflict resolution required."))
                     .setIcon(JOptionPane.WARNING_MESSAGE).show();
                 }
@@ -1084,5 +1088,10 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         Relation relation = getRelation();
         return (snapshot != null && !memberTableModel.hasSameMembersAs(snapshot)) ||
                 tagEditorPanel.getModel().isDirty() || relation == null || relation.getDataSet() == null;
+    }
+
+    @Override
+    public void setIsSaving(boolean b) {
+        isSaving = b;
     }
 }
