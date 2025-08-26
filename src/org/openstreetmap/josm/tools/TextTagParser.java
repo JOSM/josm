@@ -154,8 +154,8 @@ public final class TextTagParser {
                 r = callback.warning(tr("Suspicious characters in key:"), key, "tags.paste.keydoesnotmatch");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
-            if (value.length() > MAX_VALUE_LENGTH) {
-                r = callback.warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "tags.paste.valuetoolong");
+            if (!Utils.checkCodePointCount(value, MAX_VALUE_LENGTH)) {
+                r = callback.warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
         }

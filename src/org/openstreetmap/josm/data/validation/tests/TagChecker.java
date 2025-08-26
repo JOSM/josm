@@ -1015,9 +1015,10 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .build());
             withErrors.put(p, "UUCV");
         }
-        if ((value.length() > Tagged.MAX_TAG_LENGTH) && !withErrors.contains(p, "LV")) {
+        final int codePoints = Utils.getCodePointCount(value);
+        if (codePoints > Tagged.MAX_TAG_LENGTH && !withErrors.contains(p, "LV")) {
             errors.add(TestError.builder(this, Severity.ERROR, LONG_VALUE)
-                    .message(tr("Tag value longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, value.length()), s, key)
+                    .message(tr("Tag value longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, codePoints), s, key)
                     .primitives(p)
                     .build());
             withErrors.put(p, "LV");
@@ -1064,9 +1065,10 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .build());
             withErrors.put(p, "ICK");
         }
-        if (key.length() > Tagged.MAX_TAG_LENGTH && !withErrors.contains(p, "LK")) {
+        final int codePoints = Utils.getCodePointCount(key);
+        if (codePoints > Tagged.MAX_TAG_LENGTH && !withErrors.contains(p, "LK")) {
             errors.add(TestError.builder(this, Severity.ERROR, LONG_KEY)
-                    .message(tr("Tag key longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, key.length()), s, key)
+                    .message(tr("Tag key longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, codePoints), s, key)
                     .primitives(p)
                     .build());
             withErrors.put(p, "LK");

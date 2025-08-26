@@ -2025,4 +2025,28 @@ public final class Utils {
             default: throw new IllegalArgumentException("Invalid length unit: " + unit);
         }
     }
+
+    /**
+     * Calculate the number of unicode code points. See #24446
+     * @param s the string
+     * @return 0 if s is null or empty, else the number of code points
+     * @since 19437
+     */
+    public static int getCodePointCount(String s) {
+        if (s == null)
+            return 0;
+        return s.codePointCount(0, s.length());
+    }
+
+    /**
+     * Check if a given string has more than the allowed number of code points.
+     * See #24446. The OSM server checks this number, not the value returned by String.length()
+     * @param s the string
+     * @param maxLen the maximum number of code points
+     * @return true if s is null or within the given limit, false else
+     * @since 19437
+     */
+    public static boolean checkCodePointCount(String s, int maxLen) {
+        return getCodePointCount(s) <= maxLen;
+    }
 }

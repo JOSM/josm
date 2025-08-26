@@ -22,6 +22,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Checks certain basic conditions, that are listed in the OSM API
@@ -63,7 +64,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
             for (Map.Entry<String, String> entry: osmPrimitive.getKeys().entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                if (key.length() > Tagged.MAX_TAG_LENGTH) {
+                if (!Utils.checkCodePointCount(value, Tagged.MAX_TAG_LENGTH)) {
                     if (osmPrimitive.isDeleted()) {
                         // if OsmPrimitive is going to be deleted we automatically shorten the value
                         Logging.warn(
@@ -72,12 +73,12 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                                         Long.toString(osmPrimitive.getId())
                                 )
                         );
-                        osmPrimitive.put(key, value.substring(0, Tagged.MAX_TAG_LENGTH));
+                        osmPrimitive.put(key, Utils.shortenString(value, Tagged.MAX_TAG_LENGTH));
                         continue;
                     }
                     JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                             tr("Length of value for tag ''{0}'' on object {1} exceeds the max. allowed length {2}. Values length is {3}.",
-                                    key, Long.toString(osmPrimitive.getId()), Tagged.MAX_TAG_LENGTH, value.length()
+                                    key, Long.toString(osmPrimitive.getId()), Tagged.MAX_TAG_LENGTH, Utils.getCodePointCount(value)
                             ),
                             tr("Precondition violation"),
                             JOptionPane.ERROR_MESSAGE

@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Represents a single changeset in JOSM. For now its only used during
@@ -312,7 +313,7 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     public void setKeys(Map<String, String> keys) {
         CheckParameterUtil.ensureParameterNotNull(keys, "keys");
         keys.values().stream()
-                .filter(value -> value != null && value.length() > MAX_CHANGESET_TAG_LENGTH)
+                .filter(value -> !Utils.checkCodePointCount(value, MAX_CHANGESET_TAG_LENGTH))
                 .findFirst()
                 .ifPresent(value -> {
                 throw new IllegalArgumentException("Changeset tag value is too long: "+value);
@@ -339,9 +340,10 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     @Override
     public void put(String key, String value) {
         CheckParameterUtil.ensureParameterNotNull(key, "key");
-        if (value != null && value.length() > MAX_CHANGESET_TAG_LENGTH) {
-            throw new IllegalArgumentException("Changeset tag value is too long: "+value);
+        if (!Utils.checkCodePointCount(value, MAX_CHANGESET_TAG_LENGTH)) {
+            throw new IllegalArgumentException("Changeset tag value is too long: " + value);
         }
+
         this.tags.put(key, value);
     }
 
