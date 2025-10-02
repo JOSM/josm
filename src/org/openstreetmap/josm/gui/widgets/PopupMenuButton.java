@@ -72,7 +72,7 @@ public class PopupMenuButton extends JButton implements ActionListener {
     }
 
     /**
-     * Pass-through to {@link JButton#JButton()} allowing associated popup menu to be set
+     * Pass-through to {@link JButton#JButton} allowing associated popup menu to be set
      * @param m the associated popup menu
      */
     public PopupMenuButton(JPopupMenu m) {
