@@ -13,6 +13,8 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.AbstractProperty;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -29,6 +31,7 @@ import org.openstreetmap.josm.tools.Utils;
  * {@link org.openstreetmap.josm.io.Capabilities}.
  */
 public class ApiPreconditionCheckerHook implements UploadHook {
+    static AbstractProperty<Boolean> PREF_LENGTH_CHECK = new BooleanProperty("upload.check-maxlength-value", true).cached();
 
     @Override
     public boolean checkUpload(APIDataSet apiData) {
@@ -61,31 +64,8 @@ public class ApiPreconditionCheckerHook implements UploadHook {
 
     private static boolean checkMaxNodes(Collection<OsmPrimitive> primitives, long maxNodes) {
         for (OsmPrimitive osmPrimitive : primitives) {
-            for (Map.Entry<String, String> entry: osmPrimitive.getKeys().entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (!Utils.checkCodePointCount(value, Tagged.MAX_TAG_LENGTH)) {
-                    if (osmPrimitive.isDeleted()) {
-                        // if OsmPrimitive is going to be deleted we automatically shorten the value
-                        Logging.warn(
-                                tr("Automatically truncating value of tag ''{0}'' on deleted object {1}",
-                                        key,
-                                        Long.toString(osmPrimitive.getId())
-                                )
-                        );
-                        osmPrimitive.put(key, Utils.shortenString(value, Tagged.MAX_TAG_LENGTH));
-                        continue;
-                    }
-                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                            tr("Length of value for tag ''{0}'' on object {1} exceeds the max. allowed length {2}. Values length is {3}.",
-                                    key, Long.toString(osmPrimitive.getId()), Tagged.MAX_TAG_LENGTH, Utils.getCodePointCount(value)
-                            ),
-                            tr("Precondition violation"),
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                    MainApplication.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));
-                    return false;
-                }
+            if (Boolean.TRUE.equals(PREF_LENGTH_CHECK.get()) && !valueLengthCheck(osmPrimitive)) {
+                return false;
             }
 
             if (osmPrimitive instanceof Way &&
@@ -98,6 +78,41 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                                 maxNodes
                         ),
                         tr("API Capabilities Violation"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+                MainApplication.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check that the tag values of a primitive are not too long.
+     * @param osmPrimitive the primitive to check
+     * @return false if any tag value of the primitive is too long, true else
+     */
+    private static boolean valueLengthCheck(OsmPrimitive osmPrimitive) {
+        for (Map.Entry<String, String> entry: osmPrimitive.getKeys().entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (!Utils.checkCodePointCount(value, Tagged.MAX_TAG_LENGTH)) {
+                if (osmPrimitive.isDeleted()) {
+                    // if OsmPrimitive is going to be deleted we automatically shorten the value
+                    Logging.warn(
+                            tr("Automatically truncating value of tag ''{0}'' on deleted object {1}",
+                                    key,
+                                    Long.toString(osmPrimitive.getId())
+                            )
+                    );
+                    osmPrimitive.put(key, Utils.shortenString(value, Tagged.MAX_TAG_LENGTH));
+                    continue;
+                }
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                        tr("Length of value for tag ''{0}'' on object {1} exceeds the max. allowed length {2}. Values length is {3}.",
+                                key, Long.toString(osmPrimitive.getId()), Tagged.MAX_TAG_LENGTH, Utils.getCodePointCount(value)
+                        ),
+                        tr("Precondition violation"),
                         JOptionPane.ERROR_MESSAGE
                 );
                 MainApplication.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));
