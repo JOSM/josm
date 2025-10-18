@@ -1276,7 +1276,14 @@
                 </combo>
                 <combo key="mtb:scale" text="MTB Scale" values="0-,0,0+,1-,1,1+,2-,2,2+,3-,3,3+,4-,4,4+,5-,5,5+,6-,6,6+" values_sort="false" values_no_i18n="true" />
                 <reference ref="trailblazed" />
-                <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" values_context="trail_visibility" values_sort="false" />
+                <combo key="trail_visibility" text="Visibility" values_searchable="true" values_context="trail_visibility" values_sort="false">
+                    <list_entry value="excellent" display_value="Always clearly visible trail" short_description="Unambiguous path or markers everywhere" />
+                    <list_entry value="good" display_value="Always visible trail" short_description="Path or next marker always visible, but sometimes has to be searched for" />
+                    <list_entry value="intermediate" display_value="Mostly visible trail" short_description="Path (or markers) mostly visible" />
+                    <list_entry value="bad" display_value="Sometimes invisible trail" short_description="Path (or markers) sometimes invisible/absent, route partly pathless" />
+                    <list_entry value="horrible" display_value="Often invisible trail" short_description="Often pathless without visible markers" />
+                    <list_entry value="no" display_value="Mostly or wholly invisible trail" short_description="Mostly pathless or no markers" />
+                </combo>
                 <checkgroup columns="2">
                     <check key="segregated" text="Segregated" />
                     <check key="informal" text="Informal" />
