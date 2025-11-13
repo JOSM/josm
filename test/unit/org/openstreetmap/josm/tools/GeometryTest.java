@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -635,4 +636,28 @@ class GeometryTest {
                 () -> Geometry.getCentroid(Arrays.asList(new Node(LatLon.ZERO), new Node(), new Node(LatLon.ZERO))));
         assertTrue(new EastNorth(0, 0).equalsEpsilon(centroid3, 1e-9));
     }
+
+    /**
+     * A non-regression test for an issue found in #24485
+     * Test of {@link Geometry#getClosestWaySegment} method when DataSet is read-only.
+     */
+    @Test
+    void testNonRegression24485() {
+        Node node1 = new Node(new LatLon(0, 0));
+        Node node2 = new Node(new LatLon(0, 1));
+        Node node3 = new Node(new LatLon(0.3, 0.5));
+        Node node4 = new Node(new LatLon(0.1, 0));
+        Way way1 = TestUtils.newWay("", node1, node2, node3, node4);
+
+        DataSet ds = new DataSet();
+        way1.getNodes().forEach(n -> ds.addPrimitive(n));
+        ds.addPrimitive(way1);
+        ds.lock();
+        WaySegment closestSegment = Geometry.getClosestWaySegment(way1, new Node(new LatLon(0, 0.5)));
+        ds.unlock();
+        Way closestSegmentWay = closestSegment.toWay();
+        assertTrue(closestSegmentWay.containsNode(node1));
+        assertTrue(closestSegmentWay.containsNode(node2));
+    }
+
 }

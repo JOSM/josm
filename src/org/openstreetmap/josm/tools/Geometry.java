@@ -1562,8 +1562,8 @@ public final class Geometry {
         Pair<Node, Node> closestNodes = null;
         for (Pair<Node, Node> nodes : way.getNodePairs(false)) {
             Way tWay = new Way();
-            tWay.addNode(nodes.a);
-            tWay.addNode(nodes.b);
+            tWay.addNode(new Node(nodes.a));
+            tWay.addNode(new Node(nodes.b));
             double distance = getDistance(tWay, primitive);
             if (distance < lowestDistance) {
                 lowestDistance = distance;
