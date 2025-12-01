@@ -1026,7 +1026,8 @@ public class SyncEditorLayerIndex {
                 }
                 for (int nump = 1; nump < p.size(); ++nump) {
                     if (Objects.equals(p.get(nump-1), p.get(nump))) {
-                        myprintln("~~~ JOSM shape "+num+" double point at "+(nump-1)+": "+getDescription(j));
+                        myprintln("~~~ JOSM shape "+num+" double point at "+(nump-1)+" ("
+                        +p.get(nump).getLat()+", "+p.get(nump).getLon()+"): "+getDescription(j));
                     }
                 }
                 ++num;
