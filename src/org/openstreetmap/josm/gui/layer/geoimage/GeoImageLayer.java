@@ -47,6 +47,7 @@ import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.TimeSource;
 import org.openstreetmap.josm.data.imagery.street_level.IImageEntry;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
@@ -977,14 +978,18 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      * Default setting is to return untagged images, but may be overwritten.
      * @param exif also returns images with exif-gps info
      * @param tagged also returns tagged images
+     * @param gpsTime use GPS Time if true, instead of Camera RTC Time
      * @return matching images
+     * @since 19455 gpsTime was added
      */
-    List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
+    List<ImageEntry> getSortedImgList(boolean exif, boolean tagged, TimeSource timeSource) {
         return data.getImages().stream()
-                .filter(GpxImageEntry::hasExifTime)
+                .filter(timeSource == TimeSource.EXIFGPSTIME ? GpxImageEntry::hasExifGpsTime : GpxImageEntry::hasExifTime)
                 .filter(e -> e.getExifCoor() == null || exif)
                 .filter(e -> tagged || !e.isTagged() || e.getExifCoor() != null)
-                .sorted(Comparator.comparing(ImageEntry::getExifInstant))
+                .sorted(timeSource == TimeSource.EXIFGPSTIME
+                    ? Comparator.comparing(ImageEntry::getExifGpsInstant)
+                    : Comparator.comparing(ImageEntry::getExifInstant))
                 .collect(toList());
     }
 }

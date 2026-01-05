@@ -79,7 +79,7 @@ public class EditImagesSequenceAction extends JosmAction {
             // So reset all images.
             yLayer.discardTmp();
             // Construct a list of images that have a date, and sort them on the date.
-            List<ImageEntry> dateImgLst = yLayer.getSortedImgList(true, true);
+            List<ImageEntry> dateImgLst = yLayer.getSortedImgList(true, true, TimeSource.EXIFCAMTIME);
             // Create a temporary copy for each image
             dateImgLst.forEach(ie -> ie.createTmp().unflagNewGpsData());
             GpxImageCorrelation.matchGpxTrack(dateImgLst, yLayer.getFauxGpxData(),

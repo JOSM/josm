@@ -551,9 +551,9 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         JLabel labelPosition = new JLabel(tr("Override position for: "));
 
-        int numAll = yLayer.getSortedImgList(true, true).size();
-        int numExif = numAll - yLayer.getSortedImgList(false, true).size();
-        int numTagged = numAll - yLayer.getSortedImgList(true, false).size();
+        int numAll = yLayer.getSortedImgList(true, true, imgTimeSource).size();
+        int numExif = numAll - yLayer.getSortedImgList(false, true, imgTimeSource).size();
+        int numTagged = numAll - yLayer.getSortedImgList(true, false, imgTimeSource).size();
 
         cbExifImg = new JCheckBox(tr("Images with geo location in exif data ({0}/{1})", numExif, numAll));
         cbExifImg.setEnabled(numExif != 0);
@@ -828,6 +828,9 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
             // So reset all images.
             yLayer.discardTmp();
 
+            //Get how many images are present in the layer
+            int totalImg = yLayer.getImages().size();
+            
             // Construct a list of images that have a date, and sort them on the date.
             List<ImageEntry> dateImgLst = getSortedImgList();
             // Create a temporary copy for each image
@@ -846,7 +849,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
             return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
                     "<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>",
-                    dateImgLst.size(), lastNumMatched, dateImgLst.size());
+                    totalImg, lastNumMatched, totalImg);
         }
     }
 
@@ -1003,7 +1006,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     }
 
     private List<ImageEntry> getSortedImgList() {
-        return yLayer.getSortedImgList(cbExifImg.isSelected(), cbTaggedImg.isSelected());
+        return yLayer.getSortedImgList(cbExifImg.isSelected(), cbTaggedImg.isSelected(), imgTimeSource);
     }
 
     private static GpxDataWrapper selectedGPX(boolean complain) {
