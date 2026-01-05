@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -16,6 +17,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.tools.PlatformManager;
 
@@ -92,18 +94,25 @@ public class SlippyMapController extends MouseAdapter {
 
         // zooming. To avoid confusion about which modifier key to use,
         // we just add all keys left of the space bar
+        //
+        // Typing the '+', '=', or '-' character in the Overpass query field
+        // seems to trigger these key bindings, which would zoom the map
+        // (https://josm.openstreetmap.de/ticket/24392). To prevent that, those
+        // keys use a special version of the action that does nothing if a text
+        // field is focused. That feels like a hack, but we didn't find an
+        // obvious better way.
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.META_DOWN_MASK, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK, false), "ZOOM_IN");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0, false), "ZOOM_IN");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0, false), "ZOOM_IN");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0, false), "ZOOM_IN");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.SHIFT_DOWN_MASK, false), "ZOOM_IN");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0, false), "ZOOM_IN_UNLESS_TYPING");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0, false), "ZOOM_IN_UNLESS_TYPING");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0, false), "ZOOM_IN_UNLESS_TYPING");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.SHIFT_DOWN_MASK, false), "ZOOM_IN_UNLESS_TYPING");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK, false), "ZOOM_OUT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.META_DOWN_MASK, false), "ZOOM_OUT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK, false), "ZOOM_OUT");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0, false), "ZOOM_OUT");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0, false), "ZOOM_OUT");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0, false), "ZOOM_OUT_UNLESS_TYPING");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0, false), "ZOOM_OUT_UNLESS_TYPING");
 
         // action mapping
         actionMap.put("MOVE_RIGHT", new MoveXAction(1));
@@ -112,8 +121,10 @@ public class SlippyMapController extends MouseAdapter {
         actionMap.put("MOVE_DOWN", new MoveYAction(1));
         actionMap.put("STOP_MOVE_HORIZONTALLY", new MoveXAction(0));
         actionMap.put("STOP_MOVE_VERTICALLY", new MoveYAction(0));
-        actionMap.put("ZOOM_IN", new ZoomInAction());
-        actionMap.put("ZOOM_OUT", new ZoomOutAction());
+        actionMap.put("ZOOM_IN", new ZoomInAction(false));
+        actionMap.put("ZOOM_IN_UNLESS_TYPING", new ZoomInAction(true));
+        actionMap.put("ZOOM_OUT", new ZoomOutAction(false));
+        actionMap.put("ZOOM_OUT_UNLESS_TYPING", new ZoomOutAction(true));
     }
 
     /**
@@ -300,18 +311,38 @@ public class SlippyMapController extends MouseAdapter {
         }
     }
 
+    static boolean isTyping() {
+        return KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof JTextComponent;
+    }
+
     private final class ZoomInAction extends AbstractAction {
+
+        private boolean suppressWhileTyping;
+
+        ZoomInAction(boolean suppressWhileTyping) {
+            this.suppressWhileTyping = suppressWhileTyping;
+        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (suppressWhileTyping && isTyping())
+                return;
             iSlippyMapChooser.zoomIn();
         }
     }
 
     private final class ZoomOutAction extends AbstractAction {
 
+        private boolean suppressWhileTyping;
+
+        ZoomOutAction(boolean suppressWhileTyping) {
+            this.suppressWhileTyping = suppressWhileTyping;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (suppressWhileTyping && isTyping())
+                return;
             iSlippyMapChooser.zoomOut();
         }
     }
