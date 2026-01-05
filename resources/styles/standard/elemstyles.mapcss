@@ -3217,7 +3217,8 @@ area[amenity=car_pooling],
 area[amenity=car_sharing],
 area[amenity=car_wash],
 area[amenity=taxi],
-area[amenity=fuel] {
+area[amenity=fuel],
+area[amenity=charging_station] {
     fill-color: amenity_traffic#f7efb7;
 }
 node[amenity=parking_space] {
