@@ -445,6 +445,10 @@ public final class GpxImageCorrelation {
                     if (nextWp != null && dirpos.isSetImageDirection()) {
                         double direction = curWp.bearing(nextWp);
                         curTmp.setExifImgDir(computeDirection(direction, dirpos.getImageDirectionAngleOffset()));
+                    } else if (nextWp == null && isLast && dirpos.isSetImageDirection()) {
+                        //last image in the sequence without any next waypoint-> get previous direction angle
+                        double direction = prevWp.bearing(curWp);
+                        curTmp.setExifImgDir(computeDirection(direction, dirpos.getImageDirectionAngleOffset()));
                     }
                     curTmp.setGpsTime(curImg.getExifInstant().minusMillis(offset));
                     curTmp.flagNewGpsData();
