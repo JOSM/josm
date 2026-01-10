@@ -7,8 +7,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -168,12 +166,13 @@ public class Text extends KeyedItem {
                 saveHorizontalSpace(aibutton);
                 bg.add(aibutton);
                 try {
-                    // TODO there must be a better way to parse a number like "+3" than this.
-                    final int buttonvalue = NumberFormat.getIntegerInstance().parse(ai.replace("+", "")).intValue();
+                    // NumberFormat cannot parse negative for hr_HR and also needs a workaround for the +
+                    // see #2374
+                    final int buttonvalue = Integer.parseInt(ai);
                     if (auto_increment_selected == buttonvalue) aibutton.setSelected(true);
                     aibutton.addActionListener(e -> auto_increment_selected = buttonvalue);
                     pnl.add(aibutton, GBC.std());
-                } catch (ParseException ex) {
+                } catch (NumberFormatException ex) {
                     Logging.error("Cannot parse auto-increment value of '" + ai + "' into an integer");
                 }
             }
