@@ -167,7 +167,7 @@ public class Text extends KeyedItem {
                 bg.add(aibutton);
                 try {
                     // NumberFormat cannot parse negative for hr_HR and also needs a workaround for the +
-                    // see #2374
+                    // see #24374
                     final int buttonvalue = Integer.parseInt(ai);
                     if (auto_increment_selected == buttonvalue) aibutton.setSelected(true);
                     aibutton.addActionListener(e -> auto_increment_selected = buttonvalue);
