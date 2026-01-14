@@ -37,7 +37,7 @@ public class MapImage {
     /**
      * ImageIcon can change while the image is loading.
      */
-    private Image img;
+    private volatile Image img;
     private ImageResource imageResource;
 
     /**
@@ -79,7 +79,7 @@ public class MapImage {
     /**
      * A cache that holds a disabled (gray) version of this image
      */
-    private BufferedImage disabledImgCache;
+    private volatile BufferedImage disabledImgCache;
 
     /**
      * Creates a new {@link MapImage}
@@ -141,14 +141,16 @@ public class MapImage {
             getImage(); // fix #7498 ?
         // This should fix #21919: NPE due to disabledImgCache being null (race condition with #loadImage())
         synchronized (this) {
-            Image disImg = GuiHelper.getDisabledImage(img);
-            if (disImg instanceof BufferedImage) {
-                disabledImgCache = (BufferedImage) disImg;
-            } else {
-                disabledImgCache = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-                Graphics g = disabledImgCache.getGraphics();
-                g.drawImage(disImg, 0, 0, null);
-                g.dispose();
+            if(disabledImgCache != null) {
+                Image disImg = GuiHelper.getDisabledImage(img);
+                if (disImg instanceof BufferedImage) {
+                    disabledImgCache = (BufferedImage) disImg;
+                } else {
+                    disabledImgCache = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    Graphics g = disabledImgCache.getGraphics();
+                    g.drawImage(disImg, 0, 0, null);
+                    g.dispose();
+                }
             }
         }
         return disabledImgCache;
