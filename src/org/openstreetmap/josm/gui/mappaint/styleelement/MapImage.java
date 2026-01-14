@@ -141,7 +141,7 @@ public class MapImage {
             getImage(); // fix #7498 ?
         // This should fix #21919: NPE due to disabledImgCache being null (race condition with #loadImage())
         synchronized (this) {
-            if(disabledImgCache != null) {
+            if (disabledImgCache != null) {
                 Image disImg = GuiHelper.getDisabledImage(img);
                 if (disImg instanceof BufferedImage) {
                     disabledImgCache = (BufferedImage) disImg;
