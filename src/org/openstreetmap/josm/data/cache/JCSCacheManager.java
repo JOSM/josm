@@ -50,6 +50,7 @@ public final class JCSCacheManager {
     public static final BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
 
     private static final AuxiliaryCacheFactory DISK_CACHE_FACTORY = getDiskCacheFactory();
+    private static FileChannel cacheDirChannel;
     private static FileLock cacheDirLock;
 
     /**
@@ -117,7 +118,8 @@ public final class JCSCacheManager {
                     if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
                         Logging.warn("Cannot create cache dir lock file");
                     }
-                    cacheDirLock = FileChannel.open(cacheDirLockPath.toPath(), StandardOpenOption.WRITE).tryLock();
+                    cacheDirChannel = FileChannel.open(cacheDirLockPath.toPath(), StandardOpenOption.WRITE);
+                    cacheDirLock = cacheDirChannel.tryLock();
 
                     if (cacheDirLock == null)
                         Logging.warn("Cannot lock cache directory. Will not use disk cache");
@@ -219,6 +221,14 @@ public final class JCSCacheManager {
      * Close all files to ensure, that all indexes and data are properly written
      */
     public static void shutdown() {
+        try {
+            if (cacheDirLock != null)
+                cacheDirLock.release();
+            if (cacheDirChannel != null)
+                cacheDirChannel.close();
+        } catch (IOException e) {
+            Logging.error(e);
+        }
         JCS.shutdown();
     }
 
