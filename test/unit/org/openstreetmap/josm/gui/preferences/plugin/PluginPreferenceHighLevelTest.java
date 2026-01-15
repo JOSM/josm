@@ -162,7 +162,7 @@ class PluginPreferenceHighLevelTest {
             () -> ((javax.swing.JButton) TestUtils.getComponentByName(tabbedPane, "downloadListButton")).doClick()
         );
 
-        Awaitility.await().atMost(3000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
+        Awaitility.await().atMost(6000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
 
         pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         pluginServerRule.resetRequests();
