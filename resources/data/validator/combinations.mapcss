@@ -1157,3 +1157,4 @@ relation[power=circuit][topology][topology!~/^(linear|branched)$/] {
        throwError: tr("power=circuit relations should have a topology tag with value linear or branched");
        assertMatch: "relation type=power power=circuit topology=branch";
        assertNoMatch: "relation type=power power=circuit topology=branched";
+}
