@@ -2583,4 +2583,16 @@ way[cycleway][cycleway^=opposite_]!:righthandtraffic {
   suggestAlternative: "residential=apartments + condo=*"
 }
 
+/* route=power is deprecated, see #24456 */
+relation[route=power] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "type=power + power=circuit";
+}
+relation[power=branch] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "type=power + power=line_section";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

@@ -90,7 +90,9 @@ node[source:outline] {
 node[type=multipolygon],
 node[interval],
 node[route],
-node[restriction] {
+node[restriction],
+node[power=circuit],
+node[power=line_section] {
   throwError: tr("{0} on a node. Should be used in a relation", "{0.tag}"); 
 }
 
@@ -139,12 +141,16 @@ way[door] {
 way[restriction][restriction =~ /^(no_right_turn|no_left_turn|no_u_turn|no_straight_on|only_right_turn|only_left_turn|only_straight_on|no_entry|no_exit)$/],
 way[type=multipolygon],
 way[interval][route!=ferry],
-way[route=bus] {
+way[route=bus],
+way[power=circuit],
+way[power=line_section] {
   throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
 
 /* {0} on a closed way, should be a unclosed way; #19981 */
-way:closed[power=line] {
+way:closed[power=line],
+way:closed[power=cable],
+way:closed[power=minor_line] {
   throwWarning: tr("{0} on a closed way. Should be used on an unclosed way.", "{1.tag}"); 
 }
 

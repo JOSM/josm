@@ -499,6 +499,9 @@
             <combo key="windings:configuration" text="Windings configuration" values="star,delta,open-delta,zigzag,open,scott,leblanc" values_context="power_windings" />
         </optional>
     </chunk>
+    <chunk id="power_topology">
+        <combo key="topology" text="Circuit topology" values="linear,branched" />
+    </chunk>
     <chunk id="telecom_medium">
         <combo key="telecom:medium" text="Local loop type" values="copper,fibre,coaxial" />
     </chunk>
@@ -10115,17 +10118,6 @@
                     <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
             </item> <!-- Detour Route -->
-            <item name="Power Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
-                <link wiki="Tag:route=power" />
-                <space/>
-                <key key="type" value="route"/>
-                <key key="route" value="power"/>
-                <reference ref="name_ref_operator"/>
-                <roles>
-                    <role key="line" text="route segment" requisite="required" type="way" member_expression="power=line|power=cable"/>
-                    <role key="substation" text="Power Substation" requisite="optional" type="way,closedway,multipolygon" member_expression="power"/>
-                </roles>
-            </item> <!-- Power Route -->
             <item name="Railway Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
                 <link wiki="Tag:route=railway" />
                 <space/>
@@ -10158,7 +10150,7 @@
                 <link wiki="Relation:superroute" />
                 <space/>
                 <key key="type" value="superroute"/>
-                <combo key="route" text="Type" values="bicycle,detour,foot,hiking,horse,mtb,piste,power,railway,road,ski" display_values="Bicycle Route,Detour Route,Walking Route,Hiking Route,Riding Route,Mountain Biking Route,Piste Route,Power Route,Railway Route,Road Route,Ski Route" />
+                <combo key="route" text="Type" values="bicycle,detour,foot,hiking,horse,mtb,piste,railway,road,ski" display_values="Bicycle Route,Detour Route,Walking Route,Hiking Route,Riding Route,Mountain Biking Route,Piste Route,Railway Route,Road Route,Ski Route" />
                 <reference ref="name_ref_operator"/>
                 <roles>
                     <role key="" text="route segment" requisite="required" type="relation" member_expression="type=route"/> <!-- fixme: at least 2 members are required -->
@@ -10297,5 +10289,41 @@
                 <role key="edge" text="edge ways parallel to 'through'" requisite="optional" type="way" />
             </roles>
         </item> <!-- Tunnel -->
+        <group name="Power" icon="presets/power/power.svg">
+            <item name="Power circuit" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+                <link wiki="Tag:power=circuit" />
+                <space/>
+                <key key="type" value="power"/>
+                <key key="power" value="circuit"/>
+                <space/>
+                <reference ref="cables"/>
+                <reference ref="voltage"/>
+                <reference ref="frequency"/>
+                <reference ref="power_topology"/>
+                <optional>
+                    <reference ref="name_ref_operator"/>
+                </optional>
+                <roles>
+                    <role key="substation" text="Power Substation" requisite="required" type="way,closedway,multipolygon" member_expression="power|substation"/>
+                    <role key="section" text="Circuit section" requisite="required" type="way,relation" member_expression="power=line|power=cable|power=minor_line|power=line_section"/>
+                    <role key="tap" text="Tap point" requisite="optional" type="node" member_expression="power=pole|power=tower|power=connection"/>
+                </roles>
+            </item> <!-- Power circuit -->
+            <item name="Power line section" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+                <link wiki="Tag:power=line_section" />
+                <space/>
+                <key key="type" value="power"/>
+                <key key="power" value="line_section"/>
+                <space/>
+                <reference ref="cables"/>
+                <reference ref="voltage"/>
+                <optional>
+                    <reference ref="name_ref_operator"/>
+                </optional>
+                <roles>
+                    <role key="line" text="Section segment" requisite="required" type="way" member_expression="power=line|power=cable|power=minor_line"/>
+                </roles>
+            </item> <!-- Power circuit -->
+        </group>
     </group> <!-- Relations -->
 </presets>

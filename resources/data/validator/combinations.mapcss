@@ -306,6 +306,8 @@ way[usage=penstock][waterway!=pressurised] {
 *[internet_access=no][internet_access:fee],
 node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
+relation[power=circuit][wires],
+relation[power=line_section][wires],
 *[amenity=vending_machine][shop],
 *[noname?][name],
 *[noref?][ref],
@@ -1137,3 +1139,21 @@ way[/^cycleway(?!:right|:left|:both|:lanes):/][!cycleway][!cycleway:both][!cycle
   assertNoMatch: "way highway=path segregated=yes cycleway:surface=needles footway:surface=paving_stones";
   assertNoMatch: "way highway=primary oneway=yes bicycle:lanes=no|designated|yes cycleway:lanes=|lane|no";
 }
+
+/* Prevent redundancy between relation and members, see #24456, #24457 */
+relation[power=circuit] > way[power=line][frequency],
+relation[power=circuit] > way[power=minor_line][frequency],
+relation[power=circuit] > way[power=cable][frequency] {
+  throwWarning: tr("Frequency tag should be on the circuit relation only, not on the power segment");
+  group: tr("redundant tagging");
+}
+relation[power=circuit] > relation[power=line_section][frequency] {  
+  throwWarning: tr("Frequency tag should be on the circuit relation only, not on the power section");
+  group: tr("redundant tagging");
+}
+
+/* Invalid topology with power circuit relation, see #24456 */
+relation[power=circuit][topology][topology!~/^(linear|branched)$/] {
+       throwError: tr("power=circuit relations should have a topology tag with value linear or branched");
+       assertMatch: "relation type=power power=circuit topology=branch";
+       assertNoMatch: "relation type=power power=circuit topology=branched";

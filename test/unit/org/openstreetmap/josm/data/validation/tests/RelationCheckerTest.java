@@ -125,14 +125,14 @@ class RelationCheckerTest {
     }
 
     @Test
-    void testPowerMemberExpression() {
-        Relation r = createRelation("type=route route=power");
+    void testPowerCircuitMemberExpression() {
+        Relation r = createRelation("type=power power=circuit");
         r.addMember(new RelationMember("", new Way()));
 
         List<TestError> errors = testRelation(r);
         assertEquals(2, errors.size());
-        assertEquals("Role 'line' missing", errors.get(0).getDescription());
-        assertEquals("Empty role found when expecting one of 'line/substation'", errors.get(1).getDescription());
+        assertEquals("Role 'substation' missing", errors.get(0).getDescription());
+        assertEquals("Empty role found when expecting one of 'substation/section/tap'", errors.get(1).getDescription());
     }
 
     @Test

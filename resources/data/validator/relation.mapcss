@@ -71,3 +71,12 @@ relation[type=building][building] >[role=outline] *[building][parent_tag(buildin
   throwWarning: tr("{0} of {1} member and {0} relation differ", "{0.key}", "outline");
   group: tr("suspicious tag combination");
 }
+
+/* Power relations, #24456 */
+relation[type=power][!power],
+relation[type=power][power][power!~/^(circuit|line_section)$/] {
+       throwError: tr("Power relation misses or combined to wrong power=* value");
+       assertMatch: "relation type=power";
+  assertMatch: "relation type=power power=line";
+       assertNoMatch: "relation type=power power=circuit";
+}
