@@ -130,9 +130,11 @@ class RelationCheckerTest {
         r.addMember(new RelationMember("", new Way()));
 
         List<TestError> errors = testRelation(r);
-        assertEquals(2, errors.size());
+        assertEquals(3, errors.size());
         assertEquals("Role 'substation' missing", errors.get(0).getDescription());
-        assertEquals("Empty role found when expecting one of 'substation/section/tap'", errors.get(1).getDescription());
+        assertEquals("Role 'section' missing", errors.get(1).getDescription());
+        assertEquals("Empty role found when expecting one of 'substation/section/tap'", errors.get(2).getDescription());
+        
     }
 
     @Test
