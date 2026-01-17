@@ -895,7 +895,7 @@ public final class DomainValidator extends AbstractValidator {
         "med", // med Medistry LLC
         "media", // media Binky Moon, LLC
         "meet", // meet Charleston Road Registry Inc.
-        "melbourne", // melbourne The Crown in right of the State of Victoria, represented by its Department of State Development, Business and Innovation
+        "melbourne", // melbourne The Crown in right of the State of Victoria, Department of State Development, Business and Innovation
         "meme", // meme Charleston Road Registry Inc.
         "memorial", // memorial Dog Beach, LLC
         "men", // men Exclusive Registry Limited
