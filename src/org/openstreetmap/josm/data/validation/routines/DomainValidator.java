@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2025052300, Last Updated Fri May 23 07:07:02 2025 UTC
+        // Taken from Version 2026011700, Last Updated Sat Jan 17 07:07:01 2026 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -342,7 +342,7 @@ public final class DomainValidator extends AbstractValidator {
         "amsterdam", // amsterdam Gemeente Amsterdam
         "analytics", // analytics Campus IP LLC
         "android", // android Charleston Road Registry Inc.
-        "anquan", // anquan QIHOO 360 TECHNOLOGY CO. LTD.
+        "anquan", // anquan Beijing Qihu Keji Co., Ltd.
         "anz", // anz Australia and New Zealand Banking Group Limited
         "aol", // aol Yahoo Inc.
         "apartments", // apartments Binky Moon, LLC
@@ -446,7 +446,7 @@ public final class DomainValidator extends AbstractValidator {
         "cal", // cal Charleston Road Registry Inc.
         "call", // call Amazon Registry Services, Inc.
         "calvinklein", // calvinklein PVH gTLD Holdings LLC
-        "cam", // cam CAM Connecting SARL
+        "cam", // cam CAM Connecting SarL
         "camera", // camera Binky Moon, LLC
         "camp", // camp Binky Moon, LLC
         "canon", // canon Canon Inc.
@@ -581,7 +581,6 @@ public final class DomainValidator extends AbstractValidator {
         "drive", // drive Charleston Road Registry Inc.
         "dtv", // dtv Dish DBS Corporation
         "dubai", // dubai Dubai Smart Government Department
-        "dunlop", // dunlop The Goodyear Tire & Rubber Company
         "dupont", // dupont DuPont Specialty Products USA, LLC
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
         "dvag", // dvag Deutsche Vermögensberatung Aktiengesellschaft DVAG
@@ -890,13 +889,13 @@ public final class DomainValidator extends AbstractValidator {
         "markets", // markets Dog Beach, LLC
         "marriott", // marriott Marriott Worldwide Corporation
         "marshalls", // marshalls The TJX Companies, Inc.
-        "mattel", // mattel Mattel Sites, Inc.
+        "mattel", // mattel Mattel IT Services, Inc.
         "mba", // mba Binky Moon, LLC
         "mckinsey", // mckinsey McKinsey Holdings, Inc.
         "med", // med Medistry LLC
         "media", // media Binky Moon, LLC
         "meet", // meet Charleston Road Registry Inc.
-        "melbourne", // melbourne The Crown in right of the State of Victoria, Department of State Development, Business and Innovation
+        "melbourne", // melbourne The Crown in right of the State of Victoria, represented by its Department of State Development, Business and Innovation
         "meme", // meme Charleston Road Registry Inc.
         "memorial", // memorial Dog Beach, LLC
         "men", // men Exclusive Registry Limited
@@ -963,7 +962,7 @@ public final class DomainValidator extends AbstractValidator {
         "now", // now Amazon Registry Services, Inc.
         "nowruz", // nowruz Emergency Back-End Registry Operator Program - ICANN
         "nowtv", // nowtv Starbucks (HK) Limited
-        "nra", // nra NRA Holdings Company, INC.
+        "nra", // nra National Rifle Association of America
         "nrw", // nrw Minds + Machines GmbH
         "ntt", // ntt NIPPON TELEGRAPH AND TELEPHONE CORPORATION
         "nyc", // nyc The City of New York by and through the New York City Department of Information Technology & Telecommunications
@@ -978,7 +977,7 @@ public final class DomainValidator extends AbstractValidator {
         "one", // one One.com A/S
         "ong", // ong Public Interest Registry
         "onl", // onl iRegistry GmbH
-        "online", // online Radix Technologies Inc.
+        "online", // online Radix Technologies Inc. SEZC
         "ooo", // ooo INFIBEAM AVENUES LIMITED
         "open", // open American Express Travel Related Services Company, Inc.
         "oracle", // oracle Oracle Corporation
@@ -1010,7 +1009,7 @@ public final class DomainValidator extends AbstractValidator {
         "photos", // photos Binky Moon, LLC
         "physio", // physio PhysBiz Pty Ltd
         "pics", // pics XYZ.COM LLC
-        "pictet", // pictet Pictet Europe S.A.
+        "pictet", // pictet Banque Pictet & Cie SA
         "pictures", // pictures Binky Moon, LLC
         "pid", // pid Top Level Spectrum, Inc.
         "pin", // pin Amazon Registry Services, Inc.
@@ -1056,7 +1055,6 @@ public final class DomainValidator extends AbstractValidator {
         "realty", // realty Internet Naming Co.
         "recipes", // recipes Binky Moon, LLC
         "red", // red Identity Digital Limited
-        "redstone", // redstone Redstone Haute Couture Co., Ltd.
         "redumbrella", // redumbrella Travelers TLD, LLC
         "rehab", // rehab Dog Beach, LLC
         "reise", // reise Binky Moon, LLC
@@ -1138,12 +1136,12 @@ public final class DomainValidator extends AbstractValidator {
         "shoes", // shoes Binky Moon, LLC
         "shop", // shop GMO Registry, Inc.
         "shopping", // shopping Binky Moon, LLC
-        "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
+        "shouji", // shouji Beijing Qihu Keji Co., Ltd.
         "show", // show Binky Moon, LLC
         "silk", // silk Amazon Registry Services, Inc.
         "sina", // sina Sina Corporation
         "singles", // singles Binky Moon, LLC
-        "site", // site Radix Technologies Inc.
+        "site", // site Radix Technologies Inc. SEZC
         "ski", // ski Identity Digital Limited
         "skin", // skin XYZ.COM LLC
         "sky", // sky Sky UK Limited
@@ -1317,14 +1315,14 @@ public final class DomainValidator extends AbstractValidator {
         "wtf", // wtf Binky Moon, LLC
         "xbox", // xbox Microsoft Corporation
         "xerox", // xerox Xerox DNHC LLC
-        "xihuan", // xihuan QIHOO 360 TECHNOLOGY CO. LTD.
+        "xihuan", // xihuan Beijing Qihu Keji Co., Ltd.
         "xin", // xin Elegant Leader Limited
         "xn--11b4c3d", // कॉम VeriSign Sarl
         "xn--1ck2e1b", // セール Amazon Registry Services, Inc.
         "xn--1qqw23a", // 佛山 Guangzhou YU Wei Information Technology Co., Ltd.
         "xn--30rr7y", // 慈善 Excellent First Limited
         "xn--3bst00m", // 集团 Eagle Horizon Limited
-        "xn--3ds443g", // 在线 Beijing Tld Registry Technology Limited
+        "xn--3ds443g", // 在线 Beijing TLD Registry Technology Limited
         "xn--3pxu8k", // 点看 VeriSign Sarl
         "xn--42c2d9a", // คอม VeriSign Sarl
         "xn--45q11c", // 八卦 Zodiac Gemini Ltd
@@ -1358,7 +1356,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--efvy88h", // 新闻 Guangzhou YU Wei Information and Technology Co.,Ltd
         "xn--fct429k", // 家電 Amazon Registry Services, Inc.
         "xn--fhbei", // كوم VeriSign Sarl
-        "xn--fiq228c5hs", // 中文网 TLD REGISTRY LIMITED
+        "xn--fiq228c5hs", // 中文网 Beijing TLD Registry Technology Limited
         "xn--fiq64b", // 中信 CITIC Group Corporation
         "xn--fjq720a", // 娱乐 Binky Moon, LLC
         "xn--flw351e", // 谷歌 Charleston Road Registry Inc.
@@ -1420,7 +1418,7 @@ public final class DomainValidator extends AbstractValidator {
         "yokohama", // yokohama GMO Registry, Inc.
         "you", // you Amazon Registry Services, Inc.
         "youtube", // youtube Charleston Road Registry Inc.
-        "yun", // yun QIHOO 360 TECHNOLOGY CO. LTD.
+        "yun", // yun Beijing Qihu Keji Co., Ltd.
         "zappos", // zappos Amazon Registry Services, Inc.
         "zara", // zara Industria de Diseño Textil, S.A. (INDITEX, S.A.)
         "zero", // zero Amazon Registry Services, Inc.
