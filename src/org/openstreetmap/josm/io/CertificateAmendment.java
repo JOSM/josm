@@ -150,8 +150,8 @@ public final class CertificateAmendment {
      * Certificates looked into platform native keystore and not embedded in JOSM.
      * Identifiers must match Windows/macOS keystore aliases and Unix filenames for efficient search.
      * To find correct values, see:<ul>
-     * <li><a href="https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReport">Mozilla List</a></li>
-     * <li><a href="https://ccadb-public.secure.force.com/microsoft/IncludedCACertificateReportForMSFT">Microsoft List</a></li>
+     * <li><a href="https://ccadb.my.salesforce-sites.com/mozilla/includedcacertificatereport">Mozilla List</a></li>
+     * <li><a href="https://ccadb.my.salesforce-sites.com/microsoft/includedcacertificatereportformsft">Microsoft List</a></li>
      * <li><a href="https://support.apple.com/en-us/HT210770">Apple List</a></li>
      * </ul>
      */
@@ -177,6 +177,11 @@ public final class CertificateAmendment {
                 "AC_RAIZ_FNMT-RCM.pem",
                 "ebc5570c29018c4d67b1aa127baf12f703b4611ebc17b7dab5573894179b93fa",
                 "https://www.sede.fnmt.gob.es"),
+        // #24580 - Greek Research - https://repo.harica.gr (expires 2029)
+        new NativeCertAmend(Collections.singleton("HARICA TLS RSA Root CA 2021"),
+                "HARICA_TLS_RSA_Root_CA_2021.pem",
+                "8dd4b5373cb0de36769c12339280d82746b3aa6cd426e797a31babe4279cf00b",
+                "https://www.harica.gr"),
     };
 
     private CertificateAmendment() {
