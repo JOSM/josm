@@ -56168,7 +56168,6 @@
     <nd ref='-10935' />
     <nd ref='-10936' />
     <nd ref='-10930' />
-    <tag k='ISO3166-1:alpha2' v='HK' />
     <tag k='ISO3166-2' v='CN-HK' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='Hong Kong' />
@@ -56240,7 +56239,6 @@
     <nd ref='-10975' />
     <nd ref='-10976' />
     <nd ref='-10962' />
-    <tag k='ISO3166-1:alpha2' v='MO' />
     <tag k='ISO3166-2' v='CN-MO' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='Macau' />
@@ -83180,7 +83178,6 @@
     <nd ref='-25365' />
     <nd ref='-25366' />
     <nd ref='-25352' />
-    <tag k='ISO3166-1:alpha2' v='HK' />
     <tag k='ISO3166-2' v='CN-HK' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='Hong Kong (Shenzhen Bay)' />
@@ -83193,7 +83190,6 @@
     <nd ref='-25371' />
     <nd ref='-25372' />
     <nd ref='-25367' />
-    <tag k='ISO3166-1:alpha2' v='MO' />
     <tag k='ISO3166-2' v='CN-MO' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='Macau (Universidade de Macau)' />
@@ -83807,6 +83803,24 @@
     <member type='way' ref='-412' role='outer' />
     <tag k='ISO3166-2' v='IN-GJ' />
     <tag k='name:en' v='Gujarat' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+  <relation id='-56'>
+    <member type='way' ref='-262' role='outer' />
+    <member type='way' ref='-579' role='outer' />
+    <tag k='ISO3166-1:alpha2' v='HK' />
+    <tag k='ISO3166-2' v='CN-HK' />
+    <tag k='driving_side' v='left' />
+    <tag k='name:en' v='Hong Kong' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+  <relation id='-57'>
+    <member type='way' ref='-269' role='outer' />
+    <member type='way' ref='-580' role='outer' />
+    <tag k='ISO3166-1:alpha2' v='MO' />
+    <tag k='ISO3166-2' v='CN-MO' />
+    <tag k='driving_side' v='left' />
+    <tag k='name:en' v='Macau' />
     <tag k='type' v='multipolygon' />
   </relation>
 </osm>
