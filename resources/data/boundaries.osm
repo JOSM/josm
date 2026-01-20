@@ -56168,7 +56168,6 @@
     <nd ref='-10935' />
     <nd ref='-10936' />
     <nd ref='-10930' />
-    <tag k='driving_side' v='left' />
     <tag k='name:en' v='Hong Kong' />
   </way>
   <way id='-263'>
@@ -56239,7 +56238,6 @@
     <nd ref='-10976' />
     <nd ref='-10962' />
     <tag k='ISO3166-2' v='CN-MO' />
-    <tag k='driving_side' v='left' />
     <tag k='name:en' v='Macau' />
   </way>
   <way id='-270'>
@@ -83177,7 +83175,6 @@
     <nd ref='-25365' />
     <nd ref='-25366' />
     <nd ref='-25352' />
-    <tag k='driving_side' v='left' />
     <tag k='name:en' v='Hong Kong (Shenzhen Bay)' />
   </way>
   <way id='-580'>
@@ -83189,7 +83186,6 @@
     <nd ref='-25372' />
     <nd ref='-25367' />
     <tag k='ISO3166-2' v='CN-MO' />
-    <tag k='driving_side' v='left' />
     <tag k='name:en' v='Macau (Universidade de Macau)' />
   </way>
   <relation id='-1'>

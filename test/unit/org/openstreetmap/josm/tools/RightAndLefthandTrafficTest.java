@@ -79,6 +79,7 @@ class RightAndLefthandTrafficTest {
         check(false, "Brunei", 4.5, 114.666667);
         check(false, "East Timor", -8.833333, 125.916667);
         check(false, "Hong Kong", 22.3, 114.2);
+        check(false, "Hong Kong (Shenzhen Bay)", 22.495, 113.945);
         check(false, "Indonesia", -5, 120);
         check(false, "India", 21, 78);
         check(false, "Japan", 35, 136);
