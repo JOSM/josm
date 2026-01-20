@@ -56168,7 +56168,6 @@
     <nd ref='-10935' />
     <nd ref='-10936' />
     <nd ref='-10930' />
-    <tag k='ISO3166-2' v='CN-HK' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='Hong Kong' />
   </way>
@@ -83178,7 +83177,6 @@
     <nd ref='-25365' />
     <nd ref='-25366' />
     <nd ref='-25352' />
-    <tag k='ISO3166-2' v='CN-HK' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='Hong Kong (Shenzhen Bay)' />
   </way>
