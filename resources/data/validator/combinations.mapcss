@@ -1158,3 +1158,16 @@ relation[power=circuit][topology][topology!~/^(linear|branched)$/] {
        assertMatch: "relation type=power power=circuit topology=branch";
        assertNoMatch: "relation type=power power=circuit topology=branched";
 }
+
+/* #21927 */
+way[!cycleway][!cycleway:right][!cycleway:left][!cycleway:both][!cycleway:lanes] > node[cycleway=asl] {
+  throwWarning: tr("{0} not on cycleway", "{0.tag}");
+  group: tr("suspicious tag combination");
+}
+
+way[/^oneway(:bicycle)?$/!~/^yes$/] > node[cycleway=asl][!direction],
+way[!oneway][!oneway:bicycle] > node[cycleway=asl][!direction] {
+  throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("missing tag");
+  suggestAlternative: "{0.tag} + {1.key}=*";
+}
