@@ -689,7 +689,7 @@ relation[type=multipolygon][building] > way {
   set part_of_building_MP;
 }
 way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!note][!amenity][!leisure][!landuse][!man_made][!tourism][!barrier][place!=plot]!.part_of_building_MP {
-  /* don't exclude shop because a lot of real missing bulding tag cases have a shop tag. */
+  /* do not exclude shop because a lot of real missing bulding tag cases have a shop tag. */
   throwOther: tr("possibly missing {0} tag", "{1.key}");
   group: tr("missing tag");
 }

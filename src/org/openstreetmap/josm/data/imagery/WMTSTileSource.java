@@ -608,7 +608,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             layer.style = "";
         }
         if (layer.format == null) {
-            // no format found - it's mandatory parameter - can't use this layer
+            // no format found - parameter is mandatory - cannot use this layer
             Logging.warn(tr("Can''t use layer {0} because no supported formats were found. Layer is available in formats: {1}",
                     layer.getUserTitle(),
                     String.join(", ", unsupportedFormats)));

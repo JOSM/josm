@@ -61,7 +61,7 @@ public class UntaggedNode extends Test implements KeyValueVisitor {
     @Override
     public void visitKeyValue(Tagged n, String key, String value) {
         if (key.toLowerCase(Locale.ENGLISH).contains("fixme") || value.toLowerCase(Locale.ENGLISH).contains("fixme")) {
-            /* translation note: don't translate quoted words */
+            /* translation note: do not translate quoted words */
             errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_FIXME)
                     .message(ERROR_MESSAGE, marktr("Has tag containing ''fixme''"))
                     .primitives(castPrim(n))
@@ -72,19 +72,19 @@ public class UntaggedNode extends Test implements KeyValueVisitor {
         String msg = null;
         int code = 0;
         if (key.startsWith("note") || key.startsWith("comment") || key.startsWith("description")) {
-            /* translation note: don't translate quoted words */
+            /* translation note: do not translate quoted words */
             msg = marktr("Has key ''note'' or ''comment'' or ''description''");
             code = UNTAGGED_NODE_NOTE;
         } else if (key.startsWith("created_by")) {
-            /* translation note: don't translate quoted words */
+            /* translation note: do not translate quoted words */
             msg = marktr("Has key ''created_by''");
             code = UNTAGGED_NODE_CREATED_BY;
         } else if (key.startsWith("watch")) {
-            /* translation note: don't translate quoted words */
+            /* translation note: do not translate quoted words */
             msg = marktr("Has key ''watch''");
             code = UNTAGGED_NODE_WATCH;
         } else if (key.startsWith("source")) {
-            /* translation note: don't translate quoted words */
+            /* translation note: do not translate quoted words */
             msg = marktr("Has key ''source''");
             code = UNTAGGED_NODE_SOURCE;
         }

@@ -997,7 +997,7 @@ public class OsmApi extends OsmConnection {
             if (newNotes.size() == 1) {
                 return newNotes.get(0);
             }
-            // Shouldn't ever execute. Server will either respond with an error (caught elsewhere) or one note
+            // Should never execute. Server will either respond with an error (caught elsewhere) or one note
             throw new OsmTransferException(tr("Note upload failed"));
         } catch (SAXException | IOException e) {
             Logging.error(e);

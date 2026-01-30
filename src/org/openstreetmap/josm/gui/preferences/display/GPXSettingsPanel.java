@@ -573,8 +573,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         ExpertToggleAction.addVisibilitySwitcher(colorDynamic);
 
         if (global) {
-            // Setting waypoints for gpx layer doesn't make sense - waypoints are shown in marker layer that has different name - so show
-            // this only for global config
+            // Setting waypoints for gpx layer does not make sense - waypoints are shown in marker layer that has
+            // different name - so show this only for global config
 
             // waypointLabel
             label = new JLabel(tr("Waypoint labelling"));
