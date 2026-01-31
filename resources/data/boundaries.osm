@@ -56237,7 +56237,6 @@
     <nd ref='-10975' />
     <nd ref='-10976' />
     <nd ref='-10962' />
-    <tag k='ISO3166-2' v='CN-MO' />
     <tag k='name:en' v='Macau' />
   </way>
   <way id='-270'>
@@ -83185,7 +83184,6 @@
     <nd ref='-25371' />
     <nd ref='-25372' />
     <nd ref='-25367' />
-    <tag k='ISO3166-2' v='CN-MO' />
     <tag k='name:en' v='Macau (Universidade de Macau)' />
   </way>
   <relation id='-1'>
