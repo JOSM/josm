@@ -150,7 +150,7 @@ public class TagEditHelper {
     /** The preference filter of tags which should not be remembered, since r9940 */
     public static final StringProperty PROPERTY_TAGS_TO_IGNORE = new StringProperty("properties.recent-tags.ignore",
             new SearchSetting().writeToString());
-    /** The preference filter for tag keys for which values should not be auto-completed, since xxx */
+    /** The preference filter for tag keys for which values should not be auto-completed, since r19483 */
     public static final StringProperty NO_AUTOCOMPLETE_KEYS = new StringProperty("properties.autocomplete.exclude-keys",
             new SearchSetting().writeToString());
 
