@@ -69,6 +69,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -146,8 +147,11 @@ public class TagEditHelper {
     /** The preference storage of recent tags */
     public static final ListProperty PROPERTY_RECENT_TAGS = new ListProperty("properties.recent-tags",
             Collections.emptyList());
-    /** The preference list of tags which should not be remembered, since r9940 */
+    /** The preference filter of tags which should not be remembered, since r9940 */
     public static final StringProperty PROPERTY_TAGS_TO_IGNORE = new StringProperty("properties.recent-tags.ignore",
+            new SearchSetting().writeToString());
+    /** The preference filter for tag keys for which values should not be auto-completed, since xxx */
+    public static final StringProperty NO_AUTOCOMPLETE_KEYS = new StringProperty("properties.autocomplete.exclude-keys",
             new SearchSetting().writeToString());
 
     /**
@@ -182,6 +186,7 @@ public class TagEditHelper {
 
     final RecentTagCollection recentTags = new RecentTagCollection(MAX_LRU_TAGS_NUMBER);
     SearchSetting tagsToIgnore;
+    SearchSetting noAutocomplete;
 
     /**
      * Copy of recently added tags in sorted from newest to oldest order.
@@ -240,6 +245,7 @@ public class TagEditHelper {
         this.tagTable = tagTable;
         this.tagData = propertyData;
         this.valueCount = valueCount;
+        this.noAutocomplete = SearchSetting.readFromString(NO_AUTOCOMPLETE_KEYS.get());
     }
 
     /**
@@ -736,6 +742,23 @@ public class TagEditHelper {
             }
         }
 
+        /**
+         * Check if values should be auto-completed for the given tag key.
+         * @param key the key
+         * @return false if auto-completion is disabled or if the key matches the exclusion filter, true else
+         */
+        private boolean autocompleteValuesForKey(String key) {
+            if (!AUTOCOMPLETE_VALUES.get())
+                return false;
+            if (noAutocomplete == null || Utils.isEmpty(noAutocomplete.text))
+                return true;
+            try {
+                return !SearchCompiler.compile(noAutocomplete).match(new Tag(key));
+            } catch (SearchParseError parseError) {
+                throw new IllegalStateException(parseError);
+            }
+        }
+
         protected void addEventListeners() {
             // OK on Enter in values
             values.getEditor().addActionListener(e -> buttonAction(0, null));
@@ -777,6 +800,8 @@ public class TagEditHelper {
         public void focusLost(FocusEvent e) {
             // update the values combobox orientation if the key changed
             values.applyComponentOrientation(OrientationAction.getNamelikeOrientation(keys.getText()));
+            // update the auto-completion setting for the given tag key
+            values.setAutocompleteEnabled(autocompleteValuesForKey(keys.getText()));
         }
 
         protected void updateOkButtonIcon() {
@@ -1162,6 +1187,7 @@ public class TagEditHelper {
                 add(new IgnoreTagAction(tr("Ignore key ''{0}''", t.getKey()), new Tag(t.getKey(), "")));
                 add(new IgnoreTagAction(tr("Ignore tag ''{0}''", t), t));
                 add(new EditIgnoreTagsAction());
+                add(new EditExcludeAutocompleteValues(t));
             }
         }
 
@@ -1189,12 +1215,12 @@ public class TagEditHelper {
         class EditIgnoreTagsAction extends AbstractAction {
 
             EditIgnoreTagsAction() {
-                super(tr("Edit ignore list"));
+                super(tr("Edit ignore filter"));
             }
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final SearchSetting newTagsToIngore = SearchAction.showSearchDialog(tagsToIgnore);
+                final SearchSetting newTagsToIngore = SearchAction.showSearchDialog(new Filter(tagsToIgnore));
                 if (newTagsToIngore == null) {
                     return;
                 }
@@ -1204,6 +1230,29 @@ public class TagEditHelper {
                     PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
                 } catch (SearchParseError parseError) {
                     warnAboutParseError(parseError);
+                }
+            }
+        }
+
+        class EditExcludeAutocompleteValues extends AbstractAction {
+            final transient Tag tag;
+
+            EditExcludeAutocompleteValues(Tag tag) {
+                super(tr("Edit tag filter to stop autocompletion of values"));
+                this.tag = tag;
+                setEnabled(AUTOCOMPLETE_VALUES.get());
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SearchSetting initFilter = SearchSetting.fromString('"' + tag.getKey() + '"');
+
+                if (noAutocomplete != null && !Utils.isEmpty(noAutocomplete.text))
+                    initFilter = noAutocomplete;
+                final SearchSetting newNoAutocomplete = SearchAction.showSearchDialog(new Filter(initFilter));
+                if (newNoAutocomplete != null) {
+                    noAutocomplete = newNoAutocomplete;
+                    NO_AUTOCOMPLETE_KEYS.put(noAutocomplete.writeToString());
                 }
             }
         }
