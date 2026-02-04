@@ -1,0 +1,38 @@
+* {
+    font-size: 20;
+}
+
+node[test] {
+    symbol-shape:square;
+    symbol-size: 20;
+    value: "";
+    result: "";
+}
+
+node[test=1] {
+    value: 2 + 3 * 5 + 1 / 4;
+    result: 17.25;
+}
+
+node[test=2] {
+    tmp: 3;
+    value: cond(tag("12") >= 14, 1, 2) + (10*cond(tag("15") >= 14, 1, 2)) + (100*max(prop("tmp"), 2));
+    result: 312;
+}
+
+node[test=3] {
+    lst: 12, 3, 6;
+    tmp: list(get(prop("lst"), 1), get(prop("lst"), 0), get(prop("lst"), 2), length(prop("lst")));
+    value: concat("", prop("tmp"));
+    result: "[3.0, 12.0, 6.0, 3]";
+}
+
+node[test=4] {
+    value: regexp_test("aa\\|", "aa|");
+    result: "true";
+}
+
+node[test] {
+    text: concat("Test ", tag("test"), ": ", prop(result), " == ", prop(value));
+}
+

@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.data.projection.ShiftedProjectionTest
+Test: testGetProjectingsForAreaMultiple() took 1 milli sec(s)
+Test: testEastNorth2latlonClamped() took 1 milli sec(s)
+Test: testLatlon2eastNorth() took 0 milli sec(s)
+Test: testGetProjectingsForArea() took 0 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 64 milli sec(s)

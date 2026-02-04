@@ -1,0 +1,150 @@
+Testcase: org.openstreetmap.josm.data.validation.ValidatorCLITest
+Test: testBadDataPlusChangeFile() took 606 milli sec(s)
+Test: testNonRegression22898(Path) took 386 milli sec(s)
+Test: testInternalValidatorMapcss(String)[1] took 361 milli sec(s)
+Test: testInternalValidatorMapcss(String)[2] took 359 milli sec(s)
+Test: testInternalValidatorMapcss(String)[3] took 350 milli sec(s)
+Test: testInternalValidatorMapcss(String)[4] took 353 milli sec(s)
+Test: testInternalValidatorMapcss(String)[5] took 368 milli sec(s)
+Test: testInternalValidatorMapcss(String)[6] took 394 milli sec(s)
+Test: testInternalValidatorMapcss(String)[7] took 390 milli sec(s)
+Test: testInternalValidatorMapcss(String)[8] took 357 milli sec(s)
+Test: testInternalValidatorMapcss(String)[9] took 368 milli sec(s)
+Test: testInternalValidatorMapcss(String)[10] took 353 milli sec(s)
+Test: testInternalValidatorMapcss(String)[11] took 380 milli sec(s)
+Test: testInternalValidatorMapcss(String)[12] took 405 milli sec(s)
+Test: testInternalMapcss(String)[1] took 382 milli sec(s)
+Test: testBadDataTicket13165() took 598 milli sec(s)
+Tests run: 16, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 6 sec(s)
+unit-11490798292326167002/testBadDataPlusChangeFile.geojson completed in 8 ms
+2026-02-04 20:41:33.873 INFO: Finishing task : Processing files... (9 ms)
+2026-02-04 20:41:33.991 INFO: Open file: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataPlusChangeFile.osm (148 bytes)
+2026-02-04 20:41:33.991 INFO: Finishing task : Rendering data set... (0 ms)
+2026-02-04 20:41:33.991 INFO: Open file: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataPlusChangeFile.osm (148 bytes) completed in 0 ms
+2026-02-04 20:41:33.991 INFO: Validating /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataPlusChangeFile.osm, saving output to /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataPlusChangeFile.geojson
+2026-02-04 20:41:33.992 INFO: Finishing task : Parsing OSM data... (0 ms)
+2026-02-04 20:41:33.993 INFO: Validating /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataPlusChangeFile.osm, saving output to /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataPlusChangeFile.geojson completed in 2 ms
+2026-02-04 20:41:33.993 INFO: org.openstreetmap.josm.io.IllegalDataException: Missing attribute 'version' on OSM primitive with ID 1. (at line 1, column 91). 90 bytes have been read. Cause: org.openstreetmap.josm.io.XmlStreamParsingException: Missing attribute 'version' on OSM primitive with ID 1. (at line 1, column 91). 90 bytes have been read. Cause: org.openstreetmap.josm.io.IllegalDataException: Missing attribute 'version' on OSM primitive with ID 1.
+org.openstreetmap.josm.io.IllegalDataException: Missing attribute 'version' on OSM primitive with ID 1. (at line 1, column 91). 90 bytes have been read
+	at org.openstreetmap.josm.io.OsmReader.lambda$doParseDataSet$0(OsmReader.java:509)
+	at org.openstreetmap.josm.io.AbstractReader.doParseDataSet(AbstractReader.java:331)
+	at org.openstreetmap.josm.io.AbstractReader.doParseDataSet(AbstractReader.java:314)
+	at org.openstreetmap.josm.io.OsmReader.doParseDataSet(OsmReader.java:504)
+	at org.openstreetmap.josm.io.OsmChangeReader.parseDataSet(OsmChangeReader.java:149)
+	at org.openstreetmap.josm.data.validation.ValidatorCLI.processFile(ValidatorCLI.java:271)
+	at org.openstreetmap.josm.data.validation.ValidatorCLI.processArguments(ValidatorCLI.java:187)
+	at org.openstreetmap.josm.data.validation.ValidatorCLITest.testBadDataPlusChangeFile(ValidatorCLITest.java:164)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:767)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$8(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.exec(ForkJoinPoolHierarchicalTestExecutorService.java:274)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.execSync(ForkJoinPoolHierarchicalTestExecutorService.java:247)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.executeSync(ForkJoinPoolHierarchicalTestExecutorService.java:194)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.invokeAll(ForkJoinPoolHierarchicalTestExecutorService.java:166)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.exec(ForkJoinPoolHierarchicalTestExecutorService.java:274)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.execSync(ForkJoinPoolHierarchicalTestExecutorService.java:247)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.invokeAll(ForkJoinPoolHierarchicalTestExecutorService.java:159)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.exec(ForkJoinPoolHierarchicalTestExecutorService.java:274)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: org.openstreetmap.josm.io.XmlStreamParsingException: Missing attribute 'version' on OSM primitive with ID 1. (at line 1, column 91). 90 bytes have been read
+	at org.openstreetmap.josm.io.OsmReader.throwException(OsmReader.java:109)
+	at org.openstreetmap.josm.io.OsmReader.handleIllegalDataException(OsmReader.java:200)
+	at org.openstreetmap.josm.io.OsmReader.parseNode(OsmReader.java:246)
+	at org.openstreetmap.josm.io.OsmChangeReader.parseCommon(OsmChangeReader.java:80)
+	at org.openstreetmap.josm.io.OsmChangeReader.parseOsmChange(OsmChangeReader.java:63)
+	at org.openstreetmap.josm.io.OsmChangeReader.parseRoot(OsmChangeReader.java:44)
+	at org.openstreetmap.josm.io.OsmReader.parse(OsmReader.java:124)
+	at org.openstreetmap.josm.io.OsmReader.lambda$doParseDataSet$0(OsmReader.java:507)
+	... 64 more
+Caused by: org.openstreetmap.josm.io.IllegalDataException: Missing attribute 'version' on OSM primitive with ID 1.
+	at org.openstreetmap.josm.io.AbstractReader.parseVersion(AbstractReader.java:519)
+	at org.openstreetmap.josm.io.OsmReader.readCommon(OsmReader.java:459)
+	at org.openstreetmap.josm.io.AbstractReader.parseNode(AbstractReader.java:715)
+	at org.openstreetmap.josm.io.OsmReader.parseNode(OsmReader.java:244)
+	... 69 more
+
+2026-02-04 20:41:34.242 INFO: properties: {plugins=[baz]}
+2026-02-04 20:41:34.374 INFO: resources/styles/standard/elemstyles.mapcss had no errors
+2026-02-04 20:41:34.375 INFO: Finishing task : Processing files... (11 ms)
+2026-02-04 20:41:34.735 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/multiple.validator.mapcss had no errors
+2026-02-04 20:41:34.735 INFO: Finishing task : Processing files... (2 ms)
+2026-02-04 20:41:35.093 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/religion.validator.mapcss had no errors
+2026-02-04 20:41:35.093 INFO: Finishing task : Processing files... (1 ms)
+2026-02-04 20:41:35.443 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/relation.validator.mapcss had no errors
+2026-02-04 20:41:35.443 INFO: Finishing task : Processing files... (2 ms)
+2026-02-04 20:41:35.799 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/territories.validator.mapcss had no errors
+2026-02-04 20:41:35.799 INFO: Finishing task : Processing files... (6 ms)
+2026-02-04 20:41:36.162 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/deprecated.validator.mapcss had no errors
+2026-02-04 20:41:36.163 INFO: Finishing task : Processing files... (13 ms)
+2026-02-04 20:41:36.541 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/addresses.validator.mapcss had no errors
+2026-02-04 20:41:36.541 INFO: Finishing task : Processing files... (2 ms)
+2026-02-04 20:41:36.939 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/numeric.validator.mapcss had no errors
+2026-02-04 20:41:36.939 INFO: Finishing task : Processing files... (19 ms)
+2026-02-04 20:41:37.310 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/geometry.validator.mapcss had no errors
+2026-02-04 20:41:37.310 INFO: Finishing task : Processing files... (2 ms)
+2026-02-04 20:41:37.666 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/highway.validator.mapcss had no errors
+2026-02-04 20:41:37.666 INFO: Finishing task : Processing files... (3 ms)
+[Foo%27s, null, Foo%27s]
+[Foo%27s, null, Foo%27s]
+[Foo%27s, null, Foo%27s]
+2026-02-04 20:41:38.034 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/wikipedia.validator.mapcss had no errors
+2026-02-04 20:41:38.034 INFO: Finishing task : Processing files... (3 ms)
+2026-02-04 20:41:38.384 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/unnecessary.validator.mapcss had no errors
+2026-02-04 20:41:38.384 INFO: Finishing task : Processing files... (3 ms)
+2026-02-04 20:41:38.795 INFO: /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/combinations.validator.mapcss had no errors
+2026-02-04 20:41:38.795 INFO: Finishing task : Processing files... (15 ms)
+2026-02-04 20:41:39.177 INFO: resources/styles/standard/elemstyles.mapcss had no errors
+2026-02-04 20:41:39.177 INFO: Finishing task : Processing files... (7 ms)
+2026-02-04 20:41:39.552 INFO: Open file: /Users/petechentw/Documents/261P_Project/josm/test/data/regress/13165/13165.osm (4307 bytes)
+2026-02-04 20:41:39.553 INFO: Finishing task : Rendering data set... (0 ms)
+2026-02-04 20:41:39.553 INFO: Open file: /Users/petechentw/Documents/261P_Project/josm/test/data/regress/13165/13165.osm (4307 bytes) completed in 0 ms
+2026-02-04 20:41:39.553 INFO: Validating /Users/petechentw/Documents/261P_Project/josm/test/data//regress/13165/13165.osm, saving output to /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataTicket13165.geojson
+2026-02-04 20:41:39.563 INFO: Finishing task : Updating ignored errors .../ (9 ms)
+2026-02-04 20:41:39.563 INFO: Validating /Users/petechentw/Documents/261P_Project/josm/test/data//regress/13165/13165.osm, saving output to /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/junit-11490798292326167002/testBadDataTicket13165.geojson completed in 10 ms
+2026-02-04 20:41:39.563 INFO: Finishing task : Processing files... (10 ms)
+------------- ---------------- ---------------

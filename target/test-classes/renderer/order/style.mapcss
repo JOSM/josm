@@ -1,0 +1,83 @@
+canvas {
+    default-points: true;
+    default-lines: false;
+}
+
+way[color=A] {
+	color: blue;
+	fill-color: blue;
+	width: 5;
+}
+
+way[color=B] {
+	color: green;
+	fill-color: green;
+	width: 5;
+}
+
+way[color=A]:selected {
+}
+
+way[color=B]:selected {
+}
+
+node[color=EndNode] {
+	symbol-shape: circle;
+	symbol-size: 2;
+	symbol-fill-color: yellow;
+}
+
+node[color=N] {
+	symbol-shape: circle;
+	symbol-size: 20;
+	symbol-fill-color: blue;
+	major-z-index: 4.1;
+}
+
+way[z-index] {
+	z-index: eval(tag("z-index"));
+}
+
+way[test=object-z-index-1] {
+	object-z-index: 10.000;
+}
+
+way[test=object-z-index-1]::B {
+	object-z-index: 9.999;
+	color: yellow;
+	width: 5;
+}
+
+way[test=object-z-index-1b] {
+	object-z-index: 9.999;
+}
+
+way[test=object-z-index-1b]::B {
+	object-z-index: 10.000;
+	color: yellow;
+	width: 5;
+}
+
+way[test=object-z-index-2] {
+	object-z-index: 0.00;
+}
+
+way[test=object-z-index-2]::B {
+	object-z-index: 0.01;
+	color: yellow;
+	width: 5;
+}
+
+way[test=object-z-index-2b] {
+	object-z-index: 0.02;
+}
+
+way[test=object-z-index-2b]::B {
+	object-z-index: 0.01;
+	color: yellow;
+	width: 5;
+}
+
+way[major-z-index] {
+	major-z-index: eval(tag("major-z-index"));
+}

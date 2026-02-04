@@ -1,0 +1,18 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+area[test] {
+	icon-image: "info";
+	color: red;
+	width: 1;
+}
+
+area[test=H] {
+	icon-position: inside;
+}
+
+area[test=I] {
+	icon-position: line;
+}

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-30552' action='modify' visible='true' lat='0.1' lon='0.1' />
+  <node id='-30554' action='modify' visible='true' lat='0.1' lon='0.3' />
+  <node id='-30556' action='modify' visible='true' lat='0.1' lon='0.5' />
+  <node id='-30558' action='modify' visible='true' lat='0.1' lon='0.7' />
+  <node id='-30560' action='modify' visible='true' lat='0.1' lon='0.9' />
+  <node id='-30562' action='modify' visible='true' lat='0.3' lon='0.1' />
+  <node id='-30564' action='modify' visible='true' lat='0.3' lon='0.3' />
+  <node id='-30566' action='modify' visible='true' lat='0.3' lon='0.5' />
+  <node id='-30568' action='modify' visible='true' lat='0.3' lon='0.7' />
+  <node id='-30570' action='modify' visible='true' lat='0.3' lon='0.9' />
+  <node id='-30572' action='modify' visible='true' lat='0.5' lon='0.1' />
+  <node id='-30574' action='modify' visible='true' lat='0.5' lon='0.3' />
+  <node id='-30576' action='modify' visible='true' lat='0.5' lon='0.5' />
+  <node id='-30578' action='modify' visible='true' lat='0.5' lon='0.7' />
+  <node id='-30580' action='modify' visible='true' lat='0.5' lon='0.9' />
+  <node id='-30582' action='modify' visible='true' lat='0.7' lon='0.1' />
+  <node id='-30584' action='modify' visible='true' lat='0.7' lon='0.3' />
+  <node id='-30586' action='modify' visible='true' lat='0.7' lon='0.5' />
+  <node id='-30588' action='modify' visible='true' lat='0.7' lon='0.7' />
+  <node id='-30590' action='modify' visible='true' lat='0.7' lon='0.9' />
+  <node id='-30592' action='modify' visible='true' lat='0.9' lon='0.1' />
+  <node id='-30594' action='modify' visible='true' lat='0.9' lon='0.3' />
+  <node id='-30596' action='modify' visible='true' lat='0.9' lon='0.5' />
+  <node id='-30598' action='modify' visible='true' lat='0.9' lon='0.7' />
+  <node id='-30600' action='modify' visible='true' lat='0.9' lon='0.9' />
+  <way id='-30626' action='modify' visible='true'>
+    <nd ref='-30600' />
+    <nd ref='-30598' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='width5' />
+  </way>
+  <way id='-30629' action='modify' visible='true'>
+    <nd ref='-30590' />
+    <nd ref='-30588' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='width4' />
+  </way>
+  <way id='-30630' action='modify' visible='true'>
+    <nd ref='-30580' />
+    <nd ref='-30578' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='width3' />
+  </way>
+  <way id='-30631' action='modify' visible='true'>
+    <nd ref='-30570' />
+    <nd ref='-30568' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='width2' />
+  </way>
+  <way id='-30632' action='modify' visible='true'>
+    <nd ref='-30560' />
+    <nd ref='-30558' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='width1' />
+  </way>
+  <way id='-30638' action='modify' visible='true'>
+    <nd ref='-30596' />
+    <nd ref='-30594' />
+    <nd ref='-30592' />
+    <tag k='test' v='width5' />
+  </way>
+  <way id='-30640' action='modify' visible='true'>
+    <nd ref='-30586' />
+    <nd ref='-30584' />
+    <nd ref='-30582' />
+    <tag k='test' v='width4' />
+  </way>
+  <way id='-30642' action='modify' visible='true'>
+    <nd ref='-30576' />
+    <nd ref='-30574' />
+    <nd ref='-30572' />
+    <tag k='test' v='width3' />
+  </way>
+  <way id='-30644' action='modify' visible='true'>
+    <nd ref='-30566' />
+    <nd ref='-30564' />
+    <nd ref='-30562' />
+    <tag k='test' v='width2' />
+  </way>
+  <way id='-30646' action='modify' visible='true'>
+    <nd ref='-30556' />
+    <nd ref='-30554' />
+    <nd ref='-30552' />
+    <tag k='test' v='width1' />
+  </way>
+</osm>

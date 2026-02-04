@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayerTest
+Test: testNonRegression23316() took 113 milli sec(s)
+Test: testMarkerLayer() took 145 milli sec(s)
+Test: testPlayHeadMarker() took 126 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 454 milli sec(s)

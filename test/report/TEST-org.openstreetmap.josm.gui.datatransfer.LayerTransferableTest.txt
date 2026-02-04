@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.datatransfer.LayerTransferableTest
+Test: testTransferDataUnsupported() took 2 milli sec(s)
+Test: testTransferData() took 0 milli sec(s)
+Test: testLayerData() took 0 milli sec(s)
+Test: testSupportedDataFlavor() took 0 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 61 milli sec(s)

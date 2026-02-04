@@ -1,0 +1,40 @@
+Testcase: org.openstreetmap.josm.plugins.PluginHandlerJOSMTooOldTest
+Test: testUpdatePluginsSkipOne() took 363 milli sec(s)
+Test: testUpdatePluginsDownloadBoth() took 311 milli sec(s)
+Test: testUpdatePluginsUnexpectedlyJOSMTooOld() took 306 milli sec(s)
+Test: testUpdatePluginsMultiVersionInsufficient() took 316 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)
+ls.mockers.ExtendedDialogMocker answering 1 to ExtendedDialog with content JOSM version 8 001 required for plugin baz_plugin.
+2026-02-04 20:43:06.870 INFO: GET http://localhost:58866/plugin/baz_plugin.v7.jar -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:43:06.870 INFO: Downloading Plugin dummy_plugin...
+2026-02-04 20:43:06.871 INFO: org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker answering 2 to ExtendedDialog with content JOSM version 7 001 required for plugin dummy_plugin.
+2026-02-04 20:43:06.872 INFO: org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker answering 0 to HelpAwareOptionPane with message <html>Updating the following plugin has failed:<ul><li>dummy_plugin</li></ul>Please open the Preference Dialog after JOSM has started and try to update it manually.</html>
+2026-02-04 20:43:07.094 INFO: GET http://localhost:58866/plugins -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:07.200 INFO: Downloading Plugin baz_plugin...
+2026-02-04 20:43:07.202 INFO: org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker answering 1 to ExtendedDialog with content JOSM version 8 001 required for plugin baz_plugin.
+2026-02-04 20:43:07.203 INFO: GET http://localhost:58866/plugin/baz_plugin.v7.jar -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:43:07.203 INFO: Downloading Plugin dummy_plugin...
+2026-02-04 20:43:07.204 INFO: org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker answering 1 to ExtendedDialog with content JOSM version 7 001 required for plugin dummy_plugin.
+2026-02-04 20:43:07.205 INFO: GET http://localhost:58866/plugin/dummy_plugin.v31772.jar -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:07.401 INFO: GET http://localhost:58866/plugins -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:07.507 INFO: Downloading Plugin baz_plugin...
+2026-02-04 20:43:07.508 INFO: GET http://localhost:58866/plugin/baz_plugin.v7.jar -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:07.712 INFO: GET http://localhost:58866/plugins -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:07.819 INFO: Downloading Plugin qux_plugin...
+2026-02-04 20:43:07.821 INFO: org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker answering 1 to ExtendedDialog with content JOSM version 7 500 required for plugin qux_plugin.
+2026-02-04 20:43:07.822 INFO: GET http://localhost:58866/plugin/qux_plugin.v432.jar -> HTTP/1.1 200 (1 ms)
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:43:06.871 SEVERE: org.openstreetmap.josm.plugins.PluginDownloadException: Download skipped
+org.openstreetmap.josm.plugins.PluginDownloadException: Download skipped
+	at org.openstreetmap.josm.plugins.PluginDownloadTask.download(PluginDownloadTask.java:115)
+	at org.openstreetmap.josm.plugins.PluginDownloadTask.realRun(PluginDownloadTask.java:175)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.doRealRun(PleaseWaitRunnable.java:94)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.run(PleaseWaitRunnable.java:142)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+------------- ---------------- ---------------

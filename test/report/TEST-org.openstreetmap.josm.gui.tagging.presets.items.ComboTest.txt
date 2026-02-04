@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.gui.tagging.presets.items.ComboTest
+Test: testUseLastAsDefault() took 172 milli sec(s)
+Test: testColor() took 128 milli sec(s)
+Test: testAddToPanel() took 146 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 524 milli sec(s)
+cause of conflict with ⌥+M
+2026-02-04 20:42:51.853 INFORMATION: Tastenkürzelkonflikt: 'menu:Modus' wurde von 'menu:Mode' auf '⌃+⌥+F2' verschoben.
+------------- ---------------- ---------------

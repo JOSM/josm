@@ -1,0 +1,15 @@
+Testcase: org.openstreetmap.josm.gui.io.DownloadOpenChangesetsTaskTest
+Test: testAnonymous() took 174 milli sec(s)
+Test: testPartiallyIdentified() took 634 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)
+.testutils.mockers.JOptionPaneSimpleMocker answering 1 to showConfirmDialog with message Obtain OAuth 2.0 token for authentication?
+2026-02-04 20:42:20.564 INFO: org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker answering 0 to showMessageDialog with message <html>Could not retrieve the list of your open changesets because<br>JOSM does not know your identity.<br>You have either chosen to work anonymously or you are not entitled<br>to know the identity of the user on whose behalf you are working.</html>
+2026-02-04 20:42:20.695 INFO: org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker answering 1 to showConfirmDialog with message Obtain OAuth 2.0 token for authentication?
+2026-02-04 20:42:21.174 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/changesets?display_name=josm_test&open=true -> HTTP/1.1 200 (478 ms; 189 B)
+2026-02-04 20:42:21.176 INFO: org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker answering 0 to showMessageDialog with message There are no open changesets
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:42:20.564 WARNING: Failed to retrieve user infos for the current JOSM user. Exception was: org.openstreetmap.josm.io.MissingOAuthAccessTokenException: org.openstreetmap.josm.io.MissingOAuthAccessTokenException
+2026-02-04 20:42:20.564 WARNING: Could not retrieve the list of your open changesets because<br>JOSM does not know your identity.<br>You have either chosen to work anonymously or you are not entitled<br>to know the identity of the user on whose behalf you are working.
+2026-02-04 20:42:20.695 WARNING: Failed to retrieve user infos for the current JOSM user. Exception was: org.openstreetmap.josm.io.MissingOAuthAccessTokenException: org.openstreetmap.josm.io.MissingOAuthAccessTokenException
+------------- ---------------- ---------------

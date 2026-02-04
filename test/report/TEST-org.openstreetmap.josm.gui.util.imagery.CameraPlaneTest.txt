@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.util.imagery.CameraPlaneTest
+Test: testGetVector3D() took 0 milli sec(s) SKIPPED: Currently broken
+Test: testMapping() took 0 milli sec(s) SKIPPED: Currently broken
+Test: testGetVector3DFloat(Vector3D, Point)[1] took 135 milli sec(s)
+Test: testSetRotation() took 0 milli sec(s) SKIPPED: Currently broken
+Tests run: 1, Failures: 0, Skipped: 3, Aborted: 0, Time elapsed: 218 milli sec(s)

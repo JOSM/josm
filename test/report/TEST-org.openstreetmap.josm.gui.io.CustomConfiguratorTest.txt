@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.io.CustomConfiguratorTest
+Test: testExportPreferencesKeysToFile() took 5 milli sec(s)
+Test: testReadXML() took 1 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 72 milli sec(s)
+111, 2222222, JOSM]}
+2026-02-04 20:42:20.113 INFO: properties: {lorem_ipsum=[Lorem ipsum dolor sit amet, consectetur adipiscing elit., Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor., Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi., Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat., Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim., Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue., Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales., Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh., Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.]}
+------------- ---------------- ---------------

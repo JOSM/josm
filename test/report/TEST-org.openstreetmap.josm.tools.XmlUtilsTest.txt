@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.tools.XmlUtilsTest
+Test: testExternalEntitiesParsingDom() took 5 milli sec(s)
+Test: testExternalEntitiesTransformer() took 1 milli sec(s)
+Test: testExternalEntitiesSaxParser() took 1 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 95 milli sec(s)
+tion set by the accessExternalDTD property.
+[Fatal Error] :6:11: External Entity: Failed to read external document 'passwd', because 'file' access is not allowed due to restriction set by the accessExternalDTD property.
+------------- ---------------- ---------------

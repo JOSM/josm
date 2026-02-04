@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.MultipolygonTestTest
+Test: testTicket17768TouchingInner() took 112 milli sec(s)
+Test: testMultipolygonFile() took 774 milli sec(s)
+Test: testTicket17768TouchingInnerOuter() took 96 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)

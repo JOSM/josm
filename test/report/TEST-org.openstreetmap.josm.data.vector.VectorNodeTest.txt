@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.vector.VectorNodeTest
+Test: testBBox() took 0 milli sec(s)
+Test: testNode() took 0 milli sec(s)
+Test: testIsReferredToByWays() took 1 milli sec(s)
+Test: testSetEastNorth() took 0 milli sec(s)
+Test: testVisitor() took 0 milli sec(s)
+Test: testUniqueIdGenerator() took 1 milli sec(s)
+Test: testLatLon() took 0 milli sec(s)
+Test: testICoordinate() took 1 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 62 milli sec(s)

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WMS_Capabilities xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.3.0" xmlns="http://www.opengis.net/wms">
+  <Service>
+    <Name>WMS</Name>
+    <Title>wms.hgis.cartomatic.pl</Title>
+    <Abstract>Usługa przeglądania historycznych map Polski i krajów ościennych - Meßtischblätter.</Abstract>
+    <KeywordList>
+      <Keyword>Mapy topograficzne</Keyword>
+      <Keyword>Mapy historyczne</Keyword>
+      <Keyword>HGIS</Keyword>
+      <Keyword>GIS Historyczny</Keyword>
+      <Keyword>25k</Keyword>
+      <Keyword>1:25 000</Keyword>
+      <Keyword>Topografische Karten</Keyword>
+      <Keyword>Meßtischblätter</Keyword>
+    </KeywordList>
+    <OnlineResource d3p1:type="simple" d3p1:href="http://wms.hgis.cartomatic.pl/topo/3857/m25k" xmlns:d3p1="http://www.w3.org/1999/xlink"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+        <ContactPerson/>
+        <ContactOrganization>cartomatic.pl</ContactOrganization>
+      </ContactPersonPrimary>
+      <ContactPosition/>
+      <ContactAddress>
+        <AddressType>postal</AddressType>
+        <Address>Puławska 30/5</Address>
+        <City>Warsaw</City>
+        <StateOrProvince>Mazowieckie</StateOrProvince>
+        <PostCode>02-512 Warszawa</PostCode>
+        <Country>Poland</Country>
+      </ContactAddress>
+      <ContactVoiceTelephone/>
+      <ContactElectronicMailAddress/>
+    </ContactInformation>
+    <Fees>none</Fees>
+    <AccessConstraints>None for non commercial use. See the http://hgis.cartomatic.pl/page/services for the license details.</AccessConstraints>
+    <LayerLimit>1</LayerLimit>
+    <MaxWidth>256</MaxWidth>
+    <MaxHeight>256</MaxHeight>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource d8p1:type="simple" d8p1:href="http://wms.hgis.cartomatic.pl/topo/3857/m25k" xmlns:d8p1="http://www.w3.org/1999/xlink"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/gif</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource d8p1:type="simple" d8p1:href="http://wms.hgis.cartomatic.pl/topo/3857/m25k" xmlns:d8p1="http://www.w3.org/1999/xlink"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+    </Exception>
+    <Layer>
+      <Name>wms.hgis.cartomatic.pl</Name>
+      <CRS>EPSG:3857</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>13.998140203668838</westBoundLongitude>
+        <eastBoundLongitude>24.66311891979262</eastBoundLongitude>
+        <southBoundLatitude>49.588986559126212</southBoundLatitude>
+        <northBoundLatitude>56.076697987705245</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="EPSG:3857" minx="1558265.8395252659" miny="6342844.7392918337" maxx="2745485.8395252656" maxy="7538214.7392918337"/>
+      <Layer>
+        <Name>m25k</Name>
+        <Title>m25k</Title>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>13.998140203668838</westBoundLongitude>
+          <eastBoundLongitude>24.66311891979262</eastBoundLongitude>
+          <southBoundLatitude>49.588986559126212</southBoundLatitude>
+          <northBoundLatitude>56.076697987705245</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:3857" minx="1558265.8395252659" miny="6342844.7392918337" maxx="2745485.8395252656" maxy="7538214.7392918337"/>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>

@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandlerTest
+Test: testBadRequestNoLayer() took 1 milli sec(s)
+Test: testBadRequestNoParam() took 0 milli sec(s)
+Test: testBadRequestInvalidUrl() took 1 milli sec(s)
+Test: testNominalRequest() took 0 milli sec(s)
+Test: testBadRequestIncompleteUrl() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 85 milli sec(s)
+-------------

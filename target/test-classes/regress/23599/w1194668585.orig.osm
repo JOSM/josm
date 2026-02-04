@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='11088568973' timestamp='2023-08-04T06:42:51Z' uid='533465' user='GerdP' visible='true' version='1' changeset='139425106' lat='52.7901028' lon='8.4290125' />
+  <node id='11088568974' timestamp='2023-08-04T06:42:51Z' uid='533465' user='GerdP' visible='true' version='1' changeset='139425106' lat='52.7898498' lon='8.4292298' />
+  <node id='11088568975' timestamp='2023-08-04T06:42:51Z' uid='533465' user='GerdP' visible='true' version='1' changeset='139425106' lat='52.7897903' lon='8.4290403' />
+  <node id='11088568976' timestamp='2023-08-04T06:42:51Z' uid='533465' user='GerdP' visible='true' version='1' changeset='139425106' lat='52.7900433' lon='8.4288231' />
+  <way id='1194668585' timestamp='2024-01-07T11:40:04Z' uid='12616326' user='os-emmer' visible='true' version='4' changeset='145987123'>
+    <nd ref='11088568976' />
+    <nd ref='11088568973' />
+    <nd ref='11088568974' />
+    <nd ref='11088568975' />
+    <nd ref='11088568976' />
+    <tag k='addr:housenumber' v='62' />
+    <tag k='addr:street' v='Hauptstraße' />
+    <tag k='building' v='apartments' />
+  </way>
+</osm>

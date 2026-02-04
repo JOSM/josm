@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<josm-session version="0.1">
+    <viewport>
+        <center lat="0.0" lon="0.0"/>
+        <scale meter-per-pixel="10"/>
+    </viewport>
+    <layers>
+        <layer index="1" name="Geojson layer name" type="osm-data" version="0.1" visible="true">
+            <file>data.geojson</file>
+        </layer>
+    </layers>
+</josm-session>

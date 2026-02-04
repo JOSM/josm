@@ -1,0 +1,28 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+way[test] {
+	color: green;
+}
+
+way[test=width5] {
+	width: thinnest;
+}
+
+way[test=width4] {
+	width: 10.5;
+}
+
+way[test=width3] {
+	width: 30;
+}
+
+way[test=width2] {
+	width: 3;
+}
+
+way[test=width1] {
+	width: .5;
+}

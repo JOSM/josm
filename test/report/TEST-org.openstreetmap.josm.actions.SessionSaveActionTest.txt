@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.actions.SessionSaveActionTest
+Test: testSaveAction() took 258 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 309 milli sec(s)
+
+2026-02-04 20:40:34.395 INFO: Converting *.jos to *.joz because a new layer has been added that requires zip format
+2026-02-04 20:40:34.400 INFO: org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker answering 0 to showConfirmDialog with message javax.swing.JLabel[,0,0,0x0,invalid,alignmentX=0.0,alignmentY=0.0,border=,flags=8388608,maximumSize=,minimumSize=,preferredSize=,defaultIcon=,disabledIcon=,horizontalAlignment=LEADING,horizontalTextPosition=TRAILING,iconTextGap=4,labelFor=,text=<html>The following layer has been removed since the session was last saved:<ul><li>OSM layer name</ul><br>You are about to overwrite the session file "session1110887687769892359.joz". Would you like to proceed?,verticalAlignment=CENTER,verticalTextPosition=CENTER]
+------------- ---------------- ---------------

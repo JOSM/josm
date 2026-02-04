@@ -1,0 +1,17 @@
+Testcase: org.openstreetmap.josm.data.imagery.WMSEndpointTileSourceTest
+Test: testCustomHeaders() took 9 milli sec(s)
+Test: testDefaultLayerSetInMaps() took 11 milli sec(s)
+Test: testCustomHeadersServerSide() took 204 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 475 milli sec(s)
+/1.1 200 (4 ms)
+2026-02-04 20:41:07.415 INFO: Skipping unsupported image format application/x-pdf
+2026-02-04 20:41:07.415 INFO: Skipping unsupported image format image/svg+xml
+2026-02-04 20:41:07.421 INFO: GET http://localhost:58787/other/maps -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:41:07.425 INFO: GET http://localhost:58787/capabilities?SERVICE=WMS&REQUEST=GetCapabilities -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:41:07.426 INFO: Skipping unsupported image format application/x-pdf
+2026-02-04 20:41:07.426 INFO: Skipping unsupported image format image/svg+xml
+2026-02-04 20:41:07.431 INFO: GET http://localhost:58787/other/maps -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:41:07.471 INFO: GET http://localhost:58787/capabilities?SERVICE=WMS&REQUEST=GetCapabilities -> HTTP/1.1 200 (39 ms)
+2026-02-04 20:41:07.573 INFO: Skipping unsupported image format application/arcgrid
+2026-02-04 20:41:07.574 INFO: Skipping unsupported image format application/arcgrid;compressed=true
+------------- ---------------- ---------------

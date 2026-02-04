@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.io.OverpassDownloadReaderTest
+Test: testSearchName() took 2 milli sec(s)
+Test: testOutputFormatStatement() took 0 milli sec(s)
+Test: testBbox() took 2 milli sec(s)
+Test: testDate() took 1 milli sec(s)
+Test: testGeocodeUnknownArea() took 3 milli sec(s)
+Test: testFixQuery() took 1 milli sec(s)
+Test: testDateNewer() took 1 milli sec(s)
+Test: testGeocodeArea() took 2 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 326 milli sec(s)
+ Error ---------------
+2026-02-04 20:42:58.158 WARNING: Failed to evaluate {{geocodeArea:foo-bar-baz-does-not-exist}}: java.util.NoSuchElementException
+------------- ---------------- ---------------

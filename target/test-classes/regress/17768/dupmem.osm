@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM' upload='never'>
+  <node id='580080' version='2' visible='true' lat='52.91551495426' lon='7.39168509017' />
+  <node id='580081' version='2' visible='true' lat='52.91535245088' lon='7.42788719612' />
+  <node id='580083' version='2' visible='true' lat='52.90180835975' lon='7.43282793018' />
+  <node id='580085' version='2' visible='true' lat='52.88685076458' lon='7.43426523464' />
+  <node id='580087' version='2' visible='true' lat='52.89357148218' lon='7.38737317681' />
+  <node id='580089' version='2' visible='true' lat='52.90142906425' lon='7.38961896502' />
+  <way id='580082' version='2' visible='true'>
+    <nd ref='580080' />
+    <nd ref='580081' />
+    <nd ref='580083' />
+    <nd ref='580085' />
+    <nd ref='580087' />
+    <tag k='natural' v='wood' />
+  </way>
+  <way id='580090' version='2' visible='true'>
+    <nd ref='580087' />
+    <nd ref='580089' />
+    <nd ref='580080' />
+    <tag k='natural' v='wood' />
+  </way>
+  <relation id='580092' version='2' visible='true'>
+    <member type='way' ref='580090' role='outer' />
+    <member type='way' ref='580090' role='outer' />
+    <member type='way' ref='580082' role='outer' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+</osm>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/preferences-1.0"
+    xmlns:tns="http://josm.openstreetmap.de/preferences-1.0" elementFormDefault="qualified">
+
+    <element name="preferences" type="tns:root"/>
+
+    <complexType name="root">
+        <choice minOccurs="0" maxOccurs="unbounded">
+            <element name="tag" type="tns:tag" />
+            <element name="list" type="tns:list" />
+            <element name="lists" type="tns:lists" />
+            <element name="maps" type="tns:maps" />
+        </choice>
+        <attribute name="version" type="string" />
+    </complexType>
+
+    <complexType name="tag">
+        <attribute name="key" type="string" use="required" />
+        <attribute name="value" type="string" use="required"/>
+    </complexType>
+
+    <complexType name="list">
+        <sequence>
+            <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="key" type="string" use="required" />
+    </complexType>
+
+    <complexType name="lists">
+        <sequence>
+            <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="key" type="string" use="required" />
+    </complexType>
+
+    <complexType name="maps">
+        <sequence>
+            <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="key" type="string" use="required" />
+    </complexType>
+
+    <complexType name="slist">
+        <sequence>
+            <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="map">
+        <sequence>
+            <element name="tag" type="tns:tag" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="entry">
+        <attribute name="value" type="string" use="required"/>
+    </complexType>
+
+    <!-- cache for default preference values -->
+
+    <element name="preferences-defaults" type="tns:root-def"/>
+
+    <complexType name="root-def">
+        <choice minOccurs="0" maxOccurs="unbounded">
+            <element name="tag" type="tns:tag-def" nillable="true"/>
+            <element name="list" type="tns:list-def" nillable="true"/>
+            <element name="lists" type="tns:lists-def" nillable="true"/>
+            <element name="maps" type="tns:maps-def" nillable="true"/>
+        </choice>
+        <attribute name="version" type="string" />
+    </complexType>
+
+    <complexType name="tag-def">
+        <attribute name="key" type="string" use="required" />
+        <!-- element must be either nil or have the value attribute -->
+        <attribute name="value" type="string" use="optional"/>
+        <attribute name="time" type="decimal" use="required"/>
+    </complexType>
+
+    <complexType name="list-def">
+         <complexContent>
+             <extension base="tns:list">
+                <attribute name="time" type="decimal" use="required"/>
+            </extension>
+         </complexContent>
+    </complexType>
+
+    <complexType name="lists-def">
+         <complexContent>
+             <extension base="tns:lists">
+                <attribute name="time" type="decimal" use="required"/>
+            </extension>
+         </complexContent>
+    </complexType>
+
+    <complexType name="maps-def">
+         <complexContent>
+             <extension base="tns:maps">
+                <attribute name="time" type="decimal" use="required"/>
+            </extension>
+         </complexContent>
+    </complexType>
+</schema>

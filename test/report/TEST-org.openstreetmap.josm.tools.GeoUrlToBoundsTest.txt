@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.tools.GeoUrlToBoundsTest
+Test: testParseCrsUncertainty() took 1 milli sec(s)
+Test: testParse() took 0 milli sec(s)
+Test: testNull() took 0 milli sec(s)
+Test: testParseWithoutZoom() took 0 milli sec(s)
+Test: testInvalid() took 1 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 80 milli sec(s)

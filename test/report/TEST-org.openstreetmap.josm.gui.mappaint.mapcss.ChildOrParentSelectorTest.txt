@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.gui.mappaint.mapcss.ChildOrParentSelectorTest
+Test: testContains() took 3 milli sec(s)
+Test: matches_1() took 0 milli sec(s) SKIPPED: public void org.openstreetmap.josm.gui.mappaint.mapcss.ChildOrParentSelectorTest.matches_1() is @Disabled
+Test: matches_2() took 0 milli sec(s) SKIPPED: public void org.openstreetmap.josm.gui.mappaint.mapcss.ChildOrParentSelectorTest.matches_2() is @Disabled
+Test: matches_3() took 0 milli sec(s) SKIPPED: public void org.openstreetmap.josm.gui.mappaint.mapcss.ChildOrParentSelectorTest.matches_3() is @Disabled
+Test: matches_4() took 0 milli sec(s) SKIPPED: public void org.openstreetmap.josm.gui.mappaint.mapcss.ChildOrParentSelectorTest.matches_4() is @Disabled
+Test: matches_5() took 0 milli sec(s)
+Test: matches_6() took 0 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 4, Aborted: 0, Time elapsed: 77 milli sec(s)

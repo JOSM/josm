@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.actions.JoinAreasActionTest
+Test: testExamples() took 186 milli sec(s)
+Test: testTicket10511() took 100 milli sec(s)
+Test: testTicket11992() took 95 milli sec(s)
+Test: testTicket18744() took 75 milli sec(s)
+Test: testTicket9599Simple() took 82 milli sec(s)
+Test: testTicket9599() took 111 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 687 milli sec(s)

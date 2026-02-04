@@ -1,0 +1,59 @@
+
+/**
+ * 3 Tests: relative symbol-stroke-width, alignment and stacking of stroke & fill for shapes
+ */
+node[test=pentagon1]
+{
+    symbol-shape: pentagon;
+    symbol-size: 50;
+    symbol-stroke-color: gold;
+    symbol-stroke-opacity: 0.9;
+    symbol-stroke-width: 10;
+}
+node[test=pentagon1]::stroke-casing
+{
+    symbol-shape: pentagon;
+    symbol-size: 50;
+    symbol-stroke-color: #ddd;
+    symbol-stroke-opacity: 0.6;
+    symbol-stroke-width: +8;
+    z-index: -10;
+}
+node[test=pentagon1]::fill
+{
+    symbol-shape: pentagon;
+    symbol-size: 50;
+    symbol-fill-color: darkblue;
+    symbol-fill-opacity: 1.0;
+    z-index: -15;
+}
+node[test=pentagon2]
+{
+    symbol-shape: pentagon;
+    symbol-size: 50;
+    symbol-stroke-color: blue;
+    symbol-stroke-opacity: 0.9;
+    symbol-stroke-width: 10;
+}
+node[test=pentagon2]::fill-above
+{
+    symbol-shape: pentagon;
+    symbol-size: 50;
+    symbol-fill-color: white;
+    symbol-fill-opacity: 0.3;
+    z-index: 2;
+}
+node[test=pentagon3]
+{
+    symbol-shape: pentagon;
+    symbol-size: 50;
+    symbol-fill-color: darkgreen;
+}
+node[test=pentagon3]::stroke-above
+{
+    symbol-shape: pentagon;
+    symbol-size: 50;
+    symbol-stroke-color: yellow;
+    symbol-stroke-width: 1.0;
+    z-index: 1;
+}

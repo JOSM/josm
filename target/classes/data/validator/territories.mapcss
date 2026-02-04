@@ -1,0 +1,37 @@
+/* #13932, #15283 */
+*[addr:street =~ /(?i).*Strasse.*/][addr:street !~ /(?i).*Strasser.*/][inside("DE,AT")],
+*[name =~ /(?i).*Strasse.*/][name !~ /(?i).*Strasser.*/][name !~ /(?i).*spannungstrasse.*/][inside("DE,AT")] {
+  throwError: tr("street name contains ss");
+  assertMatch: "way name=Hauptstrasse";
+  assertNoMatch: "way name=Hauptstraße";
+  assertNoMatch: "way name=Kapitän-Strasser-Straße";
+  assertNoMatch: "way name=Peter-Strasser-Platz";
+  assertNoMatch: "way name=Hochspannungstrasse";
+}
+*[addr:street =~ /(?i).*Straße.*/][inside("LI,CH")],
+*[name =~ /(?i).*Straße.*/][inside("LI,CH")] {
+  throwError: tr("street name contains ß");
+  assertMatch: "way name=Hauptstraße";
+  assertNoMatch: "way name=Hauptstrasse";
+}
+
+/* #17484 */
+relation[type=associatedStreet][inside("DE")] {
+  throwWarning: tr("{0} is deprecated in {1}", "{0.tag}", "Deutschland");
+  suggestAlternative: "addr:street";
+  group: tr("deprecated tagging");
+}
+
+/* #15107 */
+*[aeroway=helipad  ][!faa][inside("US")],
+*[aeroway=aerodrome][!faa][inside("US")] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("Airport tagging");
+}
+*[aeroway=aerodrome][!icao][faa!~/\d/][inside("US")],
+*[aeroway=aerodrome][!iata][faa!~/\d/][inside("US")] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("Airport tagging");
+  assertNoMatch: "way aeroway=aerodrome faa=OK12";
+  assertMatch: "way aeroway=aerodrome faa=ORD";
+}

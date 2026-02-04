@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.preferences.StrokePropertyTest
+Test: testPutValue() took 0 milli sec(s)
+Test: testGetValue() took 1 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 55 milli sec(s)
+ts for x differ: 1.0 != 12.0
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:41:24.563 SEVERE: Error in stroke dash format (all zeros): 11 0 0 0.0001
+------------- ---------------- ---------------

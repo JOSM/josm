@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/maps-1.0"
+    xmlns:tns="http://josm.openstreetmap.de/maps-1.0" elementFormDefault="qualified">
+
+    <xs:simpleType name="latitude">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="-90" />
+            <xs:maxInclusive value="+90" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="longitude">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="-180" />
+            <xs:maxInclusive value="+180" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="id">
+        <!-- exclude white space characters and characters that are not valid for file names in Windows -->
+        <xs:restriction base="xs:string">
+            <xs:pattern value='[^\s/\\:*?"&lt;>|,;]+' />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="oldid">
+        <xs:simpleContent>
+            <xs:extension base="tns:id">
+                <!-- date of the retirement of this ID -->
+                <xs:attribute name="date" type="xs:date" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="wms" />
+            <xs:enumeration value="wms_endpoint" />
+            <xs:enumeration value="wmts" />
+            <xs:enumeration value="tms" />
+            <xs:enumeration value="mvt" />
+            <xs:enumeration value="bing" />
+            <xs:enumeration value="scanex" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="zoom">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="24" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="eula">
+        <xs:simpleContent>
+            <xs:extension base="xs:anyURI" >
+                <xs:attribute name="mandatory" type="xs:boolean" use="optional" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="attribution-text">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="mandatory" type="xs:boolean" use="optional" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="description">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="lang" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="name">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="lang" type="xs:string" use="optional" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="point">
+        <xs:attribute name="lat" type="tns:latitude" use="required" />
+        <xs:attribute name="lon" type="tns:longitude" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="shape">
+        <xs:sequence>
+            <xs:element name="point" minOccurs="3" maxOccurs="999" type="tns:point" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="bounds">
+        <xs:sequence>
+            <xs:element name="shape" minOccurs="0" maxOccurs="100" type="tns:shape" />
+        </xs:sequence>
+        <xs:attribute name="min-lat" type="tns:latitude" use="required" />
+        <xs:attribute name="min-lon" type="tns:longitude" use="required" />
+        <xs:attribute name="max-lat" type="tns:latitude" use="required" />
+        <xs:attribute name="max-lon" type="tns:longitude" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="projections">
+        <xs:sequence>
+            <!-- TODO: find an easy way to validate projections codes -->
+            <xs:element name="code" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="defaultLayers">
+        <xs:sequence>
+            <xs:element name="layer" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="optional" />
+                    <xs:attribute name="style" type="xs:string" use="optional" />
+                    <xs:attribute name="tile-matrix-set" type="xs:string" use="optional" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ISO3166-1, taken from https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Current_codes + "EU" for Europe -->
+    <xs:simpleType name="iso3166">
+        <xs:restriction base="xs:string">
+            <!-- EUROPE (JOSM ONLY) -->
+            <xs:enumeration value="EU" />
+            <!-- KOSOVO (TEMPORARY USER-ASSIGNED CODE) -->
+            <xs:enumeration value="XK" />
+            <!-- AFGHANISTAN -->
+            <xs:enumeration value="AF" />
+            <!-- ÅLAND ISLANDS -->
+            <xs:enumeration value="AX" />
+            <!-- ALBANIA -->
+            <xs:enumeration value="AL" />
+            <!-- ALGERIA -->
+            <xs:enumeration value="DZ" />
+            <!-- AMERICAN SAMOA -->
+            <xs:enumeration value="AS" />
+            <!-- ANDORRA -->
+            <xs:enumeration value="AD" />
+            <!-- ANGOLA -->
+            <xs:enumeration value="AO" />
+            <!-- ANGUILLA -->
+            <xs:enumeration value="AI" />
+            <!-- ANTARCTICA -->
+            <xs:enumeration value="AQ" />
+            <!-- ANTIGUA AND BARBUDA -->
+            <xs:enumeration value="AG" />
+            <!-- ARGENTINA -->
+            <xs:enumeration value="AR" />
+            <!-- ARMENIA -->
+            <xs:enumeration value="AM" />
+            <!-- ARUBA -->
+            <xs:enumeration value="AW" />
+            <!-- AUSTRALIA -->
+            <xs:enumeration value="AU" />
+            <!-- AUSTRIA -->
+            <xs:enumeration value="AT" />
+            <!-- AZERBAIJAN -->
+            <xs:enumeration value="AZ" />
+            <!-- BAHAMAS -->
+            <xs:enumeration value="BS" />
+            <!-- BAHRAIN -->
+            <xs:enumeration value="BH" />
+            <!-- BANGLADESH -->
+            <xs:enumeration value="BD" />
+            <!-- BARBADOS -->
+            <xs:enumeration value="BB" />
+            <!-- BELARUS -->
+            <xs:enumeration value="BY" />
+            <!-- BELGIUM -->
+            <xs:enumeration value="BE" />
+            <!-- BELIZE -->
+            <xs:enumeration value="BZ" />
+            <!-- BENIN -->
+            <xs:enumeration value="BJ" />
+            <!-- BERMUDA -->
+            <xs:enumeration value="BM" />
+            <!-- BHUTAN -->
+            <xs:enumeration value="BT" />
+            <!-- BOLIVIA, PLURINATIONAL STATE OF -->
+            <xs:enumeration value="BO" />
+            <!-- BONAIRE, SINT EUSTATIUS AND SABA -->
+            <xs:enumeration value="BQ" />
+            <!-- BOSNIA AND HERZEGOVINA -->
+            <xs:enumeration value="BA" />
+            <!-- BOTSWANA -->
+            <xs:enumeration value="BW" />
+            <!-- BOUVET ISLAND -->
+            <xs:enumeration value="BV" />
+            <!-- BRAZIL -->
+            <xs:enumeration value="BR" />
+            <!-- BRITISH INDIAN OCEAN TERRITORY -->
+            <xs:enumeration value="IO" />
+            <!-- BRUNEI DARUSSALAM -->
+            <xs:enumeration value="BN" />
+            <!-- BULGARIA -->
+            <xs:enumeration value="BG" />
+            <!-- BURKINA FASO -->
+            <xs:enumeration value="BF" />
+            <!-- BURUNDI -->
+            <xs:enumeration value="BI" />
+            <!-- CAMBODIA -->
+            <xs:enumeration value="KH" />
+            <!-- CAMEROON -->
+            <xs:enumeration value="CM" />
+            <!-- CANADA -->
+            <xs:enumeration value="CA" />
+            <!-- CAPE VERDE -->
+            <xs:enumeration value="CV" />
+            <!-- CAYMAN ISLANDS -->
+            <xs:enumeration value="KY" />
+            <!-- CENTRAL AFRICAN REPUBLIC -->
+            <xs:enumeration value="CF" />
+            <!-- CHAD -->
+            <xs:enumeration value="TD" />
+            <!-- CHILE -->
+            <xs:enumeration value="CL" />
+            <!-- CHINA -->
+            <xs:enumeration value="CN" />
+            <!-- CHRISTMAS ISLAND -->
+            <xs:enumeration value="CX" />
+            <!-- COCOS (KEELING) ISLANDS -->
+            <xs:enumeration value="CC" />
+            <!-- COLOMBIA -->
+            <xs:enumeration value="CO" />
+            <!-- COMOROS -->
+            <xs:enumeration value="KM" />
+            <!-- CONGO -->
+            <xs:enumeration value="CG" />
+            <!-- CONGO, THE DEMOCRATIC REPUBLIC OF THE -->
+            <xs:enumeration value="CD" />
+            <!-- COOK ISLANDS -->
+            <xs:enumeration value="CK" />
+            <!-- COSTA RICA -->
+            <xs:enumeration value="CR" />
+            <!-- CÔTE D'IVOIRE -->
+            <xs:enumeration value="CI" />
+            <!-- CROATIA -->
+            <xs:enumeration value="HR" />
+            <!-- CUBA -->
+            <xs:enumeration value="CU" />
+            <!-- CURAÇAO -->
+            <xs:enumeration value="CW" />
+            <!-- CYPRUS -->
+            <xs:enumeration value="CY" />
+            <!-- CZECH REPUBLIC -->
+            <xs:enumeration value="CZ" />
+            <!-- DENMARK -->
+            <xs:enumeration value="DK" />
+            <!-- DJIBOUTI -->
+            <xs:enumeration value="DJ" />
+            <!-- DOMINICA -->
+            <xs:enumeration value="DM" />
+            <!-- DOMINICAN REPUBLIC -->
+            <xs:enumeration value="DO" />
+            <!-- ECUADOR -->
+            <xs:enumeration value="EC" />
+            <!-- EGYPT -->
+            <xs:enumeration value="EG" />
+            <!-- EL SALVADOR -->
+            <xs:enumeration value="SV" />
+            <!-- EQUATORIAL GUINEA -->
+            <xs:enumeration value="GQ" />
+            <!-- ERITREA -->
+            <xs:enumeration value="ER" />
+            <!-- ESTONIA -->
+            <xs:enumeration value="EE" />
+            <!-- ETHIOPIA -->
+            <xs:enumeration value="ET" />
+            <!-- FALKLAND ISLANDS (MALVINAS) -->
+            <xs:enumeration value="FK" />
+            <!-- FAROE ISLANDS -->
+            <xs:enumeration value="FO" />
+            <!-- FIJI -->
+            <xs:enumeration value="FJ" />
+            <!-- FINLAND -->
+            <xs:enumeration value="FI" />
+            <!-- FRANCE -->
+            <xs:enumeration value="FR" />
+            <!-- FRENCH GUIANA -->
+            <xs:enumeration value="GF" />
+            <!-- FRENCH POLYNESIA -->
+            <xs:enumeration value="PF" />
+            <!-- FRENCH SOUTHERN TERRITORIES -->
+            <xs:enumeration value="TF" />
+            <!-- GABON -->
+            <xs:enumeration value="GA" />
+            <!-- GAMBIA -->
+            <xs:enumeration value="GM" />
+            <!-- GEORGIA -->
+            <xs:enumeration value="GE" />
+            <!-- GERMANY -->
+            <xs:enumeration value="DE" />
+            <!-- GHANA -->
+            <xs:enumeration value="GH" />
+            <!-- GIBRALTAR -->
+            <xs:enumeration value="GI" />
+            <!-- GREECE -->
+            <xs:enumeration value="GR" />
+            <!-- GREENLAND -->
+            <xs:enumeration value="GL" />
+            <!-- GRENADA -->
+            <xs:enumeration value="GD" />
+            <!-- GUADELOUPE -->
+            <xs:enumeration value="GP" />
+            <!-- GUAM -->
+            <xs:enumeration value="GU" />
+            <!-- GUATEMALA -->
+            <xs:enumeration value="GT" />
+            <!-- GUERNSEY -->
+            <xs:enumeration value="GG" />
+            <!-- GUINEA -->
+            <xs:enumeration value="GN" />
+            <!-- GUINEA-BISSAU -->
+            <xs:enumeration value="GW" />
+            <!-- GUYANA -->
+            <xs:enumeration value="GY" />
+            <!-- HAITI -->
+            <xs:enumeration value="HT" />
+            <!-- HEARD ISLAND AND MCDONALD ISLANDS -->
+            <xs:enumeration value="HM" />
+            <!-- HOLY SEE (VATICAN CITY STATE) -->
+            <xs:enumeration value="VA" />
+            <!-- HONDURAS -->
+            <xs:enumeration value="HN" />
+            <!-- HONG KONG -->
+            <xs:enumeration value="HK" />
+            <!-- HUNGARY -->
+            <xs:enumeration value="HU" />
+            <!-- ICELAND -->
+            <xs:enumeration value="IS" />
+            <!-- INDIA -->
+            <xs:enumeration value="IN" />
+            <!-- INDONESIA -->
+            <xs:enumeration value="ID" />
+            <!-- IRAN, ISLAMIC REPUBLIC OF -->
+            <xs:enumeration value="IR" />
+            <!-- IRAQ -->
+            <xs:enumeration value="IQ" />
+            <!-- IRELAND -->
+            <xs:enumeration value="IE" />
+            <!-- ISLE OF MAN -->
+            <xs:enumeration value="IM" />
+            <!-- ISRAEL -->
+            <xs:enumeration value="IL" />
+            <!-- ITALY -->
+            <xs:enumeration value="IT" />
+            <!-- JAMAICA -->
+            <xs:enumeration value="JM" />
+            <!-- JAPAN -->
+            <xs:enumeration value="JP" />
+            <!-- JERSEY -->
+            <xs:enumeration value="JE" />
+            <!-- JORDAN -->
+            <xs:enumeration value="JO" />
+            <!-- KAZAKHSTAN -->
+            <xs:enumeration value="KZ" />
+            <!-- KENYA -->
+            <xs:enumeration value="KE" />
+            <!-- KIRIBATI -->
+            <xs:enumeration value="KI" />
+            <!-- KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF -->
+            <xs:enumeration value="KP" />
+            <!-- KOREA, REPUBLIC OF -->
+            <xs:enumeration value="KR" />
+            <!-- KUWAIT -->
+            <xs:enumeration value="KW" />
+            <!-- KYRGYZSTAN -->
+            <xs:enumeration value="KG" />
+            <!-- LAO PEOPLE'S DEMOCRATIC REPUBLIC -->
+            <xs:enumeration value="LA" />
+            <!-- LATVIA -->
+            <xs:enumeration value="LV" />
+            <!-- LEBANON -->
+            <xs:enumeration value="LB" />
+            <!-- LESOTHO -->
+            <xs:enumeration value="LS" />
+            <!-- LIBERIA -->
+            <xs:enumeration value="LR" />
+            <!-- LIBYAN ARAB JAMAHIRIYA -->
+            <xs:enumeration value="LY" />
+            <!-- LIECHTENSTEIN -->
+            <xs:enumeration value="LI" />
+            <!-- LITHUANIA -->
+            <xs:enumeration value="LT" />
+            <!-- LUXEMBOURG -->
+            <xs:enumeration value="LU" />
+            <!-- MACAO -->
+            <xs:enumeration value="MO" />
+            <!-- MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF -->
+            <xs:enumeration value="MK" />
+            <!-- MADAGASCAR -->
+            <xs:enumeration value="MG" />
+            <!-- MALAWI -->
+            <xs:enumeration value="MW" />
+            <!-- MALAYSIA -->
+            <xs:enumeration value="MY" />
+            <!-- MALDIVES -->
+            <xs:enumeration value="MV" />
+            <!-- MALI -->
+            <xs:enumeration value="ML" />
+            <!-- MALTA -->
+            <xs:enumeration value="MT" />
+            <!-- MARSHALL ISLANDS -->
+            <xs:enumeration value="MH" />
+            <!-- MARTINIQUE -->
+            <xs:enumeration value="MQ" />
+            <!-- MAURITANIA -->
+            <xs:enumeration value="MR" />
+            <!-- MAURITIUS -->
+            <xs:enumeration value="MU" />
+            <!-- MAYOTTE -->
+            <xs:enumeration value="YT" />
+            <!-- MEXICO -->
+            <xs:enumeration value="MX" />
+            <!-- MICRONESIA, FEDERATED STATES OF -->
+            <xs:enumeration value="FM" />
+            <!-- MOLDOVA, REPUBLIC OF -->
+            <xs:enumeration value="MD" />
+            <!-- MONACO -->
+            <xs:enumeration value="MC" />
+            <!-- MONGOLIA -->
+            <xs:enumeration value="MN" />
+            <!-- MONTENEGRO -->
+            <xs:enumeration value="ME" />
+            <!-- MONTSERRAT -->
+            <xs:enumeration value="MS" />
+            <!-- MOROCCO -->
+            <xs:enumeration value="MA" />
+            <!-- MOZAMBIQUE -->
+            <xs:enumeration value="MZ" />
+            <!-- MYANMAR -->
+            <xs:enumeration value="MM" />
+            <!-- NAMIBIA -->
+            <xs:enumeration value="NA" />
+            <!-- NAURU -->
+            <xs:enumeration value="NR" />
+            <!-- NEPAL -->
+            <xs:enumeration value="NP" />
+            <!-- NETHERLANDS -->
+            <xs:enumeration value="NL" />
+            <!-- NEW CALEDONIA -->
+            <xs:enumeration value="NC" />
+            <!-- NEW ZEALAND -->
+            <xs:enumeration value="NZ" />
+            <!-- NICARAGUA -->
+            <xs:enumeration value="NI" />
+            <!-- NIGER -->
+            <xs:enumeration value="NE" />
+            <!-- NIGERIA -->
+            <xs:enumeration value="NG" />
+            <!-- NIUE -->
+            <xs:enumeration value="NU" />
+            <!-- NORFOLK ISLAND -->
+            <xs:enumeration value="NF" />
+            <!-- NORTHERN MARIANA ISLANDS -->
+            <xs:enumeration value="MP" />
+            <!-- NORWAY -->
+            <xs:enumeration value="NO" />
+            <!-- OMAN -->
+            <xs:enumeration value="OM" />
+            <!-- PAKISTAN -->
+            <xs:enumeration value="PK" />
+            <!-- PALAU -->
+            <xs:enumeration value="PW" />
+            <!-- PALESTINIAN TERRITORY, OCCUPIED -->
+            <xs:enumeration value="PS" />
+            <!-- PANAMA -->
+            <xs:enumeration value="PA" />
+            <!-- PAPUA NEW GUINEA -->
+            <xs:enumeration value="PG" />
+            <!-- PARAGUAY -->
+            <xs:enumeration value="PY" />
+            <!-- PERU -->
+            <xs:enumeration value="PE" />
+            <!-- PHILIPPINES -->
+            <xs:enumeration value="PH" />
+            <!-- PITCAIRN -->
+            <xs:enumeration value="PN" />
+            <!-- POLAND -->
+            <xs:enumeration value="PL" />
+            <!-- PORTUGAL -->
+            <xs:enumeration value="PT" />
+            <!-- PUERTO RICO -->
+            <xs:enumeration value="PR" />
+            <!-- QATAR -->
+            <xs:enumeration value="QA" />
+            <!-- RÉUNION -->
+            <xs:enumeration value="RE" />
+            <!-- ROMANIA -->
+            <xs:enumeration value="RO" />
+            <!-- RUSSIAN FEDERATION -->
+            <xs:enumeration value="RU" />
+            <!-- RWANDA -->
+            <xs:enumeration value="RW" />
+            <!-- SAINT BARTHÉLEMY -->
+            <xs:enumeration value="BL" />
+            <!-- SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA -->
+            <xs:enumeration value="SH" />
+            <!-- SAINT KITTS AND NEVIS -->
+            <xs:enumeration value="KN" />
+            <!-- SAINT LUCIA -->
+            <xs:enumeration value="LC" />
+            <!-- SAINT MARTIN (FRENCH PART) -->
+            <xs:enumeration value="MF" />
+            <!-- SAINT PIERRE AND MIQUELON -->
+            <xs:enumeration value="PM" />
+            <!-- SAINT VINCENT AND THE GRENADINES -->
+            <xs:enumeration value="VC" />
+            <!-- SAMOA -->
+            <xs:enumeration value="WS" />
+            <!-- SAN MARINO -->
+            <xs:enumeration value="SM" />
+            <!-- SAO TOME AND PRINCIPE -->
+            <xs:enumeration value="ST" />
+            <!-- SAUDI ARABIA -->
+            <xs:enumeration value="SA" />
+            <!-- SENEGAL -->
+            <xs:enumeration value="SN" />
+            <!-- SERBIA -->
+            <xs:enumeration value="RS" />
+            <!-- SEYCHELLES -->
+            <xs:enumeration value="SC" />
+            <!-- SIERRA LEONE -->
+            <xs:enumeration value="SL" />
+            <!-- SINGAPORE -->
+            <xs:enumeration value="SG" />
+            <!-- SINT MAARTEN (DUTCH PART) -->
+            <xs:enumeration value="SX" />
+            <!-- SLOVAKIA -->
+            <xs:enumeration value="SK" />
+            <!-- SLOVENIA -->
+            <xs:enumeration value="SI" />
+            <!-- SOLOMON ISLANDS -->
+            <xs:enumeration value="SB" />
+            <!-- SOMALIA -->
+            <xs:enumeration value="SO" />
+            <!-- SOUTH AFRICA -->
+            <xs:enumeration value="ZA" />
+            <!-- SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS -->
+            <xs:enumeration value="GS" />
+            <!-- SOUTH SUDAN -->
+            <xs:enumeration value="SS" />
+            <!-- SPAIN -->
+            <xs:enumeration value="ES" />
+            <!-- SRI LANKA -->
+            <xs:enumeration value="LK" />
+            <!-- SUDAN -->
+            <xs:enumeration value="SD" />
+            <!-- SURINAME -->
+            <xs:enumeration value="SR" />
+            <!-- SVALBARD AND JAN MAYEN -->
+            <xs:enumeration value="SJ" />
+            <!-- SWAZILAND -->
+            <xs:enumeration value="SZ" />
+            <!-- SWEDEN -->
+            <xs:enumeration value="SE" />
+            <!-- SWITZERLAND -->
+            <xs:enumeration value="CH" />
+            <!-- SYRIAN ARAB REPUBLIC -->
+            <xs:enumeration value="SY" />
+            <!-- TAIWAN, PROVINCE OF CHINA -->
+            <xs:enumeration value="TW" />
+            <!-- TAJIKISTAN -->
+            <xs:enumeration value="TJ" />
+            <!-- TANZANIA, UNITED REPUBLIC OF -->
+            <xs:enumeration value="TZ" />
+            <!-- THAILAND -->
+            <xs:enumeration value="TH" />
+            <!-- TIMOR-LESTE -->
+            <xs:enumeration value="TL" />
+            <!-- TOGO -->
+            <xs:enumeration value="TG" />
+            <!-- TOKELAU -->
+            <xs:enumeration value="TK" />
+            <!-- TONGA -->
+            <xs:enumeration value="TO" />
+            <!-- TRINIDAD AND TOBAGO -->
+            <xs:enumeration value="TT" />
+            <!-- TUNISIA -->
+            <xs:enumeration value="TN" />
+            <!-- TURKEY -->
+            <xs:enumeration value="TR" />
+            <!-- TURKMENISTAN -->
+            <xs:enumeration value="TM" />
+            <!-- TURKS AND CAICOS ISLANDS -->
+            <xs:enumeration value="TC" />
+            <!-- TUVALU -->
+            <xs:enumeration value="TV" />
+            <!-- UGANDA -->
+            <xs:enumeration value="UG" />
+            <!-- UKRAINE -->
+            <xs:enumeration value="UA" />
+            <!-- UNITED ARAB EMIRATES -->
+            <xs:enumeration value="AE" />
+            <!-- UNITED KINGDOM -->
+            <xs:enumeration value="GB" />
+            <!-- UNITED STATES -->
+            <xs:enumeration value="US" />
+            <!-- UNITED STATES MINOR OUTLYING ISLANDS -->
+            <xs:enumeration value="UM" />
+            <!-- URUGUAY -->
+            <xs:enumeration value="UY" />
+            <!-- UZBEKISTAN -->
+            <xs:enumeration value="UZ" />
+            <!-- VANUATU -->
+            <xs:enumeration value="VU" />
+            <!-- VENEZUELA, BOLIVARIAN REPUBLIC OF -->
+            <xs:enumeration value="VE" />
+            <!-- VIET NAM -->
+            <xs:enumeration value="VN" />
+            <!-- VIRGIN ISLANDS, BRITISH -->
+            <xs:enumeration value="VG" />
+            <!-- VIRGIN ISLANDS, U.S. -->
+            <xs:enumeration value="VI" />
+            <!-- WALLIS AND FUTUNA -->
+            <xs:enumeration value="WF" />
+            <!-- WESTERN SAHARA -->
+            <xs:enumeration value="EH" />
+            <!-- YEMEN -->
+            <xs:enumeration value="YE" />
+            <!-- ZAMBIA -->
+            <xs:enumeration value="ZM" />
+            <!-- ZIMBABWE -->
+            <xs:enumeration value="ZW" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="imagery">
+        <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <!-- this is actually not fully correct, but XSD does not allow multiple time the
+                        same argument in one xs:all, so this sequence/choice combination, which
+                        actually allows to much, only description and mirror can appear more than once! -->
+                    <xs:sequence>
+                        <xs:choice minOccurs="1" maxOccurs="unbounded">
+                            <!-- The name of the imagery source -->
+                            <xs:element name="name" minOccurs="1" type="tns:name" />
+                            <!-- A description of the imagery source -->
+                            <xs:element name="description" minOccurs="0" type="tns:description" />
+                            <!-- A unique id for the imagery source -->
+                            <xs:element name="id" minOccurs="1" maxOccurs="1" type="tns:id" />
+                            <!-- Historic id for the imagery source -->
+                            <xs:element name="oldid" minOccurs="0" maxOccurs="unbounded" type="tns:oldid" />
+                            <!-- The type. Can be mvt, tms, wms and html. In addition, there are the special types bing and scanex
+                                with hardcoded behaviour. -->
+                            <xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
+                            <!-- To define as default server for this type -->
+                            <xs:element name="default" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                            <!-- The URL of the service. Can contain templates, e.g. {zoom} will be replaced by the current 
+                                zoom level (see below). The list of services is a XML document, so the '&' character is represented by 
+                                '&amp;'. Alternatively, the URL can be wrapped in a <![CDATA[...]]> section. -->
+                            <xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
+                            <!-- A list of supported projections (inside <code> tags) -->
+                            <xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
+                            <!-- TMS only: The minimum zoom level -->
+                            <xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+                            <!-- TMS only: The maximum zoom level. For higher scales, the images of the maximum level is enlarged. -->
+                            <xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+                            <!-- The area of use, e.g. <bounds min-lat='45.7' min-lon='5.9' max-lat='55.0' max-lon='17.3'/> -->
+                            <xs:element name="bounds" minOccurs="0" maxOccurs="1" type="tns:bounds" />
+                            <!-- A link to the privacy policy of the operator -->
+                            <xs:element name="privacy-policy-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+                            <!-- Provide a source that this background can be used for OSM. A page on the OSM-wiki with additional explanation and further references is preferred, but other sources (for example the license text) can also be linked. -->
+                            <xs:element name="permission-ref" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+                            <!-- A link to an EULA text that has to be accepted by the user, before the imagery source is added. -->
+                            <xs:element name="eula" minOccurs="0" maxOccurs="1" type="tns:eula" />
+                            <!-- The attribution text to be shown all the time on the map. -->
+                            <xs:element name="attribution-text" minOccurs="0" maxOccurs="1" type="tns:attribution-text" />
+                            <!-- A link that is opened, when the user clicks on the attribution text -->
+                            <xs:element name="attribution-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+                            <!-- A image that is displayed as attribution for the imagery background -->
+                            <xs:element name="logo-image" minOccurs="0" maxOccurs="1" type="xs:string" />
+                            <!-- A link that is opened, when the user clicks on the logo image -->
+                            <xs:element name="logo-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+                            <!-- terms-of-use text (if missing, default tou text will be used, unless terms-of-use-url is also missing) -->
+                            <xs:element name="terms-of-use-text" minOccurs="0" maxOccurs="1" type="xs:string" />
+                            <!-- A link that is opened, when the user clicks on the terms-of-use text -->
+                            <xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
+                            <!-- The image category, don't use enumeration, so future extension is possible -->
+                            <!-- Currently defined values are: "photo", "elevation", "map", "historicmap", "osmbasedmap", "historicphoto", "qa" and "other" -->
+                            <xs:element name="category" minOccurs="1" maxOccurs="1" type="xs:string" />
+                            <!-- The ISO 3166 country code -->
+                            <xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
+                            <!-- A base64-encoded image that is displayed as menu/toolbar icon -->
+                            <xs:element name="icon" minOccurs="0" maxOccurs="1" type="xs:string" />
+                            <!-- Date in form YYYY-MM-DD;YYYY-MM-DD (each element after first year is optional, a single - marks an unknown or open timespan like -;2015) -->
+                            <xs:element name="date" minOccurs="0" maxOccurs="1" type="xs:string" />
+                            <xs:element name="mirror" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:all>
+                                        <xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
+                                        <xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
+                                        <xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
+                                        <xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
+                                        <xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+                                        <xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+                                        <xs:element name="tile-size" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
+                                        <xs:element name="privacy-policy-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+                                    </xs:all>
+                                </xs:complexType>
+                            </xs:element>
+                            <!-- list of HTTP headers, that indicate "no tile at this zoom level" situation -->
+                            <xs:element name="no-tile-header" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="name" type="xs:string" />
+                                    <xs:attribute name="value" type="xs:string" />
+                                </xs:complexType>
+                            </xs:element>
+                            <!-- list of checksums, that indicate "no tile at this zoom level" situation -->
+                            <xs:element name="no-tile-checksum" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="type" type="xs:string" />
+                                    <xs:attribute name="value" type="xs:string" />
+                                </xs:complexType>
+                            </xs:element>
+                            <!-- tile size provided by imagery source. Default - 256 -->
+                            <xs:element name="tile-size" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
+                            <!--  HTTP headers that contain valuable information and that will be shown on "Shown Tile Info" dialog -->
+                            <xs:element name="metadata-header" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="header-name" type="xs:string" />
+                                    <xs:attribute name="metadata-key" type="xs:string" />
+                                </xs:complexType>
+                            </xs:element>
+                            <!--  is imagery properly georeferenced (i.e. no need to check offsets). Defaults to false. Affects showing warnings. -->
+                            <xs:element name="valid-georeference" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                            <!-- old unused feature, ignored -->
+                            <xs:element name="epsg4326to3857Supported" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                            <xs:element name="default-layers" type="tns:defaultLayers" minOccurs="0" maxOccurs="1" />
+                            <xs:element name="custom-http-header" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="header-name" type="xs:string" />
+                                    <xs:attribute name="header-value" type="xs:string" />
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="transparent" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="format" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                            <!-- does imagery server supports "/status" and tile re-rendering using "/dirty". Defaults to false. -->
+                            <xs:element name="mod-tile-features" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                            <!--  minimum time in seconds for which tile will be considered valid -->
+                            <xs:element name="minimum-tile-expire" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
+                        </xs:choice>
+                    </xs:sequence>
+                    <xs:attribute name="eli-best" type="xs:boolean" use="optional" />
+                    <xs:attribute name="overlay" type="xs:boolean" use="optional" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="imagery" type="tns:imagery" />
+</xs:schema>

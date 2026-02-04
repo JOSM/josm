@@ -1,0 +1,25 @@
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest
+Test: testApplyAutomaticTagConflictResolution() took 1 milli sec(s)
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest$AutomaticChoiceGroupTest
+Test: testResolve() took 0 milli sec(s)
+Test: testMatchesKey() took 0 milli sec(s)
+Test: testGroupChoices() took 1 milli sec(s)
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest$AutomaticChoiceTest
+Test: testMatchesValueInvalidRegex() took 0 milli sec(s)
+Test: testMatchesValue() took 0 milli sec(s)
+Test: testComputeScoreFromValueInvalidRegex() took 0 milli sec(s)
+Test: testInvalidRegex() took 0 milli sec(s)
+Test: testComputeScoreFromValue() took 0 milli sec(s)
+Test: testComputeScoreFromValueInvalidReplacement() took 1 milli sec(s)
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest$AutomaticCombineTest
+Test: testMatchesKeyEmptyKey() took 0 milli sec(s)
+Test: testMatchesKeyNotRegex() took 0 milli sec(s)
+Test: testInvalidRegexExceptionFullyConstructed() took 0 milli sec(s)
+Test: testResolve() took 1 milli sec(s)
+Test: testInvalidRegexExceptionDefaultConstructed() took 0 milli sec(s)
+Test: testInvalidRegex() took 0 milli sec(s)
+Test: testMatchesKeyRegex() took 0 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 75 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 57 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 58 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 248 milli sec(s)

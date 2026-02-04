@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTagTransferDataTest
+Test: testIsHeterogeneousSource() took 0 milli sec(s)
+Test: testGetSourcePrimitiveCount() took 1 milli sec(s)
+Test: testPrimitiveTagTransferDataPrimitiveTransferData() took 0 milli sec(s)
+Test: testGetStatistics() took 0 milli sec(s)
+Test: testGetForPrimitives() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 58 milli sec(s)

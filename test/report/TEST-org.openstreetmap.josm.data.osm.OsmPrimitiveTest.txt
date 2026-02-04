@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.osm.OsmPrimitiveTest
+Test: testSimpleReferrersTest() took 1 milli sec(s)
+Test: testMultipleReferrers() took 0 milli sec(s)
+Test: testCheckMustBeInDatasate() took 0 milli sec(s)
+Test: testRemoveMemberFromRelationReferrerTest() took 0 milli sec(s)
+Test: testNodeFromMultipleDatasets() took 0 milli sec(s)
+Test: testSetRelationMemberReferrerTest() took 1 milli sec(s)
+Test: testAddAndRemoveReferrer() took 0 milli sec(s)
+Test: testRemovePrimitiveReferrerTest() took 0 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 44 milli sec(s)

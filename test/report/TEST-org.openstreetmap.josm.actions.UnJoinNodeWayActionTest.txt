@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.actions.UnJoinNodeWayActionTest
+Test: testTicket10396() took 90 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 125 milli sec(s)
+
+2026-02-04 20:40:35.729 INFO: Keystroke alt pressed J is already assigned to org.openstreetmap.josm.actions.UnJoinNodeWayAction@22a709e3, will be overridden by org.openstreetmap.josm.actions.UnJoinNodeWayActionTest$UnJoinNodeWayActionTestClass@4381472d
+2026-02-04 20:40:35.729 INFO: Registered toolbar action unjoinnodeway overwritten: org.openstreetmap.josm.actions.UnJoinNodeWayAction gets org.openstreetmap.josm.actions.UnJoinNodeWayActionTest$UnJoinNodeWayActionTestClass
+------------- ---------------- ---------------

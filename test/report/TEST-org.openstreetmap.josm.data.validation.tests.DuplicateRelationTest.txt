@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.DuplicateRelationTest
+Test: testIncomplete() took 1 milli sec(s)
+Test: testTMCRelation1() took 0 milli sec(s)
+Test: testTMCRelation2() took 0 milli sec(s)
+Test: testDuplicateRelationDifferentTags() took 0 milli sec(s)
+Test: testMemberOrder1() took 0 milli sec(s)
+Test: testMemberOrder2() took 0 milli sec(s)
+Test: testMemberOrder3() took 0 milli sec(s)
+Test: testMemberOrder4() took 0 milli sec(s)
+Test: testDuplicateRelationNoTags() took 1 milli sec(s)
+Test: testImport() took 0 milli sec(s)
+Test: testDuplicateRelationSameTags() took 0 milli sec(s)
+Tests run: 11, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 59 milli sec(s)

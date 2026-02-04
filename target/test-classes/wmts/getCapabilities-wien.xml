@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd" version="1.0.0" xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml">
+	<ows:ServiceIdentification>
+		<ows:Title>Web Map Tile Service</ows:Title>
+		<ows:ServiceType>OGC WMTS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:Fees>none</ows:Fees>
+		<ows:AccessConstraints>http://data.linz.gv.at/nutzungsbedingungen/</ows:AccessConstraints>
+	</ows:ServiceIdentification>	
+	<ows:ServiceProvider>
+		<ows:ProviderName>IKT Linz GmbH</ows:ProviderName>
+		<ows:ProviderSite xlink:href="http://www.linz.at/politik_verwaltung/44530.asp"/>
+		<ows:ServiceContact>
+			<ows:IndividualName>Emmanuel Blassnig</ows:IndividualName>
+		</ows:ServiceContact>
+	</ows:ServiceProvider>	
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://webgis.linz.at/WMTS/1.0.0">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>RESTful</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetTile">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://webgis.linz.at/WMTS/1.0.0">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>RESTful</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>					
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+	</ows:OperationsMetadata>
+	<Contents>
+		<Layer>
+			<ows:Title>Orthofotos</ows:Title>
+			<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+				<ows:LowerCorner>14.42 48.21</ows:LowerCorner>
+				<ows:UpperCorner>14.24 48.38</ows:UpperCorner>
+			</ows:WGS84BoundingBox>
+			<ows:Identifier>Orthofotos</ows:Identifier>
+			<Style isDefault="true">
+				<ows:Identifier>normal</ows:Identifier>
+			</Style>
+			<Format>image/png</Format>
+			<TileMatrixSetLink>
+				<TileMatrixSet>Orthofotos_standard</TileMatrixSet>
+			</TileMatrixSetLink>
+			<ResourceURL format="image/png" template="http://webgis.linz.at/WMTS/1.0.0/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png" resourceType="tile"/> 
+		</Layer>
+		<TileMatrixSet>
+			<ows:Identifier>Orthofotos_standard</ows:Identifier>
+			<ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.18:3:3857">
+				<ows:LowerCorner>1585189.5489 6141862.73088</ows:LowerCorner>
+				<ows:UpperCorner>1603000.66742 6168631.88034</ows:UpperCorner>
+			</ows:BoundingBox>
+			<ows:SupportedCRS>urn:ogc:def:crs:EPSG:6.18:3:3857</ows:SupportedCRS>
+			<WellKnownScaleSet>urn:ogc:def:wkss:OGC:1.0:GoogleMapsCompatible</WellKnownScaleSet>
+			<TileMatrix>
+				<ows:Identifier>10</ows:Identifier>
+				<ScaleDenominator>545978.773466</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>1024</MatrixWidth>
+				<MatrixHeight>1024</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>11</ows:Identifier>
+				<ScaleDenominator>272989.386733</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>2048</MatrixWidth>
+				<MatrixHeight>2048</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>12</ows:Identifier>
+				<ScaleDenominator>136494.693366</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>4096</MatrixWidth>
+				<MatrixHeight>4096</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>13</ows:Identifier>
+				<ScaleDenominator>68247.3466832</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>8192</MatrixWidth>
+				<MatrixHeight>8192</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>14</ows:Identifier>
+				<ScaleDenominator>34123.6733416</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>16384</MatrixWidth>
+				<MatrixHeight>16384</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>15</ows:Identifier>
+				<ScaleDenominator>17061.8366708</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>32768</MatrixWidth>
+				<MatrixHeight>32768</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>16</ows:Identifier>
+				<ScaleDenominator>8530.91833540</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>65536</MatrixWidth>
+				<MatrixHeight>65536</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>17</ows:Identifier>
+				<ScaleDenominator>4265.45916770</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>131072</MatrixWidth>
+				<MatrixHeight>131072</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>18</ows:Identifier>
+				<ScaleDenominator>2132.72958385</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>262144</MatrixWidth>
+				<MatrixHeight>262144</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>19</ows:Identifier>
+				<ScaleDenominator>1066.36479193</ScaleDenominator>
+				<TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>524288</MatrixWidth>
+				<MatrixHeight>524288</MatrixHeight>
+			</TileMatrix>
+		</TileMatrixSet>
+			<TileMatrixSet xmlns:ows="http://www.opengis.net/ows/1.1">
+			<ows:Identifier>Stadtkarte_standard</ows:Identifier> 
+			<ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.18:3:3857">
+				<ows:LowerCorner>1585189.5489 6141862.73088</ows:LowerCorner>
+				<ows:UpperCorner>1603000.66742 6168631.88034</ows:UpperCorner>
+			</ows:BoundingBox>
+			<ows:SupportedCRS>urn:ogc:def:crs:EPSG:6.18:3:3857</ows:SupportedCRS>
+			<TileMatrix>
+				<ows:Identifier>10</ows:Identifier>
+				<ScaleDenominator>545978</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>1</MatrixWidth>
+				<MatrixHeight>1</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>11</ows:Identifier>
+				<ScaleDenominator>272989</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>2</MatrixWidth>
+				<MatrixHeight>2</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>12</ows:Identifier>
+				<ScaleDenominator>136495</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>3</MatrixWidth>
+				<MatrixHeight>4</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>13</ows:Identifier>
+				<ScaleDenominator>68247</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>5</MatrixWidth>
+				<MatrixHeight>7</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>14</ows:Identifier>
+				<ScaleDenominator>34123</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>10</MatrixWidth>
+				<MatrixHeight>13</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>15</ows:Identifier>
+				<ScaleDenominator>17061</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>19</MatrixWidth>
+				<MatrixHeight>25</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>16</ows:Identifier>
+				<ScaleDenominator>8530</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>38</MatrixWidth>
+				<MatrixHeight>50</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>17</ows:Identifier>
+				<ScaleDenominator>4265</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>76</MatrixWidth>
+				<MatrixHeight>99</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>18</ows:Identifier>
+				<ScaleDenominator>2133</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>151</MatrixWidth>
+				<MatrixHeight>197</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>19</ows:Identifier>
+				<ScaleDenominator>1066</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>302</MatrixWidth>
+				<MatrixHeight>393</MatrixHeight>
+			</TileMatrix>
+		</TileMatrixSet>
+		<TileMatrixSet xmlns:ows="http://www.opengis.net/ows/1.1">
+			<ows:Identifier>Beschriftungen_alles</ows:Identifier>
+			<ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.18:3:3857">
+				<ows:LowerCorner>1585189.5489 6141862.73088</ows:LowerCorner>
+				<ows:UpperCorner>1603000.66742 6168631.88034</ows:UpperCorner>
+			</ows:BoundingBox>
+			<ows:SupportedCRS>urn:ogc:def:crs:EPSG:6.18:3:3857</ows:SupportedCRS>
+			<TileMatrix>
+				<ows:Identifier>10</ows:Identifier>
+				<ScaleDenominator>545978</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>1</MatrixWidth>
+				<MatrixHeight>1</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>11</ows:Identifier>
+				<ScaleDenominator>272989</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>2</MatrixWidth>
+				<MatrixHeight>2</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>12</ows:Identifier>
+				<ScaleDenominator>136495</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>3</MatrixWidth>
+				<MatrixHeight>4</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>13</ows:Identifier>
+				<ScaleDenominator>68247</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>5</MatrixWidth>
+				<MatrixHeight>7</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>14</ows:Identifier>
+				<ScaleDenominator>34123</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>10</MatrixWidth>
+				<MatrixHeight>13</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>15</ows:Identifier>
+				<ScaleDenominator>17061</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>19</MatrixWidth>
+				<MatrixHeight>25</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>16</ows:Identifier>
+				<ScaleDenominator>8530</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>38</MatrixWidth>
+				<MatrixHeight>50</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>17</ows:Identifier>
+				<ScaleDenominator>4265</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>76</MatrixWidth>
+				<MatrixHeight>99</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>18</ows:Identifier>
+				<ScaleDenominator>2133</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>151</MatrixWidth>
+				<MatrixHeight>197</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>19</ows:Identifier>
+				<ScaleDenominator>1066</ScaleDenominator>
+				<TopLeftCorner>1584000 6171000</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>302</MatrixWidth>
+				<MatrixHeight>393</MatrixHeight>
+			</TileMatrix>
+		</TileMatrixSet>
+	</Contents>
+	<ServiceMetadataURL xlink:href="http://webgis.linz.at/WMTS/1.0.0/getCapabilities.xml"/>
+</Capabilities>

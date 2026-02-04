@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.data.imagery.vectortile.mapbox.GeometryTypesTest
+Test: testNaiveEnumTest() took 0 milli sec(s)
+Test: testExpectedIds(GeometryTypes)[1] took 0 milli sec(s)
+Test: testExpectedIds(GeometryTypes)[2] took 0 milli sec(s)
+Test: testExpectedIds(GeometryTypes)[3] took 1 milli sec(s)
+Test: testExpectedIds(GeometryTypes)[4] took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 39 milli sec(s)

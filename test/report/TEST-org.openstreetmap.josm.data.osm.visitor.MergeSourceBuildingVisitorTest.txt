@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.data.osm.visitor.MergeSourceBuildingVisitorTest
+Test: testOneWayNodesSelectedToo() took 2 milli sec(s)
+Test: testOneRelationNewRecursive() took 0 milli sec(s)
+Test: testTwoRelationExistingCircular() took 0 milli sec(s)
+Test: testNodes() took 0 milli sec(s)
+Test: testOneWayIncomplete() took 0 milli sec(s)
+Test: testOneRelationExistingMembersSelected() took 0 milli sec(s)
+Test: testOneRelationExistingRecursive() took 0 milli sec(s)
+Test: testOneRelationNewMembersNotSelected() took 0 milli sec(s)
+Test: testOneWay() took 0 milli sec(s)
+Test: testOneRelationExistingMembersNotSelected() took 0 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 54 milli sec(s)

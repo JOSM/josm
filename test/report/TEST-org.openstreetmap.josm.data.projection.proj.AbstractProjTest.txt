@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.data.projection.proj.AbstractProjTest
+Test: testCphi2NaN() took 1 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 53 milli sec(s)
+---
+2026-02-04 20:41:32.982 WARNING: Trying to project invalid NaN coordinates
+------------- ---------------- ---------------

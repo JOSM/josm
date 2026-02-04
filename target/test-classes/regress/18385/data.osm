@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-122635' action='modify' visible='true' lat='52.66926046073' lon='12.21392505729' />
+  <node id='-122637' action='modify' visible='true' lat='52.55051305295' lon='13.09798864018' />
+  <node id='-122639' action='modify' visible='true' lat='52.61734809138' lon='13.4565029042' />
+  <node id='-122641' action='modify' visible='true' lat='52.3991399431' lon='13.68057431922' />
+  <node id='-122643' action='modify' visible='true' lat='53.1825599038' lon='11.54578483796' />
+  <node id='-122645' action='modify' visible='true' lat='53.27036137055' lon='13.39946654402' />
+  <node id='-122647' action='modify' visible='true' lat='53.5302652224' lon='13.87612755415' />
+  <node id='-122649' action='modify' visible='true' lat='53.34582398928' lon='14.5035275162' />
+  <node id='-122651' action='modify' visible='true' lat='52.12985665416' lon='14.73167295694' />
+  <node id='-122653' action='modify' visible='true' lat='51.97954756913' lon='12.48688478104' />
+  <node id='-122655' action='modify' visible='true' lat='52.40908200502' lon='13.08169253727' />
+  <node id='-122657' action='modify' visible='true' lat='52.24974002702' lon='13.5746496503' />
+  <node id='-122659' action='modify' visible='true' lat='51.40375250434' lon='13.20798733482' />
+  <node id='-122661' action='modify' visible='true' lat='51.58384268627' lon='14.68278464821' />
+  <way id='-122662' action='modify' visible='true'>
+    <nd ref='-122651' />
+    <nd ref='-122649' />
+    <nd ref='-122647' />
+    <nd ref='-122645' />
+    <nd ref='-122643' />
+    <nd ref='-122635' />
+    <nd ref='-122637' />
+    <nd ref='-122639' />
+    <nd ref='-122641' />
+  </way>
+  <way id='-122663' action='modify' visible='true'>
+    <nd ref='-122641' />
+    <nd ref='-122657' />
+    <nd ref='-122655' />
+    <nd ref='-122637' />
+    <nd ref='-122635' />
+    <nd ref='-122653' />
+    <nd ref='-122659' />
+    <nd ref='-122661' />
+    <nd ref='-122651' />
+  </way>
+</osm>

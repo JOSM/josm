@@ -1,0 +1,186 @@
+Supplemental information for JOSM -- the Java OpenStreetMap Editor
+
+=============================================================================
+            I. Install & Launch
+=============================================================================
+
+Installation notes
+------------------
+To run JOSM, you need:
+
+* The JOSM .jar file, e.g., josm-tested.jar or josm-latest.jar
+* Java Runtime Environment (JRE) 11, or later.
+
+
+How to get Java Runtime Environment
+-----------------------------------
+You need JRE Version 11, or later.
+
+Microsoft Windows and Apple macOS users should visit one of:
+- https://www.azul.com/downloads/?package=jdk#download-openjdk
+- https://bell-sw.com/pages/downloads/#mn
+and download the latest Java executable for their system.
+
+Linux users should visit http://www.oracle.com/technetwork/java/index.html
+There is a Linux binary installer, which you must execute from a console, or
+use the mechanism of your distribution's packaging system.
+
+
+How to launch
+-------------
+Microsoft Windows users launch by double-clicking on the .jar file.
+If this does not work, open a command shell and type
+"java -jar josm-latest.jar"  in the directory that holds the file. (Please
+replace josm-latest.jar with the name of your .jar file, if you aren't using
+the latest version.)
+
+Under Linux, open a shell, go to the file directory and type
+"java -jar josm-latest.jar" to launch. If this does not work, try to set
+your JAVA_HOME variable to the java executable location (the root location,
+not the bin).
+
+macOS users just click on the .jar file icon.
+
+=============================================================================
+            II. Development
+=============================================================================
+
+How to get the source code
+--------------------------
+Download it directly from the subversion at
+https://josm.openstreetmap.de/svn/trunk. To use the command line subversion
+client, type
+
+svn co https://josm.openstreetmap.de/svn/trunk josm
+
+
+Files & directories
+-------------------
+This is an overview of the files and directories in the JOSM code repository:
+- build.xml                 ant build file (standard way to create a JOSM binary)
+- CONTRIBUTION              list of major code contributors
+- gpl-2.0.txt, gpl-3.0.txt  full text of the GNU General Public License
+- LICENSE                   the JOSM license terms
+- native/                   OS-specific files
+  - linux/                  files useful for Linux distributions, including Appdata files, .desktop
+                            files, Debian/Ubuntu scripts, man pages, icons, etc.
+  - macosx/                 files needed to create the MacOS package
+  - windows/                files needed to create the Windows installer
+  - josm.jnlp               Java Web Start launcher file (used on the website for the tested version)
+  - josm-latest.jnlp        Java Web Start launcher file (used on the website for the latest version)
+- nodist/                   files not included in JOSM binary
+  - data/                   data files that are useful for development, but not distributed
+    - exif-direction-example.jpg
+                            sample image, that contains direction information in the EXIF header
+                            (keys: Exif.GPSInfo.GPSImgDirectionRef, Exif.GPSInfo.GPSImgDirection)
+    - filterTests.osm       used for unit testing of the filter feature
+                            (see test/unit/org/openstreetmap/josm/data/osm/FilterTest.java)
+    - Join_Areas_Tests.osm  some examples to test the 'join areas' feature
+    - *.*                   various other data files used for unit testing and as reference file
+    - projection/           projection files
+      - *.gsb               NTv2 grid files for projection support, downloaded by the
+                            client on demand (see CONTRIBUTION)
+      - CHENyx06-Distribution.pdf
+                            archive of terms of use for the CHENyx06.gsb file
+      - epsg                EPSG data file, taken from the proj.4 project
+                            (see https://github.com/OSGeo/proj.4/blob/master/nad/epsg)
+      - esri                ESRI data file, taken from the proj.4 project
+                            (see https://github.com/OSGeo/proj.4/blob/master/nad/esri)
+      - josm-epsg           customizations to the epsg file, used together with the epsg file
+                            to generate data/projection/custom-epsg
+                            
+      - projection-reference-data.csv
+                            reference data for projection tests
+                            (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRefTest.java)
+      - projection-regression-test-data.csv
+                            regression data for projection tests
+                            (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java)
+    - trans/*.lang          translation data for files that are not distributed, but used
+                            by the server for localization of the services;
+                            currently contains plugin descriptions in order to include translations
+                            in the downloaded plugin list
+  - images/                 images, which are not for distribution, but may be useful later (e.g. high
+                            resolution and vector versions)
+  - styles/                 files needed for map style maintenance
+- README                    this file
+- resources/                resource files that will be included in the JOSM jar file
+  - data/                   data files that will be included in the JOSM jar file
+    - fonts/                font files used for map rendering
+    - gpx/                  different color gradients for gpx drawing
+    - projection/           projection files
+      - custom-epsg         list of projection definitions, auto-generated file created by ant task 'epsg'
+    - security/*.pem        certificates that we like to accept for TLS connections, but are missing in the
+                            default Java certificate store
+    - validator/            data files used by the JOSM validator
+      - *.cfg               files designed for the old tagchecker, still in use
+      - *.mapcss            default validation rules for the MapCSS-based tagchecker
+    - boundaries.osm        OSM file containing boundary data for the states of the earth, including
+                            data for right and left-hand traffic
+    - defaultpresets.xml    data file for the core tagging presets
+    - help-browser.css      CSS file for the help sites (HTML content is downloaded from the website
+                            on demand, but displayed inside the programm in a Java web browser component.)
+    - *.lang                translation data
+    - *.xsd                 xml schema files for validation of configuration files
+  - images/                 images distributed with the JOSM binary
+    - icons                 images for the Potlatch 2 style
+    - presets               images for the main mappaint style and the internal presets
+  - styles/                 map styles included in JOSM
+- scripts/                  various scripts used by JOSM developers
+  - BuildProjectionDefinitions.java
+                            called from the ant build file to combine the files epsg and josm-epsg
+                            to create the custom-epsg file for distribution
+  - geticons.pl             tool to find all used icons and allows deleting unused icons
+                            searches also for images with incompatible svg code
+  - optimize-images         short script to decrease size of PNG images
+  - since_xxx.py            developer tool to replace "@since xxx" in Javadoc by the upcoming revision number
+  - SyncEditorLayerIndex.java
+                            script to compare and analyse the differences of the editor layer index and the
+                            JOSM imagery list (see https://josm.openstreetmap.de/wiki/ImageryCompare)
+  - TagInfoExtract.java     extracts tag information for the taginfo project
+- src/                      the source code of the application
+- start.html                HTML page to run the applet version of JOSM
+- test/                     automated software tests
+    - data/                 resources used for some tests
+    - functional/           functional tests (source code)
+    - lib/                  libraries needed for (some of) the tests, including JUnit
+    - performance/          performance tests (source code)
+    - unit/                 unit tests (source code)
+- tools/                    libraries, tools and configuration files that help in the development process
+    - checkstyle/           libs and config files for checkstyle (automatically detects code style
+                            problems in source code); can be launched as an ant target in build.xml
+    - eclipse/              preconfigured Eclipse configuration files
+    - ivy/                  Apache Ivy binary, configuration file, and downloaded dependencies 
+    - jacocoant.jar         used to include coverage data into JUnit test reports
+    - japicc/               used to generate a compatibility report between optimized jar and normal one
+    - netbeans/             preconfigured Netbeans project
+    - pmd/                  config files for PMD (source code analyzer, finds common programming flaws)
+    - spotbugs/             libs and config files for spotbugs (automatically detects common bugs and potential
+                            problems in source code); can be launched as an ant target in build.xml
+
+Third party libraries
+---------------------
+There are some third party libraries which are directly included in the source code tree, in particular:
+
+* jmapviewer: Java component to browse a TMS map
+    src/org/openstreetmap/gui (svn external)
+    -> https://josm.openstreetmap.de/osmsvn/applications/viewer/jmapviewer/
+* Apache commons compress: Support for bzip2 compression when opening files
+    -> https://github.com/apache/commons-compress
+* Apache commons validator: Improved validator routines
+    src/org/openstreetmap/josm/data/validation/routines
+    -> http://commons.apache.org/proper/commons-validator
+* SVG Salamander: Support for SVG image format
+    -> https://github.com/blackears/svgSalamander
+* Metadata Extractor: Read EXIF Metadata of photos
+    -> https://github.com/drewnoakes/metadata-extractor
+* MultiSplitPane: Small lib for GUI layout management
+    src/org/openstreetmap/josm/gui/MultiSplitLayout.java, MultiSplitPane.java
+    -> https://github.com/floscher/multi-split
+    -> https://community.oracle.com/docs/DOC-983539
+* swinghelper: Class CheckThreadViolationRepaintManager to find EDT violations
+    src/org/openstreetmap/josm/gui/util/CheckThreadViolationRepaintManager.java
+    -> https://github.com/floscher/swinghelper
+* xz extractor (0BSD)
+    -> https://tukaani.org/xz/java.html
+* OpeningHoursParser (MIT license)
+    -> https://github.com/simonpoole/OpeningHoursParser

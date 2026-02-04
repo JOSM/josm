@@ -1,0 +1,37 @@
+Testcase: org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandlerTest
+Test: testSearchAndZoom() took 364 milli sec(s)
+Test: testNonRegression23821(WireMockRuntimeInfo) took 429 milli sec(s)
+Test: testOverlappingArea(WireMockRuntimeInfo) took 433 milli sec(s)
+Test: testBadRequestNoParam() took 1 milli sec(s)
+Test: testDoubleDownload(WireMockRuntimeInfo) took 429 milli sec(s)
+Test: testBadRequestInvalidUrl() took 3 milli sec(s)
+Test: testChangesetTags() took 219 milli sec(s)
+Test: testBadRequestIncompleteUrl() took 3 milli sec(s)
+Test: testSelectAndZoom() took 401 milli sec(s)
+Test: testDownload(WireMockRuntimeInfo) took 214 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 2 sec(s)
+6/map?bbox=0.0,0.0,0.001,0.001 -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:43:02.526 INFO: RemoteControl received: GET /load_and_zoom?left=0.00025&bottom=0.00025&right=0.00075&top=0.00125&new_layer=false&layer_name=OSMData HTTP/1.1
+2026-02-04 20:43:02.526 INFO: GET http://localhost:58859/load_and_zoom?left=0&bottom=0&right=0.001&top=0.001&new_layer=true&layer_name=OSMData -> HTTP/1.1 200 (108 ms; 4 B)
+2026-02-04 20:43:02.527 INFO: GET http://localhost:58858/api/0.6/map?bbox=2.5E-4,0.001,7.5E-4,0.00125 -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:02.528 INFO: GET http://localhost:58859/load_and_zoom?left=0.00025&bottom=0.00025&right=0.00075&top=0.00125&new_layer=false&layer_name=OSMData -> HTTP/1.1 200 (5 ms; 4 B)
+2026-02-04 20:43:02.843 INFO: RemoteControl::Server /127.0.0.1:58859 stopped.
+2026-02-04 20:43:02.844 INFO: RemoteControl::Server /0:0:0:0:0:0:0:1:58859 stopped.
+2026-02-04 20:43:02.849 INFO: GET http://localhost:58858/api/0.6/map?bbox=0.0,0.0,0.001,0.001 -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:43:03.064 INFO: GET http://localhost:58858/api/0.6/map?bbox=2.5E-4,0.001,7.5E-4,0.00125 -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:43:03.284 INFO: GET http://localhost:58858/api/0.6/map?bbox=0.0,0.0,0.001,0.001 -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:43:03.500 INFO: RemoteControl: no download necessary
+2026-02-04 20:43:03.716 INFO: GET http://localhost:58858/api/0.6/map?bbox=0.0,0.0,0.001,0.001 -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:43:04.023 INFO: GET http://localhost:58858/api/0.6/map?bbox=0.0,0.0,0.001,0.001 -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:43:04.337 INFO: GET http://localhost:58858/api/0.6/map?bbox=0.0,0.0,0.001,0.001 -> HTTP/1.1 200 (0 ms)
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:43:03.711 WARNING: 'load_and_zoom' remote control request must have 'bottom' parameter
+2026-02-04 20:43:03.712 WARNING: 'load_and_zoom' remote control request must have 'top' parameter
+2026-02-04 20:43:03.712 WARNING: 'load_and_zoom' remote control request must have 'left' parameter
+2026-02-04 20:43:03.712 WARNING: 'load_and_zoom' remote control request must have 'right' parameter
+2026-02-04 20:43:03.933 WARNING: 'load_and_zoom' remote control request must have 'bottom' parameter
+2026-02-04 20:43:03.934 WARNING: 'load_and_zoom' remote control request must have 'top' parameter
+2026-02-04 20:43:03.934 WARNING: 'load_and_zoom' remote control request must have 'left' parameter
+2026-02-04 20:43:03.934 WARNING: 'load_and_zoom' remote control request must have 'right' parameter
+------------- ---------------- ---------------

@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.gui.MapScalerTest
+Test: testMapScaler() took 115 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 174 milli sec(s)

@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreferenceTest
+Test: testAdvancedPreference() took 3 milli sec(s)
+Test: testAddGui() took 104 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 182 milli sec(s)

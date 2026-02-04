@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='21657940' version='11' lat='52.892583' lon='8.4304035' />
+  <node id='21658035' version='9' lat='52.8925365' lon='8.4306565'>
+    <tag k='converted_by' v='Track2osm' />
+  </node>
+  <node id='21658036' version='5' lat='52.8922741' lon='8.4295676'>
+    <tag k='converted_by' v='Track2osm' />
+  </node>
+  <node id='21658081' version='6' lat='52.8931418' lon='8.4330586'>
+    <tag k='converted_by' v='Track2osm' />
+  </node>
+  <node id='73227374' version='11' lat='52.8925356' lon='8.4304845' />
+  <node id='76465657' version='7' lat='52.8930039' lon='8.434235' />
+  <node id='76474542' version='4' lat='52.8930507' lon='8.4304979' />
+  <node id='76474543' version='3' lat='52.8928728' lon='8.4304707' />
+  <node id='76478545' version='6' lat='52.8947806' lon='8.4321263'>
+    <tag k='highway' v='traffic_signals' />
+  </node>
+  <node id='77636315' version='7' lat='52.8925235' lon='8.4305719' />
+  <node id='77636748' version='9' lat='52.8927478' lon='8.4305301' />
+  <node id='77636749' version='7' lat='52.8927054' lon='8.4304192' />
+  <node id='77636750' version='7' lat='52.8926437' lon='8.4303813' />
+  <node id='78037253' version='5' lat='52.894249' lon='8.4316544' />
+  <node id='81224584' version='6' lat='52.8910536' lon='8.4274468' />
+  <node id='82466180' version='6' lat='52.8913547' lon='8.4279641' />
+  <node id='92811392' version='5' lat='52.891013' lon='8.4315072' />
+  <node id='92811394' version='4' lat='52.8906098' lon='8.4318617' />
+  <node id='92811395' version='6' lat='52.8893739' lon='8.4330256' />
+  <node id='105304730' version='5' lat='52.8938347' lon='8.4311831' />
+  <node id='305468587' version='5' lat='52.8889607' lon='8.4332039' />
+  <node id='305492177' version='5' lat='52.8916124' lon='8.4311284' />
+  <node id='305492179' version='5' lat='52.891801' lon='8.4310449' />
+  <node id='305492181' version='5' lat='52.8927226' lon='8.4306919' />
+  <node id='307388519' version='3' lat='52.891443' lon='8.428123'>
+    <tag k='railway' v='level_crossing' />
+  </node>
+  <node id='440346289' version='3' lat='52.8914858' lon='8.4281925' />
+  <node id='1133854864' version='2' lat='52.8924889' lon='8.4300422' />
+  <node id='1133854897' version='4' lat='52.8930884' lon='8.433848' />
+  <node id='1133854908' version='3' lat='52.8927447' lon='8.4306268' />
+  <node id='1133854931' version='3' lat='52.8925843' lon='8.4307354' />
+  <node id='1168240918' version='2' lat='52.8946236' lon='8.4320619' />
+  <node id='1227909460' version='3' lat='52.8923367' lon='8.4297234' />
+  <node id='1227909479' version='2' lat='52.892313' lon='8.4308154' />
+  <node id='1577447735' version='1' lat='52.8892172' lon='8.4331186' />
+  <node id='1601720771' version='1' lat='52.8895817' lon='8.4328553' />
+  <node id='1601721365' version='1' lat='52.8912922' lon='8.4313004' />
+  <node id='1601722162' version='1' lat='52.8924023' lon='8.4307688' />
+  <node id='1601722860' version='2' lat='52.8930766' lon='8.4325158' />
+  <node id='1601722886' version='2' lat='52.8931176' lon='8.4327778' />
+  <node id='1601722905' version='2' lat='52.89313' lon='8.4335832' />
+  <node id='1601722913' version='2' lat='52.8931452' lon='8.4333054' />
+  <node id='1601723000' version='1' lat='52.8932146' lon='8.4306242' />
+  <node id='1601723432' version='1' lat='52.893986' lon='8.43134' />
+  <node id='1601723541' version='1' lat='52.894126' lon='8.4315038' />
+  <node id='1601723720' version='1' lat='52.8943366' lon='8.431761' />
+  <node id='1601723784' version='1' lat='52.8945035' lon='8.4319646' />
+  <node id='2310189579' version='1' lat='52.8924511' lon='8.4299149' />
+  <node id='2310189580' version='3' lat='52.8926389' lon='8.4307568' />
+  <node id='2440942588' version='2' lat='52.8924465' lon='8.4307308' />
+  <node id='2440942594' version='1' lat='52.89254' lon='8.4302435' />
+  <node id='2440942604' version='1' lat='52.8928214' lon='8.4304945' />
+  <node id='2507291974' version='1' lat='52.8901024' lon='8.432352' />
+  <node id='2517859485' version='1' lat='52.8912381' lon='8.4277637' />
+  <node id='3625401978' version='1' lat='52.8925607' lon='8.4307081' />
+  <node id='3625401979' version='1' lat='52.8926704' lon='8.4303894' />
+  <node id='3625401980' version='1' lat='52.8925521' lon='8.430444' />
+  <node id='3625401981' version='1' lat='52.8926046' lon='8.4303887' />
+  <node id='3625401982' version='1' lat='52.8927331' lon='8.4304696' />
+  <node id='5504817312' version='1' lat='52.8926807' lon='8.4307243' />
+  <way id='-104550'>
+    <nd ref='73227374' />
+    <nd ref='77636315' />
+    <nd ref='21658035' />
+    <nd ref='3625401978' />
+    <nd ref='1133854931' />
+    <nd ref='2310189580' />
+    <nd ref='5504817312' />
+    <nd ref='305492181' />
+    <nd ref='1133854908' />
+    <tag k='converted_by' v='Track2osm' />
+    <tag k='highway' v='tertiary' />
+    <tag k='junction' v='roundabout' />
+    <tag k='maxspeed' v='50' />
+    <tag k='name' v='Visbeker Straße' />
+    <tag k='oneway' v='yes' />
+    <tag k='ref' v='K 248' />
+  </way>
+  <way id='8325782' version='14'>
+    <nd ref='1133854908' />
+    <nd ref='77636748' />
+    <nd ref='3625401982' />
+    <nd ref='77636749' />
+    <nd ref='3625401979' />
+    <nd ref='77636750' />
+    <nd ref='3625401981' />
+    <nd ref='21657940' />
+    <nd ref='3625401980' />
+    <nd ref='73227374' />
+    <tag k='converted_by' v='Track2osm' />
+    <tag k='highway' v='tertiary' />
+    <tag k='junction' v='roundabout' />
+    <tag k='maxspeed' v='50' />
+    <tag k='name' v='Visbeker Straße' />
+    <tag k='oneway' v='yes' />
+    <tag k='ref' v='K 248' />
+  </way>
+  <way id='9703493' version='16'>
+    <nd ref='76478545' />
+    <nd ref='1168240918' />
+    <nd ref='1601723784' />
+    <nd ref='1601723720' />
+    <nd ref='78037253' />
+    <nd ref='1601723541' />
+    <nd ref='1601723432' />
+    <nd ref='105304730' />
+    <nd ref='1601723000' />
+    <nd ref='76474542' />
+    <nd ref='76474543' />
+    <nd ref='2440942604' />
+    <nd ref='77636748' />
+    <tag k='highway' v='tertiary' />
+    <tag k='maxspeed' v='50' />
+    <tag k='name' v='Visbeker Straße' />
+  </way>
+  <way id='10611560' version='21'>
+    <nd ref='21658035' />
+    <nd ref='2440942588' />
+    <nd ref='1601722162' />
+    <nd ref='1227909479' />
+    <nd ref='305492179' />
+    <nd ref='305492177' />
+    <nd ref='1601721365' />
+    <nd ref='92811392' />
+    <nd ref='92811394' />
+    <nd ref='2507291974' />
+    <nd ref='1601720771' />
+    <nd ref='92811395' />
+    <nd ref='1577447735' />
+    <nd ref='305468587' />
+    <tag k='highway' v='unclassified' />
+    <tag k='maxspeed' v='50' />
+    <tag k='name' v='Goldenstedter Straße' />
+    <tag k='old_ref' v='L 882' />
+    <tag k='surface' v='asphalt' />
+  </way>
+  <way id='27822921' version='11'>
+    <nd ref='5504817312' />
+    <nd ref='1601722860' />
+    <nd ref='1601722886' />
+    <nd ref='21658081' />
+    <nd ref='1601722913' />
+    <nd ref='1601722905' />
+    <nd ref='1133854897' />
+    <nd ref='76465657' />
+    <tag k='converted_by' v='Track2osm' />
+    <tag k='highway' v='tertiary' />
+    <tag k='maxspeed' v='50' />
+    <tag k='name' v='Feldstraße' />
+    <tag k='ref' v='K 248' />
+  </way>
+  <way id='495863846' version='1'>
+    <nd ref='81224584' />
+    <nd ref='2517859485' />
+    <nd ref='82466180' />
+    <nd ref='307388519' />
+    <nd ref='440346289' />
+    <nd ref='21658036' />
+    <nd ref='1227909460' />
+    <nd ref='2310189579' />
+    <nd ref='1133854864' />
+    <nd ref='2440942594' />
+    <nd ref='21657940' />
+    <tag k='highway' v='tertiary' />
+    <tag k='maxspeed' v='50' />
+    <tag k='name' v='Visbeker Straße' />
+    <tag k='old_ref' v='L 837' />
+    <tag k='ref' v='K 248' />
+  </way>
+</osm>

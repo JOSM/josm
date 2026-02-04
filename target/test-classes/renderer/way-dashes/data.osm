@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-32972' action='modify' lat='0.1' lon='0.1' />
+  <node id='-32974' action='modify' lat='0.15' lon='0.3' />
+  <node id='-32976' action='modify' lat='0.1' lon='0.5' />
+  <node id='-32978' action='modify' lat='0.1' lon='0.7' />
+  <node id='-32980' action='modify' lat='0.1' lon='0.9' />
+  <node id='-32982' action='modify' lat='0.3' lon='0.1' />
+  <node id='-32984' action='modify' lat='0.35' lon='0.3' />
+  <node id='-32986' action='modify' lat='0.3' lon='0.5' />
+  <node id='-32988' action='modify' lat='0.3' lon='0.7' />
+  <node id='-32990' action='modify' lat='0.3' lon='0.9' />
+  <node id='-32992' action='modify' lat='0.5' lon='0.1' />
+  <node id='-32994' action='modify' lat='0.55' lon='0.3' />
+  <node id='-32996' action='modify' lat='0.5' lon='0.5' />
+  <node id='-32998' action='modify' lat='0.5' lon='0.7' />
+  <node id='-33000' action='modify' lat='0.5' lon='0.9' />
+  <node id='-33002' action='modify' lat='0.7' lon='0.1' />
+  <node id='-33004' action='modify' lat='0.75' lon='0.3' />
+  <node id='-33006' action='modify' lat='0.7' lon='0.5' />
+  <node id='-33008' action='modify' lat='0.7' lon='0.7' />
+  <node id='-33010' action='modify' lat='0.7' lon='0.9' />
+  <node id='-33012' action='modify' lat='0.9' lon='0.1' />
+  <node id='-33014' action='modify' lat='0.95' lon='0.3' />
+  <node id='-33016' action='modify' lat='0.9' lon='0.5' />
+  <node id='-33018' action='modify' lat='0.9' lon='0.7' />
+  <node id='-33020' action='modify' lat='0.9' lon='0.9' />
+  <way id='-33034' action='modify'>
+    <nd ref='-33020' />
+    <nd ref='-33018' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='style5' />
+  </way>
+  <way id='-33036' action='modify'>
+    <nd ref='-33010' />
+    <nd ref='-33008' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='style4' />
+  </way>
+  <way id='-33038' action='modify'>
+    <nd ref='-33000' />
+    <nd ref='-32998' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='style3' />
+  </way>
+  <way id='-33040' action='modify'>
+    <nd ref='-32990' />
+    <nd ref='-32988' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='style2' />
+  </way>
+  <way id='-33042' action='modify'>
+    <nd ref='-32980' />
+    <nd ref='-32978' />
+    <tag k='highlight' v='yes' />
+    <tag k='test' v='style1' />
+  </way>
+  <way id='-33044' action='modify'>
+    <nd ref='-33016' />
+    <nd ref='-33014' />
+    <nd ref='-33012' />
+    <tag k='test' v='style5' />
+  </way>
+  <way id='-33046' action='modify'>
+    <nd ref='-33006' />
+    <nd ref='-33004' />
+    <nd ref='-33002' />
+    <tag k='test' v='style4' />
+  </way>
+  <way id='-33048' action='modify'>
+    <nd ref='-32996' />
+    <nd ref='-32994' />
+    <nd ref='-32992' />
+    <tag k='test' v='style3' />
+  </way>
+  <way id='-33050' action='modify'>
+    <nd ref='-32986' />
+    <nd ref='-32984' />
+    <nd ref='-32982' />
+    <tag k='test' v='style2' />
+  </way>
+  <way id='-33052' action='modify'>
+    <nd ref='-32976' />
+    <nd ref='-32974' />
+    <nd ref='-32972' />
+    <tag k='test' v='style1' />
+  </way>
+</osm>

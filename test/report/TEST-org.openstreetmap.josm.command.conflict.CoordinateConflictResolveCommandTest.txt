@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.command.conflict.CoordinateConflictResolveCommandTest
+Test: testEqualsContract() took 6 milli sec(s)
+Test: testGetDescriptionIcon() took 1 milli sec(s)
+Test: testExecuteKeepTheirUndoCommand() took 1 milli sec(s)
+Test: testExecuteKeepMineUndoCommand() took 0 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 52 milli sec(s)

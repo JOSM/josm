@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 14.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 43363)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Ebene_1"
+   x="0px"
+   y="0px"
+   width="16px"
+   height="16px"
+   viewBox="0 0 16 16"
+   enable-background="new 0 0 16 16"
+   xml:space="preserve"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="fire_hose.svg"><metadata
+   id="metadata21"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs19" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1680"
+   inkscape:window-height="988"
+   id="namedview17"
+   showgrid="true"
+   inkscape:zoom="29.5"
+   inkscape:cx="3.0504169"
+   inkscape:cy="7.108022"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Ebene_1"><inkscape:grid
+     type="xygrid"
+     id="grid3004" /></sodipodi:namedview>
+<rect
+   style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.59999999999999998"
+   id="rect3006"
+   width="16"
+   height="16"
+   x="0"
+   y="0"
+   ry="0" /><g
+   id="g3">
+	<path
+   d="M1,7.156c0.02,4.616,5.878,8.566,10.124,6.496"
+   id="path5"
+   stroke="#000000"
+   fill="none" />
+	<path
+   d="M1,7.156C1,4.05,3.473,1.532,6.523,1.532c3.049,0,5.523,2.519,5.523,5.625"
+   id="path7"
+   stroke="#000000"
+   fill="none" />
+	<path
+   d="M3.455,7.156L3.455,7.156c0,2.416,1.923,4.375,4.295,4.375s4.296-1.959,4.296-4.375v0"
+   id="path9"
+   stroke="#000000"
+   fill="none" />
+	<path
+   d="M5.909,7.156L5.909,7.156c0,1.036,0.825,1.875,1.841,1.875s1.841-0.839,1.841-1.875v0"
+   id="path11"
+   stroke="#000000"
+   fill="none" />
+	<path
+   d="M3.455,7.156c0-1.726,1.374-3.125,3.068-3.125c1.694,0,3.068,1.399,3.068,3.125"
+   id="path13"
+   stroke="#000000"
+   fill="none" />
+	<polyline
+   points="9.544,12.118 11.527,15.361 15.002,12.12 14.007,10.5  "
+   id="polyline15"
+   fill="#0092DA" />
+</g>
+</svg>

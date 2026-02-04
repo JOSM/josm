@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="https://josm.openstreetmap.de/gpx-drawing-extensions-1.0"
+    elementFormDefault="qualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:gpxd="https://josm.openstreetmap.de/gpx-drawing-extensions-1.0"
+    xsi:schemaLocation="https://josm.openstreetmap.de/gpx-drawing-extensions-1.0 https://josm.openstreetmap.de/gpx-drawing-extensions-1.0.xsd">
+
+    <xsd:annotation>
+        <xsd:documentation>
+            This schema defines drawing extensions for the GPX 1.1 schema (http://www.topografix.com/GPX/1/1/gpx.xsd).
+            Elements in this schema should be used as child elements of the "extensions" element defined by the GPX schema.
+        </xsd:documentation>
+    </xsd:annotation>
+    
+    <!-- Elements -->
+
+    <xsd:element name="color" type="gpxd:hexColor_type">
+        <xsd:annotation>
+            <xsd:documentation>
+                The color of the element, i.e. #RRGGBB or #RRGGBBAA.
+                Note that applications should apply possible alpha values to the lines and opacity to the whole track. This means that overlapping parts of the
+                track with alpha values will look more intense than individual lines, whereas the opacity affects the whole track including overlapping parts.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    
+    <xsd:element name="opacity" type="gpxd:opacity_type">
+        <xsd:annotation>
+            <xsd:documentation>
+                The opacity of the element between 0.00 and 1.00.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    
+    <xsd:element name="width" type="xsd:positiveInteger">
+        <xsd:annotation>
+            <xsd:documentation>
+                The width of the line in pixels, applications may use a width relative to this value if required.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    
+    <xsd:element name="dashPattern" type="gpxd:dashPattern_type">
+        <xsd:annotation>
+            <xsd:documentation>
+                The dash pattern of the line, see gpxd:dashPattern_type. Should always be relative to the width.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    
+    <!-- Types -->
+
+    <xsd:simpleType name="hexColor_type">
+        <xsd:annotation>
+            <xsd:documentation>
+                The hexColor_type must be a # followed by a 6 or 8-digit hex representation of the color (with or without the alpha value).            
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\#([a-fA-F0-9]{6}|[a-fA-F0-9]{8})" />
+            <xsd:whiteSpace value="collapse" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="opacity_type">
+        <xsd:annotation>
+            <xsd:documentation>
+                The opacity_type must be a decimal value between 0 and 1.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minInclusive value="0" />
+            <xsd:maxInclusive value="1" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="dashPattern_type">
+        <xsd:annotation>
+            <xsd:documentation>
+                The dashPattern_type can be 
+                    - a representation of the pattern as y-n-y-n-... with y being the relative length of the line that is
+                      visible and n being the relative length of the line that is hidden to create a dashed / dotted line.
+                      Has to have an even number of segments (at least two) and can contain multi-digit numbers.
+                    - one of the following predefined values:
+                      none, dash-long, dash-medium, dash-short, dot-sparse, dot-normal, dot-dense, dash-dot, dash-dot-dot
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">               <!-- use string based pattern instead of enum because both pattern and enums are allowed -->
+            <xsd:pattern value="\d+\-\d+(\-\d+\-\d+)*" /> <!-- pattern, see documentation above -->
+            <xsd:pattern value="none" />                  <!-- 1-0, default value/line -->
+            <xsd:pattern value="dash-long" />             <!-- 6-2 -->
+            <xsd:pattern value="dash-medium" />           <!-- 4-4 -->
+            <xsd:pattern value="dash-short" />            <!-- 2-6 -->
+            <xsd:pattern value="dot-sparse" />            <!-- 1-4 -->
+            <xsd:pattern value="dot-normal" />            <!-- 1-2 -->
+            <xsd:pattern value="dot-dense" />             <!-- 1-1 -->
+            <xsd:pattern value="dash-dot" />              <!-- 4-2-1-2 -->
+            <xsd:pattern value="dash-dot-dot" />          <!-- 4-2-1-2-1-2 -->            
+        </xsd:restriction>
+    </xsd:simpleType>
+</schema>

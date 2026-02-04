@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presets xmlns="http://josm.openstreetmap.de/tagging-preset-1.0">
+    <chunk id="A1">
+        <key key="A1" value="true"/>
+    </chunk>
+    <chunk id="A3">
+        <key key="A3" value="true"/>
+    </chunk>
+    <chunk id="A">
+        <reference ref="A1"/>
+        <key key="A2" value="true"/>
+        <reference ref="A3"/>
+    </chunk>
+    <chunk id="C">
+        <key key="C1" value="true"/>
+        <key key="C2" value="true"/>
+        <key key="C3" value="true"/>
+    </chunk>
+    <item name="ABC">
+        <reference ref="A"/>
+        <key key="B1" value="true"/>
+        <key key="B2" value="true"/>
+        <key key="B3" value="true"/>
+        <reference ref="C"/>
+    </item>
+</presets>

@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.actions.AlignInCircleActionTest
+Test: testNodesSelected() took 44 milli sec(s)
+Test: testOpenWaysSelected() took 5 milli sec(s)
+Test: testTicket20041() took 3 milli sec(s)
+Test: testWaySelected() took 3 milli sec(s)
+Test: testMultipleWaysSelected() took 2 milli sec(s)
+Test: testSelectionEvaluation() took 14 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 101 milli sec(s)

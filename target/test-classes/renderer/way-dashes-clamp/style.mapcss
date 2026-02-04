@@ -1,0 +1,20 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+way[pattern] {
+	width: 10;
+	color: red;
+	dashes: 20, 20;
+	dashes-background-color: green;
+	dashes-offset: 0;
+}
+
+way[pattern=B] {
+	dashes-offset: 4;
+}
+
+way[pattern=C] {
+	dashes-offset: 8;
+}

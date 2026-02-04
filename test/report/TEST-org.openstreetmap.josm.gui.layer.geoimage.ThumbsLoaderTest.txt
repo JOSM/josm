@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.gui.layer.geoimage.ThumbsLoaderTest
+Test: testPerformance() took 0 milli sec(s) SKIPPED: Set working directory to image folder and run manually
+Tests run: 0, Failures: 0, Skipped: 1, Aborted: 0, Time elapsed: 68 milli sec(s)

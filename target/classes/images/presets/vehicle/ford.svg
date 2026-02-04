@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="ford11.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     id="namedview7"
+     showgrid="true"
+     showguides="false"
+     inkscape:zoom="33.714286"
+     inkscape:cx="5.0591107"
+     inkscape:cy="7.2441084"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4135" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <rect
+     style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.80000001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+     id="rect4137"
+     width="16"
+     height="16"
+     x="0"
+     y="0"
+     ry="2" />
+  <rect
+     width="14"
+     height="14"
+     x="0"
+     y="2"
+     id="canvas"
+     style="visibility:hidden;fill:none;stroke:none" />
+  <path
+     style="color:#000000;fill:#000000;fill-opacity:1"
+     d="M 5,1 1,4 5,7 5,5 11,5 11,7 15,4 11,1 11,3 5,3 Z"
+     id="path4141"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccccccccccc" />
+  <path
+     style="color:#000000;fill:#41a8e2;fill-opacity:1"
+     d="M 2.6666667,7.6666667 C 1.9548023,7.6666667 0.6769531,9 0,9 l 0,2 C 0.7162452,11 2.0338983,9.666667 2.6666667,9.666667 3.3389831,9.666667 4.6214689,11 5.3333333,11 5.9673364,11 7.3230469,9.666667 8,9.666667 8.6723164,9.666667 10.028974,11 10.666667,11 11.338983,11 12.700565,9.666667 13.333333,9.666667 13.966101,9.666667 15.327684,11 16,11 L 16,9 C 15.446328,9 14.045197,7.6271187 13.333333,7.6666667 12.69564,7.6666667 11.379629,9 10.666667,9 10.073446,9 8.6723164,7.6666667 8,7.6666667 7.3276836,7.6666667 5.9278705,9 5.3333333,9 4.6993303,9 3.3785311,7.6666667 2.6666667,7.6666667 Z"
+     id="path4139"
+     inkscape:connector-curvature="0" />
+  <path
+     style="color:#000000;fill:#41a8e2;fill-opacity:1"
+     d="M 2.6666667,11.666667 C 1.9548023,11.666667 0.6769531,13 0,13 l 0,2 C 0.7162452,15 2.0338983,13.666667 2.6666667,13.666667 3.3389831,13.666667 4.6214689,15 5.3333333,15 5.9673364,15 7.3230469,13.666667 8,13.666667 8.6723164,13.666667 10.028974,15 10.666667,15 11.338983,15 12.700565,13.666667 13.333333,13.666667 13.966101,13.666667 15.327684,15 16,15 l 0,-2 C 15.446328,13 14.045197,11.627119 13.333333,11.666667 12.69564,11.666667 11.379629,13 10.666667,13 10.073446,13 8.6723164,11.666667 8,11.666667 7.3276836,11.666667 5.9278705,13 5.3333333,13 4.6993303,13 3.3785311,11.666667 2.6666667,11.666667 Z"
+     id="ford"
+     inkscape:connector-curvature="0" />
+</svg>

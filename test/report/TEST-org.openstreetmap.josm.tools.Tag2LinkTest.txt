@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.tools.Tag2LinkTest
+Test: testWikipedia() took 5 milli sec(s)
+Test: testImageCommonsCategory() took 1 milli sec(s)
+Test: testArchipelagoWikidata() took 1 milli sec(s)
+Test: testName() took 1 milli sec(s)
+Test: testImageCommonsImage() took 3 milli sec(s)
+Test: testMultipleSources() took 1 milli sec(s)
+Test: testInitialize() took 6 milli sec(s)
+Test: testWebsite() took 3 milli sec(s)
+Test: testBrandWikidata() took 1 milli sec(s)
+Test: testUrlKeyMultipleForms(String)[1] took 2 milli sec(s)
+Test: testUrlKeyMultipleForms(String)[2] took 1 milli sec(s)
+Tests run: 11, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 127 milli sec(s)

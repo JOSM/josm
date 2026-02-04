@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.preferences.display.LanguagePreferenceTest
+Test: testLanguagePreference() took 1 milli sec(s)
+Test: testAddGui() took 26 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 100 milli sec(s)

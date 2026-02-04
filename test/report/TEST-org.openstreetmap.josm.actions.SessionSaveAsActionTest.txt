@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.actions.SessionSaveAsActionTest
+Test: testSessionSaveAsAction() took 64 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 114 milli sec(s)
+-04 20:40:34.633 INFO: Keystroke shift ctrl alt pressed S is already assigned to org.openstreetmap.josm.actions.SessionSaveAsAction@68fe0086, will be overridden by org.openstreetmap.josm.actions.SessionSaveAsAction@20b9dff5
+2026-02-04 20:40:34.633 INFO: Registered toolbar action save_as-session overwritten: org.openstreetmap.josm.actions.SessionSaveAsAction gets org.openstreetmap.josm.actions.SessionSaveAsAction
+------------- ---------------- ---------------

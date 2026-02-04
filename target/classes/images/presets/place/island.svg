@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="339.99463"
+   id="svg6271"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="island.svg"
+   sodipodi:version="0.32"
+   width="418.38162"
+   version="1.1">
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Island, palm, and the sun</dc:title>
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li />
+            <rdf:li>vacation</rdf:li>
+            <rdf:li>palm</rdf:li>
+            <rdf:li>sun</rdf:li>
+            <rdf:li>plants</rdf:li>
+            <rdf:li>island</rdf:li>
+            <rdf:li>plant</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org">
+            <dc:title>Claygirl</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Claygirl</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Claygirl</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     id="base"
+     inkscape:current-layer="layer1"
+     inkscape:cx="52.218922"
+     inkscape:cy="165.57038"
+     inkscape:document-units="px"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:zoom="0.7"
+     pagecolor="#ffffff"
+     showgrid="false"
+     units="px"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1" />
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1"
+     transform="translate(-72.469649,-255.22273)">
+    <path
+       d="m 140.76834,567.84201 80.03335,-6.11575 c -59.94724,-28.79554 12.10553,-181.59108 20.15829,-203.38662 28.43237,11.50475 12.86474,58.00949 68.29711,76.51424 -22.90096,-40.16192 -15.80193,-83.32385 -65.70289,-84.48577 50.44143,-4.87381 79.88285,-34.74763 90.32428,-49.62144 -91.89191,20.12619 -71.78381,27.25237 -95.67572,41.37856 4.88285,-20.08096 46.76571,-40.16192 32.64856,-85.24288 -15.89191,27.95952 -46.78381,40.91903 -47.67572,83.87855 -28.77929,-52.85357 -57.55858,-27.70715 -96.33787,-40.56072 -6.77929,12.14643 35.44143,12.29285 89.66214,48.43928 -57.22524,-2.04048 -77.45048,52.91904 -75.67572,65.87856 31.10809,-40.70715 37.21619,-19.41429 87.32428,-60.12144 -109.86997,215.0613 -78.3091,189.98217 -87.38009,213.44543 z"
+       id="path3708"
+       inkscape:export-filename="/home/clay/solano02.png"
+       inkscape:export-xdpi="90.000000"
+       inkscape:export-ydpi="90.000000"
+       sodipodi:nodetypes="cccccccccccccc"
+       style="fill:#67bb27;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6.71712637;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
+    <path
+       d="M 297.15179,591.06696 C 177.6722,592.60884 75.53125,587.59375 75.53125,587.59375 l -0.866071,0.96875 c 0,0 201.535251,-114.14593 413.553571,0 l 1.95982,0.45982 c -64.48838,6.38052 -130.44223,1.23699 -193.02678,2.04464 z"
+       id="path6292"
+       sodipodi:nodetypes="cccccc"
+       style="fill:#e6cc00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:5.88999987;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

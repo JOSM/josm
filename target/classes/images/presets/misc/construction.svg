@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg height="76.7998" id="svg1117" inkscape:version="0.40"  width="173.177" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://web.resource.org/cc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <metadata>
+    <rdf:RDF xmlns:cc="http://web.resource.org/cc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <cc:Work rdf:about="">
+        <dc:title>advertising</dc:title>
+        <dc:description></dc:description>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li></rdf:li>
+            <rdf:li>caution</rdf:li>
+            <rdf:li>security</rdf:li>
+            <rdf:li>warning</rdf:li>
+            <rdf:li>signs_and_symbols</rdf:li>
+            <rdf:li>sign</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://www.openclipart.org">
+            <dc:title>yves GUILLOU</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>yves GUILLOU</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>yves GUILLOU</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date></dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://web.resource.org/cc/PublicDomain"/>
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+        <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+        <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview bordercolor="#666666" borderopacity="1.0" id="base" inkscape:current-layer="svg1117" inkscape:cx="69.495649" inkscape:cy="33.813108" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:window-height="810" inkscape:window-width="1070" inkscape:window-x="111" inkscape:window-y="137" inkscape:zoom="6.9644045" pagecolor="#ffffff"/>
+  <defs id="defs1118">
+    <marker id="ArrowEnd" markerHeight="3" markerUnits="strokeWidth" markerWidth="4" orient="auto" refX="0" refY="5" viewBox="0 0 10 10">
+      <path d="M 0 0 L 10 5 L 0 10 z" id="path1120"/>
+    </marker>
+    <marker id="ArrowStart" markerHeight="3" markerUnits="strokeWidth" markerWidth="4" orient="auto" refX="10" refY="5" viewBox="0 0 10 10">
+      <path d="M 10 0 L 0 5 L 10 10 z" id="path1122"/>
+    </marker>
+  </defs>
+  <g id="g1123">
+    <path d="M 120.04 15.7225L 81.5306 15.7225L 157.455 55.8654L 157.455 35.5045L 120.04 15.7225z" id="path1124" style="stroke:none; fill:#000000"/>
+    <path d="M 157.455 15.7225L 120.04 15.7225L 157.455 35.5045L 157.455 15.7225z" id="path1125" style="stroke:none; fill:#ffcc00"/>
+    <path d="M 42.277700,15.722500 L 128.05900,61.077100 L 157.45500,61.077100 L 157.45500,55.865400 L 82.069052,15.543016 L 42.277700,15.722500 z " id="path1126" sodipodi:nodetypes="cccccc" style="stroke:none; fill:#ffcc00"/>
+    <path d="M 15.7224 15.7225L 15.7224 23.1283L 87.4967 61.0771L 128.059 61.0771L 42.2777 15.7225L 15.7224 15.7225z" id="path1127" style="stroke:none; fill:#000000"/>
+    <path d="M 15.7224 43.8822L 48.2439 61.0771L 87.4967 61.0771L 15.7224 23.1283L 15.7224 43.8822z" id="path1128" style="stroke:none; fill:#ffcc00"/>
+    <path d="M 15.7224 61.0771L 48.2439 61.0771L 15.7224 43.8822L 15.7224 61.0771z" id="path1129" style="stroke:none; fill:#000000"/>
+    <path d="M 157.455 61.0772L 157.455 15.7225L 15.7225 15.7225L 15.7225 61.0772L 157.455 61.0772z" id="path1130" style="stroke:#000000; stroke-width:3; fill:none"/>
+  </g>
+</svg>

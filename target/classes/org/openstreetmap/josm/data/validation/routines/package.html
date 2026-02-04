@@ -1,0 +1,294 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<html>
+<head>
+<title>Package Documentation for org.openstreetmap.josm.data.validation.routines Package</title>
+</head>
+<body bgcolor="white">
+    <p>This package contains <i>independent</i> validation routines adapted from Apache Commons Validator 1.5.0.</p>
+<h1>Table of Contents</h1>
+
+<ul>
+<li>1. <a href="#overview">Overview</a></li>
+<li>2. <a href="#other">Validators</a>
+    <ul>
+    <li>2.1 <a href="#other.overview">Overview</a></li>
+    <li>2.2 <a href="#other.regex">Regular Expression validation</a></li>
+    <li>2.3 <a href="#other.inet">IP Address Validation</a></li>
+    <li>2.4 <a href="#other.email">Email Address Validation</a></li>
+    <li>2.5 <a href="#other.url">URL Validation</a></li>
+    <li>2.6 <a href="#other.domain">Domain Name Validation</a></li>
+    </ul></li>
+</ul>
+
+<a id="overview"></a>
+<h1>1. Overview</h1>
+<p>
+   Commons Validator serves two purposes:
+</p>
+    <ul>
+       <li>To provide standard, independent validation routines/functions.</li>
+       <li>To provide a <i>mini</i> framework for Validation.</li>
+    </ul>
+<p>
+   This package has been created, since version 1.3.0, in an attempt to clearly
+   separate these two concerns and is the location for the standard, independent
+   validation routines/functions in <em>Commons Validator</em>.
+</p>
+
+<p>
+   The contents of this package have no dependencies on the framework aspect of
+   Commons Validator and can be used on their own.
+</p>
+
+<a id="other"></a>
+<h1>2. Validators</h1>
+
+<a id="other.overview"></a>
+<h2>2.1 Overview</h2>
+<p>
+   This section lists other available validators.
+</p>
+<ul>
+   <li><a href="#other.regex">Regular Expressions</a> - validates
+       using Java 1.4+ regular expression support</li>
+   <li><a href="#other.inet">IP Address Validation</a> - provides IPv4 address
+       validation.</li>
+   <li><a href="#other.email">Email Address Validation</a> - provides email
+       address validation according to RFC 822 standards.</li>
+   <li><a href="#other.url">URL Validation</a> - provides URL validation on
+       scheme, domain, and authority.</li>
+   <li><a href="#other.domain">Domain Name Validation</a> - provides domain
+       name and IANA TLD validation.</li>
+</ul>
+
+<a id="other.regex"></a>
+<h2>2.2 Regular Expression Validation</h2>
+<p>
+   Regular expression validation can be done either by using the <i>static</i>
+   methods provied by <a href="RegexValidator.html">RegexValidator</a> or
+   by creating a new instance, which caches and re-uses compiled Patterns.
+</p>
+<ul>
+   <li><b>Method Flavours</b> - three <i>flavours</i> of validation metods are provided:
+    <ul>
+        <li><code>isValid()</code> methods return true/false to indicate
+            whether validation was successful.</li>
+        <li><code>validate()</code> methods return a <code>String</code>
+            value of the matched <i>groups</i> aggregated together or
+            <code>null</code> if invalid.</li>
+        <li><code>match()</code> methods return a <code>String</code> array
+            of the matched <i>groups</i> or <code>null</code> if invalid.</li>
+    </ul>
+   </li>
+   <li><b>Case Sensitivity</b> - matching can be done in either a <i>case
+       sensitive</i> or <i>case in-sensitive</i> way.</li>
+   <li><b>Multiple Expressions</b> - instances of the
+       <a href="RegexValidator.html">RegexValidator</a>
+       can be created to either match against a single regular expression
+       or set (String array) of regular expressions.</li>
+</ul>
+<p>
+   Below is an example of using one of the static methods to validate,
+   matching in a <i>case insensitive</i> manner and returning a String
+   of the matched groups (which doesn't include the hyphen).
+</p>
+<pre>
+      // set up the parameters
+      boolean caseSensitive   = false;
+      String regex            = "^([A-Z]*)(?:\\-)([A-Z]*)$";
+
+      // validate - result should be a String of value "abcdef"
+      String result = RegexValidator.validate("abc-def", regex, caseSensitive);
+
+</pre>
+
+<p>The following static methods are provided for regular expression validation:
+</p>
+<ul>
+    <li><code>isValid(<i>value</i>, <i>regex</i>)</code></li>
+    <li><code>isValid(<i>value</i>, <i>regex</i>, <i>caseSensitive</i>)</code></li>
+    <li><code>validate(<i>value</i>, <i>regex</i>)</code></li>
+    <li><code>validate(<i>value</i>, <i>regex</i>, <i>caseSensitive</i>)</code></li>
+    <li><code>match(<i>value</i>, <i>regex</i>)</code></li>
+    <li><code>match(<i>value</i>, <i>regex</i>, <i>caseSensitive</i>)</code></li>
+</ul>
+<p>
+   Below is an example of creating an instance of
+   <a href="RegexValidator.html">RegexValidator</a> matching in a <i>case insensitive</i>
+   manner against a set of regular expressions:
+</p>
+<pre>
+      // set up the parameters
+      boolean caseSensitive = false;
+      String regex1   = "^([A-Z]*)(?:\\-)([A-Z]*)*$"
+      String regex2   = "^([A-Z]*)$";
+      String[] regexs = new String[] {regex1, regex1};
+
+      // Create the validator
+      RegexValidator validator = new RegexValidator(regexs, caseSensitive);
+
+      // Validate true/false
+      boolean valid = validator.isValid("abc-def");
+
+      // Validate and return a String
+      String result = validator.validate("abc-def");
+
+      // Validate and return a String[]
+      String[] groups = validator.match("abc-def");
+
+</pre>
+<p>See the
+   <a href="RegexValidator.html">RegexValidator</a> javadoc for a full list
+   of the available constructors.
+</p>
+
+<a id="other.inet"></a>
+<h2>2.3 IP Address Validation</h2>
+
+<p>
+    <a href="InetAddressValidator.html">InetAddressValidator</a> provides
+    IPv4 address validation.
+</p>
+<p>
+    For example:
+</p>
+<pre>
+
+      // Get an InetAddressValidator
+      InetAddressValidator validator = InetAddressValidator.getInstance();
+
+      // Validate an IPv4 address
+      if (!validator.isValid(candidateInetAddress)) {
+          ... // invalid
+      }
+
+</pre>
+
+<a id="other.email"></a>
+<h2>2.4 Email Address Validation</h2>
+
+<p>
+    <a href="EmailValidator.html">EmailValidator</a> provides email address
+    validation according to RFC 822 standards.
+</p>
+<p>
+    For example:
+</p>
+<pre>
+      // Get an EmailValidator
+      EmailValidator validator = EmailValidator.getInstance();
+
+      // Validate an email address
+      boolean isAddressValid = validator.isValid("user@apache.org");
+
+      // Validate a variable containing an email address
+      if (!validator.isValid(addressFromUserForm)) {
+          webController.sendRedirect(ERROR_REDIRECT, "Email address isn't valid");
+          // etc.
+      }
+</pre>
+
+<a id="other.url"></a>
+<h2>2.5 URL Validation</h2>
+
+<p>
+    <a href="UrlValidator.html">UrlValidator</a> provides URL validation by
+    checking the scheme, authority, path, query, and fragment in turn. Clients
+    may specify valid schemes to be used in validating in addition to or instead of
+    the default values (HTTP, HTTPS, FTP). The UrlValidator also supports options
+    that change the parsing rules; for example, the ALLOW_2_SLASHES option instructs
+    the Validator to allow consecutive slash characters in the path component, which
+    is considered an error by default.
+
+    For more information on the available options, see the UrlValidator documentation.
+</p>
+<p>
+    For example:
+</p>
+<pre>
+      // Get an UrlValidator
+      UrlValidator defaultValidator = new UrlValidator(); // default schemes
+      if (defaultValidator.isValid("http://www.apache.org")) {
+          ... // valid
+      }
+      if (!defaultValidator.isValid("http//www.oops.com")) {
+          ... // invalid
+      }
+
+      // Get an UrlValidator with custom schemes
+      String[] customSchemes = { "sftp", "scp", "https" };
+      UrlValidator customValidator = new UrlValidator(customSchemes);
+      if (!customValidator.isValid("http://www.apache.org")) {
+          ... // invalid due to insecure protocol
+      }
+
+      // Get an UrlValidator that allows double slashes in the path
+      UrlValidator doubleSlashValidator = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
+      if (doubleSlashValidator.isValid("http://www.apache.org//projects")) {
+          ... // valid only in this Validator instance
+      }
+</pre>
+
+<a id="other.domain"></a>
+<h2>2.6 Domain Name Validation</h2>
+
+<p>
+    <a href="DomainValidator.html">DomainValidator</a> provides validation of Internet
+    domain names as specified by RFC1034/RFC1123 and according to the IANA-recognized
+    list of top-level domains (TLDs). Clients may validate an entire domain name, a
+    TLD of any category, or a TLD within a specific category.
+</p>
+<p>
+    For example:
+</p>
+<pre>
+      // Get a DomainValidator
+      DomainValidator validator = DomainValidator.getInstance();
+
+      // Validate a domain name
+      if (validator.isValid("www.apache.org")) {
+          ... // valid
+      }
+      if (!validator.isValid("www.apache.wrong")) {
+          ... // invalid
+      }
+
+      // Validate a TLD
+      if (validator.isValidTld(".com")) {
+          ... // valid
+      }
+      if (validator.isValidTld("org")) {
+          ... // valid, the leading dot is optional
+      }
+      if (validator.isValidTld(".us")) {
+          ... // valid, country code TLDs are also accepted
+      }
+
+      // Validate TLDs in categories
+      if (validator.isValidGenericTld(".name")) {
+          ... // valid
+      }
+      if (!validator.isValidGenericTld(".uk")) {
+          ... // invalid, .uk is a country code TLD
+      }
+      if (!validator.isValidCountryCodeTld(".info")) {
+          ... // invalid, .info is a generic TLD
+      }
+</pre>
+</body>
+</html>

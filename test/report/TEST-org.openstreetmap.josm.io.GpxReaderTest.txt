@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.io.GpxReaderTest
+Test: testException() took 1 milli sec(s)
+Test: testLayerPrefs() took 3 milli sec(s)
+Test: testTicket15634() took 2 milli sec(s)
+Test: testIncompleteLocations(String)[1] took 0 milli sec(s)
+Test: testIncompleteLocations(String)[2] took 1 milli sec(s)
+Test: testIncompleteLocations(String)[3] took 0 milli sec(s)
+Test: testMunich() took 60 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 155 milli sec(s)

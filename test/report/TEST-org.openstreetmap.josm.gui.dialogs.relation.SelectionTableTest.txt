@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.relation.SelectionTableTest
+Test: testSelectionTable() took 1 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 67 milli sec(s)

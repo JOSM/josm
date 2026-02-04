@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.autofilter.AutoFilterRuleTest
+Test: testTagValuesForPrimitivesDefaults() took 1 milli sec(s)
+Test: testValueFormatter() took 0 milli sec(s)
+Test: testTagValuesForPrimitive() took 1 milli sec(s)
+Test: testTagValuesForPrimitiveInclineUnit() took 0 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 56 milli sec(s)

@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.io.OsmWriterTest
+Test: testByIdComparator() took 1 milli sec(s)
+Test: testNode() took 0 milli sec(s)
+Test: testWriteLock() took 0 milli sec(s)
+Test: testHeader() took 0 milli sec(s)
+Test: testChangeset() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 85 milli sec(s)

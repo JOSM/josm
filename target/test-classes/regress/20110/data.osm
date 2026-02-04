@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-101770' action='modify' visible='true' lat='52.8825296301' lon='8.42060908349' />
+  <node id='-101771' action='modify' visible='true' lat='52.88854640489' lon='8.44962466717' />
+  <node id='-101772' action='modify' visible='true' lat='52.89813899419' lon='8.46022478752' />
+  <node id='-101773' action='modify' visible='true' lat='52.90491214264' lon='8.45681118944' />
+  <node id='-101774' action='modify' visible='true' lat='52.88388483241' lon='8.41512936025' />
+  <node id='-101775' action='modify' visible='true' lat='52.88290329214' lon='8.41611375352' />
+  <node id='-101777' action='modify' visible='true' lat='52.88990212311' lon='8.4328166643' />
+  <node id='-101778' action='modify' visible='true' lat='52.89224037406' lon='8.43774185623' />
+  <node id='-101779' action='modify' visible='true' lat='52.88839193568' lon='8.43854926475' />
+  <way id='-101791' action='modify' visible='true'>
+    <nd ref='-101770' />
+    <nd ref='-101771' />
+    <nd ref='-101772' />
+    <nd ref='-101773' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-101795' action='modify' visible='true'>
+    <nd ref='-101774' />
+    <nd ref='-101775' />
+    <nd ref='-101770' />
+  </way>
+  <way id='-101799' action='modify' visible='true'>
+    <nd ref='-101773' />
+    <nd ref='-101774' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-101805' action='modify' visible='true'>
+    <nd ref='-101777' />
+    <nd ref='-101778' />
+    <nd ref='-101779' />
+    <nd ref='-101777' />
+  </way>
+  <relation id='-99748' action='modify' visible='true'>
+    <member type='way' ref='-101795' role='outer' />
+    <member type='way' ref='-101799' role='outer' />
+    <member type='way' ref='-101791' role='outer' />
+    <tag k='natural' v='wetland' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+</osm>

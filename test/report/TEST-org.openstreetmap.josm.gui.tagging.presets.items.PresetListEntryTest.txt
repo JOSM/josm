@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.tagging.presets.items.PresetListEntryTest
+Test: testTicket12416() took 0 milli sec(s)
+Test: testTicket21550() took 1 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 86 milli sec(s)

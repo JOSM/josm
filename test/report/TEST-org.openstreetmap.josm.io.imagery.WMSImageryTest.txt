@@ -1,0 +1,30 @@
+Testcase: org.openstreetmap.josm.io.imagery.WMSImageryTest
+Test: testTicket15730() took 10 milli sec(s)
+Test: testTicket16248() took 2 milli sec(s)
+Test: testTicket16333() took 18 milli sec(s)
+Test: testTicket19193() took 3 milli sec(s)
+Test: testForTitleWithinAttribution_ticket16940() took 2 milli sec(s)
+Test: testNestedLayers() took 12 milli sec(s)
+Test: testWMSGetCapabilitiesException() took 0 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 348 milli sec(s)
+TTP/1.1 200 (1 ms)
+2026-02-04 20:42:59.154 INFO: GET http://localhost:58855/any?SERVICE=WMS&REQUEST=GetCapabilities -> HTTP/1.1 200 (4 ms)
+2026-02-04 20:42:59.155 INFO: Skipping unsupported image format application/atom+xml
+2026-02-04 20:42:59.155 INFO: Skipping unsupported image format application/json;type=geojson
+2026-02-04 20:42:59.155 INFO: Skipping unsupported image format application/json;type=topojson
+2026-02-04 20:42:59.155 INFO: Skipping unsupported image format application/json;type=utfgrid
+2026-02-04 20:42:59.155 INFO: Skipping unsupported image format application/pdf
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format application/rss+xml
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format application/vnd.google-earth.kml+xml
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format application/vnd.google-earth.kml+xml;mode=networklink
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format application/vnd.google-earth.kmz
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format application/x-protobuf;type=mapbox-vector
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format image/svg+xml
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format image/vnd.jpeg-png
+2026-02-04 20:42:59.156 INFO: Skipping unsupported image format text/html; subtype=openlayers
+2026-02-04 20:42:59.168 INFO: GET http://localhost:58855/any?SERVICE=WMS&REQUEST=GetCapabilities -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:59.170 INFO: GET http://localhost:58855/any?SERVICE=WMS&REQUEST=GetCapabilities -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:42:59.171 INFO: Skipping unsupported image format application/x-pdf
+2026-02-04 20:42:59.171 INFO: Skipping unsupported image format image/svg+xml
+2026-02-04 20:42:59.175 INFO: GET http://localhost:58855/serwis?SERVICE=WMS&REQUEST=GetCapabilities -> HTTP/1.1 200 (3 ms)
+------------- ---------------- ---------------

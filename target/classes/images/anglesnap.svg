@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="24px" height="24px">
+
+  <g stroke="#df421e" fill="#ffffff">
+    <g opacity=".5">
+      <path d="m6.5,1.5v10h10
+        m0,-10l-10,10l10,10" stroke="#ffc800" fill="none"/>
+      <path d="m5.5,.5h3v3h-3z
+        m10,0h3v3h-3z
+        m0,10h3v3h-3z
+        m0,10h3v3h-3z"/><!-- DarkRed-white nodes -->
+    </g>
+    <path d="m6.5,11.5v10" stroke="#ff0000"/>
+    <path d="m5.5,10.5h3v3h-3z
+      m0,10h3v3h-3z"/><!-- LightRed-white nodes -->
+
+  </g>
+</svg>

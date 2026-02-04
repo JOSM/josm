@@ -1,0 +1,21 @@
+Testcase: org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyActionTest
+Test: testNonRegression23444() took 116 milli sec(s)
+Test: testAddLock() took 93 milli sec(s)
+Test: testAdd() took 93 milli sec(s)
+Test: testMode() took 85 milli sec(s)
+Test: testMove() took 92 milli sec(s)
+Test: testNonRegression23444Selection() took 85 milli sec(s)
+Test: testMoveLock() took 93 milli sec(s)
+Test: testEnumState() took 68 milli sec(s)
+Test: testDeleteLock() took 90 milli sec(s)
+Test: testDelete() took 96 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 949 milli sec(s)
+ll be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@1adfd56e
+2026-02-04 20:40:39.605 INFO: Keystroke pressed W is already assigned to org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@77d93aac, will be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@642f5614
+2026-02-04 20:40:39.697 INFO: Keystroke pressed W is already assigned to org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@7de6c389, will be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@7707c681
+2026-02-04 20:40:39.783 INFO: Keystroke pressed W is already assigned to org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@232fabe6, will be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@5b3e98ba
+2026-02-04 20:40:39.875 INFO: Keystroke pressed W is already assigned to org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@4ca80019, will be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@227c89e6
+2026-02-04 20:40:39.958 INFO: Keystroke pressed W is already assigned to org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@364ab6f7, will be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@689204fc
+2026-02-04 20:40:40.119 INFO: Keystroke pressed W is already assigned to org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@5e7b9dc6, will be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@51463f10
+2026-02-04 20:40:40.211 INFO: Keystroke pressed W is already assigned to org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@102018c, will be overridden by org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction@4ee6bf31
+------------- ---------------- ---------------

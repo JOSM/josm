@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskTest
+Test: testAcceptsURL() took 2 milli sec(s)
+Test: testDownloadExternalFile() took 8 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 263 milli sec(s)
+:58781/samples/data.osm -> HTTP/1.1 200 (2 ms)
+------------- ---------------- ---------------

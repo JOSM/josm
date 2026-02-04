@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-25355' action='modify' visible='true' lat='52.70525056802' lon='8.2863900479' />
+  <node id='-25357' action='modify' visible='true' lat='52.70663875771' lon='8.28933646476' />
+  <node id='-25358' action='modify' visible='true' lat='52.70450084767' lon='8.29294054842' />
+  <node id='-25362' action='modify' visible='true' lat='52.70563846997' lon='8.28878800161' />
+  <node id='-25363' action='modify' visible='true' lat='52.70628725805' lon='8.28924416778' />
+  <node id='-25364' action='modify' visible='true' lat='52.70512022866' lon='8.29068470374' />
+  <way id='-579' action='modify' visible='true'>
+    <nd ref='-25355' />
+    <nd ref='-25357' />
+    <nd ref='-25358' />
+    <nd ref='-25355' />
+    <tag k='landuse' v='forest' />
+    <tag k='leaf_type' v='needleleaved' />
+  </way>
+  <way id='-585' action='modify' visible='true'>
+    <nd ref='-25362' />
+    <nd ref='-25363' />
+    <nd ref='-25364' />
+    <nd ref='-25362' />
+    <tag k='landuse' v='forest' />
+    <tag k='leaf_type' v='broadleaved' />
+  </way>
+</osm>

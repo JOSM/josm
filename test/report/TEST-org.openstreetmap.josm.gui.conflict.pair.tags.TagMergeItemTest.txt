@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItemTest
+Test: testTagMergeItem2() took 1 milli sec(s)
+Test: testTagMergeItem3() took 0 milli sec(s)
+Test: testTagMergeItem4() took 0 milli sec(s)
+Test: testApplyToMyPrimitive() took 0 milli sec(s)
+Test: testApplyToMyPrimitive2() took 0 milli sec(s)
+Test: testApplyToMyPrimitive3() took 0 milli sec(s)
+Test: testApplyToMyPrimitive4() took 1 milli sec(s)
+Test: testDecide1() took 0 milli sec(s)
+Test: testTagMergeItem() took 0 milli sec(s)
+Test: testDecide() took 0 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 59 milli sec(s)

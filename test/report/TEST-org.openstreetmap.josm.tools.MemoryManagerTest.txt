@@ -1,0 +1,15 @@
+Testcase: org.openstreetmap.josm.tools.MemoryManagerTest
+Test: testResetStateUseAfterFree() took 1 milli sec(s)
+Test: testUseAfterFree() took 0 milli sec(s)
+Test: testFreeAfterFree() took 0 milli sec(s)
+Test: testAllocationFails() took 0 milli sec(s)
+Test: testSupplierFails() took 0 milli sec(s)
+Test: testIsAvailableFails() took 0 milli sec(s)
+Test: testIsAvailable() took 1 milli sec(s)
+Test: testUseMemory() took 0 milli sec(s)
+Test: testResetState() took 0 milli sec(s)
+Tests run: 9, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 86 milli sec(s)
+511 INFO: Allocate for test2: 0 MB of memory. Available: 4 045 MB.
+2026-02-04 20:43:12.511 INFO: Allocate for test: 0 MB of memory. Available: 4 046 MB.
+2026-02-04 20:43:12.511 INFO: Allocate for test2: 0 MB of memory. Available: 4 045 MB.
+------------- ---------------- ---------------

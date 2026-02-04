@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.data.vector.VectorDataSetTest
+Test: testNodeDeduplication()[1] took 107 milli sec(s)
+Test: testNodeDeduplication()[2] took 106 milli sec(s)
+Test: testNodeDeduplication()[3] took 107 milli sec(s)
+Test: testNodeDeduplication()[4] took 109 milli sec(s)
+Test: testNodeDeduplication()[5] took 109 milli sec(s)
+Test: testNodeDeduplication()[6] took 109 milli sec(s)
+Test: testNodeDeduplication()[7] took 106 milli sec(s)
+Test: testNodeDeduplication()[8] took 108 milli sec(s)
+Test: testNodeDeduplication()[9] took 107 milli sec(s)
+Test: testNodeDeduplication()[10] took 103 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)

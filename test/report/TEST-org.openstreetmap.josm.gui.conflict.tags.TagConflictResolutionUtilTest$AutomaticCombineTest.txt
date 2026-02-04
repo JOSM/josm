@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest$AutomaticCombineTest
+Test: testMatchesKeyEmptyKey() took 0 milli sec(s)
+Test: testMatchesKeyNotRegex() took 0 milli sec(s)
+Test: testInvalidRegexExceptionFullyConstructed() took 1 milli sec(s)
+Test: testResolve() took 1 milli sec(s)
+Test: testInvalidRegexExceptionDefaultConstructed() took 0 milli sec(s)
+Test: testInvalidRegex() took 0 milli sec(s)
+Test: testMatchesKeyRegex() took 0 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 60 milli sec(s)
+Tests run: 0, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 118 milli sec(s)
+er') -> For input string: "bar"
+------------- ---------------- ---------------

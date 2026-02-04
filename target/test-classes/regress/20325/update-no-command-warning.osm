@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-103699' action='modify' visible='true' lat='52.89615136699' lon='8.35203543126' />
+  <node id='-103700' action='modify' visible='true' lat='52.91706439562' lon='8.35491004017' />
+  <node id='-103701' action='modify' visible='true' lat='52.90314155932' lon='8.37961371048' />
+  <way id='-106895' action='modify' visible='true'>
+    <nd ref='-103699' />
+    <nd ref='-103700' />
+    <nd ref='-103701' />
+    <nd ref='-103699' />
+  </way>
+  <relation id='-99800' action='modify' visible='true'>
+    <member type='way' ref='-106895' role='outer' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+</osm>

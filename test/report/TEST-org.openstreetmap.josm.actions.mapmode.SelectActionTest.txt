@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.actions.mapmode.SelectActionTest
+Test: testEnumMode() took 74 milli sec(s)
+Test: testEnumSelectActionCursor() took 71 milli sec(s)
+Test: testTicket10748() took 89 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 275 milli sec(s)
+ctions.mapmode.SelectAction@25886b8e, will be overridden by org.openstreetmap.josm.actions.mapmode.SelectActionTest$SelectActionMock@585c651c
+------------- ---------------- ---------------

@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManagerTest
+Test: testChangesetDetailViewSynchronizer() took 1 milli sec(s)
+Test: testCancelAction() took 3 milli sec(s)
+Test: testBuild() took 7 milli sec(s)
+Test: testDownloadMyChangesets() took 48 milli sec(s)
+Test: testDownloadSelectedChangesetContentAction() took 50 milli sec(s)
+Test: testCloseSelectedChangesetsAction() took 1 milli sec(s)
+Test: testRemoveFromCacheAction() took 1 milli sec(s)
+Test: testDestroyInstance() took 0 milli sec(s)
+Test: testDownloadSelectedChangesetsAction() took 51 milli sec(s)
+Test: testQueryAction() took 174 milli sec(s)
+Test: testShowDetailAction() took 1 milli sec(s)
+Tests run: 11, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 405 milli sec(s)

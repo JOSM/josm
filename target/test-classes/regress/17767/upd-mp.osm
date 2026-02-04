@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='2005535324' timestamp='2012-11-09T23:12:38Z' uid='192181' user='hennie90' visible='true' version='1' changeset='13815605' lat='52.8969453' lon='8.4315703' />
+  <node id='2005535336' timestamp='2012-11-09T23:12:38Z' uid='192181' user='hennie90' visible='true' version='1' changeset='13815605' lat='52.8969794' lon='8.431385' />
+  <node id='2005535480' timestamp='2012-11-09T23:12:41Z' uid='192181' user='hennie90' visible='true' version='1' changeset='13815605' lat='52.8975654' lon='8.431884' />
+  <node id='2005535490' timestamp='2012-11-09T23:12:42Z' uid='192181' user='hennie90' visible='true' version='1' changeset='13815605' lat='52.8975995' lon='8.4316988' />
+  <way id='189944949' timestamp='2012-11-09T23:13:05Z' uid='192181' user='hennie90' visible='true' version='1' changeset='13815605'>
+    <nd ref='2005535490' />
+    <nd ref='2005535480' />
+    <nd ref='2005535324' />
+    <nd ref='2005535336' />
+    <nd ref='2005535490' />
+    <tag k='amenity' v='parking' />
+    <tag k='capacity' v='32' />
+  </way>
+  <relation id='7309419' timestamp='2017-06-04T19:27:59Z' uid='92274' user='adjuva' visible='true' version='1' changeset='49250013'>
+    <member type='node' ref='3710947411' role='stop' />
+    <member type='node' ref='3710947412' role='stop' />
+    <member type='way' ref='233536420' role='platform' />
+    <member type='way' ref='233536421' role='platform' />
+    <member type='way' ref='111752151' role='building' />
+    <member type='node' ref='4566467239' role='' />
+    <member type='node' ref='2005535504' role='' />
+    <member type='way' ref='189944949' role='' />
+    <tag k='name' v='Wildeshausen' />
+    <tag k='public_transport' v='stop_area' />
+    <tag k='type' v='public_transport' />
+  </relation>
+</osm>

@@ -1,0 +1,47 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+way[test] {
+	width: 10;
+	color: red;
+}
+
+way[test=style5] {
+	dashes: 3,3,10,3;
+}
+
+way[test=style4] {
+	dashes: 0.2,5;
+}
+
+way[test=style3] {
+	color: blue;
+	dashes: list(12, 2);
+	dashes-offset: 1;
+}
+
+way[test=style2] {
+	dashes: list(8, 4);
+	dashes-offset: 1;
+	dashes-background-color: green;
+}
+
+way[test=style1] {
+	dashes: 8, 4;
+	dashes-offset: 1;
+	dashes-background-color: green;
+	dashes-background-opacity: .5;
+}
+
+way[test=out-of-screen] {
+    width: 5;
+    color: teal;
+    opacity: 0.7;
+	dashes: 18, 14;
+	dashes-offset: 1;
+	dashes-background-color: khaki;
+	dashes-background-opacity: .8;
+}
+

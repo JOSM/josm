@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.actions.upload.UploadNotesTaskTest
+Test: testUpload(NoteData, Collection)[1] took 50 milli sec(s)
+Test: testUpload(NoteData, Collection)[2] took 30 milli sec(s)
+Test: testUpload(NoteData, Collection)[3] took 33 milli sec(s)
+Test: testUpload(NoteData, Collection)[4] took 31 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 184 milli sec(s)

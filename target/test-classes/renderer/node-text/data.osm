@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-30552' action='modify' visible='true' lat='0.1' lon='0.1' >
+    <tag k='test' v='n21' />
+  </node>
+  <node id='-30554' action='modify' visible='true' lat='0.1' lon='0.3' >
+    <tag k='test' v='n22' />
+  </node>
+  <node id='-30556' action='modify' visible='true' lat='0.1' lon='0.5' >
+    <tag k='test' v='n23' />
+    <tag k='name' v='Test' />
+  </node>
+  <node id='-30558' action='modify' visible='true' lat='0.1' lon='0.7' >
+    <tag k='test' v='n24' />
+    <tag k='ref' v='Test' />
+  </node>
+  <node id='-30560' action='modify' visible='true' lat='0.1' lon='0.9' >
+    <tag k='test' v='n25' />
+  </node>
+  <node id='-30562' action='modify' visible='true' lat='0.3' lon='0.1' >
+    <tag k='test' v='n16' />
+  </node>
+  <node id='-30564' action='modify' visible='true' lat='0.3' lon='0.3' >
+    <tag k='test' v='n17' />
+  </node>
+  <node id='-30566' action='modify' visible='true' lat='0.3' lon='0.5' >
+    <tag k='test' v='n18' />
+  </node>
+  <node id='-30568' action='modify' visible='true' lat='0.3' lon='0.7' >
+    <tag k='test' v='n19' />
+    <tag k='highlight' v='yes' />
+  </node>
+  <node id='-30570' action='modify' visible='true' lat='0.3' lon='0.9' >
+    <tag k='test' v='n20' />
+    <tag k='disabled' v='yes' />
+  </node>
+  <node id='-30572' action='modify' visible='true' lat='0.5' lon='0.1' >
+    <tag k='test' v='n11' />
+  </node>
+  <node id='-30574' action='modify' visible='true' lat='0.5' lon='0.3' >
+    <tag k='test' v='n12' />
+  </node>
+  <node id='-30576' action='modify' visible='true' lat='0.5' lon='0.5' >
+    <tag k='test' v='n13' />
+  </node>
+  <node id='-30578' action='modify' visible='true' lat='0.5' lon='0.7' >
+    <tag k='test' v='n14' />
+  </node>
+  <node id='-30580' action='modify' visible='true' lat='0.5' lon='0.9' >
+    <tag k='test' v='n15' />
+  </node>
+  <node id='-30582' action='modify' visible='true' lat='0.7' lon='0.1' >
+    <tag k='test' v='n6' />
+  </node>
+  <node id='-30584' action='modify' visible='true' lat='0.7' lon='0.3' >
+    <tag k='test' v='n7' />
+  </node>
+  <node id='-30586' action='modify' visible='true' lat='0.7' lon='0.5' >
+    <tag k='test' v='n8' />
+  </node>
+  <node id='-30588' action='modify' visible='true' lat='0.7' lon='0.7' >
+    <tag k='test' v='n9' />
+  </node>
+  <node id='-30590' action='modify' visible='true' lat='0.7' lon='0.9' >
+    <tag k='test' v='n10' />
+  </node>
+  <node id='-30592' action='modify' visible='true' lat='0.9' lon='0.1' >
+    <tag k='test' v='n1' />
+  </node>
+  <node id='-30594' action='modify' visible='true' lat='0.9' lon='0.3' >
+    <tag k='test' v='n2' />
+  </node>
+  <node id='-30596' action='modify' visible='true' lat='0.9' lon='0.5' >
+    <tag k='test' v='n3' />
+  </node>
+  <node id='-30598' action='modify' visible='true' lat='0.9' lon='0.7' >
+    <tag k='test' v='n4' />
+  </node>
+  <node id='-30600' action='modify' visible='true' lat='0.9' lon='0.9' >
+    <tag k='test' v='n5' />
+  </node>
+</osm>

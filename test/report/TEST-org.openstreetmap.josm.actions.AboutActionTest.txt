@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.actions.AboutActionTest
+Test: testBuildAboutPanel() took 1 sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)
+---
+2026-02-04 20:40:26.110 INFO: Reassigning shortcut 'system:deletelayer' from null to 640 because of conflict with ⌃+F4
+2026-02-04 20:40:26.111 INFO: Silent shortcut conflict: 'system:deletelayer' moved by 'apple-reserved-15' to '⌃+⌥+F1'.
+2026-02-04 20:40:26.295 INFO: Registered toolbar action logo overwritten: org.openstreetmap.josm.actions.AboutAction gets org.openstreetmap.josm.actions.AboutAction
+2026-02-04 20:40:26.840 INFO: GET https://josm.openstreetmap.de/wiki/StartupPage -> HTTP/1.1 200 (758 ms)
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:40:26.187 WARNING: Using fake clipboard.
+------------- ---------------- ---------------

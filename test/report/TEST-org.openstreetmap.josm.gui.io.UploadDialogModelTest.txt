@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.io.UploadDialogModelTest
+Test: testNonRegression23153() took 100 milli sec(s)
+Test: testUploadDialogModel() took 96 milli sec(s)
+Test: testGetCommentWithDataSetHashTag() took 93 milli sec(s)
+Test: testCommentWithHashtags() took 92 milli sec(s)
+Test: testFindHashTags() took 91 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 539 milli sec(s)

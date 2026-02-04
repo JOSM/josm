@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.10.1
+Created-By: 1.8.0_152-b16 (Oracle Corporation)
+Plugin-Mainversion: 7654
+Plugin-Version: 5432
+Plugin-Class: org.openstreetmap.josm.plugin.corrupted.CorruptedPlugin
+Plugin-Description: A plugin whose download gets corrupted.
+Plugin-Date: 2017-06-01T12:34:56.789012Z
+Author: Example Author <author@example.com>
+Plugin-Link: https://example.com/corrupted-plugin
+Plugin-Icon: images/preferences/corrupted.png
+Plugin-Canloadatruntime: false

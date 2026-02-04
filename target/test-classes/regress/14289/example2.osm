@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-30485' action='modify' visible='true' lat='-23.2277275943' lon='-51.12651457665' />
+  <node id='-30487' action='modify' visible='true' lat='-23.22434907439' lon='-51.12226912293' />
+  <node id='-30489' action='modify' visible='true' lat='-23.22804935364' lon='-51.12318824177' />
+  <node id='-30491' action='modify' visible='true' lat='-23.22274022534' lon='-51.11793613408' />
+  <node id='-30493' action='modify' visible='true' lat='-23.22652098986' lon='-51.11854887998' />
+  <node id='-30495' action='modify' visible='true' lat='-23.22648076952' lon='-51.12296940395' />
+  <node id='-30497' action='modify' visible='true' lat='-23.2288537486' lon='-51.12467633895' />
+  <node id='-30499' action='modify' visible='true' lat='-23.23014077046' lon='-51.11929292857' />
+  <node id='-30664' action='modify' visible='true' lat='-23.22448675761' lon='-51.12075882171' />
+  <node id='-30665' action='modify' visible='true' lat='-23.22758893344' lon='-51.1210246296' />
+  <node id='-30667' action='modify' visible='true' lat='-23.22773549114' lon='-51.11932345911' />
+  <node id='-30669' action='modify' visible='true' lat='-23.22368066863' lon='-51.11932345911' />
+  <way id='-30509' action='modify' visible='true'>
+    <nd ref='-30487' />
+    <nd ref='-30485' />
+    <nd ref='-30489' />
+    <nd ref='-30491' />
+    <nd ref='-30487' />
+    <tag k='name' v='A' />
+    <tag k='natural' v='wood' />
+  </way>
+  <way id='-30511' action='modify' visible='true'>
+    <nd ref='-30493' />
+    <nd ref='-30495' />
+    <nd ref='-30497' />
+    <nd ref='-30499' />
+    <nd ref='-30493' />
+    <tag k='name' v='B' />
+    <tag k='natural' v='wood' />
+  </way>
+  <way id='-30666' action='modify' visible='true'>
+    <nd ref='-30664' />
+    <nd ref='-30665' />
+    <nd ref='-30667' />
+    <nd ref='-30669' />
+    <nd ref='-30664' />
+    <tag k='name' v='C' />
+    <tag k='natural' v='wood' />
+  </way>
+</osm>

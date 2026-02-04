@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.tools.OsmPrimitiveImageProviderTest
+Test: testGetResourceNonSquare() took 49 milli sec(s)
+Test: testGetResource() took 4 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 199 milli sec(s)

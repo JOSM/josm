@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gpx version="1.1" creator="JOSM GPX export" xmlns="http://www.topografix.com/GPX/1/1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <bounds minlat="-44.6794593" minlon="168.9676659" maxlat="-44.6267934" maxlon="169.114549"/>
+  </metadata>
+  <trk>
+    <trkseg>
+      <trkpt lat="-44.64903055828478" lon="168.9688660654368">
+        <time>2018-08-01T04:15:00.000Z</time>
+      </trkpt>
+      <trkpt lat="-44.627129349" lon="168.96766593933">
+        <time>2018-08-01T04:45:00.000Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <trkseg>
+      <trkpt lat="-44.67377988143" lon="169.10087551117">
+        <time>2018-08-01T01:15:00.000Z</time>
+      </trkpt>
+      <trkpt lat="-44.67574681965" lon="169.08905899514">
+        <time>2018-08-01T01:20:00.000Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <trkseg>
+      <trkpt lat="-44.67945926209" lon="169.08388386828">
+        <time>2018-08-01T01:30:00.000Z</time>
+      </trkpt>
+      <trkpt lat="-44.67193249915" lon="169.05767836406">
+      </trkpt>
+      <trkpt lat="-44.67829447303" lon="169.03051544255">
+        <time>2018-08-01T02:30:00.000Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <trkseg>
+      <trkpt lat="-44.67601752425" lon="169.02167947454">
+        <time>2018-08-01T02:40:00.000Z</time>
+      </trkpt>
+      <trkpt lat="-44.67302186733" lon="169.01440310326">
+        <time>2018-08-01T02:50:00.000Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <trkseg>
+      <trkpt lat="-44.67206867129" lon="169.00865859961">
+        <time>2018-08-01T02:55:00.000Z</time>
+      </trkpt>
+      <trkpt lat="-44.6715239808" lon="168.98031904829">
+        <time>2018-08-01T03:15:00.000Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <trkseg>
+      <trkpt lat="-44.6716601539" lon="169.11454895015">
+        <time>2018-08-01T01:05:00.000Z</time>
+      </trkpt>
+      <trkpt lat="-44.67261335666" lon="169.10708109541">
+        <time>2018-08-01T01:10:00.000Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <trkseg>
+      <trkpt lat="-44.62679341842" lon="169.09608703937">
+        <time>2018-08-01T06:30:00.000Z</time>
+      </trkpt>
+      <trkpt lat="-44.64397805726" lon="169.10662502858">
+        <time>2018-08-01T07:30:00.000Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

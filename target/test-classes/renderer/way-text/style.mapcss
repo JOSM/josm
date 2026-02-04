@@ -1,0 +1,49 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+way[test]{
+	font-family: "DejaVu Sans";
+}
+way[test=w1] {
+    text: name;
+    font-size: 12;
+    text-color: blue;
+    text-halo-color: yellow;
+    text-halo-radius: 2;
+    text-offset: 5;
+    color: yellow;
+    width: 2;
+}
+
+way[test=w2] {
+    text: eval("Groß Vahlberger Straße");
+    font-size: 12;
+    text-color: teal;
+    text-halo-color: #ca3;
+    text-halo-radius: 2;
+    color: #ca3;
+    width: 4;
+}
+
+way[test=bidi] { /* bi-directional text #12025 */
+    text: name;
+    font-size: 14;
+    text-color: white;
+    color: blue;
+    width: 16;
+}
+
+way[test=opacity] {
+    text-position: line;
+    text:auto;
+    font-size: 18;
+    text-color: coral;
+    text-opacity: 0.7;
+    text-halo-opacity: 0.4;
+    text-halo-color: cyan;
+    text-halo-radius: 2.5;
+    color: cyan;
+    width: 3;
+    text-offset-y: -5.5;
+}

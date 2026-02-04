@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<searchresults timestamp='Tue, 01 Aug 17 19:44:23 +0000'
+	attribution='Data © OpenStreetMap contributors, ODbL 1.0. http://www.openstreetmap.org/copyright'
+	querystring='London' polygon='false'
+	exclude_place_ids='172886376,4363712,171577264,393695,173598423,173598634,173598624,173495610,433519,361768,434160'
+	more_url='https://nominatim.openstreetmap.org/search.php?q=London&amp;exclude_place_ids=172886376%2C4363712%2C171577264%2C393695%2C173598423%2C173598634%2C173598624%2C173495610%2C433519%2C361768%2C434160&amp;format=xml&amp;accept-language=fr-FR%2Cfr%3Bq%3D0.8%2Cen-US%3Bq%3D0.6%2Cen%3Bq%3D0.4'>
+	<place place_id='172886376' osm_type='relation' osm_id='65606'
+		place_rank='16' boundingbox="51.2867602,51.6918741,-0.5103751,0.3340155"
+		lat='51.5073219' lon='-0.1276474' display_name='Londres, Grand Londres, Angleterre, Royaume-Uni'
+		class='place' type='city' importance='0.8654895765402'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_city.p.20.png' />
+	<place place_id='4363712' osm_type='node' osm_id='485248691'
+		place_rank='16' boundingbox="42.828576,43.148576,-81.406643,-81.086643"
+		lat='42.988576' lon='-81.246643' display_name='London, Ontario, Canada'
+		class='place' type='city' importance='0.6515723047601'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_city.p.20.png' />
+	<place place_id='171577264' osm_type='relation' osm_id='130591'
+		place_rank='16' boundingbox="37.079759,37.15226,-84.126262,-84.035957"
+		lat='37.1289771' lon='-84.0832646'
+		display_name='London, Laurel County, Kentucky, États-Unis d&#039;Amérique'
+		class='place' type='city' importance='0.50529223844486'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_city.p.20.png' />
+	<place place_id='393695' osm_type='node' osm_id='153408665'
+		place_rank='19' boundingbox="43.0277775,43.0677775,-89.0328881,-88.9928881"
+		lat='43.0477775' lon='-89.0128881'
+		display_name='London, Dane County, Wisconsin, États-Unis d&#039;Amérique'
+		class='place' type='hamlet' importance='0.457828369551'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_village.p.20.png' />
+	<place place_id='173598423' osm_type='relation' osm_id='182481'
+		place_rank='16' boundingbox="39.85928,39.921786,-83.478923,-83.389997"
+		lat='39.8864493' lon='-83.448253'
+		display_name='London, Madison County, Ohio, États-Unis d&#039;Amérique'
+		class='place' type='city' importance='0.44543898169688'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_city.p.20.png' />
+	<place place_id='173598634' osm_type='relation' osm_id='2730965'
+		place_rank='19' boundingbox="36.4734452,36.4884367,-119.4497699,-119.4385395"
+		lat='36.4760619' lon='-119.4431785'
+		display_name='London, Tulare County, Californie, États-Unis d&#039;Amérique'
+		class='place' type='village' importance='0.42045232539126'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_village.p.20.png' />
+	<place place_id='173495610' osm_type='relation' osm_id='111457'
+		place_rank='16' boundingbox="35.315577,35.33814,-93.272693,-93.187375"
+		lat='35.328973' lon='-93.2529553'
+		display_name='London, Pope County, Arkansas, États-Unis d&#039;Amérique'
+		class='place' type='city' importance='0.4184484386218'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_city.p.20.png' />
+	<place place_id='433519' osm_type='node' osm_id='154301303'
+		place_rank='19' boundingbox="38.1743567,38.2143567,-81.3886944,-81.3486944"
+		lat='38.1943567' lon='-81.3686944'
+		display_name='London, Kanawha County, Virginie-Occidentale, États-Unis d&#039;Amérique'
+		class='place' type='hamlet' importance='0.41707848858916'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_village.p.20.png' />
+	<place place_id='361768' osm_type='node' osm_id='151379108'
+		place_rank='19' boundingbox="32.2109892,32.2509892,-94.9643839,-94.9243839"
+		lat='32.2309892' lon='-94.9443839'
+		display_name='London, Rusk County, Texas, États-Unis d&#039;Amérique'
+		class='place' type='hamlet' importance='0.385'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_village.p.20.png' />
+	<place place_id='434160' osm_type='node' osm_id='154083583'
+		place_rank='19' boundingbox="40.8903338,40.9303338,-82.6493412,-82.6093412"
+		lat='40.9103338' lon='-82.6293412'
+		display_name='London, Cass Township, Richland County, Ohio, États-Unis d&#039;Amérique'
+		class='place' type='hamlet' importance='0.385'
+		icon='https://nominatim.openstreetmap.org/images/mapicons/poi_place_village.p.20.png' />
+</searchresults>

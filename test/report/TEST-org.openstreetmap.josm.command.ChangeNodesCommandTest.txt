@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.command.ChangeNodesCommandTest
+Test: testEqualsContract() took 10 milli sec(s)
+Test: testUndo() took 0 milli sec(s)
+Test: testFillModifiedData() took 1 milli sec(s)
+Test: testChange() took 0 milli sec(s)
+Test: testPreventEmptyWays() took 0 milli sec(s)
+Test: testDescription() took 1 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 53 milli sec(s)

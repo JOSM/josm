@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.gui.layer.markerlayer.AudioMarkerTest
+Test: testAudioMarker() took 24 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 106 milli sec(s)

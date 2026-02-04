@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-25' action='modify' visible='true' lat='-22.58401175177' lon='-47.41447678914' />
+  <node id='-28' action='modify' visible='true' lat='-22.58366442745' lon='-47.41407254727' />
+  <node id='-32' action='modify' visible='true' lat='-22.58386141747' lon='-47.4137890165' />
+  <node id='-34' action='modify' visible='true' lat='-22.5841698618' lon='-47.41412588474' />
+  <node id='-43' visible='true' lat='-22.58433963548' lon='-47.41448661447' />
+  <node id='-44' visible='true' lat='-22.583992312' lon='-47.41408237259' />
+  <node id='-45' visible='true' lat='-22.58418930154' lon='-47.41379884183' />
+  <node id='-46' visible='true' lat='-22.58449774514' lon='-47.41413571006' />
+  <way id='-29' action='modify' visible='true'>
+    <nd ref='-25' />
+    <nd ref='-28' />
+    <nd ref='-32' />
+    <nd ref='-34' />
+    <nd ref='-25' />
+    <tag k='natural' v='wood' />
+  </way>
+  <way id='-42' action='modify' visible='true'>
+    <nd ref='-43' />
+    <nd ref='-44' />
+    <nd ref='-45' />
+    <nd ref='-46' />
+    <nd ref='-43' />
+    <tag k='natural' v='wood' />
+  </way>
+</osm>

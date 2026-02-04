@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.gui.tagging.presets.items.LinkTest
+Test: testAddToPanel() took 2 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 82 milli sec(s)

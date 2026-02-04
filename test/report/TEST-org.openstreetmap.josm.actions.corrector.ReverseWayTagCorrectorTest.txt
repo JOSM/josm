@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.actions.corrector.ReverseWayTagCorrectorTest
+Test: testTagSwitch() took 1 milli sec(s)
+Test: testIsReversible() took 1 milli sec(s)
+Test: testNotSwitchingWayNodes() took 0 milli sec(s)
+Test: testSwitchingWayNodes() took 1 milli sec(s)
+Test: testUtilityClass() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 38 milli sec(s)

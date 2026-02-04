@@ -1,0 +1,15 @@
+Testcase: org.openstreetmap.josm.actions.MergeLayerActionTest
+Test: testMergeNoTargetLayer() took 148 milli sec(s)
+Test: testMergeTwoEmptyLayers() took 180 milli sec(s)
+Test: testMergeNoSourceLayer() took 61 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 435 milli sec(s)
+eLayerAction@4e42f135, will be overridden by org.openstreetmap.josm.actions.MergeLayerAction@21166bbd
+2026-02-04 20:40:32.626 INFO: Registered toolbar action action/mergelayer overwritten: org.openstreetmap.josm.actions.MergeLayerAction gets org.openstreetmap.josm.actions.MergeLayerAction
+2026-02-04 20:40:32.677 INFO: org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker answering 0 to showMessageDialog with message <html>There are no layers the source layer<br>'onion'<br>could be merged to.</html>
+2026-02-04 20:40:32.773 INFO: Keystroke ctrl pressed M is already assigned to org.openstreetmap.josm.actions.MergeLayerAction@4d0f69a2, will be overridden by org.openstreetmap.josm.actions.MergeLayerAction@27a1032e
+2026-02-04 20:40:32.773 INFO: Registered toolbar action action/mergelayer overwritten: org.openstreetmap.josm.actions.MergeLayerAction gets org.openstreetmap.josm.actions.MergeLayerAction
+2026-02-04 20:40:32.854 INFO: org.openstreetmap.josm.actions.MergeLayerActionTest$MergeLayerExtendedDialogMocker answering 1 to ExtendedDialog with content Please select the target layer.
+2026-02-04 20:40:32.858 INFO: Merge layer completed in 3 ms
+2026-02-04 20:40:32.952 INFO: Keystroke ctrl pressed M is already assigned to org.openstreetmap.josm.actions.MergeLayerAction@6caf2082, will be overridden by org.openstreetmap.josm.actions.MergeLayerAction@2b4d2d4
+2026-02-04 20:40:32.952 INFO: Registered toolbar action action/mergelayer overwritten: org.openstreetmap.josm.actions.MergeLayerAction gets org.openstreetmap.josm.actions.MergeLayerAction
+------------- ---------------- ---------------

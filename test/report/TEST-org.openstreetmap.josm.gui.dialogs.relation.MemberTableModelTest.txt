@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.relation.MemberTableModelTest
+Test: testTicket12443() took 1 milli sec(s)
+Test: testTicket12617() took 2 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 72 milli sec(s)

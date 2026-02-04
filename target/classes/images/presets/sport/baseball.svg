@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="470.85999"
+   id="svg1"
+   inkscape:version="0.46"
+   sodipodi:docbase="/home/aliekens/personal/inkscape"
+   sodipodi:docname="baseball.svg"
+   sodipodi:version="0.32"
+   width="470"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.0">
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Baseball</dc:title>
+        <dc:description>Baseball</dc:description>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>sports</rdf:li>
+            <rdf:li>toy</rdf:li>
+            <rdf:li>baseball</rdf:li>
+            <rdf:li>ball</rdf:li>
+            <rdf:li>entertainment</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org">
+            <dc:title>Open Clip Art Library</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Anthony Liekens</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Anthony Liekens</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective26" />
+    <linearGradient
+       id="linearGradient122">
+      <stop
+         id="stop123"
+         offset="0.0000000"
+         style="stop-color:#ff0000;stop-opacity:1.0000000;" />
+      <stop
+         id="stop124"
+         offset="1.0000000"
+         style="stop-color:#761414;stop-opacity:1.0000000;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient118">
+      <stop
+         id="stop119"
+         offset="0.0000000"
+         style="stop-color:#ffffff;stop-opacity:1.0000000;" />
+      <stop
+         id="stop120"
+         offset="1.0000000"
+         style="stop-color:#929648;stop-opacity:0.0000000;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient90">
+      <stop
+         id="stop91"
+         offset="0.0000000"
+         style="stop-color:#997c75;stop-opacity:1.0000000;" />
+      <stop
+         id="stop92"
+         offset="1.0000000"
+         style="stop-color:#929648;stop-opacity:1.0000000;" />
+    </linearGradient>
+    <radialGradient
+       cx="257.64386"
+       cy="341.40033"
+       fx="257.64386"
+       fy="341.40033"
+       gradientTransform="scale(1.020069,0.980326)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient93"
+       inkscape:collect="always"
+       r="555.5459"
+       xlink:href="#linearGradient90" />
+    <linearGradient
+       gradientTransform="scale(0.965896,1.035308)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient125"
+       inkscape:collect="always"
+       x1="457.40964"
+       x2="602.93018"
+       xlink:href="#linearGradient122"
+       y1="292.32196"
+       y2="528.50598" />
+    <linearGradient
+       gradientTransform="matrix(1.021654,0,0,0.978805,0,-8.571429)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient129"
+       inkscape:collect="always"
+       x1="408.17328"
+       x2="411.05389"
+       xlink:href="#linearGradient118"
+       y1="307.2547"
+       y2="696.27338" />
+    <linearGradient
+       gradientTransform="matrix(1.021654,0,0,0.978805,0,-8.571429)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient131"
+       inkscape:collect="always"
+       x1="408.17328"
+       x2="411.05389"
+       xlink:href="#linearGradient118"
+       y1="307.2547"
+       y2="696.27338" />
+    <linearGradient
+       gradientTransform="scale(1.021654,0.978805)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient133"
+       inkscape:collect="always"
+       x1="301.9812"
+       x2="481.55508"
+       xlink:href="#linearGradient118"
+       y1="354.11786"
+       y2="624.12701" />
+  </defs>
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     id="base"
+     inkscape:current-layer="layer1"
+     inkscape:cx="-3076.4286"
+     inkscape:cy="520"
+     inkscape:document-units="px"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="667"
+     inkscape:window-width="912"
+     inkscape:window-x="132"
+     inkscape:window-y="174"
+     inkscape:zoom="0.04375"
+     pagecolor="#ffffff"
+     showgrid="false" />
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1"
+     transform="translate(-182.14285,-260.21931)">
+    <path
+       d="M 637.14285,486.64789 A 220,211.42857 0 1 1 197.14285,486.64789 A 220,211.42857 0 1 1 637.14285,486.64789 z"
+       id="path85"
+       sodipodi:cx="417.14285"
+       sodipodi:cy="486.64789"
+       sodipodi:rx="220"
+       sodipodi:ry="211.42857"
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient93);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:30;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline" />
+    <path
+       d="M 394.85268,292.15625 C 322.25529,299.2018 254.03609,346.81512 225.52695,414.41895 C 192.77846,488.77754 215.78223,583.10321 278.78875,634.31019 C 341.76742,688.99027 438.51048,700.70417 512.37375,661.67624 C 574.31933,630.17505 619.29231,564.55185 620.20104,494.28335 C 623.66372,423.54731 583.02349,353.53899 521.23,319.52052 C 483.21911,297.58343 438.50599,288.27109 394.85268,292.15625 z"
+       id="path94"
+       style="opacity:0.68000034;fill:url(#linearGradient133);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:30;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline" />
+    <path
+       d="M 325.71428,292.36218 C 420.78242,291.96605 434.59377,366.33984 405.71428,409.50504 C 368.59394,483.76824 325.35056,529.14132 362.85714,583.79075 C 395.92588,628.28806 486.94969,650.70223 511.42857,543.79075 C 543.48972,479.35216 568.05607,451.84683 631.42857,478.07647"
+       id="path9"
+       sodipodi:nodetypes="ccccc"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient125);stroke-width:25;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:50, 25;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline" />
+    <path
+       d="M 637.14285,486.64789 A 220,211.42857 0 1 1 197.14285,486.64789 A 220,211.42857 0 1 1 637.14285,486.64789 z"
+       id="path8"
+       sodipodi:cx="417.14285"
+       sodipodi:cy="486.64789"
+       sodipodi:rx="220"
+       sodipodi:ry="211.42857"
+       sodipodi:type="arc"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:30;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline" />
+  </g>
+</svg>

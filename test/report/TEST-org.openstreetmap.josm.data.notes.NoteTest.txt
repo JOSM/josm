@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.data.notes.NoteTest
+Test: testEqualsContract() took 9 milli sec(s)
+Test: testToString() took 0 milli sec(s)
+Test: testUpdateWith() took 0 milli sec(s)
+Test: testSorting() took 1 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 50 milli sec(s)

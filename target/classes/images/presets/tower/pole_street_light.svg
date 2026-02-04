@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <path id="a" d="M1.89 2H.42v4h1.47v10h4.13V6h5.09V2H6.02V.09H1.89V2z"/>
+  <path id="b" d="m3.97 1v15"/>
+  <path id="c" d="M1.55 5.12h7.5V6h1.19V3.12H1.55v2z"/>
+  <path id="d" d="M6.74 6h5.5v2.56c0 1.25-1.02 2.27-2.28 2.27H9.1c-1.31 0-2.36-1.06-2.36-2.36V6z"/>
+  <path id="e" d="M7.86 6h3.25v2.14c0 .78-.64 1.4-1.42 1.37-.36-.02-.25-.01-.67-.03-.65-.02-1.16-.55-1.16-1.2V6z"/>
+ </defs>
+ <use fill="#fc0" xlink:href="#a"/>
+ <g fill-opacity="0">
+  <use stroke="#000" stroke-opacity="0" stroke-width="1.94" xlink:href="#a"/>
+  <use xlink:href="#b"/>
+  <use stroke="#8b4513" stroke-width="2" xlink:href="#b"/>
+ </g>
+ <use xlink:href="#c"/>
+ <use fill-opacity="0" stroke="#000" stroke-opacity="0" stroke-width="2" xlink:href="#c"/>
+ <use fill="#fc0" xlink:href="#d"/>
+ <use fill="#f38c0a" xlink:href="#e"/>
+</svg>

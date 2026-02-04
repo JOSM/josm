@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.tools.ColorHelperTest
+Test: testComplement() took 1 milli sec(s)
+Test: testAlphaMultiply() took 0 milli sec(s)
+Test: testColorFloat2int() took 0 milli sec(s)
+Test: testColor2html() took 0 milli sec(s)
+Test: testHtml2color() took 0 milli sec(s)
+Test: testColorInt2float() took 0 milli sec(s)
+Test: testGetForegroundColor() took 0 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 83 milli sec(s)

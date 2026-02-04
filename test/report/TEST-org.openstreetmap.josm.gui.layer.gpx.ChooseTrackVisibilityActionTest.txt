@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.gui.layer.gpx.ChooseTrackVisibilityActionTest
+Test: testAction() took 0 milli sec(s) SKIPPED: broken, see #16796
+Tests run: 0, Failures: 0, Skipped: 1, Aborted: 0, Time elapsed: 66 milli sec(s)

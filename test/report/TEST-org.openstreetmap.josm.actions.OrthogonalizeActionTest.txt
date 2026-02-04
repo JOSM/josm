@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.actions.OrthogonalizeActionTest
+Test: testClosedWayWithReferenceNodes() took 4 milli sec(s)
+Test: testNoSelection() took 2 milli sec(s)
+Test: testTwoRingsAtOnce() took 1 milli sec(s)
+Test: testTwoWaysFormingClosedWay() took 1 milli sec(s)
+Test: testClosedWay() took 1 milli sec(s)
+Test: testEnumDirection() took 0 milli sec(s)
+Test: testFourNodes() took 1 milli sec(s)
+Test: testUtilityClass() took 1 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 63 milli sec(s)

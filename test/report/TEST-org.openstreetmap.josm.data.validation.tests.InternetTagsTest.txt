@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.InternetTagsTest
+Test: testInvalidUrls() took 1 milli sec(s)
+Test: testValidUrls() took 1 milli sec(s)
+Test: testInvalidEmails() took 0 milli sec(s)
+Test: testInvalidSlashes() took 0 milli sec(s)
+Test: testMultipleUrls() took 1 milli sec(s)
+Test: testValidEmails() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 60 milli sec(s)

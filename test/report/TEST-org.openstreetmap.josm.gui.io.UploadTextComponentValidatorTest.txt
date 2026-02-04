@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.io.UploadTextComponentValidatorTest
+Test: testUploadCommentValidator() took 3 milli sec(s)
+Test: testUploadWithMandatoryTerm(String, String, BiFunction)[1] took 1 milli sec(s)
+Test: testUploadWithMandatoryTerm(String, String, BiFunction)[2] took 1 milli sec(s)
+Test: testUploadSourceValidator() took 1 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 74 milli sec(s)

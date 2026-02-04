@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.tools.ImageResizeModeTest
+Test: testCacheKey() took 1 milli sec(s)
+Test: testComputeDimensionBounded() took 0 milli sec(s)
+Test: testComputeDimensionAuto() took 0 milli sec(s)
+Test: testComputeDimensionPadded() took 0 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 80 milli sec(s)

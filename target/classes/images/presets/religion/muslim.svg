@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Sodipodi ("http://www.sodipodi.com/") -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="514.40881"
+   id="svg378"
+   version="1.0"
+   width="535.08594"
+   x="0"
+   y="0"
+   sodipodi:version="0.32"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="muslim.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <sodipodi:namedview
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="0.53198919"
+     inkscape:cx="210.99977"
+     inkscape:cy="206.38235"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:current-layer="svg378"
+     showgrid="false"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Pakistan</dc:title>
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li />
+            <rdf:li>asia</rdf:li>
+            <rdf:li>united_nations_member</rdf:li>
+            <rdf:li>flag</rdf:li>
+            <rdf:li>sign</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org">
+            <dc:title>Lauris Kaplinski</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Lauris Kaplinski</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Lauris Kaplinski</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs380" />
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.56699997;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+     id="rect4135"
+     width="535.08594"
+     height="514.40881"
+     x="0"
+     y="3.4765624e-006" />
+  <rect
+     height="708.66101"
+     id="rect403"
+     style="fill:#ffffff;fill-rule:evenodd;stroke-width:1pt"
+     width="266.46799"
+     x="-390.36511"
+     y="-97.126106" />
+  <path
+     d="m 449.89309,202.64994 -54.86697,-11.5427 -28.85361,48.07439 -5.97811,-55.74828 -54.63828,-12.58691 51.1736,-22.91206 -4.91406,-55.852705 37.60409,41.587755 51.60069,-21.93259 -27.93158,48.61529 36.80423,42.29781 z"
+     id="path273"
+     style="fill:#000000;fill-rule:evenodd;stroke-width:1pt"
+     inkscape:connector-curvature="0" />
+  <path
+     d="m 470.58989,344.69092 c -48.714,107.324 -176.541,154.212 -284.178,104.346 -107.636002,-49.865 -154.523002,-177.693 -104.657002,-285.329 25.434002,-54.9 67.057002,-92.628006 125.812002,-113.219006 -6.758,5.715 -13.445,11.643 -20.773,19.205 -75.899,78.328006 -73.927,203.498006 4.4,279.397006 78.328,75.899 203.498,73.928 279.396,-4.4 z"
+     id="path278"
+     style="fill:#000000;fill-rule:evenodd;stroke-width:1pt"
+     inkscape:connector-curvature="0" />
+</svg>

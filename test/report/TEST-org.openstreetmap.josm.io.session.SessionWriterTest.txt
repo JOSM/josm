@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.io.session.SessionWriterTest
+Test: testWriteNoteLayer() took 124 milli sec(s)
+Test: testWriteImageryLayer() took 114 milli sec(s)
+Test: testWriteGpxJos() took 113 milli sec(s)
+Test: testWriteGpxJoz() took 113 milli sec(s)
+Test: testWriteOsmJos() took 112 milli sec(s)
+Test: testWriteOsmJoz() took 112 milli sec(s)
+Test: testWriteGpxAndMarkerJoz() took 116 milli sec(s)
+Test: testWriteEmptyJos() took 117 milli sec(s)
+Test: testWriteEmptyJoz() took 115 milli sec(s)
+Tests run: 9, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)

@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.gui.NavigatableComponentTest
+Test: testGetEastNorth() took 2 milli sec(s)
+Test: testGetRealBounds() took 1 milli sec(s)
+Test: testPoint2DEastNorth() took 0 milli sec(s)
+Test: testGetProjectionBounds() took 0 milli sec(s)
+Test: testZoomToFactor() took 1 milli sec(s)
+Test: testZoomToLatLon() took 0 milli sec(s)
+Test: testDefaultScale() took 0 milli sec(s)
+Test: testZoomToFactorCenter() took 0 milli sec(s)
+Test: testHoverListeners() took 1 milli sec(s)
+Test: testPoint2DLatLon() took 1 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 63 milli sec(s)

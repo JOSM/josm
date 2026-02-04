@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest$AutomaticChoiceTest
+Test: testMatchesValueInvalidRegex() took 0 milli sec(s)
+Test: testMatchesValue() took 1 milli sec(s)
+Test: testComputeScoreFromValueInvalidRegex() took 0 milli sec(s)
+Test: testInvalidRegex() took 0 milli sec(s)
+Test: testComputeScoreFromValue() took 0 milli sec(s)
+Test: testComputeScoreFromValueInvalidReplacement() took 0 milli sec(s)
+Tests run: 0, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 118 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 60 milli sec(s)

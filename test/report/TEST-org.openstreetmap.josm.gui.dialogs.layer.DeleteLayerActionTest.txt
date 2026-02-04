@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.layer.DeleteLayerActionTest
+Test: testRemoveMiddleActiveWithSurroundingHiddenLayers() took 155 milli sec(s)
+Test: testRemoveBottomActiveWithBackgroundLayer() took 146 milli sec(s)
+Test: testSetActiveLayerOnlyOneVisible0to8() took 119 milli sec(s)
+Test: testSetActiveLayerOnlyOneVisible1to9() took 120 milli sec(s)
+Test: testRemoveBottomActiveWithSurroundingHiddenLayers() took 123 milli sec(s)
+Test: testRemoveBottomActiveAllHidden() took 122 milli sec(s)
+Test: testRemoveTopActiveWithSurroundingHiddenLayers() took 124 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 981 milli sec(s)

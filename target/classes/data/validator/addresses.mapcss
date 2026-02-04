@@ -1,0 +1,47 @@
+/* #10232 */
+way[addr:interpolation=odd] > node[addr:housenumber][mod(tag("addr:housenumber"),2)=0] {
+    throwWarning: tr("Even housenumber in odd address interpolation.");
+}
+way[addr:interpolation=even] > node[addr:housenumber][mod(tag("addr:housenumber"),2)=1] {
+    throwWarning: tr("Odd housenumber in even address interpolation.");
+}
+way[addr:interpolation] {
+    throwOther: tr("Way with {0}. Tag each housenumber separately if possible.", "{0.key}");
+}
+
+/* #19393 */
+way[addr:interpolation] >[index= 1] node[!addr:housenumber],
+way[addr:interpolation] >[index=-1] node[!addr:housenumber] {
+    throwWarning: tr("End node without housenumber in address interpolation.");
+}
+
+/* #13752 */
+*[!addr:housenumber][addr:street][addr:housename=~/^[0-9]+[a-zA-Z]?$/] {
+    throwOther: tr("Object has no {0}, however, it has {1} and {2} whose value looks like a housenumber.", "{0.key}", "{1.key}", "{2.key}");
+    assertMatch: "node addr:street=foo addr:housename=1";
+    assertMatch: "node addr:street=foo addr:housename=1a";
+    assertMatch: "node addr:street=foo addr:housename=221B";
+    assertNoMatch: "node addr:street=foo addr:housename=1 addr:housenumber=1";
+    assertNoMatch: "node addr:housename=1";
+    assertNoMatch: "node addr:street=foo addr:housename=bar";
+}
+*[addr:housenumber][addr:housename]["addr:housenumber"=*"addr:housename"] {
+    throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
+    assertMatch: "node addr:housename=1 addr:housenumber=1";
+    assertNoMatch: "node addr:housename=1 addr:housenumber=2";
+}
+
+/* #17486 */
+*[addr:housenumber=bb][inside("BA")] {
+  set ok_housenumber;
+}
+*[addr:housenumber][addr:housenumber!~/[0-9]/]!.ok_housenumber {
+  throwWarning: tr("{0} without number", "{0.key}");
+  assertNoMatch: "way addr:housenumber=0";
+  assertNoMatch: "way addr:housenumber=5a";
+  assertNoMatch: "way addr:housenumber=5/1";
+  assertMatch: "way addr:housenumber=?";
+  assertMatch: "way addr:housenumber=unknown";
+  assertMatch: "way addr:housenumber=Palace of Westminster";
+  assertMatch: "way addr:housenumber=S/N";
+}

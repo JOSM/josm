@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.io.DiffResultProcessorTest
+Test: testParse_OK_Cases() took 2 milli sec(s)
+Test: testPostProcess_ForModifiedElement() took 0 milli sec(s)
+Test: testPostProcess_ForCreatedElement() took 0 milli sec(s)
+Test: testPostProcess_ForDeletedElement() took 0 milli sec(s)
+Test: testPostProcess_Invocation_Variants() took 0 milli sec(s)
+Test: testParse_NOK_Cases() took 1 milli sec(s)
+Test: testPostProcess_OK() took 0 milli sec(s)
+Test: testConstructor() took 0 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 89 milli sec(s)

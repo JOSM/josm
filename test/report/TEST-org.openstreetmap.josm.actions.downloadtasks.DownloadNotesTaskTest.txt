@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTaskTest
+Test: testAcceptsURL() took 2 milli sec(s)
+Test: testDownloadExternalFile() took 656 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 923 milli sec(s)
+reetmap.org/api/capabilities -> HTTP/1.1 200 (522 ms; 493 B)
+2026-02-04 20:40:37.287 INFO: OK
+2026-02-04 20:40:37.408 INFO: GET http://localhost:58778/samples/data.osn -> HTTP/1.1 200 (8 ms)
+------------- ---------------- ---------------

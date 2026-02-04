@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.osm.NodeTest
+Test: testBBox() took 0 milli sec(s)
+Test: testOutsideWorld() took 0 milli sec(s)
+Test: testCloneFromIAE() took 1 milli sec(s)
+Test: testTicket12060() took 0 milli sec(s)
+Test: testMergeFromIAE() took 0 milli sec(s)
+Test: testLoadIAE() took 0 milli sec(s)
+Test: testDirectional() took 1 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 42 milli sec(s)

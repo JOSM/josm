@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorterTest
+Test: testGeneric() took 3 milli sec(s)
+Test: testIncompleteLoops() took 1 milli sec(s)
+Test: testOneLoopEndsSplit() took 1 milli sec(s)
+Test: testThreeLoopsEndsLoop() took 1 milli sec(s)
+Test: testThreeLoopsEndsNode() took 1 milli sec(s)
+Test: testNoLoopEndsSplit() took 0 milli sec(s)
+Test: testThreeLoopsEndsWay() took 1 milli sec(s)
+Test: testParallelOneWay() took 1 milli sec(s)
+Test: testStreet() took 1 milli sec(s)
+Test: testAssociatedStreet() took 0 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 78 milli sec(s)

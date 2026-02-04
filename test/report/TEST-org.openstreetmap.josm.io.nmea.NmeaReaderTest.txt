@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.io.nmea.NmeaReaderTest
+Test: testTicket14924() took 4 milli sec(s)
+Test: testTicket16496() took 0 milli sec(s)
+Test: testTicket16554() took 1 milli sec(s)
+Test: testIsSentence() took 0 milli sec(s)
+Test: testReader2() took 3 milli sec(s)
+Test: testTicket1433() took 27 milli sec(s)
+Test: testTicket1853() took 16 milli sec(s)
+Test: testTicket2147() took 12 milli sec(s)
+Test: testReader() took 1 milli sec(s)
+Tests run: 9, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 146 milli sec(s)

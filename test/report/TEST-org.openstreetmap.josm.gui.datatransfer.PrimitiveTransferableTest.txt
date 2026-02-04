@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferableTest
+Test: testIsDataFlavorSupported() took 0 milli sec(s)
+Test: testGetTransferDataNominal() took 0 milli sec(s)
+Test: testGetTransferDataError() took 1 milli sec(s)
+Test: testGetTransferDataFlavors() took 0 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 63 milli sec(s)

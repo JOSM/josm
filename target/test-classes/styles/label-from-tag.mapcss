@@ -1,0 +1,19 @@
+/*
+ * Simple test style sheet. Includes a style for nodes where the label is derived
+ * from the value of a specific tag.
+ *
+ */
+ 
+meta {
+    title: "Test style - Deriving labels from tags";
+}
+
+canvas {
+    fill-color: #000000;
+}
+
+node {
+   text: my_label_tag;  /* take the value of the tag 'my_label_tag' as text */
+   text-color: white;   
+   font-size: 12;
+}

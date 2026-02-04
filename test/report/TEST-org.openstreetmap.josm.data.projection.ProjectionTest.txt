@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.data.projection.ProjectionTest
+Test: testSwedishProjections() took 1 milli sec(s)
+Test: testProjections() took 359 milli sec(s)
+Test: testProjs() took 20 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 438 milli sec(s)

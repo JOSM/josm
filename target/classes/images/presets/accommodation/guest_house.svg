@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.91 r13725"
+   version="1.0"
+   sodipodi:docname="04.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.4"
+     inkscape:cx="7.4241071"
+     inkscape:cy="5.6013608"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="32px"
+     height="32px"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     showgrid="true"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4160" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:title></dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-8,-8.000001)">
+    <rect
+       x="8"
+       y="8.000001"
+       width="16"
+       height="16"
+       rx="2"
+       ry="2"
+       id="shield"
+       style="fill:#ffffff;stroke:none" />
+    <path
+       style="fill:#c3c3c3;fill-rule:evenodd;stroke:#000000;stroke-width:0.03181237;fill-opacity:1"
+       d="m 16.249466,8.6436365 -5.563218,5.7098325 1.112637,0 0,8.564744 3.337938,0 0,-4.352519 2.30158,0 7e-6,4.352519 3.261638,0 0,-8.564744 1.112644,0 -5.563226,-5.7098325 0,0 0,0 z"
+       id="path645"
+       sodipodi:nodetypes="ccccccccccccc"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4152"
+       d="M 9.59893,15.000001 C 9.224597,15.000001 9,15.224302 9,15.747664 l 0,7.252337 1.272728,0 0,-1.794396 c 0,0 10.331534,0.07478 11.454537,0 l 0,1.794396 1.272735,0 0,-2.392519 0,-3.887853 c 0,-0.29908 -0.149722,-0.747664 -0.673802,-0.747664 -0.449201,0 -0.598933,0.448598 -0.598933,0.747664 l 0,3.289715 -11.454537,0 0,-4.26168 c 0,-0.523366 -0.299479,-0.747663 -0.673798,-0.747663 z m 2.919783,0.971964 c -0.823528,0 -1.497319,0.672899 -1.497319,1.495323 0,0.822439 0.673791,1.495331 1.497319,1.495331 0.823534,0 1.497325,-0.672892 1.497325,-1.495331 0,-0.822424 -0.673791,-1.495323 -1.497325,-1.495323 z m 1.946526,1.046732 0,1.943922 6.513356,0 c 0,-0.971961 -1.048135,-1.943922 -2.021373,-1.943922 z"
+       style="fill:#007ebc;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+  </g>
+</svg>

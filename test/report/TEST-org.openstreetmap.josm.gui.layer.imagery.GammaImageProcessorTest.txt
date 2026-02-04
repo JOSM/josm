@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.layer.imagery.GammaImageProcessorTest
+Test: testToString() took 1 milli sec(s)
+Test: testSetGet() took 0 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 68 milli sec(s)

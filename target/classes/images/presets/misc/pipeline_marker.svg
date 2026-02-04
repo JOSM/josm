@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="13"
+   height="16"
+   id="svg3042"
+   version="1.1"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="pipeline_marker3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs3044" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="128"
+     inkscape:cx="5.1914063"
+     inkscape:cy="2.2070313"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3050"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="-340"
+       originy="-574"
+       spacingx="1"
+       spacingy="1" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3047">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-340,-462.36218)">
+    <rect
+       style="fill:#ffcc00;fill-opacity:1;stroke:none"
+       id="rect3052"
+       width="13"
+       height="16"
+       x="340"
+       y="462.36218"
+       ry="2" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="rect3054"
+       width="9"
+       height="1"
+       x="342"
+       y="468.36218"
+       ry="0" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="rect3056"
+       width="1"
+       height="5"
+       x="346"
+       y="469.36218" />
+    <rect
+       style="fill:#ffe680;fill-opacity:1;stroke:none"
+       id="rect3058"
+       width="3"
+       height="3"
+       x="341"
+       y="464.36218" />
+    <rect
+       style="fill:#ffe680;fill-opacity:1;stroke:none"
+       id="rect3060"
+       width="5"
+       height="3"
+       x="347"
+       y="464.36218" />
+    <rect
+       style="fill:#ffe680;fill-opacity:1;stroke:none"
+       id="rect3062"
+       width="4"
+       height="2"
+       x="341"
+       y="470.36218" />
+    <rect
+       style="fill:#ffe680;fill-opacity:1;stroke:none"
+       id="rect3064"
+       width="4"
+       height="2"
+       x="348"
+       y="470.36218" />
+    <rect
+       style="fill:#ffe680;fill-opacity:1;stroke:none"
+       id="rect3066"
+       width="7"
+       height="2"
+       x="343"
+       y="475.36218" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="328.07797"
+       y="488.46289"
+       id="text3068"
+       transform="scale(1.051936,0.95062818)"><tspan
+         sodipodi:role="line"
+         id="tspan3070"
+         x="328.07797"
+         y="488.46289"
+         style="font-size:1.42109px;line-height:1.25">GAS</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.5389px;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.04491"
+       x="315.71246"
+       y="504.80283"
+       id="text3068-1"
+       transform="scale(1.0801106,0.92583111)"><tspan
+         sodipodi:role="line"
+         id="tspan3070-7"
+         x="315.71246"
+         y="504.80283"
+         style="font-size:4.52674px;line-height:1.25;stroke-width:1.04491">A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="332.9227"
+       y="483.92914"
+       id="text3068-1-4"
+       transform="scale(1.0249278,0.97567849)"><tspan
+         sodipodi:role="line"
+         id="tspan3070-7-0"
+         x="332.9227"
+         y="483.92914"
+         style="font-size:2.38258px;line-height:1.25">1,2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="336.36353"
+       y="489.0759"
+       id="text3068-1-4-9"
+       transform="scale(1.0249278,0.97567849)"><tspan
+         sodipodi:role="line"
+         id="tspan3070-7-0-4"
+         x="336.36353"
+         y="489.0759"
+         style="font-size:2.38258px;line-height:1.25">3,4</tspan></text>
+  </g>
+</svg>

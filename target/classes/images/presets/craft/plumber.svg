@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1901"
+   sodipodi:docname="pipe5.svg"
+   inkscape:export-filename="pgoi.png"
+   viewBox="0 0 13 16"
+   sodipodi:version="0.32"
+   inkscape:export-xdpi="19.749216"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-ydpi="19.749216"
+   inkscape:version="0.91 r13725"
+   width="13"
+   height="16">
+  <defs
+     id="defs1903">
+    <linearGradient
+       id="linearGradient3152">
+      <stop
+         id="stop3154"
+         style="stop-color:#009a11"
+         offset="0" />
+      <stop
+         id="stop3156"
+         style="stop-color:#00cb17"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3158"
+       y2="139.50999"
+       xlink:href="#linearGradient3152"
+       gradientUnits="userSpaceOnUse"
+       x2="-286.42999"
+       y1="139.50999"
+       x1="-742.14001"
+       inkscape:collect="always"
+       gradientTransform="matrix(0.02853817,0,0,0.02749137,-720.96285,617.04918)" />
+    <linearGradient
+       id="linearGradient3166"
+       y2="139.50999"
+       xlink:href="#linearGradient3152"
+       gradientUnits="userSpaceOnUse"
+       x2="-286.42999"
+       gradientTransform="matrix(0.02256855,0,0,0.06968035,-723.96015,618.96697)"
+       y1="139.50999"
+       x1="-742.14001"
+       inkscape:collect="always" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     inkscape:window-y="29"
+     pagecolor="#ffffff"
+     gridtolerance="10000"
+     inkscape:window-height="938"
+     inkscape:zoom="179.2"
+     inkscape:window-x="0"
+     showgrid="true"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="2.7027335"
+     inkscape:cy="5.3951293"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1280"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4151"
+       originx="-0.00029001674"
+       originy="-0.0010790054" />
+  </sodipodi:namedview>
+  <g
+     id="layer1"
+     inkscape:label="Taso 1"
+     inkscape:groupmode="layer"
+     transform="translate(742.13968,-618.50493)">
+    <rect
+       id="rect3164"
+       style="fill:url(#linearGradient3166);stroke:#005e04;stroke-width:0.28397593;stroke-linejoin:round"
+       height="11.347969"
+       width="10.059224"
+       y="623.01385"
+       x="-740.59631" />
+    <rect
+       id="rect2380"
+       style="fill:url(#linearGradient3158);stroke:#005e04;stroke-width:0.2800988;stroke-linejoin:round"
+       height="4.4772449"
+       width="12.719748"
+       y="618.64575"
+       x="-741.99945" />
+    <rect
+       id="rect3160"
+       style="fill:#00d818"
+       height="4.1924343"
+       width="1.9576044"
+       y="618.78326"
+       x="-734.31494" />
+    <rect
+       id="rect3162"
+       style="fill:#00d818"
+       height="4.1924343"
+       width="0.77532506"
+       y="618.78326"
+       x="-731.84448" />
+    <rect
+       id="rect3168"
+       style="fill:#00d818"
+       height="10.906265"
+       width="2.0125492"
+       y="623.27881"
+       x="-734.91766" />
+    <rect
+       id="rect3170"
+       style="fill:#00d818"
+       height="10.906265"
+       width="0.7970863"
+       y="623.27881"
+       x="-732.37756" />
+    <rect
+       id="rect3172"
+       style="fill:#00820e"
+       height="4.1968331"
+       width="1.4676896"
+       y="618.78381"
+       x="-741.8468" />
+    <rect
+       id="rect3174"
+       style="fill:#00820e"
+       height="10.949693"
+       width="1.5088837"
+       y="623.26947"
+       x="-740.43939" />
+    <rect
+       id="rect3178"
+       style="fill:#005e04"
+       height="4.3043237"
+       width="0.46123394"
+       y="618.68164"
+       x="-742.06482" />
+    <rect
+       id="rect3180"
+       style="fill:#005e04"
+       height="11.07833"
+       width="0.70262998"
+       y="623.21698"
+       x="-740.72015" />
+    <rect
+       id="rect3182"
+       style="fill:#00820e"
+       height="4.1968331"
+       width="0.22807707"
+       y="618.78381"
+       x="-740.02032" />
+    <rect
+       id="rect3184"
+       style="fill:#00820e"
+       height="10.956841"
+       width="0.23447859"
+       y="623.26337"
+       x="-738.6109" />
+  </g>
+  <metadata
+     id="metadata23">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2010-01-05T16:49:58</dc:date>
+        <dc:description>A cartoonish pipe entrance.</dc:description>
+        <dc:source>https://openclipart.org/detail/28804/a-green-cartoon-pipe-by-purzen</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>purzen</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>bros</rdf:li>
+            <rdf:li>cartoon</rdf:li>
+            <rdf:li>colour</rdf:li>
+            <rdf:li>game</rdf:li>
+            <rdf:li>mario</rdf:li>
+            <rdf:li>outline</rdf:li>
+            <rdf:li>silhouette</rdf:li>
+            <rdf:li>super</rdf:li>
+            <rdf:li>unchecked</rdf:li>
+            <rdf:li>warp</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

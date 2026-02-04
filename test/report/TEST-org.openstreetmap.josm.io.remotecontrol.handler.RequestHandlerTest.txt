@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.io.remotecontrol.handler.RequestHandlerTest
+Test: testRequestParameter1() took 1 milli sec(s)
+Test: testRequestParameter2() took 0 milli sec(s)
+Test: testRequestParameter3() took 0 milli sec(s)
+Test: testRequestParameter4() took 0 milli sec(s)
+Test: testRequestParameter5() took 0 milli sec(s)
+Test: testRequestParameter6() took 0 milli sec(s)
+Test: testRequestParameterInvalid() took 1 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 85 milli sec(s)

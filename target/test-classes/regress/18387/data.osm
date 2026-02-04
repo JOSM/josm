@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-180907' action='modify' visible='true' lat='52.29588639682' lon='13.64411897386' />
+  <node id='-180909' action='modify' visible='true' lat='52.29609561925' lon='13.64572029375' />
+  <node id='61146250' timestamp='2014-11-05T19:19:33Z' uid='115651' user='Rego_Loos' visible='true' version='7' changeset='26578210' lat='52.2948763' lon='13.6442384' />
+  <node id='263019068' timestamp='2014-05-08T09:07:16Z' uid='115651' user='Rego_Loos' visible='true' version='5' changeset='22204763' lat='52.2953129' lon='13.6466991' />
+  <node id='263019078' timestamp='2014-11-05T19:19:34Z' uid='115651' user='Rego_Loos' visible='true' version='6' changeset='26578210' lat='52.2949636' lon='13.6434815' />
+  <node id='263019090' timestamp='2014-05-08T09:07:16Z' uid='115651' user='Rego_Loos' visible='true' version='4' changeset='22204763' lat='52.2952933' lon='13.641262' />
+  <node id='264010827' timestamp='2014-11-05T19:19:34Z' uid='115651' user='Rego_Loos' visible='true' version='5' changeset='26578210' lat='52.2948715' lon='13.6450454' />
+  <node id='264010828' timestamp='2014-11-05T19:19:34Z' uid='115651' user='Rego_Loos' visible='true' version='5' changeset='26578210' lat='52.2949126' lon='13.6453051' />
+  <node id='293894042' timestamp='2014-11-05T19:19:35Z' uid='115651' user='Rego_Loos' visible='true' version='3' changeset='26578210' lat='52.2949155' lon='13.6438623' />
+  <node id='428651766' timestamp='2014-05-08T09:07:18Z' uid='115651' user='Rego_Loos' visible='true' version='2' changeset='22204763' lat='52.2948714' lon='13.6447485' />
+  <node id='2153001668' timestamp='2014-05-08T09:07:17Z' uid='115651' user='Rego_Loos' visible='true' version='2' changeset='22204763' lat='52.295224' lon='13.6416799' />
+  <node id='2153001679' timestamp='2014-11-05T19:19:35Z' uid='115651' user='Rego_Loos' visible='true' version='3' changeset='26578210' lat='52.2949787' lon='13.6455675' />
+  <way id='-180920' action='modify' visible='true'>
+    <nd ref='-180907' />
+    <nd ref='-180909' />
+    <nd ref='263019068' />
+  </way>
+  <way id='24290495' timestamp='2018-05-28T12:52:28Z' uid='2680179' user='SGKW' visible='true' version='11' changeset='59339679'>
+    <nd ref='263019090' />
+    <nd ref='2153001668' />
+    <nd ref='263019078' />
+    <nd ref='293894042' />
+    <nd ref='61146250' />
+    <nd ref='428651766' />
+    <nd ref='264010827' />
+    <nd ref='264010828' />
+    <nd ref='2153001679' />
+    <nd ref='263019068' />
+    <tag k='cycleway' v='opposite' />
+    <tag k='highway' v='residential' />
+    <tag k='maxspeed' v='30' />
+    <tag k='name' v='Kirchsteig' />
+    <tag k='oneway' v='yes' />
+    <tag k='surface' v='asphalt' />
+  </way>
+</osm>

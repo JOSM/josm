@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.actions.SplitWayActionTest
+Test: testTicket11184() took 2 milli sec(s)
+Test: testTicket17810() took 1 milli sec(s)
+Test: testTicket18477() took 1 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 38 milli sec(s)

@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.actions.UnGlueActionTest
+Test: testSingleNodeNotInWay() took 106 milli sec(s)
+Test: testSingleNodeInTwoWays() took 99 milli sec(s)
+Test: testSelectionEmpty() took 88 milli sec(s)
+Test: testSingleNodeInSingleWay() took 83 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 410 milli sec(s)

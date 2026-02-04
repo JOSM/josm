@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm-notes>
+<note id="4" lat="36.7232991" lon="68.8641500" created_at="2013-04-24T08:07:02Z" closed_at="2013-04-24T08:08:51Z">
+  <comment action="opened" timestamp="2013-04-24T08:07:02Z" uid="1626" user="FredB">test</comment>
+  <comment action="closed" timestamp="2013-04-24T08:08:51Z" uid="1626" user="FredB"></comment>
+</note>
+<note id="5" lat="51.7609210" lon="-0.0112063" created_at="2013-04-24T08:10:38Z" closed_at="2013-04-24T21:31:47Z">
+  <comment action="opened" timestamp="2013-04-24T08:10:38Z" uid="3980" user="TomH">This building has been demolished and is currently a construction site.</comment>
+  <comment action="closed" timestamp="2013-04-24T21:31:47Z" uid="3980" user="TomH"></comment>
+</note>
+<note id="6" lat="35.5170066" lon="139.6322554" created_at="2013-04-24T08:12:38Z" closed_at="2013-05-10T12:28:11Z">
+  <comment action="opened" timestamp="2013-04-24T08:12:38Z" uid="378532" user="nyampire">Ministopは閉店済み</comment>
+  <comment action="closed" timestamp="2013-05-10T12:28:11Z" uid="10353" user="gorn">name corrected</comment>
+</note>
+<note id="7" lat="50.9381992" lon="1.8605947" created_at="2013-04-24T08:14:28Z" closed_at="2013-04-24T08:14:50Z">
+  <comment action="opened" timestamp="2013-04-24T08:14:28Z">Adresse complète :
+B&amp;B CALAIS Centre St Pierre 	 
+ZAC Curie
+Rue de Lille
+62100 CALAIS
+Tel. 08 92 70 75 18 (0.34€ TTC/mn depuis un poste fixe)
+Fax. 03 21 00 92 71
+Parking, accès handicapé, wifi, ascenseur, caméra</comment>
+  <comment action="closed" timestamp="2013-04-24T08:14:50Z" uid="37548" user="Marcussacapuces91"></comment>
+</note>
+<note id="289379" lat="50.3699789" lon="8.6278027" created_at="2014-12-21T01:30:26Z">
+  <comment action="opened" timestamp="2014-12-21T01:30:26Z">Freizeitheim Uhu</comment>
+</note>
+<note id="289380" lat="48.5979475" lon="-2.1622145" created_at="2014-12-21T01:51:36Z">
+  <comment action="opened" timestamp="2014-12-21T01:51:36Z">parking</comment>
+</note>
+<note id="289381" lat="49.8535075" lon="20.9857535" created_at="2014-12-21T02:14:51Z" closed_at="2014-12-21T02:16:33Z">
+  <comment action="opened" timestamp="2014-12-21T02:14:51Z">to nie ścieżka</comment>
+  <comment action="closed" timestamp="2014-12-21T02:16:33Z" uid="163896" user="Zbigniew_Czernik">zgadza się</comment>
+</note>
+<note id="289382" lat="49.8537980" lon="20.9873736" created_at="2014-12-21T02:15:04Z">
+  <comment action="opened" timestamp="2014-12-21T02:15:04Z">to nie ścieżka</comment>
+</note>
+<note id="289383" lat="49.8525390" lon="20.9827387" created_at="2014-12-21T02:15:23Z" closed_at="2014-12-21T02:18:01Z">
+  <comment action="opened" timestamp="2014-12-21T02:15:23Z">o to za droga i dlaczego brak jej oznaczenia w legendzie?</comment>
+  <comment action="closed" timestamp="2014-12-21T02:18:01Z" uid="163896" user="Zbigniew_Czernik">bo legenda jest stara i nieaktualna. To jest droga lokalna.</comment>
+</note>
+</osm-notes>

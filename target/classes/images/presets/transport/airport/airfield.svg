@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="1052.3622"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="airfield.svg"
+   sodipodi:version="0.32"
+   width="744.09448"
+   version="1.1">
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>military airplane</dc:title>
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>army</rdf:li>
+            <rdf:li>military</rdf:li>
+            <rdf:li>mig</rdf:li>
+            <rdf:li>vehicles</rdf:li>
+            <rdf:li>fly</rdf:li>
+            <rdf:li>air force</rdf:li>
+            <rdf:li>fighter</rdf:li>
+            <rdf:li>airplane</rdf:li>
+            <rdf:li>bomber</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org/">
+            <dc:title>Open Clip Art Library</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>mo</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>mo</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date>20 09 2005</dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     id="base"
+     inkscape:current-layer="layer1"
+     inkscape:cx="-112.14286"
+     inkscape:cy="517.14286"
+     inkscape:document-units="px"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="1050"
+     inkscape:window-width="1600"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:zoom="0.35"
+     pagecolor="#ffffff"
+     showgrid="false"
+     inkscape:window-maximized="0" />
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:30;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+       id="rect4135"
+       width="744.09399"
+       height="1052.3622"
+       x="0"
+       y="0"
+       ry="65.41317" />
+    <path
+       d="m 372.74513,979.43631 c -1.08984,-13.51272 -2.78734,-30.87447 -3.77226,-38.58164 l -1.79075,-14.01302 -17.98929,-0.87709 -17.98927,-0.8771 -3.32407,-11.88843 c -1.91618,-6.85311 -5.40547,-12.28922 -8.23827,-12.83475 -3.81186,-0.73412 -70.79354,15.37954 -104.35058,25.1034 -4.62894,1.34134 -5.20636,-0.92586 -5.16504,-20.28119 l 0.0465,-21.79134 52.06889,-83.26457 52.06891,-83.26461 -0.11813,-25.4332 -0.11817,-25.43324 -82.52195,84.23983 c -45.38707,46.33189 -83.89528,84.18999 -85.57378,84.12911 -5.11321,-0.18544 -20.2848,-63.82228 -18.05259,-75.721 1.13136,-6.03062 19.91048,-37.88778 44.62596,-75.70393 27.63068,-42.27669 56.90695,-92.46172 83.05432,-142.37063 l 40.3817,-77.07886 2.0994,-33.50274 2.09941,-33.50275 17.08022,0 17.08018,0 1.89382,-13.81674 c 1.04158,-7.59925 1.89379,-26.39992 1.89379,-41.77933 0,-34.03753 7.94986,-144.60423 12.16887,-169.24459 3.60381,-21.04732 24.37655,-96.785716 26.54541,-96.785716 2.17165,0 22.9461,75.759356 26.54024,96.785716 4.31633,25.25115 12.16118,131.56186 12.19633,165.28021 0.0162,15.56016 0.87454,35.32678 1.90742,43.92582 l 1.87793,15.63463 17.12787,0 17.12782,0 2.08364,33.50275 2.08363,33.50274 40.52289,77.42858 c 25.68126,49.07014 54.98685,99.48263 80.0147,137.64401 45.16747,68.86944 48.67138,75.04987 48.67138,85.8494 0,12.18812 -15.91828,69.82903 -19.31572,69.94323 -1.6607,0.0558 -40.15054,-37.8023 -85.53305,-84.12912 l -82.51361,-84.23062 -0.08,25.31319 -0.08,25.31319 52.0689,83.26458 52.06889,83.26459 0,21.91137 c 0,19.45791 -0.58355,21.74228 -5.21154,20.40123 -23.54077,-6.82145 -99.06099,-25.69342 -102.81765,-25.69342 -4.6438,0 -5.71213,2.11929 -9.38263,18.61265 -1.75439,7.88326 -2.53002,8.18955 -20.73927,8.18955 l -18.91677,0 -1.80831,14.14561 c -0.9946,7.78008 -2.70002,25.20152 -3.78987,38.71424 -1.08984,13.5128 -2.93626,24.56869 -4.1032,24.56869 -1.16695,0 -3.01337,-11.05589 -4.1032,-24.56869 z"
+       id="path1368"
+       style="fill:#000000"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

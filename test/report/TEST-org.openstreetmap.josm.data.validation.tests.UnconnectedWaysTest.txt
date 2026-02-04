@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.UnconnectedWaysTest
+Test: testTicket18051() took 26 milli sec(s)
+Test: testTicket18106() took 1 milli sec(s)
+Test: testTicket18137() took 2 milli sec(s)
+Test: testTicket19568() took 1 milli sec(s)
+Test: testTicket6313() took 1 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 86 milli sec(s)
+ith 6 nodes is incomplete because at least one node was missing in the loaded data.
+2026-02-04 20:41:43.975 INFO: Way 108684723 with 8 nodes is incomplete because at least one node was missing in the loaded data.
+------------- ---------------- ---------------

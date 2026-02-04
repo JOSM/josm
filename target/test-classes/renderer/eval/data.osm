@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='23.2628349' minlon='6.7909447' maxlat='23.6008378' maxlon='7.4540337'/>
+  <node id='-40673' action='modify' lat='23.40126813706' lon='6.86812402846'>
+    <tag k='test' v='3' />
+  </node>
+  <node id='-40674' action='modify' lat='23.46061342982' lon='6.86740537624'>
+    <tag k='12' v='12' />
+    <tag k='15' v='15' />
+    <tag k='test' v='2' />
+  </node>
+  <node id='-40675' action='modify' lat='23.5199320577' lon='6.86668672401'>
+    <tag k='test' v='1' />
+  </node>
+  <node id='-40676' action='modify' lat='23.34189623112' lon='6.86884268069'>
+    <tag k='test' v='4' />
+  </node>
+</osm>

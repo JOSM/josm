@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.layer.gpx.DownloadAlongTrackActionTest
+Test: testDownloadEmpty() took 56 milli sec(s)
+Test: testDownload() took 53 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 175 milli sec(s)
+tmap.josm.gui.layer.gpx.DownloadAlongTrackActionTest$1 answering 0 to HelpAwareOptionPane with message DownloadAlongPanel
+2026-02-04 20:42:32.848 INFO: org.openstreetmap.josm.gui.layer.gpx.DownloadAlongTrackActionTest$1 answering 0 to HelpAwareOptionPane with message DownloadAlongPanel
+------------- ---------------- ---------------

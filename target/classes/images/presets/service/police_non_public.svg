@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="15"
+   height="16"
+   id="svg2226"
+   sodipodi:version="0.32"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   version="1.0"
+   sodipodi:docname="police4.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs2228">
+    <radialGradient
+       cx="-41.2598"
+       cy="-47.871601"
+       fx="-41.2598"
+       fy="-47.871601"
+       gradientUnits="userSpaceOnUse"
+       id="XMLID_15_"
+       r="599.07233">
+      <stop
+         offset="0"
+         style="stop-color:#E8D776"
+         id="stop2960" />
+      <stop
+         offset="0.4141"
+         style="stop-color:#B39949"
+         id="stop2962" />
+      <stop
+         offset="0.8085"
+         style="stop-color:#856422"
+         id="stop2964" />
+      <stop
+         offset="1"
+         style="stop-color:#734F13"
+         id="stop2966" />
+      <a:midPointStop
+         offset="0"
+         style="stop-color:#E8D776" />
+      <a:midPointStop
+         offset="0.4551"
+         style="stop-color:#E8D776" />
+      <a:midPointStop
+         offset="1"
+         style="stop-color:#734F13" />
+    </radialGradient>
+    <radialGradient
+       cx="-41.2598"
+       cy="-47.871601"
+       fx="-41.2598"
+       fy="-47.871601"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient2241"
+       r="599.07233">
+      <stop
+         offset="0"
+         style="stop-color:#E8D776"
+         id="stop2243" />
+      <stop
+         offset="0.4141"
+         style="stop-color:#B39949"
+         id="stop2245" />
+      <stop
+         offset="0.8085"
+         style="stop-color:#856422"
+         id="stop2247" />
+      <stop
+         offset="1"
+         style="stop-color:#734F13"
+         id="stop2249" />
+      <a:midPointStop
+         offset="0"
+         style="stop-color:#E8D776" />
+      <a:midPointStop
+         offset="0.4551"
+         style="stop-color:#E8D776" />
+      <a:midPointStop
+         offset="1"
+         style="stop-color:#734F13" />
+    </radialGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="31.678384"
+     inkscape:cx="0.25635431"
+     inkscape:cy="5.5160575"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="32px"
+     height="32px"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid824" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata2231">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:title></dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-255.89842,-523.38464)">
+    <path
+       style="fill:#917400;fill-opacity:1;stroke:#000000;stroke-width:0.28981566"
+       d="m 263.40457,539.34897 c 0.3979,-1.57039 8.28022,-0.52347 7.06207,-3.14079 -3.72818,-8.01036 0,-9.42237 0,-9.42237 -1.17886,-0.3926 -1.40929,-1.57041 -1.41463,-1.57041 -3.53038,1.57041 -5.64744,-1.57038 -5.64744,-1.57038 v 0 c 0,0 -2.08756,3.14079 -5.65855,1.57038 -0.003,0 -0.23575,1.17781 -1.4146,1.57041 0,0 3.72816,1.41201 0,9.42237 -1.21816,2.61732 6.67527,1.5704 7.07315,3.14079 z"
+       id="path2968"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path3435"
+       d="m 263.80132,527.68793 2.52615,7.295 -6.61357,-4.50855 h 8.17481 l -6.61356,4.50855 z"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.01040763"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

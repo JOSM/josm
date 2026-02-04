@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding="utf-8" standalone="no" ?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd"
+ [
+ <!ELEMENT VendorSpecificCapabilities EMPTY>
+ ]>  <!-- end of DOCTYPE declaration -->
+
+<!-- source: https://gaia.inegi.org.mx/NLB/mdm5.wms?Request=GetCapabilities&Version=1.1.1&Service=WMS -->
+<WMT_MS_Capabilities version="1.1.1">
+
+<!-- MapServer version 6.2.1 OUTPUT=GIF OUTPUT=PNG OUTPUT=JPEG SUPPORTS=PROJ SUPPORTS=GD SUPPORTS=AGG SUPPORTS=FREETYPE SUPPORTS=CAIRO SUPPORTS=ICONV SUPPORTS=WMS_SERVER SUPPORTS=WMS_CLIENT SUPPORTS=WFS_SERVER SUPPORTS=WFS_CLIENT SUPPORTS=WCS_SERVER SUPPORTS=FASTCGI SUPPORTS=GEOS INPUT=JPEG INPUT=POSTGIS INPUT=OGR INPUT=GDAL INPUT=SHAPEFILE -->
+
+<Service>
+  <Name>OGC:WMS</Name>
+  <Title>Servicio WMS</Title>
+  <KeywordList>
+      <Keyword>WMS</Keyword>
+      <Keyword>OGC</Keyword>
+      <Keyword>MapServer</Keyword>
+      <Keyword>GeoNetwork</Keyword>
+  </KeywordList>
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.inegi.org.mx/"/>
+  <ContactInformation>
+    <ContactPersonPrimary>
+      <ContactPerson>atencion.usuarios@inegi.org.mx</ContactPerson>
+      <ContactOrganization>INEGI</ContactOrganization>
+    </ContactPersonPrimary>
+    <ContactAddress>
+        <AddressType>postal</AddressType>
+        <Address>Heroe de Nacozari 2301</Address>
+        <City>Aguascalientes</City>
+        <StateOrProvince>Aguascalientes</StateOrProvince>
+        <PostCode>20276</PostCode>
+        <Country>M&amp;aacute;xico</Country>
+    </ContactAddress>
+      <ContactVoiceTelephone>+52 4499105300</ContactVoiceTelephone>
+      <ContactFacsimileTelephone>+52 4499105328</ContactFacsimileTelephone>
+  <ContactElectronicMailAddress>aaron.villar@inegi.org.mx</ContactElectronicMailAddress>
+  </ContactInformation>
+  <Fees>none</Fees>
+  <AccessConstraints>none</AccessConstraints>
+</Service>
+<Capability>
+  <Request>
+    <GetCapabilities>
+      <Format>application/vnd.ogc.wms_xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaia.inegi.org.mx/NLB/mdm5.wms?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaia.inegi.org.mx/NLB/mdm5.wms?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetCapabilities>
+    <GetMap>
+      <Format>image/png</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/gif</Format>
+      <Format>image/png; mode=8bit</Format>
+      <Format>application/x-pdf</Format>
+      <Format>image/svg+xml</Format>
+      <Format>image/tiff</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaia.inegi.org.mx/NLB/mdm5.wms?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaia.inegi.org.mx/NLB/mdm5.wms?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetMap>
+    <GetLegendGraphic>
+      <Format>image/png</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/gif</Format>
+      <Format>image/png; mode=8bit</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaia.inegi.org.mx/NLB/mdm5.wms?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaia.inegi.org.mx/NLB/mdm5.wms?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetLegendGraphic>
+  </Request>
+  <Exception>
+    <Format>application/vnd.ogc.se_xml</Format>
+    <Format>application/vnd.ogc.se_inimage</Format>
+    <Format>application/vnd.ogc.se_blank</Format>
+  </Exception>
+  <VendorSpecificCapabilities />
+  <UserDefinedSymbolization SupportSLD="1" UserLayer="0" UserStyle="1" RemoteWFS="0"/>
+      <Layer queryable="0" opaque="0" cascaded="1">
+        <Name>c00</Name>
+        <Title>Hipsográfico</Title>
+        <Abstract></Abstract>
+        <KeywordList>
+            <Keyword></Keyword>
+        </KeywordList>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-119.993" miny="9.404" maxx="-85.1237" maxy="37.8468" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="-119.993" miny="9.404" maxx="-85.1237" maxy="37.8468" />
+    <Attribution>
+        <Title>INEGI</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.inegi.org.mx/"/>
+        <LogoURL width="20" height="20">
+             <Format>image/jpg</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://mapserver.inegi.org.mx/images/logoINEGI.JPG"/>
+          </LogoURL>
+    </Attribution>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://mapserver.inegi.org.mx/geografia/espanol/normatividad/metadatos/gateway.cfm"/>
+        </DataURL>
+        <ScaleHint min="299.341709057782" max="0" />
+        <!-- WARNING: Only MINSCALEDENOM and no MAXSCALEDENOM specified in the mapfile. A default value of 0 has been returned for the Max ScaleHint but this is probably not what you want. -->
+      </Layer>
+</Capability>
+</WMT_MS_Capabilities>
+    

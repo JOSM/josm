@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.actions.SelectAllActionTest
+Test: testActionPerformed() took 85 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 133 milli sec(s)
+6-02-04 20:40:33.601 INFO: Keystroke meta pressed A is already assigned to org.openstreetmap.josm.actions.SelectAllAction@1f06193b, will be overridden by org.openstreetmap.josm.actions.SelectAllAction@194f1e07
+2026-02-04 20:40:33.601 INFO: Registered toolbar action selectall overwritten: org.openstreetmap.josm.actions.SelectAllAction gets org.openstreetmap.josm.actions.SelectAllAction
+------------- ---------------- ---------------

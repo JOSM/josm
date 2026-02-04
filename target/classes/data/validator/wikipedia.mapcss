@@ -1,0 +1,167 @@
+/* validation for the wikipedia=* tag - see tickets #8383, #14425, #18251 */
+
+/* If there is no language at all, this is broken. Also catches 'wikipedia' used as 'email', 'website', 'ele' [sic!] ... */
+*[wikipedia][wikipedia !~ /(?i)^[-a-z]{2,12}:/] {
+  throwError: tr("wikipedia tag has no language given, use ''wikipedia''=''language:page title''");
+  assertMatch: "node wikipedia=Foobar";
+  assertNoMatch: "node wikipedia=en:Foobar";
+  assertNoMatch: "node wikipedia=en-GB:Foobar";
+}
+
+/* Valid languages are extracted from <https://www.wikidata.org/w/api.php?action=sitematrix&formatversion=2>, which may change, so this is a warning only. */
+*[wikipedia =~ /(?i)^[-a-z]{2,12}:/][wikipedia !~ /^https?:\/\//][wikipedia !~ /^(aa|ab|ace|ady|af|ak|als|alt|am|ami|an|ang|ar|arc|ary|arz|as|ast|atj|av|avk|awa|ay|az|azb|ba|ban|bar|bat-smg|bcl|be|be-tarask|be-x-old|bg|bh|bi|bjn|bm|bn|bo|bpy|br|bs|bug|bxr|ca|cbk-zam|cdo|ce|ceb|ch|cho|chr|chy|ckb|co|cr|crh|cs|csb|cu|cv|cy|da|dag|de|din|diq|dsb|dty|dv|dz|ee|el|eml|en|eo|es|et|eu|ext|fa|ff|fi|fiu-vro|fj|fo|fr|frp|frr|fur|fy|ga|gag|gan|gcr|gd|gl|glk|gn|gom|gor|got|gu|guw|gv|ha|hak|haw|he|hi|hif|ho|hr|hsb|ht|hu|hy|hyw|hz|ia|id|ie|ig|ii|ik|ilo|inh|io|is|it|iu|ja|jam|jbo|jv|ka|kaa|kab|kbd|kbp|kcg|kg|ki|kj|kk|kl|km|kn|ko|koi|kr|krc|ks|ksh|ku|kv|kw|ky|la|lad|lb|lbe|lez|lfn|lg|li|lij|lld|lmo|ln|lo|lrc|lt|ltg|lv|mad|mai|map-bms|mdf|mg|mh|mhr|mi|min|mk|ml|mn|mni|mnw|mo|mr|mrj|ms|mt|mus|mwl|my|myv|mzn|na|nah|nap|nds|nds-nl|ne|new|ng|nia|nl|nn|no|nov|nqo|nrm|nso|nv|ny|oc|olo|om|or|os|pa|pag|pam|pap|pcd|pdc|pfl|pi|pih|pl|pms|pnb|pnt|ps|pt|pwn|qu|rm|rmy|rn|ro|roa-rup|roa-tara|ru|rue|rw|sa|sah|sat|sc|scn|sco|sd|se|sg|sh|shi|shn|shy|si|simple|sk|skr|sl|sm|smn|sn|so|sq|sr|srn|ss|st|stq|su|sv|sw|szl|szy|ta|tay|tcy|te|tet|tg|th|ti|tk|tl|tn|to|tpi|tr|trv|ts|tt|tum|tw|ty|tyv|udm|ug|uk|ur|uz|ve|vec|vep|vi|vls|vo|wa|war|wo|wuu|xal|xh|xmf|yi|yo|yue|za|zea|zh|zh-classical|zh-min-nan|zh-yue|zu):/] {
+  throwWarning: tr("wikipedia tag has an unknown language prefix");
+  assertMatch: "node wikipedia=X-Y-Z:Foobar";
+  assertNoMatch: "node wikipedia=en:Foobar";
+}
+
+*[wikipedia =~ /^https?:\/\//],
+*[wikipedia =~ /(?i)^[-a-z]{2,12}:https?:\/\//] {
+  throwWarning: tr("wikipedia tag format is deprecated");
+  suggestAlternative: tr("''wikipedia''=''language:page title''");
+  group: tr("deprecated tagging");
+  assertMatch: "node wikipedia=http://en.wikipedia.org/wiki/OpenStreetMap";
+  assertNoMatch: "node wikipedia=en:OpenStreetMap";
+}
+
+*[wikipedia =~ /^be-x-old:/] {
+  throwWarning: tr("wikipedia ''{0}'' language is obsolete, use ''{1}'' instead", "be-x-old", "be-tarask");
+  fixAdd: concat("wikipedia=be-tarask:", get(regexp_match("^be-x-old:(.+)$", tag("wikipedia")),1));
+  assertMatch: "node wikipedia=be-x-old:foo";
+  assertNoMatch: "node wikipedia=abe-x-old:foo";
+}
+
+*[wikipedia =~ /^cz:/] {
+  throwWarning: tr("wikipedia ''{0}'' language is invalid, use ''{1}'' instead", "cz", "cs");
+  fixAdd: concat("wikipedia=cs:", get(regexp_match("^cz:(.+)$", tag("wikipedia")),1));
+  assertMatch: "node wikipedia=cz:foo";
+  assertNoMatch: "node wikipedia=en:cz:foo";
+}
+
+*[wikimedia_commons =~ /%[0-9A-F][0-9A-F]/] {
+  throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.key}");
+  fixAdd: concat("wikimedia_commons=", trim(replace(URL_decode(tag("wikimedia_commons")), "_", " ")));
+  assertMatch: "node wikimedia_commons=File:Foo%27s";
+  assertNoMatch: "node wikimedia_commons=File:Foo";
+}
+
+*[wikipedia =~ /(?i)^[-a-z]{2,12}:.*%[0-9A-F][0-9A-F]/] {
+  throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.key}");
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(replace(URL_decode(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),2)), "_", " ")));
+  assertMatch: "node wikipedia=en:Foo%27s";
+  assertNoMatch: "node wikipedia=en:Foo";
+}
+
+*[/^wikipedia:[-a-z]{2,12}$/][/^wikipedia:[-a-z]{2,12}$/ =~ /(?i).*%[0-9A-F][0-9A-F]/] {
+  throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.key}");
+  fixAdd: concat("{0.key}", "=", get(regexp_match("(?i)^([-a-z]+:)?(.*)$", tag("{0.key}")),1), trim(replace(URL_decode(get(println(regexp_match("(?i)^([-a-z]+:)?(.+)$", tag("{0.key}"))),2)), "_", " ")));
+  assertMatch: "node wikipedia:de=Foo%27s";
+  assertNoMatch: "node wikipedia:de=Foo";
+}
+
+*[wikipedia =~ /(?i)^[-a-z]{2,12}: /] {
+  throwWarning: tr("wikipedia title should not start with a space after language code");
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),2)));
+  assertMatch: "node wikipedia=en: foo";
+  assertNoMatch: "node wikipedia=en:foo";
+}
+
+*[wikipedia =~ /(?i)^[-a-z]{2,12}:wiki\//] { 
+  throwWarning: tr("wikipedia title should not have ''{0}'' prefix", "wiki/");
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)wiki/(.*)$", tag("wikipedia")),1), trim(get(regexp_match("(?i)^([-a-z]+:)wiki/(.*)$", tag("wikipedia")),2)));
+  assertMatch: "node wikipedia=en:wiki/foo";
+  assertNoMatch: "node wikipedia=en:foo";
+}
+
+/* All wikipedias except "jbo" automatically capitalize first letter of the page title.
+   To see the latest list, see <https://noc.wikimedia.org/conf/highlight.php?file=InitialiseSettings.php>
+   and look for 'wgCapitalLinks' setting. */
+*[wikipedia =~ /^[-a-zA-Z]{2,12}:(?!\p{sc=Georgian})\p{Ll}/][wikipedia !~ /^jbo:/][wikipedia !~ /(?i)^[-a-z]{2,12}:https?:/] {
+  throwWarning: tr("wikipedia page title should have first letter capitalized");
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),1), upper(get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),2)), get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),3));
+  assertMatch: "node wikipedia=en:foo";
+  assertNoMatch: "node wikipedia=en:Foo";
+  assertMatch: "node wikipedia=ru:абв";
+  assertNoMatch: "node wikipedia=ru:Абв";
+}
+
+*[wikipedia =~ /(?i)^[-a-z]{2,12}:.*_/][wikipedia !~ /(?i)^[-a-z]{2,12}:https?:/] {
+  throwWarning: tr("wikipedia page title should have spaces instead of underscores (''_''→'' '')");
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),1), trim(replace(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),2), "_", " ")));
+  assertMatch: "node wikipedia=en:foo_bar";
+  assertNoMatch: "node wikipedia=en:foo bar";
+}
+
+*[wikipedia ^= "da:da:"],
+*[wikipedia ^= "da:dk:"],
+*[wikipedia ^= "de:de:"],
+*[wikipedia ^= "dk:dk:"],
+*[wikipedia ^= "en:de:"],
+*[wikipedia ^= "en:en:"],
+*[wikipedia ^= "en:es:"],
+*[wikipedia ^= "en:eu:"],
+*[wikipedia ^= "en:fr:"],
+*[wikipedia ^= "en:ja:"],
+*[wikipedia ^= "en:pl:"],
+*[wikipedia ^= "en:pt:"],
+*[wikipedia ^= "en:zh:"],
+*[wikipedia ^= "es:es:"],
+*[wikipedia ^= "eu:eu:"],
+*[wikipedia ^= "fr:fr:"],
+*[wikipedia ^= "ja:ja:"],
+*[wikipedia ^= "pl:en:"],
+*[wikipedia ^= "pl:pl:"],
+*[wikipedia ^= "pt:pt:"],
+*[wikipedia ^= "ru:fr:"],
+*[wikipedia ^= "ru:ru:"],
+*[wikipedia ^= "zh:zh:"] {
+  throwWarning: tr("wikipedia language seems to be duplicated, e.g. en:en:Foo");
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)([-a-z]+:)(.*)$", tag("wikipedia")),2), trim(get(regexp_match("(?i)^([-a-z]+:)([-a-z]+:)(.*)$", tag("wikipedia")),3)));
+  assertMatch: "node wikipedia=en:en:Foo";
+  assertMatch: "node wikipedia=en:fr:Foo";
+  assertNoMatch: "node wikipedia=en:Bar";
+}
+
+/* Detect invalid wikidata tags */
+*[wikidata][wikidata !~ /^Q[1-9][0-9]{0,8}$/] {
+  throwError: tr("wikidata tag must be in Qnnnn format, where n is a digit");
+  assertMatch: "node wikidata=a";
+  assertMatch: "node wikidata=Q";
+  assertMatch: "node wikidata=Q0";
+  assertMatch: "node wikidata=Q0123";
+  assertNoMatch: "node wikidata=Q123";
+  assertNoMatch: "node wikidata=Q1";
+}
+
+/* Wikipedia without wikidata */
+*[wikipedia][!wikidata] {
+  throwOther: tr("wikipedia tag is set, but there is no wikidata tag. Wikipedia plugin might help with wikidata id lookups");
+  group: tr("missing tag");
+  assertMatch: "node wikipedia=a";
+  assertNoMatch: "node wikipedia=a wikidata=Q123";
+  assertNoMatch: "node wikidata=Q1";
+  assertNoMatch: "node foo=bar";
+}
+
+/* Detect wikidata value wrongly in wikipedia key, not 100% safe as there might be wikipedia articles matching the regexp, therefore no fixChangeKey */
+*[wikipedia][wikipedia =~ /^[-a-zA-Z]{2,12}:Q[1-9][0-9]{0,8}$/] {
+  throwWarning: tr("{0} value looks like a {1} value", "{0.key}", "wikidata");
+  assertNoMatch: "node wikipedia=a";
+  assertNoMatch: "node wikipedia=de:a";
+  assertNoMatch: "node wikipedia=de:Q";
+  assertNoMatch: "node wikipedia=de:Q0";
+  assertNoMatch: "node wikipedia=de:Q0123";
+  assertNoMatch: "node wikipedia=en-GB:Q0123";
+  assertMatch: "node wikipedia=de:Q123";
+  assertMatch: "node wikipedia=de:Q1";
+  assertMatch: "node wikipedia=en-GB:Q123";
+  assertMatch: "node wikipedia=en-GB:Q1";
+}
+
+/* Wikipedia:lang without wikipedia */
+*[!wikipedia][/^wikipedia:/] {
+  throwWarning: tr("''{0}'' tag is set, but no ''{1}'' tag. Make sure to set ''wikipedia=language:value'' for the main article and optional ''wikipedia:language=value'' only for additional articles that are not just other language variants of the main article.", "{1.key}", "{0.key}");
+  assertMatch: "node wikipedia:en=a";
+  assertNoMatch: "node wikipedia=a wikipedia:en=b";
+  assertNoMatch: "node wikipedia=Foo";
+}

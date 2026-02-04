@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.actions.mapmode.ParallelWayActionTest
+Test: testNonRegression20908() took 610 milli sec(s)
+Test: testEnumMode() took 85 milli sec(s)
+Test: testMode() took 83 milli sec(s)
+Test: testEnumModifier() took 83 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 902 milli sec(s)
+on@72dbe006, will be overridden by org.openstreetmap.josm.actions.mapmode.ParallelWayAction@332ed065
+2026-02-04 20:40:40.962 INFO: Keystroke shift pressed P is already assigned to org.openstreetmap.josm.actions.mapmode.ParallelWayAction@798787da, will be overridden by org.openstreetmap.josm.actions.mapmode.ParallelWayAction@5d91e5df
+2026-02-04 20:40:41.045 INFO: Keystroke shift pressed P is already assigned to org.openstreetmap.josm.actions.mapmode.ParallelWayAction@776b962e, will be overridden by org.openstreetmap.josm.actions.mapmode.ParallelWayAction@5f1cc2fa
+2026-02-04 20:40:41.127 INFO: Keystroke shift pressed P is already assigned to org.openstreetmap.josm.actions.mapmode.ParallelWayAction@a1dcfed, will be overridden by org.openstreetmap.josm.actions.mapmode.ParallelWayAction@356fe3a4
+------------- ---------------- ---------------

@@ -1,0 +1,20 @@
+Testcase: org.openstreetmap.josm.actions.CreateMultipolygonActionTest
+Test: testTicket20325NoUpdateWarning() took 132 milli sec(s)
+Test: testUpdate1() took 52 milli sec(s)
+Test: testUpdate2() took 50 milli sec(s)
+Test: testTicket17767() took 166 milli sec(s)
+Test: testTicket17768() took 75 milli sec(s)
+Test: testTicket20110() took 58 milli sec(s)
+Test: testTicket20230() took 60 milli sec(s)
+Test: testTicket20238() took 64 milli sec(s)
+Test: testTicket20325() took 59 milli sec(s)
+Test: testTicket23642() took 59 milli sec(s)
+Test: testTicket20325Invalid() took 59 milli sec(s)
+Test: testCreate1() took 60 milli sec(s)
+Test: testCreate2() took 52 milli sec(s)
+Test: testTicket20325New() took 56 milli sec(s)
+Test: testTicket20325Old() took 56 milli sec(s)
+Tests run: 15, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)
+MultipolygonAction@570bb42b
+2026-02-04 20:40:30.139 INFO: Registered toolbar action multipoly_create overwritten: org.openstreetmap.josm.actions.CreateMultipolygonAction gets org.openstreetmap.josm.actions.CreateMultipolygonAction
+------------- ---------------- ---------------

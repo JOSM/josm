@@ -1,0 +1,82 @@
+/* relation types */
+
+relation[!type] {
+  throwError: tr("relation without type");
+  assertMatch: "relation name=Foo";
+  assertNoMatch: "relation type=route name=Foo";
+}
+
+/* from http://wiki.openstreetmap.org/wiki/Types_of_relation */
+/* see also #9071 */
+relation[type=boundary][!boundary][!disused:boundary],
+relation[type=destination_sign][!destination],
+relation[type=enforcement][!enforcement],
+relation[type=public_transport][!public_transport],
+relation[type=route][!route],
+relation[type=route_master][!route_master],
+relation[type=waterway][!waterway] {
+  throwWarning: tr("{0} relation without {0} tag", "{1.key}");
+  group: tr("missing tag");
+  assertMatch: "relation type=route";
+  assertNoMatch: "relation type=route route=train";
+  assertMatch: "relation type=route_master";
+  assertNoMatch: "relation type=route_master route_master=train";
+  assertMatch: "relation type=boundary";
+  assertNoMatch: "relation type=boundary boundary=administrative";
+  assertNoMatch: "relation type=site site=administrative";
+  assertMatch: "relation type=public_transport";
+  assertNoMatch: "relation type=public_transport public_transport=stop_area";
+  assertMatch: "relation type=waterway";
+  assertNoMatch: "relation type=waterway waterway=river";
+  assertMatch: "relation type=enforcement";
+  assertNoMatch: "relation type=enforcement enforcement=maxspeed";
+}
+
+/* #11586 */
+relation[type=restriction][!/^restriction/]{ 
+  throwWarning: tr("{0} relation without {0} tag", "restriction");
+  group: tr("missing tag");
+  assertMatch: "relation type=restriction";
+  assertNoMatch: "relation type=restriction restriction=no_left_turn";
+  assertNoMatch: "relation type=restriction restriction:hgv=no_left_turn";
+}
+
+/* #15208, #16242 */
+relation[type=route][route=mtb    ] > way[bicycle=no],
+relation[type=route][route=bicycle] > way[bicycle=no],
+relation[type=route][route=mtb    ] > way[bicycle=private],
+relation[type=route][route=bicycle] > way[bicycle=private],
+relation[type=route][route=mtb    ] > way[bicycle=use_sidepath],
+relation[type=route][route=bicycle] > way[bicycle=use_sidepath], 
+relation[type=route][route=fitness_trail] > way[foot=no],
+relation[type=route][route=hiking       ] > way[foot=no],
+relation[type=route][route=running      ] > way[foot=no],
+relation[type=route][route=walking      ] > way[foot=no],
+relation[type=route][route=fitness_trail] > way[foot=private],
+relation[type=route][route=hiking       ] > way[foot=private],
+relation[type=route][route=running      ] > way[foot=private],
+relation[type=route][route=walking      ] > way[foot=private],
+relation[type=route][route=fitness_trail] > way[foot=use_sidepath],
+relation[type=route][route=hiking       ] > way[foot=use_sidepath],
+relation[type=route][route=running      ] > way[foot=use_sidepath],
+relation[type=route][route=walking      ] > way[foot=use_sidepath], 
+relation[type=route][route=horse] > way[horse=no],
+relation[type=route][route=horse] > way[horse=private],
+relation[type=route][route=horse] > way[horse=use_sidepath] { 
+  throwWarning: tr("way with {0} is part of a {1} route relation", "{0.tag}", "{0.key}");
+}
+
+/* #21285, #21738 */
+relation[type=building][building] >[role=outline] *[building][parent_tag(building) != tag(building)] {
+  throwWarning: tr("{0} of {1} member and {0} relation differ", "{0.key}", "outline");
+  group: tr("suspicious tag combination");
+}
+
+/* Power relations, #24456 */
+relation[type=power][!power],
+relation[type=power][power][power!~/^(circuit|line_section)$/] {
+       throwError: tr("Power relation misses or combined to wrong power=* value");
+       assertMatch: "relation type=power";
+  assertMatch: "relation type=power power=line";
+       assertNoMatch: "relation type=power power=circuit";
+}

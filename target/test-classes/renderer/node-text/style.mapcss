@@ -1,0 +1,142 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+node[test] {
+	symbol-shape: circle;
+	symbol-size: 5;
+	symbol-fill-color: #8888ff;
+	text-color: red;
+	font-family: DejaVu Sans;
+	_match: regexp_match("n(.+)", tag("test"));
+	text: eval(concat("Test ", get(prop("_match"),1)));
+}
+
+/* Anchor position */
+node[test=n1] {
+	text-anchor-horizontal: center; 
+	text-anchor-vertical: center; 
+}
+
+node[test=n2] {
+	text-anchor-horizontal: left;
+	text-anchor-vertical: center;
+	text-color: green;
+}
+
+node[test=n3] {
+	text-anchor-horizontal: right;
+	text-anchor-vertical: center;
+	text-color: rgba(0.1, 1.0, 0.1, 0.5);
+}
+
+node[test=n4] {
+	text-anchor-horizontal: center;
+	text-anchor-vertical: top;
+	text-color: rgba(0.1, 1.0, 0.1, 1.0);
+	text-opacity: 0.5;
+}
+
+node[test=n5] {
+	text-anchor-horizontal: center;
+	text-anchor-vertical: bottom;
+	text-color: rgba(0.1, 1.0, 0.1, 0.8);
+	text-opacity: 0.8;
+}
+
+node[test=n6] {
+	text-anchor-horizontal: center; 
+	text-anchor-vertical: above; 
+}
+
+node[test=n7] {
+	text-anchor-horizontal: center; 
+	text-anchor-vertical: below; 
+}
+
+node[test=n8] {
+	text-anchor-horizontal: center; 
+	text-anchor-vertical: below; 
+	text-offset-x: -10;
+	text-offset-y: -10;
+}
+
+node[test=n9] {
+	text-anchor-horizontal: left; 
+	text-anchor-vertical: top; 
+	text-offset-x: 5;
+	text-offset: 10; /* interpreted as offset-y */
+}
+
+node[test=n10] {
+	text-offset: list(2, -6);
+}
+
+/* Halo */
+
+node[test=n11] {
+	text-halo-radius: 1;
+	text-halo-color: green;
+}
+
+node[test=n12] {
+	text-halo-radius: 5;
+	text-halo-opacity: 0.5;
+}
+
+node[test=n13] {
+	text-halo-radius: 5;
+	text-halo-color: rgba(0, 0, 1.0, 0.4);
+}
+
+node[test=n14] {
+	text-halo-radius: 5;
+	text-halo-color: rgba(0, 0, 1.0, 0.4);
+	text-halo-opacity: 0.5;
+}
+
+node[test=n15] {
+	/* ignored */
+	text-halo-radius: -2;
+}
+
+/* Text style */
+
+node[test=n16] {
+	 font-size: 10;
+	 font-style: italic;
+}
+
+node[test=n17] {
+	 font-size: 5;
+	 text-color: green;
+}
+
+node[test=n18] {
+	 font-size: 12;
+	 font-weight: bold;
+}
+
+/* 19, 20: hover/disabled */
+
+/* Text values */
+node[test=n21] {
+	text: test;
+}
+
+node[test=n22] {
+	text: unused_key;
+}
+
+node[test=n23] {
+	text: auto;
+}
+
+node[test=n24] {
+	text: auto;
+}
+
+node[test=n25] {
+	text: auto;
+}

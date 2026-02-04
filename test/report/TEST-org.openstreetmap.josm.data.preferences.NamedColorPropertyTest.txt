@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.preferences.NamedColorPropertyTest
+Test: testGet() took 1 milli sec(s)
+Test: testPut() took 1 milli sec(s)
+Test: testGetChildColor() took 0 milli sec(s)
+Test: testColorNameAlpha() took 0 milli sec(s)
+Test: testColorAlpha() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 55 milli sec(s)
+s for clr.general.test differ: [#FF0000, general, , test] != [#808080, general, , test]
+------------- ---------------- ---------------

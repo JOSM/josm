@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.data.cache.HostLimitQueueTest
+Test: testTwoHosts() took 4 sec(s)
+Test: testMultipleThreadPerHost() took 5 sec(s)
+Test: testSingleThreadPerHost() took 8 sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 17 sec(s)
+leName: test_BLOCK_v2 and root directory: 
+------------- ---------------- ---------------

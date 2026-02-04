@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.gui.help.HelpBrowserTest
+Test: testEditActionNull(PlatformHook, PlatformManager) took 151 milli sec(s)
+Test: testEditActionInternal(PlatformHook, PlatformManager) took 92 milli sec(s)
+Test: testOpenInBrowserAction(PlatformHook, PlatformManager) took 92 milli sec(s)
+Test: testHomeAction() took 3 milli sec(s)
+Test: testBackAndForwardActions() took 1 milli sec(s)
+Test: testReloadAction() took 1 milli sec(s)
+Test: testEditActionExternal(PlatformHook, PlatformManager) took 183 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 594 milli sec(s)
+Editing is only possible for help topics<br>on the help server <tt>https://josm.openstreetmap.de</tt>.</html>
+------------- ---------------- ---------------

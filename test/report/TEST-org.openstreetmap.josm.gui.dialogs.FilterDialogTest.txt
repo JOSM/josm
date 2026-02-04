@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.FilterDialogTest
+Test: testNonRegression22439(int)[1] took 97 milli sec(s)
+Test: testNonRegression22439(int)[2] took 93 milli sec(s)
+Test: testNonRegression22439(int)[3] took 91 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 342 milli sec(s)

@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.data.osm.OsmUtilsTest
+Test: testArea() took 1 milli sec(s)
+Test: testCreatePrimitive() took 0 milli sec(s)
+Test: testCreatePrimitiveFail() took 0 milli sec(s)
+Test: testSplitMultipleValues() took 1 milli sec(s)
+Test: testTrueFalse() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 48 milli sec(s)

@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.data.coor.conversion.LatLonParserTest
+Test: testParse() took 2 milli sec(s)
+Test: testParseInvalid1() took 0 milli sec(s)
+Test: testParseInvalid2() took 0 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 39 milli sec(s)

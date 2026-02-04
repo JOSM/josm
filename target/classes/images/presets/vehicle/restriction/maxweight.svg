@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="725"
+   height="725"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="maxweight.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="maxweight.png"
+   inkscape:export-xdpi="2"
+   inkscape:export-ydpi="2">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="480"
+     inkscape:window-width="640"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     showgrid="false" />
+  <defs
+     id="defs9">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 362.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="725 : 362.5 : 1"
+       inkscape:persp3d-origin="362.5 : 241.66667 : 1"
+       id="perspective14" />
+  </defs>
+  <g
+     id="g1875">
+    <circle
+       cx="362.5"
+       cy="362.5"
+       r="350"
+       style="fill: white; stroke: black; stroke-width: 2.5px;"
+       id="circle4" />
+    <circle
+       cx="362.5"
+       cy="362.5"
+       r="290"
+       style="fill: none; stroke: rgb(204, 0, 0); stroke-width: 93.75;"
+       id="circle6" />
+  </g>
+  <path
+     d="M 294.04544,221.14362 L 183.255,221.14362 L 183.09088,366.25115 L 217.70291,366.25115 C 217.70291,346.53041 254.48357,345.84843 254.48357,366.25115 C 254.48357,366.25115 254.48357,438.76401 254.48357,438.76401 C 254.48363,445.03123 243.11783,452.40422 240.48875,452.53397 C 240.48875,452.53397 230.31359,452.48158 230.31359,452.48158 C 227.68867,452.48158 217.6159,446.79648 217.64867,439.33743 C 217.64867,439.33743 217.70122,422.19028 217.70122,422.19028 L 178.14358,422.19028 L 178.30449,443.8005 C 178.30449,459.84517 202.26675,492.57459 225.40921,492.57459 C 225.40921,492.57459 245.28039,492.22491 245.28039,492.22491 C 268.501,492.22491 294.49726,461.2583 294.28512,443.8005 L 294.44602,357.71952 C 294.44602,319.56363 239.39049,305.97469 217.91336,327.45182 L 217.57542,259.17346 L 294.35071,259.33759 L 294.04544,221.14362 z "
+     style="fill: black; fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     id="path1908" />
+  <path
+     d="M 495.56079,294.87587 L 495.43446,340.0281 L 480.58385,340.15444 L 480.58385,366.03161 L 495.49828,366.03161 L 495.62462,461.38956 C 495.62462,473.97512 514.04468,491.02693 522.86158,491.02693 L 545.83034,491.02693 L 545.57767,461.86366 L 533.98324,461.99 C 530.49753,461.99 526.64293,459.44917 526.64293,456.22031 L 526.64293,366.12536 L 545.61025,365.99903 L 545.61025,340.12185 L 526.46286,340.12185 L 526.58919,294.93837 L 495.56079,294.87587 z "
+     style="fill: black; fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     id="path1886" />
+  <path
+     d="M 455.49795,280.06412 L 368.51182,280.06412 L 368.38296,393.99401 L 395.55829,393.99401 C 395.55829,378.51045 424.4363,377.975 424.4363,393.99401 C 424.4363,393.99401 424.4363,450.92684 424.4363,450.92684 C 424.43634,455.84749 415.51259,461.63633 413.44839,461.7382 C 413.44839,461.7382 405.45945,461.69707 405.45945,461.69707 C 403.39852,461.69707 395.48997,457.23346 395.5157,451.37706 C 395.5157,451.37706 395.55696,437.91412 395.55696,437.91412 L 364.49863,437.91412 L 364.62497,454.8812 C 364.62497,467.47853 383.43872,493.17574 401.60882,493.17574 C 401.60882,493.17574 417.2105,492.90119 417.2105,492.90119 C 435.44196,492.90119 455.85269,468.58803 455.68613,454.8812 L 455.81246,387.29548 C 455.81246,357.33772 412.5861,346.66848 395.72352,363.53106 L 395.45819,309.92291 L 455.73763,310.05178 L 455.49795,280.06412 z "
+     style="fill: black; fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     id="path1888" />
+  <path
+     d="M 311.3137,459.93357 L 342.53319,459.78807 L 342.53319,491.74752 L 311.34695,514.75268 L 311.3137,459.93357 z "
+     style="fill: black; fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     id="path1910" />
+</svg>

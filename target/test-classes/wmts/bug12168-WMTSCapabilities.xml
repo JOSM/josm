@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0 http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0/inspire_vs_ows_11.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd" version="1.0.0">
+	<ows:ServiceIdentification>
+		<ows:Title xml:lang="nl">Viewservice WMTS</ows:Title>
+		<ows:Title xml:lang="fr">Service de visualisation WMTS</ows:Title>
+		<ows:Abstract xml:lang="nl">CartoWeb is een webservice (Web Map Tile Service) met kaartweergaven op 11 verschillende schaalniveaus (1:2500 - 1:4 000 000).De kaartvoorstelling die hiervoor werd ontwikkeld, is specifiek aangepast voor weergave op het scherm en bestrijkt 11 schaalniveaus (1:2500 tot 1:4 000 000). Cartoweb biedt een kaartvoorstelling van de meest bijgewerkte vectoriële referentiedatasets van het NGI. Er zijn twee versies beschikbaar: 1) een TOPO-laag, met een kaartweergave op alle schalen. 2) een OVERLAY-laag, die bedoeld is om als overdruk op andere achtergrondgegevens gelegd te worden.Deze laag bevat alleen maar de symbolisatie van enkele thema’s.</ows:Abstract>
+		<ows:Abstract xml:lang="fr">CartoWeb est un web-service (Web Map Tile Service) comprenant des représentations cartographiques qui couvrent 11 niveaux d’échelle différents (1 :2 500 - 1 :4 000 000). CartoWeb offre une représentation cartographique, spécifiquement développée pour une visualisation à l’écran, des sets de données vectoriels de référence les plus à jour de l'IGN. Deux versions sont disponibles :  1) une couche TOPO, reprenant une représentation cartographique à toutes les échelles. 2) une couche OVERLAY, destinée à être appliquée en surcharge à d'autres données en fond (des orthophotos par exemple). Cette couche ne reprend la symbolisation que de quelques thèmes uniquement.</ows:Abstract>
+		<ows:Keywords>
+			<ows:Keyword xml:lang="fr">Carte topographique de base</ows:Keyword>
+			<ows:Keyword xml:lang="fr">Bâtiments</ows:Keyword>
+			<ows:Keyword xml:lang="fr">Hydrographie</ows:Keyword>
+			<ows:Keyword xml:lang="fr">Réseaux (Routes, Rails)</ows:Keyword>
+			<ows:Keyword xml:lang="fr">Unités administratives</ows:Keyword>
+			<ows:Keyword xml:lang="fr">LandCover</ows:Keyword>
+			<ows:Keyword xml:lang="fr">Réseau haute tension</ows:Keyword>
+			<ows:Keyword xml:lang="fr">Altimétrie</ows:Keyword>
+			<ows:Keyword xml:lang="fr">Toponymie</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Topografische basiskaart</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Gebouwen</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Hydrografie</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Netwerken (wegen, spoorwegen)</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Administratieve eenheden</ows:Keyword>
+			<ows:Keyword xml:lang="nl">LandCover</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Hoogspanningsnetwerk</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Altimetrie</ows:Keyword>
+			<ows:Keyword xml:lang="nl">Toponymie</ows:Keyword>
+		</ows:Keywords>
+		<ows:ServiceType>OGC WMTS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:AccessConstraints>http://www.ngi.be/cartoweb/cartoweb_gebruiksvoorwaarden.pdf - http://www.ngi.be/cartoweb/cartoweb_conditions.pdf</ows:AccessConstraints>
+	</ows:ServiceIdentification>
+	<ows:ServiceProvider>
+		<ows:ProviderName>NGI - IGN</ows:ProviderName>
+		<ows:ProviderSite xlink:href="http://www.ngi.be"/>
+		<ows:ServiceContact>
+			<ows:ContactInfo>
+				<ows:Address>
+					<ows:ElectronicMailAddress>cartoweb@ngi.be</ows:ElectronicMailAddress>
+				</ows:Address>
+			</ows:ContactInfo>
+		</ows:ServiceContact>
+	</ows:ServiceProvider>
+	<Contents>
+		<Layer>
+			<ows:Title xml:lang="nl">CartoWeb-TOPO</ows:Title>
+			<ows:Title xml:lang="fr">CartoWeb-TOPO</ows:Title>
+			<ows:Abstract xml:lang="nl">De TOPO-laag lijkt op een “traditionele” kaartweergave, die alle schalen bestrijkt (1:4 000 000, 1:2 000 000, 1:800 000, 1:500 000, 1:250 000, 1:100 000, 1:50 000, 1:25 000, 1:10 000, 1:5 000, 1:2 500).  Dankzij deze verschillende schalen kunnen verschillende types informatie weergegeven worden : Op de kleinste schalen maken de zeer gegeneraliseerde kaarten het mogelijk slechts één thema te benadrukken, zoals de administratieve eenheden of de belangrijkste netwerken. Op de middenschalige weergaven vindt men de typische topografische kaarten van het Nationaal Geografisch Instituut. Deze kaarten zijn dus middelen waarmee men het terrein kan interpreteren, zijn positie kan bepalen en zich oriënteren. De grootste schalen, die zeer gedetailleerd zijn, lijken meer op plannen. Ze hebben hun eigen specifiek nut maar geven geen goed globaal beeld van het landschap.</ows:Abstract>
+			<ows:Abstract xml:lang="fr">La coucheTOPO s’apparente à une représentation cartographique « traditionnelle », couvrant toutes les échelles (1:4 000 000, 1:2 000 000, 1:800 000, 1:500 000, 1:250 000, 1:100 000, 1:50 000, 1:25 000, 1:10 000, 1:5 000, 1:2 500). Cette diversité d’échelles a permis de représenter différents types d’informations : Aux plus petites échelles, les cartes très généralisées permettent de ne mettre en évidence qu’un thème ou l’autre tel que les entités administratives ou les réseaux principaux, tandis que les échelles intermédiaires offrent des cartes topographiques caractéristiques de l’Institut géographique national. Ces cartes sont donc des outils permettant d’interpréter le terrain, de se localiser, et de s’orienter. Les plus grandes échelles, extrêmement détaillées, s’apparentent plus à des plans, ayant leur utilité spécifique mais ne permettant pas d’avoir un bon aperçu global du paysage. </ows:Abstract>
+			<ows:Keywords>
+				<ows:Keyword xml:lang="fr">Carte topographique de base</ows:Keyword>
+				<ows:Keyword xml:lang="fr">Bâtiments</ows:Keyword>
+				<ows:Keyword xml:lang="fr">Hydrographie</ows:Keyword>
+				<ows:Keyword xml:lang="fr">Réseaux (Routes, Rails)</ows:Keyword>
+				<ows:Keyword xml:lang="fr">Unités administratives</ows:Keyword>
+				<ows:Keyword xml:lang="fr">LandCover</ows:Keyword>
+				<ows:Keyword xml:lang="fr">Réseau haute tension</ows:Keyword>
+				<ows:Keyword xml:lang="fr">Altimétrie</ows:Keyword>
+				<ows:Keyword xml:lang="fr">Toponymie</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Topografische basiskaart</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Gebouwen</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Hydrografie</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Netwerken (wegen, spoorwegen)</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Administratieve eenheden</ows:Keyword>
+				<ows:Keyword xml:lang="nl">LandCover</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Hoogspanningsnetwerk</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Altimetrie</ows:Keyword>
+				<ows:Keyword xml:lang="nl">Toponymie</ows:Keyword>
+			</ows:Keywords>
+			<ows:WGS84BoundingBox>
+				<ows:LowerCorner>2.54 49.49</ows:LowerCorner>
+				<ows:UpperCorner>6.41 51.51</ows:UpperCorner>
+			</ows:WGS84BoundingBox>
+			<ows:Identifier>topo</ows:Identifier>
+			<Style isDefault="true">
+				<ows:Identifier>default</ows:Identifier>
+				<LegendURL format="image/png" xlink:href="http://www.ngi.be/cartoweb/legend/topo/default/nl.png"/>
+				<LegendURL format="image/png" xlink:href="http://www.ngi.be/cartoweb/legend/topo/default/fr.png"/>
+			</Style>
+			<Format>image/png</Format>
+			<InfoFormat>text/plain</InfoFormat>
+			<TileMatrixSetLink>
+				<TileMatrixSet>3812</TileMatrixSet>
+			</TileMatrixSetLink>
+			<TileMatrixSetLink>
+				<TileMatrixSet>3857</TileMatrixSet>
+				<TileMatrixSetLimits>
+					<TileMatrixLimits>
+						<TileMatrix>7</TileMatrix>
+						<MinTileRow>40</MinTileRow>
+						<MaxTileRow>43</MaxTileRow>
+						<MinTileCol>64</MinTileCol>
+						<MaxTileCol>66</MaxTileCol>
+					</TileMatrixLimits>
+				</TileMatrixSetLimits>
+			</TileMatrixSetLink>
+			<ResourceURL resourceType="tile" template="http://www.ngi.be/cartoweb/1.0.0/topo/{style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png" format="image/png"/>
+		</Layer>
+		<TileMatrixSet>
+			<ows:Identifier>3812</ows:Identifier>
+			<ows:SupportedCRS>urn:ogc:def:crs:EPSG::3812</ows:SupportedCRS>
+			<TileMatrix>
+				<ows:Identifier>0</ows:Identifier>
+				<ScaleDenominator>3779761.90476</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>8</MatrixWidth>
+				<MatrixHeight>8</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>1</ows:Identifier>
+				<ScaleDenominator>1889880.95238</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>8</MatrixWidth>
+				<MatrixHeight>8</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>2</ows:Identifier>
+				<ScaleDenominator>755952.380952</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>8</MatrixWidth>
+				<MatrixHeight>8</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>3</ows:Identifier>
+				<ScaleDenominator>472470.238095</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>16</MatrixWidth>
+				<MatrixHeight>16</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>4</ows:Identifier>
+				<ScaleDenominator>236235.119048</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>32</MatrixWidth>
+				<MatrixHeight>32</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>5</ows:Identifier>
+				<ScaleDenominator>94494.047619</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>64</MatrixWidth>
+				<MatrixHeight>64</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>6</ows:Identifier>
+				<ScaleDenominator>47247.0238095</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>128</MatrixWidth>
+				<MatrixHeight>128</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>7</ows:Identifier>
+				<ScaleDenominator>23623.5119048</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>256</MatrixWidth>
+				<MatrixHeight>256</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>8</ows:Identifier>
+				<ScaleDenominator>9449.4047619</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>512</MatrixWidth>
+				<MatrixHeight>512</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>9</ows:Identifier>
+				<ScaleDenominator>4724.70238095</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>1024</MatrixWidth>
+				<MatrixHeight>1024</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>10</ows:Identifier>
+				<ScaleDenominator>2362.35119048</ScaleDenominator>
+				<TopLeftCorner>450000.0 800000.0</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>2048</MatrixWidth>
+				<MatrixHeight>2048</MatrixHeight>
+			</TileMatrix>
+		</TileMatrixSet>
+		<TileMatrixSet>
+			<ows:Identifier>3857</ows:Identifier>
+			<ows:SupportedCRS>urn:ogc:def:crs:EPSG::3857</ows:SupportedCRS>
+			<TileMatrix>
+				<ows:Identifier>7</ows:Identifier>
+				<ScaleDenominator>4367830.189732144</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>67</MatrixWidth>
+				<MatrixHeight>44</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>8</ows:Identifier>
+				<ScaleDenominator>2183915.094866072</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>133</MatrixWidth>
+				<MatrixHeight>88</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>9</ows:Identifier>
+				<ScaleDenominator>1091957.547433036</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>266</MatrixWidth>
+				<MatrixHeight>175</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>10</ows:Identifier>
+				<ScaleDenominator>545978.773716518</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>531</MatrixWidth>
+				<MatrixHeight>350</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>11</ows:Identifier>
+				<ScaleDenominator>272989.386858259</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>1061</MatrixWidth>
+				<MatrixHeight>700</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>12</ows:Identifier>
+				<ScaleDenominator>136494.6934291295</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>2122</MatrixWidth>
+				<MatrixHeight>1400</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>13</ows:Identifier>
+				<ScaleDenominator>68247.34671456474</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>4243</MatrixWidth>
+				<MatrixHeight>2799</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>14</ows:Identifier>
+				<ScaleDenominator>34123.67335728237</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>8486</MatrixWidth>
+				<MatrixHeight>5597</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>15</ows:Identifier>
+				<ScaleDenominator>17061.836678641186</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>16972</MatrixWidth>
+				<MatrixHeight>11193</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>16</ows:Identifier>
+				<ScaleDenominator>8530.918339320593</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>33944</MatrixWidth>
+				<MatrixHeight>22386</MatrixHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>17</ows:Identifier>
+				<ScaleDenominator>4265.4591696602965</ScaleDenominator>
+				<TopLeftCorner>-20037508.3427870013 20037508.3427870013</TopLeftCorner>
+				<TileWidth>256</TileWidth>
+				<TileHeight>256</TileHeight>
+				<MatrixWidth>67888</MatrixWidth>
+				<MatrixHeight>44771</MatrixHeight>
+			</TileMatrix>
+		</TileMatrixSet>
+	</Contents>
+	<!--Mandatory in resource oriented architectural style-->
+	<ServiceMetadataURL xlink:href="http://www.ngi.be/cartoweb/1.0.0/WMTSCapabilities.xml"/>
+</Capabilities>

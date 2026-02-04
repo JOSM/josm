@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="725"
+   height="725"
+   version="1.1"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="motorcar.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="motorcar.png"
+   inkscape:export-xdpi="2"
+   inkscape:export-ydpi="2">
+  <metadata
+     id="metadata15">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs13">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 362.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="725 : 362.5 : 1"
+       inkscape:persp3d-origin="362.5 : 241.66667 : 1"
+       id="perspective17" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-height="480"
+     inkscape:window-width="640"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     showgrid="false" />
+  <circle
+     style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 2.5px;"
+     r="350"
+     cx="362.5"
+     cy="362.5"
+     id="circle4" />
+  <circle
+     cx="362.5"
+     cy="362.5"
+     r="290"
+     style="stroke: rgb(204, 0, 0); stroke-width: 93.75; fill: none;"
+     id="circle6" />
+  <g
+     transform="matrix(0.387772, 0, 0, 0.387772, 168.342, 207.443)"
+     id="CarSymbol">
+    <path
+       style="stroke: none; fill: black; fill-rule: evenodd;"
+       id="Car"
+       d="M 26.666667,456.41026 C 24.273504,280.00000 14.700854,431.79487 121.02564,170.25641 C 197.94872,-7.5213676 120.00000,40.341880 517.94872,33.846154 C 872.13675,41.025642 800.68376,-10.256409 882.05128,178.46154 C 983.93162,420.17094 976.06838,293.67521 975.38462,451.28205 C 971.62393,624.27350 1035.5556,579.82906 499.48718,585.64103 C -32.478634,578.46155 30.427346,623.58974 26.666667,456.41026 z     M 134.35897,286.15385 L 207.17949,117.94872 C 220.76607,88.070065 216.43137,92.480742 248.20513,92.307692 L 757.32827,92.252822 C 784.88973,92.354119 780.84626,90.564525 792.20006,116.86821 L 864.61538,284.10256 L 134.35897,286.15385 z     M 82.279202,604.93828 L 218.46154,604.63438 C 218.04369,775.61254 232.21273,766.07788 157.94872,767.17949 C 69.515671,766.83761 83.494777,775.76449 82.279202,604.93828 z     M 783.58974,606.15385 L 920.00000,606.15385 C 919.08832,777.39791 931.54796,765.69801 854.35897,766.15385 C 774.54890,765.09022 784.69135,777.70181 783.58974,606.15385 z" />
+    <circle
+       style="fill: white; fill-opacity: 1; stroke: none;"
+       r="66.5"
+       cy="412"
+       cx="150"
+       id="LeftLamp" />
+    <circle
+       style="fill: white; fill-opacity: 1; stroke: none;"
+       r="66.5"
+       cy="412"
+       cx="850"
+       id="RightLamp" />
+  </g>
+</svg>

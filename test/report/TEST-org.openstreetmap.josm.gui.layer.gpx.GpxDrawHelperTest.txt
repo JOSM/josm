@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelperTest
+Test: testVelocity() took 4 milli sec(s)
+Test: testNone() took 1 milli sec(s)
+Test: testTime() took 1 milli sec(s)
+Test: testTicket12312() took 1 milli sec(s)
+Test: testDirection() took 2 milli sec(s)
+Test: testVelocityDynamic() took 1 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 82 milli sec(s)

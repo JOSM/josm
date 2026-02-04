@@ -1,0 +1,38 @@
+Testcase: org.openstreetmap.josm.gui.TableCellRendererTest
+Test: testTableCellRenderer() took 384 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 446 milli sec(s)
+2-04 20:41:54.746 INFO: class org.openstreetmap.josm.gui.dialogs.relation.MemberTableRoleCellRenderer
+2026-02-04 20:41:54.747 INFO: class org.openstreetmap.josm.gui.dialogs.LayerListDialog$NativeScaleLayerCellRenderer
+2026-02-04 20:41:54.747 INFO: class org.openstreetmap.josm.gui.dialogs.relation.MemberTableMemberCellRenderer
+2026-02-04 20:41:54.747 INFO: class org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListTableCellRenderer
+2026-02-04 20:41:54.747 INFO: class org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberTableCellRenderer
+2026-02-04 20:41:54.748 INFO: class org.openstreetmap.josm.gui.history.VersionTableCellRenderer
+2026-02-04 20:41:54.748 INFO: class org.openstreetmap.josm.gui.history.TagTableCellRenderer
+2026-02-04 20:41:54.748 INFO: class org.openstreetmap.josm.gui.correction.CorrectionTable$BoldRenderer
+2026-02-04 20:41:54.748 INFO: class org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog$StatisticsInfoRenderer
+2026-02-04 20:41:54.749 INFO: class org.openstreetmap.josm.gui.dialogs.changeset.ChangesetContentTableCellRenderer
+2026-02-04 20:41:54.749 INFO: class org.openstreetmap.josm.gui.dialogs.relation.MemberTableLinkedCellRenderer
+2026-02-04 20:41:54.752 INFO: class org.openstreetmap.josm.gui.conflict.pair.tags.MineTableCellRenderer
+2026-02-04 20:41:54.752 INFO: class org.openstreetmap.josm.gui.io.SaveLayersTableColumnModel$RecommendedActionsTableCell
+2026-02-04 20:41:54.754 INFO: class org.openstreetmap.josm.gui.history.RelationMemberListTableCellRenderer
+2026-02-04 20:41:54.755 INFO: class org.openstreetmap.josm.gui.dialogs.LayerListDialog$ActiveLayerCellRenderer
+2026-02-04 20:41:54.755 INFO: class org.openstreetmap.josm.gui.conflict.tags.RelationMemberConflictResolverColumnModel$MemberRenderer
+2026-02-04 20:41:54.755 INFO: class org.openstreetmap.josm.gui.dialogs.MapPaintDialog$MyCheckBoxRenderer
+2026-02-04 20:41:54.756 INFO: class org.openstreetmap.josm.gui.history.VersionTable$RadioButtonRenderer
+2026-02-04 20:41:54.757 INFO: class org.openstreetmap.josm.gui.dialogs.RelationListDialog$NoTooltipOsmRenderer
+2026-02-04 20:41:54.757 INFO: class org.openstreetmap.josm.gui.dialogs.changeset.ChangesetDiscussionTableCellRenderer
+2026-02-04 20:41:54.757 INFO: class org.openstreetmap.josm.gui.conflict.pair.tags.MergedTableCellRenderer
+2026-02-04 20:41:54.757 INFO: class org.openstreetmap.josm.gui.dialogs.LayerListDialog$OffsetLayerCellRenderer
+2026-02-04 20:41:54.757 INFO: class org.openstreetmap.josm.actions.PurgeAction$SelectionForcedPrimitiveRenderer
+2026-02-04 20:41:54.757 INFO: class org.openstreetmap.josm.gui.widgets.ButtonColumn
+2026-02-04 20:41:54.757 INFO: class org.openstreetmap.josm.gui.conflict.pair.tags.TheirTableCellRenderer
+2026-02-04 20:41:54.758 INFO: class org.openstreetmap.josm.gui.dialogs.LayerListDialog$LayerVisibleCellRenderer
+2026-02-04 20:41:54.758 INFO: class org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheTableCellRenderer
+2026-02-04 20:41:54.758 INFO: class org.openstreetmap.josm.gui.conflict.tags.MultiValueCellRenderer
+2026-02-04 20:41:54.770 INFO: class org.openstreetmap.josm.gui.io.LayerNameAndFilePathTableCell
+2026-02-04 20:41:54.771 INFO: class org.openstreetmap.josm.gui.download.PlaceSelection$NamedResultCellRenderer
+2026-02-04 20:41:54.772 INFO: class org.openstreetmap.josm.gui.tagging.TagCellRenderer
+2026-02-04 20:41:54.772 INFO: class org.openstreetmap.josm.gui.io.ActionFlagsTableCell
+2026-02-04 20:41:54.772 INFO: class org.openstreetmap.josm.gui.PrimitiveRenderer
+2026-02-04 20:41:54.773 INFO: class org.openstreetmap.josm.gui.history.NodeListTableCellRenderer
+------------- ---------------- ---------------

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="Osm_element_relation.svg"
+   id="svg34"
+   width="24"
+   height="24"
+   version="1.0">
+  <defs
+     id="defs38" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg34"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="12.452738"
+     inkscape:cx="9.3271316"
+     inkscape:zoom="25.044602"
+     showgrid="false"
+     id="namedview36"
+     inkscape:window-height="987"
+     inkscape:window-width="1680"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <title
+     id="title2">OpenStreetMap relation element icon</title>
+  <metadata
+     id="metadata4">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>OpenStreetMap relation element icon</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+        <dc:date>2014-03-10</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>https://wiki.openstreetmap.org/wiki/User:Moresby</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="matrix(0.09448819,0,0,0.09448819,-0.09448819,-0.09448819)"
+     id="g32">
+    <rect
+       id="rect6"
+       y="7"
+       x="7"
+       ry="32"
+       fill="#ffffff"
+       stroke="none"
+       height="242"
+       width="242" />
+    <g
+       id="g20">
+      <path
+         id="path8"
+         stroke="#cccccc"
+         stroke-width="16"
+         d="M 68,68 196,62" />
+      <path
+         id="path10"
+         stroke="#cccccc"
+         stroke-width="16"
+         d="m 68,68 128,74" />
+      <path
+         id="path12"
+         stroke="#cccccc"
+         stroke-width="16"
+         d="M 68,68 62,196" />
+      <circle
+         id="circle14"
+         fill="#000000"
+         r="24"
+         cy="62"
+         cx="196" />
+      <circle
+         id="circle16"
+         fill="#000000"
+         r="24"
+         cy="142"
+         cx="196" />
+      <circle
+         id="circle18"
+         fill="#000000"
+         r="24"
+         cy="196"
+         cx="62" />
+    </g>
+    <g
+       id="g28">
+      <path
+         id="path22"
+         stroke="#cccccc"
+         stroke-width="16"
+         d="m 68,68 74,128" />
+      <circle
+         id="circle24"
+         fill="#000000"
+         r="24"
+         cy="196"
+         cx="142" />
+      <circle
+         id="circle26"
+         stroke-width="8"
+         stroke="#000000"
+         fill="#bee6be"
+         r="32"
+         cy="72"
+         cx="72" />
+    </g>
+    <rect
+       id="rect30"
+       y="7"
+       x="7"
+       ry="32"
+       stroke-width="12"
+       fill="none"
+       stroke="#000000"
+       height="242"
+       width="242" />
+  </g>
+</svg>

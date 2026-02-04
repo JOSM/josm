@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.oauth.OAuthParametersTest
+Test: testEqualsContract() took 3 milli sec(s)
+Test: testCreateDefault() took 1 sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)
+/api.openstreetmap.org/.well-known/oauth-authorization-server -> HTTP/1.1 301 (493 ms; 316 B)
+2026-02-04 20:41:13.388 INFO: Download redirected to https://www.openstreetmap.org/.well-known/oauth-authorization-server
+2026-02-04 20:41:13.902 INFO: GET https://www.openstreetmap.org/.well-known/oauth-authorization-server -> HTTP/1.1 200 (513 ms; 441 B)
+2026-02-04 20:41:14.565 INFO: GET https://api06.dev.openstreetmap.org/.well-known/oauth-authorization-server -> HTTP/1.1 200 (555 ms; 454 B)
+2026-02-04 20:41:14.671 FINEST: java.net.MalformedURLException: no protocol: wrong_url
+------------- ---------------- ---------------

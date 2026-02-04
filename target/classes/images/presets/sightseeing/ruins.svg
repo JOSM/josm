@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="352.85715"
+   height="342.85715"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   version="1.0"
+   sodipodi:docbase="Eigene Dateien"
+   sodipodi:docname="ruins.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="201.08095"
+     inkscape:cy="160.50756"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="797"
+     inkscape:window-height="573"
+     inkscape:window-x="44"
+     inkscape:window-y="58" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Ulf Lamping</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-289.5,-347.14789)">
+    <rect
+       style="opacity:1;fill:#786721;fill-opacity:1;stroke:none;stroke-width:10.07386494;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:40.29545975, 10.07386494;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3134"
+       width="45.714287"
+       height="207.14285"
+       x="514.28577"
+       y="440.93362"
+       ry="19.642857" />
+    <rect
+       style="opacity:1;fill:#786721;fill-opacity:1;stroke:none;stroke-width:10.07386494;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:40.29545975, 10.07386494;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4105"
+       width="57.142849"
+       height="98.571434"
+       x="375.71429"
+       y="510.93359"
+       ry="15.945377" />
+    <rect
+       style="opacity:1;fill:#786721;fill-opacity:1;stroke:none;stroke-width:10.07386494;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:40.29545975, 10.07386494;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4107"
+       width="48.57143"
+       height="298.57144"
+       x="344.28571"
+       y="376.64789"
+       ry="15.714286" />
+    <rect
+       ry="15.714286"
+       y="465.21936"
+       x="417.14288"
+       height="165.71428"
+       width="45.714287"
+       id="rect4111"
+       style="opacity:1;fill:#786721;fill-opacity:1;stroke:none;stroke-width:10.07386494;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:40.29545975, 10.07386494;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       ry="10.39916"
+       y="563.79077"
+       x="451.42856"
+       height="64.285721"
+       width="88.571419"
+       id="rect4113"
+       style="opacity:1;fill:#786721;fill-opacity:1;stroke:none;stroke-width:10.07386494;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:40.29545975, 10.07386494;stroke-dashoffset:0;stroke-opacity:1" />
+    <path
+       style="fill:#00cd00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.95963115px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 151.40838,706.66809 C 151.40838,706.66809 347.85199,594.19632 480.00498,590.90768 C 612.15796,587.61904 678.59162,706.66808 678.59162,706.66808"
+       id="path2160"
+       sodipodi:nodetypes="csc" />
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.gui.io.importexport.OsmPbfImporterTest
+Test: testSimpleCase() took 4 milli sec(s)
+Test: testMultipleHeaders() took 1 milli sec(s)
+Test: testGoodHeader() took 0 milli sec(s)
+Test: testNonRegression23550() took 0 milli sec(s)
+Test: testMissingRequiredFeature() took 0 milli sec(s)
+Test: testIdParsing() took 1 milli sec(s)
+Test: testTooBigHeader() took 0 milli sec(s)
+Test: testNonRegression23599a() took 0 milli sec(s)
+Test: testNonRegression23599b() took 1 milli sec(s)
+Test: testNonRegression23599c() took 0 milli sec(s)
+Test: testNonRegression23599d() took 0 milli sec(s)
+Tests run: 11, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 76 milli sec(s)

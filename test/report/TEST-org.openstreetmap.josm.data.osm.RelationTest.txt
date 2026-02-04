@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.osm.RelationTest
+Test: testBbox() took 1 milli sec(s)
+Test: testCreateNewRelation() took 1 milli sec(s)
+Test: testCloneFromIAE() took 0 milli sec(s)
+Test: testTicket12467() took 0 milli sec(s)
+Test: testLoadIAE() took 0 milli sec(s)
+Test: testEqualSemanticsToNull() took 0 milli sec(s)
+Test: testBBoxNotInDataset() took 1 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 45 milli sec(s)

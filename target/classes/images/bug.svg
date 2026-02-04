@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg4376"
+   viewBox="0 0 24 24"
+   sodipodi:version="0.32"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="face-sad15.svg"
+   version="1.1"
+   width="24"
+   height="24">
+  <defs
+     id="defs3">
+    <radialGradient
+       id="radialGradient2714"
+       fx="29.158001"
+       fy="15.756"
+       gradientUnits="userSpaceOnUse"
+       cy="15.721"
+       cx="29.288"
+       r="8.9020996"
+       inkscape:collect="always"
+       gradientTransform="matrix(1.123333,0,0,1.1233331,-22.949918,-10.353011)">
+      <stop
+         id="stop3292"
+         style="stop-color:#fffcde"
+         offset="0" />
+      <stop
+         id="stop3294"
+         style="stop-color:#f6e76a"
+         offset=".64486" />
+      <stop
+         id="stop3296"
+         style="stop-color:#ffb738"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       id="aigrd2"
+       gradientUnits="userSpaceOnUse"
+       cy="39.592999"
+       cx="25.052999"
+       gradientTransform="matrix(0.67407527,0,0,-0.67407534,-4.5786179,38.264536)"
+       r="15.757">
+      <stop
+         id="stop8602"
+         style="stop-color:#343434;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop8604"
+         style="stop-color:#000000"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       id="radialGradient4571"
+       cx="24.714001"
+       gradientUnits="userSpaceOnUse"
+       cy="38.570999"
+       r="19.714001"
+       gradientTransform="matrix(0.5,0,0,0.166665,-0.33038157,13.859002)"
+       inkscape:collect="always">
+      <stop
+         id="stop4567"
+         style="stop-color:#000000"
+         offset="0" />
+      <stop
+         id="stop4569"
+         style="stop-color:#000000;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#000000"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     pagecolor="#ffffff"
+     inkscape:showpageshadow="false"
+     inkscape:grid-bbox="true"
+     inkscape:zoom="32"
+     inkscape:pageshadow="2"
+     showgrid="true"
+     borderopacity="1"
+     inkscape:current-layer="layer1"
+     inkscape:cx="15.447634"
+     inkscape:cy="10.46982"
+     inkscape:window-width="1680"
+     inkscape:pageopacity="0.0"
+     inkscape:window-height="987"
+     inkscape:document-units="px"
+     fill="#edd400"
+     inkscape:document-rotation="0"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid851" />
+  </sodipodi:namedview>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <ellipse
+       id="path4563"
+       style="color:#000000;opacity:0.53165;fill:url(#radialGradient4571);fill-rule:evenodd;stroke-width:0.5"
+       cx="12.02676"
+       cy="20.287718"
+       rx="9.8571424"
+       ry="3.2857144" />
+    <circle
+       id="path4320"
+       style="color:#000000;fill:url(#radialGradient2714);fill-rule:evenodd;stroke:#9c8c0a;stroke-width:0.539246;stroke-linecap:round;stroke-linejoin:round"
+       cx="12"
+       cy="11"
+       r="9.7303772" />
+    <ellipse
+       id="path4322"
+       style="color:#000000;opacity:0.67722;fill:none;stroke:#ffffff;stroke-width:0.539269;stroke-linecap:round;stroke-linejoin:round"
+       cx="12.00111"
+       cy="11.000762"
+       rx="9.2478504"
+       ry="9.2478514" />
+    <path
+       id="path1387"
+       sodipodi:nodetypes="czczc"
+       style="color:#000000;opacity:0.36;fill:#ffffff;stroke-width:0.539259"
+       d="m 17.257863,15.629251 c -2.007667,-2.245481 -2.999367,-3.036575 -5.151014,-3.036575 -2.103655,0 -3.5046524,0.91027 -5.0555651,3.226932 1.8518198,-1.266182 2.9415963,-2.264634 4.9907841,-2.264634 2.001736,0 3.023161,0.863636 5.215795,2.074277 z" />
+    <path
+       id="path8606"
+       sodipodi:nodetypes="czczc"
+       style="fill:url(#aigrd2);stroke-width:0.539;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 17.257863,15.435493 c -2.007667,-2.24548 -2.983742,-3.208989 -5.135389,-3.208989 -2.103655,0 -3.5202774,1.082686 -5.0711901,3.399348 1.8518198,-1.266723 2.9572211,-2.249012 5.0064091,-2.249012 2.001736,0 3.007536,0.847475 5.20017,2.058653 z" />
+    <g
+       style="stroke-width:0.934603"
+       transform="matrix(1.1448378,0,0,1,-1.6139068,0)"
+       id="g861">
+      <path
+         id="path8610"
+         style="opacity:0.36;fill:#ffffff;stroke-width:0.503995"
+         d="m 10.652956,8.0927636 c 0,1.3481508 -0.606668,2.4266714 -1.3481521,2.4266714 -0.7414828,0 -1.4155581,-1.0785206 -1.4155581,-2.4266714 0,-1.3481507 0.6066678,-2.4266713 1.3481506,-2.4266713 0.7414846,0 1.3481526,1.0785206 1.3481526,2.4266713 z" />
+      <path
+         id="path8614"
+         style="fill:#000000;stroke-width:0.503995"
+         d="m 10.740305,7.7557259 c 0,1.3481508 -0.646009,2.4266711 -1.4355759,2.4266711 -0.7895655,0 -1.4355735,-1.0785203 -1.4355735,-2.4266711 0,-1.3481507 0.646008,-2.4266713 1.4355735,-2.4266713 0.7895669,0 1.4355759,1.0785206 1.4355759,2.4266713 z" />
+    </g>
+    <g
+       style="stroke-width:0.904475"
+       transform="matrix(1.2224154,0,0,1,-3.0058366,0)"
+       id="g857">
+      <path
+         id="path8612"
+         style="opacity:0.36;fill:#ffffff;stroke-width:0.487739"
+         d="m 16.079506,8.0927636 c 0,1.3481508 -0.606668,2.4266714 -1.348151,2.4266714 -0.741482,0 -1.34815,-1.0785206 -1.34815,-2.4266714 0,-1.3481507 0.606668,-2.4266713 1.34815,-2.4266713 0.741483,0 1.348151,1.0785206 1.348151,2.4266713 z" />
+      <path
+         id="path8616"
+         style="fill:#000000;stroke-width:0.487739"
+         d="m 16.079506,7.7557259 c 0,1.3481508 -0.606668,2.4266711 -1.348151,2.4266711 -0.741482,0 -1.34815,-1.0785203 -1.34815,-2.4266711 0,-1.3481507 0.606668,-2.4266713 1.34815,-2.4266713 0.741483,0 1.348151,1.0785206 1.348151,2.4266713 z" />
+    </g>
+  </g>
+  <metadata
+     id="metadata25">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2010-03-08T08:40:41</dc:date>
+        <dc:description>Smiley icon from Tango Project: http://tango.freedesktop.org/Tango_Desktop_Project
+\n&lt;br&gt;&lt;br&gt;
+\nTango Project icons are Public Domain.</dc:description>
+        <dc:source>https://openclipart.org/detail/30223/tango-face-sad-by-warszawianka</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>warszawianka</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>emote</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>sad</rdf:li>
+            <rdf:li>smiley</rdf:li>
+            <rdf:li>unhappy</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

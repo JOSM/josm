@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.actions.mapmode.DrawSnapHelperTest
+Test: testNonRegression13097(Projection)[1] took 90 milli sec(s)
+Test: testNonRegression13097(Projection)[2] took 88 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 225 milli sec(s)
+eetmap.josm.actions.mapmode.DrawAction@1667997a, will be overridden by org.openstreetmap.josm.actions.mapmode.DrawAction@22ea9132
+2026-02-04 20:40:39.055 INFO: Keystroke pressed A is already assigned to org.openstreetmap.josm.actions.mapmode.DrawAction@310ee02c, will be overridden by org.openstreetmap.josm.actions.mapmode.DrawAction@6bb7dc3f
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:40:38.982 WARNING: Some of the key listeners forgot to remove themselves: [org.openstreetmap.josm.actions.mapmode.DrawAction@1667997a]
+2026-02-04 20:40:38.982 WARNING: Some of the key modifier listeners forgot to remove themselves: org.openstreetmap.josm.tools.ListenerList@681f6a18
+2026-02-04 20:40:39.072 WARNING: Some of the key listeners forgot to remove themselves: [org.openstreetmap.josm.actions.mapmode.DrawAction@310ee02c]
+2026-02-04 20:40:39.072 WARNING: Some of the key modifier listeners forgot to remove themselves: org.openstreetmap.josm.tools.ListenerList@2773b712
+------------- ---------------- ---------------

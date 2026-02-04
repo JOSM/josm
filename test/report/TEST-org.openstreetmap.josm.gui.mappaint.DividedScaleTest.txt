@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.gui.mappaint.DividedScaleTest
+Test: testPutSingleSubrangeNoData() took 1 milli sec(s)
+Test: testGetEmpty() took 0 milli sec(s)
+Test: testGetFooBarBaz() took 1 milli sec(s)
+Test: testPutSingleSubrange1() took 0 milli sec(s)
+Test: testPutSingleSubrange2() took 0 milli sec(s)
+Test: testGetWithRangeFoo() took 0 milli sec(s)
+Test: testGetFooBar() took 0 milli sec(s)
+Test: testGetFoo() took 0 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 71 milli sec(s)

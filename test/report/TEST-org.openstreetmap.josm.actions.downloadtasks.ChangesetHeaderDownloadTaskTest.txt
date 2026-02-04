@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTaskTest
+Test: testBuildTaskForChangesetsNullParent() took 1 milli sec(s)
+Test: testBuildTaskForChangesets() took 0 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 37 milli sec(s)

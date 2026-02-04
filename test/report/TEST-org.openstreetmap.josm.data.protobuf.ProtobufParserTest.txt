@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.protobuf.ProtobufParserTest
+Test: testConvertLong() took 1 milli sec(s)
+Test: testDecodeVarInt(long, int[])[1] took 1 milli sec(s)
+Test: testDecodeVarInt(long, int[])[2] took 0 milli sec(s)
+Test: testDecodeVarInt(long, int[])[3] took 1 milli sec(s)
+Test: testDecodeVarInt(long, int[])[4] took 0 milli sec(s)
+Test: testEncodeZigZag() took 0 milli sec(s)
+Test: testDecode(long, long)[1] took 1 milli sec(s)
+Test: testDecode(long, long)[2] took 0 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 55 milli sec(s)

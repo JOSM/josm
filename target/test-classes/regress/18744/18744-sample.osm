@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-106298' action='modify' visible='true' lat='52.89496434247' lon='8.43548214602' />
+  <node id='-106299' action='modify' visible='true' lat='52.89508712421' lon='8.43626255743' />
+  <node id='-106300' action='modify' visible='true' lat='52.89472893929' lon='8.43645064219' />
+  <node id='-106301' action='modify' visible='true' lat='52.894619705' lon='8.43533897702' />
+  <node id='-106302' action='modify' visible='true' lat='52.89471200375' lon='8.43518738632' />
+  <node id='2507131352' timestamp='2013-10-24T11:32:00Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8948728' lon='8.4358634' />
+  <node id='2507131359' timestamp='2013-10-24T11:32:00Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8948129' lon='8.436255' />
+  <node id='2507131361' timestamp='2013-10-24T11:32:00Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8947207' lon='8.4357561' />
+  <node id='2507131364' timestamp='2013-10-24T11:32:00Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8948534' lon='8.4358661' />
+  <node id='2507131373' timestamp='2013-10-24T11:32:00Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8947967' lon='8.4354262' />
+  <node id='2507131386' timestamp='2013-10-24T11:32:00Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.894842' lon='8.4361585' />
+  <node id='2507131416' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8948437' lon='8.4354343' />
+  <node id='2507131418' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8950199' lon='8.4362589' />
+  <node id='2507131423' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8948843' lon='8.4361469' />
+  <node id='2507131425' timestamp='2015-09-29T08:00:55Z' uid='533465' user='GerdP' visible='true' version='2' changeset='34319251' lat='52.8948068' lon='8.4361677' />
+  <node id='2507131437' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8950087' lon='8.4361129' />
+  <node id='2507131440' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8948566' lon='8.4362953' />
+  <node id='2507131458' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8947239' lon='8.4353243' />
+  <node id='2507131465' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8947336' lon='8.4362657' />
+  <node id='2507131467' timestamp='2013-10-24T11:32:01Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851' lat='52.8947903' lon='8.4353216' />
+  <way id='-106397' action='modify' visible='true'>
+    <nd ref='-106298' />
+    <nd ref='-106299' />
+    <nd ref='-106300' />
+    <nd ref='-106301' />
+    <nd ref='-106302' />
+    <nd ref='-106298' />
+  </way>
+  <way id='243282834' timestamp='2015-09-29T08:00:35Z' uid='533465' user='GerdP' visible='true' version='2' changeset='34319251'>
+    <nd ref='2507131465' />
+    <nd ref='2507131359' />
+    <nd ref='2507131425' />
+    <nd ref='2507131386' />
+    <nd ref='2507131423' />
+    <nd ref='2507131352' />
+    <nd ref='2507131364' />
+    <nd ref='2507131416' />
+    <nd ref='2507131373' />
+    <nd ref='2507131467' />
+    <nd ref='2507131458' />
+    <nd ref='2507131361' />
+    <nd ref='2507131465' />
+    <tag k='building' v='yes' />
+  </way>
+  <way id='243282844' timestamp='2013-10-24T11:32:02Z' uid='890418' user='Tiefradler' visible='true' version='1' changeset='18517851'>
+    <nd ref='2507131437' />
+    <nd ref='2507131418' />
+    <nd ref='2507131440' />
+    <nd ref='2507131386' />
+    <nd ref='2507131423' />
+    <nd ref='2507131437' />
+    <tag k='building' v='yes' />
+  </way>
+  <relation id='-106536' action='modify' visible='true'>
+    <member type='way' ref='243282834' role='inner' />
+    <member type='way' ref='243282844' role='inner' />
+    <member type='way' ref='-106397' role='outer' />
+    <tag k='landuse' v='commercial' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+</osm>

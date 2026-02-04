@@ -1,0 +1,14 @@
+Testcase: org.openstreetmap.josm.gui.preferences.imagery.ImageryPreferenceTest
+Test: testImageryPreference() took 113 milli sec(s)
+Test: testAddGui() took 141 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 331 milli sec(s)
+id imagery: Landsat[] ('Worldwide) - http://irs.gis-lab.info/?layers=landsat&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox} - WMS
+2026-02-04 20:42:41.001 SEVERE: Not adding invalid imagery: Bing aerial imagery[] ('Worldwide) - http://www.bing.com/maps/ - BING
+2026-02-04 20:42:41.001 SEVERE: Not adding invalid imagery: Mapbox Satellite[] ('Worldwide) - https://{switch:a,b,c}.tiles.mapbox.com/v4/openstreetmap.map-inh7ifmo/{zoom}/{x}/{y}.png?access_token=pk.eyJ1Ijoib3BlbnN0cmVldG1hcCIsImEiOiJncjlmd0t3In0.DmZsIeOW-3x-C5eX-wAqTw
+		 - TMS
+2026-02-04 20:42:41.001 SEVERE: Not adding invalid imagery: IGN orthophoto AMBA a (WMTS)[AR] ('Argentina) - 
+
+https://ide.ign.gob.ar/geoservicios/rest/services/sensores_remotos/amba_a/ImageServer/WMTS?
+
+		 - WMTS
+------------- ---------------- ---------------

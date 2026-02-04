@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.layer.markerlayer.ImageMarkerTest
+Test: testNonRegression23978() took 133 milli sec(s)
+Test: testTicket22638() took 112 milli sec(s)
+Test: testImageMarker() took 114 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 435 milli sec(s)
+regress/12255/G0016941.JPG
+------------- ---------------- ---------------

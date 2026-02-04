@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <node id='6780376649' timestamp='2019-09-08T07:06:52Z' uid='10276652' user='Sululu' version='1' changeset='74219981' lat='47.1291095' lon='21.7230971' />
+  <node id='6855025163' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1287594' lon='21.7230679' />
+  <node id='6855025164' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.128815' lon='21.7227853' />
+  <node id='6855025165' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1288229' lon='21.7226978' />
+  <node id='6855025166' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1288857' lon='21.7224701' />
+  <node id='6855025167' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1289508' lon='21.7222705' />
+  <node id='6855025168' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1289945' lon='21.722121' />
+  <node id='6855025169' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1292171' lon='21.7213232' />
+  <node id='6855025170' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1292377' lon='21.7212287' />
+  <node id='6855025171' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1290698' lon='21.7218512' />
+  <node id='6855025172' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1290536' lon='21.7219092' />
+  <node id='6855025173' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1292856' lon='21.7209623' />
+  <node id='6855025174' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1293064' lon='21.7208169' />
+  <node id='6855027686' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893' lat='47.1287994' lon='21.7228646' />
+  <node id='9044997814' timestamp='2021-08-29T10:38:07Z' uid='10276652' user='Sululu' version='1' changeset='110407049' lat='47.1290679' lon='21.7218579' />
+  <node id='9044997815' timestamp='2021-08-29T10:38:07Z' uid='10276652' user='Sululu' version='1' changeset='110407049' lat='47.1290555' lon='21.7219025' />
+  <way id='732065016' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893'>
+    <nd ref='6855025163' />
+    <nd ref='6855027686' />
+    <nd ref='6855025164' />
+    <tag k='layer' v='-1' />
+    <tag k='tunnel' v='culvert' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='732065017' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893'>
+    <nd ref='6855025164' />
+    <nd ref='6855025165' />
+    <nd ref='6855025166' />
+    <nd ref='6855025167' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='732065018' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893'>
+    <nd ref='6855025167' />
+    <nd ref='6855025168' />
+    <tag k='layer' v='-1' />
+    <tag k='tunnel' v='culvert' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='732065019' timestamp='2021-08-29T10:38:07Z' uid='10276652' user='Sululu' version='2' changeset='110407049'>
+    <nd ref='9044997814' />
+    <nd ref='6855025171' />
+    <nd ref='6855025169' />
+    <nd ref='6855025170' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='732065020' timestamp='2021-08-29T10:38:07Z' uid='10276652' user='Sululu' version='2' changeset='110407049'>
+    <nd ref='6855025171' />
+    <nd ref='9044997814' />
+    <nd ref='9044997815' />
+    <nd ref='6855025172' />
+    <tag k='layer' v='-1' />
+    <tag k='tunnel' v='culvert' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='732065021' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893'>
+    <nd ref='6855025170' />
+    <nd ref='6855025173' />
+    <nd ref='6855025174' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='732065024' timestamp='2019-10-06T10:17:31Z' uid='10276652' user='Sululu' version='1' changeset='75336893'>
+    <nd ref='6780376649' />
+    <nd ref='6855027686' />
+    <tag k='layer' v='-1' />
+    <tag k='tunnel' v='culvert' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='977512672' timestamp='2021-08-29T10:38:07Z' uid='10276652' user='Sululu' version='1' changeset='110407049'>
+    <nd ref='6855025168' />
+    <nd ref='6855025172' />
+    <nd ref='9044997815' />
+    <tag k='waterway' v='drain' />
+  </way>
+  <way id='977512673' timestamp='2021-08-29T10:38:07Z' uid='10276652' user='Sululu' version='1' changeset='110407049'>
+    <nd ref='9044997815' />
+    <nd ref='9044997814' />
+    <tag k='layer' v='-1' />
+    <tag k='tunnel' v='culvert' />
+    <tag k='waterway' v='drain' />
+  </way>
+</osm>

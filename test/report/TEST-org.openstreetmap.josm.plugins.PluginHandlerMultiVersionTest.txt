@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.plugins.PluginHandlerMultiVersionTest
+Test: testUpdatePluginsExistingVersionLatestPossible() took 318 milli sec(s)
+Test: testUpdatePluginsOneMultiVersion() took 305 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 713 milli sec(s)
+2-04 20:43:08.436 INFO: GET http://localhost:58868/plugins -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:08.542 INFO: Downloading Plugin qux_plugin...
+2026-02-04 20:43:08.544 INFO: GET http://localhost:58868/qux/newer.jar -> HTTP/1.1 200 (1 ms)
+------------- ---------------- ---------------

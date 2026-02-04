@@ -1,0 +1,31 @@
+Testcase: org.openstreetmap.josm.gui.layer.AutosaveTaskTest
+Test: testAutosaveHandlesDuplicateNames() took 5 milli sec(s)
+Test: testAutosaveIgnoresUnmodifiedLayer() took 0 milli sec(s)
+Test: testRecoverLayers() took 2 milli sec(s)
+Test: testGetUnsavedLayersFilesEmpty() took 1 milli sec(s)
+Test: testScheduleCreatesDirectories() took 0 milli sec(s)
+Test: testDiscardUnsavedLayersIgnoresCurrentInstance() took 1 milli sec(s)
+Test: testAutosaveSavesLayerMultipleTimes() took 3 milli sec(s)
+Test: testGetUnsavedLayersFilesNotEmpty() took 0 milli sec(s)
+Test: testGetNewLayerFile() took 2 milli sec(s)
+Test: testAutosaveSavesLayer() took 2 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 85 milli sec(s)
+olders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/any_other_file.pid
+2026-02-04 20:42:25.743 WARNING: Unable to delete file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/any_other_file.pid
+2026-02-04 20:42:25.744 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/OsmData_20260204_204225744.osm, other filename will be used
+2026-02-04 20:42:25.745 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/OsmData_20260204_204225745.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_1.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_1.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_2.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_2.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_3.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_3.osm, other filename will be used
+2026-02-04 20:42:25.747 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_4.osm, other filename will be used
+2026-02-04 20:42:25.748 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_4.osm, other filename will be used
+2026-02-04 20:42:25.748 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_5.osm, other filename will be used
+2026-02-04 20:42:25.748 SEVERE: IOError while creating file, autosave will be skipped: index limit exceeded: java.io.IOException: index limit exceeded
+2026-02-04 20:42:25.748 WARNING: Unable to create file /var/folders/v7/2527djts1d14xn7jk30lvtfr0000gn/T/df00efbd-1c16-42c9-af70-af437db522cd14378911440679004947/autosave/null_20160101_010203456_5.osm, other filename will be used
+2026-02-04 20:42:25.748 SEVERE: IOError while creating file, autosave will be skipped: index limit exceeded: java.io.IOException: index limit exceeded
+------------- ---------------- ---------------

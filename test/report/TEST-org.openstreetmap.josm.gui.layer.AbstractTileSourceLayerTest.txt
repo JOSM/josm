@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.gui.layer.AbstractTileSourceLayerTest
+Test: testGetInfoComponent() took 118 milli sec(s)
+Test: testClearTileCache() took 112 milli sec(s)
+Test: testTileSourceLayerPopup() took 112 milli sec(s)
+Test: testGetAdjustAction() took 110 milli sec(s)
+Test: testFilterChanged() took 110 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 632 milli sec(s)
+he size: 182
+2026-02-04 20:42:25.390 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:25.501 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:25.610 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+------------- ---------------- ---------------

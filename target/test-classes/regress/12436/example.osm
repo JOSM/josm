@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <bounds minlat='-22.3688439' minlon='-48.7448984' maxlat='-22.3679077' maxlon='-48.7435258' origin='CGImap 0.4.0 (6997 thorn-01.openstreetmap.org)' />
+  <bounds minlat='-22.3688439' minlon='-48.7448984' maxlat='-22.3679077' maxlon='-48.7435258' origin='OpenStreetMap server' />
+  <node id='-25' action='modify' visible='true' lat='-22.36825791811' lon='-48.74347164191' />
+</osm>

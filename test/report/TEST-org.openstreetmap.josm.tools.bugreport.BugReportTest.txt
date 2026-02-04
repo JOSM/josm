@@ -1,0 +1,21 @@
+Testcase: org.openstreetmap.josm.tools.bugreport.BugReportTest
+Test: testSuppressedExceptionsReportedOnce() took 2 milli sec(s)
+Test: testGetCallingMethod() took 0 milli sec(s)
+Test: testSuppressedExceptions(String, Consumer)[1] took 1 milli sec(s)
+Test: testSuppressedExceptions(String, Consumer)[2] took 1 milli sec(s)
+Test: testSuppressedExceptions(String, Consumer)[3] took 1 milli sec(s)
+Test: testSuppressedExceptionsOrder() took 1 milli sec(s)
+Test: testManyExceptions() took 1 milli sec(s)
+Test: testNullException() took 1 milli sec(s)
+Test: testIntercept() took 1 milli sec(s)
+Test: testReportText() took 1 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 97 milli sec(s)
+ncaughtException(ThreadGroup.java:576)
+	at java.base/java.lang.ThreadGroup.uncaughtException(ThreadGroup.java:571)
+	at java.base/java.lang.Thread.dispatchUncaughtException(Thread.java:2556)
+Caused by: java.lang.NullPointerException
+	at org.openstreetmap.josm.tools.bugreport.BugReportTest.lambda$testSuppressedExceptions$5(BugReportTest.java:152)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+------------- ---------------- ---------------

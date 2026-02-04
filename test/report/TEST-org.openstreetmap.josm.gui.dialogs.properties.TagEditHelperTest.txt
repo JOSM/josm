@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.properties.TagEditHelperTest
+Test: testTicket18764() took 64 milli sec(s)
+Test: testTicket18798() took 58 milli sec(s)
+Test: testTicket23191() took 326 milli sec(s)
+Test: testAcItemComparator() took 1 milli sec(s)
+Test: testContainsDataKey() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 517 milli sec(s)

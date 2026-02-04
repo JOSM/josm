@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.datatransfer.OsmTransferHandlerTest
+Test: testNonRegression21324(Runnable)[1] took 113 milli sec(s)
+Test: testNonRegression21324(Runnable)[2] took 125 milli sec(s)
+Test: testPasteOn() took 89 milli sec(s)
+Test: testPasteTags() took 102 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 490 milli sec(s)

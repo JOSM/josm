@@ -1,0 +1,11 @@
+canvas {
+    default-points: false;
+    default-lines: true;
+}
+
+area[landuse=quarry][test=parent] { fill-color : #aaa; }
+
+way[barrier=fence] { width: 2; color: #F0F050; }
+
+way[barrier=fence] < area[landuse=quarry][test=parent] { fill-color : #f70; }
+

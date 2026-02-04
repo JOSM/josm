@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-117848' action='modify' lat='-21.08763547741' lon='-50.39117567184' />
+  <node id='-117850' action='modify' lat='-21.09088329715' lon='-50.38820000246' />
+  <node id='-117852' action='modify' lat='-21.09002420335' lon='-50.39142270855' />
+  <node id='-117854' action='modify' lat='-21.08836886226' lon='-50.38800911046' />
+  <node id='-117856' action='modify' lat='-21.08922243916' lon='-50.38958051884'>
+    <tag k='name' v='select me and press N' />
+  </node>
+  <node id='-117858' action='modify' lat='-21.08920644697' lon='-50.38973634946' />
+  <way id='-117859' action='modify'>
+    <nd ref='-117848' />
+    <nd ref='-117858' />
+    <nd ref='-117850' />
+    <tag k='name' v='w1' />
+  </way>
+  <way id='-117860' action='modify'>
+    <nd ref='-117852' />
+    <nd ref='-117858' />
+    <nd ref='-117854' />
+    <tag k='name' v='w2' />
+  </way>
+</osm>

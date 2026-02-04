@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="16"
+   id="svg1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="telephone3.svg"
+   sodipodi:version="0.32"
+   width="12.08762"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.0">
+  <metadata
+     id="metadata2213">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title></dc:title>
+        <dc:description>lutte incendie</dc:description>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>office</rdf:li>
+            <rdf:li />
+            <rdf:li>telephone</rdf:li>
+            <rdf:li>symbol</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org">
+            <dc:title>yves GUILLOU</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>yves GUILLOU</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>yves GUILLOU</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     id="base"
+     inkscape:current-layer="svg1"
+     inkscape:cx="-3.9822662"
+     inkscape:cy="9.6184726"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:zoom="20.418464"
+     pagecolor="#ffffff"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1" />
+  <defs
+     id="defs2">
+    <marker
+       id="ArrowEnd"
+       markerHeight="3"
+       markerUnits="strokeWidth"
+       markerWidth="4"
+       orient="auto"
+       refX="0"
+       refY="5"
+       viewBox="0 0 10 10">
+      <path
+         d="M 0,0 10,5 0,10 0,0 Z"
+         id="path4"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       id="ArrowStart"
+       markerHeight="3"
+       markerUnits="strokeWidth"
+       markerWidth="4"
+       orient="auto"
+       refX="10"
+       refY="5"
+       viewBox="0 0 10 10">
+      <path
+         d="M 10,0 0,5 10,10 10,0 Z"
+         id="path6"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#000000;stroke:#ffffff;stroke-width:0.80419183;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path11"
+     d="m 3.6815815,0.41654839 c 0,0 -3.32396579,0.0435383 -3.28081049,3.04769391 0.0431811,3.0041556 0.64753619,5.6600048 1.64041819,7.1403067 0.992869,1.480381 3.5397939,5.355302 6.4321551,4.963444 0,0 1.4245124,-0.304807 2.5036537,-1.001472 L 7.4803977,11.823648 c 0,0 -1.0360373,0.653009 -1.6835605,-0.217757 C 5.1493139,10.735125 3.1203946,6.6860894 3.1203946,6.6860894 c 0,0 -0.5611868,-1.306162 0.6906916,-1.8721468 L 3.6815815,0.41654839 Z" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#000000;stroke:#ffffff;stroke-width:0.304;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path12"
+     d="m 4.0700955,0.41654839 c 0,0 0.2590222,-0.0870896 0.7338726,0.17415319 0.4748504,0.26122979 0.4748504,0.47892132 0.4748504,0.47892132 l 0.043168,3.0041686 c 0,0 -0.1295046,0.1741532 -0.3021775,0.3482934 C 4.8471363,4.5962511 4.2859366,4.8574678 4.1996001,4.6833277 4.1132766,4.5091615 4.0700955,0.41654839 4.0700955,0.41654839 Z" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#000000;stroke:#ffffff;stroke-width:0.304;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     sodipodi:nodetypes="ccccccc"
+     id="path13"
+     d="M 7.7712436,11.502692 8.732276,10.996407 c 0,0 0.2159057,-0.04352 0.5611481,0.174101 0.3453716,0.217757 2.1584109,1.654481 2.1584109,1.654481 0,0 0.302216,0.261282 0.215906,0.56609 -0.08631,0.304676 -0.302217,0.957816 -0.302217,0.957816 L 7.7712436,11.502692 Z" />
+</svg>

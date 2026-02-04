@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="garages3.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="31.678384"
+     inkscape:cx="10.159106"
+     inkscape:cy="7.9616689"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1036.3622)">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.60000002;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+       id="rect4165"
+       width="16"
+       height="16"
+       x="0"
+       y="1036.3622" />
+    <g
+       transform="matrix(0.01388464,0,0,0.01388464,0.62885776,1037.1303)"
+       id="g4188">
+      <path
+         inkscape:connector-curvature="0"
+         d="M 55.335442,781.58875 C 52.942279,605.17849 43.369629,756.97336 149.69442,495.4349 226.61749,317.65712 148.66878,365.52037 546.61749,359.02464 c 354.18803,7.17949 282.73504,-44.10256 364.10256,144.61539 101.88035,241.7094 94.01715,115.21367 93.33335,272.82051 -3.7607,172.99145 60.171,128.54701 -475.89745,134.35898 C -3.809859,903.64004 59.096121,948.76823 55.335442,781.58875 Z M 163.02774,611.33234 235.84826,443.12721 c 13.58658,-29.87865 9.25188,-25.46798 41.02564,-25.64103 l 509.12314,-0.0549 c 27.56146,0.1013 23.51799,-1.68829 34.87179,24.61539 l 72.41532,167.23435 -730.25641,2.05129 z m -52.07976,318.78443 136.18233,-0.3039 c -0.41785,170.97813 13.75119,161.44353 -60.51282,162.54513 -88.433044,-0.3419 -74.45394,8.585 -75.66951,-162.24123 z m 701.31053,1.21557 136.41026,0 c -0.91168,171.24406 11.54796,159.54416 -65.64103,159.99996 -79.81007,-1.0636 -69.66762,11.548 -70.76923,-159.99996 z"
+         id="Car"
+         style="fill:#000000;fill-rule:evenodd;stroke:none" />
+      <circle
+         id="LeftLamp"
+         cx="178.66878"
+         cy="737.17847"
+         r="66.5"
+         style="fill:#ffffff;fill-opacity:1;stroke:none" />
+      <circle
+         id="RightLamp"
+         cx="878.66876"
+         cy="737.17847"
+         r="66.5"
+         style="fill:#ffffff;fill-opacity:1;stroke:none" />
+    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.71230602;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 0.96327773,1040.8213 6.99500047,-2.9471 6.9949998,2.9471 0,0"
+       id="path4163"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

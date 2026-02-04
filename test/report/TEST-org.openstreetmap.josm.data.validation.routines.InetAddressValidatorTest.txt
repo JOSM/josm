@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.validation.routines.InetAddressValidatorTest
+Test: testIPv6() took 2 milli sec(s)
+Test: testVALIDATOR_335() took 1 milli sec(s)
+Test: testReservedInetAddresses() took 0 milli sec(s)
+Test: testBrokenInetAddresses() took 0 milli sec(s)
+Test: testInetAddressesByClass() took 0 milli sec(s)
+Test: testInetAddressesFromTheWild() took 0 milli sec(s)
+Test: testValidatorName() took 0 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 56 milli sec(s)

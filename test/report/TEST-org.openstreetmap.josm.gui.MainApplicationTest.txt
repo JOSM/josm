@@ -1,0 +1,227 @@
+Testcase: org.openstreetmap.josm.gui.MainApplicationTest
+Test: testPostConstructorProcessCmdLineFilename() took 183 milli sec(s)
+Test: testMapFrameListener() took 92 milli sec(s)
+Test: testParamType() took 90 milli sec(s)
+Test: testGetRegisteredActionShortcut() took 89 milli sec(s)
+Test: testPostConstructorProcessCmdLineFileUrl() took 107 milli sec(s)
+Test: testEnumDownloadParamType() took 92 milli sec(s)
+Test: testShowVersion() took 91 milli sec(s)
+Test: testShowHelp() took 91 milli sec(s)
+Test: testSetupUIManager() took 196 milli sec(s)
+Test: testPostConstructorProcessCmdLineBounds() took 2 sec(s)
+Test: testPostConstructorProcessCmdLineEmpty() took 95 milli sec(s)
+Test: testPostConstructorProcessCmdLineHttpUrl() took 877 milli sec(s)
+Test: testUpdateAndLoadPlugins() took 3 sec(s)
+Tests run: 13, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 8 sec(s)
+20:41:46.829 INFO: Open file: /Users/petechentw/Documents/261P_Project/josm/test/data/multipolygon.osm (3063 bytes)
+2026-02-04 20:41:46.842 INFO: Open file: /Users/petechentw/Documents/261P_Project/josm/test/data/multipolygon.osm (3063 bytes) completed in 12 ms
+2026-02-04 20:41:47.916 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/map?bbox=-126.75,-47.2,-126.65,-47.1 -> HTTP/1.1 200 (474 ms)
+2026-02-04 20:41:48.893 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/trackpoints?bbox=-0.4,51.35,0.2,51.6&page=0 -> HTTP/1.1 200 (915 ms)
+2026-02-04 20:41:49.525 INFO: Keystroke ctrl pressed L is already assigned to org.openstreetmap.josm.actions.OpenLocationAction@10cc849c, will be overridden by org.openstreetmap.josm.actions.OpenLocationAction@716e2397
+2026-02-04 20:41:49.525 INFO: Registered toolbar action openlocation overwritten: org.openstreetmap.josm.actions.OpenLocationAction gets org.openstreetmap.josm.actions.OpenLocationAction
+2026-02-04 20:41:49.686 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/map?bbox=-126.75,-47.20,-126.65,-47.10 -> HTTP/1.1 200 (158 ms)
+2026-02-04 20:41:50.167 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/trackpoints?bbox=-0.4,51.35,0.2,51.6&page=0 -> HTTP/1.1 200 (462 ms)
+2026-02-04 20:41:51.352 INFO: GET https://josm.openstreetmap.de/pluginicons -> HTTP/1.1 200 (912 ms)
+2026-02-04 20:41:53.877 INFO: loading plugin 'log4j' (version 36474)
+2026-02-04 20:41:53.881 INFO: loading plugin 'buildings_tools' (version 36474)
+2026-02-04 20:41:53.887 INFO: Could not load tool definition save
+2026-02-04 20:41:53.887 INFO: Could not load tool definition splitway
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Highways/Streets
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Highways/Ways
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Highways/Waypoints
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Highways/Barriers
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Transport/Car
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Transport/Public Transport
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Facilities/Tourism
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Facilities/Food+Drinks
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Man Made/Historic Places
+2026-02-04 20:41:53.887 INFO: Could not load tool definition tagginggroup_Man Made/Man Made
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:41:47.292 SEVERE: Handled by bug report queue: java.lang.UnsupportedOperationException: Test failure loading
+java.lang.UnsupportedOperationException: Test failure loading
+	at org.openstreetmap.josm.gui.MainApplicationTest$BadLaf.getDefaults(MainApplicationTest.java:362)
+	at java.desktop/javax.swing.UIManager.setLookAndFeel(UIManager.java:584)
+	at java.desktop/javax.swing.UIManager.setLookAndFeel(UIManager.java:630)
+	at org.openstreetmap.josm.gui.MainApplication.setupUIManager(MainApplication.java:1139)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:49)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:36)
+	at org.junit.jupiter.api.Assertions.assertDoesNotThrow(Assertions.java:3199)
+	at org.openstreetmap.josm.gui.MainApplicationTest.testSetupUIManager(MainApplicationTest.java:222)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:767)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.SameThreadTimeoutInvocation.proceed(SameThreadTimeoutInvocation.java:45)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$8(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.exec(ForkJoinPoolHierarchicalTestExecutorService.java:274)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.execSync(ForkJoinPoolHierarchicalTestExecutorService.java:247)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.executeSync(ForkJoinPoolHierarchicalTestExecutorService.java:194)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.invokeAll(ForkJoinPoolHierarchicalTestExecutorService.java:166)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.exec(ForkJoinPoolHierarchicalTestExecutorService.java:274)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.execSync(ForkJoinPoolHierarchicalTestExecutorService.java:247)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.invokeAll(ForkJoinPoolHierarchicalTestExecutorService.java:159)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.exec(ForkJoinPoolHierarchicalTestExecutorService.java:274)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+2026-02-04 20:41:50.422 WARNING: Missing plugin main version in plugin panoramax
+2026-02-04 20:41:50.428 WARNING: java.util.zip.ZipException: zip END header not found
+java.util.zip.ZipException: zip END header not found
+	at java.base/java.util.zip.ZipFile$Source.findEND(ZipFile.java:1693)
+	at java.base/java.util.zip.ZipFile$Source.initCEN(ZipFile.java:1701)
+	at java.base/java.util.zip.ZipFile$Source.<init>(ZipFile.java:1542)
+	at java.base/java.util.zip.ZipFile$Source.get(ZipFile.java:1506)
+	at java.base/java.util.zip.ZipFile$CleanableResource.<init>(ZipFile.java:704)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:204)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:150)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:333)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:306)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:276)
+	at org.openstreetmap.josm.plugins.PluginHandler.isValidJar(PluginHandler.java:1480)
+	at org.openstreetmap.josm.plugins.PluginInformation.<init>(PluginInformation.java:123)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.processJarFile(ReadLocalPluginInformationTask.java:73)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanPluginFiles(ReadLocalPluginInformationTask.java:124)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanLocalPluginRepository(ReadLocalPluginInformationTask.java:149)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.realRun(ReadLocalPluginInformationTask.java:201)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.doRealRun(PleaseWaitRunnable.java:94)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.run(PleaseWaitRunnable.java:142)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+2026-02-04 20:41:50.428 WARNING: PluginException: : org.openstreetmap.josm.plugins.PluginException: Invalid jar file '/Users/petechentw/Documents/261P_Project/josm/test/config/unit-josm.home/plugins/corrupted_plugin.jar'
+2026-02-04 20:41:50.428 WARNING: Failed to scan file 'corrupted_plugin.jar' for plugin information. Skipping.
+2026-02-04 20:41:50.429 WARNING: java.util.zip.ZipException: zip END header not found
+java.util.zip.ZipException: zip END header not found
+	at java.base/java.util.zip.ZipFile$Source.findEND(ZipFile.java:1693)
+	at java.base/java.util.zip.ZipFile$Source.initCEN(ZipFile.java:1701)
+	at java.base/java.util.zip.ZipFile$Source.<init>(ZipFile.java:1542)
+	at java.base/java.util.zip.ZipFile$Source.get(ZipFile.java:1506)
+	at java.base/java.util.zip.ZipFile$CleanableResource.<init>(ZipFile.java:704)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:204)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:150)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:333)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:306)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:276)
+	at org.openstreetmap.josm.plugins.PluginHandler.isValidJar(PluginHandler.java:1480)
+	at org.openstreetmap.josm.plugins.PluginInformation.<init>(PluginInformation.java:123)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.processJarFile(ReadLocalPluginInformationTask.java:73)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanPluginFiles(ReadLocalPluginInformationTask.java:127)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanLocalPluginRepository(ReadLocalPluginInformationTask.java:149)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.realRun(ReadLocalPluginInformationTask.java:201)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.doRealRun(PleaseWaitRunnable.java:94)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.run(PleaseWaitRunnable.java:142)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+2026-02-04 20:41:50.429 WARNING: PluginException: : org.openstreetmap.josm.plugins.PluginException: Invalid jar file '/Users/petechentw/Documents/261P_Project/josm/test/config/unit-josm.home/plugins/corrupted_plugin.jar.new'
+2026-02-04 20:41:50.429 WARNING: Failed to scan file 'corrupted_plugin.jar.new' for plugin information. Skipping.
+2026-02-04 20:41:50.438 WARNING: Update plugins - You updated your JOSM software. To prevent problems the plugins should be updated as well.  Update plugins now?
+2026-02-04 20:41:53.863 WARNING: Missing plugin main version in plugin panoramax
+2026-02-04 20:41:53.873 WARNING: Missing plugin main version in plugin panoramax
+2026-02-04 20:41:53.874 WARNING: java.util.zip.ZipException: zip END header not found
+java.util.zip.ZipException: zip END header not found
+	at java.base/java.util.zip.ZipFile$Source.findEND(ZipFile.java:1693)
+	at java.base/java.util.zip.ZipFile$Source.initCEN(ZipFile.java:1701)
+	at java.base/java.util.zip.ZipFile$Source.<init>(ZipFile.java:1542)
+	at java.base/java.util.zip.ZipFile$Source.get(ZipFile.java:1506)
+	at java.base/java.util.zip.ZipFile$CleanableResource.<init>(ZipFile.java:704)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:204)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:150)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:333)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:306)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:276)
+	at org.openstreetmap.josm.plugins.PluginHandler.isValidJar(PluginHandler.java:1480)
+	at org.openstreetmap.josm.plugins.PluginInformation.<init>(PluginInformation.java:123)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.processJarFile(ReadLocalPluginInformationTask.java:73)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanPluginFiles(ReadLocalPluginInformationTask.java:124)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanLocalPluginRepository(ReadLocalPluginInformationTask.java:149)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.realRun(ReadLocalPluginInformationTask.java:201)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.doRealRun(PleaseWaitRunnable.java:94)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.run(PleaseWaitRunnable.java:142)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+2026-02-04 20:41:53.875 WARNING: PluginException: : org.openstreetmap.josm.plugins.PluginException: Invalid jar file '/Users/petechentw/Documents/261P_Project/josm/test/config/unit-josm.home/plugins/corrupted_plugin.jar'
+2026-02-04 20:41:53.875 WARNING: Failed to scan file 'corrupted_plugin.jar' for plugin information. Skipping.
+2026-02-04 20:41:53.875 WARNING: java.util.zip.ZipException: zip END header not found
+java.util.zip.ZipException: zip END header not found
+	at java.base/java.util.zip.ZipFile$Source.findEND(ZipFile.java:1693)
+	at java.base/java.util.zip.ZipFile$Source.initCEN(ZipFile.java:1701)
+	at java.base/java.util.zip.ZipFile$Source.<init>(ZipFile.java:1542)
+	at java.base/java.util.zip.ZipFile$Source.get(ZipFile.java:1506)
+	at java.base/java.util.zip.ZipFile$CleanableResource.<init>(ZipFile.java:704)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:204)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:150)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:333)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:306)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:276)
+	at org.openstreetmap.josm.plugins.PluginHandler.isValidJar(PluginHandler.java:1480)
+	at org.openstreetmap.josm.plugins.PluginInformation.<init>(PluginInformation.java:123)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.processJarFile(ReadLocalPluginInformationTask.java:73)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanPluginFiles(ReadLocalPluginInformationTask.java:127)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.scanLocalPluginRepository(ReadLocalPluginInformationTask.java:149)
+	at org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask.realRun(ReadLocalPluginInformationTask.java:201)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.doRealRun(PleaseWaitRunnable.java:94)
+	at org.openstreetmap.josm.gui.PleaseWaitRunnable.run(PleaseWaitRunnable.java:142)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+2026-02-04 20:41:53.875 WARNING: PluginException: : org.openstreetmap.josm.plugins.PluginException: Invalid jar file '/Users/petechentw/Documents/261P_Project/josm/test/config/unit-josm.home/plugins/corrupted_plugin.jar.new'
+2026-02-04 20:41:53.875 WARNING: Failed to scan file 'corrupted_plugin.jar.new' for plugin information. Skipping.
+2026-02-04 20:41:53.876 WARNING: Failed to install plugin '/Users/petechentw/Documents/261P_Project/josm/test/config/unit-josm.home/plugins/corrupted_plugin.jar' from temporary download file '/Users/petechentw/Documents/261P_Project/josm/test/config/unit-josm.home/plugins/corrupted_plugin.jar.new'. zip END header not found: java.util.zip.ZipException: zip END header not found
+------------- ---------------- ---------------

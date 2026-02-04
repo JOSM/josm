@@ -1,0 +1,35 @@
+meta {
+    title: "MapCSS tests: node symbols";
+}
+
+node[ test:fill ]
+{
+    symbol-size: 50;
+    symbol-fill-color: purple;
+}
+node[ test:fill = circle ] { symbol-shape : circle ; } /* whitespace at all possible places */
+node[test:fill=square]{symbol-shape:square;} /* no whitespace at all */
+node[ test:fill = triangle ] { symbol-shape: triangle; }
+node[ test:fill = pentagon ] { symbol-shape: pentagon }
+node[ test:fill = hexagon ] { symbol-shape: hexagon; }
+node[ test:fill = heptagon ] { symbol-shape: heptagon; }
+node[ test:fill = octagon ] { symbol-shape: octagon; }
+node[ test:fill = nonagon ] {symbol-shape: nonagon; }
+node[ test:fill = decagon ] {  symbol-shape: decagon; }
+
+node[ test:stroke ]
+{
+    symbol-size: 50;
+    symbol-stroke-color: purple;
+}
+node[ test:stroke = circle ] { symbol-shape: circle; }
+node[ test:stroke = square ] { symbol-shape: square; }
+node[ test:stroke = triangle ] { symbol-shape: triangle; }
+node[ test:stroke = triangle ] { symbol-shape: triangle; }
+node[ test:stroke = pentagon ] { symbol-shape: pentagon; }
+node[ test:stroke = hexagon ] { symbol-shape: hexagon; }
+node[ test:stroke = heptagon ] { symbol-shape: heptagon; }
+node[ test:stroke = octagon ] { symbol-shape: octagon; }
+node[ test:stroke = nonagon ] { symbol-shape: nonagon; }
+node[ test:stroke = decagon ] { symbol-shape: decagon; }
+

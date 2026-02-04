@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.gui.layer.WMSLayerTest
+Test: testTicket13828() took 103 milli sec(s)
+Test: testWMSLayer() took 112 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 282 milli sec(s)
+ourceLayer: estimated visible tiles: 9, estimated cache size: 88
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:42:30.290 WARNING: Unable to find supported projection for layer test wms. Using EPSG:3857.
+2026-02-04 20:42:30.290 WARNING: Unable to find supported projection for layer test wms. Using EPSG:3857.
+------------- ---------------- ---------------

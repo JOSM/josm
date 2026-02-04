@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.DuplicateWayTest
+Test: testDuplicateWayNoTags() took 1 milli sec(s)
+Test: testDuplicateWaySameTags() took 0 milli sec(s)
+Test: testFixError() took 1 milli sec(s)
+Test: testDuplicateWayDifferentTags() took 0 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 58 milli sec(s)

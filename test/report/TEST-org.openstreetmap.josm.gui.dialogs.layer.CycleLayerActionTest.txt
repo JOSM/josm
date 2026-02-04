@@ -1,0 +1,34 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerActionTest
+Test: testUpTop() took 139 milli sec(s)
+Test: testDown() took 124 milli sec(s)
+Test: testUp() took 123 milli sec(s)
+Test: testWithAerialImagery() took 134 milli sec(s)
+Test: testDownBottom() took 128 milli sec(s)
+Test: testNoLayers() took 132 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 854 milli sec(s)
+ialogs.layer.CycleLayerUpAction@102830fd
+2026-02-04 20:42:05.660 INFO: Registered toolbar action cycle-layer-up overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction
+2026-02-04 20:42:05.660 INFO: Keystroke shift pressed CLOSE_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@429dca2c, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@4a092401
+2026-02-04 20:42:05.660 INFO: Registered toolbar action cycle-layer-down overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction
+2026-02-04 20:42:05.788 INFO: Keystroke shift pressed OPEN_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@298fe703, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@3e84dc8e
+2026-02-04 20:42:05.789 INFO: Registered toolbar action cycle-layer-up overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction
+2026-02-04 20:42:05.789 INFO: Keystroke shift pressed CLOSE_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@5b88266a, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@49b0fa4f
+2026-02-04 20:42:05.789 INFO: Registered toolbar action cycle-layer-down overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction
+2026-02-04 20:42:05.912 INFO: Keystroke shift pressed OPEN_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@4466d5db, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@2cd1fa3
+2026-02-04 20:42:05.912 INFO: Registered toolbar action cycle-layer-up overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction
+2026-02-04 20:42:05.913 INFO: Keystroke shift pressed CLOSE_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@3a65996d, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@55986bbe
+2026-02-04 20:42:05.913 INFO: Registered toolbar action cycle-layer-down overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction
+2026-02-04 20:42:06.042 INFO: Keystroke shift pressed OPEN_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@b8b7133, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@3a970ce0
+2026-02-04 20:42:06.042 INFO: Registered toolbar action cycle-layer-up overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction
+2026-02-04 20:42:06.042 INFO: Keystroke shift pressed CLOSE_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@4cbe9b1f, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@3b7445ac
+2026-02-04 20:42:06.042 INFO: Registered toolbar action cycle-layer-down overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction
+2026-02-04 20:42:06.058 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:06.176 INFO: Keystroke shift pressed OPEN_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@36c92b43, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@6db6544f
+2026-02-04 20:42:06.176 INFO: Registered toolbar action cycle-layer-up overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction
+2026-02-04 20:42:06.176 INFO: Keystroke shift pressed CLOSE_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@d3c1eab, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@4e0443d9
+2026-02-04 20:42:06.176 INFO: Registered toolbar action cycle-layer-down overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction
+2026-02-04 20:42:06.303 INFO: Keystroke shift pressed OPEN_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@35d1996, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction@7a1aced3
+2026-02-04 20:42:06.303 INFO: Registered toolbar action cycle-layer-up overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction
+2026-02-04 20:42:06.303 INFO: Keystroke shift pressed CLOSE_BRACKET is already assigned to org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@ee35dd0, will be overridden by org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction@479119c4
+2026-02-04 20:42:06.303 INFO: Registered toolbar action cycle-layer-down overwritten: org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction gets org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction
+------------- ---------------- ---------------

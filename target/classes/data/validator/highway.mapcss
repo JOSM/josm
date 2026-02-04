@@ -1,0 +1,215 @@
+way[highway=~/^(motorway|trunk|primary|secondary|tertiary)$/] {
+  set major_road;
+}
+way[highway=~/^.*_link$/] {
+  set link_road;
+}
+way[highway=~/^(unclassified|residential|living_street|service)$/] {
+  set minor_road;
+}
+
+/* r3669, #9384, #20117 */
+way[highway][name =~ /(?i).* (Ave|Blvd|Bnd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Cv|Dr|Drv|Esp|Espl|Hwy|Ln|Mw|Mwy|Pky|Pkwy|Pl|Rd|Qy|Qys|Sq|St|Str|Ter|Tce|Tr|Trl|Vw|Wy|Xing)[.]?$/] {
+  throwWarning: tr("abbreviated street name");
+  assertMatch: "way highway=unclassified name=\"Foo Ave\"";
+  assertMatch: "way highway=unclassified name=\"Foo Ave.\"";
+  assertMatch: "way highway=unclassified name=\"Bou Blvd.\"";
+  assertMatch: "way highway=unclassified name=\"Bou blvd.\"";
+}
+
+node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway|cycleway|busway|bus_guideway|bridleway/][highway!=motorway_junction][highway!=services] {
+  throwWarning: tr("wrong highway tag on a node");
+  assertMatch: "node highway=primary";
+  assertMatch: "node highway=primary_link";
+  assertNoMatch: "node highway=traffic_calming";
+  assertNoMatch: "node highway=bus_stop";
+  assertNoMatch: "node highway=crossing";
+  assertNoMatch: "node highway=emergency_access_point";
+  assertNoMatch: "node highway=give_way";
+  assertNoMatch: "node highway=mini_roundabout";
+  assertNoMatch: "node highway=motorway_junction";
+  assertNoMatch: "node highway=passing_place";
+  assertNoMatch: "node highway=rest_area";
+  assertNoMatch: "node highway=speed_camera";
+  assertNoMatch: "node highway=street_lamp";
+  assertNoMatch: "node highway=services";
+  assertNoMatch: "node highway=stop";
+  assertNoMatch: "node highway=traffic_signals";
+  assertNoMatch: "node highway=turning_circle";
+}
+
+way[highway=crossing],
+way[railway=crossing],
+way[railway=level_crossing] {
+  throwWarning: tr("wrong crossing tag on a way");
+  assertMatch: "way highway=crossing";
+  assertNoMatch: "node highway=crossing";
+}
+
+/* #18060 */
+node[footway=crossing] {
+  throwWarning: tr("{0} on a node", "{0.tag}");
+  suggestAlternative: "highway=crossing";
+  suggestAlternative: "railway=crossing";
+}
+node[cycleway=crossing] {
+  throwWarning: tr("{0} on a node", "{0.tag}");
+  suggestAlternative: "highway=crossing + bicycle=yes";
+  suggestAlternative: "railway=crossing + bicycle=yes";
+}
+
+way[highway=unclassified][!name][noname!=yes] {
+  throwOther: tr("Unnamed unclassified highway");
+  assertMatch: "way highway=unclassified";
+  assertNoMatch: "way highway=unclassified noname=yes";
+  assertNoMatch: "way highway=unclassified name=Foo";
+}
+
+/* #17970 */
+relation[type=route][route=road][ref] > way.major_road {
+  set road_route_has_ref;
+}
+way.major_road!.road_route_has_ref[!ref][!destination:ref][noref!=yes][junction!=roundabout] {
+  throwOther: tr("highway without a reference");
+  group: tr("missing tag");
+  assertMatch: "way highway=primary";
+  assertNoMatch: "way highway=primary ref=123";
+  assertNoMatch: "way highway=primary destination:ref=123";
+  assertNoMatch: "way highway=primary noref=yes";
+}
+
+way[highway=yes],
+way[highway=road] {
+  throwWarning: tr("Unspecific highway type");
+  assertMatch: "way highway=road";
+  assertNoMatch: "way highway=residential";
+}
+
+way[highway=footway][maxspeed],
+way[highway=steps][maxspeed],
+way[highway=cycleway][bicycle=no],
+way[highway=footway][foot=no],
+way[highway=cycleway][cycleway=lane] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  assertMatch: "way highway=cycleway cycleway=lane";
+  assertMatch: "way highway=footway maxspeed=20";
+  assertNoMatch: "way highway=cycleway bicycle=yes";
+  assertNoMatch: "way highway=cycleway";
+  assertNoMatch: "way highway=footway foot=yes";
+  assertNoMatch: "way highway=footway";
+  assertNoMatch: "way highway=residential cycleway=lane";
+  assertNoMatch: "way highway=residential maxspeed=20";
+}
+
+/* footway, see #10851, #10976, #15439, #19389, #21235 */
+way[footway=left][/^footway:/],
+way[footway=right][/^footway:/],
+way[footway=both][/^footway:/],
+way[footway=separate][/^footway:/],
+way[footway=no][/^footway:/] {
+  throwWarning: tr("{0} is deprecated, use {1} instead. Also check similar tags like {2}", "{0.tag}", "sidewalk", "{1.key}");
+  group: tr("deprecated tagging");
+  set not_fixable_footway;
+  assertMatch: "way footway=both footway:surface=asphalt";
+  assertMatch: "way footway=separate footway:surface=asphalt";
+}
+way[footway=none][/^footway:/] {
+  throwWarning: tr("{0} is deprecated, use {1} instead. Also check similar tags like {2}", "{0.tag}", "sidewalk=no", "{1.key}");
+  group: tr("deprecated tagging");
+  set not_fixable_footway;
+  assertMatch: "way footway=none footway:surface=asphalt";
+  assertNoMatch: "way footway=no footway:surface=asphalt";
+}
+
+way[footway=left]!.not_fixable_footway,
+way[footway=right]!.not_fixable_footway,
+way[footway=both]!.not_fixable_footway,
+way[footway=separate]!.not_fixable_footway,
+way[footway=no]!.not_fixable_footway {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sidewalk";
+  group: tr("deprecated tagging");
+  fixChangeKey: "footway => sidewalk";
+  set fixable_footway;
+}
+
+way[footway=none]!.not_fixable_footway {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sidewalk=no";
+  group: tr("deprecated tagging");
+  fixRemove: "footway";
+  fixAdd: "sidewalk=no";
+  set fixable_footway;
+}
+
+/* #11270, #9297, #15439, #16424, #17022 */
+way[railway =~ /^(miniature|narrow_gauge|preserved|rail)$/][!highway] > node { set .is_in_railway }
+way[highway =~ /^(bridleway|cycleway|footway|path|steps)$/] > node { set .is_in_minor_road }
+way[highway =~ /^(busway|bus_guideway|living_street|motorway|motorway_link|pedestrian|primary|primary_link|raceway|residential|road|secondary|secondary_link|service|tertiary|tertiary_link|track|trunk|trunk_link|unclassified)$/] > node { set .is_in_major_road }
+node[railway!=crossing][crossing!=no].is_in_railway.is_in_minor_road!.is_in_major_road {
+  throwWarning: tr("pedestrian railway crossing without {0}", "{0.tag}");
+  group: tr("missing tag");
+  fixAdd: "railway=crossing";
+}
+node[railway!=level_crossing].is_in_railway.is_in_major_road!.is_in_minor_road {
+  throwWarning: tr("railway crossing without {0}", "{0.tag}");
+  group: tr("missing tag");
+  fixAdd: "railway=level_crossing";
+}
+
+node[highway=crossing][barrier=kerb].is_in_major_road {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "kerb=*";
+  group: tr("suspicious tag combination");
+}
+
+/* #20987 */
+way[turn                         ][turn                          !~ /^(none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)$/],
+way[turn:forward                 ][turn:forward                  !~ /^(none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)$/],
+way[turn:backward                ][turn:backward                 !~ /^(none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)$/],
+way[turn:both_ways               ][turn:both_ways                !~ /^(none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)$/],
+way[turn:both_ways:forward       ][turn:both_ways:forward        !~ /^(none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)$/],
+way[turn:both_ways:backward      ][turn:both_ways:backward       !~ /^(none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)$/],
+way[turn:lanes                   ][turn:lanes                    !~ /^(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)(\|(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*))*$/],
+way[turn:lanes:forward           ][turn:lanes:forward            !~ /^(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)(\|(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*))*$/],
+way[turn:lanes:backward          ][turn:lanes:backward           !~ /^(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)(\|(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*))*$/],
+way[turn:lanes:both_ways         ][turn:lanes:both_ways          !~ /^(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)(\|(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*))*$/], 
+way[turn:lanes:both_ways:forward ][turn:lanes:both_ways:forward  !~ /^(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)(\|(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*))*$/],
+way[turn:lanes:both_ways:backward][turn:lanes:both_ways:backward !~ /^(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*)(\|(|none|((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through)(;((sharp_|slight_|merge_to_|slide_)?(left|right)|reverse|through))*))*$/] {
+  throwWarning: tr("unusual value of {0}", "{0.key}");
+  assertMatch: "way turn=straight"; /* through would be correct */
+  assertMatch: "way turn=slight_reverse"; /* wrong value */
+  assertMatch: "way turn=through|right"; /*  :lanes missing in key */
+  assertNoMatch: "way turn=through;right";
+  assertMatch: "way turn:lanes:forward=straight|right"; /* through would be correct */
+  assertMatch: "way turn:lanes:forward=slight_reverse|right"; /* wrong value */
+  assertMatch: "way turn:lanes=left;none|right"; /* "none" needs to be a solo value */
+  assertNoMatch: "way turn:lanes:forward=sharp_left;left||left;through;slight_right|slight_right;right|";
+}
+
+/* #20442 traffic signals or similar on roundabouts */
+node[highway=traffic_signals                     ][ traffic_signals=signal] < way[highway][junction=roundabout],
+node[highway=~/^(traffic_signals|stop|give_way)$/][!traffic_signals       ] < way[highway][junction=roundabout] {
+  throwWarning: tr("{0} without right of way", "{1.tag}");
+  suggestAlternative: "junction=circular";
+}
+
+/* #18217 */
+way[highway =~ /^((motorway|trunk|primary|secondary|tertiary)(_link)?|residential|unclassified)$/][area=yes],
+relation[highway =~ /^((motorway|trunk|primary|secondary|tertiary)(_link)?|residential|unclassified)$/][type=multipolygon] {
+  throwError: tr("Area with {0} above {1} is invalid", "highway=*", "highway=service");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "area:highway=*";
+  assertMatch:   "way highway=trunk area=yes";
+  assertMatch:   "relation highway=trunk type=multipolygon";
+  assertNoMatch: "way highway=service area=yes";
+  assertNoMatch: "way highway=trunk";
+}
+
+/* #21396 comment 39 */
+*[surface=~/^paving_stones:(\d+)$/] {
+  throwWarning: tr("{0} with trailing number", "paving_stones");
+  group: tr("questionable value (ending with a number)");
+  suggestAlternative: "paving_stones:length";
+  suggestAlternative: "paving_stones:width";
+}

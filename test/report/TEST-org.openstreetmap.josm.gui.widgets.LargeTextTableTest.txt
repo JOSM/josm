@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.gui.widgets.LargeTextTableTest
+Test: testGetScrollableUnitIncrementWithInvalidOrientation() took 0 milli sec(s)
+Test: testGetScrollableBlockIncrementHorizontal() took 0 milli sec(s)
+Test: testGetScrollableBlockIncrementWithInvalidOrientation() took 0 milli sec(s)
+Test: testGetScrollableUnitIncrementVertical() took 0 milli sec(s)
+Test: testGetScrollableBlockIncrementVertical() took 0 milli sec(s)
+Test: testGetScrollableUnitIncrementHorizontal() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 80 milli sec(s)

@@ -1,0 +1,17 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.DuplicateNodeTest
+Test: testDuplicateNodeLanduse() took 1 milli sec(s)
+Test: testDuplicateNodeTriple() took 1 milli sec(s)
+Test: testServerPrecision() took 0 milli sec(s) SKIPPED: fix #18074
+Test: testDuplicateNodeBoundary() took 0 milli sec(s)
+Test: testDuplicateNodeHighway() took 0 milli sec(s)
+Test: testDuplicateNodeRailway() took 0 milli sec(s)
+Test: testDuplicateNodeWithEle() took 1 milli sec(s)
+Test: testDuplicateNodeBuilding() took 0 milli sec(s)
+Test: testDuplicateNodeMixed() took 0 milli sec(s)
+Test: testDuplicateNodeOther() took 0 milli sec(s)
+Test: testDuplicateNodePower() took 0 milli sec(s)
+Test: testDuplicateNodeNatural() took 0 milli sec(s)
+Test: testDuplicateNode() took 0 milli sec(s)
+Test: testNoDuplicateNode() took 1 milli sec(s)
+Test: testDuplicateNodeWaterway() took 0 milli sec(s)
+Tests run: 14, Failures: 0, Skipped: 1, Aborted: 0, Time elapsed: 62 milli sec(s)

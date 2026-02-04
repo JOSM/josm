@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.io.remotecontrol.handler.ImportHandlerTest
+Test: testBadRequestNoParam() took 113 milli sec(s)
+Test: testBadRequestInvalidUrl() took 111 milli sec(s)
+Test: testNominalRequest() took 109 milli sec(s)
+Test: testTicket7434() took 106 milli sec(s)
+Test: testBadRequestIncompleteUrl() took 108 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 640 milli sec(s)
+emote control parameter lat, skipping it
+------------- ---------------- ---------------

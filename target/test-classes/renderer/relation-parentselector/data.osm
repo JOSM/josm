@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='41.7540034' minlon='-93.6103371' maxlat='41.7555465' maxlon='-93.6057618' origin='JOSM' />
+  <node id='-41148' action='modify' lat='41.75449259482' lon='-93.60684960581' />
+  <node id='-41150' action='modify' lat='41.75444121701' lon='-93.60735137702' />
+  <node id='-41152' action='modify' lat='41.75491829511' lon='-93.60713492669' />
+  <node id='-41154' action='modify' lat='41.75430910244' lon='-93.60628880269' />
+  <node id='-41156' action='modify' lat='41.75422836563' lon='-93.60784330958' />
+  <node id='-41158' action='modify' lat='41.75530729464' lon='-93.60710541074' />
+  <node id='-41160' action='modify' lat='41.75449626466' lon='-93.60896491582' />
+  <node id='-41162' action='modify' lat='41.75444488685' lon='-93.60946668703' />
+  <node id='-41164' action='modify' lat='41.75492196493' lon='-93.60925023671' />
+  <node id='-41166' action='modify' lat='41.75431277229' lon='-93.6084041127' />
+  <node id='-41168' action='modify' lat='41.75423203549' lon='-93.60995861959' />
+  <node id='-41170' action='modify' lat='41.75531096443' lon='-93.60922072075' />
+  <way id='-41172' action='modify'>
+    <nd ref='-41152' />
+    <nd ref='-41150' />
+    <nd ref='-41148' />
+    <nd ref='-41152' />
+  </way>
+  <way id='-41174' action='modify'>
+    <nd ref='-41158' />
+    <nd ref='-41156' />
+    <nd ref='-41154' />
+    <nd ref='-41158' />
+    <tag k='barrier' v='fence' />
+  </way>
+  <way id='-41176' action='modify'>
+    <nd ref='-41164' />
+    <nd ref='-41162' />
+    <nd ref='-41160' />
+    <nd ref='-41164' />
+  </way>
+  <way id='-41178' action='modify'>
+    <nd ref='-41170' />
+    <nd ref='-41168' />
+    <nd ref='-41166' />
+    <nd ref='-41170' />
+  </way>
+  <relation id='-41180' action='modify'>
+    <member type='way' ref='-41174' role='outer' />
+    <member type='way' ref='-41172' role='inner' />
+    <tag k='landuse' v='quarry' />
+    <tag k='test' v='parent' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+  <relation id='-41182' action='modify'>
+    <member type='way' ref='-41178' role='outer' />
+    <member type='way' ref='-41176' role='inner' />
+    <tag k='landuse' v='quarry' />
+    <tag k='test' v='parent' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+</osm>

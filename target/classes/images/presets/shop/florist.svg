@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="841.88976pt"
+   id="svg2"
+   inkscape:version="0.46"
+   sodipodi:docbase="/home/peterm/afbeeldingen/svg"
+   sodipodi:docname="florist.svg"
+   sodipodi:version="0.32"
+   width="595.27559pt"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="florist32.png"
+   inkscape:export-xdpi="3.0419531"
+   inkscape:export-ydpi="3.0419531">
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>flower</dc:title>
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>flower</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org/">
+            <dc:title>Open Clip Art Library</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>peterm</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>peterm</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs5">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective11" />
+  </defs>
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     id="base"
+     inkscape:current-layer="svg2"
+     inkscape:cx="372.04724"
+     inkscape:cy="473.86360"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="721"
+     inkscape:window-width="1270"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:zoom="0.37724655"
+     pagecolor="#ffffff"
+     showgrid="false" />
+  <g
+     id="g5840"
+     transform="matrix(1.340218,0.000000,0.000000,1.340218,-653.5452,7.795854)">
+    <path
+       d="M 796.81250,295.50000 C 795.93675,295.58953 795.02004,295.90048 794.06250,296.43750 C 787.79894,299.95034 792.94621,401.31416 766.96875,492.87500 C 757.99251,468.07073 723.97814,435.17912 677.18750,408.96875 C 613.94367,373.54191 551.37941,363.73074 537.53125,387.06250 C 523.68311,410.39425 563.75619,458.07317 627.00000,493.50000 C 680.29990,523.35661 733.01238,534.94166 756.59375,523.90625 C 749.80980,541.56721 741.74050,558.44776 731.68750,573.43750 C 665.85161,671.60343 558.43455,646.62022 555.53125,652.12500 C 524.93426,710.13598 682.00788,693.04094 747.84375,594.87500 C 763.56137,571.43891 776.13295,541.18734 785.78125,508.96875 C 786.01584,509.37937 786.14083,509.85743 786.40625,510.25000 C 801.60278,532.72680 861.82618,516.81112 920.84375,474.71875 C 979.86133,432.62637 1015.4153,380.22680 1000.2188,357.75000 C 985.02229,335.27319 924.79883,351.18887 865.78125,393.28125 C 836.21031,414.37178 812.51619,438.04363 798.15625,459.25000 C 815.30406,375.03383 813.89002,293.75407 796.81250,295.50000 z "
+       id="path2195"
+       style="fill:#35e23e;fill-opacity:1.0000000;fill-rule:nonzero;stroke:#12892d;stroke-width:17.004999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4.0000000;stroke-dasharray:none;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000" />
+    <path
+       d="M 521.87211,275.23304 C 478.85605,245.64532 524.04766,247.12359 474.76752,264.36545 C 448.25334,273.64209 478.36895,314.58051 486.35702,287.65007 C 501.20392,237.59626 513.76299,281.03285 482.13659,239.49268 C 465.12065,217.14283 435.49213,258.43515 463.57296,257.71029 C 515.76490,256.36306 478.33522,281.73008 508.06918,238.81498 C 524.06693,215.72537 475.63989,200.30700 485.00672,226.78946 C 502.41621,276.01063 466.72433,248.25173 516.72732,263.26890 C 543.63042,271.34859 543.32938,220.52720 521.03757,237.61911 C 479.60529,269.38671 494.97617,226.86374 496.14577,279.05997 C 496.77504,307.14309 545.01603,291.15212 521.87211,275.23304 z "
+       id="path1549"
+       inkscape:flatsided="false"
+       inkscape:randomized="0.0000000"
+       inkscape:rounded="1.0800000"
+       sodipodi:arg1="0.60613533"
+       sodipodi:arg2="2.8013060"
+       sodipodi:cx="495.56927"
+       sodipodi:cy="257.00040"
+       sodipodi:r1="32.004192"
+       sodipodi:r2="22.067102"
+       sodipodi:sides="5"
+       sodipodi:type="star"
+       style="fill:#fa9806;fill-opacity:1.0000000;fill-rule:nonzero;stroke:#f58006;stroke-width:4.0247698;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000"
+       transform="matrix(4.224992,0.000000,0.000000,4.224992,-1287.368,-859.2380)" />
+    <path
+       d="M 539.80589 261.93216 A 8.8174267 8.8174267 0 1 1  522.17104,261.93216 A 8.8174267 8.8174267 0 1 1  539.80589 261.93216 z"
+       id="path1551"
+       sodipodi:cx="530.98846"
+       sodipodi:cy="261.93216"
+       sodipodi:rx="8.8174267"
+       sodipodi:ry="8.8174267"
+       sodipodi:type="arc"
+       style="fill:#fadc06;fill-opacity:1.0000000;fill-rule:nonzero;stroke:#f58006;stroke-width:4.0247698;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4.0000000;stroke-dashoffset:0.0000000;stroke-opacity:1.0000000"
+       transform="matrix(4.224992,0.000000,0.000000,4.224992,-1440.171,-885.7572)" />
+  </g>
+</svg>

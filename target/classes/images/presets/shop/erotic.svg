@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2497"
+   sodipodi:docname="sivvus-heart2.svg"
+   inkscape:export-filename="TAPETUŃCIA.png"
+   viewBox="0 0 306 288"
+   sodipodi:version="0.32"
+   inkscape:export-xdpi="90"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-ydpi="90"
+   inkscape:version="0.91 r13725"
+   width="306"
+   height="288">
+  <defs
+     id="defs2499">
+    <filter
+       id="filter3428"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3430"
+         stdDeviation="3.982787"
+         inkscape:collect="always" />
+    </filter>
+    <linearGradient
+       id="linearGradient3482"
+       y2="576"
+       gradientUnits="userSpaceOnUse"
+       x2="742"
+       y1="92"
+       x1="742"
+       inkscape:collect="always">
+      <stop
+         id="stop2543"
+         style="stop-color:#ff0000"
+         offset="0" />
+      <stop
+         id="stop2545"
+         style="stop-color:#800000"
+         offset="1" />
+    </linearGradient>
+    <radialGradient
+       id="radialGradient3484"
+       gradientUnits="userSpaceOnUse"
+       cy="507.67999"
+       cx="154.49001"
+       gradientTransform="matrix(-0.11869,2.956,-2.58,-0.10359,1797.5,-275.65)"
+       r="89.498001"
+       inkscape:collect="always">
+      <stop
+         id="stop2537"
+         style="stop-color:#ffffff;stop-opacity:.8"
+         offset="0" />
+      <stop
+         id="stop2539"
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     inkscape:window-y="-8"
+     pagecolor="#ffffff"
+     inkscape:window-height="988"
+     inkscape:zoom="1.9617303"
+     inkscape:window-x="-8"
+     showgrid="false"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="120.92192"
+     inkscape:cy="94.442679"
+     inkscape:window-width="1680"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px"
+     inkscape:window-maximized="1" />
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(-359.56,-243.98002)">
+    <g
+       id="g3432"
+       transform="matrix(0.70216437,-0.20025316,0.19865217,0.72778207,-43.936567,294.37691)">
+      <path
+         id="path2604"
+         style="fill:#808080;filter:url(#filter3428)"
+         d="m 666.96,125.24 c -37.63,-8.31 -81.08,-1.06 -114.02,29.91 -28.16,27.26 -40.88,72.83 -36.39,112.35 4.56,52.15 27.52,96.52 52.3,136.38 25.02,39.26 54.3,74.45 86.24,105.49 8.51,2.55 17.04,-4.08 25.62,-5.5 63.3,-20.7 126.94,-49.02 181.41,-97.5 28.63,-26.11 54.28,-62.16 60.85,-104.49 5.33,-35.16 -5.34,-70.1 -25.68,-92.46 -28.22,-33.18 -70.08,-49.83 -111.9,-44.51 -16.67,2.8 -33.74,10.78 -46.01,26.11 -5.21,-29.42 -26.9,-48.53 -49.43,-58.22 -7.35,-3.33 -15.12,-5.8 -22.99,-7.56 z"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path2393"
+         style="fill:#800000"
+         d="m 664.96,117.24 c -37.63,-8.31 -81.08,-1.06 -114.02,29.91 -28.16,27.26 -40.88,72.83 -36.39,112.35 4.56,52.15 27.52,96.52 52.3,136.38 25.02,39.26 54.3,74.45 86.24,105.49 8.51,2.55 17.04,-4.08 25.62,-5.5 63.3,-20.7 126.94,-49.02 181.41,-97.5 28.63,-26.11 54.28,-62.16 60.85,-104.49 5.33,-35.16 -5.34,-70.1 -25.68,-92.46 -28.22,-33.18 -70.08,-49.83 -111.9,-44.51 -16.67,2.8 -33.74,10.78 -46.01,26.11 -5.21,-29.42 -26.9,-48.53 -49.43,-58.22 -7.35,-3.33 -15.12,-5.8 -22.99,-7.56 z"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path2383"
+         style="fill:url(#linearGradient3482)"
+         d="m 663.63,123.01 c -33.03,-7.07 -70.23,-2.5 -100.87,20.92 -24.02,18.01 -39.91,50.09 -42.99,82.49 -4.63,44.42 9.3,86.03 26.55,121.95 27.94,56.12 65.74,103.69 107.06,145.5 3.27,5.25 9.32,0.09 13.99,-0.42 56.43,-17.38 112.64,-41.17 163.75,-78.1 31.8,-23.62 63.2,-54.44 78.37,-96.22 11.08,-29.56 10.56,-63.49 -2.09,-89.18 -17.24,-35.71 -49.65,-57.3 -83.75,-65.48 -23.9,-5.24 -51.53,-4.71 -73.83,13.16 -6.61,5.41 -12.3,12.49 -16.4,20.74 1.36,-27 -14.46,-48.07 -32.45,-59.78 -11.48,-7.59 -24.15,-12.64 -37.34,-15.58 z"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path2401"
+         style="fill:url(#radialGradient3484)"
+         d="m 653.7,131.04 c -41.51,-10.16 -89.71,10.06 -108.65,49.12 -18.64,40.69 -12.73,88.49 4.86,128.35 15.09,34.26 33.77,67.42 56.59,97.25 L 722.69,200.71 C 712.3,196.86 705.97,184.62 706.37,173.73 700.6,149.77 675.99,136.28 653.7,131.04 Z"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+  <metadata
+     id="metadata19">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2008-08-11T22:08:25</dc:date>
+        <dc:description />
+        <dc:source>https://openclipart.org/detail/18379/heart-by-sivvus</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>sivvus</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>colour</rdf:li>
+            <rdf:li>heart</rdf:li>
+            <rdf:li>love</rdf:li>
+            <rdf:li>red</rdf:li>
+            <rdf:li>valentine</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

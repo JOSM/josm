@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.layer.geoimage.ImageDisplayTest
+Test: testNonRegression22770() took 5 milli sec(s)
+Test: testLoadImageRunnablePerformance() took 0 milli sec(s) SKIPPED: Set working directory to image folder and run manually
+Test: testCalculateDrawImageRectangle() took 1 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 1, Aborted: 0, Time elapsed: 73 milli sec(s)

@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.data.imagery.vectortile.mapbox.FeatureTest
+Test: testCreationTrueToFalse() took 3 milli sec(s)
+Test: testNumberGrouping() took 1 milli sec(s)
+Test: testCreation() took 0 milli sec(s)
+Test: testCreationUnpacked() took 0 milli sec(s)
+Test: testNumberGroupingDecimalEn() took 0 milli sec(s)
+Test: testNumberGroupingDecimalRu() took 9 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 52 milli sec(s)

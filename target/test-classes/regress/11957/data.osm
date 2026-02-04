@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='30203000' timestamp='2012-06-04T07:43:48Z' uid='207581' user='Hjart' visible='true' version='4' changeset='11793732' lat='55.510607' lon='8.4295289' />
+  <node id='30203008' timestamp='2010-12-04T12:37:53Z' uid='207581' user='Hjart' visible='true' version='4' changeset='6537026' lat='55.5078651' lon='8.4287936' />
+  <node id='35213705' timestamp='2010-12-04T10:40:06Z' uid='80543' user='findvej' visible='true' version='2' changeset='6535476' lat='55.507892' lon='8.4307184' />
+  <node id='1618968998' timestamp='2012-06-04T07:43:44Z' uid='207581' user='Hjart' visible='true' version='2' changeset='11793732' lat='55.5090061' lon='8.4285087' />
+  <node id='1618968999' timestamp='2012-02-05T14:55:52Z' uid='599792' user='jorgenj' visible='true' version='1' changeset='10594291' lat='55.5097831' lon='8.4284817' />
+  <node id='1618969016' timestamp='2012-02-05T14:55:52Z' uid='599792' user='jorgenj' visible='true' version='1' changeset='10594291' lat='55.5107187' lon='8.4297369' />
+  <node id='1618969019' timestamp='2012-02-05T14:55:52Z' uid='599792' user='jorgenj' visible='true' version='1' changeset='10594291' lat='55.5099168' lon='8.4285353' />
+  <node id='1618969020' timestamp='2012-02-05T14:55:52Z' uid='599792' user='jorgenj' visible='true' version='1' changeset='10594291' lat='55.5100444' lon='8.4286211' />
+  <node id='1618969035' timestamp='2012-06-04T07:43:44Z' uid='207581' user='Hjart' visible='true' version='2' changeset='11793732' lat='55.5078814' lon='8.428584' />
+  <node id='1618969038' timestamp='2012-02-05T14:55:53Z' uid='599792' user='jorgenj' visible='true' version='1' changeset='10594291' lat='55.5079483' lon='8.4284817' />
+  <way id='5116361' timestamp='2012-06-04T07:43:34Z' uid='207581' user='Hjart' visible='true' version='3' changeset='11793732'>
+    <nd ref='35213705' />
+    <nd ref='30203008' />
+    <tag k='highway' v='unclassified' />
+  </way>
+  <way id='148830403' timestamp='2012-06-04T07:43:39Z' uid='207581' user='Hjart' visible='true' version='2' changeset='11793732'>
+    <nd ref='1618969016' />
+    <nd ref='30203000' />
+    <nd ref='1618969020' />
+    <nd ref='1618969019' />
+    <nd ref='1618968999' />
+    <nd ref='1618968998' />
+    <nd ref='1618969038' />
+    <nd ref='1618969035' />
+    <nd ref='30203008' />
+    <tag k='highway' v='unclassified' />
+  </way>
+</osm>

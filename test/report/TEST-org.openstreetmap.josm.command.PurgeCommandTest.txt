@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.command.PurgeCommandTest
+Test: testEqualsContract() took 8 milli sec(s)
+Test: testExecute() took 1 milli sec(s)
+Test: testUndo() took 0 milli sec(s)
+Test: testGetParticipatingPrimitives() took 0 milli sec(s)
+Test: testFillModifiedData() took 0 milli sec(s)
+Test: testDescription() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 53 milli sec(s)

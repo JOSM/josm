@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.tools.MediawikiTest
+Test: testImageUrl() took 0 milli sec(s)
+Test: testGeoImagesUrl() took 0 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 83 milli sec(s)

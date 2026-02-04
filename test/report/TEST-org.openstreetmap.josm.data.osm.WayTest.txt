@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.data.osm.WayTest
+Test: testBBox() took 1 milli sec(s)
+Test: testRemoveNodes() took 0 milli sec(s)
+Test: testCloneFromIAE() took 0 milli sec(s)
+Test: testLoadIAE() took 1 milli sec(s)
+Test: testRemoveNode() took 0 milli sec(s)
+Test: getLongestSegmentLength() took 1 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 54 milli sec(s)

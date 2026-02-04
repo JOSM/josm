@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-68' action='modify' visible='true' lat='55.18135539257' lon='-7.98285399308'>
+    <tag k='ref' v='D' />
+  </node>
+  <node id='-66' action='modify' visible='true' lat='55.1808426071' lon='-7.98215939005'>
+    <tag k='ref' v='B' />
+  </node>
+  <node id='-64' action='modify' visible='true' lat='55.18081456395' lon='-7.98219447101'>
+    <tag k='ref' v='C' />
+  </node>
+  <node id='-62' action='modify' visible='true' lat='55.18078652078' lon='-7.98196293666'>
+    <tag k='ref' v='A' />
+  </node>
+  <node id='-60' action='modify' visible='true' lat='55.18061024901' lon='-7.98460804115'>
+    <tag k='ref' v='E' />
+  </node>
+  <way id='-70' action='modify' visible='true'>
+    <nd ref='-60' />
+    <nd ref='-62' />
+    <nd ref='-66' />
+    <nd ref='-62' />
+    <nd ref='-66' />
+    <nd ref='-64' />
+    <nd ref='-66' />
+    <nd ref='-68' />
+    <nd ref='-60' />
+    <tag k='building' v='yes' />
+  </way>
+</osm>

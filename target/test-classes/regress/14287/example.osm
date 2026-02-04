@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-30910' action='modify' visible='true' lat='-23.50408988778' lon='-51.13765049621' />
+  <node id='-30911' action='modify' visible='true' lat='-23.50516007238' lon='-51.13802724884' />
+  <node id='-30913' action='modify' visible='true' lat='-23.50562134566' lon='-51.13646913871' />
+  <node id='-30915' action='modify' visible='true' lat='-23.50455116481' lon='-51.13609238609' />
+  <node id='-30931' action='modify' visible='true' lat='-23.50454078258' lon='-51.13735486045'>
+    <tag k='amenity' v='parking' />
+  </node>
+  <node id='-30934' action='modify' visible='true' lat='-23.50461949174' lon='-51.13702763095'>
+    <tag k='amenity' v='parking' />
+  </node>
+  <node id='-30935' action='modify' visible='true' lat='-23.50474739403' lon='-51.13740850463'>
+    <tag k='amenity' v='parking' />
+  </node>
+  <node id='-30936' action='modify' visible='true' lat='-23.50491465068' lon='-51.13714564815'>
+    <tag k='amenity' v='parking' />
+  </node>
+  <node id='-30937' action='modify' visible='true' lat='-23.50485561895' lon='-51.1367433168'>
+    <tag k='amenity' v='parking' />
+  </node>
+  <node id='-30938' action='modify' visible='true' lat='-23.50503271407' lon='-51.13685060516'>
+    <tag k='amenity' v='parking' />
+  </node>
+  <way id='-30912' action='modify' visible='true'>
+    <nd ref='-30910' />
+    <nd ref='-30911' />
+    <nd ref='-30913' />
+    <nd ref='-30915' />
+    <nd ref='-30910' />
+    <tag k='amenity' v='parking' />
+  </way>
+</osm>

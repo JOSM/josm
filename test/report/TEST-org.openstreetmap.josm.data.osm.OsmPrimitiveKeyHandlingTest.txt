@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.osm.OsmPrimitiveKeyHandlingTest
+Test: testPut() took 0 milli sec(s)
+Test: testPut2() took 1 milli sec(s)
+Test: testEmptyNode() took 0 milli sec(s)
+Test: testHasEqualSemanticAttributes() took 0 milli sec(s)
+Test: testHasEqualSemanticAttributes2() took 0 milli sec(s)
+Test: testRemove() took 0 milli sec(s)
+Test: testRemoveAll() took 0 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 42 milli sec(s)

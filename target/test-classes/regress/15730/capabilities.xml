@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd">
+<WMT_MS_Capabilities version="1.1.1">
+  <Service>
+    <Name>WMS</Name>
+    <Title>OGC:WMS</Title>
+    <Abstract>OGC:WMS</Abstract>
+    <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://gis.apfo.usda.gov/arcgis/services/NAIP/South_Carolina/ImageServer/WMSServer"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+      </ContactPersonPrimary>
+      <ContactAddress>
+      </ContactAddress>
+    </ContactInformation>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>application/vnd.ogc.wms_xml</Format>
+        <DCPType>
+          <HTTP><Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://gis.apfo.usda.gov/arcgis/services/NAIP/South_Carolina/ImageServer/WMSServer"/></Get></HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/tiff</Format>
+        <Format>image/png</Format>
+        <Format>image/png24</Format>
+        <Format>image/png32</Format>
+        <Format>image/bmp</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/svg</Format>
+        <DCPType>
+          <HTTP><Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://gis.apfo.usda.gov/arcgis/services/NAIP/South_Carolina/ImageServer/WMSServer"/></Get></HTTP>
+        </DCPType>
+      </GetMap>
+      <GetStyles>
+        <Format>application/vnd.ogc.sld+xml</Format>
+        <DCPType>
+          <HTTP><Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://gis.apfo.usda.gov/arcgis/services/NAIP/South_Carolina/ImageServer/WMSServer"/></Get></HTTP>
+        </DCPType>
+      </GetStyles>
+    </Request>
+    <Exception>
+      <Format>application/vnd.ogc.se_xml</Format>
+      <Format>application/vnd.ogc.se_inimage</Format>
+      <Format>application/vnd.ogc.se_blank</Format>
+    </Exception>
+    <Layer>
+    <Name>0</Name>
+      <Title>South_Carolina</Title>
+      <Abstract>South Carolina  NAIP Imagery 2017    Resolution: 100CM 
+<br/>
+<br/>
+<b>DATA IDENTFICATION </b><br/>
+Abstract: The NAIP National Metadata Map contains USGS Quarter Quad and NAIP Seamline boundaries for every year NAIP imagery has been collected. Clicking on the map also makes available a number of metadata fields which describe the day, time, camera, aircraft, and location of NAIP collection. There is also a link which will open an FGDC compliant metadata text file for each NAIP USGS Quarter Quad collected.
+<br/>
+Purpose: To make additional information and metadata about NAIP available to the public.
+<br/>
+Language: eng; USA
+<br/>
+Browse Graphic: http://www.arcgis.com/sharing/rest/content/items/d7eb04e3a14343b39cdc3503f5037003/info/thumbnail/NAIPnationalmetadata.jpg
+Browse Graphic Type: JPEG
+Browse Graphic Caption: ArcGIS Online REST endpoint content
+<br/>
+<br/>
+<b>POINT OF CONTACT </b><br/>
+Organization Name: USDA-FSA-APFO Aerial Photography Field Office<br/>
+Role: Point Of Contact<br/>
+Voice: 801-844-2900<br/>
+Delivery Point: 2222 West 2300 South<br/>
+City: Salt Lake City<br/>
+Administrative Area: Utah<br/>
+Postal Code: 84119-2020<br/>
+Web: https://catalog.data.gov/dataset/naip-national-metadata <br/>
+Country: USA<br/>
+E-Mail Address: apfo.sales@slc.usda.gov<br/></Abstract>
+<SRS>EPSG:4326</SRS>
+<SRS>EPSG:0</SRS>
+<LatLonBoundingBox minx="-83.375029" miny="31.999971" maxx="-78.499971" maxy="35.250026"/>
+<BoundingBox SRS="EPSG:4326" minx="-83.375029" miny="31.999971" maxx="-78.499971" maxy="35.250026"/>
+<BoundingBox SRS="EPSG:0" minx="-9281265.763300" miny="3763306.812100" maxx="-8738576.763300" maxy="4197910.812100"/>
+<Dimension name="time" units="ISO8601" />
+<Extent name="time" default="2017Z">2017Z/2017Z/P1Y</Extent>
+    </Layer>
+  </Capability>
+</WMT_MS_Capabilities>

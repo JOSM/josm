@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.tools.TextTagParserTest
+Test: testEQformat() took 1 milli sec(s)
+Test: testTab() took 1 milli sec(s)
+Test: testTicket8384Comment58() took 0 milli sec(s)
+Test: testFreeformat() took 1 milli sec(s)
+Test: testTicket16104() took 0 milli sec(s)
+Test: testJSONformat() took 1 milli sec(s)
+Test: testTNformat() took 1 milli sec(s)
+Test: testUnescape() took 0 milli sec(s)
+Test: testStableOrder() took 1 milli sec(s)
+Test: testErrorDetect() took 0 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 111 milli sec(s)

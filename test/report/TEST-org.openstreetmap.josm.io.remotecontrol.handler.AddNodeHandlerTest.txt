@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandlerTest
+Test: testBadRequestNoLayer() took 166 milli sec(s)
+Test: testBadRequestNoParam() took 182 milli sec(s)
+Test: testBadRequestInvalidUrl() took 173 milli sec(s)
+Test: testNominalRequest() took 177 milli sec(s)
+Test: testBadRequestIncompleteUrl() took 155 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 943 milli sec(s)
+ 'lat' parameter
+2026-02-04 20:43:00.511 WARNING: 'null' remote control request must have 'lon' parameter
+2026-02-04 20:43:00.846 WARNING: 'null' remote control request must have 'lat' parameter
+2026-02-04 20:43:00.846 WARNING: 'null' remote control request must have 'lon' parameter
+------------- ---------------- ---------------

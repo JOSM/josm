@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.data.cache.JCSCacheManagerTest
+Test: testLoggingAdaptor12054() took 6 milli sec(s)
+Test: testUtilityClass() took 0 milli sec(s)
+Test: testUseBigDiskFile() took 10 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 58 milli sec(s)

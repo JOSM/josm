@@ -1,0 +1,16 @@
+Testcase: org.openstreetmap.josm.io.remotecontrol.handler.LoadObjectHandlerTest
+Test: testBadRequestNoParam() took 0 milli sec(s)
+Test: testBadRequestInvalidUrl() took 1 milli sec(s)
+Test: testNominalRequest() took 116 milli sec(s)
+Test: testBadRequestIncompleteUrl() took 1 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 198 milli sec(s)
+tp://localhost:58863/0.6/ways?ways=1 -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:43:04.980 INFO: Way 1 with 2 nodes is incomplete because at least one node was missing in the loaded data.
+2026-02-04 20:43:04.981 INFO: GET http://localhost:58863/0.6/nodes?nodes=1,2 -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:04.983 INFO: GET http://localhost:58863/0.6/way/1/full -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:43:04.983 INFO: Way 1 with 2 nodes is incomplete because at least one node was missing in the loaded data.
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:43:04.868 WARNING: 'null' remote control request must have 'objects' parameter
+2026-02-04 20:43:04.985 WARNING: 'null' remote control request must have 'objects' parameter
+------------- ---------------- ---------------

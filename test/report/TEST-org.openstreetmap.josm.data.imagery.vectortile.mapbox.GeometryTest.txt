@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.imagery.vectortile.mapbox.GeometryTest
+Test: testMultiPolygon() took 2 milli sec(s)
+Test: testPoint() took 0 milli sec(s)
+Test: testLine() took 1 milli sec(s)
+Test: testBadGeometry() took 0 milli sec(s)
+Test: testPolygon() took 0 milli sec(s)
+Test: testNonRegression20971And21254() took 0 milli sec(s)
+Test: testBadPolygon() took 0 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 42 milli sec(s)

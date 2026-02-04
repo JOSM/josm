@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<WMS_Capabilities version="1.3.0" xmlns="http://www.opengis.net/wms" xmlns:sld="http://www.opengis.net/sld" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ms="http://mapserver.gis.umn.edu/mapserver" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  http://mapserver.gis.umn.edu/mapserver https://tools.geofabrik.de/osmi/views/geometry/wxs?service=WMS&amp;version=1.3.0&amp;request=GetSchemaExtension">
+
+<!-- MapServer version 7.0.0 OUTPUT=PNG OUTPUT=JPEG SUPPORTS=PROJ SUPPORTS=AGG SUPPORTS=FREETYPE SUPPORTS=CAIRO SUPPORTS=ICONV SUPPORTS=FRIBIDI SUPPORTS=WMS_SERVER SUPPORTS=WFS_SERVER SUPPORTS=WCS_SERVER SUPPORTS=FASTCGI SUPPORTS=GEOS INPUT=JPEG INPUT=POSTGIS INPUT=OGR INPUT=GDAL INPUT=SHAPEFILE -->
+
+<Service>
+  <Name>WMS</Name>
+  <Title>Geofabrik Tools: OSM Inspector (Geometry)</Title>
+  <Abstract>OSM Inspector is a debugging tool for OpenStreetMap data.</Abstract>
+  <KeywordList>
+      <Keyword>Geofabrik</Keyword>
+      <Keyword>OpenStreetMap</Keyword>
+      <Keyword>OSM</Keyword>
+      <Keyword>OSM Inspector</Keyword>
+  </KeywordList>
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/>
+  <ContactInformation>
+    <ContactPersonPrimary>
+      <ContactPerson>Jochen Topf</ContactPerson>
+      <ContactOrganization>Geofabrik GmbH</ContactOrganization>
+    </ContactPersonPrimary>
+      <ContactVoiceTelephone>+49-721-1803560-0</ContactVoiceTelephone>
+  <ContactElectronicMailAddress>info@geofabrik.de</ContactElectronicMailAddress>
+  </ContactInformation>
+  <MaxWidth>2048</MaxWidth>
+  <MaxHeight>2048</MaxHeight>
+</Service>
+
+<Capability>
+  <Request>
+    <GetCapabilities>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetCapabilities>
+    <GetMap>
+      <Format>image/png</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/png; mode=8bit</Format>
+      <Format>application/x-pdf</Format>
+      <Format>image/svg+xml</Format>
+      <Format>image/tiff</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetMap>
+    <GetFeatureInfo>
+      <Format>text/html</Format>
+      <Format>application/vnd.ogc.gml</Format>
+      <Format>text/plain</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetFeatureInfo>
+    <sld:DescribeLayer>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Post>
+        </HTTP>
+      </DCPType>
+    </sld:DescribeLayer>
+    <sld:GetLegendGraphic>
+      <Format>image/png</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/png; mode=8bit</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Post>
+        </HTTP>
+      </DCPType>
+    </sld:GetLegendGraphic>
+    <ms:GetStyles>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?"/></Post>
+        </HTTP>
+      </DCPType>
+    </ms:GetStyles>
+  </Request>
+  <Exception>
+    <Format>XML</Format>
+    <Format>INIMAGE</Format>
+    <Format>BLANK</Format>
+  </Exception>
+  <sld:UserDefinedSymbolization SupportSLD="1" UserLayer="0" UserStyle="1" RemoteWFS="0" InlineFeature="0" RemoteWCS="0"/>
+  <Layer>
+    <Name>geofabrik_tools_osminspector_geometry</Name>
+    <Title>Geofabrik Tools: OSM Inspector (Geometry)</Title>
+    <Abstract>OSM Inspector is a debugging tool for OpenStreetMap data.</Abstract>
+    <KeywordList>
+        <Keyword>Geofabrik</Keyword>
+        <Keyword>OpenStreetMap</Keyword>
+        <Keyword>OSM</Keyword>
+        <Keyword>OSM Inspector</Keyword>
+    </KeywordList>
+    <CRS>EPSG:4326</CRS>
+    <CRS>EPSG:900913</CRS>
+    <EX_GeographicBoundingBox>
+        <westBoundLongitude>-180</westBoundLongitude>
+        <eastBoundLongitude>180</eastBoundLongitude>
+        <southBoundLatitude>-83</southBoundLatitude>
+        <northBoundLatitude>83</northBoundLatitude>
+    </EX_GeographicBoundingBox>
+    <BoundingBox CRS="EPSG:900913" minx="-2.00375e+07" miny="-1.78219e+07" maxx="2.00375e+07" maxy="1.78219e+07"/>
+    <Attribution>
+        <Title>Geofabrik GmbH/OpenStreetMap Contributors</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.geofabrik.de/"/>
+    </Attribution>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>long_segments</Name>
+        <Title>Long segments</Title>
+        <Abstract>Segments (direct connection between two nodes in a way) longer than 20 km.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=2</Keyword>
+            <Keyword>max=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-180</westBoundLongitude>
+            <eastBoundLongitude>180</eastBoundLongitude>
+            <southBoundLatitude>-89</southBoundLatitude>
+            <northBoundLatitude>84.6946</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="-89" miny="-180" maxx="84.6946" maxy="180"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="123" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=long_segments&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2e+08</MaxScaleDenominator>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>ways_with_long_segments</Name>
+        <Title>Ways with long segments</Title>
+        <Abstract>Ways containing segments longer than 20 km.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=2</Keyword>
+            <Keyword>max=22</Keyword>
+            <Keyword>label=tags</Keyword>
+            <Keyword>labelmin=10</Keyword>
+            <Keyword>labelmax=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-180</westBoundLongitude>
+            <eastBoundLongitude>180</eastBoundLongitude>
+            <southBoundLatitude>-89</southBoundLatitude>
+            <northBoundLatitude>84.6946</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="-89" miny="-180" maxx="84.6946" maxy="180"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="190" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=ways_with_long_segments&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2e+08</MaxScaleDenominator>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>long_ways</Name>
+        <Title>Long ways</Title>
+        <Abstract>Ways with more than 1900 nodes. The API allows a way to have up to 2000 nodes, but shorter ways are easier to edit.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=4</Keyword>
+            <Keyword>max=22</Keyword>
+            <Keyword>label=tags</Keyword>
+            <Keyword>labelmin=10</Keyword>
+            <Keyword>labelmax=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-176.788</westBoundLongitude>
+            <eastBoundLongitude>176.947</eastBoundLongitude>
+            <southBoundLatitude>-83.335</southBoundLatitude>
+            <northBoundLatitude>82.9911</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="-83.335" miny="-176.788" maxx="82.9911" maxy="176.947"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="96" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=long_ways&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>1e+08</MaxScaleDenominator>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>single_node_in_way</Name>
+        <Title>Way with single node</Title>
+        <Abstract>Ways containing just a single node. This should not happen and needs to be fixed.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=3</Keyword>
+            <Keyword>max=22</Keyword>
+            <Keyword>label=tags</Keyword>
+            <Keyword>labelmin=10</Keyword>
+            <Keyword>labelmax=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-9.37981</westBoundLongitude>
+            <eastBoundLongitude>112.258</eastBoundLongitude>
+            <southBoundLatitude>14.8906</southBoundLatitude>
+            <northBoundLatitude>53.8984</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="14.8906" miny="-9.37981" maxx="53.8984" maxy="112.258"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="151" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=single_node_in_way&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>1e+08</MaxScaleDenominator>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>duplicate_node_in_way</Name>
+        <Title>Way with duplicate node</Title>
+        <Abstract>Ways containing a node twice (or more times) right next to each other. This should not happen and needs to be fixed. Subsequent nodes with the same location (but different ID) are flagged as errors, too.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=4</Keyword>
+            <Keyword>max=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-175.067</westBoundLongitude>
+            <eastBoundLongitude>174.828</eastBoundLongitude>
+            <southBoundLatitude>-45.9067</southBoundLatitude>
+            <northBoundLatitude>73.4486</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="-45.9067" miny="-175.067" maxx="73.4486" maxy="174.828"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="170" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=duplicate_node_in_way&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>5e+07</MaxScaleDenominator>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>duplicate_node_in_way_way</Name>
+        <Title>Way with duplicate node</Title>
+        <Abstract>Ways containing a node twice (or more times) right next to each other. This should not happen and needs to be fixed. Subsequent nodes with the same location (but different ID) are flagged as errors, too.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=12</Keyword>
+            <Keyword>max=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-175.067</westBoundLongitude>
+            <eastBoundLongitude>174.829</eastBoundLongitude>
+            <southBoundLatitude>-45.907</southBoundLatitude>
+            <northBoundLatitude>73.4615</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="-45.907" miny="-175.067" maxx="73.4615" maxy="174.829"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="170" height="23">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=duplicate_node_in_way_way&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>200000</MaxScaleDenominator>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>self_intersection_ways</Name>
+        <Title>Self-intersecting ways</Title>
+        <Abstract>Ways that touch or intersect themselves. Only closed ways (where first and last nodes are the same) are tested. In most cases ways should not self-intersect, but there could be cases where it is ok. Check the tags before fixing.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=6</Keyword>
+            <Keyword>max=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-179.999</westBoundLongitude>
+            <eastBoundLongitude>180</eastBoundLongitude>
+            <southBoundLatitude>-85.0546</southBoundLatitude>
+            <northBoundLatitude>87.0001</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="-85.0546" miny="-179.999" maxx="87.0001" maxy="180"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="65" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=self_intersection_ways&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>1.25e+07</MaxScaleDenominator>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>self_intersection_points</Name>
+        <Title>Intersection points</Title>
+        <Abstract>Points where a way intersects itself.</Abstract>
+        <KeywordList>
+            <Keyword>datasrc=OSM</Keyword>
+            <Keyword>min=10</Keyword>
+            <Keyword>max=22</Keyword>
+        </KeywordList>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:900913</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>-179.989</westBoundLongitude>
+            <eastBoundLongitude>179.968</eastBoundLongitude>
+            <southBoundLatitude>-85.0542</southBoundLatitude>
+            <northBoundLatitude>87.0001</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="-85.0542" miny="-179.989" maxx="87.0001" maxy="179.968"/>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="111" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://tools.geofabrik.de/osmi/views/geometry/wxs?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=self_intersection_points&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>750000</MaxScaleDenominator>
+    </Layer>
+  </Layer>
+</Capability>
+</WMS_Capabilities>

@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.io.GpxWriterTest
+Test: testTicket16550() took 1 milli sec(s)
+Test: testTicket16725() took 0 milli sec(s)
+Test: testExtensions() took 1 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 95 milli sec(s)

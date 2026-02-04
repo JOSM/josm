@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="104.88"
+   height="104.88"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="New document 1">
+  <defs
+     id="defs4">
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter5685"
+       x="-0.22926316"
+       width="1.4585263"
+       y="-0.83769232"
+       height="2.6753848">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="2.2917836"
+         id="feGaussianBlur5687" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter5347">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.6"
+         id="feGaussianBlur5349" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-66.84125"
+     inkscape:cy="-81.859683"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="463"
+     inkscape:window-height="453"
+     inkscape:window-x="150"
+     inkscape:window-y="150"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-441.84125,-345.6225)">
+    <rect
+       style="opacity:0.86386617;color:#000000;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.54900002;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5622"
+       width="61.366768"
+       height="38.890873"
+       x="449.42041"
+       y="403.92032"
+       rx="20"
+       ry="20"
+       inkscape:export-filename="golf.png"
+       inkscape:export-xdpi="54.919907"
+       inkscape:export-ydpi="54.919907" />
+    <rect
+       style="color:#000000;fill:#2c9e06;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter5347);enable-background:accumulate"
+       id="rect3007"
+       width="100"
+       height="100"
+       x="444.28571"
+       y="348.07648"
+       ry="20"
+       rx="20"
+       inkscape:export-filename="golf.png"
+       inkscape:export-xdpi="54.919907"
+       inkscape:export-ydpi="54.919907" />
+    <path
+       sodipodi:type="arc"
+       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.54068196;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="path5351"
+       sodipodi:cx="155.71428"
+       sodipodi:cy="207.71933"
+       sodipodi:rx="30.714285"
+       sodipodi:ry="10.357142"
+       d="m 186.42856,207.71933 c 0,5.72009 -13.75125,10.35714 -30.71428,10.35714 -16.96303,0 -30.71429,-4.63705 -30.71429,-10.35714 0,-5.72009 13.75126,-10.35714 30.71429,-10.35714 16.96303,0 30.71428,4.63705 30.71428,10.35714 z"
+       transform="matrix(0.88250467,0,0,0.84551904,349.48243,252.12946)"
+       inkscape:export-filename="golf.png"
+       inkscape:export-xdpi="54.919907"
+       inkscape:export-ydpi="54.919907" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.52788104;color:#000000;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.54900002;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter5685);enable-background:accumulate"
+       id="path5627"
+       sodipodi:cx="66.038719"
+       sodipodi:cy="110.39494"
+       sodipodi:rx="11.995562"
+       sodipodi:ry="3.2829957"
+       d="m 78.034281,110.39494 c 0,1.81315 -5.370596,3.283 -11.995562,3.283 -6.624966,0 -11.995561,-1.46985 -11.995561,-3.283 0,-1.81315 5.370595,-3.28299 11.995561,-3.28299 6.624966,0 11.995562,1.46984 11.995562,3.28299 z"
+       transform="matrix(1.9338771,0,0,1.5693135,358.46983,254.64499)"
+       inkscape:export-filename="golf.png"
+       inkscape:export-xdpi="54.919907"
+       inkscape:export-ydpi="54.919907" />
+    <path
+       sodipodi:type="arc"
+       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#555555;stroke-width:2;stroke-opacity:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="path5353"
+       sodipodi:cx="70.714287"
+       sodipodi:cy="189.50504"
+       sodipodi:rx="13.571428"
+       sodipodi:ry="13.571428"
+       d="m 84.285715,189.50504 c 0,7.49529 -6.076135,13.57142 -13.571428,13.57142 -7.495293,0 -13.571428,-6.07613 -13.571428,-13.57142 0,-7.4953 6.076135,-13.57143 13.571428,-13.57143 7.495293,0 13.571428,6.07613 13.571428,13.57143 z"
+       transform="matrix(0.75728873,0,0,0.75728873,471.07502,266.88949)"
+       inkscape:export-filename="golf.png"
+       inkscape:export-xdpi="54.919907"
+       inkscape:export-ydpi="54.919907" />
+    <g
+       id="g5456"
+       transform="matrix(1.0720344,0,0,1.0720344,413.11861,307.28044)"
+       inkscape:export-filename="golf.png"
+       inkscape:export-xdpi="54.919907"
+       inkscape:export-ydpi="54.919907"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none">
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 58.230403,46.766947 c -0.931851,0 -1.65788,1.006862 -1.65788,2.257538 l 0,61.553155 c 0,1.25068 0.726029,2.25754 1.65788,2.25754 0.93185,0 1.693153,-1.00686 1.693153,-2.25754 l 0,-41.411684 L 91.03525,57.066964 59.817734,48.283731 c -0.227923,-0.883475 -0.849617,-1.516784 -1.587331,-1.516784 z"
+         id="path5454"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5409"
+         d="m 57.802599,46.423856 c -0.931851,0 -1.657879,1.006862 -1.657879,2.257538 l 0,61.553186 c 0,1.25067 0.726028,2.25753 1.657879,2.25753 0.931851,0 1.693154,-1.00686 1.693154,-2.25753 l 0,-41.411715 L 90.607447,56.723873 59.38993,47.940639 c -0.227923,-0.883475 -0.849616,-1.516783 -1.587331,-1.516783 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+  </g>
+</svg>

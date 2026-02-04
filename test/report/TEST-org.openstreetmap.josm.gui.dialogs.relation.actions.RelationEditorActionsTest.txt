@@ -1,0 +1,37 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.relation.actions.RelationEditorActionsTest
+Test: testNonRegression22024() took 111 milli sec(s)
+Test: testNoDialogActions() took 105 milli sec(s)
+Test: testSetRoleAction() took 198 milli sec(s)
+Test: testDeleteCurrentRelationAction() took 201 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 703 milli sec(s)
+ead>
+    
+  </head>
+  <body>
+    You are about to delete 1 relation:
+
+    <ul>
+      <li>
+        incomplete
+      </li>
+    </ul>
+    <br>
+    This step is rarely necessary and cannot be undone easily after being 
+    uploaded to the server.<br>Do you really want to delete?
+  </body>
+</html>
+
+2026-02-04 20:42:12.273 INFO: org.openstreetmap.josm.gui.dialogs.relation.actions.RelationEditorActionsTest$1 answering 0 to showConfirmDialog with message <html>
+  <head>
+    
+  </head>
+  <body>
+    You are about to delete incomplete objects.<br>This will cause problems 
+    because you don't see the real object.<br>Do you really want to delete?
+  </body>
+</html>
+
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+2026-02-04 20:42:11.920 WARNING: Cannot add node 10 since it is not part of dataset
+------------- ---------------- ---------------

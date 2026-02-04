@@ -1,0 +1,2 @@
+Testcase: org.openstreetmap.josm.actions.ExitActionTest
+Tests run: 0, Failures: 0, Skipped: 0, Aborted: 1, Time elapsed: 43 milli sec(s)

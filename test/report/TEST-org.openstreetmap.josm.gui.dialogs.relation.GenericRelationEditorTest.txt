@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditorTest
+Test: testAddPrimitivesToRelation() took 315 milli sec(s)
+Test: testNonRegression23091() took 224 milli sec(s)
+Test: testNonRegression23116() took 371 milli sec(s)
+Test: testNonRegression23196() took 435 milli sec(s)
+Test: testBuild() took 197 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 1 sec(s)
+s a circular dependency of parent/child elements and is therefore discouraged.<br>Skipping relation 'incomplete'.</html>
+2026-02-04 20:42:09.726 INFO: Keystroke shift alt pressed R is already assigned to ToggleDialogAction [Relations], will be overridden by ToggleDialogAction [Relations]
+2026-02-04 20:42:09.727 INFO: Keystroke shift pressed ESCAPE is already assigned to org.openstreetmap.josm.actions.relation.RecentRelationsAction$LaunchEditorAction@78182e59, will be overridden by org.openstreetmap.josm.actions.relation.RecentRelationsAction$LaunchEditorAction@75a73e78
+2026-02-04 20:42:10.113 INFO: org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditorTest$4 answering 1 to ExtendedDialog with content Change 1 object
+------------- ---------------- ---------------

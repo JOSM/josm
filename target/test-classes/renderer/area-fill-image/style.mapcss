@@ -1,0 +1,34 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+area[test=A] {
+	fill-image: "info";
+	fill-opacity: 1;
+}
+
+area[test=B] {
+	fill-image: "apply";
+	fill-opacity: 1;
+}
+
+area[test=C] {
+	fill-image: "apply";
+	fill-opacity: .5;
+}
+
+area[test=D] {
+	fill-image: "apply";
+	fill-opacity: .5;
+}
+
+area[test=E] {
+	fill-image: "apply";
+	fill-opacity: 1;
+}
+
+area[test=F] {
+	fill-image: "info";
+	fill-opacity: .8;
+}

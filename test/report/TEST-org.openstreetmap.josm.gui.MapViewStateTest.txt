@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.gui.MapViewStateTest
+Test: testGetViewSize() took 0 milli sec(s)
+Test: testPointOneNormInView() took 1 milli sec(s)
+Test: testToString() took 0 milli sec(s)
+Test: testGetAffineTransform() took 0 milli sec(s)
+Test: testOutsideFlags() took 0 milli sec(s)
+Test: testGetForView() took 0 milli sec(s)
+Test: testPointGetOutsideRectangleFlags() took 0 milli sec(s)
+Test: testPointConversions() took 0 milli sec(s)
+Test: testGetCenter() took 1 milli sec(s)
+Tests run: 9, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 58 milli sec(s)

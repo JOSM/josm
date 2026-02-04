@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.widgets.HistoryComboBoxTest
+Test: testNonRegression21203(Object)[1] took 4 milli sec(s)
+Test: testNonRegression21203(Object)[2] took 1 milli sec(s)
+Test: testNonRegression21203(Object)[3] took 1 milli sec(s)
+Test: testNonRegression21215() took 2 milli sec(s)
+Test: testEmptyEditor() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 89 milli sec(s)

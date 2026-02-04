@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.gui.layer.GpxLayerTest
+Test: testMergeFrom() took 103 milli sec(s)
+Test: testGetTimespanForTrack() took 99 milli sec(s)
+Test: testPaint() took 126 milli sec(s)
+Test: testGetChangesetSourceTag() took 96 milli sec(s)
+Test: testGpxLayer() took 96 milli sec(s)
+Test: testMergeFromIAE() took 101 milli sec(s)
+Test: testGetInfoComponent() took 104 milli sec(s)
+Test: testRobustnessAfterDestroy() took 101 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 894 milli sec(s)

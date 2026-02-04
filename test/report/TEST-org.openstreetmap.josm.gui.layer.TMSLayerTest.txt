@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.gui.layer.TMSLayerTest
+Test: testTMSLayer() took 145 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 220 milli sec(s)
+--
+2026-02-04 20:42:29.782 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:29.797 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:29.809 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+------------- ---------------- ---------------

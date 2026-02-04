@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest
+Testcase: org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtilTest$AutomaticChoiceGroupTest
+Test: testResolve() took 1 milli sec(s)
+Test: testMatchesKey() took 0 milli sec(s)
+Test: testGroupChoices() took 0 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 57 milli sec(s)
+Tests run: 0, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 113 milli sec(s)

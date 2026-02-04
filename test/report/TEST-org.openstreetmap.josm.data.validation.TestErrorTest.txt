@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.validation.TestErrorTest
+Test: testCodeCompatibility(Class, int, int, boolean, List)[1] took 4 milli sec(s)
+Test: testCodeCompatibility(Class, int, int, boolean, List)[2] took 1 milli sec(s)
+Test: testCodeCompatibility(Class, int, int, boolean, List)[3] took 2 milli sec(s)
+Test: testCodeCompatibility(Class, int, int, boolean, List)[4] took 1 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 64 milli sec(s)
+E-5 ] is out of the world
+2026-02-04 20:41:33.550 INFO: bbox: [ x: -8.983152841195215E-5 -> 8.983152841195215E-5, y: -8.983152841195215E-5 -> 90.00008983152841 ] is out of the world
+2026-02-04 20:41:33.550 INFO: bbox: [ x: -8.983152841195215E-5 -> 8.983152841195215E-5, y: -90.00008983152841 -> 8.983152841195215E-5 ] is out of the world
+------------- ---------------- ---------------

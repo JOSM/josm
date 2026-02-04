@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.relation.actions.PasteMembersActionTest
+Test: testActionForPrimitives() took 116 milli sec(s)
+Test: testEnabledState() took 112 milli sec(s)
+Test: testActionWrongClipboard() took 114 milli sec(s)
+Test: testActionForMembers() took 107 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 524 milli sec(s)

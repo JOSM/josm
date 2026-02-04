@@ -1,0 +1,30 @@
+Testcase: org.openstreetmap.josm.actions.UploadActionTest
+Test: testNonRegression21476() took 338 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 375 milli sec(s)
+-04 20:40:36.006 INFO: Keystroke shift ctrl pressed UP is already assigned to org.openstreetmap.josm.actions.UploadAction@119a8e66, will be overridden by org.openstreetmap.josm.actions.UploadAction@4faea0e
+2026-02-04 20:40:36.006 INFO: Registered toolbar action upload overwritten: org.openstreetmap.josm.actions.UploadAction gets org.openstreetmap.josm.actions.UploadAction
+------------- ---------------- ---------------
+------------- Standard Error ---------------
+Exception in thread "AWT-EventQueue-0" java.awt.HeadlessException
+	at java.desktop/java.awt.GraphicsEnvironment.checkHeadless(GraphicsEnvironment.java:158)
+	at java.desktop/java.awt.Window.init(Window.java:471)
+	at java.desktop/java.awt.Window.<init>(Window.java:423)
+	at java.desktop/java.awt.Window.<init>(Window.java:563)
+	at java.desktop/java.awt.Dialog.<init>(Unknown Source)
+	at java.desktop/javax.swing.JDialog.<init>(JDialog.java:590)
+	at java.desktop/javax.swing.JDialog.<init>(JDialog.java:526)
+	at org.openstreetmap.josm.gui.io.AbstractUploadDialog.<init>(AbstractUploadDialog.java:50)
+	at org.openstreetmap.josm.gui.io.UploadDialog.<init>(UploadDialog.java:105)
+	at org.openstreetmap.josm.gui.io.UploadDialog.getUploadDialog(UploadDialog.java:117)
+	at org.openstreetmap.josm.actions.UploadAction.realUploadData(UploadAction.java:292)
+	at org.openstreetmap.josm.actions.UploadAction.lambda$uploadData$1(UploadAction.java:273)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:323)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:723)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+------------- ---------------- ---------------

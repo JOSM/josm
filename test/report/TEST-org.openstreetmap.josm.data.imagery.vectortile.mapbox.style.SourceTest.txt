@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.imagery.vectortile.mapbox.style.SourceTest
+Test: testTiles() took 0 milli sec(s)
+Test: testZoom() took 1 milli sec(s)
+Test: testToString() took 0 milli sec(s)
+Test: testTileJsonSpec() took 0 milli sec(s)
+Test: testBounds() took 1 milli sec(s)
+Test: testEquals() took 4 milli sec(s)
+Test: testSimpleSources() took 1 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 47 milli sec(s)

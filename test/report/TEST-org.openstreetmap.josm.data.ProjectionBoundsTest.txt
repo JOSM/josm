@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.data.ProjectionBoundsTest
+Test: testToString() took 1 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 42 milli sec(s)

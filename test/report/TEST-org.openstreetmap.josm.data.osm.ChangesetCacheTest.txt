@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.data.osm.ChangesetCacheTest
+Test: testGetOpenChangesets() took 0 milli sec(s)
+Test: testUpdateTwice() took 0 milli sec(s)
+Test: testContains() took 0 milli sec(s)
+Test: testUpdateGetRemoveCycle() took 1 milli sec(s)
+Test: testFiringEventsUpdateChangeset() took 0 milli sec(s)
+Test: testFiringEventsAddAChangeset() took 0 milli sec(s)
+Test: testAddAndRemoveListeners() took 0 milli sec(s)
+Test: testGetOpenChangesetsForCurrentUser() took 1 milli sec(s)
+Test: testFiringEventsRemoveChangeset() took 0 milli sec(s)
+Test: testRemove() took 0 milli sec(s)
+Test: testConstructor() took 0 milli sec(s)
+Tests run: 11, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 39 milli sec(s)

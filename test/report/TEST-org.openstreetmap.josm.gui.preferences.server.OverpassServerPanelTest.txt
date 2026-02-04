@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.preferences.server.OverpassServerPanelTest
+Test: testOverpassApiServerSaved(String)[1] took 4 milli sec(s)
+Test: testOverpassApiServerSaved(String)[2] took 1 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 77 milli sec(s)

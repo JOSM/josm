@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.layer.geoimage.ImageEntryTest
+Test: testEqualsContract() took 40 milli sec(s)
+Test: testTicket12255() took 13 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 128 milli sec(s)

@@ -1,0 +1,17 @@
+Testcase: org.openstreetmap.josm.gui.layer.gpx.DownloadWmsAlongTrackActionTest
+Test: testTMSLayer(FakeImageryWireMockExtension) took 588 milli sec(s)
+Test: testNoLayer() took 194 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 858 milli sec(s)
+sible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:33.099 INFO: org.openstreetmap.josm.actions.MergeLayerActionTest$MergeLayerExtendedDialogMocker answering 1 to ExtendedDialog with content Please select the imagery layer.
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/3/0.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/3/2.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/1/2.png -> HTTP/1.1 200 (3 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/2/0.png -> HTTP/1.1 200 (3 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/2/2.png -> HTTP/1.1 200 (3 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/2/1.png -> HTTP/1.1 200 (3 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/3/1.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/1/1.png -> HTTP/1.1 200 (3 ms)
+2026-02-04 20:42:33.104 INFO: GET http://localhost:58833/c5e18984/2/1/0.png -> HTTP/1.1 200 (3 ms)
+2026-02-04 20:42:33.639 INFO: org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker answering 0 to showMessageDialog with message There are no imagery layers.
+------------- ---------------- ---------------

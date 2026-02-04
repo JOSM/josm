@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="h" width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="a">
+   <stop offset="0"/>
+   <stop stop-color="#73e9d9" offset=".58"/>
+   <stop stop-color="#366e66" offset="1"/>
+  </linearGradient>
+  <linearGradient id="g" x1="8" x2="8.04" y1="14" y2="12" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <linearGradient id="f" x1="6.9" x2="9.1" y1="8.5" y2="8.5" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#1b2936" offset="0"/>
+   <stop stop-color="#c1c1c1" offset=".64"/>
+   <stop stop-color="#a8aeb5" offset=".775"/>
+   <stop stop-color="#2d3449" offset="1"/>
+  </linearGradient>
+  <linearGradient id="e" x1="8" x2="8.04" y1="14" y2="12" gradientTransform="translate(0,-3)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <linearGradient id="d" x1="8" x2="8.04" y1="14" y2="12" gradientTransform="translate(0,-6)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <linearGradient id="c" x1="8" x2="8.04" y1="14" y2="12" gradientTransform="translate(0,-9)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <radialGradient id="b" cx="6.13" cy=".33" r="1.05" gradientTransform="matrix(.9225 .4115 -.6168 1.383 2.886 -.9829)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#c1c1c1" offset="0"/>
+   <stop stop-color="#454b51" offset="1"/>
+  </radialGradient>
+ </defs>
+ <g stroke="#333" stroke-width=".1">
+  <path d="m3 9.5v1h10v-1z" fill="url(#e)"/>
+  <path d="m3 6.5v1h10v-1z" fill="url(#d)"/>
+  <path d="m3 3.5v1h10v-1z" fill="url(#c)"/>
+  <path d="m3 12.5v1h10v-1h-10z" fill="url(#g)"/>
+ </g>
+ <path d="m7 2v13s0.23 0.45 1 0.45c0.83 0 1-0.45 1-0.45v-13z" fill="url(#f)" stroke="#ccc" stroke-linejoin="round" stroke-width=".1"/>
+ <ellipse cx="8" cy="2" rx="1" ry=".45" fill="url(#b)" stop-color="#000000" stroke="#e6e6e6" stroke-linejoin="round" stroke-width=".1" style="paint-order:markers stroke fill"/>
+</svg>

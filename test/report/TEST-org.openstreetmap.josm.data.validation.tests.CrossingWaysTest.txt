@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.CrossingWaysTest
+Test: testBoundaries() took 0 milli sec(s)
+Test: testGetSegments() took 0 milli sec(s)
+Test: testPartial() took 5 milli sec(s)
+Test: testWays() took 1 milli sec(s)
+Test: testSelfCrossing() took 0 milli sec(s)
+Test: testCoverage() took 2 milli sec(s)
+Test: testIsProposedOrAbandoned() took 0 milli sec(s)
+Test: testIsHighway() took 0 milli sec(s)
+Test: testIsRailway() took 0 milli sec(s)
+Test: testIsCoastline() took 1 milli sec(s)
+Test: testIsSubwayOrTramOrRazed() took 0 milli sec(s)
+Tests run: 11, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 64 milli sec(s)

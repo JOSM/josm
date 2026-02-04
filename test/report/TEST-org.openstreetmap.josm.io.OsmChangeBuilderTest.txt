@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.io.OsmChangeBuilderTest
+Test: testDocumentWithDeletedNode() took 1 milli sec(s)
+Test: testMixed() took 0 milli sec(s)
+Test: testDocumentWithModifiedNode() took 0 milli sec(s)
+Test: testDocumentWithNewNode() took 0 milli sec(s)
+Test: testSequenceOfMethodCalls() took 0 milli sec(s)
+Test: testConstructor() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 84 milli sec(s)

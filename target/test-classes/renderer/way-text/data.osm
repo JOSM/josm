@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <node id='-41240' action='modify' lat='0.95462883113' lon='0.69245784308' />
+  <node id='-41242' action='modify' lat='0.93599139732' lon='0.64577386324' />
+  <node id='-41244' action='modify' lat='0.92917836022' lon='0.61790219137' />
+  <node id='-41246' action='modify' lat='0.83632453647' lon='0.35060605628' />
+  <node id='-41248' action='modify' lat='0.66045089174' lon='0.27991121964'>
+    <tag k='railway' v='level_crossing' />
+  </node>
+  <node id='-41250' action='modify' lat='0.65770696505' lon='0.18596808237' />
+  <node id='-41252' action='modify' lat='0.59627545707' lon='0.10271148998' />
+  <node id='-41254' action='modify' lat='0.87616034313' lon='0.70190515136' />
+  <node id='-41256' action='modify' lat='0.67834542545' lon='0.84762454988' />
+  <node id='-41258' action='modify' lat='0.45474826559' lon='0.7793912778' />
+  <node id='-41260' action='modify' lat='0.41652482996' lon='0.59838396312' />
+  <node id='-41262' action='modify' lat='0.51601034903' lon='0.48176548874' />
+  <node id='-41264' action='modify' lat='0.60557084089' lon='0.63849966061' />
+  <node id='-41266' action='modify' lat='0.33593750068' lon='0.10942032794' />
+  <node id='-41268' action='modify' lat='0.33278745947' lon='0.61343550409' />
+  <node id='-41270' action='modify' lat='0.06664816464' lon='0.84078758118' />
+  <node id='-41272' action='modify' lat='0.23990269548' lon='0.95419099581' />
+  <node id='-41274' action='modify' lat='0.0886988082' lon='0.43127525055' />
+  <node id='-41276' action='modify' lat='0.11704961586' lon='0.17296747278' />
+  <node id='-41313' action='modify' lat='0.24096122132' lon='0.05685283988' />
+  <node id='-41314' action='modify' lat='0.21659475263' lon='0.67414163902' />
+  <node id='-41328' action='modify' lat='0.33187955464' lon='0.76055992767' />
+  <node id='-41329' action='modify' lat='0.36121780698' lon='0.99112699543' />
+  <node id='-41361' action='modify' lat='0.28427927747' lon='0.86907494401' />
+  <node id='-41372' action='modify' lat='0.48191547356' lon='0.99361566664' />
+  <node id='-41374' action='modify' lat='0.52523231165' lon='0.93405271234' />
+  <node id='-41398' action='modify' lat='0.43589103184' lon='0.11370838717' />
+  <node id='-41399' action='modify' lat='0.74993303663' lon='0.59833424263' />
+  <node id='-41424' action='modify' lat='0.75264021089' lon='0.09475653807' />
+  <node id='-41425' action='modify' lat='0.98003625368' lon='0.40340093764' />
+  <way id='-41278' action='modify'>
+    <nd ref='-41240' />
+    <nd ref='-41242' />
+    <nd ref='-41244' />
+    <nd ref='-41246' />
+    <nd ref='-41248' />
+    <nd ref='-41250' />
+    <nd ref='-41252' />
+    <tag k='highway' v='tertiary' />
+    <tag k='name' v='An der Actien-Zuckerfabrik' />
+    <tag k='test' v='w1' />
+    <tag k='debug' v='yes' />
+  </way>
+  <way id='-41280' action='modify'>
+    <nd ref='-41264' />
+    <nd ref='-41262' />
+    <nd ref='-41260' />
+    <nd ref='-41258' />
+    <nd ref='-41256' />
+    <nd ref='-41254' />
+    <tag k='test' v='w2' />
+  </way>
+  <way id='-41282' action='modify'>
+    <nd ref='-41266' />
+    <nd ref='-41268' />
+    <tag k='name' v='گلستان ۲' />
+    <tag k='test' v='bidi' />
+  </way>
+  <way id='-41284' action='modify'>
+    <nd ref='-41276' />
+    <nd ref='-41274' />
+    <nd ref='-41270' />
+    <nd ref='-41272' />
+    <tag k='name' v='Wolfenbütteler Straße' />
+    <tag k='test' v='opacity' />
+  </way>
+  <way id='-41315' action='modify'>
+    <nd ref='-41313' />
+    <nd ref='-41314' />
+    <tag k='name' v='Teststraße' />
+    <tag k='test' v='opacity' />
+  </way>
+  <way id='-41327' action='modify'>
+    <nd ref='-41328' />
+    <nd ref='-41361' />
+    <nd ref='-41329' />
+    <nd ref='-41372' />
+    <nd ref='-41374' />
+    <tag k='name' v='گلستان ۲' />
+    <tag k='test' v='bidi' />
+  </way>
+  <way id='-41400' action='modify'>
+    <nd ref='-41398' />
+    <nd ref='-41399' />
+    <tag k='test' v='w2' />
+  </way>
+  <way id='-41426' action='modify'>
+    <nd ref='-41424' />
+    <nd ref='-41425' />
+    <tag k='highway' v='tertiary' />
+    <tag k='name' v='An der A.-Z.' />
+    <tag k='test' v='w1' />
+  </way>
+</osm>

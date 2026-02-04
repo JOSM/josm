@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.data.imagery.vectortile.mapbox.LayerTest
+Test: testLayerName() took 1 milli sec(s)
+Test: testLayerEqualsHashCode() took 5 milli sec(s)
+Test: testUnknownField() took 1 milli sec(s)
+Test: testLayerCreation() took 2 milli sec(s)
+Test: testVersionsNumbers() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 50 milli sec(s)

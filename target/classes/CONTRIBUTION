@@ -1,0 +1,130 @@
+JOSM was originally designed and coded by Immanuel Scholz,
+and is now maintained by the OpenStreetMap community.
+
+The current JOSM maintainer is Dirk Stöcker.
+A lot of administration work is done by Paul Hartmann and Vincent Privat.
+
+Major code contributions from (in alphabetical order):
+
+Stefan Breunig
+David Earl
+Gabriel Ebner
+Dave Hansen
+Paul Hartmann
+Karl Guggisberg
+Matthias Julius
+Alexei Kasatkin
+Jiri Klement
+Ulf Lamping
+Simon Legner
+Raphael Mack
+Upliner Mikhalych
+Gerd Petermann
+Vincent Privat
+Frederik Ramm
+Taylor Smock
+Dirk Stöcker
+Stefan Volke
+Michael Zangl
+
+Many minor contributions and patches by others; see SVN history
+at https://josm.openstreetmap.de/svn/ for details. Use
+"josm-dev AT openstreetmap.org" to contact still active authors.
+
+The logo has been designed by Ilya Palikov.
+
+Copyright rests with the contributors.
+
+-------------------------------- EXTERNAL CODE --------------------------------
+
+The jpeg metadata extraction code is from Drew Noakes
+(https://github.com/drewnoakes/metadata-extractor) and licensed
+with Apache license version 2.0.
+
+The Bzip2 code is from Apache Commons Compress and licensed
+with Apache license version 2.0.
+
+The mail/url validator routines use code from Apache Commons
+Validator which is licensed with Apache license version 2.0.
+
+The NTv2 transformation code (http://jgridshift.sourceforge.net/)
+is from Peter Yuill and licensed with LGPL.
+
+The MultiSplitPane is from Hans Muller and licensed with LGPL
+(https://today.java.net/pub/a/today/2006/03/23/multi-split-pane.html).
+
+The Alphanum Algorithm is from David Koelle and license with MIT
+(http://www.davekoelle.com/alphanum.html)
+
+The Diff code (http://www.bmsi.com/java/#diff) 
+is from Stuart D. Gathman and licensed with GPL.
+
+The Ellipsoid code (http://www.i3s.unice.fr/~johan/gps/)
+is from Johan Montagnat and licensed with GPL.
+
+The JSON code (https://javaee.github.io/jsonp/ and https://jakarta.ee/specifications/jsonp/)
+is from Oracle/Eclipse (RI for JSR 374: Java API for JSON Processing)
+and licensed with GPL / classpath exception.
+
+The opening hour validation uses OpeningHoursParser
+(https://github.com/simonpoole/OpeningHoursParser) which is licensed
+with MIT.
+
+The XZ code (https://tukaani.org/xz/java.html)
+is from Lasse Collin and Igor Pavlov
+and license BSD Zero Clause License (0BSD).
+
+The Windows shortcut parsing code is from StackOverflow:
+- https://stackoverflow.com/a/9403438/2257172
+- https://github.com/codebling/WindowsShortcuts
+
+The gui/animation Christmas GPL code is from Jiri Vanek (Red Hat):
+- http://icedtea.classpath.org/hg/icedtea-web/rev/87d3081ab573
+
+------------------------------- PROJECTION DATA -------------------------------
+
+Australian A66_National NTV2 grid: Source: Intergovernmental Committee on
+                                           Surveying and Mapping (CC BY 4.0)
+
+British OSTN02 NTV2 grid: Source: Ordnance Survey (BSD)
+© Crown copyright, Ordnance Survey and the Ministry of Defence (MOD) 2002.
+All rights reserved.
+
+French NTF_R93 NTV2 grid: Source: IGN - Institut national de l'information
+                                        géographique et forestière
+
+German BETA2007 NTV2 grid: Source: BKG - Bundesamt für Kartographie und Geodäsie
+
+Portuguese HGDLx / HGD73 NTV2 grids: Source: Direção Geral do Território
+
+Swiss CHENYX06 NTV2 grid: Source: Swiss Federal Office of Topography
+
+ESRI projection definitions: Environmental Systems Research Institute
+
+------------------------------------ ICONS ------------------------------------
+
+Lots of icons are from GNOME Project https://www.gnome.org/ under GPL or LGPL,
+redistributed here under GPL.
+
+Some icons are from GIMP https://www.gimp.org/ under GPL or LGPL,
+redistributed here under GPL.
+
+Some icons are from KDE https://www.kde.org under GPL
+
+Lots of icons are from https://openclipart.org/, https://publicdomainvectors.org/,
+https://de.wikipedia.org/wiki/Bildtafel_der_Verkehrszeichen_in_Deutschland,
+https://commons.wikimedia.org/wiki/Image:National_Park_Service_sample_pictographs.svg,
+http://www.sjjb.co.uk/mapicons/, The Tango Desktop Project, other sources
+or self created, all PD and CC0 licensed.
+
+Official OpenStreetMap logo has been created by Ken Vermette (CC BY-SA 3.0):
+https://commons.wikimedia.org/wiki/File:Openstreetmap_logo.svg
+
+Simple OpenStreetMap logo has been created by ScubbX (CC BY-SA 2.0) based on official
+OpenStreetMap logo:
+https://wiki.openstreetmap.org/wiki/File:Logo_simple.svg
+
+Social logos and the language icon come from https://github.com/FortAwesome/Font-Awesome (CC BY 4.0)
+
+See also the commit message of each icon for its source
+(https://josm.openstreetmap.de/browser/josm/trunk/resources/images).

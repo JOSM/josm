@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0 http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0/inspire_vs_ows_11.xsd">
+	<ows:ServiceIdentification>
+		<ows:Title>Test (WMTS)</ows:Title>
+		<ows:Abstract>Abstract.</ows:Abstract>
+		<ows:Keywords>
+			<ows:Keyword>WMTS</ows:Keyword>
+		</ows:Keywords>
+		
+		<ows:ServiceType>OGC WMTS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:Fees>Test Fees</ows:Fees>
+		<ows:AccessConstraints>Access</ows:AccessConstraints> 
+	</ows:ServiceIdentification>
+	<ows:ServiceProvider>
+		<ows:ProviderName>Provider</ows:ProviderName>
+	</ows:ServiceProvider>
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetTile">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/ORTO?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+	</ows:OperationsMetadata>
+	<Contents>
+		<Layer>
+			<ows:Title>Layer title</ows:Title>
+			<ows:Identifier>Layer identifier</ows:Identifier>
+			<Style isDefault="true">
+				<ows:Title>Default style</ows:Title>
+				<ows:Identifier>default</ows:Identifier>		
+			</Style>
+			<Format>image/jpeg</Format>
+			<InfoFormat>text/html</InfoFormat>
+    <TileMatrixSetLink>
+	<TileMatrixSet>EPSG:3857</TileMatrixSet>
+    </TileMatrixSetLink>
+  
+	</Layer>
+	
+  <TileMatrixSet>
+    <ows:Identifier>EPSG:3857</ows:Identifier>
+    <ows:SupportedCRS>urn:ogc:def:crs:EPSG::3857</ows:SupportedCRS>
+    <TileMatrix>
+      <ows:Identifier>EPSG:3857:0</ows:Identifier>
+      <ScaleDenominator>559082264.0287178</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>1</MatrixWidth>
+      <MatrixHeight>1</MatrixHeight>
+    </TileMatrix>
+
+    <TileMatrix>
+      <ows:Identifier>EPSG:3857:1</ows:Identifier>
+      <ScaleDenominator>279541132.0143589</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>2</MatrixWidth>
+      <MatrixHeight>2</MatrixHeight>
+    </TileMatrix>
+
+    <TileMatrix>
+      <ows:Identifier>EPSG:3857:2</ows:Identifier>
+      <ScaleDenominator>139770566.0071794</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>4</MatrixWidth>
+      <MatrixHeight>4</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:3857:3</ows:Identifier>
+      <ScaleDenominator>69885283.00358972</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>8</MatrixWidth>
+      <MatrixHeight>8</MatrixHeight>
+    </TileMatrix>
+
+    <TileMatrix>
+      <ows:Identifier>EPSG:3857:4</ows:Identifier>
+      <ScaleDenominator>34942641.50179486</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>16</MatrixWidth>
+      <MatrixHeight>16</MatrixHeight>
+    </TileMatrix>
+
+    <TileMatrix>
+      <ows:Identifier>EPSG:3857:5</ows:Identifier>
+      <ScaleDenominator>17471320.75089743</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>32</MatrixWidth>
+      <MatrixHeight>32</MatrixHeight>
+    </TileMatrix>
+	
+	<TileMatrix>
+      <ows:Identifier>EPSG:3857:6</ows:Identifier>
+      <ScaleDenominator>8735660.375448715</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>64</MatrixWidth>
+      <MatrixHeight>64</MatrixHeight>
+    </TileMatrix>    
+
+	<TileMatrix>
+      <ows:Identifier>EPSG:3857:7</ows:Identifier>
+      <ScaleDenominator>4367830.187724357</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>128</MatrixWidth>
+      <MatrixHeight>128</MatrixHeight>
+    </TileMatrix>  
+
+	<TileMatrix>
+      <ows:Identifier>EPSG:3857:8</ows:Identifier>
+      <ScaleDenominator>2183915.093862179</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>256</MatrixWidth>
+      <MatrixHeight>256</MatrixHeight>
+    </TileMatrix>  
+
+	<TileMatrix>
+      <ows:Identifier>EPSG:3857:9</ows:Identifier>
+      <ScaleDenominator>1091957.546931089</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>512</MatrixWidth>
+      <MatrixHeight>512</MatrixHeight>
+    </TileMatrix>  
+
+	<TileMatrix>
+      <ows:Identifier>EPSG:3857:10</ows:Identifier>
+      <ScaleDenominator>545978.7734655447</ScaleDenominator>
+      <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+      <TileWidth>256</TileWidth>
+      <TileHeight>256</TileHeight>
+      <MatrixWidth>1024</MatrixWidth>
+      <MatrixHeight>1024</MatrixHeight>
+    </TileMatrix>  
+</TileMatrixSet>
+
+ 
+	</Contents>
+</Capabilities>

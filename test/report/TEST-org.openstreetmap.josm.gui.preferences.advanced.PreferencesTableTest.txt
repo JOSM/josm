@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.preferences.advanced.PreferencesTableTest
+Test: testPreferencesTable() took 272 milli sec(s)
+Test: testAllSettingsTableModel() took 54 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 400 milli sec(s)
+ferences.advanced.PreferencesTableTest$1 answering 2 to ExtendedDialog with content org.openstreetmap.josm.gui.ExtendedDialog[dialog0,0,0,0x0,invalid,MODELESS,title=Add setting,defaultCloseOperation=DISPOSE_ON_CLOSE,rootPane=javax.swing.JRootPane[,0,0,0x0,invalid,layout=javax.swing.JRootPane$RootLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=16777673,maximumSize=,minimumSize=,preferredSize=],rootPaneCheckingEnabled=true]
+------------- ---------------- ---------------

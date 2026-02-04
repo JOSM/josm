@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.data.imagery.ShapeTest
+Test: testDoubleEdgeCases(double)[1] took 2 milli sec(s)
+Test: testDoubleEdgeCases(double)[2] took 0 milli sec(s)
+Test: testEqualsHashCodeContract() took 1 milli sec(s)
+Test: test() took 1 milli sec(s)
+Test: testHashCode(String)[1] took 1 milli sec(s)
+Test: testHashCode(String)[2] took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 41 milli sec(s)

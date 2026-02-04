@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.3 (3930316 spike-08.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <way id="3058844" visible="true" version="1" changeset="99256" timestamp="2006-08-31T16:54:30Z" user="nickw" uid="94">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="266187"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="266190"/>
+  <nd ref="266191"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="created_by" v="osmeditor2"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="2" changeset="172099" timestamp="2008-02-21T12:39:31Z" user="njd27" uid="1030">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="266187"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="266190"/>
+  <nd ref="266191"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="created_by" v="Potlatch 0.7b"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="3" changeset="309205" timestamp="2008-03-12T17:48:11Z" user="Nick Austin" uid="14020">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="266187"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="266191"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="created_by" v="Potlatch 0.7b"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="4" changeset="1173423" timestamp="2009-05-13T10:45:16Z" user="roswellgrey" uid="110174">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251120"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="266191"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="created_by" v="Potlatch 0.7b"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="5" changeset="5948999" timestamp="2010-10-03T21:37:46Z" user="Mezzanine" uid="93583">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251120"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="266191"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="6" changeset="6833565" timestamp="2011-01-01T22:51:38Z" user="monxton" uid="260682">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="266191"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="7" changeset="6833565" timestamp="2011-01-01T23:42:47Z" user="monxton" uid="260682">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="8" changeset="8809615" timestamp="2011-07-23T20:07:21Z" user="Pathfinder Dave" uid="370019">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="1371513879"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="9" changeset="11718753" timestamp="2012-05-27T18:49:10Z" user="PealRinger" uid="100597">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="1371513879"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="1767934611"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="10" changeset="12235334" timestamp="2012-07-15T20:10:52Z" user="robbieonsea" uid="76617">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="1371513879"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="1767934611"/>
+  <nd ref="266192"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="horse" v="yes"/>
+  <tag k="maxspeed" v="40 mph"/>
+  <tag k="motorcar" v="yes"/>
+ </way>
+ <way id="3058844" visible="true" version="11" changeset="13846597" timestamp="2012-11-12T13:17:23Z" user="Andy Street" uid="2098">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="1371513879"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="1767934611"/>
+  <nd ref="266192"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="maxspeed" v="40 mph"/>
+ </way>
+ <way id="3058844" visible="true" version="12" changeset="13931788" timestamp="2012-11-19T13:26:31Z" user="untitled" uid="397946">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="1371513879"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="2021497483"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="266190"/>
+  <nd ref="1767934611"/>
+  <nd ref="266192"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="maxspeed" v="40 mph"/>
+ </way>
+ <way id="3058844" visible="true" version="13" changeset="13936243" timestamp="2012-11-19T19:40:44Z" user="untitled" uid="397946">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="1371513879"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="2021497483"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="2022023552"/>
+  <nd ref="266190"/>
+  <nd ref="1767934611"/>
+  <nd ref="266192"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="maxspeed" v="40 mph"/>
+ </way>
+ <way id="3058844" visible="true" version="14" changeset="26368284" timestamp="2014-10-27T16:58:54Z" user="Andy Street" uid="2098">
+  <nd ref="266181"/>
+  <nd ref="266182"/>
+  <nd ref="266183"/>
+  <nd ref="1371513879"/>
+  <nd ref="16487194"/>
+  <nd ref="266184"/>
+  <nd ref="266185"/>
+  <nd ref="16487195"/>
+  <nd ref="16487196"/>
+  <nd ref="16798790"/>
+  <nd ref="266186"/>
+  <nd ref="16487197"/>
+  <nd ref="16487198"/>
+  <nd ref="16487200"/>
+  <nd ref="2021497483"/>
+  <nd ref="395251121"/>
+  <nd ref="266187"/>
+  <nd ref="1077652547"/>
+  <nd ref="1077652572"/>
+  <nd ref="266188"/>
+  <nd ref="266189"/>
+  <nd ref="251784234"/>
+  <nd ref="2022023552"/>
+  <nd ref="266190"/>
+  <nd ref="1767934611"/>
+  <nd ref="266192"/>
+  <tag k="access" v="yes"/>
+  <tag k="carriageway" v="single"/>
+  <tag k="highway" v="unclassified"/>
+  <tag k="lanes" v="2"/>
+  <tag k="lit" v="no"/>
+  <tag k="maxspeed" v="40 mph"/>
+  <tag k="maxspeed:type" v="GB:limit"/>
+  <tag k="oneway" v="no"/>
+  <tag k="sidewalk" v="no"/>
+  <tag k="surface" v="asphalt"/>
+ </way>
+</osm>

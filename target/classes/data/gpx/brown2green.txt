@@ -1,0 +1,15 @@
+# License: GPL. For details,see LICENSE file.
+#
+# diverging brown to green, designed by http://colorbrewer2.org/
+#
+# color map must start at first line without comment 
+#
+0,0,0
+1,102,9
+53,151,143
+128,205,193
+199,234,229
+246,232,195
+223,194,125
+191,129,45
+140,81,10

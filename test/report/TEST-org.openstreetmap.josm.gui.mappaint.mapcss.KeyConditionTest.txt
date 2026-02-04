@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.gui.mappaint.mapcss.KeyConditionTest
+Test: applies_1() took 0 milli sec(s)
+Test: applies_2() took 0 milli sec(s)
+Test: testNonRegression22073(KeyMatchType)[1] took 0 milli sec(s)
+Test: testNonRegression22073(KeyMatchType)[2] took 1 milli sec(s)
+Test: testNonRegression22073(KeyMatchType)[3] took 0 milli sec(s)
+Test: testNonRegression22073(KeyMatchType)[4] took 0 milli sec(s)
+Test: testNonRegression22073(KeyMatchType)[5] took 0 milli sec(s)
+Test: testNonRegression22073(KeyMatchType)[6] took 0 milli sec(s)
+Test: testNonRegression22073(KeyMatchType)[7] took 1 milli sec(s)
+Test: create() took 0 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 78 milli sec(s)

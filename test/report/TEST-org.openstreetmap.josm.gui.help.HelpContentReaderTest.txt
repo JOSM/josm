@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.gui.help.HelpContentReaderTest
+Test: testFetchHelpTopicContentNominal() took 823 milli sec(s)
+Test: testFetchHelpTopicContentNull() took 2 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 912 milli sec(s)
+> HTTP/1.1 200 (786 ms)
+------------- ---------------- ---------------

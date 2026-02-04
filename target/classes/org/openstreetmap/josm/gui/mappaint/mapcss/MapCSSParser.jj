@@ -1,0 +1,1206 @@
+// License: GPL. For details, see LICENSE file.
+options {
+  STATIC = false;
+  OUTPUT_DIRECTORY = "parsergen";
+}
+
+PARSER_BEGIN(MapCSSParser)
+package org.openstreetmap.josm.gui.mappaint.mapcss.parsergen;
+
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
+import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Declaration;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.NullExpression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
+import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.PlaceholderExpression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Subpart;
+import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
+
+/**
+ * MapCSS parser.
+ *
+ * Contains two independent grammars:
+ * (a) the preprocessor and (b) the main mapcss parser.
+ *
+ * The preprocessor handles @supports syntax.
+ * Basically this allows to write one style for different versions of JOSM (or different editors).
+ * When the @supports condition is not fulfilled, it should simply skip over
+ * the whole section and not attempt to parse the possibly unknown
+ * grammar. It preserves whitespace and comments, in order to keep the
+ * line and column numbers in the error messages correct for the second pass.
+ *
+ */
+public class MapCSSParser {
+    MapCSSStyleSource sheet;
+    StringBuilder sb;
+    int declarationCounter;
+
+    /**
+     * Nicer way to refer to a lexical state.
+     */
+    public enum LexicalState {
+        /** the preprocessor */
+        PREPROCESSOR(0),
+        /** the main parser */
+        DEFAULT(2);
+
+        final int idx; // the integer, which javacc assigns to this state
+
+        LexicalState(int idx) {
+            if (!this.name().equals(MapCSSParserTokenManager.lexStateNames[idx])) {
+                throw new JosmRuntimeException("Wrong name for index " + idx);
+            }
+            this.idx = idx;
+        }
+    }
+    
+    /**
+     * Constructor which initializes the parser with a certain lexical state.
+     * @param in input
+     * @param encoding contents encoding
+     * @param initState initial state
+     */
+    @Deprecated
+    public MapCSSParser(InputStream in, String encoding, LexicalState initState) {
+        this(createTokenManager(in, encoding, initState));
+        declarationCounter = 0;
+    }
+
+    @Deprecated
+    protected static MapCSSParserTokenManager createTokenManager(InputStream in, String encoding, LexicalState initState) {
+        SimpleCharStream scs;
+        try {
+            scs = new SimpleCharStream(in, encoding, 1, 1);
+        } catch (java.io.UnsupportedEncodingException e) {
+            throw new JosmRuntimeException(e);
+        }
+        return new MapCSSParserTokenManager(scs, initState.idx);
+    }
+
+    /**
+     * Constructor which initializes the parser with a certain lexical state.
+     * @param in input
+     * @param initState initial state
+     */
+    public MapCSSParser(Reader in, LexicalState initState) {
+        this(createTokenManager(in, initState));
+        declarationCounter = 0;
+    }
+
+    protected static MapCSSParserTokenManager createTokenManager(Reader in, LexicalState initState) {
+        final SimpleCharStream scs = new SimpleCharStream(in, 1, 1);
+        return new MapCSSParserTokenManager(scs, initState.idx);
+    }
+}
+PARSER_END(MapCSSParser)
+
+/**
+ * Token definitions
+ *
+ * Lexical states for the preprocessor: <PREPROCESSOR>, <PP_COMMENT>
+ * Lexical states for the main parser: <DEFAULT>, <COMMENT>
+ */
+ 
+<PREPROCESSOR>
+TOKEN:
+{
+    < PP_AND: "and" >
+|   < PP_OR: "or" >
+|   < PP_NOT: "not" >
+|   < PP_SUPPORTS: "@supports" >
+|   < PP_NEWLINECHAR: "\n" | "\r" | "\f" >
+|   < PP_WHITESPACE: " " | "\t" >
+|   < PP_COMMENT_START: "/*" > : PP_COMMENT
+}
+
+<PP_COMMENT>
+TOKEN:
+{
+    < PP_COMMENT_END: "*/" > : PREPROCESSOR
+}
+
+<PP_COMMENT>
+MORE:
+{
+    < ~[] >
+}
+
+<DEFAULT>
+TOKEN [IGNORE_CASE]:
+{
+ /* Special keyword in some contexts, ordinary identifier in other contexts.
+    Use the parsing rule <code>ident()</code> to refer to a general
+    identifier, including "set". */
+   < SET: "set" >
+}
+
+<DEFAULT,PREPROCESSOR>
+TOKEN:
+{
+    < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
+|   < UINT: ( ["0"-"9"] )+ >
+|   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
+|   < #PREDEFINED: "\\" ["a","A","b","B","d","D","e","E","f","G","h","H","n","Q","r","R","s","S","t","v","V","w","W","Z","z"] >
+|   < #REGEX_CHAR_WITHOUT_STAR: [" "-")","+"-".","0"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\/" | "\\\\" | "\\[" | "\\]" | "\\+" | "\\." | "\\'" | "\\\"" |  "\\(" | "\\)" | "\\{" | "\\}" | "\\?" | "\\*" | "\\^" | "\\$" | "\\|" | "\\p" |<PREDEFINED> >
+|   < REGEX: "/" <REGEX_CHAR_WITHOUT_STAR> ( <REGEX_CHAR_WITHOUT_STAR> | "*" )*  "/" >
+|   < LBRACE: "{" >
+|   < RBRACE: "}" >
+|   < LPAR: "(" >
+|   < RPAR: ")" >
+|   < COMMA: "," >
+|   < COLON: ":" >
+}
+
+<PREPROCESSOR>
+TOKEN:
+{
+    < PP_SOMETHING_ELSE : ~[] >
+}
+
+<DEFAULT>
+TOKEN:
+{
+    < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
+|   < #H: ["0"-"9","a"-"f","A"-"F"] >
+|   < HEXCOLOR: "#" ( <H><H><H><H><H><H><H><H> | <H><H><H><H><H><H> | <H><H><H> ) >
+|   < S: ( " " | "\t" | "\n" | "\r" | "\f" )+ >
+|   < STAR: "*" >
+|   < SLASH: "/" >
+|   < LSQUARE: "[" >
+|   < RSQUARE: "]" >
+|   < GREATER_EQUAL: ">=" >
+|   < LESS_EQUAL: "<=" >
+|   < GREATER: ">" >
+|   < LESS: "<" >
+|   < EQUAL: "=" >
+|   < EXCLAMATION: "!" >
+|   < TILDE: "~" >
+|   < DCOLON: "::" >
+|   < SEMICOLON: ";" >
+|   < PIPE: "|" >
+|   < PIPE_Z: "|z" >
+|   < PLUS: "+" >
+|   < MINUS: "-" >
+|   < AMPERSAND: "&" >
+|   < QUESTION: "?" >
+|   < DOLLAR: "$" >
+|   < CARET: "^" >
+|   < FULLSTOP: "." >
+|   < DEG: "°" >
+|   < SUBSET_OR_EQUAL: ["∈","⊆"] >
+|   < NOT_SUBSET_OR_EQUAL: "⊈" >
+|   < SUPERSET_OR_EQUAL: "⊇" >
+|   < NOT_SUPERSET_OR_EQUAL: "⊉" >
+|   < CROSSING: "⧉" >
+|   < PERCENT: "%" >
+|   < COMMENT_START: "/*" > : COMMENT
+|   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
+}
+
+<COMMENT>
+TOKEN:
+{
+    < COMMENT_END: "*/" > : DEFAULT
+}
+
+<COMMENT>
+SKIP:
+{
+    < ~[] >
+}
+
+
+/*
+ * Preprocessor parser definitions:
+ *
+ * <pre>
+ *
+ * {@literal @media} { ... } queries are supported, following http://www.w3.org/TR/css3-mediaqueries/#syntax
+ *
+ *                               media_query
+ *         ___________________________|_______________________________
+ *        |                                                           |
+ * {@literal @media} all and (min-josm-version: 7789) and (max-josm-version: 7790), all and (user-agent: xyz) { ... }
+ *                |______________________|
+ *                          |
+ *                    media_expression
+ * </pre>
+ */
+ 
+
+/**
+ * root method for the preprocessor.
+ * @param sheet MapCSS style source
+ * @return result string
+ * @throws ParseException in case of parsing error
+ */
+String pp_root(MapCSSStyleSource sheet):
+{
+}
+{
+    { sb = new StringBuilder(); this.sheet = sheet; }
+    pp_black_box(true) <EOF>
+    { return sb.toString(); }
+}
+
+/**
+ * Parse any unknown grammar (black box).
+ *
+ * Only stop when "@media" is encountered and keep track of correct number of
+ * opening and closing curly brackets.
+ *
+ * @param write false if this content should be skipped (@pp_media condition is not fulfilled), true otherwise
+ * @throws ParseException in case of parsing error
+ */
+void pp_black_box(boolean write):
+{
+    Token t;
+}
+{
+    (
+        (t=<PP_AND> | t=<PP_OR> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COMMA> | t=<COLON> | t=<IDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
+        |
+            pp_w1()
+        |
+            pp_supports(!write)
+        |
+            t=<LBRACE> { if (write) sb.append(t.image); } pp_black_box(write) t=<RBRACE> { if (write) sb.append(t.image); }
+    )*
+}
+
+/**
+ * Parses an @supports rule.
+ *
+ * @param ignore if the content of this rule should be ignored
+ * (because we are already inside a @supports block that didn't pass)
+ * @throws ParseException in case of parsing error
+ */
+void pp_supports(boolean ignore):
+{
+    boolean pass;
+}
+{
+    <PP_SUPPORTS> pp_w()
+    pass=pp_supports_condition()
+    <LBRACE>
+    pp_black_box(pass && !ignore)
+    <RBRACE>
+}
+
+/**
+ * Parses the condition of the @supports rule.
+ *
+ * Unlike other parsing rules, grabs trailing whitespace.
+ * @return true, if the condition is fulfilled
+ * @throws ParseException in case of parsing error
+ */
+boolean pp_supports_condition():
+{
+    boolean pass;
+    boolean q;
+}
+{
+    (
+        <PP_NOT> pp_w() q=pp_supports_condition_in_parens() { pass = !q; } pp_w()
+    |
+        LOOKAHEAD(pp_supports_condition_in_parens() pp_w() <PP_AND>)
+        pass=pp_supports_condition_in_parens() pp_w()
+        ( <PP_AND> pp_w() q=pp_supports_condition_in_parens() { pass = pass && q; } pp_w() )+
+    |
+        LOOKAHEAD(pp_supports_condition_in_parens() pp_w() <PP_OR>)
+        pass=pp_supports_condition_in_parens() pp_w()
+        ( <PP_OR> pp_w() q=pp_supports_condition_in_parens() { pass = pass || q; } pp_w() )+
+    |
+        pass=pp_supports_condition_in_parens() pp_w()
+    )
+    { return pass; }
+}
+
+/**
+ * Parses something in parenthesis inside the condition of the @supports rule.
+ *
+ * @return true, if the condition is fulfilled
+ * @throws ParseException in case of parsing error
+ */
+boolean pp_supports_condition_in_parens():
+{
+    boolean pass;
+}
+{
+    (
+        LOOKAHEAD(pp_supports_declaration_condition())
+        pass=pp_supports_declaration_condition()
+    |
+        <LPAR> pp_w() pass=pp_supports_condition() <RPAR>
+    )
+    { return pass; }
+}
+
+/**
+ * Parse an @supports declaration condition, e.&nbsp;g. a single (key:value) or (key) statement.
+ *
+ * The parsing rule {@link #literal()} from the main mapcss parser is reused here.
+ *
+ * @return true if the condition is fulfilled
+ * @throws ParseException in case of parsing error
+ */
+boolean pp_supports_declaration_condition():
+{
+    Token t;
+    String feature;
+    Object val = null;
+}
+{
+    <LPAR> pp_w() t=<IDENT> { feature = t.image; } pp_w() ( <COLON> pp_w() val=literal() )? <RPAR>
+    { return this.sheet.evalSupportsDeclCondition(feature, val); }
+}
+
+void pp_w1():
+{
+    Token t;
+}
+{
+    t=<PP_NEWLINECHAR> { sb.append(t.image); }
+        | 
+    t=<PP_WHITESPACE> { sb.append(t.image); }
+        |
+    t=<PP_COMMENT_START> { sb.append(t.image); } t=<PP_COMMENT_END> { sb.append(t.image); }
+}
+
+void pp_w():
+{
+}
+{
+ ( pp_w1() )*
+}
+
+/*
+ * Parser definition for the main MapCSS parser:
+ *
+ * <pre>
+ *
+ *                       rule
+ *  _______________________|______________________________
+ * |                                                      |
+ *        selector                      declaration
+ *  _________|___________________   _________|____________
+ * |                             | |                      |
+ *
+ * way|z11-12[highway=residential] { color: red; width: 3 }
+ *
+ *    |_____||___________________|   |_________|
+ *       |            |                   |
+ *     zoom       condition          instruction
+ *
+ * more general:
+ *
+ * way|z13-[a=b][c=d]::subpart, way|z-3[u=v]:closed::subpart2 { p1 : val; p2 : val; }
+ *
+ * 'val' can be a literal, or an expression like "prop(width, default) + 0.8".
+ *
+ * </pre>
+ */
+
+int uint() :
+{
+    Token i;
+}
+{
+    i=<UINT> { return Integer.parseInt(i.image); }
+}
+
+int int_() :
+{
+    int i;
+}
+{
+    <MINUS> i=uint() { return -i; } | i=uint() { return i; }
+}
+
+float ufloat() :
+{
+    Token f;
+}
+{
+    ( f=<UFLOAT> | f=<UINT> )
+    { return Float.parseFloat(f.image); }
+}
+
+float float_() :
+{
+    float f;
+}
+{
+    <MINUS> f=ufloat() { return -f; } | f=ufloat() { return f; }
+}
+
+String string() :
+{
+    Token t;
+}
+{
+    t=<STRING>
+    { return t.image.substring(1, t.image.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\"); }
+}
+
+String ident():
+{
+    Token t;
+    String s;
+}
+{
+    ( t=<IDENT> | t=<SET> ) { return t.image; }
+}
+
+String string_or_ident() :
+{
+    Token t;
+    String s;
+}
+{
+    ( s=ident() | s=string() ) { return s; }
+}
+
+String regex() :
+{
+    Token t;
+}
+{
+    t=<REGEX>
+    { return t.image.substring(1, t.image.length() - 1); }
+}
+
+/**
+ * white-space
+ * @throws ParseException in case of parsing error
+ */
+void s() :
+{
+}
+{
+    ( <S> )?
+}
+
+/**
+ * mix of white-space and comments
+ * @throws ParseException in case of parsing error
+ */
+void w() :
+{
+}
+{
+    ( <S> | <COMMENT_START> <COMMENT_END> )*
+}
+
+/**
+ * comma delimited list of floats (at least 2, all &gt;= 0)
+ * @return list of floats
+ * @throws ParseException in case of parsing error 
+ */
+List<Float> float_array() :
+{
+    float f;
+    List<Float> fs = new ArrayList<Float>();
+}
+{
+    f=ufloat() { fs.add(f); }
+    (
+        <COMMA> s()
+        f=ufloat() { fs.add(f); }
+    )+
+    {
+        return fs;
+    }
+}
+
+/**
+ * entry point for the main parser
+ * @param sheet MapCSS style source
+ * @throws ParseException in case of parsing error
+ */
+void sheet(MapCSSStyleSource sheet):
+{
+}
+{
+    { this.sheet = sheet; }
+    w()
+    (
+        try {
+            rule() w()
+        } catch (MapCSSException mex) {
+            Logging.error(mex);
+            error_skipto(RBRACE, mex);
+            w();
+        } catch (ParseException ex) {
+            error_skipto(RBRACE, null);
+            w();
+        }
+    )*
+    <EOF>
+}
+
+void rule():
+{
+    List<Selector> selectors;
+    Declaration decl;
+}
+{
+    selectors=selectors()
+    decl=declaration()
+    {
+        sheet.rules.add(new MapCSSRule(selectors, decl));
+    }
+}
+
+/** Read selectors, make sure that we read all tokens  See #17746 */
+List<Selector> selectors_for_search():
+{
+    List<Selector> selectors;
+}
+{
+    selectors=selectors() <EOF>
+    { return selectors; }
+}
+
+List<Selector> selectors():
+{
+    List<Selector> selectors = new ArrayList<Selector>();
+    Selector sel;
+}
+{
+    sel=child_selector() { selectors.add(sel); }
+    (
+        <COMMA> w()
+        sel=child_selector() { selectors.add(sel); }
+    )*
+    { return selectors; }
+}
+
+Selector child_selector() :
+{
+    Selector.ChildOrParentSelectorType type = null;
+    Condition c;
+    List<Condition> conditions = new ArrayList<Condition>();
+    Selector selLeft;
+    LinkSelector selLink = null;
+    Selector selRight = null;
+}
+{
+    selLeft=selector() w()
+    (
+        (
+            (
+                (
+                    <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; }
+                |
+                    <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; }
+                |
+                    <PLUS> { type = Selector.ChildOrParentSelectorType.SIBLING; }
+                )
+                ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { if (c!= null) conditions.add(c); } )*
+            |
+                <SUBSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.SUBSET_OR_EQUAL; }
+            |
+                <NOT_SUBSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.NOT_SUBSET_OR_EQUAL; }
+            |
+                <SUPERSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.SUPERSET_OR_EQUAL; }
+            |
+                <NOT_SUPERSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.NOT_SUPERSET_OR_EQUAL; }
+            |
+                <CROSSING> { type = Selector.ChildOrParentSelectorType.CROSSING; }
+            )
+            w()
+        |
+            { /* <GREATER> is optional for child selector */ type = Selector.ChildOrParentSelectorType.CHILD; }
+        )
+        { selLink = new LinkSelector(conditions); }
+        selRight=selector() w()
+    )?
+    { return selRight != null ? new ChildOrParentSelector(selLeft, selLink, selRight, type) : selLeft; }
+}
+
+Selector selector() :
+{
+    Token base;
+    Condition c;
+    Range r = Range.ZERO_TO_INFINITY;
+    List<Condition> conditions = new ArrayList<Condition>();
+    Subpart sub = null;
+}
+{
+    ( base=<IDENT> | base=<STAR> )
+    ( r=zoom() )?
+    ( ( c=condition(Context.PRIMITIVE) | c=class_or_pseudoclass(Context.PRIMITIVE) ) { if (c!= null) conditions.add(c); } )*
+    ( sub=subpart() )?
+    { return new GeneralSelector(base.image, r, conditions, sub); }
+}
+
+Range zoom() :
+{
+    Integer min = 0;
+    Integer max = Integer.MAX_VALUE;
+}
+{
+    <PIPE_Z>
+    (
+            <MINUS> max=uint()
+        |
+        LOOKAHEAD(2)
+            min=uint() <MINUS> ( max=uint() )?
+        |
+            min=uint() { max = min; }
+    )
+    { return GeneralSelector.fromLevel(min, max); }
+}
+
+Condition condition(Context context) :
+{
+    Condition c;
+    Expression e;
+}
+{
+    <LSQUARE> s()
+    (
+        LOOKAHEAD( simple_key_condition(context) s() <RSQUARE> )
+            c=simple_key_condition(context) s() <RSQUARE> { return c; }
+        |
+        LOOKAHEAD( simple_key_value_condition(context) s() <RSQUARE> )
+            c=simple_key_value_condition(context) s() <RSQUARE> { return c; }
+        |
+            e=expression() <RSQUARE> { return ConditionFactory.createExpressionCondition(e, context); }
+    )
+}
+
+String tag_key() :
+{
+    String s, s2;
+    Token t;
+}
+{
+        s=string() { return s; }
+    |
+        s=ident() ( <COLON> s2=ident() { s += ':' + s2; } )* { return s; }
+}
+
+Condition simple_key_condition(Context context) :
+{
+    boolean not = false;
+    KeyMatchType matchType = null;
+    String key;
+}
+{
+    ( <EXCLAMATION> { not = true; } )?
+    (
+        { matchType = KeyMatchType.REGEX; } key = regex()
+    |
+        key = tag_key()
+    )
+    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { matchType = KeyMatchType.FALSE; } )?
+    (              <QUESTION>               { matchType = KeyMatchType.TRUE;  } )?
+    { return ConditionFactory.createKeyCondition(key, not, matchType, context); }
+}
+
+Condition simple_key_value_condition(Context context) :
+{
+    String key;
+    String val;
+    float f;
+    int i;
+    KeyMatchType matchType = null;
+    Op op;
+    boolean considerValAsKey = false;
+}
+{
+    (
+        key = regex() s() { matchType = KeyMatchType.REGEX; }
+    |
+        key=tag_key() s()
+    )
+    (
+        LOOKAHEAD(3)
+            (
+                    <EQUAL> <TILDE> { op=Op.REGEX; }
+                |
+                    <EXCLAMATION> <TILDE> { op=Op.NREGEX; }
+            )
+            s()
+            ( <STAR> { considerValAsKey=true; } )?
+            val=regex()
+        |
+            (
+                    <EXCLAMATION> <EQUAL> { op=Op.NEQ; }
+                |
+                    <EQUAL> { op=Op.EQ; }
+                |
+                    <TILDE> <EQUAL> { op=Op.ONE_OF; }
+                |
+                    <CARET> <EQUAL> { op=Op.BEGINS_WITH; }
+                |
+                    <DOLLAR> <EQUAL> { op=Op.ENDS_WITH; }
+                |
+                    <STAR> <EQUAL> { op=Op.CONTAINS; }
+            )
+            s()
+            ( <STAR> { considerValAsKey=true; } )?
+            ( 
+                LOOKAHEAD(2) 
+                        i=int_() { val=Integer.toString(i); }
+                    | 
+                        f=float_() { val=Float.toString(f); } 
+                    |
+                        val=string_or_ident() 
+            )
+        |
+            (
+                    <GREATER_EQUAL> { op=Op.GREATER_OR_EQUAL; }
+                |
+                    <GREATER> { op=Op.GREATER; }
+                |
+                    <LESS_EQUAL> { op=Op.LESS_OR_EQUAL; }
+                |
+                    <LESS> { op=Op.LESS; }
+            )
+            s()
+            f=float_() { val=Float.toString(f); }
+    )
+    { return KeyMatchType.REGEX == matchType
+            ? ConditionFactory.createRegexpKeyRegexpValueCondition(key, val, op)
+            : ConditionFactory.createKeyValueCondition(key, val, op, context, considerValAsKey); }
+}
+
+Condition class_or_pseudoclass(Context context) :
+{
+    String s;
+    boolean not = false;
+    boolean pseudo;
+}
+{
+    ( <EXCLAMATION> { not = true; } )? 
+    (
+        <FULLSTOP> { pseudo = false; }
+    |
+        <COLON> { pseudo = true; }
+    )
+    s=ident()
+    {
+        if (pseudo && sheet != null && sheet.isRemoveAreaStylePseudoClass() && s.matches("areaStyle|area-style|area_style")) {
+            Logging.warn("Removing 'areaStyle' pseudo-class. This class is only meant for validator");
+            return null;
+        } else if (pseudo) {
+            return ConditionFactory.createPseudoClassCondition(s, not, context);
+        } else {
+            return ConditionFactory.createClassCondition(s, not, context);
+        }
+    }
+}
+
+Subpart subpart() :
+{
+    String s;
+    Expression e;
+}
+{
+    <DCOLON>
+    (
+        s=ident() { return new Subpart.StringSubpart(s); }
+    |
+        <STAR> { return new Subpart.StringSubpart("*"); }
+    |
+        <LPAR> e=expression() <RPAR> { return new Subpart.ExpressionSubpart(e); }
+    )
+}
+
+Declaration declaration() :
+{
+    List<Instruction> ins = new ArrayList<Instruction>();
+    Instruction i;
+    Token key;
+    Object val = null;
+}
+{
+    <LBRACE> w()
+    (
+        (
+            <SET> w()
+            (<FULLSTOP>)? // specification allows "set .class" to set "class". we also support "set class"
+            key=<IDENT> w()
+            ( <EQUAL> val=expression() )?
+            { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val, true)); }
+            ( <RBRACE> { return new Declaration(ins, declarationCounter++); } | <SEMICOLON> w() )
+        )
+    |
+        <MINUS> <IDENT> w() <COLON> w() expression() <SEMICOLON> w()
+    |
+        key=<IDENT> w() <COLON> w()
+        (
+            LOOKAHEAD( float_array() w() ( <SEMICOLON> | <RBRACE> ) )
+                val=float_array()
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
+                w()
+                ( <RBRACE> { return new Declaration(ins, declarationCounter++); } | <SEMICOLON> w() )
+            |
+            LOOKAHEAD( expression() ( <SEMICOLON> | <RBRACE> ) )
+                val=expression()
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
+                ( <RBRACE> { return new Declaration(ins, declarationCounter++); } | <SEMICOLON> w() )
+            |
+                val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
+        )
+    )*
+    <RBRACE>
+    { return new Declaration(ins, declarationCounter++); }
+}
+
+/**
+ * General expression.
+ * Separate production rule for each level of operator precedence (recursive descent).
+ */
+Expression expression() :
+{
+    Expression e;
+}
+{
+    e=conditional_expression()
+    {
+        return e;
+    }
+}
+
+Expression conditional_expression() :
+{
+    Expression e, e1, e2;
+    String op = null;
+}
+{
+    e=or_expression()
+    (
+        <QUESTION> w()
+        e1=conditional_expression()
+        <COLON> w()
+        e2=conditional_expression()
+        {
+            e = ExpressionFactory.createFunctionExpression("cond", Arrays.asList(e, e1, e2));
+        }
+    )?
+    {
+        return e;
+    }
+}
+
+Expression or_expression() :
+{
+    Expression e, e2;
+    String op = null;
+}
+{
+    e=and_expression()
+    (
+        <PIPE> <PIPE> w()
+        e2=and_expression()
+        {
+            e = ExpressionFactory.createFunctionExpression("or", Arrays.asList(e, e2));
+        }
+    )*
+    {
+        return e;
+    }
+}
+
+Expression and_expression() :
+{
+    Expression e, e2;
+    String op = null;
+}
+{
+    e=relational_expression()
+    (
+        <AMPERSAND> <AMPERSAND> w()
+        e2=relational_expression()
+        {
+            e = ExpressionFactory.createFunctionExpression("and", Arrays.asList(e, e2));
+        }
+    )*
+    {
+        return e;
+    }
+}
+
+Expression relational_expression() :
+{
+    Expression e, e2;
+    String op = null;
+}
+{
+    e=additive_expression()
+    (
+        (
+            <GREATER_EQUAL> { op = "greater_equal"; }
+            |
+            <LESS_EQUAL> { op = "less_equal"; }
+            |
+            <GREATER> { op = "greater"; }
+            |
+            <LESS> { op = "less"; }
+            |
+            <EQUAL> ( <EQUAL> )? { op = "equal"; }
+            |
+            <EXCLAMATION> <EQUAL> { op = "not_equal"; }
+        ) w()
+        e2=additive_expression()
+        {
+            e = ExpressionFactory.createFunctionExpression(op, Arrays.asList(e, e2));
+        }
+    )?
+    {
+        return e;
+    }
+}
+
+Expression additive_expression() :
+{
+    Expression e, e2;
+    String op = null;
+}
+{
+    e=multiplicative_expression()
+    (
+        ( <PLUS> { op = "plus"; } | <MINUS> { op = "minus"; } ) w()
+        e2=multiplicative_expression()
+        {
+            e = ExpressionFactory.createFunctionExpression(op, Arrays.asList(e, e2));
+        }
+    )*
+    {
+        return e;
+    }
+}
+
+Expression multiplicative_expression() :
+{
+    Expression e, e2;
+    String op = null;
+}
+{
+    e=unary_expression()
+    (
+        ( <STAR> { op = "times"; } | <SLASH> { op = "divided_by"; } ) w()
+        e2=unary_expression()
+        {
+            e = ExpressionFactory.createFunctionExpression(op, Arrays.asList(e, e2));
+        }
+    )*
+    {
+        return e;
+    }
+}
+
+Expression unary_expression() :
+{
+    Expression e;
+    String op = null;
+}
+{
+    (
+        <MINUS> { op = "minus"; } w()
+    |
+        <EXCLAMATION> { op = "not"; } w()
+    )?
+    e=primary() w()
+    {
+        if (op == null)
+            return e;
+        return ExpressionFactory.createFunctionExpression(op, Collections.singletonList(e));
+    }
+}
+
+Expression primary() :
+{
+    Expression nested;
+    Expression fn;
+    Object lit;
+}
+{
+    LOOKAHEAD(3) // both function and identifier start with an identifier (+ optional whitespace)
+        fn=function() { return fn; }
+    |
+        lit=literal()
+        { 
+            if (lit == null)
+                return NullExpression.INSTANCE;
+            else if (lit instanceof String && PlaceholderExpression.PATTERN_PLACEHOLDER.matcher((String) lit).find()) {
+                return new PlaceholderExpression((String) lit);
+            }
+            return new LiteralExpression(lit);
+        }
+    |
+        <LPAR> w() nested=expression() <RPAR> { return nested; }
+}
+
+Expression function() :
+{
+    Expression arg;
+    String name;
+    List<Expression> args = new ArrayList<Expression>();
+}
+{
+    name=ident() w()
+    <LPAR> w()
+    (
+        arg=expression() { args.add(arg); }
+        ( <COMMA> w() arg=expression() { args.add(arg); } )*
+    )?
+    <RPAR>
+    { return ExpressionFactory.createFunctionExpression(name, args); }
+}
+
+Object literal() :
+{
+    String val, pref;
+    Token t;
+    Float f;
+}
+{
+        LOOKAHEAD(2)
+        pref=ident() t=<HEXCOLOR>
+        {
+            return new NamedColorProperty(
+                    NamedColorProperty.COLOR_CATEGORY_MAPPAINT,
+                    sheet == null ? "MapCSS" : sheet.title, pref,
+                    ColorHelper.html2color(t.image)).get();
+        }
+    |
+        t=<IDENT> { return new Keyword(t.image); }
+    |
+        val=string() { return val; }
+    |
+        <PLUS> f=ufloat() { return new Instruction.RelativeFloat(f); }
+    |
+        LOOKAHEAD(2)
+        f=ufloat_unit() { return f; }
+    |
+        f=ufloat() { return f; }
+    |
+        t=<HEXCOLOR> { return ColorHelper.html2color(t.image); }
+}
+
+/**
+ * Number followed by a unit.
+ *
+ * Returns angles in radians and lengths in pixels.
+ */
+Float ufloat_unit() :
+{
+    float f;
+    String u;
+}
+{
+    f=ufloat() ( u=ident() | <DEG> { u = "°"; } | <PERCENT> { u = "%"; } )
+    {
+        Double m = unit_factor(u);
+        if (m == null)
+            return null;
+        return (float) (f * m);
+    }
+}
+
+JAVACODE
+private Double unit_factor(String unit) {
+    switch (unit) {
+        case "deg":
+        case "°": return Math.PI / 180;
+        case "rad": return 1.;
+        case "grad": return Math.PI / 200;
+        case "turn": return 2 * Math.PI;
+        case "%": return 0.01;
+        case "px": return 1.;
+        case "cm": return 96/2.54;
+        case "mm": return 9.6/2.54;
+        case "in": return 96.;
+        case "q": return 2.4/2.54;
+        case "pc": return 16.;
+        case "pt": return 96./72;
+        default: return null;
+    }
+}
+
+JAVACODE
+void error_skipto(int kind, MapCSSException me) {
+    if (token.kind == EOF)
+        throw new ParseException("Reached end of file while parsing");
+        
+    Exception e = null;        
+    ParseException pe = generateParseException();
+
+    if (me != null) {
+        final Token token = Utils.firstNonNull(pe.currentToken.next, pe.currentToken);
+        me.setLine(token.beginLine);
+        me.setColumn(token.beginColumn);
+        e = me;
+    } else {
+        e = new ParseException(pe.getMessage()); // prevent memory leak
+    }
+    
+    Logging.error("Skipping to the next rule, because of an error: " + e);
+    if (sheet != null) {
+        sheet.logError(e);
+    }
+    Token t;
+    do {
+        t = getNextToken();
+    } while (t.kind != kind && t.kind != EOF);
+    if (t.kind == EOF)
+        throw new ParseException("Reached end of file while parsing");
+}
+
+JAVACODE
+/**
+ * read everything to the next semicolon
+ */
+String readRaw() {
+    Token t;
+    StringBuilder s = new StringBuilder();
+    while (true) {
+        t = getNextToken();
+        if ((t.kind == S || t.kind == STRING || t.kind == UNEXPECTED_CHAR) &&
+                t.image.contains("\n")) {
+            ParseException e = new ParseException(String.format("Warning: end of line while reading an unquoted string at line %s column %s.", t.beginLine, t.beginColumn));
+            Logging.error(e);
+            if (sheet != null) {
+                sheet.logError(e);
+            }
+        }
+        if (t.kind == SEMICOLON || t.kind == EOF)
+            break;
+        s.append(t.image);
+    }
+    if (t.kind == EOF)
+        throw new ParseException("Reached end of file while parsing");
+    return s.toString();
+}
+

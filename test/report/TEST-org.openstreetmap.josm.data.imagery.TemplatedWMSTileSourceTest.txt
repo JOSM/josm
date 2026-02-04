@@ -1,0 +1,13 @@
+Testcase: org.openstreetmap.josm.data.imagery.TemplatedWMSTileSourceTest
+Test: testCustomHeaders() took 0 milli sec(s)
+Test: testEPSG3006withoutbounds() took 6 milli sec(s)
+Test: testEPSG3006withbounds() took 2 milli sec(s)
+Test: testGetTileUrl() took 1 milli sec(s)
+Test: testApiKeyValid() took 1 milli sec(s)
+Test: testEPSG4326widebounds() took 1 milli sec(s)
+Test: testEPSG2180() took 1 milli sec(s)
+Test: testEPSG3857() took 0 milli sec(s)
+Test: testEPSG4326() took 0 milli sec(s)
+Test: testApiKeyInvalid() took 1 milli sec(s)
+Test: testEPSG4326narrowbounds() took 1 milli sec(s)
+Tests run: 11, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 54 milli sec(s)

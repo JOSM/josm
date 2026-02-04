@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.NameMismatchTest
+Test: testCase0() took 0 milli sec(s)
+Test: testCase1() took 0 milli sec(s)
+Test: testCase2() took 0 milli sec(s)
+Test: testCase3() took 1 milli sec(s)
+Test: testEtymologyWikidata() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 59 milli sec(s)

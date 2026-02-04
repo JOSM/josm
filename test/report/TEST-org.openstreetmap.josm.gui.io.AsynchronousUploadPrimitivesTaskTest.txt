@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTaskTest
+Test: testSingleUploadInstance() took 172 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 240 milli sec(s)
+4 20:42:19.671 INFO: org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker answering 0 to showMessageDialog with message A background upload is already in progress. Kindly wait for it to finish before uploading new changes
+------------- ---------------- ---------------

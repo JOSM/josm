@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeModelTest
+Test: testAddPropertyChangeListener() took 0 milli sec(s)
+Test: testPopulateConflictingValues() took 0 milli sec(s)
+Test: testAddItem() took 0 milli sec(s)
+Test: testPopulateMissingKeyMine() took 0 milli sec(s)
+Test: testPopulateMissingKeyTheir() took 0 milli sec(s)
+Test: testDecideMultiple() took 0 milli sec(s)
+Test: testPopulateNoConflichts() took 0 milli sec(s)
+Test: testPopulateNoConflicts1() took 0 milli sec(s)
+Test: testDecide() took 0 milli sec(s)
+Test: testRemovePropertyChangeListener() took 1 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 60 milli sec(s)

@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.tools.OsmUrlToBoundsTest
+Test: testParse() took 1 milli sec(s)
+Test: testGetZoom() took 0 milli sec(s)
+Test: testPositionToBounds() took 0 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 86 milli sec(s)
+-02-04 20:43:13.003 WARNING: URL does not contain zoom/latitude/longitude
+2026-02-04 20:43:13.003 WARNING: URL does not contain valid zoom
+------------- ---------------- ---------------

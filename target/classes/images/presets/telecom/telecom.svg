@@ -1,0 +1,18 @@
+<svg height="48" width="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <linearGradient id="a">
+        <stop offset="0" stop-color="#21bd00"/>
+        <stop offset="1" stop-color="#21bd00" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="b" cx="23.917822" cy="16.079293" gradientUnits="userSpaceOnUse" r="15.475495" xlink:href="#a"/>
+    <radialGradient id="c" cx="23.917484" cy=".765856" gradientUnits="userSpaceOnUse" r="30.255927" xlink:href="#a"/>
+    <radialGradient id="d" cx="30.203562" cy="44.565483" gradientTransform="matrix(2.1364694 0 0 .7231137 -40.175173 10.667484)" gradientUnits="userSpaceOnUse" r="6.565991">
+        <stop offset="0"/>
+        <stop offset="1" stop-opacity="0"/>
+    </radialGradient>
+    <path d="m17.717263 44.370763 6.261973-19.890973 7.244242 19.890973" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1.36277"/>
+    <circle cx="23.917843" cy="23.841965" fill="#21bd00" fill-rule="evenodd" r="3.130986"/>
+    <circle cx="23.917818" cy="23.841957" fill="none" r="10.822318" stroke="url(#b)" stroke-miterlimit="10" stroke-width="3.835049"/>
+    <circle cx="23.917477" cy="23.841944" fill="none" r="21.158566" stroke="url(#c)" stroke-miterlimit="10" stroke-width="3.835048"/>
+    <ellipse cx="24.353813" cy="42.893356" fill="url(#d)" fill-rule="evenodd" opacity=".176471" rx="14.028039" ry="4.747952"/>
+    <path d="m22.605796 30.220022 3.962204 1.165353-5.82677 3.962205 7.924406 2.097635-9.788972 3.962205 11.653539 1.165355" fill="none" stroke="#000" stroke-linejoin="bevel" stroke-miterlimit="10" stroke-width="1.36277"/>
+</svg>

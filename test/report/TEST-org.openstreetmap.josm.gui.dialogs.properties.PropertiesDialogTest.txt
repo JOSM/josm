@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialogTest
+Test: testTicket12504() took 105 milli sec(s)
+Test: testTicket22487(String, Runnable)[1] took 121 milli sec(s)
+Test: testTicket22487(String, Runnable)[2] took 120 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 413 milli sec(s)

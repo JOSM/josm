@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayerTest
+Test: testMissingGPSTimeStamp() took 350 milli sec(s)
+Test: testMergeFromIAE() took 352 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 772 milli sec(s)

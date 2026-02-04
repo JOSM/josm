@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.tools.FontsManagerTest
+Test: testFontsManager() took 7 milli sec(s)
+Test: testUtilityClass() took 0 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 100 milli sec(s)
+ans Bold,style=plain,size=1]
+java.awt.Font[family=Droid Sans,name=Droid Sans,style=plain,size=1]
+------------- ---------------- ---------------

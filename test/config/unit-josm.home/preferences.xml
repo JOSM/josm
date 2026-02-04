@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences xmlns="http://josm.openstreetmap.de/preferences-1.0">
+  <tag key='expert' value='true'/>
+  <tag key='jdk.Arrays.useLegacyMergeSort' value='false'/>
+  <tag key='language' value='en'/>
+  <tag key='osm-server.url' value='http://api06.dev.openstreetmap.org/api'/>
+  <tag key='osm-server.username' value='${osm.username}'/>
+  <tag key='osm-server.password' value='${osm.password}'/>
+</preferences>

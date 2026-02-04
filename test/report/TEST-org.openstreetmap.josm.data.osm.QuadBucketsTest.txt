@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.data.osm.QuadBucketsTest
+Test: testSpecialBBox() took 2 milli sec(s)
+Test: testMove() took 7 milli sec(s)
+Test: testSplitsWithIncompleteData() took 10 milli sec(s)
+Test: testRemove() took 3 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 64 milli sec(s)

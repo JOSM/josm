@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.io.OsmChangesetContentParserTest
+Test: test_OK_OneDeletedNode() took 2 milli sec(s)
+Test: test_OK_OneUpdatedNode() took 0 milli sec(s)
+Test: test_OK_OneCreatedNode() took 0 milli sec(s)
+Test: test_Constructor() took 1 milli sec(s)
+Test: test_parse_arguments() took 0 milli sec(s)
+Test: test_OK_ComplexTestCase() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 84 milli sec(s)

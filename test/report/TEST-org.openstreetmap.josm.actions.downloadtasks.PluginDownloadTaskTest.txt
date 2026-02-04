@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.actions.downloadtasks.PluginDownloadTaskTest
+Test: testUpdatePluginCorrupt() took 7 milli sec(s)
+Test: testUpdatePluginValid() took 5 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 255 milli sec(s)
+ed_plugin...
+2026-02-04 20:40:38.054 INFO: GET http://localhost:58783/plugin/corrupted_plugin.jar -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:40:38.057 INFO: Downloading Plugin dummy_plugin...
+2026-02-04 20:40:38.059 INFO: GET http://localhost:58783/plugin/dummy_plugin.v31772.jar -> HTTP/1.1 200 (1 ms)
+------------- ---------------- ---------------

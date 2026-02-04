@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.ConnectivityRelationsTest
+Test: testMisMatchedLanes() took 1 milli sec(s)
+Test: testTicket20182() took 1 milli sec(s)
+Test: testNoConnectivityTag() took 0 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 60 milli sec(s)

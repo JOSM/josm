@@ -1,0 +1,12 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.LanesTest
+Test: test1() took 1 milli sec(s)
+Test: test2() took 0 milli sec(s)
+Test: test3() took 0 milli sec(s)
+Test: test4() took 0 milli sec(s)
+Test: test5() took 0 milli sec(s)
+Test: test6() took 1 milli sec(s)
+Test: test7() took 0 milli sec(s)
+Test: test8() took 0 milli sec(s)
+Test: test9() took 0 milli sec(s)
+Test: testLanesCount() took 0 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 58 milli sec(s)

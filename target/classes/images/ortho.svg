@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="24px" height="24px">
+  <path d="m13.5,21.5a8,8 0 0 1 8,-8m-4,3.5v1" stroke="#555555" fill="none"/>
+  <path d="m3.5,3.5h8v6h10v12h-18z" stroke="#000000" fill="none"/>
+  <path d="m1.5,1.5h3v3h-3z
+    m8,0h3v3h-3z
+    m0,6h3v3h-3z
+    m10,0h3v3h-3z
+    m0,12h3v3h-3z
+    m-18,0h3v3h-3z" fill="#ffffff" stroke="#df421e"/>
+</svg>

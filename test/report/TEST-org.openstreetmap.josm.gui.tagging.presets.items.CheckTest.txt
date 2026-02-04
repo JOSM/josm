@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.tagging.presets.items.CheckTest
+Test: testSetRegions() took 108 milli sec(s)
+Test: testSetExcludeRegions() took 104 milli sec(s)
+Test: testAddToPanel() took 101 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 393 milli sec(s)

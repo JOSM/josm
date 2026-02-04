@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.92.0 r15299"
+   sodipodi:docname="34.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="34.36097"
+     inkscape:cx="8.2408631"
+     inkscape:cy="6.8240288"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     viewbox-height="16">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1037.3622)">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#4d4d4d;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4510"
+       width="15.999998"
+       height="15.999997"
+       x="9.9999988e-007"
+       y="1037.3622" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.03218126"
+       id="rect2987-8"
+       width="16"
+       height="16"
+       x="0"
+       y="1037.3622"
+       ry="2.0000174"
+       inkscape:export-filename="mast2.png"
+       inkscape:export-xdpi="90.160004"
+       inkscape:export-ydpi="90.160004" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.053;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 6,1044.3622 c 1,-1 3,-1 4,0"
+       id="path3770-1-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="mast2.png"
+       inkscape:export-xdpi="90.160004"
+       inkscape:export-ydpi="90.160004" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.19461477;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 4,1041.9178 c 3,-1.3519 5,-1.3519 8,-0.042 v 0 0"
+       id="path3772-7-82"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="mast2.png"
+       inkscape:export-xdpi="90.160004"
+       inkscape:export-ydpi="90.160004" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.16850221;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 2,1039.6532 c 3.9557886,-1.3576 7.9540285,-1.3094 12,0 v 0"
+       id="path3774-4-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-xdpi="90.160004"
+       inkscape:export-ydpi="90.160004"
+       inkscape:export-filename="mast2.png" />
+    <g
+       id="g2915"
+       style="fill:#000000"
+       transform="matrix(0.01362649,-0.01015404,0.0136759,0.01011735,1.6490894,1050.3959)">
+      <path
+         d="M 459.05707,51.95872 C 490.15573,20.862187 447.1424,-19.792747 416.43947,10.914453 L 303.05173,124.2976 43.301333,55.63552 0,98.936853 214.08853,211.68853 l -86.58666,86.58454 -67.314137,-8.2656 -34.2464,34.24533 76.367997,40.1536 40.15254,76.368 34.24533,-34.24747 -7.872,-66.92053 86.58667,-86.5856 110.33066,212.68267 43.30134,-43.30134 -65.73547,-254.4896 z"
+         id="path2917"
+         style="fill:#000000;stroke:none;stroke-width:1.06666672"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.osm.SimplePrimitiveIdTest
+Test: testMultipleFromStringBad() took 1 milli sec(s)
+Test: testFromStringNode() took 0 milli sec(s)
+Test: testFromCopyAction() took 0 milli sec(s)
+Test: testFromStringBad() took 0 milli sec(s)
+Test: testFromStringWay() took 1 milli sec(s)
+Test: testMultipleFromString() took 0 milli sec(s)
+Test: testFromStringRelation() took 0 milli sec(s)
+Test: testFuzzyParse() took 0 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 42 milli sec(s)

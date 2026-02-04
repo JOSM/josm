@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.validation.routines.RegexValidatorTest
+Test: testExceptions() took 1 milli sec(s)
+Test: testToString() took 0 milli sec(s)
+Test: testMissingRegex() took 1 milli sec(s)
+Test: testMultipleInsensitive() took 0 milli sec(s)
+Test: testMultipleSensitive() took 0 milli sec(s)
+Test: testValidatorName() took 0 milli sec(s)
+Test: testNullValue() took 0 milli sec(s)
+Test: testSingle() took 0 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 58 milli sec(s)

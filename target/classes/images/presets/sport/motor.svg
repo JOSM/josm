@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg3419"
+   sodipodi:docname="gear23.svg"
+   viewBox="0 0 16 16"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   width="16"
+   height="16">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     inkscape:window-y="-8"
+     fit-margin-left="0"
+     pagecolor="#ffffff"
+     fit-margin-top="0"
+     inkscape:window-maximized="1"
+     inkscape:zoom="30.733071"
+     inkscape:window-x="-8"
+     inkscape:window-height="988"
+     showgrid="true"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="4.4158384"
+     inkscape:cy="5.1790307"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1680"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4147" />
+  </sodipodi:namedview>
+  <g
+     id="layer1"
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     transform="translate(-263.31,-702.69)">
+    <path
+       id="path3243"
+       style="color:#000000;fill:#502d16;stroke:#a05a2c;stroke-width:0.23241474"
+       inkscape:connector-curvature="0"
+       d="m 273.79564,708.31969 c -0.10816,0.008 -0.21329,0.0242 -0.31957,0.0363 l -0.006,0 -0.25419,1.38723 c -0.41436,0.0944 -0.80413,0.25448 -1.15483,0.47209 l -1.14101,-0.82072 c -0.30826,0.23931 -0.58876,0.51843 -0.83521,0.82072 l 0.79166,1.15483 c -0.24036,0.36733 -0.42113,0.78679 -0.52293,1.22742 -1e-5,0.002 -1e-5,0.006 0,0.006 l -1.37999,0.21789 c -0.0251,0.20606 -0.0363,0.41903 -0.0363,0.63187 0,0.17416 0.004,0.34598 0.0218,0.51568 l 1.37998,0.24693 c 0.0982,0.47922 0.28459,0.92677 0.54472,1.32189 l -0.82072,1.12578 c 0.23505,0.2918 0.50641,0.55747 0.79891,0.79166 l 1.16208,-0.79892 c 0.40614,0.25909 0.85951,0.44076 1.35094,0.53021 l 0.21787,1.37274 c 0.15484,0.0141 0.31363,0.0145 0.47211,0.0145 0.22372,0 0.43745,-0.009 0.65368,-0.0363 l 0.26147,-1.40179 c 0.46657,-0.11611 0.90489,-0.31756 1.28552,-0.58831 l 1.11846,0.81347 c 0.29006,-0.24677 0.5553,-0.53043 0.78443,-0.83527 l -0.81347,-1.17664 c 0.2203,-0.38046 0.37292,-0.80026 0.45029,-1.24922 l 1.37274,-0.21789 c 0.012,-0.14324 0.0144,-0.28216 0.0144,-0.42852 0,-0.25431 -0.0296,-0.50366 -0.0654,-0.74806 l -1.39447,-0.25421 c -0.10928,-0.40351 -0.28858,-0.78002 -0.51566,-1.11853 l 0.82072,-1.12577 c -0.2544,-0.31111 -0.5446,-0.59852 -0.86426,-0.84253 l -1.18388,0.81348 c -0.34026,-0.20124 -0.70641,-0.35564 -1.10397,-0.44305 l -0.21788,-1.37998 c -0.19831,-0.0233 -0.39827,-0.0363 -0.60282,-0.0363 -0.0553,0 -0.11218,-10e-4 -0.16706,0 -0.0268,7.8e-4 -0.0532,-10e-4 -0.0799,0 -0.006,4.8e-4 -0.0146,-4.8e-4 -0.0218,0 z m 0.18885,3.52984 c 0.0265,-10e-4 0.053,0 0.0799,0 0.85971,0 1.56153,0.70181 1.56153,1.56153 0,0.85971 -0.70182,1.55428 -1.56153,1.55428 -0.85972,0 -1.55429,-0.69457 -1.55429,-1.55428 0,-0.83284 0.65184,-1.51982 1.47438,-1.56153 z" />
+    <path
+       d="m 265.86604,703.04061 c -0.0831,0.0387 -0.161,0.0837 -0.24116,0.12559 l -0.005,9e-4 0.21955,1.17196 c -0.29847,0.20003 -0.55758,0.4445 -0.76843,0.72252 l -1.14925,-0.3021 c -0.17079,0.2823 -0.30763,0.58758 -0.41058,0.90087 l 0.97475,0.6716 c -0.0785,0.36277 -0.0941,0.74861 -0.0409,1.12724 6.3e-4,0.002 9.1e-4,0.005 9.1e-4,0.005 l -1.0231,0.59015 c 0.0414,0.17052 0.0981,0.34178 0.16259,0.50979 0.0532,0.13732 0.10856,0.27164 0.17355,0.40038 l 1.16398,-0.22351 c 0.22269,0.34849 0.50538,0.64526 0.83042,0.87832 l -0.30668,1.1372 c 0.27392,0.15911 0.5686,0.28657 0.8704,0.3828 l 0.67518,-0.98267 c 0.39904,0.0815 0.81193,0.0875 1.22689,0.01 l 0.58789,1.01746 c 0.12601,-0.0375 0.25187,-0.0838 0.37688,-0.13208 0.17634,-0.0685 0.34263,-0.1394 0.50491,-0.22678 l -0.21838,-1.18561 c 0.33309,-0.23302 0.61799,-0.52482 0.83638,-0.85383 l 1.12927,0.30318 c 0.15416,-0.28264 0.27756,-0.5869 0.36608,-0.89694 l -0.99859,-0.68223 c 0.0587,-0.36703 0.0519,-0.74464 -0.0233,-1.12243 l 1.0175,-0.58787 c -0.0324,-0.11717 -0.0747,-0.22694 -0.11901,-0.3424 -0.0768,-0.20082 -0.17599,-0.38856 -0.2782,-0.57064 l -1.17775,0.22152 c -0.2085,-0.2854 -0.46406,-0.52824 -0.74586,-0.72661 l 0.30672,-1.13722 c -0.29508,-0.16845 -0.61122,-0.30737 -0.93744,-0.40312 l -0.68794,1.00074 c -0.32955,-0.0557 -0.66532,-0.0666 -1.0056,-0.0152 l -0.59009,-1.02319 c -0.16394,0.0402 -0.32536,0.0919 -0.4866,0.15456 -0.0433,0.018 -0.0886,0.0339 -0.13159,0.0514 -0.0227,9.1e-4 -0.0421,0.0164 -0.0638,0.022 -0.005,9.1e-4 -0.0124,9.1e-4 -0.0185,9.1e-4 z m 1.21855,2.72883 c 0.0225,-9.1e-4 0.0415,-0.0172 0.0637,-0.0219 0.67852,-0.26061 1.44513,0.0808 1.70558,0.75937 0.26052,0.67853 -0.083,1.43939 -0.76153,1.69988 -0.67855,0.26052 -1.43728,-0.0774 -1.69772,-0.75587 -0.25232,-0.65735 0.0541,-1.39703 0.69059,-1.67919 z"
+       inkscape:connector-curvature="0"
+       style="color:#000000;fill:#502d16;stroke:#a05a2c;stroke-width:0.19649233"
+       id="path4149" />
+  </g>
+  <metadata
+     id="metadata6">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2012-05-07T08:05:23</dc:date>
+        <dc:description>Tango Icon Gear / Shape</dc:description>
+        <dc:source>https://openclipart.org/detail/169903/gear-by-hank0071</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>hank0071</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>gear</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>system</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

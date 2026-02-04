@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.actions.SimplifyWayActionTest
+Test: testNonRegression23399() took 346 milli sec(s)
+Test: testSimplify() took 70 milli sec(s)
+Test: testSimplifyFirstNode() took 63 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 522 milli sec(s)
+wering 0 to HelpAwareOptionPane with message The selection contains 1 000 ways. Are you sure you want to simplify them all?
+2026-02-04 20:40:34.982 INFO: org.openstreetmap.josm.actions.SimplifyWayActionTest$1 answering 1 to ExtendedDialog with content Simplify way
+------------- ---------------- ---------------

@@ -1,0 +1,14 @@
+Testcase: org.openstreetmap.josm.gui.history.HistoryBrowserModelTest
+Test: testGetTagTableModel() took 0 milli sec(s)
+Test: testSetPointsInTimeNodeHistory() took 965 milli sec(s)
+Test: testGetRelationMemberTableModel() took 2 milli sec(s)
+Test: testHistoryBrowserModel() took 1 milli sec(s)
+Test: testGetNodeListTableModel() took 1 milli sec(s)
+Test: testSetPointsInTimeNullHistory() took 0 milli sec(s)
+Test: testSetPointsInTimeRelationHistory() took 341 milli sec(s)
+Test: testSetPointsInTimeWayHistory() took 326 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 2 sec(s)
+7.940 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/changesets?changesets=242,86 -> HTTP/1.1 200 (171 ms; 449 B)
+2026-02-04 20:42:18.110 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/way/2/history -> HTTP/1.1 200 (157 ms)
+2026-02-04 20:42:18.273 INFO: GET https://api06.dev.openstreetmap.org/api/0.6/changesets?changesets=2,72 -> HTTP/1.1 200 (162 ms; 452 B)
+------------- ---------------- ---------------

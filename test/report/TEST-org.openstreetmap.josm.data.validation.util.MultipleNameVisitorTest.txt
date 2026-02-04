@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.data.validation.util.MultipleNameVisitorTest
+Test: testTicket11967() took 2 milli sec(s)
+Test: testTicket16652() took 1 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 60 milli sec(s)

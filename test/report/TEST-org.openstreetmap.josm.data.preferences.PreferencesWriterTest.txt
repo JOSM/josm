@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.data.preferences.PreferencesWriterTest
+Test: testWrite() took 0 milli sec(s)
+Test: testList() took 1 milli sec(s)
+Test: testMapList() took 0 milli sec(s)
+Test: testNullValue() took 0 milli sec(s)
+Test: testString() took 0 milli sec(s)
+Test: testListList() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 52 milli sec(s)

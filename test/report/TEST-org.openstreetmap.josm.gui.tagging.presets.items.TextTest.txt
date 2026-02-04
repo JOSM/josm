@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.tagging.presets.items.TextTest
+Test: testNonRegression24023(String)[1] took 111 milli sec(s)
+Test: testNonRegression24023(String)[2] took 107 milli sec(s)
+Test: testAddToPanel() took 106 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 404 milli sec(s)

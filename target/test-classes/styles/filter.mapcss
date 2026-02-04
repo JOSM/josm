@@ -1,0 +1,70 @@
+meta {
+    title: "filter style elments";
+}
+
+setting::icon_off {
+    type: boolean;
+    label: "icon";
+    default: false;
+}
+
+setting::symbol_off {
+    type: boolean;
+    label: "symbol";
+    default: false;
+}
+
+setting::node_text_off {
+    type: boolean;
+    label: "node_text";
+    default: false;
+}
+
+setting::line_off {
+    type: boolean;
+    label: "line";
+    default: false;
+}
+
+setting::line_text_off {
+    type: boolean;
+    label: "line_text";
+    default: false;
+}
+
+setting::area_off {
+    type: boolean;
+    label: "area";
+    default: false;
+}
+
+canvas[setting("line_off")] {
+    default-lines: false;
+}
+
+node[setting("icon_off")]::*, relation[setting("icon_off")]::* {
+    icon-image: none;
+}
+
+node[setting("symbol_off")]::* {
+    symbol-shape: none;
+}
+
+node[setting("node_text_off")]::* {
+    text: none;
+}
+
+way[setting("line_off")]::*, relation[setting("line_off")]::* {
+    width: none;
+    casing-width: none;
+    repeat-image: none;
+}
+
+way[prop("text-position", "default")="line"][setting("line_text_off")]::* {
+    text: none;
+}
+
+area[setting("area_off")]::* {
+    fill-color : none;
+}
+

@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.data.osm.search.SearchSettingTest
+Test: testEqualsHashcode() took 2 milli sec(s)
+Test: testStableHashcode() took 1 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 52 milli sec(s)

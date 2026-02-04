@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.io.rtklib.RtkLibPosReaderTest
+Test: testReader2() took 2 milli sec(s)
+Test: testReader3() took 0 milli sec(s)
+Test: testReader() took 2 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 79 milli sec(s)

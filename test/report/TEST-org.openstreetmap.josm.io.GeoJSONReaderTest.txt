@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.io.GeoJSONReaderTest
+Test: testReadLineByLineGeoJSON() took 4 milli sec(s)
+Test: testInvalidFeatureCollection() took 0 milli sec(s)
+Test: testReadGeoJson() took 1 milli sec(s)
+Test: testTicket19822Nested() took 1 milli sec(s)
+Test: testTicket19822() took 2 milli sec(s)
+Test: testTicket21044Duplicates() took 1 milli sec(s)
+Test: testReadGeoJsonNamedCrs() took 0 milli sec(s)
+Test: testReadGeoJsonWithoutType() took 1 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 102 milli sec(s)
+------------- ---------------

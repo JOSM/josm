@@ -1,0 +1,91 @@
+{ "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": { 
+                "id" : "afghanistan",
+                "parent" : "asia",
+                "iso3166-1:alpha2" : [ "AF" ],
+                "name" : "Afghanistan",
+                "urls" : {
+                    "pbf" : "https://download.geofabrik.de/asia/afghanistan-latest.osm.pbf",
+                    "bz2" : "https://download.geofabrik.de/asia/afghanistan-latest.osm.bz2",
+                    "shp" : "https://download.geofabrik.de/asia/afghanistan-latest-free.shp.zip",
+                    "pbf-internal" : "https://osm-internal.download.geofabrik.de/asia/afghanistan-latest-internal.osm.pbf",
+                    "history" : "https://osm-internal.download.geofabrik.de/asia/afghanistan-internal.osh.pbf",
+                    "taginfo" : "https://taginfo.geofabrik.de/asia/afghanistan/",
+                    "updates" : "https://download.geofabrik.de/asia/afghanistan-updates"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": { 
+                "id" : "africa",
+                "name" : "Africa",
+                "urls" : {
+                    "pbf" : "https://download.geofabrik.de/africa-latest.osm.pbf",
+                    "bz2" : "https://download.geofabrik.de/africa-latest.osm.bz2",
+                    "pbf-internal" : "https://osm-internal.download.geofabrik.de/africa-latest-internal.osm.pbf",
+                    "history" : "https://osm-internal.download.geofabrik.de/africa-internal.osh.pbf",
+                    "taginfo" : "https://taginfo.geofabrik.de/africa/",
+                    "updates" : "https://download.geofabrik.de/africa-updates"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": { 
+                "id" : "albania",
+                "parent" : "europe",
+                "iso3166-1:alpha2" : [ "AL" ],
+                "name" : "Albania",
+                "urls" : {
+                    "pbf" : "https://download.geofabrik.de/europe/albania-latest.osm.pbf",
+                    "bz2" : "https://download.geofabrik.de/europe/albania-latest.osm.bz2",
+                    "shp" : "https://download.geofabrik.de/europe/albania-latest-free.shp.zip",
+                    "pbf-internal" : "https://osm-internal.download.geofabrik.de/europe/albania-latest-internal.osm.pbf",
+                    "history" : "https://osm-internal.download.geofabrik.de/europe/albania-internal.osh.pbf",
+                    "taginfo" : "https://taginfo.geofabrik.de/europe/albania/",
+                    "updates" : "https://download.geofabrik.de/europe/albania-updates"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": { 
+                "id" : "alberta",
+                "parent" : "canada",
+                "iso3166-2" : [ "CA-AB" ],
+                "name" : "Alberta",
+                "urls" : {
+                    "pbf" : "https://download.geofabrik.de/north-america/canada/alberta-latest.osm.pbf",
+                    "bz2" : "https://download.geofabrik.de/north-america/canada/alberta-latest.osm.bz2",
+                    "shp" : "https://download.geofabrik.de/north-america/canada/alberta-latest-free.shp.zip",
+                    "pbf-internal" : "https://osm-internal.download.geofabrik.de/north-america/canada/alberta-latest-internal.osm.pbf",
+                    "history" : "https://osm-internal.download.geofabrik.de/north-america/canada/alberta-internal.osh.pbf",
+                    "taginfo" : "https://taginfo.geofabrik.de/north-america/canada/alberta/",
+                    "updates" : "https://download.geofabrik.de/north-america/canada/alberta-updates"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": { 
+                "id" : "israel-and-palestine",
+                "parent" : "asia",
+                "iso3166-1:alpha2" : [ "PS","IL" ],
+                "name" : "Israel and Palestine",
+                "urls" : {
+                    "pbf" : "https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf",
+                    "bz2" : "https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.bz2",
+                    "shp" : "https://download.geofabrik.de/asia/israel-and-palestine-latest-free.shp.zip",
+                    "pbf-internal" : "https://osm-internal.download.geofabrik.de/asia/israel-and-palestine-latest-internal.osm.pbf",
+                    "history" : "https://osm-internal.download.geofabrik.de/asia/israel-and-palestine-internal.osh.pbf",
+                    "taginfo" : "https://taginfo.geofabrik.de/asia/israel-and-palestine/",
+                    "updates" : "https://download.geofabrik.de/asia/israel-and-palestine-updates"
+                }
+            }
+        }
+     ]
+}

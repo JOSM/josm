@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.layer.markerlayer.WebMarkerTest
+Test: testWebMarker(PlatformHook, PlatformManager) took 97 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 167 milli sec(s)
+FO: Opening URL: http://example.com
+------------- ---------------- ---------------

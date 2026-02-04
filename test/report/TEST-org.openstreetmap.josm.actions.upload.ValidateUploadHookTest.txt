@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.actions.upload.ValidateUploadHookTest
+Test: testCheckUpload() took 76 milli sec(s)
+Test: testUploadOtherErrors(boolean, boolean)[1] took 224 milli sec(s)
+Test: testUploadOtherErrors(boolean, boolean)[2] took 200 milli sec(s)
+Test: testUploadOtherErrors(boolean, boolean)[3] took 202 milli sec(s)
+Test: testUploadOtherErrors(boolean, boolean)[4] took 205 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 953 milli sec(s)

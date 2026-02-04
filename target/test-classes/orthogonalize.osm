@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='-164' action='modify' visible='true' lat='8.53882631502' lon='55.72982273659' />
+  <node id='-166' action='modify' visible='true' lat='8.53692765033' lon='55.73148512506' />
+  <node id='-168' action='modify' visible='true' lat='8.53901816563' lon='55.7313279173' />
+  <node id='-170' action='modify' visible='true' lat='8.53673579867' lon='55.72997994436' />
+  <node id='-172' action='modify' visible='true' lat='8.53609408724' lon='55.73073587955' />
+  <node id='-174' action='modify' visible='true' lat='8.5381846071' lon='55.73057867179' />
+  <node id='-176' action='modify' visible='true' lat='8.534711427' lon='55.73000670312'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='ClosedWayWithReferenceNodes' />
+  </node>
+  <node id='-178' action='modify' visible='true' lat='8.53545899034' lon='55.7305284991' />
+  <node id='-180' action='modify' visible='true' lat='8.5395738703' lon='55.73034453257' />
+  <node id='-182' action='modify' visible='true' lat='8.53490327967' lon='55.73151188383' />
+  <node id='-184' action='modify' visible='true' lat='8.53748335805' lon='55.73050174033' />
+  <node id='-186' action='modify' visible='true' lat='8.53406971216' lon='55.73076263832'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='ClosedWayWithReferenceNodes' />
+  </node>
+  <node id='-188' action='modify' visible='true' lat='8.53273196095' lon='55.72987441027'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='NodeToRectify-01' />
+  </node>
+  <node id='-190' action='modify' visible='true' lat='8.53347952816' lon='55.73039620625'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='NodeToRectify-02' />
+  </node>
+  <node id='-192' action='modify' visible='true' lat='8.53292381462' lon='55.73137959098'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='NodeToRectify-03' />
+  </node>
+  <node id='-194' action='modify' visible='true' lat='8.53209024278' lon='55.73063034547'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='NodeToRectify-04' />
+  </node>
+  <node id='-196' action='modify' visible='true' lat='8.53332193268' lon='55.73067508568' />
+  <node id='-198' action='modify' visible='true' lat='8.53308888534' lon='55.73108748376' />
+  <node id='-200' action='modify' visible='true' lat='8.53317579063' lon='55.73111687863' />
+  <node id='-202' action='modify' visible='true' lat='8.53326720503' lon='55.73111040645' />
+  <node id='-204' action='modify' visible='true' lat='8.53334921153' lon='55.73106905258' />
+  <node id='-206' action='modify' visible='true' lat='8.5334093254' lon='55.73099911274' />
+  <node id='-208' action='modify' visible='true' lat='8.53343839484' lon='55.73091123466' />
+  <node id='-210' action='modify' visible='true' lat='8.53343199432' lon='55.73081879697' />
+  <node id='-212' action='modify' visible='true' lat='8.53339109825' lon='55.73073587248' />
+  <way id='-214' action='modify' visible='true'>
+    <nd ref='-164' />
+    <nd ref='-180' />
+    <nd ref='-168' />
+    <nd ref='-174' />
+    <nd ref='-164' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='ClosedWay' />
+  </way>
+  <way id='-216' action='modify' visible='true'>
+    <nd ref='-170' />
+    <nd ref='-184' />
+    <nd ref='-166' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='TwoWaysFormingClosedWay' />
+  </way>
+  <way id='-218' action='modify' visible='true'>
+    <nd ref='-176' />
+    <nd ref='-178' />
+    <nd ref='-182' />
+    <nd ref='-186' />
+    <nd ref='-176' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='ClosedWayWithReferenceNodes' />
+  </way>
+  <way id='-220' action='modify' visible='true'>
+    <nd ref='-166' />
+    <nd ref='-172' />
+    <nd ref='-170' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='TwoWaysFormingClosedWay' />
+  </way>
+  <way id='-222' action='modify' visible='true'>
+    <nd ref='-188' />
+    <nd ref='-190' />
+    <nd ref='-196' />
+    <nd ref='-212' />
+    <nd ref='-210' />
+    <nd ref='-208' />
+    <nd ref='-206' />
+    <nd ref='-204' />
+    <nd ref='-202' />
+    <nd ref='-200' />
+    <nd ref='-198' />
+    <nd ref='-192' />
+    <nd ref='-194' />
+    <nd ref='-188' />
+    <tag k='building' v='yes' />
+  </way>
+</osm>

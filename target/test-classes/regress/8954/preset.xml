@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presets xmlns="http://josm.openstreetmap.de/tagging-preset-1.0">
+    <item name="ItemName" type="node">
+        <check key="foo" text="Foo" default="off" />
+    </item>
+</presets>

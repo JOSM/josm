@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   id="svg4264"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="groyne2.svg">
+  <defs
+     id="defs4266" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="16"
+     inkscape:cx="-3.961104"
+     inkscape:cy="4.0710422"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:snap-nodes="true"
+     inkscape:object-paths="false"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-others="false"
+     inkscape:snap-global="true"
+     inkscape:snap-center="true"
+     inkscape:snap-grids="true"
+     inkscape:snap-to-guides="true"
+     inkscape:snap-page="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4137" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata4269">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1036.3621)">
+    <rect
+       x="-4.7683727e-007"
+       y="1036.3621"
+       width="16.000011"
+       height="16.000046"
+       id="rect25-2"
+       style="fill:#208ece;fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#ffbe34;fill-opacity:1"
+       d="m -1.9881402e-7,1036.362 0,16 7.24902599881402,0 c 0.499658,-2.4463 0.786705,-6.0014 -0.800782,-9 -1.46353,-2.8145 -1.838243,-5.1361 -1.896485,-7 z"
+       id="path27-8"
+       sodipodi:nodetypes="cccccc" />
+    <g
+       transform="matrix(0.33898304,0,0,2.0000018,-79.813555,-61.038921)"
+       id="g55-9">
+      <rect
+         x="250.2"
+         y="553.70001"
+         width="5.9000001"
+         height="1"
+         id="rect57-1" />
+    </g>
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4290"
+       width="1.9999993"
+       height="2.0000401"
+       x="7.0000024"
+       y="1046.3621" />
+    <g
+       transform="matrix(0.33898304,0,0,2.0000018,-75.813555,-61.038895)"
+       id="g55-9-6">
+      <rect
+         x="250.2"
+         y="553.70001"
+         width="5.9000001"
+         height="1"
+         id="rect57-1-2" />
+    </g>
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4290-6"
+       width="1.9999996"
+       height="2.0000403"
+       x="11.000005"
+       y="1046.3622" />
+    <g
+       transform="matrix(0.33898304,0,0,2.0000018,-71.813554,-61.038895)"
+       id="g55-9-6-4">
+      <rect
+         x="250.2"
+         y="553.70001"
+         width="5.9000001"
+         height="1"
+         id="rect57-1-2-4" />
+    </g>
+    <g
+       transform="matrix(0.33898304,0,0,2.0000018,-81.813558,-68.038921)"
+       id="g55-9-3">
+      <rect
+         x="250.2"
+         y="553.70001"
+         width="5.9000001"
+         height="1"
+         id="rect57-1-0" />
+    </g>
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4290-3"
+       width="1.9999996"
+       height="2.0000403"
+       x="5.0000014"
+       y="1039.3622" />
+    <g
+       transform="matrix(0.33898304,0,0,2.0000018,-77.813558,-68.038921)"
+       id="g55-9-6-2">
+      <rect
+         x="250.2"
+         y="553.70001"
+         width="5.9000001"
+         height="1"
+         id="rect57-1-2-7" />
+    </g>
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4290-6-1"
+       width="2"
+       height="2.0000405"
+       x="9.0000048"
+       y="1039.3623" />
+    <g
+       transform="matrix(0.33898304,0,0,2.0000018,-73.813557,-68.038921)"
+       id="g55-9-6-4-2">
+      <rect
+         x="250.2"
+         y="553.70001"
+         width="5.9000001"
+         height="1"
+         id="rect57-1-2-4-0" />
+    </g>
+  </g>
+</svg>

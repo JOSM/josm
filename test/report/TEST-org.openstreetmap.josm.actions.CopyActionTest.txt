@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.actions.CopyActionTest
+Test: testCopySinglePrimitive() took 371 milli sec(s)
+Test: testWarnOnEmpty() took 83 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 483 milli sec(s)
+C is already assigned to org.openstreetmap.josm.actions.CopyAction@2b2eb4c1, will be overridden by org.openstreetmap.josm.actions.CopyActionTest$1@36ccbca4
+2026-02-04 20:40:28.995 INFO: Registered toolbar action copy overwritten: org.openstreetmap.josm.actions.CopyAction gets org.openstreetmap.josm.actions.CopyActionTest$1
+2026-02-04 20:40:28.995 INFO: Keystroke ctrl pressed INSERT is already assigned to org.openstreetmap.josm.actions.CopyAction@2b2eb4c1, will be overridden by org.openstreetmap.josm.actions.CopyActionTest$1@36ccbca4
+2026-02-04 20:40:29.061 INFO: Keystroke meta pressed C is already assigned to org.openstreetmap.josm.actions.CopyAction@14c3a747, will be overridden by org.openstreetmap.josm.actions.CopyActionTest$CapturingCopyAction@4010187b
+2026-02-04 20:40:29.061 INFO: Registered toolbar action copy overwritten: org.openstreetmap.josm.actions.CopyAction gets org.openstreetmap.josm.actions.CopyActionTest$CapturingCopyAction
+2026-02-04 20:40:29.061 INFO: Keystroke ctrl pressed INSERT is already assigned to org.openstreetmap.josm.actions.CopyAction@14c3a747, will be overridden by org.openstreetmap.josm.actions.CopyActionTest$CapturingCopyAction@4010187b
+------------- ---------------- ---------------

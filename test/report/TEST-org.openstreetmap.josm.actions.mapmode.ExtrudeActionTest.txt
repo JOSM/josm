@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.actions.mapmode.ExtrudeActionTest
+Test: testEnumMode() took 69 milli sec(s)
+Test: testMode() took 91 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 197 milli sec(s)
+troke pressed X is already assigned to org.openstreetmap.josm.actions.mapmode.ExtrudeAction@7cb203dd, will be overridden by org.openstreetmap.josm.actions.mapmode.ExtrudeAction@14d30c16
+------------- ---------------- ---------------

@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.gui.oauth.FullyAutomaticAuthorizationUITest
+Test: testFullyAutomaticAuthorizationUI(OAuthVersion)[1] took 10 milli sec(s)
+Test: testFullyAutomaticAuthorizationUI(OAuthVersion)[2] took 3 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 87 milli sec(s)

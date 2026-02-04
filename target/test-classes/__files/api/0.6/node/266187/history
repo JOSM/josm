@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.3 (4163645 spike-08.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <node id="266187" visible="true" version="1" changeset="749" timestamp="2005-11-20T10:48:57Z" user="nickw" uid="94" lat="50.9083027" lon="-1.6724797"/>
+ <node id="266187" visible="true" version="2" changeset="172099" timestamp="2008-02-21T12:39:31Z" user="njd27" uid="1030" lat="50.9081170" lon="-1.6726391"/>
+ <node id="266187" visible="true" version="3" changeset="5407199" timestamp="2010-08-05T11:30:13Z" user="Sailor Steve" uid="196654" lat="50.9082088" lon="-1.6725014"/>
+ <node id="266187" visible="true" version="4" changeset="6833565" timestamp="2011-01-01T22:51:19Z" user="monxton" uid="260682" lat="50.9080637" lon="-1.6727160"/>
+ <node id="266187" visible="true" version="5" changeset="65565982" timestamp="2018-12-17T23:38:05Z" user="robbieonsea" uid="76617" lat="50.9080637" lon="-1.6727160">
+  <tag k="lcn_ref" v="55"/>
+ </node>
+</osm>

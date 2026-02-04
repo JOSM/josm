@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<imagery xmlns="http://josm.openstreetmap.de/maps-1.0">
+<entry>
+<name>Landsat</name>
+<id>landsat</id>
+<type>wmts</type>
+<category>photo</category>
+<url><![CDATA[http://localhost:58789/getcapabilities.xml]]></url>
+<default-layers><layer name="GEOGRAPHICALGRIDSYSTEMS.MAPS" /></default-layers></entry>
+</imagery>

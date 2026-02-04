@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.gui.mappaint.mapcss.IconRotationTest
+Test: testRotationNone() took 1 milli sec(s)
+Test: testRotationWayNoParent() took 0 milli sec(s)
+Test: testRotationWayMultiple() took 0 milli sec(s)
+Test: testRotationDeg() took 1 milli sec(s)
+Test: testRotationRad() took 0 milli sec(s)
+Test: testRotationWay() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 81 milli sec(s)

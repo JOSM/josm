@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <bounds minlat='55.3310119' minlon='10.493499' maxlat='55.3313171' maxlon='10.4944539' origin='CGImap 0.6.0 (14790 thorn-01.openstreetmap.org)' />
+  <node id='1425145996' timestamp='2011-09-06T13:32:55Z' uid='445576' user='Krægpøth' version='1' changeset='9227321' lat='55.3295347' lon='10.494432' />
+  <node id='1425146006' action='modify' timestamp='2011-09-06T13:32:55Z' uid='445576' user='Krægpøth' version='1' changeset='9227321' lat='550.3311950157' lon='10.49428298298' />
+  <node id='1432736611' timestamp='2015-07-09T09:57:07Z' uid='207581' user='Hjart' version='2' changeset='32514866' lat='55.3365712' lon='10.5010424' />
+</osm>

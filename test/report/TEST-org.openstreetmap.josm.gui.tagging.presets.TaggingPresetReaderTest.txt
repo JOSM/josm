@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReaderTest
+Test: testExternalEntityResolving() took 4 milli sec(s)
+Test: testReadDefaultPresets() took 46 milli sec(s)
+Test: testTicket8954() took 1 milli sec(s)
+Test: testNestedChunks() took 3 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 125 milli sec(s)
+------- ---------------

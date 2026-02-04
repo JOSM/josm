@@ -1,0 +1,11 @@
+Testcase: org.openstreetmap.josm.io.ChangesetQueryUrlParserTest
+Test: testUidAndDisplayName() took 1 milli sec(s)
+Test: testParseBasic() took 0 milli sec(s)
+Test: testUid() took 0 milli sec(s)
+Test: testBbox() took 0 milli sec(s)
+Test: testOpen() took 0 milli sec(s)
+Test: testTime() took 1 milli sec(s)
+Test: testDisplayName() took 0 milli sec(s)
+Test: testClosed() took 0 milli sec(s)
+Test: testChangesetIds() took 0 milli sec(s)
+Tests run: 9, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 80 milli sec(s)

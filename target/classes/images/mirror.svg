@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24px" height="24px" viewBox="0 0 24 24">
+<g fill="#fff" stroke="#df421e">
+  <path d="m3.5,3.5h3v3h-3z
+    M15.5,11.5h3v3h-3z
+    M1.5,17.5h3v3h-3z"/>
+</g>
+<g fill="#d2d2d2" stroke="#858585">
+  <path d="m16.5,3.5h3v3h-3z
+    M4.5,11.5h3v3h-3z
+    M18.5,17.5h3v3h-3z"/>
+</g>
+<path d="m11.5,1.5v21" stroke="#000"/>
+</svg>

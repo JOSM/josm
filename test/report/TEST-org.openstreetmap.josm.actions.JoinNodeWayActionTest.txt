@@ -1,0 +1,20 @@
+Testcase: org.openstreetmap.josm.actions.JoinNodeWayActionTest
+Test: testTicket11508() took 90 milli sec(s)
+Test: testTicket18189() took 80 milli sec(s)
+Test: testTicket18420() took 79 milli sec(s)
+Test: testTicket18990() took 78 milli sec(s)
+Test: testTicket18189ThreeWays() took 90 milli sec(s)
+Test: testTicket18189Crossing() took 81 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 534 milli sec(s)
+Registered toolbar action movenodeontoway overwritten: org.openstreetmap.josm.actions.JoinNodeWayAction gets org.openstreetmap.josm.actions.JoinNodeWayAction
+2026-02-04 20:40:32.189 INFO: Keystroke pressed N is already assigned to org.openstreetmap.josm.actions.JoinNodeWayAction@7170a840, will be overridden by org.openstreetmap.josm.actions.JoinNodeWayAction@366c12af
+2026-02-04 20:40:32.189 INFO: Registered toolbar action movenodeontoway overwritten: org.openstreetmap.josm.actions.JoinNodeWayAction gets org.openstreetmap.josm.actions.JoinNodeWayAction
+2026-02-04 20:40:32.270 INFO: Keystroke pressed N is already assigned to org.openstreetmap.josm.actions.JoinNodeWayAction@7843a5f0, will be overridden by org.openstreetmap.josm.actions.JoinNodeWayAction@32deb0f1
+2026-02-04 20:40:32.270 INFO: Registered toolbar action movenodeontoway overwritten: org.openstreetmap.josm.actions.JoinNodeWayAction gets org.openstreetmap.josm.actions.JoinNodeWayAction
+2026-02-04 20:40:32.345 INFO: Keystroke pressed N is already assigned to org.openstreetmap.josm.actions.JoinNodeWayAction@480e26b9, will be overridden by org.openstreetmap.josm.actions.JoinNodeWayAction@497a7af4
+2026-02-04 20:40:32.346 INFO: Registered toolbar action movenodeontoway overwritten: org.openstreetmap.josm.actions.JoinNodeWayAction gets org.openstreetmap.josm.actions.JoinNodeWayAction
+2026-02-04 20:40:32.431 INFO: Keystroke pressed N is already assigned to org.openstreetmap.josm.actions.JoinNodeWayAction@442c40d5, will be overridden by org.openstreetmap.josm.actions.JoinNodeWayAction@6ee80a94
+2026-02-04 20:40:32.431 INFO: Registered toolbar action movenodeontoway overwritten: org.openstreetmap.josm.actions.JoinNodeWayAction gets org.openstreetmap.josm.actions.JoinNodeWayAction
+2026-02-04 20:40:32.518 INFO: Keystroke pressed N is already assigned to org.openstreetmap.josm.actions.JoinNodeWayAction@ab7dd19, will be overridden by org.openstreetmap.josm.actions.JoinNodeWayAction@4bf2c5a4
+2026-02-04 20:40:32.518 INFO: Registered toolbar action movenodeontoway overwritten: org.openstreetmap.josm.actions.JoinNodeWayAction gets org.openstreetmap.josm.actions.JoinNodeWayAction
+------------- ---------------- ---------------

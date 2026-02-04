@@ -1,0 +1,4 @@
+Testcase: org.openstreetmap.josm.data.validation.tests.ConditionalKeysTest
+Test: testKeyValid() took 30 milli sec(s)
+Test: testValueValid() took 7 milli sec(s)
+Tests run: 2, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 123 milli sec(s)

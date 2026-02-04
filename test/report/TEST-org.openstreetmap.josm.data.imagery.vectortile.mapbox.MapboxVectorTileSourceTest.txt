@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorTileSourceTest
+Test: testCustomHeaders() took 0 milli sec(s)
+Test: testMapillaryStyle(Integer, String, String)[1] took 71 milli sec(s)
+Test: testMapillaryStyle(Integer, String, String)[2] took 61 milli sec(s)
+Test: testMapillaryStyle(Integer, String, String)[3] took 59 milli sec(s)
+Test: testNoStyle() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 232 milli sec(s)
+openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorTileSourceTest$SelectLayerDialogMocker answering 1 to ExtendedDialog with content https://a.mapillary.com/v3/map_features?tile={z}/{x}/{y}&client_id=_apiKey_&layers=points&per_page=1000
+2026-02-04 20:41:09.430 INFO: org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorTileSourceTest$SelectLayerDialogMocker answering 1 to ExtendedDialog with content https://a.mapillary.com/v3/map_features?tile={z}/{x}/{y}&client_id=_apiKey_&layers=trafficsigns&per_page=1000
+------------- ---------------- ---------------

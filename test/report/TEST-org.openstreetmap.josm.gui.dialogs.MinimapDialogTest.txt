@@ -1,0 +1,45 @@
+Testcase: org.openstreetmap.josm.gui.dialogs.MinimapDialogTest
+Test: testSourceSwitching() took 585 milli sec(s)
+Test: testTileSourcesFromCurrentLayers() took 743 milli sec(s)
+Test: testShowDownloadedAreaLayerSwitching() took 231 milli sec(s)
+Test: testSourcePrefObeyed() took 294 milli sec(s)
+Test: testShowDownloadedArea() took 329 milli sec(s)
+Test: testViewportAspectRatio() took 228 milli sec(s)
+Test: testRemovedSourceStillSelected() took 289 milli sec(s)
+Test: testMinimapDialog() took 100 milli sec(s)
+Test: testRefreshSourcesRetainsSelection() took 426 milli sec(s)
+Test: testSourcePrefInvalid() took 204 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 3 sec(s)
+ INFO: GET http://localhost:58814/56807d04/3/4/3.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:41:59.947 INFO: GET http://localhost:58814/56807d04/3/4/2.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:41:59.948 INFO: GET http://localhost:58814/56807d04/3/3/2.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.127 INFO: GET http://localhost:58814/d21427bd/3/4/3.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.127 INFO: GET http://localhost:58814/d21427bd/3/3/2.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.127 INFO: GET http://localhost:58814/d21427bd/3/4/2.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:00.127 INFO: GET http://localhost:58814/d21427bd/3/3/3.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.231 INFO: Defaults for slippy_map_chooser.mapstyle differ: Fail != Mapnik
+2026-02-04 20:42:00.333 INFO: Defaults for slippy_map_chooser.mapstyle differ: Mapnik != Fail
+2026-02-04 20:42:00.349 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:00.425 INFO: GET http://localhost:58814/56807d04/18/131071/131072.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.425 INFO: GET http://localhost:58814/56807d04/18/131072/131071.png -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:42:00.425 INFO: GET http://localhost:58814/56807d04/18/131071/131071.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.426 INFO: GET http://localhost:58814/56807d04/18/131072/131072.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.531 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:00.607 INFO: GET http://localhost:58814/8e7d8bb9/18/131071/131072.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.607 INFO: GET http://localhost:58814/8e7d8bb9/18/131072/131072.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.607 INFO: GET http://localhost:58814/8e7d8bb9/18/131072/131071.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.607 INFO: GET http://localhost:58814/8e7d8bb9/18/131071/131071.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:00.719 INFO: AbstractTileSourceLayer: estimated visible tiles: 20, estimated cache size: 182
+2026-02-04 20:42:01.094 INFO: GET http://localhost:58814/d21427bd/8/84/140.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:01.094 INFO: GET http://localhost:58814/d21427bd/8/84/139.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:01.094 INFO: GET http://localhost:58814/d21427bd/8/85/140.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:01.094 INFO: GET http://localhost:58814/d21427bd/8/85/139.png -> HTTP/1.1 200 (2 ms)
+2026-02-04 20:42:01.493 INFO: Defaults for slippy_map_chooser.mapstyle differ: Fail != Mapnik
+2026-02-04 20:42:01.632 INFO: Defaults for slippy_map_chooser.mapstyle differ: Mapnik != Fail
+2026-02-04 20:42:01.638 INFO: GET http://localhost:58814/d21427bd/10/512/339.png -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:42:01.638 INFO: GET http://localhost:58814/d21427bd/10/511/339.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:01.945 INFO: GET http://localhost:58814/c5e18984/13/3680/3476.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:01.945 INFO: GET http://localhost:58814/c5e18984/13/3681/3475.png -> HTTP/1.1 200 (0 ms)
+2026-02-04 20:42:01.945 INFO: GET http://localhost:58814/c5e18984/13/3680/3475.png -> HTTP/1.1 200 (1 ms)
+2026-02-04 20:42:01.945 INFO: GET http://localhost:58814/c5e18984/13/3681/3476.png -> HTTP/1.1 200 (1 ms)
+------------- ---------------- ---------------

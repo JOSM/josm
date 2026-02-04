@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="11"
+   height="16"
+   viewBox="0 0 11 16"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="casino4.svg">
+  <metadata
+     id="metadata9">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Hotel has a casino</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     id="namedview11"
+     showgrid="true"
+     inkscape:zoom="28.963094"
+     inkscape:cx="3.5189393"
+     inkscape:cy="7.4496916"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     showguides="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4141" />
+  </sodipodi:namedview>
+  <title
+     id="title3924">Hotel has a casino</title>
+  <defs
+     id="defs25" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff;fill-rule:evenodd"
+     id="path127"
+     d="M 1.304076,15.999821 C 0.58237886,16.001281 0.00212482,15.383717 6.7389239e-4,14.617108 L 0,14.614908 0.00137529,1.3861086 C 0.00133403,0.6171854 0.58302525,0.0011329 1.3048049,-2.103e-4 l 8.3904965,0.00219 C 10.417088,5.197e-4 10.999185,0.6174628 10.998587,1.3843566 L 11,14.615214 c 4.1e-5,0.768924 -0.581664,1.384925 -1.3041174,1.384312 L 1.3044987,16 Z" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#ff0000;fill-rule:evenodd"
+     id="path131"
+     d="M 5.0301915,5.1332715 6.2347899,5.1318115 5.6306584,3.0166905 5.0301915,5.1333737 Z M 6.5185362,6.1182401 4.7494091,6.1145901 4.4699115,7.0850389 3.3294149,7.0835789 4.9561542,1.7712628 6.3070971,1.7716497 7.9345445,7.0846228 6.7956613,7.0875428 6.5185362,6.1188241 Z" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#ff0000;fill-rule:evenodd"
+     id="path139"
+     d="m 4.4328052,8.9757924 c -0.1378909,0.00219 -0.2898418,0.034967 -0.4574878,0.11191 -1.8283817,1.4207676 0.6370038,3.7129596 1.6761827,5.6801666 l 0.031463,0.01139 C 6.8265624,12.627154 9.0043905,10.260268 7.3397862,9.0870454 6.0228836,8.4880166 5.6710862,10.483818 5.6588147,10.556534 5.6469156,10.492658 5.3794923,8.9702954 4.4328344,8.9758143 Z" />
+</svg>

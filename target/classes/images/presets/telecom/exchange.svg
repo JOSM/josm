@@ -1,0 +1,23 @@
+<svg height="16" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path id="a" d="m.5.5h15v15h-15z"/>
+    </defs>
+    <use fill="#232323" xlink:href="#a"/>
+    <g fill="none" stroke-width="2">
+        <g stroke="#21bd00">
+            <use xlink:href="#a"/>
+            <path d="m3.5 8.5v-5"/>
+            <path d="m8.5 3.5h-6"/>
+            <path d="m7 12.5h5.5"/>
+            <path d="m12.5 7.5v6"/>
+        </g>
+        <path d="m12.5 3.5-9 9" stroke="#fff"/>
+        <path d="m12.5 12.5-9-9" stroke="#21bd00"/>
+        <g stroke="#fff">
+            <path d="m13.5 3.5h-5"/>
+            <path d="m12.5 7.5v-3.93"/>
+            <path d="m3.5 8.5v4"/>
+            <path d="m2.5 12.5h4.5"/>
+        </g>
+    </g>
+</svg>

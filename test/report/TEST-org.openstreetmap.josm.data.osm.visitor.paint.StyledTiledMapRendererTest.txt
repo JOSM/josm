@@ -1,0 +1,10 @@
+Testcase: org.openstreetmap.josm.data.osm.visitor.paint.StyledTiledMapRendererTest
+Test: testRender(String, Supplier, TileZXY)[1] took 502 milli sec(s)
+Test: testRender(String, Supplier, TileZXY)[2] took 448 milli sec(s)
+Test: testRender(String, Supplier, TileZXY)[3] took 455 milli sec(s)
+Test: testRender(String, Supplier, TileZXY)[4] took 464 milli sec(s)
+Test: testRender(String, Supplier, TileZXY)[5] took 446 milli sec(s)
+Test: testRender(String, Supplier, TileZXY)[6] took 451 milli sec(s)
+Test: testRender(String, Supplier, TileZXY)[7] took 486 milli sec(s)
+Test: testRender(String, Supplier, TileZXY)[8] took 440 milli sec(s)
+Tests run: 8, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 3 sec(s)

@@ -1,0 +1,8 @@
+Testcase: org.openstreetmap.josm.gui.mappaint.mapcss.KeyValueConditionTest
+Test: applies_1() took 0 milli sec(s)
+Test: applies_2() took 1 milli sec(s)
+Test: create() took 0 milli sec(s)
+Test: testKeyRegexValueRegex() took 0 milli sec(s)
+Test: testValueFive() took 1 milli sec(s)
+Test: testValueZero() took 0 milli sec(s)
+Tests run: 6, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 75 milli sec(s)

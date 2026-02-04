@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<imagery xmlns="http://josm.openstreetmap.de/maps-1.0">
+  <entry>
+        <name>Norway Orthophoto (historic)</name>
+        <name lang="nb">Norge i Bilder (historisk)</name>
+        <id>geovekst-nib-historic</id>
+        <type>wms_endpoint</type>
+        <category>photo</category>
+        <country-code>NO</country-code>
+        <description lang="en">Historic Norwegian orthophotos and maps, courtesy of Geovekst and Norkart.</description>
+        <url><![CDATA[http://localhost:58488/capabilities?SERVICE=WMS&REQUEST=GetCapabilities]]></url>
+        <custom-http-header header-name="X-WAAPI-TOKEN" header-value="b8e36d51-119a-423b-b156-d744d54123d5" />
+        <attribution-text>© Geovekst</attribution-text>
+        <attribution-url>https://www.norgeibilder.no/</attribution-url>
+        <permission-ref>https://forum.openstreetmap.org/viewtopic.php?id=62083</permission-ref>
+        <icon>https://register.geonorge.no/data/organizations/_L_norgeibilder96x96.png</icon>
+        <max-zoom>21</max-zoom>
+        <valid-georeference>true</valid-georeference>
+</entry>
+</imagery>

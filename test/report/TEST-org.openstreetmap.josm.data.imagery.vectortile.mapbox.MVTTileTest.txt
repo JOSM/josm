@@ -1,0 +1,6 @@
+Testcase: org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTTileTest
+Test: testMVTTile(BufferedImage, Boolean)[1] took 213 milli sec(s)
+Test: testMVTTile(BufferedImage, Boolean)[2] took 212 milli sec(s)
+Test: testMVTTile(BufferedImage, Boolean)[3] took 210 milli sec(s)
+Test: testMVTTile(BufferedImage, Boolean)[4] took 107 milli sec(s)
+Tests run: 4, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 815 milli sec(s)

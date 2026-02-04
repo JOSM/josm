@@ -1,0 +1,5 @@
+Testcase: org.openstreetmap.josm.gui.layer.imagery.ColorfulImageProcessorTest
+Test: testToString() took 0 milli sec(s)
+Test: testProcessing() took 7 milli sec(s)
+Test: testSetGet() took 0 milli sec(s)
+Tests run: 3, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 79 milli sec(s)

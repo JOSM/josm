@@ -1,0 +1,9 @@
+Testcase: org.openstreetmap.josm.data.APIDataSetTest
+Test: testOneCycle() took 1 milli sec(s)
+Test: testOneParentTwoNewChildren() took 0 milli sec(s)
+Test: testNewParentChildPair() took 0 milli sec(s)
+Test: testOneNewRelationOnly() took 0 milli sec(s)
+Test: testDeleteOneParentTwoNewChildren() took 1 milli sec(s)
+Test: testDeleteWay() took 0 milli sec(s)
+Test: testOneExistingAndThreNewInAChain() took 0 milli sec(s)
+Tests run: 7, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 46 milli sec(s)

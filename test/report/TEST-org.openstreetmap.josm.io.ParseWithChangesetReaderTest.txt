@@ -1,0 +1,17 @@
+Testcase: org.openstreetmap.josm.io.ParseWithChangesetReaderTest
+Test: test_11() took 1 milli sec(s)
+Test: test_12() took 1 milli sec(s)
+Test: test_13() took 0 milli sec(s)
+Test: test_14() took 0 milli sec(s)
+Test: test_1() took 0 milli sec(s)
+Test: test_2() took 1 milli sec(s)
+Test: test_3() took 0 milli sec(s)
+Test: test_4() took 0 milli sec(s)
+Test: test_5() took 0 milli sec(s)
+Test: test_6() took 0 milli sec(s)
+Tests run: 10, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 88 milli sec(s)
+1. Got -1. Resetting to 0.
+2026-02-04 20:42:58.481 INFO: Illegal value for attribute 'changeset' on new object -1. Got aaa. Resetting to 0.
+2026-02-04 20:42:58.481 INFO: Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is 1
+2026-02-04 20:42:58.481 INFO: Illegal value for attribute 'changeset' on new object -1. Got 1. Resetting to 0.
+------------- ---------------- ---------------

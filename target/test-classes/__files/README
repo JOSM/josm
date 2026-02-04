@@ -1,0 +1,1 @@
+The __files directory must be named this way in order to use WireMock, until https://github.com/tomakehurst/wiremock/issues/471 is fixed.

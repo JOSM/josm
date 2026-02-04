@@ -1,0 +1,3 @@
+Testcase: org.openstreetmap.josm.actions.FullscreenToggleActionTest
+Test: testFullscreenToggleAction() took 70 milli sec(s)
+Tests run: 1, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 114 milli sec(s)

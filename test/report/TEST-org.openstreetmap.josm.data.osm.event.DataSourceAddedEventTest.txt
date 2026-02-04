@@ -1,0 +1,7 @@
+Testcase: org.openstreetmap.josm.data.osm.event.DataSourceAddedEventTest
+Test: testGetAddedSource() took 0 milli sec(s)
+Test: testGetDataEventSource() took 1 milli sec(s)
+Test: testGetRemovedSource() took 0 milli sec(s)
+Test: testGetDataSources() took 1 milli sec(s)
+Test: testToString() took 0 milli sec(s)
+Tests run: 5, Failures: 0, Skipped: 0, Aborted: 0, Time elapsed: 51 milli sec(s)
