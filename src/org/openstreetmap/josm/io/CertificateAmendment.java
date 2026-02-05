@@ -180,7 +180,7 @@ public final class CertificateAmendment {
         // #24580 - Greek Research - https://repo.harica.gr (expires 2029)
         new NativeCertAmend(Collections.singleton("HARICA TLS RSA Root CA 2021"),
                 "HARICA_TLS_RSA_Root_CA_2021.pem",
-                "8dd4b5373cb0de36769c12339280d82746b3aa6cd426e797a31babe4279cf00b",
+                "d95d0e8eda79525bf9beb11b14d2100d3294985f0c62d9fabd9cd999eccb7b1d",
                 "https://www.harica.gr"),
     };
 
