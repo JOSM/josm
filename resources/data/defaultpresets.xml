@@ -8527,7 +8527,6 @@
             <check key="payment:bankaxess" text="BankAxess" match="keyvalue" />
             <check key="payment:bancomat" text="Bancomat" match="keyvalue" />
             <check key="payment:girocard" text="Girocard" match="keyvalue" />
-            <check key="payment:laser" text="Laser" match="keyvalue" />
             <check key="payment:maestro" text="Maestro" match="keyvalue" />
             <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" regions="CH" />
             <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
@@ -8548,10 +8547,8 @@
         <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" regions="FI" />
             <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" regions="DE" />
             <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" regions="PT" />
-            <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" regions="LU" />
             <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" regions="IT" />
             <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" regions="ES" />
         </checkgroup>
