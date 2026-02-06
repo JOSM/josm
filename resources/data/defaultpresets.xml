@@ -8543,7 +8543,11 @@
             <check key="payment:visa" text="Visa" match="keyvalue" />
         </checkgroup>
         <space />
-        <check key="payment:contactless" text="Contactless payment" match="keyvalue" />
+        <checkgroup columns="3">
+            <check key="payment:contactless" text="Contactless payment" match="keyvalue" />
+            <check key="payment:qr_code" text="QR code" match="keyvalue" />
+            <check key="payment:cards" text="Cards (of any type)" match="keyvalue" />
+        </checkgroup>
         <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
