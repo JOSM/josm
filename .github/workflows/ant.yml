@@ -1,6 +1,6 @@
 name: Java CI Build
 env:
-  JAVAFX_VERSION: '17.0.7'
+  JAVAFX_VERSION: '17.0.18'
 on:
   push:
     branches: [master]
