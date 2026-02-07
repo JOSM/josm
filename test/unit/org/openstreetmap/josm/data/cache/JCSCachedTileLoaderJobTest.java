@@ -106,9 +106,6 @@ class JCSCachedTileLoaderJobTest {
      */
     @BeforeEach
     void clearCache() {
-        /* ensure we have a cache */
-        getCache().get("init");
-        /* clear it */
         getCache().clear();
     }
 
