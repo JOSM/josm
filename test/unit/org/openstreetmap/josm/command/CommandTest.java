@@ -73,10 +73,10 @@ public class CommandTest {
             layer = new OsmDataLayer(new DataSet(), "layer", null);
             MainApplication.getLayerManager().addLayer(layer);
 
-            existingNode = createNode(5);
-            existingNode2 = createNode(6);
+            existingNode = createNode(5, layer);
+            existingNode2 = createNode(6, layer);
 
-            existingWay = createWay(10, existingNode, existingNode2);
+            existingWay = createWay(10, layer, existingNode, existingNode2);
         }
 
         /**
@@ -85,6 +85,10 @@ public class CommandTest {
          * @return The node.
          */
         public Node createNode(long id) {
+            return createNode(id, layer);
+        }
+
+        public static Node createNode(long id, OsmDataLayer layer) {
             Node node = new Node();
             node.setOsmId(id, 1);
             node.setCoor(LatLon.ZERO);
@@ -101,6 +105,10 @@ public class CommandTest {
          * @return The way.
          */
         public Way createWay(int id, Node... nodes) {
+            return createWay(id, layer, nodes);
+        }
+
+        public static Way createWay(int id, OsmDataLayer layer, Node... nodes) {
             Way way = new Way();
             way.setOsmId(id, 1);
             way.setNodes(Arrays.asList(nodes));
@@ -117,6 +125,10 @@ public class CommandTest {
          * @return The relation.
          */
         public Relation createRelation(int id, RelationMember... members) {
+            return createRelation(id, layer, members);
+        }
+        
+        public static Relation createRelation(int id, OsmDataLayer layer, RelationMember... members) {
             Relation relation = new Relation(id, 1);
             for (RelationMember member : members) {
                 relation.addMember(member);
@@ -142,7 +154,7 @@ public class CommandTest {
          * Creates the new test data and adds {@link #layer} to the layer manager.
          */
         public CommandTestDataWithRelation() {
-            existingRelation = createRelation(20, new RelationMember("node", existingNode), new RelationMember("way", existingWay));
+            existingRelation = createRelation(20, layer, new RelationMember("node", existingNode), new RelationMember("way", existingWay));
         }
     }
 }
