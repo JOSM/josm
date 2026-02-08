@@ -8551,7 +8551,6 @@
         <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" regions="DE" />
             <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" regions="PT" />
             <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" regions="IT" />
             <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" regions="ES" />
