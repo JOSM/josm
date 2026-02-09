@@ -59,7 +59,7 @@
         <!-- test->default -->
         <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.9.0"/>
         <dependency conf="test->default" org="org.wiremock" name="wiremock" rev="3.10.0"/>
-        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.179"/>
+        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.184"/>
         <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.11.4"/>
         <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.11.4"/>
         <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.11.4"/>

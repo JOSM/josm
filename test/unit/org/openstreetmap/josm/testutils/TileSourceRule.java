@@ -192,6 +192,7 @@ public class TileSourceRule extends WireMockRule {
      * @param registerInLayerList whether to add sources to ImageryLayerInfo's layer list
      * @param sources tile sources to serve from this mock server
      */
+    @SuppressWarnings("this-escape")
     public TileSourceRule(
         boolean clearLayerList,
         boolean clearSlippyMapSources,
