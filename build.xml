@@ -118,6 +118,9 @@
         <condition property="versions.jmockit" value="1.50" else="1.49.a">
             <isset property="isJava17"/>
         </condition>
+        <condition property="versions.equalsverifier" value="4.3.1" else="3.19.4">
+            <isset property="isJava17"/>
+        </condition>
         <property name="java.library.dir" value="jmods" />
     </target>
     <target name="init-svn-revision-xml" if="svn.present" depends="init-properties"
