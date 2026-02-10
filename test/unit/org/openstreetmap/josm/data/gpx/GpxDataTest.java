@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -493,6 +495,14 @@ class GpxDataTest {
         TestUtils.assumeWorkingEqualsVerifier();
         GpxExtensionCollection col = new GpxExtensionCollection();
         col.add("josm", "from-server", "true");
+        Collection<Collection<WayPoint>> trackSegs1 = new ArrayList<Collection<WayPoint>>();
+        Collection<Collection<WayPoint>> trackSegs2 = new ArrayList<Collection<WayPoint>>();
+        Collection<WayPoint> wps = new ArrayList<WayPoint>();
+        wps.add(new WayPoint(LatLon.SOUTH_POLE));
+        trackSegs2.add(wps);
+        Map<String, Object> attributes1 = new HashMap<String, Object>();
+        Map<String, Object> attributes2 = new HashMap<String, Object>();
+        attributes2.put("test", "test");
         EqualsVerifier.forClass(GpxData.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .withIgnoredFields("creator", "fromServer", "fromSession", "storageFile", "initializing", "updating",
@@ -500,6 +510,7 @@ class GpxDataTest {
             .withPrefabValues(WayPoint.class, new WayPoint(LatLon.NORTH_POLE), new WayPoint(LatLon.SOUTH_POLE))
             .withPrefabValues(ListenerList.class, ListenerList.create(), ListenerList.create())
             .withPrefabValues(GpxExtensionCollection.class, new GpxExtensionCollection(), col)
+            .withPrefabValues(IGpxTrack.class, new GpxTrack(trackSegs1, attributes1), new GpxTrack(trackSegs2, attributes2))
             .verify();
     }
 }

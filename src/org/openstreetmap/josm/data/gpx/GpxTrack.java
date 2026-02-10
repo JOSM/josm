@@ -210,7 +210,8 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + ((segments == null) ? 0 : segments.hashCode());
+        return 31 * super.hashCode() + ((segments == null) ? 0 : segments.hashCode())
+            + ((attr == null) ? 0 : attr.hashCode());
     }
 
     @Override
@@ -228,6 +229,11 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
             if (other.segments != null)
                 return false;
         } else if (!segments.equals(other.segments))
+            return false;
+        if (attr == null) {
+            if (other.attr != null)
+                return false;
+        } else if (!attr.equals(other.attr))
             return false;
         return true;
     }

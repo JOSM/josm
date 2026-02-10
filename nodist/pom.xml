@@ -253,7 +253,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.11.4</version>
+                <version>5.14.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -284,7 +284,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.27.1</version>
+                <version>1.28.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -296,7 +296,7 @@
             <dependency>
                 <groupId>org.tukaani</groupId>
                 <artifactId>xz</artifactId>
-                <version>1.10</version>
+                <version>1.11</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -320,7 +320,7 @@
             <dependency>
                 <groupId>ch.poole</groupId>
                 <artifactId>OpeningHoursParser</artifactId>
-                <version>0.28.2</version>
+                <version>0.29.0</version>
                 <scope>provided</scope>
             </dependency>
             <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
@@ -351,13 +351,13 @@
             <dependency>
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock</artifactId>
-                <version>3.10.0</version>
+                <version>3.13.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
-                <version>4.8.179</version>
+                <version>4.8.184</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -381,7 +381,7 @@
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
-                <version>4.2.2</version>
+                <version>4.3.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
