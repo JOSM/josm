@@ -118,7 +118,7 @@ public enum Compression {
         if (in == null) {
             return null;
         }
-        return new XZCompressorInputStream(in, true);
+        return XZCompressorInputStream.builder().setInputStream(in).setDecompressConcatenated(true).get();
     }
 
     /**

@@ -26,13 +26,13 @@
         <!-- parsson is an implementation for jakarta.json -->
         <dependency conf="runtimeOnly->default" org="org.eclipse.parsson" name="parsson" rev="1.1.7"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-jcs3-core" rev="3.2.1"/>
-        <dependency conf="api->default" org="org.apache.commons" name="commons-compress" rev="1.27.1"/>
-        <dependency conf="api->default" org="jakarta.annotation" name="jakarta.annotation-api" rev="2.1.1" />
-        <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.10"/>
+        <dependency conf="api->default" org="org.apache.commons" name="commons-compress" rev="1.28.0"/>
+        <dependency conf="api->default" org="jakarta.annotation" name="jakarta.annotation-api" rev="3.0.0" />
+        <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.11"/>
         <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
         <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.19.0" transitive="false"/>
         <dependency conf="api->default" org="com.formdev" name="svgSalamander" rev="1.1.4"/>
-        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.28.2"/>
+        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.29.0"/>
         <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2025.11.21"/>
         <!-- sources->sources -->
@@ -51,25 +51,25 @@
         <!-- commonslang->default -->
         <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.18.0"/>
         <!-- jacocoant->default -->
-        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.12">
+        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.14">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
-        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49.a"/>
+        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.50"/>
         <dependency conf="junit5-system-exit->default" org="com.ginsberg" name="junit5-system-exit" rev="${versions.junit5-system-exit}"/>
         <!-- test->default -->
-        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.9.0"/>
-        <dependency conf="test->default" org="org.wiremock" name="wiremock" rev="3.10.0"/>
+        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.9.8"/>
+        <dependency conf="test->default" org="org.wiremock" name="wiremock" rev="3.13.2"/>
         <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.184"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.11.4"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.11.4"/>
-        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.11.4"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.11.4"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.11.4"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.11.4"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.11.4"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.14.2"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-suite" rev="1.14.2"/>
+        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.14.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.14.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.14.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.14.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.14.2"/>
         <dependency conf="test->default" org="net.trajano.commons" name="commons-testing" rev="2.1.0"/>
-        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.18.1"/>
-        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.18.0"/>
-        <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.2.2"/>
+        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="4.3.1"/>
+        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.20.0"/>
+        <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.3.0"/>
     </dependencies>
 </ivy-module>
