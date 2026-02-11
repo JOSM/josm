@@ -51,7 +51,6 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
     private CacheAccess<TileZXY, ImageCache> cache;
     private int zoom;
     private Consumer<TileZXY> notifier;
-    private final ExecutorService worker;
 
     /**
      * Constructs a new {@code StyledMapRenderer}.
@@ -65,7 +64,6 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
      */
     public StyledTiledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
-        this.worker = MainApplication.worker;
     }
 
     @Override
@@ -75,7 +73,6 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
             super.render(data, renderVirtualNodes, bounds);
             return;
         }
-        final Executor worker = this.worker;
         final BufferedImage tempImage;
         final Graphics2D tempG2d;
         // I'd like to avoid two image copies, but there are some issues using the original g2d object
@@ -131,7 +128,7 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
                 // Note that the paint code is *not* thread safe, so all tiles must be painted on the same thread.
                 // FIXME figure out how to make this thread safe? Probably not necessary, since UI isn't blocked, but it would be a nice to have
                 TileLoader loader = new TileLoader(data, tile, tileSize, new ArrayList<>());
-                worker.execute(loader);
+                MainApplication.worker.execute(loader);
                 if (tImg == null) {
                     this.cache.put(tile, new ImageCache(null, loader, false));
                 } else {
@@ -161,7 +158,7 @@ public final class StyledTiledMapRenderer extends StyledMapRenderer {
         }
         // Force another render pass if there may be more tiles to render
         if (submittedTile <= 0) {
-            worker.execute(nc::invalidate);
+            MainApplication.worker.execute(nc::invalidate);
         }
         final double percentDrawn = 100 * painted / (double) toRender.size();
         if (percentDrawn < 99.99) {
