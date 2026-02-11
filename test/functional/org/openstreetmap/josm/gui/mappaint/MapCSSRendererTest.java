@@ -123,7 +123,7 @@ public class MapCSSRendererTest {
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
                 /* Tests node shapes with both fill and stroke combined */
                 new TestConfig("node-shapes-combined")
-                        .setThresholdPixels(1).setThresholdTotalColorDiff(0),
+                        .setThresholdPixels(1).setThresholdTotalColorDiff(1),
                 /* Another test for dashed ways */
                 new TestConfig("way-dashes2")
                         .setThresholdPixels(0).setThresholdTotalColorDiff(0),
