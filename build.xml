@@ -15,7 +15,26 @@
          xmlns:jacoco="antlib:org.jacoco.ant"
          xmlns:unless="ant:unless"
 >
-    <target name="init-ivy" description="Initialize dependency management system Apache Ivy">
+    <target name="init-javaversions" description="Initialize Java version properties">
+        <!-- For Java specific stuff by version -->
+        <!-- <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]|[2-9][0-9]" /></condition> -->
+        <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]|[2-9][0-9]" /></condition>
+        <!-- <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition> -->
+        <!-- <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]|[2-9][0-9]" /></condition> -->
+        <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]|[2-9][0-9]" /></condition>
+        <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
+        <!-- <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]|[2-9][0-9]" /></condition> -->
+        <condition property="isJava19"><matches string="${ant.java.version}" pattern="19|[2-9][0-9]" /></condition>
+        <!-- <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition> -->
+        <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
+        <!-- <condition property="isJava22"><matches string="${ant.java.version}" pattern="2[2-9]|[3-9][0-9]" /></condition> -->
+        <!-- <condition property="isJava23"><matches string="${ant.java.version}" pattern="2[3-9]|[3-9][0-9]" /></condition> -->
+        <condition property="isJava24"><matches string="${ant.java.version}" pattern="2[4-9]|[3-9][0-9]" /></condition>
+        <!-- <condition property="isJava25"><matches string="${ant.java.version}" pattern="2[5-9]|[3-9][0-9]" /></condition> -->
+        <!-- <condition property="isJava26"><matches string="${ant.java.version}" pattern="2[6-9]|[3-9][0-9]" /></condition> -->
+        <!-- Disable jacoco on Java 19+, see https://github.com/jacoco/jacoco/pull/1282 -->
+    </target>
+    <target name="init-ivy" depends="init-javaversions" description="Initialize dependency management system Apache Ivy">
         <property name="ivy.version" value="2.5.3"/>
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="lib.dir"   location="${base.dir}/lib"/>
@@ -23,6 +42,12 @@
         <property name="tools.ivy" location="${tools.dir}/ivy.xml"/>
         <property name="ivy.jar.dir" location="${tools.dir}/ivy"/>
         <property name="ivy.jar.file" location="${ivy.jar.dir}/ivy-${ivy.version}.jar"/>
+        <condition property="versions.jmockit" value="1.50" else="1.49.a">
+            <isset property="isJava17"/>
+        </condition>
+        <condition property="versions.equalsverifier" value="4.3.1" else="3.19.4">
+            <isset property="isJava17"/>
+        </condition>
         <mkdir dir="${ivy.jar.dir}"/>
         <get src="https://josm.openstreetmap.de/repository/public/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
              dest="${ivy.jar.file}"
@@ -30,7 +55,7 @@
         />
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.file}"/>
     </target>
-    <target name="init-properties" description="Initialize properties for the build">
+    <target name="init-properties" depends="init-javaversions" description="Initialize properties for the build">
         <property environment="env"/>
         <!-- Load properties in a target and not at top level, so this build file can be
         imported from an IDE ant file (Netbeans) without messing up IDE properties.
@@ -93,33 +118,10 @@
         <condition property="clevel" value="${clevel}" else="9">
             <isset property="clevel"/>
         </condition>
-        <!-- For Java specific stuff by version -->
-        <!-- <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]|[2-9][0-9]" /></condition> -->
-        <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]|[2-9][0-9]" /></condition>
-        <!-- <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition> -->
-        <!-- <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]|[2-9][0-9]" /></condition> -->
-        <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]|[2-9][0-9]" /></condition>
-        <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
-        <!-- <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]|[2-9][0-9]" /></condition> -->
-        <condition property="isJava19"><matches string="${ant.java.version}" pattern="19|[2-9][0-9]" /></condition>
-        <!-- <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition> -->
-        <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
-        <!-- <condition property="isJava22"><matches string="${ant.java.version}" pattern="2[2-9]|[3-9][0-9]" /></condition> -->
-        <!-- <condition property="isJava23"><matches string="${ant.java.version}" pattern="2[3-9]|[3-9][0-9]" /></condition> -->
-        <condition property="isJava24"><matches string="${ant.java.version}" pattern="2[4-9]|[3-9][0-9]" /></condition>
-        <!-- <condition property="isJava25"><matches string="${ant.java.version}" pattern="2[5-9]|[3-9][0-9]" /></condition> -->
-        <!-- <condition property="isJava26"><matches string="${ant.java.version}" pattern="2[6-9]|[3-9][0-9]" /></condition> -->
-        <!-- Disable jacoco on Java 19+, see https://github.com/jacoco/jacoco/pull/1282 -->
         <condition property="coverageByDefault">
             <not>
                 <isset property="isJava19"/>
             </not>
-        </condition>
-        <condition property="versions.jmockit" value="1.50" else="1.49.a">
-            <isset property="isJava17"/>
-        </condition>
-        <condition property="versions.equalsverifier" value="4.3.1" else="3.19.4">
-            <isset property="isJava17"/>
         </condition>
         <property name="java.library.dir" value="jmods" />
     </target>
