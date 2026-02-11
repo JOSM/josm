@@ -51,7 +51,7 @@
         <!-- commonslang->default -->
         <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.18.0"/>
         <!-- jacocoant->default -->
-        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="${versions.jacoco}">
+        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.13">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
         <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="${versions.jmockit}"/>
