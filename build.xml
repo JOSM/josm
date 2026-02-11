@@ -369,6 +369,12 @@ Build-Date: ${build.tstamp}
             <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" unless:set="noJavaFX" />
         </javadoc>
     </target>
+    <target name="cleanfull" depends="init-properties" description="Delete all generated files">
+        <exec executable="svn" dir="${basedir}">
+            <arg value="cleanup"/>
+            <arg value="--remove-ignored"/>
+        </exec>
+    </target>
     <target name="clean" depends="init-properties" description="Delete all build files">
         <delete dir="${build.dir}"/>
         <delete dir="${proj-build.dir}"/>
