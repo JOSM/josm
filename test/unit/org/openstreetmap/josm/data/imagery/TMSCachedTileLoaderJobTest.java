@@ -55,7 +55,7 @@ class TMSCachedTileLoaderJobTest {
     }
 
     private static ICacheAccess<String, BufferedImageCacheEntry> getCache() {
-        return JCSCacheManager.getCache("test");
+        return JCSCacheManager.getCache("testTMSCachedTileLoader");
     }
 
     private static class TestCachedTileLoaderJob extends TMSCachedTileLoaderJob {

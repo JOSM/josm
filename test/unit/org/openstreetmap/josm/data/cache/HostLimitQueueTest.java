@@ -73,7 +73,7 @@ class HostLimitQueueTest {
     @Test
     void testSingleThreadPerHost() throws Exception {
         ThreadPoolExecutor tpe = TMSCachedTileLoader.getNewThreadPoolExecutor("test-%d", 3, 1);
-        ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("test", 3, 0, "");
+        ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("testHostLimitQueue", 3, 0, "");
         AtomicInteger counter = new AtomicInteger(0);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10; i++) {
@@ -99,7 +99,7 @@ class HostLimitQueueTest {
     @Test
     void testMultipleThreadPerHost() throws Exception {
         ThreadPoolExecutor tpe = TMSCachedTileLoader.getNewThreadPoolExecutor("test-%d", 3, 2);
-        ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("test", 3, 0, "");
+        ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("testHostLimitQueue", 3, 0, "");
         AtomicInteger counter = new AtomicInteger(0);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10; i++) {
@@ -124,7 +124,7 @@ class HostLimitQueueTest {
     @Test
     void testTwoHosts() throws Exception {
         ThreadPoolExecutor tpe = TMSCachedTileLoader.getNewThreadPoolExecutor("test-%d", 3, 1);
-        ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("test", 3, 0, "");
+        ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("testHostLimitQueue", 3, 0, "");
         AtomicInteger counter = new AtomicInteger(0);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10; i++) {
