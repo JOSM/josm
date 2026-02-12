@@ -20,7 +20,7 @@ class ShortcutTest {
     @Test
     void testMakeTooltip() {
         final String tooltip = Shortcut.makeTooltip("Foo Bar", KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.SHIFT_DOWN_MASK));
-        final String shift = Platform.determinePlatform() == Platform.OSX ? "⇧" : "Shift";
+        final String shift = Platform.determinePlatform() == Platform.OSX ? "⇧" : KeyEvent.getKeyModifiersText(InputEvent.SHIFT_MASK);
         if (PlatformManager.getPlatform().isHtmlSupportedInMenuTooltips()) {
             assertEquals("<html>Foo Bar <font size='-2'>(" + shift + "+J)</font>&nbsp;</html>", tooltip);
         } else {
