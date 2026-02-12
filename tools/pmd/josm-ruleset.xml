@@ -106,6 +106,7 @@
     </properties>
   </rule>
   <rule ref="category/java/design.xml">
+    <exclude name="PublicMemberInNonPublicType" reason="Fixing these issues does not improve the code quality, rather the opposite"/>
     <exclude name="AvoidCatchingGenericException"/>
     <exclude name="AvoidDeeplyNestedIfStmts"/>
     <exclude name="AvoidRethrowingException"/>
