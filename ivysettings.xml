@@ -5,7 +5,19 @@
   <resolvers>
     <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/repository/public/" />
   </resolvers>
-  <!-- Remove junit5-system-exit specific statements in build.xml when we drop Java 11 as a build platform -->
+
+  <!-- Remove specific statements in build.xml when we drop older Java as a build platform -->
+
   <property name="versions.junit5-system-exit" value="1.1.2" unlessset="isJava17"/>
   <property name="versions.junit5-system-exit" value="2.0.2" ifset="isJava17"/>
+  
+  <property name="versions.checkstyle" value="10.26.1" unlessset="isJava17"/>
+  <property name="versions.checkstyle" value="12.3.1" unlessset="isJava21" ifset="isJava17"/>
+  <property name="versions.checkstyle" value="13.2.0" ifset="isJava21"/>
+
+  <property name="versions.jmockit" value="1.49.a" unlessset="isJava17"/>
+  <property name="versions.jmockit" value="1.50" ifset="isJava17"/>
+
+  <property name="versions.equalsverifier" value="3.19.4" unlessset="isJava17"/>
+  <property name="versions.equalsverifier" value="4.3.1" ifset="isJava17"/>
 </ivysettings>
