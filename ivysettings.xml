@@ -15,6 +15,10 @@
   <property name="versions.checkstyle" value="12.3.1" unlessset="isJava21" ifset="isJava17"/>
   <property name="versions.checkstyle" value="13.2.0" ifset="isJava21"/>
 
+  <property name="versions.errorprone" value="2.31.0" unlessset="isJava17"/>
+  <property name="versions.errorprone" value="2.42.0" unlessset="isJava21" ifset="isJava17"/>
+  <property name="versions.errorprone" value="2.47.0" ifset="isJava21"/>
+
   <property name="versions.jmockit" value="1.49.a" unlessset="isJava17"/>
   <property name="versions.jmockit" value="1.50" ifset="isJava17"/>
 
