@@ -173,7 +173,9 @@ class DomainValidatorTestIT {
                 }
             }
             allTLD.remove("arpa");
-            allTLD.replace("melbourne", allTLD.get("melbourne").replaceAll("represented by its ",""));
+            String s = allTLD.get("melbourne");
+            if (s != null) /* text too long, shorten a bit */
+                allTLD.replace("melbourne", s.replace("represented by its ", ""));
             printMap(header, allTLD, "allTLD");
             printMap(header, allCC, "allCC");
             if (!missingTLD.isEmpty()) {
