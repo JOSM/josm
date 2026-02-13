@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2026011700, Last Updated Sat Jan 17 07:07:01 2026 UTC
+        // Taken from Version 2026021300, Last Updated Fri Feb 13 07:07:01 2026 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -698,7 +698,6 @@ public final class DomainValidator extends AbstractValidator {
         "gold", // gold Binky Moon, LLC
         "goldpoint", // goldpoint YODOBASHI CAMERA CO.,LTD.
         "golf", // golf Binky Moon, LLC
-        "goo", // goo NTT Resonant Inc.
         "goodyear", // goodyear The Goodyear Tire & Rubber Company
         "goog", // goog Charleston Road Registry Inc.
         "google", // google Charleston Road Registry Inc.
@@ -1225,7 +1224,7 @@ public final class DomainValidator extends AbstractValidator {
         "today", // today Binky Moon, LLC
         "tokyo", // tokyo GMO Registry, Inc.
         "tools", // tools Binky Moon, LLC
-        "top", // top .TOP Registry
+        "top", // top Hong Kong Zhongze International Limited
         "toray", // toray Toray Industries, Inc.
         "toshiba", // toshiba TOSHIBA Corporation
         "total", // total TotalEnergies SE
@@ -1680,7 +1679,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--45br5cyl", // ভাৰত National Internet eXchange of India
         "xn--45brj9c", // ভারত National Internet Exchange of India
         "xn--4dbrk0ce", // ישראל The Israel Internet Association (RA)
-        "xn--54b7fta0cc", // বাং Posts and Telecommunications Division
+        "xn--54b7fta0cc", // বাংলা Posts and Telecommunications Division
         "xn--80ao21a", // қаз Association of IT Companies of Kazakhstan
         "xn--90a3ac", // срб Serbian National Internet Domain Registry (RNIDS)
         "xn--90ae", // бг Imena.BG AD
@@ -1720,7 +1719,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mix891f", // 澳門 Macao Post and Telecommunications Bureau (CTT)
         "xn--node", // გე Information Technologies Development Center (ITDC)
         "xn--o3cw4h", // ไทย Thai Network Information Center Foundation
-        "xn--ogbpf8fl", // سورية National Agency for Network Services (NANS)
+        "xn--ogbpf8fl", // سورية National Authority for Information Technology Services (NAITS)
         "xn--p1ai", // рф Coordination Center for TLD RU
         "xn--pgbs0dh", // تونس Agence Tunisienne d'Internet
         "xn--q7ce6a", // ລາວ Lao National Internet Center (LANIC), Ministry of Technology and Communications
