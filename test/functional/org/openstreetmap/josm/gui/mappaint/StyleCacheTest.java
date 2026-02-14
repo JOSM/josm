@@ -153,14 +153,15 @@ class StyleCacheTest {
         Rendering visitor = new StyledMapRenderer(g, nc, false);
         nc.zoomTo(bounds);
         visitor.render(dsCity2, true, bounds);
+        ElemStyles elemStyles = MapPaintStyles.getStyles();
 
         IdentityHashMap<StyleElementList, Integer> counter = new IdentityHashMap<>();
         int noPrimitives = 0;
         for (OsmPrimitive osm : dsCity2.allPrimitives()) {
             // primitives, that have been rendered, should have the cache populated
-            if (osm.getCachedStyle() != null) {
+            if (osm.getCachedStyle(elemStyles) != null) {
                 noPrimitives++;
-                Pair<StyleElementList, Range> p = osm.getCachedStyle().getWithRange(nc.getDist100Pixel(), false);
+                Pair<StyleElementList, Range> p = osm.getCachedStyle(elemStyles).getWithRange(nc.getDist100Pixel(), false);
                 StyleElementList sel = p.a;
                 assertNotNull(sel);
                 counter.merge(sel, 1, Integer::sum);

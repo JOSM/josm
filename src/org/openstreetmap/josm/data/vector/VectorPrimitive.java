@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -13,6 +14,7 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -24,7 +26,7 @@ import org.openstreetmap.josm.tools.Utils;
 public abstract class VectorPrimitive extends AbstractPrimitive implements DataLayer<String> {
     private VectorDataSet dataSet;
     private boolean highlighted;
-    private StyleCache mappaintStyle;
+    private final Map<ElemStyles, StyleCache> mappaintStyle = new HashMap<>();
     private final String layer;
 
     /**
@@ -77,23 +79,27 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
      *--------*/
 
     @Override
-    public final StyleCache getCachedStyle() {
-        return mappaintStyle;
+    public final StyleCache getCachedStyle(ElemStyles elemStyles) {
+        return mappaintStyle.get(elemStyles);
     }
 
     @Override
-    public final void setCachedStyle(StyleCache mappaintStyle) {
-        this.mappaintStyle = mappaintStyle;
+    public final void setCachedStyle(ElemStyles elemStyles, StyleCache mappaintStyle) {
+        this.mappaintStyle.put(elemStyles, mappaintStyle);
     }
 
     @Override
-    public final boolean isCachedStyleUpToDate() {
-        return mappaintStyle != null && mappaintCacheIdx == dataSet.getMappaintCacheIndex();
+    public final boolean isCachedStyleUpToDate(ElemStyles elemStyles) {
+        return mappaintStyle.get(elemStyles) != null && mappaintCacheIdx == dataSet.getMappaintCacheIndex();
     }
 
     @Override
-    public final void declareCachedStyleUpToDate() {
+    public final void declareCachedStyleUpToDate(ElemStyles elemStyles) {
         this.mappaintCacheIdx = dataSet.getMappaintCacheIndex();
+    }
+
+    public void clearCachedStyle() {
+        this.mappaintStyle.clear();
     }
 
     @Override
