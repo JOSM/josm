@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2026021300, Last Updated Fri Feb 13 07:07:01 2026 UTC
+        // Taken from Version 2026021400, Last Updated Sat Feb 14 07:07:01 2026 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -1304,7 +1304,6 @@ public final class DomainValidator extends AbstractValidator {
         "wine", // wine Binky Moon, LLC
         "winners", // winners The TJX Companies, Inc.
         "wme", // wme William Morris Endeavor Entertainment, LLC
-        "wolterskluwer", // wolterskluwer Wolters Kluwer N.V.
         "woodside", // woodside Woodside Petroleum Limited
         "work", // work Registry Services, LLC
         "works", // works Binky Moon, LLC
