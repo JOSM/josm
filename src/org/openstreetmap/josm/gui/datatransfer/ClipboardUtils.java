@@ -116,8 +116,9 @@ public final class ClipboardUtils {
                             + " while getting clipboard content", ex);
                     Thread.currentThread().interrupt();
                 }
-            } catch (NullPointerException e) { // NOPMD
+            } catch (NullPointerException|NoClassDefFoundError e) { // NOPMD
                 // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
+                // See #24642: Access can fail due to issues in ImageIO when an image is in clipboard
                 Logging.error(e);
             }
         }
