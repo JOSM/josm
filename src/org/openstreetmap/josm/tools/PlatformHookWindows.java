@@ -472,61 +472,62 @@ public class PlatformHookWindows implements PlatformHook {
             byte[] content = Files.readAllBytes(templateFile);
             File cachePath = Config.getDirs().getCacheDirectory(true);
             Path fontconfigFile = cachePath.toPath().resolve("fontconfig.properties");
-            OutputStream os = Files.newOutputStream(fontconfigFile); // NOPMD
-            os.write(content);
-            try (Writer w = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
-                Collection<FontEntry> extrasPref = StructUtils.getListOfStructs(Config.getPref(),
-                        "font.extended-unicode.extra-items", getAdditionalFonts(), FontEntry.class);
-                Collection<FontEntry> extras = new ArrayList<>();
-                w.append("\n\n# Added by JOSM to extend unicode coverage of Java font support:\n\n");
-                List<String> allCharSubsets = new ArrayList<>();
-                for (FontEntry entry: extrasPref) {
-                    Collection<String> fontsAvail = getInstalledFonts();
-                    if (fontsAvail != null && fontsAvail.contains(entry.file.toUpperCase(Locale.ENGLISH))) {
-                        if (!allCharSubsets.contains(entry.charset)) {
-                            allCharSubsets.add(entry.charset);
-                            extras.add(entry);
+            try (OutputStream os = Files.newOutputStream(fontconfigFile)) {
+                os.write(content);
+                try (Writer w = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
+                    Collection<FontEntry> extrasPref = StructUtils.getListOfStructs(Config.getPref(),
+                            "font.extended-unicode.extra-items", getAdditionalFonts(), FontEntry.class);
+                    Collection<FontEntry> extras = new ArrayList<>();
+                    w.append("\n\n# Added by JOSM to extend unicode coverage of Java font support:\n\n");
+                    List<String> allCharSubsets = new ArrayList<>();
+                    for (FontEntry entry: extrasPref) {
+                        Collection<String> fontsAvail = getInstalledFonts();
+                        if (fontsAvail != null && fontsAvail.contains(entry.file.toUpperCase(Locale.ENGLISH))) {
+                            if (!allCharSubsets.contains(entry.charset)) {
+                                allCharSubsets.add(entry.charset);
+                                extras.add(entry);
+                            } else {
+                                Logging.trace("extended font config - already registered font for charset ''{0}'' - skipping ''{1}''",
+                                        entry.charset, entry.name);
+                            }
                         } else {
-                            Logging.trace("extended font config - already registered font for charset ''{0}'' - skipping ''{1}''",
-                                    entry.charset, entry.name);
+                            Logging.trace("extended font config - Font ''{0}'' not found on system - skipping", entry.name);
                         }
-                    } else {
-                        Logging.trace("extended font config - Font ''{0}'' not found on system - skipping", entry.name);
                     }
+                    for (FontEntry entry: extras) {
+                        allCharSubsets.add(entry.charset);
+                        if ("".equals(entry.name)) {
+                            continue;
+                        }
+                        String key = "allfonts." + entry.charset;
+                        String value = entry.name;
+                        String prevValue = props.getProperty(key);
+                        if (prevValue != null && !prevValue.equals(value)) {
+                            Logging.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
+                        }
+                        w.append(key).append('=').append(value).append('\n');
+                    }
+                    w.append('\n');
+                    for (FontEntry entry: extras) {
+                        if ("".equals(entry.name) || "".equals(entry.file)) {
+                            continue;
+                        }
+                        String key = "filename." + entry.name.replace(' ', '_');
+                        String value = entry.file;
+                        String prevValue = props.getProperty(key);
+                        if (prevValue != null && !prevValue.equals(value)) {
+                            Logging.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
+                        }
+                        w.append(key).append('=').append(value).append('\n');
+                    }
+                    w.append('\n');
+                    w.append("sequence.fallback=");
+                    String fallback = props.getProperty("sequence.fallback");
+                    if (fallback != null) {
+                        w.append(fallback).append(",");
+                    }
+                    w.append(String.join(",", allCharSubsets)).append("\n");
                 }
-                for (FontEntry entry: extras) {
-                    allCharSubsets.add(entry.charset);
-                    if ("".equals(entry.name)) {
-                        continue;
-                    }
-                    String key = "allfonts." + entry.charset;
-                    String value = entry.name;
-                    String prevValue = props.getProperty(key);
-                    if (prevValue != null && !prevValue.equals(value)) {
-                        Logging.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
-                    }
-                    w.append(key).append('=').append(value).append('\n');
-                }
-                w.append('\n');
-                for (FontEntry entry: extras) {
-                    if ("".equals(entry.name) || "".equals(entry.file)) {
-                        continue;
-                    }
-                    String key = "filename." + entry.name.replace(' ', '_');
-                    String value = entry.file;
-                    String prevValue = props.getProperty(key);
-                    if (prevValue != null && !prevValue.equals(value)) {
-                        Logging.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
-                    }
-                    w.append(key).append('=').append(value).append('\n');
-                }
-                w.append('\n');
-                w.append("sequence.fallback=");
-                String fallback = props.getProperty("sequence.fallback");
-                if (fallback != null) {
-                    w.append(fallback).append(",");
-                }
-                w.append(String.join(",", allCharSubsets)).append("\n");
             }
             Utils.updateSystemProperty("sun.awt.fontconfig", fontconfigFile.toString());
         } catch (IOException | InvalidPathException ex) {

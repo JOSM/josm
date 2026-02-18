@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
@@ -48,7 +49,7 @@ public class WMSLayerImporter extends FileImporter {
         ImageryInfo info = null;
         final ImageryLayer layer;
 
-        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file.toPath()))) {
+        try (InputStream fis = Files.newInputStream(file.toPath()); ObjectInputStream ois = new ObjectInputStream(fis)) {
             int sfv = ois.readInt();
             if (sfv < 5) {
                 throw new InvalidClassException(tr("Unsupported WMS file version; found {0}, expected {1}", sfv, 5));
