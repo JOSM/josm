@@ -401,9 +401,6 @@ public abstract class HttpClient {
          * @see HttpURLConnection#getInputStream()
          * @see HttpURLConnection#getErrorStream()
          */
-        @SuppressWarnings({"resource",
-                /* All 4 `InputStream in` reassignments would close the original when the returned stream is closed */
-                "PMD.CloseResource"})
         public final InputStream getContent() throws IOException {
             InputStream in = new ProgressInputStream(getInputStream(), getContentLength(), monitor);
             if ("gzip".equalsIgnoreCase(getContentEncoding())) {

@@ -793,7 +793,6 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     }
 
     @Override
-    @SuppressWarnings("PMD.UseArraysAsList") // See https://github.com/pmd/pmd/issues/5071
     public final Collection<String> keySet() {
         String[] tKeys = this.keys;
         if (tKeys == null) {

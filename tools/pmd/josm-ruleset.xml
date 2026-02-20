@@ -107,7 +107,6 @@
   </rule>
   <rule ref="category/java/design.xml">
     <exclude name="PublicMemberInNonPublicType" reason="Fixing these issues does not improve the code quality, rather the opposite"/>
-    <exclude name="AvoidCatchingGenericException"/>
     <exclude name="AvoidDeeplyNestedIfStmts"/>
     <exclude name="AvoidRethrowingException"/>
     <exclude name="AvoidUncheckedExceptionsInSignatures" reason="We disagree with the reasoning for making this an issue; a strength of Java is verbosity, and warning users about adding `@throws &lt;? extends RuntimeException&gt;` is probably a bad long-term idea."/>
@@ -146,6 +145,7 @@
     </properties>
   </rule>
   <rule ref="category/java/errorprone.xml">
+    <exclude name="AvoidCatchingGenericException"/>
     <exclude name="AssignmentInOperand"/>
     <exclude name="AssignmentToNonFinalStatic"/>
     <exclude name="AvoidBranchingStatementAsLastInLoop"/>

@@ -127,6 +127,7 @@ public final class TaggingPresetReader {
          * Returns the last inserted element.
          * @return the last inserted element
          */
+        @SuppressWarnings("PMD.MissingOverride") // For Java >= 21 we can drop the whole class
         public E getLast() {
             return last;
         }

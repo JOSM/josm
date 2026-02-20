@@ -273,7 +273,7 @@ public class RenderingCLI implements CLIModule {
             if (!"auto".equals(arg)) {
                 try {
                     argBounds = new Bounds(arg, ",", Bounds.ParseMethod.LEFT_BOTTOM_RIGHT_TOP, false);
-                } catch (IllegalArgumentException iae) { // NOPMD
+                } catch (IllegalArgumentException iae) {
                     throw new OptionParseException(
                             tr("Unable to parse {0} parameter: {1}", "--bounds", iae.getMessage()), iae);
                 }
@@ -308,7 +308,7 @@ public class RenderingCLI implements CLIModule {
                 double lon = LatLonParser.parseCoordinate(parts[0]);
                 double lat = LatLonParser.parseCoordinate(parts[1]);
                 argAnchor = new LatLon(lat, lon);
-            } catch (IllegalArgumentException iae) { // NOPMD
+            } catch (IllegalArgumentException iae) {
                 throw new OptionParseException(tr("In option {0}: {1}", "--anchor", iae.getMessage()), iae);
             }
             break;

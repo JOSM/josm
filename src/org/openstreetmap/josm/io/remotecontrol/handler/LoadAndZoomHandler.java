@@ -178,7 +178,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     }
                 }
             }
-        } catch (RuntimeException ex) { // NOPMD
+        } catch (RuntimeException ex) {
             Logging.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
             Logging.error(ex);
             throw new RequestHandlerErrorException(ex);
@@ -246,7 +246,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 Thread.currentThread().interrupt();
                 ExceptionDialogUtil.explainException(ex);
             } catch (ExecutionException | TimeoutException |
-                     OsmTransferException | RuntimeException ex) { // NOPMD
+                     OsmTransferException | RuntimeException ex) {
                 ExceptionDialogUtil.explainException(ex);
             }
         });

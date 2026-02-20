@@ -79,7 +79,7 @@ public class GpxTracksSessionExporter extends GenericSessionExporter<GpxLayer> {
 
     @Override
     // The new closable resources in this method will close the input OutputStream
-    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"})
+    @SuppressWarnings("squid:S2095")
     protected void addDataFile(OutputStream out) {
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         GpxWriter w = new GpxWriter(new PrintWriter(writer));

@@ -114,7 +114,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
         } catch (IOException e) {
             displayError(f, e);
             return false;
-        } catch (RuntimeException | LinkageError e) { // NOPMD
+        } catch (RuntimeException | LinkageError e) {
             BugReportExceptionHandler.handleException(e);
             return false;
         }

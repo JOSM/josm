@@ -213,7 +213,7 @@ public class WMSImagery {
                 }
                 try {
                     capabilitiesUrl = new File(workingAddress).toURI().toURL();
-                } catch (MalformedURLException e1) { // NOPMD
+                } catch (MalformedURLException e1) {
                     // do nothing, raise original exception
                     Logging.trace(e1);
                 }

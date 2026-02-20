@@ -674,7 +674,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                     }
                 } catch (SecurityException ex) {
                     Logging.error(ex);
-                } catch (RuntimeException ex) { // NOPMD
+                } catch (RuntimeException ex) {
                     // allow to change most settings even if e.g. a plugin fails
                     BugReportExceptionHandler.handleException(ex);
                 } finally {
@@ -695,7 +695,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                 sps.addGui(this);
             } catch (SecurityException ex) {
                 Logging.error(ex);
-            } catch (RuntimeException ex) { // NOPMD
+            } catch (RuntimeException ex) {
                 BugReportExceptionHandler.handleException(ex);
             } finally {
                 settingsInitialized.add(sps);

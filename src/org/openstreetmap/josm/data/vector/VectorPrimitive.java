@@ -188,7 +188,7 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
         if (referrers == null) {
             return Stream.empty();
         }
-        final Stream<IPrimitive> stream = referrers instanceof IPrimitive // NOPMD
+        final Stream<IPrimitive> stream = referrers instanceof IPrimitive
           ? Stream.of((IPrimitive) referrers)
           : Arrays.stream((IPrimitive[]) referrers);
         return stream

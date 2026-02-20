@@ -199,7 +199,7 @@ public final class JCSCacheManager {
                     cc.setAuxCaches(Collections.singletonList(DISK_CACHE_FACTORY.createCache(
                             diskAttributes, null, null, new StandardSerializer())));
                 }
-            } catch (Exception e) { // NOPMD
+            } catch (Exception e) {
                 // in case any error in setting auxiliary cache, do not use disk cache at all - only memory
                 cc.setAuxCaches(Collections.emptyList());
                 Logging.debug(e);

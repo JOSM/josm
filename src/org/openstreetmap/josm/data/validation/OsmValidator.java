@@ -671,7 +671,7 @@ public final class OsmValidator {
                 if (test.enabled) {
                     test.initialize();
                 }
-            } catch (Exception e) { // NOPMD
+            } catch (Exception e) {
                 String message = tr("Error initializing test {0}:\n {1}", test.getClass().getSimpleName(), e);
                 Logging.error(message);
                 if (!GraphicsEnvironment.isHeadless()) {

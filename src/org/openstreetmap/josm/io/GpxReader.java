@@ -40,7 +40,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
      * @throws IOException if an IO error occurs, e.g. the input stream is closed.
      */
     public GpxReader(InputStream source) throws IOException {
-        Reader utf8stream = UTFInputStreamReader.create(source); // NOPMD
+        Reader utf8stream = UTFInputStreamReader.create(source);
         Reader filtered = new InvalidXmlCharacterFilter(utf8stream); // NOPMD
         this.inputSource = new InputSource(filtered);
     }

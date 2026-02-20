@@ -1581,7 +1581,7 @@ public class ImageProvider {
     public static BufferedImage read(InputStream input, boolean readMetadata, boolean enforceTransparency) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(input, "input");
 
-        ImageInputStream stream = createImageInputStream(input); // NOPMD
+        ImageInputStream stream = createImageInputStream(input);
         BufferedImage bi = read(stream, readMetadata, enforceTransparency);
         if (bi == null) {
             stream.close();

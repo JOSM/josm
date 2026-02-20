@@ -172,7 +172,7 @@ public class MapPaintPreference extends DefaultTabPreferenceSetting {
             if (!Utils.isEmpty(css.title)) {
                 return css.title;
             }
-        } catch (RuntimeException ignore) { // NOPMD
+        } catch (RuntimeException ignore) {
             Logging.debug(ignore);
         }
         return null;

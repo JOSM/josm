@@ -38,7 +38,7 @@ public class OsmDataSessionExporter extends GenericSessionExporter<OsmDataLayer>
      *            {@link org.apache.commons.io.output.CloseShieldOutputStream} when calling this method to
      *            avoid potential future issues)
      */
-    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"}) // All the closeables in this method will close the input OutputStream.
+    @SuppressWarnings("squid:S2095") // All the closeables in this method will close the input OutputStream.
     public static void exportData(DataSet data, OutputStream out) {
         // This writer will close out when it is closed
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
