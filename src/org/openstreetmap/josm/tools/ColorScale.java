@@ -8,7 +8,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Font;
 import java.util.Arrays;
-import java.util.Date;
 import java.time.ZoneId;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -488,10 +487,7 @@ public final class ColorScale {
                 txt = colorBarTitles[i];
             } else {
                 final double val = minVal + i * (maxVal - minVal) / intervalCount;
-                final long longval = (long) val;
-
-                final Date date = new Date(longval * 1000L);
-                final Instant dateInst = date.toInstant();
+                final Instant dateInst = Instant.ofEpochSecond((long) val);
 
                 final ZoneId gmt = ZoneId.of("GMT");
                 final ZonedDateTime zonedDateTime = dateInst.atZone(gmt);

@@ -10,8 +10,10 @@ import java.io.Writer;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -452,7 +454,7 @@ public class RequestProcessor extends Thread {
     private static void sendHeader(Writer out, String status, String contentType,
             boolean endHeaders) throws IOException {
         out.write("HTTP/1.1 " + status + "\r\n");
-        out.write("Date: " + new Date() + "\r\n");
+        out.write("Date: " + DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneOffset.UTC)) + "\r\n");
         out.write("Server: " + JOSM_REMOTE_CONTROL + "\r\n");
         out.write("Content-type: " + contentType + "; charset=" + RESPONSE_CHARSET.name().toLowerCase(Locale.ENGLISH) + "\r\n");
         out.write("Access-Control-Allow-Origin: *\r\n");

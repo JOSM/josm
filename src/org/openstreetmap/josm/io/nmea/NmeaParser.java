@@ -2,24 +2,24 @@
 package org.openstreetmap.josm.io.nmea;
 
 import java.nio.charset.StandardCharsets;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Parses NMEA 0183 data. Based on information from
@@ -179,28 +179,19 @@ public class NmeaParser {
         }
     }
 
-    private static final Pattern DATE_TIME_PATTERN = Pattern.compile("(\\d{12})(\\.\\d+)?");
-
-    private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS", Locale.ENGLISH);
-
-    private Instant readTime(String p) throws IllegalDataException {
-        // NMEA defines time with "a variable number of digits for decimal-fraction of seconds"
-        // This variable decimal fraction cannot be parsed by SimpleDateFormat
-        Matcher m = DATE_TIME_PATTERN.matcher(p);
-        if (m.matches()) {
-            String date = m.group(1);
-            double milliseconds = 0d;
-            if (m.groupCount() > 1 && m.group(2) != null) {
-                milliseconds = 1000d * Double.parseDouble("0" + m.group(2));
-            }
-            // Add milliseconds on three digits to match SimpleDateFormat pattern
-            date += String.format(".%03d", (int) milliseconds);
-            Date d = rmcTimeFmt.parse(date, new ParsePosition(0));
-            if (d != null)
-                return d.toInstant();
-        }
-        throw new IllegalDataException("Date is malformed: '" + p + "'");
-    }
+    /**
+     * NMEA defines time with "a variable number of digits for decimal-fraction of seconds"
+     */
+    private static final DateTimeFormatter RMC_TIME_FMT =
+        new DateTimeFormatterBuilder()
+                .appendPattern("ddMMyyHHmmss")
+                .optionalStart()
+                .appendFraction(ChronoField.NANO_OF_SECOND, 1, 9, true)
+                .optionalEnd()
+                .toFormatter(Locale.ENGLISH)
+                .withZone(ZoneOffset.UTC)
+                /* allow bad date information, we're mainly interested in the positions */
+                .withResolverStyle(ResolverStyle.LENIENT);
 
     protected Collection<WayPoint> waypoints = new ArrayList<>();
     protected String pTime;
@@ -290,7 +281,6 @@ public class NmeaParser {
      * Constructs a new {@code NmeaParser}
      */
     public NmeaParser() {
-        rmcTimeFmt.setTimeZone(DateUtils.UTC);
         pDate = "010100"; // TODO date problem
     }
 
@@ -365,7 +355,7 @@ public class NmeaParser {
 
                 // time
                 accu = e[GGA.TIME.position];
-                Instant instant = readTime(currentDate+accu);
+                Instant instant = Instant.from(RMC_TIME_FMT.parse(currentDate+accu));
 
                 if ((pTime == null) || (currentwp == null) || !pTime.equals(accu)) {
                     // this node is newer than the previous, create a new waypoint.
@@ -522,7 +512,7 @@ public class NmeaParser {
                 currentDate = e[RMC.DATE.position];
                 String time = e[RMC.TIME.position];
 
-                Instant instant = readTime(currentDate+time);
+                Instant instant = Instant.from(RMC_TIME_FMT.parse(currentDate+time));
 
                 if (pTime == null || currentwp == null || !pTime.equals(time)) {
                     // this node is newer than the previous, create a new waypoint.
@@ -589,7 +579,7 @@ public class NmeaParser {
             }
             return true;
 
-        } catch (IllegalArgumentException | IndexOutOfBoundsException | IllegalDataException ex) {
+        } catch (IllegalArgumentException | IndexOutOfBoundsException | IllegalDataException | DateTimeParseException ex) {
             if (malformed < 5) {
                 Logging.warn(ex);
             } else {

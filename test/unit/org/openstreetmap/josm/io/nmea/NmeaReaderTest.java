@@ -83,12 +83,12 @@ class NmeaReaderTest {
         assertEquals("0.94", wayPoints.get(0).get(GpxConstants.PT_PDOP).toString().trim());
     }
     
-    private static void compareWithReference(int ticket, String filename, int numCoor) throws IOException, SAXException {
+    private static void compareWithReference(int ticket, String filename, int numCoor, int parseErrors) throws IOException, SAXException {
         GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getRegressionDataFile(ticket, filename+".gpx"));
         NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get(TestUtils.getRegressionDataFile(ticket, filename+".nmea"))));
         in.parse(true);
         assertEquals(numCoor, in.getNumberOfCoordinates());
-        assertEquals(0, in.getParserMalformed());
+        assertEquals(parseErrors, in.getParserMalformed());
         assertEquals(gpx.dataSources, in.data.dataSources);
         assertEquals(1, gpx.tracks.size());
         assertEquals(1, in.data.tracks.size());
@@ -128,16 +128,18 @@ class NmeaReaderTest {
      */
     @Test
     void testTicket1433() throws Exception {
-        compareWithReference(1433, "2008-08-14-16-04-58", 1241);
+        compareWithReference(1433, "2008-08-14-16-04-58", 1241, 0);
     }
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/1853">Bug #1853</a>.
+     * date format is wrong, so RMC lines get ignored
      * @throws Exception if an error occurs
      */
     @Test
     void testTicket1853() throws Exception {
-        compareWithReference(1853, "PosData-20081216-115434", 1285);
+        /* last argument must be 1285 if RMC_TIME_FMT is not using .withResolverStyle(ResolverStyle.LENIENT) */
+        compareWithReference(1853, "PosData-20081216-115434", 1285, 0);
     }
 
     /**
@@ -146,7 +148,7 @@ class NmeaReaderTest {
      */
     @Test
     void testTicket2147() throws Exception {
-        compareWithReference(2147, "WG20080203171807.log", 487);
+        compareWithReference(2147, "WG20080203171807.log", 487, 0);
     }
 
     /**
@@ -155,7 +157,7 @@ class NmeaReaderTest {
      */
     @Test
     void testTicket14924() throws Exception {
-        compareWithReference(14924, "input", 0);
+        compareWithReference(14924, "input", 0, 0);
     }
 
     private static GpxData read(String nmeaLine) throws IOException, SAXException {
