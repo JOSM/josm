@@ -52,6 +52,7 @@ public interface IGeoImageLayer {
     /**
      * Listen for image changes
      */
+    @FunctionalInterface
     interface ImageChangeListener {
         /**
          * Called when the selected image(s) change

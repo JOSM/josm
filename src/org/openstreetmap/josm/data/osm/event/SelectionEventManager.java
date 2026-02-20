@@ -41,6 +41,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         return INSTANCE;
     }
 
+    @FunctionalInterface
     private interface ListenerInfo {
         void fire(SelectionChangeEvent event);
     }

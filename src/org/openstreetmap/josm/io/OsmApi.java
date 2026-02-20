@@ -97,6 +97,7 @@ public class OsmApi extends OsmConnection {
      * OSM API initialization listener.
      * @since 12804
      */
+    @FunctionalInterface
     public interface OsmApiInitializationListener {
         /**
          * Called when an OSM API instance has been successfully initialized.

@@ -260,6 +260,7 @@ public class OptionParser {
         }
     }
 
+    @FunctionalInterface
     protected interface AvailableOption {
 
         /**

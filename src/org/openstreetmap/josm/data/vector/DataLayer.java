@@ -5,6 +5,7 @@ package org.openstreetmap.josm.data.vector;
  * An interface for objects that are part of a data layer
  * @param <T> The type used to identify a layer, typically a string
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface DataLayer<T> {
     /**
      * Get the layer

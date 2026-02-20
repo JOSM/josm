@@ -7,6 +7,7 @@ import java.net.URL;
  * Listener receiving audio playing events.
  * @since 12328
  */
+@FunctionalInterface
 public interface AudioListener {
 
     /**

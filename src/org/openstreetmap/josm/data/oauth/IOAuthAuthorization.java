@@ -9,6 +9,7 @@ import java.util.function.Consumer;
  * @author Taylor Smock
  * @since 18650
  */
+@FunctionalInterface
 public interface IOAuthAuthorization {
     /**
      * Perform the authorization dance

@@ -15,6 +15,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
  * @author Michael Zangl
  * @since 14027
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface IRelationEditorActionGroup {
 
     /**

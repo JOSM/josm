@@ -7,6 +7,7 @@ import java.io.InputStream;
  * Source of NTV2 grid shift files (local directory, download, etc.).
  * @since 12777
  */
+@FunctionalInterface
 public interface NTV2GridShiftFileSource {
 
     /**
@@ -15,5 +16,4 @@ public interface NTV2GridShiftFileSource {
      * @return an input stream for the file data
      */
     InputStream getNTV2GridShiftFile(String gridFileName);
-
 }

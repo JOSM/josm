@@ -7,6 +7,7 @@ import javax.swing.JMenu;
  * GUI elements for a {@link StyleSetting} class.
  * @since 12831
  */
+@FunctionalInterface
 public interface StyleSettingGui {
 
     /**

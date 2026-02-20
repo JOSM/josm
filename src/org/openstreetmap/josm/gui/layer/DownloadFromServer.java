@@ -6,6 +6,7 @@ package org.openstreetmap.josm.gui.layer;
  * @see UploadToServer
  * @since 13453
  */
+@FunctionalInterface
 public interface DownloadFromServer {
 
     /**

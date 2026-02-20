@@ -40,6 +40,7 @@ public class BugReportQueue {
     /**
      * Class that handles reporting a bug to the user.
      */
+    @FunctionalInterface
     public interface BugReportHandler {
         /**
          * Handle the bug report for a given exception

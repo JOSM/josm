@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
  * Download URL pattern.
  * @since 15784
  */
+@FunctionalInterface
 public interface UrlPattern {
     /**
      * Returns the URL pattern.

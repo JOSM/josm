@@ -68,6 +68,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
     }
 
+    @FunctionalInterface
     private interface IStringSwitcher extends Function<String, String> {
 
         static IStringSwitcher combined(IStringSwitcher... switchers) {

@@ -947,6 +947,7 @@ public class Preferences extends AbstractPreferences {
      * @param <T> The object type to accept
      * @param <E> The throwable type
      */
+    @FunctionalInterface
     private interface ThrowingConsumer<T, E extends Throwable> {
         /**
          * Accept an object
