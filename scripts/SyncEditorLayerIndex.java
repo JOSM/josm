@@ -15,13 +15,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -817,16 +817,15 @@ public class SyncEditorLayerIndex {
             String ed2 = ed;
             Matcher m = pattern.matcher(ed);
             if (m.matches()) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(Integer.parseInt(m.group(2)),
-                        m.group(4) == null ? 0 : Integer.parseInt(m.group(4))-1,
-                        m.group(6) == null ? 1 : Integer.parseInt(m.group(6)));
-                cal.add(Calendar.DAY_OF_MONTH, -1);
-                ed2 = m.group(1) + cal.get(Calendar.YEAR);
+                int year = Integer.parseInt(m.group(2));
+                int month = (m.group(4) == null) ? 1 : Integer.parseInt(m.group(4));
+                int day = (m.group(6) == null) ? 1 : Integer.parseInt(m.group(6));
+                LocalDate date = LocalDate.of(year, month, day).minusDays(1);
+                ed2 = m.group(1) + date.getYear();
                 if (m.group(4) != null)
-                    ed2 += "-" + String.format("%02d", cal.get(Calendar.MONTH)+1);
+                    ed2 += "-" + String.format("%02d", date.getMonthValue());
                 if (m.group(6) != null)
-                    ed2 += "-" + String.format("%02d", cal.get(Calendar.DAY_OF_MONTH));
+                    ed2 += "-" + String.format("%02d", date.getDayOfMonth());
             }
             String ef2 = ed2.replaceAll("\\A-;", "").replaceAll(";-\\z", "").replaceAll("\\A([0-9-]+);\\1\\z", "$1");
             if (!ed.equals(jd) && !ef.equals(jd) && !ed2.equals(jd) && !ef2.equals(jd)) {
@@ -1305,8 +1304,8 @@ public class SyncEditorLayerIndex {
                     myprintln("~ JOSM-Date '"+d+"' is strange: "+getDescription(j));
                 } else {
                     try {
-                        Date first = verifyDate(m.group(2), m.group(4), m.group(6));
-                        Date second = verifyDate(m.group(9), m.group(11), m.group(13));
+                        LocalDate first = verifyDate(m.group(2), m.group(4), m.group(6));
+                        LocalDate second = verifyDate(m.group(9), m.group(11), m.group(13));
                         if (second.compareTo(first) < 0) {
                             myprintln("~ JOSM-Date '"+d+"' is strange (second earlier than first): "+getDescription(j));
                         }
@@ -1392,16 +1391,16 @@ public class SyncEditorLayerIndex {
         return "";
     }
 
-    static Date verifyDate(String year, String month, String day) throws ParseException {
+    static LocalDate verifyDate(String year, String month, String day) throws ParseException {
         String date;
         if (year == null) {
             date = "3000-01-01";
         } else {
             date = year + "-" + (month == null ? "01" : month) + "-" + (day == null ? "01" : day);
         }
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        df.setLenient(false);
-        return df.parse(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
+
+        return LocalDate.parse(date, formatter);
     }
 
     static String getId(Object e) {
