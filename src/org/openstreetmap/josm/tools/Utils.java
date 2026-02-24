@@ -31,17 +31,14 @@ import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Bidi;
-import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.Normalizer;
-import java.text.ParseException;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1702,31 +1699,6 @@ public final class Utils {
             Logging.trace(e);
             return 0;
         }
-    }
-
-    /**
-     * Returns the JRE expiration date.
-     * @return the JRE expiration date, or null
-     * @since 12219
-     */
-    public static Date getJavaExpirationDate() {
-        try {
-            Object value;
-            Class<?> c = Class.forName("com.sun.deploy.config.BuiltInProperties");
-            try {
-                value = c.getDeclaredField("JRE_EXPIRATION_DATE").get(null);
-            } catch (NoSuchFieldException e) {
-                // Field is gone with Java 9, there's a method instead
-                Logging.trace(e);
-                value = c.getDeclaredMethod("getProperty", String.class).invoke(null, "JRE_EXPIRATION_DATE");
-            }
-            if (value instanceof String) {
-                return DateFormat.getDateInstance(3, Locale.US).parse((String) value);
-            }
-        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException | ParseException e) {
-            Logging.debug(e);
-        }
-        return null;
     }
 
     /**

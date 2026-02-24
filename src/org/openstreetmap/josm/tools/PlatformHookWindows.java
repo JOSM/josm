@@ -156,7 +156,6 @@ public class PlatformHookWindows implements PlatformHook {
     @Override
     public void startupHook(JavaExpirationCallback javaCallback, SanityCheckCallback sanityCheckCallback) {
         warnSoonToBeUnsupportedJava(javaCallback);
-        checkExpiredJava(javaCallback);
         PlatformHook.super.startupHook(javaCallback, sanityCheckCallback);
     }
 
