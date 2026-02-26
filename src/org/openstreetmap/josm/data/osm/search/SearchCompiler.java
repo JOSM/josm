@@ -36,6 +36,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Range;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -249,7 +251,7 @@ public class SearchCompiler {
      * The core {@link UnaryMatch} factory
      */
     public static class CoreUnaryMatchFactory implements UnaryMatchFactory {
-        private static final Collection<String> keywords = Arrays.asList("parent", "child");
+        private static final Collection<String> keywords = Arrays.asList("parent", "child", "was");
 
         @Override
         public UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) {
@@ -257,6 +259,8 @@ public class SearchCompiler {
                 return new Parent(matchOperand);
             else if ("child".equals(keyword))
                 return new Child(matchOperand);
+            else if ("was".equals(keyword))
+                return new Was(matchOperand);
             return null;
         }
 
@@ -1770,6 +1774,39 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return "child(" + match + ')';
+        }
+    }
+
+    /**
+     * Matches objects if the expression matches at any point in their history
+     */
+    public static class Was extends UnaryMatch {
+
+        public Was(Match m) {
+            super(m);
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            return match.match(osm) || matchInHistory(osm);
+        }
+
+        private boolean matchInHistory(OsmPrimitive osm) {
+            if (osm.isNew()) {
+                return false;
+            }
+
+            History h = HistoryDataSet.getInstance().getHistory(osm);
+            if (h == null) {
+                return false;
+            }
+
+            return h.getAsList().stream().anyMatch(match::match);
+        }
+
+        @Override
+        public String toString() {
+            return "was(" + match + ')';
         }
     }
 
