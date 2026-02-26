@@ -4799,6 +4799,20 @@
             <reference ref="school_common"/>
             <reference ref="link_contact_address" />
         </item> <!-- Music school -->
+        <item name="Research Institute" icon="presets/education/research_institute.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=research_institute" />
+            <space />
+            <key key="amenity" value="research_institute" />
+            <combo key="research" text="Research" values="aerospace,physics,chemistry,biology,molecular_biology,medicine,electrical_engineering,industrial_engineering,material_engineering,telecommunication,computer_science,geo_science,astronomy,mathematics,agriculture,particle_physics" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address" />
+            <optional>
+                <multiselect key="isced:level" text="ISCED level" rows="2" values_sort="false">
+                    <list_entry value="7" short_description="Master's"/>
+                    <list_entry value="8" short_description="Doctorate"/>
+                </multiselect>
+            </optional>
+        </item> <!-- Research Institute -->
     </group> <!-- Education -->
     <group name="Animal" icon="presets/health/animal_shelter.svg">   
         <item name="Animal boarding" icon="presets/accommodation/animal_boarding.svg" type="node,closedway,multipolygon" preset_name_label="true">
