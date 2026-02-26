@@ -5375,7 +5375,10 @@
             <link wiki="Tag:amenity=bench" />
             <space />
             <key key="amenity" value="bench" />
-            <check key="backrest" text="Backrest" />
+            <checkgroup columns="2">
+                <check key="backrest" text="Backrest" />
+                <check key="armrest" text="Armrests (one or more)" />
+            </checkgroup>
             <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
             <reference ref="color" />
             <combo key="seats" text="Amount of Seats" values="1,2,3,4,5,6,7,8,9,10" />
