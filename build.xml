@@ -655,8 +655,7 @@ Build-Date: ${build.tstamp}
             <arg value="${dist-optimized.jar}"/>
         </exec>
     </target>
-    <target name="check-plugins" depends="dist-optimized" description="Check of plugins binary compatibility" unless="isJava21">
-        <!-- animal_sniffer doesn't support Java 21 yet. The unless statement can be removed after animal_sniffer is updated to 1.24. -->
+    <target name="check-plugins" depends="dist-optimized" description="Check of plugins binary compatibility">
         <local name="dir"/>
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
@@ -683,7 +682,7 @@ Build-Date: ${build.tstamp}
         </loadfile>
         <!-- Download list of plugins -->
         <loadresource property="plugins">
-            <url url="https://josm.openstreetmap.de/pluginicons?minjava=8&amp;noparams=1"/>
+            <url url="https://josm.openstreetmap.de/pluginicons?minjava=${java.lang.version}&amp;noparams=1"/>
             <filterchain>
                 <linecontainsregexp negate="true">
                     <regexp pattern="${deprecated-plugins}"/>
@@ -724,7 +723,7 @@ Build-Date: ${build.tstamp}
         <as:build-signatures destfile="${dir}/api.sig">
             <path>
                 <fileset file="${dist-optimized.jar}"/>
-                <fileset dir="${java.home}/jmods" />
+                <fileset dir="${java.home}/${java.library.dir}"/>
             </path>
         </as:build-signatures>
         <as:check-signature signature="${dir}/api.sig" failonerror="false">
