@@ -17,10 +17,10 @@
         <sonar.host.url>https://josm.openstreetmap.de/sonar/</sonar.host.url>
         <sonar.projectKey>JOSM</sonar.projectKey>
         <jmockit.version>1.49.a</jmockit.version>
-        <pmd.version>7.10.0</pmd.version>
-        <jacoco.version>0.8.12</jacoco.version>
-        <checkstyle.version>10.21.2</checkstyle.version>
-        <spotbugs.version>4.9.0</spotbugs.version>
+        <pmd.version>7.22.0</pmd.version>
+        <jacoco.version>0.8.13</jacoco.version>
+        <checkstyle.version>10.26.1</checkstyle.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
         <!-- Note: 2.0.0 requires Java 17, and we'll need to upgrade to it for Java 25 LTS (see JEP 486)-->
         <junit5-system-exit.version>1.1.2</junit5-system-exit.version>
     </properties>

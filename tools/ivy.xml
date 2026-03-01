@@ -20,9 +20,9 @@
         <!-- proguard->default -->
         <dependency org="com.guardsquare" name="proguard-ant" rev="7.8.2" conf="proguard->default"/>
         <!-- pmd->default -->
-        <dependency org="net.sourceforge.pmd" name="pmd-core" rev="7.21.0" conf="pmd->default"/>
-        <dependency org="net.sourceforge.pmd" name="pmd-ant" rev="7.21.0" conf="pmd->default"/>
-        <dependency org="net.sourceforge.pmd" name="pmd-java" rev="7.21.0" conf="pmd->default"/>
+        <dependency org="net.sourceforge.pmd" name="pmd-core" rev="7.22.0" conf="pmd->default"/>
+        <dependency org="net.sourceforge.pmd" name="pmd-ant" rev="7.22.0" conf="pmd->default"/>
+        <dependency org="net.sourceforge.pmd" name="pmd-java" rev="7.22.0" conf="pmd->default"/>
         <dependency org="org.xmlresolver" name="xmlresolver" rev="6.0.21" conf="pmd->default"/>
         <!-- spotbugs->default -->
         <dependency org="com.github.spotbugs" name="spotbugs" rev="4.9.8" conf="spotbugs->default"/>
