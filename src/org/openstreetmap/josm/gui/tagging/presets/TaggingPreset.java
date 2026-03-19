@@ -284,9 +284,14 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             .setOptional(true)
             .getResourceAsync(result -> {
                 if (result != null) {
+                    // Pre-render off EDT to avoid flooding the event queue with expensive SVG rendering
+                    ImageIcon small = result.getImageIcon(ImageProvider.ImageSizes.SMALLICON.getImageDimension());
+                    ImageIcon large = result.getImageIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
                     GuiHelper.runInEDT(() -> {
                         try {
-                            result.attachImageIcon(this, true);
+                            putValue(Action.SMALL_ICON, small);
+                            putValue(Action.LARGE_ICON_KEY, large);
+                            putValue("ImageResource", result);
                         } catch (IllegalArgumentException e) {
                             Logging.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
                             Logging.warn(e);
