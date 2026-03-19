@@ -71,6 +71,24 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         Config.getPref().addPreferenceChangeListener(this);
     }
 
+    /**
+     * Creates MapPaintSettings with most neutral settings, that do not override MapCSS.
+     * Useful for MapCSS CLI/Plugin rendering, via {@link org.openstreetmap.josm.gui.mappaint.RenderingHelper}
+     * @return a new MapPaintSettings instance with neutral values.
+     * @since 19549
+     */
+    public static MapPaintSettings createNeutralSettings() {
+        MapPaintSettings neutralSettings = new MapPaintSettings();
+        neutralSettings.useRealWidth = false; // Real width is not used (at least currently)
+        neutralSettings.showDirectionArrow = false; // Direction arrows are turned off
+        neutralSettings.showOnewayArrow = false; // One way arrows are disabled
+        neutralSettings.showNamesDistance = 0; // Forced labels are turned off
+        neutralSettings.showOrderNumber = false;
+        neutralSettings.showOrderNumberOnSelectedWay = false;
+        neutralSettings.outlineOnly = false;
+        return neutralSettings;
+    }
+
     private void load() {
         showDirectionArrow = Config.getPref().getBoolean("draw.segment.direction", false);
         showOnewayArrow = Config.getPref().getBoolean("draw.oneway", true);

@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
+import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -183,7 +184,7 @@ public class RenderingHelper {
             g.setColor(Optional.ofNullable(backgroundColor).orElse(elemStyles.getBackgroundColor()));
             g.fillRect(0, 0, imgDimPx.width, imgDimPx.height);
         }
-        StyledMapRenderer smr = new StyledMapRenderer(g, nc, false);
+        StyledMapRenderer smr = new StyledMapRenderer(g, nc, false, MapPaintSettings.createNeutralSettings());
         smr.setStyles(elemStyles);
         smr.render(ds, false, bounds);
 

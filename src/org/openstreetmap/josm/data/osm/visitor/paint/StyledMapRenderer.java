@@ -383,6 +383,24 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     /**
+     * Constructs a new {@code StyledMapRenderer} with custom map paint settings.
+     *
+     * @param g the graphics context. Must not be null.
+     * @param nc the map viewport. Must not be null.
+     * @param isInactiveMode if true, the paint visitor shall render OSM objects such that they
+     * look inactive. Example: rendering of data in an inactive layer using light gray as color only.
+     * @param paintSettings the map paint settings to use. Must not be null.
+     * @throws IllegalArgumentException if {@code g} is null
+     * @throws IllegalArgumentException if {@code nc} is null
+     * @throws IllegalArgumentException if {@code paintSettings} is null
+     * @since 19549
+     */
+    public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode, MapPaintSettings paintSettings) {
+        this(g, nc, isInactiveMode);
+        this.paintSettings = paintSettings;
+    }
+
+    /**
      * Set the {@link ElemStyles} instance to use for this renderer.
      * @param styles the {@code ElemStyles} instance to use
      */
@@ -1410,7 +1428,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     @Override
     public void getSettings(boolean virtual) {
         super.getSettings(virtual);
-        paintSettings = MapPaintSettings.INSTANCE;
+        if (paintSettings == null) {
+            paintSettings = MapPaintSettings.INSTANCE;
+        }
 
         circum = nc.getDist100Pixel();
         scale = nc.getScale();
