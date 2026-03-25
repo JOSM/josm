@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -717,14 +718,28 @@ public class ImageProvider {
     /**
      * Load the image in a background thread.
      * <p>
-     * This method returns immediately and runs the image request asynchronously.
+     * This method returns immediately and runs the image request asynchronously for remote resources.
+     * For local resources, the request is executed synchronously in the current thread.
      * @param action the action that will deal with the image
      *
      * @return the future of the requested image
      * @since 13252
      */
     public CompletableFuture<Void> getResourceAsync(Consumer<? super ImageResource> action) {
-        return CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER).thenAcceptAsync(action, IMAGE_FETCHER);
+        return isRemote()
+                ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER).thenAcceptAsync(action, IMAGE_FETCHER)
+                : CompletableFuture.completedFuture(getResource()).thenAccept(action);
+    }
+
+    /**
+     * Returns the executor used for background image fetching.
+     * Callers that need to force asynchronous loading even for local resources
+     * (e.g. to off-load expensive SVG pre-rendering) may use this executor directly.
+     * @return the image fetch executor
+     * @since 19553
+     */
+    public static Executor getImageFetchExecutor() {
+        return IMAGE_FETCHER;
     }
 
     /**
