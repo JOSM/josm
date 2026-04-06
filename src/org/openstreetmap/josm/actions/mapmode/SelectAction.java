@@ -607,29 +607,30 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             }
         }
 
-        if (mode == Mode.MOVE && e.getButton() == MouseEvent.BUTTON1) {
-            DataSet ds = getLayerManager().getEditDataSet();
-            if (!didMouseDrag) {
-                // only built in move mode
-                virtualManager.clear();
-                // do nothing if the click was to short too be recognized as a drag,
-                // but the release position is farther than 10px away from the press position
-                if (lastMousePos == null || lastMousePos.distanceSq(e.getPoint()) < 100) {
-                    updateKeyModifiers(e);
-                    selectPrims(cycleManager.cyclePrims(), true, false);
+        if (mode == Mode.MOVE && e.getButton() == MouseEvent.BUTTON1 && !didMouseDrag) {
+            // only built in move mode
+            virtualManager.clear();
+            // do nothing if the click was to short too be recognized as a drag,
+            // but the release position is farther than 10px away from the press position
+            if (lastMousePos == null || lastMousePos.distanceSq(e.getPoint()) < 100) {
+                DataSet ds = getLayerManager().getEditDataSet();
+                updateKeyModifiers(e);
+                selectPrims(cycleManager.cyclePrims(), true, false);
 
-                    // If the user double-clicked a node, change to draw mode
-                    Collection<OsmPrimitive> c = ds.getSelected();
-                    if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
-                        // We need to do it like this as otherwise drawAction will see a double
-                        // click and switch back to SelectMode
-                        MainApplication.worker.execute(() -> map.selectDrawTool(true));
-                        return;
-                    }
+                // If the user double-clicked a node, change to draw mode
+                Collection<OsmPrimitive> c = ds.getSelected();
+                if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
+                    // We need to do it like this as otherwise drawAction will see a double
+                    // click and switch back to SelectMode
+                    MainApplication.worker.execute(() -> map.selectDrawTool(true));
+                    return;
                 }
-            } else {
-                confirmOrUndoMovement(e);
             }
+        }
+
+        if ((mode == Mode.MOVE || mode == Mode.ROTATE || mode == Mode.SCALE) && e.getButton() == MouseEvent.BUTTON1
+                && didMouseDrag) {
+            confirmOrUndoMovement(e);
         }
 
         mode = null;
