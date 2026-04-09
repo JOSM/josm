@@ -45,7 +45,7 @@ public final class UrlPatterns {
      */
     public enum GpxUrlPattern implements UrlPattern {
         /** URL of identified GPX trace on OpenStreetMap website */
-        TRACE_ID     (".*(osm|openstreetmap).org/trace/\\p{Digit}+/data"),
+        TRACE_ID     (".*(osm|openstreetmap).org/traces?/\\p{Digit}+/data"),
         /** URL of identified GPX trace belonging to any user on OpenStreetMap website */
         USER_TRACE_ID(".*(osm|openstreetmap).org/user/[^/]+/traces/(\\p{Digit}+)"),
         /** URL of the edit link from the OpenStreetMap trace page */
