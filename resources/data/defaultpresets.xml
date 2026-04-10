@@ -8361,6 +8361,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Toys -->
+        <item name="Games" icon="presets/shop/games.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=games" />
+            <space />
+            <key key="shop" value="games" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!--Games -->
         <item name="Gift/Souvenir" icon="presets/shop/present.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=gift" />
             <space />

@@ -2590,6 +2590,10 @@ node[shop=bicycle] {
     icon-image: "presets/shop/bicycle.svg";
     set icon_z17;
 }
+node[shop=games] {
+    icon-image: "presets/shop/games.svg";
+    set icon_z17;
+}
 node[shop=doityourself] {
     icon-image: "presets/shop/diy_store.svg";
     set icon_z17;
