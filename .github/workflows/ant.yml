@@ -25,7 +25,7 @@ jobs:
       josm_release_tag: ${{ steps.create_revision.outputs.josm_release_tag }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 256
 
@@ -73,7 +73,7 @@ jobs:
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 256
 

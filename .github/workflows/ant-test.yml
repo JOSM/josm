@@ -24,7 +24,7 @@ jobs:
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 256
 
