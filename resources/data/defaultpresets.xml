@@ -6355,7 +6355,7 @@
             <space />
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
-        <item name="Avalanche Protection" icon="presets/misc/avalanche_protection.svg" type="node,way,closed_way" preset_name_label="true">
+        <item name="Avalanche Protection" icon="presets/misc/avalanche_protection.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=avalanche_protection" />
             <space />
             <key key="man_made" value="avalanche_protection" />
