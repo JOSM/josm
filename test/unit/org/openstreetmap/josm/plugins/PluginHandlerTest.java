@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.TestUtils;
@@ -172,5 +174,23 @@ class PluginHandlerTest {
         Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
         assertEquals(0, (int) invocationLogEntry[0]);
         assertEquals("Plugin information", invocationLogEntry[2]);
+    }
+
+    /**
+     * Unit test of {@link PluginHandler#getInfoPanel}.
+     */
+    @Test
+    void testGetInfoPanel() {
+        JPanel panel = PluginHandler.getInfoPanel();
+        assertNotNull(panel);
+
+        assertTrue(PluginHandler.getPlugins().isEmpty());
+
+        // if no plugins are loaded in the test environment, the panel should show "No plugins installed"
+        boolean found = Arrays.stream(panel.getComponents())
+            .filter(JLabel.class::isInstance)
+            .map(JLabel.class::cast)
+            .anyMatch(l -> l.getText().equals("No plugins installed"));
+        assertTrue(found, "Should find 'No plugins installed' label");
     }
 }

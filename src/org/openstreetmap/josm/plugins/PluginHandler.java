@@ -1691,24 +1691,29 @@ public final class PluginHandler {
      */
     public static JPanel getInfoPanel() {
         JPanel pluginTab = new JPanel(new GridBagLayout());
-        for (final PluginInformation info : getPlugins()) {
-            String name = info.name
-            + (!Utils.isEmpty(info.localversion) ? " Version: " + info.localversion : "");
-            pluginTab.add(new JLabel(name), GBC.std());
-            pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GridBagConstraints.HORIZONTAL));
-            pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
+        final List<PluginInformation> plugins = getPlugins();
+        if (plugins.isEmpty()) {
+            pluginTab.add(new JLabel(tr("No plugins installed")), GBC.eol());
+        } else {
+            for (final PluginInformation info : plugins) {
+                String name = info.name
+                + (!Utils.isEmpty(info.localversion) ? " Version: " + info.localversion : "");
+                pluginTab.add(new JLabel(name), GBC.std());
+                pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GridBagConstraints.HORIZONTAL));
+                pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
 
-            JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
-                    : info.description);
-            description.setEditable(false);
-            description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
-            description.setLineWrap(true);
-            description.setWrapStyleWord(true);
-            description.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-            description.setBackground(UIManager.getColor("Panel.background"));
-            description.setCaretPosition(0);
+                JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
+                        : info.description);
+                description.setEditable(false);
+                description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
+                description.setLineWrap(true);
+                description.setWrapStyleWord(true);
+                description.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+                description.setBackground(UIManager.getColor("Panel.background"));
+                description.setCaretPosition(0);
 
-            pluginTab.add(description, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
+                pluginTab.add(description, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
+            }
         }
         return pluginTab;
     }
