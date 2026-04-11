@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.PlatformManager;
@@ -58,6 +61,10 @@ import org.openstreetmap.josm.tools.PlatformManager;
  */
 public class SelectionManager implements MouseListener, MouseMotionListener, PropertyChangeListener {
 
+    private final transient NamedColorProperty LASSO_COLOR = new NamedColorProperty(
+            /* I18n: color description for color of lasso select mode */
+            marktr("Lasso"),
+            ColorHelper.complement(PaintColors.getBackgroundColor()));
     /**
      * This is the interface that an user of SelectionManager has to implement
      * to get informed when a selection closes.
@@ -84,7 +91,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
                 return;
-            Color color = ColorHelper.complement(PaintColors.getBackgroundColor());
+            Color color = LASSO_COLOR.get();
             g.setColor(color);
             if (lassoMode) {
                 g.drawPolygon(lasso);
