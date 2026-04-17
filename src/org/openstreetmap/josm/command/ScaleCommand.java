@@ -122,7 +122,7 @@ public class ScaleCommand extends TransformNodesCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), pivot, scalingFactor, startEN);
+        return Objects.hash(super.hashCode(), pivot, scalingFactor, startEN, deltaScalingFactor);
     }
 
     @Override
@@ -133,6 +133,7 @@ public class ScaleCommand extends TransformNodesCommand {
         ScaleCommand that = (ScaleCommand) obj;
         return Double.compare(that.scalingFactor, scalingFactor) == 0 &&
                 Objects.equals(pivot, that.pivot) &&
-                Objects.equals(startEN, that.startEN);
+                Objects.equals(startEN, that.startEN) &&
+                Objects.equals(deltaScalingFactor, that.deltaScalingFactor);
     }
 }

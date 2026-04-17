@@ -123,7 +123,7 @@ public class RotateCommand extends TransformNodesCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), pivot, startAngle, rotationAngle);
+        return Objects.hash(super.hashCode(), pivot, startAngle, rotationAngle, deltaAngle);
     }
 
     @Override
@@ -134,6 +134,7 @@ public class RotateCommand extends TransformNodesCommand {
         RotateCommand that = (RotateCommand) obj;
         return Double.compare(that.startAngle, startAngle) == 0 &&
                 Double.compare(that.rotationAngle, rotationAngle) == 0 &&
-                Objects.equals(pivot, that.pivot);
+                Objects.equals(pivot, that.pivot) &&
+                Objects.equals(deltaAngle, that.deltaAngle);
     }
 }
