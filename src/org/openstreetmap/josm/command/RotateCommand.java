@@ -25,12 +25,14 @@ public class RotateCommand extends TransformNodesCommand {
     /**
      * angle of rotation starting click to pivot
      */
-    private final double startAngle;
+    private double startAngle;
 
     /**
      * computed rotation angle between starting click and current mouse pos
      */
     private double rotationAngle;
+
+    private double deltaAngle;
 
     /**
      * Creates a RotateCommand.
@@ -65,8 +67,18 @@ public class RotateCommand extends TransformNodesCommand {
     @Override
     public final void handleEvent(EastNorth currentEN) {
         double currentAngle = getAngle(currentEN);
-        rotationAngle = currentAngle - startAngle;
+        rotationAngle = currentAngle - startAngle + deltaAngle;
         transformNodes();
+    }
+
+    /**
+     * Handle a repeated rotation action where the mouse was moved to a different position
+     * see #24695
+     * @param startEN start cursor position of a repeated rotation
+     */
+    public void handleUpdate(EastNorth startEN) {
+        deltaAngle = rotationAngle;
+        startAngle = getAngle(startEN);
     }
 
     /**

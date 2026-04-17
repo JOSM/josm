@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -792,13 +793,21 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             return ds.update(() -> {
                 if (mode == Mode.ROTATE) {
                     if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
-                        ((RotateCommand) c).handleEvent(currentEN);
+                        if (didMouseDrag) {
+                            ((RotateCommand) c).handleEvent(currentEN);
+                        } else {
+                            ((RotateCommand) c).handleUpdate(currentEN);
+                        }
                     } else {
                         UndoRedoHandler.getInstance().add(new RotateCommand(selection, currentEN));
                     }
                 } else if (mode == Mode.SCALE) {
                     if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
-                        ((ScaleCommand) c).handleEvent(currentEN);
+                        if (didMouseDrag) {
+                            ((ScaleCommand) c).handleEvent(currentEN);
+                        } else {
+                            ((ScaleCommand) c).handleUpdate(currentEN);
+                        }
                     } else {
                         UndoRedoHandler.getInstance().add(new ScaleCommand(selection, currentEN));
                     }
