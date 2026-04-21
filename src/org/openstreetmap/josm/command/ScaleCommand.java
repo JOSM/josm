@@ -70,6 +70,7 @@ public class ScaleCommand extends TransformNodesCommand {
      * Handle a repeated scaling action where the mouse was moved to a different position
      * see #24695
      * @param newStartEN start cursor position of a repeated scaling
+     * @since 19566
      */
     public void handleUpdate(EastNorth newStartEN) {
         startEN = newStartEN;

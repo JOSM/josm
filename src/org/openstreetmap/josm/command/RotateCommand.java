@@ -75,6 +75,7 @@ public class RotateCommand extends TransformNodesCommand {
      * Handle a repeated rotation action where the mouse was moved to a different position
      * see #24695
      * @param startEN start cursor position of a repeated rotation
+     * @since 19566
      */
     public void handleUpdate(EastNorth startEN) {
         deltaAngle = rotationAngle;
