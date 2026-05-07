@@ -48,7 +48,7 @@ public final class TextTagParser {
      * @param unescapeTextInQuotes - if true, matched tag and value will be analyzed more thoroughly
      * @param unescapePipe - if true, then replace all '\|' by '|' (issue #14490)
      * @return map of tags
-     * @since 19570 (parameter unescapePipe added)
+     * @since 19571 (parameter unescapePipe added)
      */
     public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, 
             boolean unescapeTextInQuotes, boolean unescapePipe) {
