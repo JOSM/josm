@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 256
 
     - name: Cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ~/.ivy2/cache/
@@ -31,11 +31,11 @@ jobs:
         ant pmd
 
     - name: Upload report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: pmd-josm.xml
 
-    - uses: JOSM/JOSMPluginAction/actions/pmd@v2
+    - uses: JOSM/JOSMPluginAction/actions/pmd@v3
       with:
         src: 'src'
         file: "pmd-josm.xml"
