@@ -153,6 +153,10 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Primiti
     public void render(OsmData<?, ?, ?, ?> data, boolean virtual, Bounds bounds) {
         BBox bbox = bounds.toBBox();
         Rectangle clip = g.getClipBounds();
+        // handle possible null value, see #24734
+        if (clip == null)
+            return;
+
         clip.grow(50, 50);
         viewClip = mapState.getViewArea(clip);
         getSettings(virtual);
