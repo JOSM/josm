@@ -421,6 +421,7 @@ public class OsmApi extends OsmConnection {
     public void createPrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
         individualPrimitiveModification("PUT", "create", osm, monitor, ret -> {
             osm.setOsmId(Long.parseLong(ret.trim()), 1);
+            osm.setReferrersDownloaded(true);
             osm.setChangesetId(getChangeset().getId());
         }, ret -> tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
     }
