@@ -5617,6 +5617,10 @@ node[traffic_sign][maxspeed=none][!is_prop_set(icon-image)] {
     icon-image: "presets/vehicle/restriction/maxspeed_none.svg";
     set icon_z17;
 }
+node[traffic_sign][maxspeed=implicit][!is_prop_set(icon-image)] {
+    icon-image: "presets/vehicle/restriction/maxspeed_none.svg";
+    set icon_z17;
+}
 node[traffic_sign][maxspeed=~/^[0-9]+$/][!is_prop_set(icon-image)] {
     maxspeedprop: tag(maxspeed);
     set maxspeedclass;
