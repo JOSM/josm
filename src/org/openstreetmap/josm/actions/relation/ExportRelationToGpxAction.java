@@ -175,7 +175,14 @@ public class ExportRelationToGpxAction extends GpxExportAction
                     if (wayConnectionType.direction == WayConnectionType.Direction.BACKWARD)
                         Collections.reverse(ln);
                     for (Node n: ln) {
-                        trkseg.add(OsmDataLayer.nodeToWayPoint(n, TimeUnit.SECONDS.toMillis(time)));
+                        WayPoint point = OsmDataLayer.nodeToWayPoint(n, TimeUnit.SECONDS.toMillis(time));
+                        if (!trkseg.isEmpty()) {
+                            // see #24745 don't add connecting way nodes twice
+                            WayPoint last = trkseg.get(trkseg.size() - 1);
+                            if (point.getCoor().equals(last.getCoor()))
+                                continue;
+                        }
+                        trkseg.add(point);
                         time += 1;
                     }
                 }
