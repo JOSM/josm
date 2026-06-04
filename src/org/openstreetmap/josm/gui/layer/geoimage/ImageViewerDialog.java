@@ -100,7 +100,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private final ImageOpenExternalAction imageOpenExternalAction = new ImageOpenExternalAction();
     private final LayerVisibilityAction visibilityAction = new LayerVisibilityAction(Collections::emptyList,
             () -> Collections.singleton(imageryFilterSettings));
-
+    private final CloseOtherTabsAction closeAllTabsAction = new CloseOtherTabsAction();
     private final ImageDisplay imgDisplay = new ImageDisplay(imageryFilterSettings);
     private Future<?> imgLoadingFuture;
     private boolean centerView;
@@ -417,6 +417,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         imageRemoveFromDiskAction.destroy();
         imageZoomAction.destroy();
         toggleAction.destroy();
+        closeAllTabsAction.destroy();
         cancelLoadingImage();
         super.destroy();
         // make sure that Image Display is destroyed here, it might not be a component
@@ -607,7 +608,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             refresh(false);
         }
     }
-    
+
     private class ImageRemoveAction extends JosmAction {
         ImageRemoveAction() {
             super(null, new ImageProvider(DIALOG_FOLDER, "delete"), tr("Remove photo from layer"), Shortcut.registerShortcut(
@@ -751,6 +752,28 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                     PlatformManager.getPlatform().openUrl(currentEntry.getImageURI().toURL().toExternalForm());
                 } catch (IOException ex) {
                     Logging.error(ex);
+                }
+            }
+        }
+    }
+
+    private class CloseOtherTabsAction extends JosmAction {
+        CloseOtherTabsAction() {
+            super(tr("close-other-tabs"), new ImageProvider("misc", "close"), tr("Close other tabs"),
+                    Shortcut.registerShortcut("closeother", "close other tabs", KeyEvent.VK_Y, Shortcut.ALT), false, null,
+                    false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (int i = layers.getTabCount() - 1; i >= 0; i--) {
+                Component component = layers.getComponentAt(i);
+                if (component instanceof MoveImgDisplayPanel) {
+                    MoveImgDisplayPanel<?> moveImgDisplayPanel = (MoveImgDisplayPanel<?>) component;
+                    if (moveImgDisplayPanel.layer.containsImage(currentEntry))
+                        continue;
+                    layers.removeTabAt(i);
+                    layers.remove(moveImgDisplayPanel);
                 }
             }
         }
@@ -1032,7 +1055,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             if (Config.getPref().getBoolean("geoimage.viewer.extendedinfo", false)) {
                 osd.append(tr("\nEXIF DTO time: {0}", dtf.format(entry.getExifInstant())));
             } else {
-                osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifInstant())));        
+                osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifInstant())));
             }
         }
 
@@ -1042,7 +1065,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             }
             if (entry.hasGpsTime()) {
                 osd.append(tr("\nCorr GPS time: {0}", dtf.format(entry.getGpsInstant())));
-            }            
+            }
             if (entry.getExifImgDir() != null) {
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
@@ -1211,7 +1234,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             GuiHelper.runInEDT(this::refresh);
         }
     }
-    
+
     private void registerOnLayer(Layer layer) {
         if (layer instanceof IGeoImageLayer) {
             layer.addPropertyChangeListener(l -> {
