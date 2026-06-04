@@ -45,7 +45,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorScale;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is the model used by the history browser.
@@ -141,14 +140,6 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             return false;
         if (primitive.isNew() || !primitive.isUsable())
             return false;
-
-        //try creating a history primitive. if that fails, the primitive cannot be used.
-        try {
-            HistoryOsmPrimitive.forOsmPrimitive(primitive);
-        } catch (IllegalArgumentException ign) {
-            Logging.trace(ign);
-            return false;
-        }
 
         if (history == null)
             return false;
