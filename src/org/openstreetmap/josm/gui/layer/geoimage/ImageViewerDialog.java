@@ -759,8 +759,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class CloseOtherTabsAction extends JosmAction {
         CloseOtherTabsAction() {
-            super(tr("close-other-tabs"), new ImageProvider("misc", "close"), tr("Close other tabs"),
-                    Shortcut.registerShortcut("closeother", "close other tabs", KeyEvent.VK_Y, Shortcut.ALT), false, null,
+            super(tr("Close other tabs"), new ImageProvider("misc", "close"), tr("Close other tabs"),
+                    Shortcut.registerShortcut("closeother", "Close other tabs", KeyEvent.VK_Y, Shortcut.ALT), false, null,
                     false);
         }
 
