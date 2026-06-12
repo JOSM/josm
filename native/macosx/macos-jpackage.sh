@@ -99,7 +99,7 @@ function do_jpackage() {
       --add-modules java.compiler,java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom,javafx.controls,javafx.media,javafx.swing,javafx.web
   echo "Building done (${JAVA_HOME})."
 }
-function do_signapp() {
+function notarize_app() {
   echo "Compressing app (${1})"
   ditto -c -k --zlibCompressionLevel 9 --keepParent "app/${1}.app" "app/${1}.zip"
   if $SIGNAPP; then
@@ -184,7 +184,7 @@ if [ -n "${2}" ]; then
     sign_app "app/JOSM_${second}.app"
     sign_app "app/JOSM.app"
   fi
-  do_signapp "JOSM_${first}"
-  do_signapp "JOSM_${second}"
+  notarize_app "JOSM_${first}"
+  notarize_app "JOSM_${second}"
 fi
-do_signapp JOSM
+notarize_app JOSM
