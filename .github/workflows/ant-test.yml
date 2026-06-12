@@ -56,9 +56,9 @@ jobs:
 
       - name: Upload Ant reports
         if: ${{ always() }}
-        uses: actions/download-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
-          name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }}
+          name: Ant reports for JOSM on java ${{ matrix.java }} on ${{ matrix.os }}
           path: |
             test/report/*.txt
             test/report/TEST*.xml
@@ -73,7 +73,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
