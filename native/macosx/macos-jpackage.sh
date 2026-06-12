@@ -160,15 +160,12 @@ if [ -n "${2}" ]; then
   )
   if [ "${KEYCHAINPATH}" != "false" ]; then
     security unlock-keychain -p "$KEYCHAIN_PW" $KEYCHAIN
+    CODESIGN_OPTS=(--sign "FOSSGIS e.V." --force --keychain "${KEYCHAINPATH}" --timestamp --options runtime
+      --entitlements "$(dirname "${BASH_SOURCE[0]}")/josm.entitlements")
     function do_codesign() {
-      codesign --sign "FOSSGIS e.V." \
-        --force \
-        --keychain "${KEYCHAINPATH}" \
-        --timestamp \
+      codesign "${CODESIGN_OPTS[@]}" \
         --prefix "de.openstreetmap.josm" \
         --identifier "${2}" \
-        --options runtime \
-        --entitlements "$(dirname "${BASH_SOURCE[0]}")/josm.entitlements" \
         --verbose=4 "${1}"
     }
     function sign_app() {
@@ -177,13 +174,7 @@ if [ -n "${2}" ]; then
       # (inside-out), then seal the runtime bundle and the app bundle.
       while IFS= read -r -d '' binary; do
         if file "$binary" | grep -q 'Mach-O'; then
-          codesign --sign "FOSSGIS e.V." \
-            --force \
-            --keychain "${KEYCHAINPATH}" \
-            --timestamp \
-            --options runtime \
-            --entitlements "$(dirname "${BASH_SOURCE[0]}")/josm.entitlements" \
-            "$binary"
+          codesign "${CODESIGN_OPTS[@]}" "$binary"
         fi
       done < <(find "${1}" -type f -print0)
       do_codesign "${1}/Contents/runtime" "com.oracle.java.de.openstreetmap.josm"
