@@ -40,10 +40,12 @@ else
 
     echo "$CERT_MACOS_P12" | base64 --decode > $CERTIFICATE_P12
     security create-keychain -p "$KEYCHAIN_PW" $KEYCHAIN
+    security set-keychain-settings -lut 21600 $KEYCHAIN
     security default-keychain -s $KEYCHAIN
+    security list-keychains -d user -s $KEYCHAIN login.keychain-db
     security unlock-keychain -p "$KEYCHAIN_PW" $KEYCHAIN
     security import $CERTIFICATE_P12 -k $KEYCHAIN -P "$CERT_MACOS_PW" -T /usr/bin/codesign
-    security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PW" $KEYCHAIN
+    security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PW" $KEYCHAIN
     rm $CERTIFICATE_P12
     SIGNAPP=true
     echo "Signing preparation done."
@@ -51,6 +53,13 @@ else
 fi
 
 set -u
+
+# For two-arch builds (ARM64 runner), the x64 jpackage runs under Rosetta 2 and
+# cannot access the keychain item; sign_app re-signs everything after the merge
+# anyway, so skip jpackage's --mac-sign for this case entirely.
+if [ -n "${2:-}" ]; then
+    JPACKAGEOPTIONS=""
+fi
 
 function do_jpackage() {
   echo "Building app (${JAVA_HOME})"
@@ -149,9 +158,8 @@ if [ -n "${2}" ]; then
   directory_iterate "JOSM_${first}.app" "JOSM.app" "JOSM_${first}.app" "JOSM_${second}.app"
   directory_iterate "JOSM_${second}.app" "JOSM.app" "JOSM_${first}.app" "JOSM_${second}.app"
   )
-  do_signapp "JOSM_${first}"
-  do_signapp "JOSM_${second}"
   if [ "${KEYCHAINPATH}" != "false" ]; then
+    security unlock-keychain -p "$KEYCHAIN_PW" $KEYCHAIN
     function do_codesign() {
       codesign --sign "FOSSGIS e.V." \
         --force \
@@ -163,8 +171,29 @@ if [ -n "${2}" ]; then
         --entitlements "$(dirname "${BASH_SOURCE[0]}")/josm.entitlements" \
         --verbose=4 "${1}"
     }
-    do_codesign app/JOSM.app/Contents/runtime "com.oracle.java.de.openstreetmap.josm"
-    do_codesign app/JOSM.app/ "de.openstreetmap.josm"
+    function sign_app() {
+      # jpackage's --mac-sign does not produce valid Developer ID signatures with
+      # secure timestamps. Sign every Mach-O binary in the app individually first
+      # (inside-out), then seal the runtime bundle and the app bundle.
+      while IFS= read -r -d '' binary; do
+        if file "$binary" | grep -q 'Mach-O'; then
+          codesign --sign "FOSSGIS e.V." \
+            --force \
+            --keychain "${KEYCHAINPATH}" \
+            --timestamp \
+            --options runtime \
+            --entitlements "$(dirname "${BASH_SOURCE[0]}")/josm.entitlements" \
+            "$binary"
+        fi
+      done < <(find "${1}" -type f -print0)
+      do_codesign "${1}/Contents/runtime" "com.oracle.java.de.openstreetmap.josm"
+      do_codesign "${1}/" "de.openstreetmap.josm"
+    }
+    sign_app "app/JOSM_${first}.app"
+    sign_app "app/JOSM_${second}.app"
+    sign_app "app/JOSM.app"
   fi
+  do_signapp "JOSM_${first}"
+  do_signapp "JOSM_${second}"
 fi
 do_signapp JOSM
