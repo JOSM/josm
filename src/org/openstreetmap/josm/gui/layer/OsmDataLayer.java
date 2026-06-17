@@ -54,6 +54,7 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.actions.ToggleEditLockLayerAction;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
@@ -808,6 +809,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer
                 new RenameLayerAction(getAssociatedFile(), this)));
         if (ExpertToggleAction.isExpert()) {
             actions.add(new ToggleUploadDiscouragedLayerAction(this));
+            actions.add(new ToggleEditLockLayerAction<>(this));
         }
         actions.addAll(Arrays.asList(
                 new ConsistencyTestAction(),
