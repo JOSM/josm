@@ -509,10 +509,15 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 Point p = mv.getPoint(e.getPos());
                 Dimension imgDim = getImageDimension(e);
 
-                if (e.getExifImgDir() != null) {
+                Double direction = e.getExifImgDir();
+                if (direction == null)
+                    direction = e.getExifGpsTrack(); // see #24762
+                if (direction != null) {
                     Vector3D imgRotation = ImageViewerDialog.getInstance().getRotation(e);
-                    drawDirectionArrow(g, p, e.getExifImgDir()
-                            + (imgRotation != null ? Utils.toDegrees(imgRotation.getPolarAngle()) : 0d), imgDim);
+                    final Color color = e.getExifImgDir() != null ? new Color(255, 255, 255, 192) : Color.darkGray;
+                    drawDirectionArrow(g, p,
+                            direction + (imgRotation != null ? Utils.toDegrees(imgRotation.getPolarAngle()) : 0d),
+                            imgDim, color);
                 }
 
                 if (useThumbs && e.hasThumbnail()) {
@@ -541,6 +546,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     protected static void drawDirectionArrow(Graphics2D g, Point p, double dir, Dimension imgDim) {
+        drawDirectionArrow(g, p, dir, imgDim, new Color(255, 255, 255, 192));
+    }
+
+    protected static void drawDirectionArrow(Graphics2D g, Point p, double dir, Dimension imgDim, Color color) {
         // Multiplier must be larger than sqrt(2)/2=0.71.
         double arrowlength = Math.max(25, Math.max(imgDim.width, imgDim.height) * 0.85);
         double arrowwidth = arrowlength / 1.4;
@@ -560,7 +569,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(new Color(255, 255, 255, 192));
+        g.setColor(color);
         int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
         int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
         g.fillPolygon(xar, yar, 4);
