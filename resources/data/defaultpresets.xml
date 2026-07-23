@@ -1888,7 +1888,7 @@
             <link wiki="Tag:barrier=fence" />
             <key key="barrier" value="fence" />
             <optional>
-                <combo key="fence_type" text="Type" values="barbed_wire,bars,chain_link,concrete,electric,metal,pole,railing,split_rail,wire,wood" />
+                <combo key="fence_type" text="Type" values="barbed_wire,bars,chain_link,concrete,corrugated_metal,electric,glass,knee_rail,krest,net,paling,panel,pole,post_and_rail,railing,roundpole,slatted,split_rail,temporary,welded_diamond_mesh,wire"/>
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Fence -->
