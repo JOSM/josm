@@ -366,10 +366,6 @@ relation[type=multipolygon][area=no] {
 /* {0.key} together with {1.key}, #18267, #17630, #17604, #21836 */
 node[transformer][voltage],
 node[marker][cover],
-node[marker][voltage],
-node[marker][pressure],
-node[marker][diameter],
-node[marker][substance],
 *[building:part][building],
 *[addr:street][addr:place][outside("CZ,DK")] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
@@ -1178,4 +1174,34 @@ way[!oneway][!oneway:bicycle] > node[cycleway=asl][!direction] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
   group: tr("missing tag");
   suggestAlternative: "{0.tag} + {1.key}=*";
+}
+
+/* #24724 */
+*[marker][voltage] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:voltage=*";
+  fixRemove: "voltage";
+  fixAdd: "indication:voltage={1.value}"
+}
+*[marker][diameter] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:diameter=*";
+  fixRemove: "diameter";
+  fixAdd: "indication:diameter={1.value}"
+}
+*[marker][pressure] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:pressure=*";
+  fixRemove: "pressure";
+  fixAdd: "indication:pressure={1.value}"
+}
+*[marker][substance] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:substance=*";
+  fixRemove: "substance";
+  fixAdd: "indication:substance={1.value}"
 }

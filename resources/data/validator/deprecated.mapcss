@@ -924,18 +924,20 @@ node[type][pipeline=marker] {
 /* #11507, #12297, #15409 */
 *[power=cable_distribution_cabinet] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "man_made=street_cabinet + street_cabinet=*";
+  suggestAlternative: "man_made=street_cabinet + utility=power";
   group: tr("deprecated tagging");
   fixAdd: "man_made=street_cabinet";
+  fixAdd: "utility=power";
   fixRemove: "power";
 }
 
 /* #16430 */
 *[power][location=kiosk] {
   throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "man_made=street_cabinet + utility=power";
   group: tr("deprecated tagging");
   fixAdd: "man_made=street_cabinet";
-  fixAdd: "street_cabinet=power";
+  fixAdd: "utility=power";
   fixRemove: "location";
 }
 
@@ -2355,6 +2357,29 @@ way[shoulder=none] {
   fixAdd: "windings:auto=yes";
 }
 
+/* #20421 */
+*[transformer=minor_distribution] {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "transformer=distribution";
+  group: tr("deprecated tagging");
+  fixAdd: "transformer=distribution";
+}
+
+*[transformer=traction] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "transformer=main";
+  group: tr("deprecated tagging");
+  fixAdd: "transformer=main";
+}
+
+*[transformer=auto] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "transformer=* + windings:auto=yes";
+  group: tr("deprecated tagging");
+  fixRemove: "transformer";
+  fixAdd: "windings:auto=yes";
+}
+
 /* #20434 */
 *[building:roof:shape] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
@@ -2513,6 +2538,58 @@ way[shoulder=none] {
   assertNoMatch: "node historic=archaeological_site site_type2=fortification";
 }
 
+
+/* #22748, Many street_cabinet values are deprecated*/
+*[street_cabinet=power] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=power";
+  fixAdd: "utility=power";
+  fixRemove: "street_cabinet";
+}
+*[street_cabinet=telecom] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=telecom";
+  fixAdd: "utility=telecom";
+  fixRemove: "street_cabinet";
+}
+*[street_cabinet=gas] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=gas";
+  fixAdd: "utility=gas";
+  fixRemove: "street_cabinet";
+}
+*[street_cabinet=street_lighting] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=street_lighting";
+  fixAdd: "utility=street_lighting";
+  fixRemove: "street_cabinet";
+}
+*[street_cabinet=water] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=water";
+  fixAdd: "utility=water";
+  fixRemove: "street_cabinet";
+}
+*[street_cabinet=water_management] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=water";
+  fixAdd: "utility=water";
+  fixRemove: "street_cabinet";
+}
+*[industrial=gas] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=gas";
+  fixAdd: "utility=gas";
+  fixRemove: "industrial";
+}
+
 /* Tag was renamed, see #22957 */
 area[parking:orientation][!orientation] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -2616,6 +2693,15 @@ relation[power=branch] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   group: tr("deprecated tagging");
   suggestAlternative: "type=power + power=line_section";
+}
+
+/* #24724, utility=hydrant is replaced by indication:emergency=fire_hydrant */
+*[marker][utility=hydrant] {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "utility=water + indication:emergency=fire_hydrant";
+  fixAdd: "indication:emergency=fire_hydrant";
+  fixAdd": "utility=water";
 }
 
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

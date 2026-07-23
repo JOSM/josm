@@ -469,7 +469,7 @@
     <chunk id="power_source_values">
     </chunk>
     <chunk id="utilities">
-        <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" values_searchable="true"/>
+        <combo key="utility" text="Utility" values="chemical,gas,heating,oil,power,sewerage,street_lighting,telecom,television,waste,water" values_searchable="true"/>
     </chunk>
     <chunk id="pole">
         <text key="height" text="Height (meters)" length="7" />
@@ -5017,6 +5017,21 @@
                 <text key="name" text="Name" />
                 </optional>
         </item> <!-- Fire Hydrant -->
+        <item name="Hydrant marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Key:marker" />
+            <space />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key!" />
+            <key key="indication:emergency" value="fire_hydrant" match="keyvalue!" />
+            <optional>
+                <reference ref="ref_operator" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+                <reference ref="color" />
+                <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
+                <space />
+                <label text="Indicates:" />
+                <text key="indication:diameter" text="Diameter" />
+            </optional>
+        </item> <!-- Hydrant marker -->
         <item name="Water Tank" icon="presets/emergency/water_tank.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:emergency=water_tank" />
             <space />
@@ -6099,6 +6114,18 @@
             </optional>
             <preset_link preset_name="Address" />
         </item> <!-- Residential Building -->
+        <item name="Service Building" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
+            <link wiki="Key:building" />
+            <key key="building" value="service" match="keyvalue!" />
+            <optional>
+                <reference ref="name_operator" />
+                <reference ref="utilities" />
+                <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels:underground" text="Levels below ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
+            <preset_link preset_name="Address" />
+        </item> <!-- Service Building -->
         <item name="Building part" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building:part" />
             <space />
@@ -6370,7 +6397,7 @@
             <space />
             <key key="man_made" value="utility_pole" />
             <reference ref="pole" />
-            <reference ref="utilities" />
+            <combo key="utility" text="Utility" values="power,street_lighting,telecom,television" values_searchable="true"/>
             <optional>
                 <reference ref="line_properties"/>
             </optional>
@@ -6388,7 +6415,8 @@
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
             <optional>
-                <combo key="street_cabinet" text="Type" values="cable_tv,gas,postal_service,power,street_lighting,telecom,traffic_control,traffic_monitoring,transport_management,waste,water,water_management" />
+                <reference ref="utilities" />
+                <combo key="street_cabinet" text="Special function" values="postal_service,traffic_control,traffic_monitoring,transport_management,waste" />
                 <reference ref="ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
                 <reference ref="color" />
@@ -6636,15 +6664,21 @@
         <item name="Marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
             <link wiki="Key:marker" />
             <space />
-            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key" />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key!" />
+            <key key="indication:man_made" value="pipeline" match="keyvalue!" />
             <reference ref="utilities" />
             <optional>
                 <reference ref="ref_operator" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
                 <reference ref="color" />
                 <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
+                <space />
+                <label text="Indicates:" />
+                <combo key="indication:substance" text="Substance" values="water,hot_water,steam,sewage,gas,oil" />
+                <text key="indication:diameter" text="Diameter" />
+                <text key="indication:pressure" text="Pressure" />
             </optional>
-        </item> <!-- Marker -->
+        </item> <!-- Pipeline marker -->
         <item name="Manhole" icon="presets/misc/manhole.svg" type="node" preset_name_label="true">
             <link wiki="Key:manhole" />
             <space />
@@ -7214,7 +7248,7 @@
         <item name="Power Street Cabinet" icon="presets/power/cable_distribution_cabinet.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
-            <key key="street_cabinet" value="power" />
+            <key key="utility" value="power" />
             <optional>
                 <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110" /> <!-- Recheck values -->
                 <reference ref="ref_operator" />
@@ -7227,6 +7261,7 @@
             <link wiki="Tag:building=transformer_tower" />
             <space />
             <key key="building" value="transformer_tower" />
+            <key key="utility" value="power" />
             <text key="height" text="Height (meters)" length="7" />
             <reference ref="ref_operator" />
             <preset_link preset_name="Power Substation" />
@@ -7368,12 +7403,28 @@
                 <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
         </item> <!-- Power Cable -->
+        <item name="Cable marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Key:marker" />
+            <space />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key!" />
+            <key key="indication:power" value="cable" match="keyvalue!" />
+            <key key="utility" value="power" match="keyvalue!"/>
+            <optional>
+                <reference ref="ref_operator" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+                <reference ref="color" />
+                <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
+                <space />
+                <label text="Indicates:" />
+                <text key="indication:voltage" text="Voltage" />
+            </optional>
+        </item> <!-- Power marker -->
     </group> <!-- Power -->
     <group name="Telecom" icon="presets/telecom/telecom.svg">
         <item name="Telecom Street Cabinet" icon="presets/telecom/telecom_cabinet.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
-            <key key="street_cabinet" value="telecom" />
+            <key key="utility" value="telecom" />
             <optional>
                 <reference ref="ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
@@ -9679,7 +9730,10 @@
             <space />
             <key key="landuse" value="industrial" />
             <combo key="industrial" text="Type" values="bakery,brewery,brickyard,depot,distributor,factory,grinding_mill,heating_station,machine_shop,mine,oil,port,salt_pond,sawmill,scrap_yard,shipyard,slaughterhouse,warehouse,wellsite" values_context="industrial" />
-            <reference ref="optional_name" />
+            <optional>
+                <text key="name" text="Name" />
+                <reference ref="utilities" />
+            </optional>
         </item> <!-- Industrial -->
         <item name="Garages" icon="presets/landuse/garages.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=garages" />
