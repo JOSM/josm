@@ -37,7 +37,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.annotations.FunctionalTest;
 import org.xml.sax.SAXException;
 
-import com.kitfox.svg.SVGConst;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -102,7 +101,6 @@ class ImageProviderTest {
     @SuppressFBWarnings(value = "LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE")
     void testTicket14319() throws IOException {
         LogHandler14319 handler = new LogHandler14319();
-        Logger.getLogger(SVGConst.SVG_LOGGER).addHandler(handler);
         ImageIcon img = new ImageProvider(
                 new File(TestUtils.getRegressionDataDir(14319)).getAbsolutePath(), "attack.svg").get();
         assertNotNull(img);
