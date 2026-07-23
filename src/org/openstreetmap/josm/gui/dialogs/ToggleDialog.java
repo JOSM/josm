@@ -441,7 +441,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     public void collapse() {
         if (isDialogInDefaultView()) {
             int titlebarHeight = Config.getPref().getInt("toggledialog.titlebar.height", 
-                (int)(20 * Config.getPref().getDouble("gui.scale", 1.0)));
+                (int) (20 * Config.getPref().getDouble("gui.scale", 1.0)));
             setContentVisible(false);
             setIsCollapsed(true);
             setPreferredSize(new Dimension(0, titlebarHeight));
@@ -572,7 +572,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 }
             };
             int titlebarHeight = Config.getPref().getInt("toggledialog.titlebar.height", 
-                (int)(20 * Config.getPref().getDouble("gui.scale", 1.0)));
+                (int) (20 * Config.getPref().getDouble("gui.scale", 1.0)));
             lblTitleWeak.setPreferredSize(new Dimension(Integer.MAX_VALUE, titlebarHeight));
             lblTitleWeak.setMinimumSize(new Dimension(0, titlebarHeight));
             add(lblTitleWeak, GBC.std().fill(GridBagConstraints.HORIZONTAL));
