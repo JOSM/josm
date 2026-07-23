@@ -1118,11 +1118,6 @@ Build-Date: ${build.tstamp}
                 <exclude name="com/drew/metadata/wav/**"/>
                 <exclude name="com/drew/metadata/webp/**"/>
                 <exclude name="com/drew/tools/**"/>
-                <exclude name="com/kitfox/svg/app/ant/**"/>
-                <exclude name="com/kitfox/svg/app/*Dialog*"/>
-                <exclude name="com/kitfox/svg/app/*Frame*"/>
-                <exclude name="com/kitfox/svg/app/*Player*"/>
-                <exclude name="com/kitfox/svg/app/*Viewer*"/>
                 <exclude name="org/apache/commons/compress/PasswordRequiredException*"/>
                 <exclude name="org/apache/commons/compress/archivers/**"/>
                 <exclude name="org/apache/commons/compress/changes/**"/>

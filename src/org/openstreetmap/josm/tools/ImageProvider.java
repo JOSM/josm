@@ -79,9 +79,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGException;
-import com.kitfox.svg.SVGUniverse;
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.geometry.size.FloatSize;
+import com.github.weisj.jsvg.parser.DocumentLimits;
+import com.github.weisj.jsvg.parser.LoaderContext;
+import com.github.weisj.jsvg.parser.SVGLoader;
 
 /**
  * Helper class to support the application with images.
@@ -252,6 +254,8 @@ public class ImageProvider {
         ARCHIVE
     }
 
+    private static final SVGLoader svgloader = new SVGLoader();
+
     /**
      * Property set on {@code BufferedImage} returned by {@link #makeImageTransparent}.
      * @since 7132
@@ -294,8 +298,6 @@ public class ImageProvider {
     protected boolean isDisabled;
     /** <code>true</code> if multi-resolution image is requested */
     protected boolean multiResolution = true;
-
-    private static SVGUniverse svgUniverse;
 
     /**
      * The icon cache
@@ -967,20 +969,17 @@ public class ImageProvider {
      */
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
         try (CachedFile cf = new CachedFile(url).setDestDir(
-                new File(Config.getDirs().getCacheDirectory(true), "images").getPath());
-             InputStream is = cf.getInputStream()) {
+                new File(Config.getDirs().getCacheDirectory(true), "images").getPath())) {
+            URL localurl = Utils.fileToURL(cf.getFile());
             switch (type) {
             case SVG:
-                SVGDiagram svg;
-                synchronized (getSvgUniverse()) {
-                    URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
-                    svg = getSvgUniverse().getDiagram(uri);
-                }
+                Logging.debug("Load SVG "+url);
+                SVGDocument svg = svgloader.load(localurl, getSVGContext());
                 return svg == null ? null : new ImageResource(svg);
             case OTHER:
                 BufferedImage img = null;
                 try {
-                    img = read(Utils.fileToURL(cf.getFile()), false, false);
+                    img = read(localurl, false, false);
                 } catch (IOException | UnsatisfiedLinkError e) {
                     Logging.log(Logging.LEVEL_WARN, "Exception while reading HTTP image:", e);
                 }
@@ -1017,19 +1016,16 @@ public class ImageProvider {
             }
             String mediatype = m.group(1);
             if ("image/svg+xml".equals(mediatype)) {
-                String s = new String(bytes, StandardCharsets.UTF_8);
                 // see #19097: check if s starts with PNG magic
-                if (s.length() > 4 && "PNG".equals(s.substring(1, 4))) {
+                if (bytes.length > 4 && bytes[1] == 'P' && bytes[2] == 'N' && bytes[3] == 'G') {
                     Logging.warn("url contains PNG file " + url);
                     return null;
                 }
-                SVGDiagram svg;
-                synchronized (getSvgUniverse()) {
-                    URI uri = getSvgUniverse().loadSVG(new StringReader(s), Utils.encodeUrl(s));
-                    svg = getSvgUniverse().getDiagram(uri);
-                }
+                InputStream is = new ByteArrayInputStream(bytes);
+                Logging.debug("Load SVG "+url);
+                SVGDocument svg = svgloader.load(is, (URI) null, getSVGContext());
                 if (svg == null) {
-                    Logging.warn("Unable to process svg: "+s);
+                    Logging.warn("Unable to process svg: "+bytes);
                     return null;
                 }
                 return new ImageResource(svg);
@@ -1112,11 +1108,8 @@ public class ImageProvider {
                 try (InputStream is = zipFile.getInputStream(entry)) {
                     switch (type) {
                     case SVG:
-                        SVGDiagram svg;
-                        synchronized (getSvgUniverse()) {
-                            URI uri = getSvgUniverse().loadSVG(is, entryName, true);
-                            svg = getSvgUniverse().getDiagram(uri);
-                        }
+                        Logging.debug("Load SVG "+archive+" "+entryName);
+                        SVGDocument svg = svgloader.load(is, (URI) null, getSVGContext());
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
                         while (size > 0) {
@@ -1151,24 +1144,27 @@ public class ImageProvider {
         Objects.requireNonNull(type, "ImageType must not be null");
         switch (type) {
         case SVG:
-            SVGDiagram svg = null;
-            synchronized (getSvgUniverse()) {
+            SVGDocument svg = null;
+            try {
+                Logging.debug("Load SVG "+path);
+                svg = svgloader.load(path, getSVGContext());
+            } catch (Exception e) {
+                Logging.error("Cannot open {0}: {1}", path, e.getMessage());
+                Logging.trace(e);
+            }
+
+            if (svg == null && "jar".equals(path.getProtocol())) {
                 try {
-                    URI uri = null;
-                    try {
-                        uri = getSvgUniverse().loadSVG(path);
-                    } catch (InvalidPathException e) {
-                        Logging.error("Cannot open {0}: {1}", path, e.getMessage());
-                        Logging.trace(e);
-                    }
-                    if (uri == null && "jar".equals(path.getProtocol())) {
-                        URL betterPath = Utils.betterJarUrl(path);
-                        if (betterPath != null) {
-                            uri = getSvgUniverse().loadSVG(betterPath);
+                    URL betterPath = Utils.betterJarUrl(path);
+                    if (betterPath != null) {
+                        try {
+                            Logging.debug("Load SVG "+betterPath);
+                            svg = svgloader.load(betterPath, getSVGContext());
+                        } catch (Exception e) {
+                            Logging.log(Logging.LEVEL_WARN, "Unable to read SVG from fallback jar URL", e);
                         }
                     }
-                    svg = getSvgUniverse().getDiagram(uri);
-                } catch (SecurityException | IOException e) {
+                } catch (IOException e) {
                     Logging.log(Logging.LEVEL_WARN, "Unable to read SVG", e);
                 }
             }
@@ -1471,34 +1467,20 @@ public class ImageProvider {
      * @param resizeMode how to size/resize the image
      * @return an image from the given SVG data at the desired dimension.
      */
-    static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim, ImageResizeMode resizeMode) {
+    static BufferedImage createImageFromSvg(SVGDocument svg, Dimension dim, ImageResizeMode resizeMode) {
         if (Logging.isTraceEnabled()) {
-            Logging.trace("createImageFromSvg: {0} {1}", svg.getXMLBase(), dim);
+            Logging.trace("createImageFromSvg: {0}", dim);
         }
-        final float sourceWidth = svg.getWidth();
-        final float sourceHeight = svg.getHeight();
+        FloatSize size = svg.size();
+        final float sourceWidth = size.width;
+        final float sourceHeight = size.height;
         if (sourceWidth <= 0 || sourceHeight <= 0) {
-            Logging.error("createImageFromSvg: {0} {1} sourceWidth={2} sourceHeight={3}", svg.getXMLBase(), dim, sourceWidth, sourceHeight);
+            Logging.error("createImageFromSvg: {0} sourceWidth={1} sourceHeight={2}", dim, sourceWidth, sourceHeight);
             return null;
         }
         return resizeMode.createBufferedImage(dim, new Dimension((int) sourceWidth, (int) sourceHeight), g -> {
-            try {
-                synchronized (getSvgUniverse()) {
-                    svg.render(g);
-                }
-            } catch (SVGException ex) {
-                Logging.log(Logging.LEVEL_ERROR, "Unable to load svg:", ex);
-            }
+            svg.render(null, g);
         }, null);
-    }
-
-    private static synchronized SVGUniverse getSvgUniverse() {
-        if (svgUniverse == null) {
-            svgUniverse = new SVGUniverse();
-            // CVE-2017-5617: Allow only data scheme (see #14319)
-            svgUniverse.setImageDataInlineOnly(true);
-        }
-        return svgUniverse;
     }
 
     /**
@@ -1952,6 +1934,11 @@ public class ImageProvider {
      */
     public static ImageIcon createBlankIcon(ImageSizes size) {
         return new ImageIcon(new BufferedImage(size.getAdjustedWidth(), size.getAdjustedHeight(), BufferedImage.TYPE_INT_ARGB));
+    }
+
+    private static LoaderContext getSVGContext() {
+        return LoaderContext.builder().documentLimits(new DocumentLimits(DocumentLimits.DEFAULT_MAX_NESTING_DEPTH,
+            DocumentLimits.DEFAULT_MAX_USE_NESTING_DEPTH, DocumentLimits.DEFAULT_MAX_PATH_COUNT+3000)).build();
     }
 
     @Override

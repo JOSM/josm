@@ -123,9 +123,15 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.formdev</groupId>
-      <artifactId>svgSalamander</artifactId>
+      <groupId>com.github.weisj</groupId>
+      <artifactId>jsvg</artifactId>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.1.0</version>
+      <scope>provided</scope> 
     </dependency>
     <dependency>
       <groupId>ch.poole</groupId>
@@ -658,16 +664,6 @@
                     <exclude>com/drew/metadata/wav/**</exclude>
                     <exclude>com/drew/metadata/webp/**</exclude>
                     <exclude>com/drew/tools/**</exclude>
-                  </excludes>
-                </filter>
-                <filter>
-                  <artifact>com.formdev:svgSalamander</artifact>
-                  <excludes>
-                    <exclude>com/kitfox/svg/app/ant/**</exclude>
-                    <exclude>com/kitfox/svg/app/*Dialog*</exclude>
-                    <exclude>com/kitfox/svg/app/*Frame*</exclude>
-                    <exclude>com/kitfox/svg/app/*Player*</exclude>
-                    <exclude>com/kitfox/svg/app/*Viewer*</exclude>
                   </excludes>
                 </filter>
                 <filter>
