@@ -1,4 +1,3 @@
-// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.lang.ClassCastException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -472,7 +472,7 @@ public class GeoJSONReader extends AbstractReader {
                 }
             }
             mergeEqualMultipolygonWays();
-        } catch (IOException | IllegalArgumentException | JsonParsingException e) {
+        } catch (IOException | IllegalArgumentException | ClassCastException | JsonParsingException e) {
             throw new IllegalDataException(e);
         }
         return getDataSet();
