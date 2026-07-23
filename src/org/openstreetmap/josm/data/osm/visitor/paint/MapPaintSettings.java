@@ -14,8 +14,9 @@ import org.openstreetmap.josm.spi.preferences.Config;
 public final class MapPaintSettings implements PreferenceChangedListener {
 
     /** The unique instance **/
-    public static final MapPaintSettings INSTANCE = new MapPaintSettings();
+    public static final MapPaintSettings INSTANCE = new MapPaintSettings("");
 
+    private final String prefix;
     private boolean useRealWidth;
     /** Preference: should directional arrows be displayed */
     private boolean showDirectionArrow;
@@ -66,34 +67,28 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     /** Color Preference for tagged and multiply connected nodes */
     private Color taggedConnectionColor;
 
-    private MapPaintSettings() {
+    private MapPaintSettings(String prefix) {
+        this.prefix = prefix;
         load();
         Config.getPref().addPreferenceChangeListener(this);
     }
 
     /**
-     * Creates MapPaintSettings with most neutral settings, that do not override MapCSS.
+     * Creates MapPaintSettings with optional prefix to fine-tune settings influence
      * Useful for MapCSS CLI/Plugin rendering, via {@link org.openstreetmap.josm.gui.mappaint.RenderingHelper}
+     * @param prefix a option prefix, should be lowercase with a dot at the end
      * @return a new MapPaintSettings instance with neutral values.
-     * @since 19549
+     * @since 19589
      */
-    public static MapPaintSettings createNeutralSettings() {
-        MapPaintSettings neutralSettings = new MapPaintSettings();
-        neutralSettings.useRealWidth = false; // Real width is not used (at least currently)
-        neutralSettings.showDirectionArrow = false; // Direction arrows are turned off
-        neutralSettings.showOnewayArrow = false; // One way arrows are disabled
-        neutralSettings.showNamesDistance = 0; // Forced labels are turned off
-        neutralSettings.showOrderNumber = false;
-        neutralSettings.showOrderNumberOnSelectedWay = false;
-        neutralSettings.outlineOnly = false;
-        return neutralSettings;
+    public static MapPaintSettings createSettings(String prefix) {
+        return new MapPaintSettings(name);
     }
 
     private void load() {
-        showDirectionArrow = Config.getPref().getBoolean("draw.segment.direction", false);
-        showOnewayArrow = Config.getPref().getBoolean("draw.oneway", true);
-        useRealWidth = Config.getPref().getBoolean("mappaint.useRealWidth", false);
-        defaultSegmentWidth = Config.getPref().getInt("mappaint.segment.default-width", 2);
+        showDirectionArrow = Config.getPref().getBoolean(prefix+"draw.segment.direction", false);
+        showOnewayArrow = Config.getPref().getBoolean(prefix+"draw.oneway", true);
+        useRealWidth = Config.getPref().getBoolean(prefix+"mappaint.useRealWidth", false);
+        defaultSegmentWidth = Config.getPref().getInt(prefix+"mappaint.segment.default-width", 2);
 
         selectedColor = PaintColors.SELECTED.get();
         relationSelectedColor = PaintColors.RELATIONSELECTED.get();
@@ -108,24 +103,24 @@ public final class MapPaintSettings implements PreferenceChangedListener {
             taggedConnectionColor = connectionColor;
         }
 
-        showOrderNumber = Config.getPref().getBoolean("draw.segment.order_number", false);
-        showOrderNumberOnSelectedWay = Config.getPref().getBoolean("draw.segment.order_number.on_selected", false);
-        showHeadArrowOnly = Config.getPref().getBoolean("draw.segment.head_only", false);
+        showOrderNumber = Config.getPref().getBoolean(prefix+"draw.segment.order_number", false);
+        showOrderNumberOnSelectedWay = Config.getPref().getBoolean(prefix+"draw.segment.order_number.on_selected", false);
+        showHeadArrowOnly = Config.getPref().getBoolean(prefix+"draw.segment.head_only", false);
 
-        showNamesDistance = Config.getPref().getInt("mappaint.shownames", 10_000_000);
-        useStrokesDistance = Config.getPref().getInt("mappaint.strokes", 10_000_000);
-        showIconsDistance = Config.getPref().getInt("mappaint.showicons", 10_000_000);
+        showNamesDistance = Config.getPref().getInt(prefix+"mappaint.shownames", 10_000_000);
+        useStrokesDistance = Config.getPref().getInt(prefix+"mappaint.strokes", 10_000_000);
+        showIconsDistance = Config.getPref().getInt(prefix+"mappaint.showicons", 10_000_000);
 
-        selectedNodeSize = Config.getPref().getInt("mappaint.node.selected-size", 5);
-        unselectedNodeSize = Config.getPref().getInt("mappaint.node.unselected-size", 3);
-        connectionNodeSize = Config.getPref().getInt("mappaint.node.connection-size", 5);
-        taggedNodeSize = Config.getPref().getInt("mappaint.node.tagged-size", 3);
-        fillSelectedNode = Config.getPref().getBoolean("mappaint.node.fill-selected", true);
-        fillUnselectedNode = Config.getPref().getBoolean("mappaint.node.fill-unselected", false);
-        fillTaggedNode = Config.getPref().getBoolean("mappaint.node.fill-tagged", true);
-        fillConnectionNode = Config.getPref().getBoolean("mappaint.node.fill-connection", false);
+        selectedNodeSize = Config.getPref().getInt(prefix+"mappaint.node.selected-size", 5);
+        unselectedNodeSize = Config.getPref().getInt(prefix+"mappaint.node.unselected-size", 3);
+        connectionNodeSize = Config.getPref().getInt(prefix+"mappaint.node.connection-size", 5);
+        taggedNodeSize = Config.getPref().getInt(prefix+"mappaint.node.tagged-size", 3);
+        fillSelectedNode = Config.getPref().getBoolean(prefix+"mappaint.node.fill-selected", true);
+        fillUnselectedNode = Config.getPref().getBoolean(prefix+"mappaint.node.fill-unselected", false);
+        fillTaggedNode = Config.getPref().getBoolean(prefix+"mappaint.node.fill-tagged", true);
+        fillConnectionNode = Config.getPref().getBoolean(prefix+"mappaint.node.fill-connection", false);
 
-        outlineOnly = Config.getPref().getBoolean("draw.data.area_outline_only", false);
+        outlineOnly = Config.getPref().getBoolean(prefix+"draw.data.area_outline_only", false);
     }
 
     @Override
