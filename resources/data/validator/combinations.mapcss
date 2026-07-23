@@ -334,7 +334,7 @@ way[highway=footway][oneway=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.tag} together with {1.tag}, see #18411, #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186, #18815, #20960 */
+/* {0.tag} together with {1.tag}, see #18411, #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186, #18815, #20960, #24114 */
 *[barrier=kerb][kerb=no],
 way[highway=construction][construction][construction=~/^(yes|minor|no)$/],
 way[railway=construction][construction][construction=~/^(yes|minor|no)$/],
@@ -352,7 +352,8 @@ way[tracktype=grade4][surface].fully_paved_surface,
 way[tracktype=grade5][surface].fully_paved_surface,
 way[segregated][bicycle=no],
 way[segregated][foot=no],
-way[man_made=pipeline][tunnel=flooded] {
+way[man_made=pipeline][tunnel=flooded],
+*[line_management=termination][location:transition=yes] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
 }
