@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 
