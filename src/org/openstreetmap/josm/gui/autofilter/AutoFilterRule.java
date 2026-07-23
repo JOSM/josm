@@ -3,20 +3,26 @@ package org.openstreetmap.josm.gui.autofilter;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.tools.Logging;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * An auto filter rule determines how auto filter can be built from visible map data.
@@ -42,6 +48,11 @@ public class AutoFilterRule {
 
     private IntFunction<String> valueFormatter = Integer::toString;
 
+    private boolean noValueFilter = false;
+
+    /** The union of {@link #key} and the keys provided by {@link #setExtraKeys(List)}. */
+    private List<String> allKeys;
+
     /**
      * Constructs a new {@code AutoFilterRule}.
      * @param key the OSM key on which the rule applies
@@ -50,6 +61,7 @@ public class AutoFilterRule {
     public AutoFilterRule(String key, int minZoomLevel) {
         this.key = key;
         this.minZoomLevel = minZoomLevel;
+        this.allKeys = List.of(key);
     }
 
     /**
@@ -69,12 +81,21 @@ public class AutoFilterRule {
     }
 
     /**
+     * Returns true if there should be a filter button for OSM primitives which have no value for the key.
+     * @since xxx
+     */
+    public boolean getNoValueFilter() {
+        return noValueFilter;
+    }
+
+    /**
      * Formats the numeric value
      * @param value the numeric value to format
      * @return the formatted value
+     * @since xxx
      */
-    public String formatValue(int value) {
-        return valueFormatter.apply(value);
+    public String formatValue(Integer value) {
+        return value == null ? "∅" : valueFormatter.apply(value);
     }
 
     /**
@@ -112,11 +133,54 @@ public class AutoFilterRule {
     }
 
     /**
-     * Returns the numeric values for the given OSM primitive
-     * @param osm the primitive
-     * @return a stream of numeric values
+     * Adds a filter button for OSM primitives which have no value for the key.
      */
-    public IntStream getTagValuesForPrimitive(OsmPrimitive osm) {
+    public AutoFilterRule enableNoValueFilter() {
+        this.noValueFilter = true;
+        return this;
+    }
+
+    /**
+     * Sets extra OSM keys on which the rule applies in addition to the primary key ({@link #getKey()}).
+     * This allows a filter to look at the values of more than one key at the same time.
+     * @param extraKeys the list of extra keys, may be empty
+     * @return {@code this}
+     * @throws NullPointerException if {@code extraKeys} is null
+     * @since xxx
+     */
+    public AutoFilterRule setExtraKeys(List<String> extraKeys) {
+        Objects.requireNonNull(extraKeys);
+        this.allKeys = Stream.concat(Stream.of(key), extraKeys.stream()).collect(toList());
+        return this;
+    }
+
+    /**
+     * Returns the numeric values for the given OSM primitive
+     *
+     * @param osm              the primitive
+     * @param directValuesOnly whether "inner" values from ranges (such as 6 and 7 for 5-8) should be omitted
+     * @return a stream of numeric values
+     * @since xxx
+     */
+    public IntStream getTagValuesForPrimitive(OsmPrimitive osm, boolean directValuesOnly) {
+        if (osm.isDeleted()) return IntStream.empty();
+        if (allKeys.size() == 1) {
+            IntStream values = getTagValuesForPrimitive(osm, key, directValuesOnly);
+            if (values != null) return values;
+        } else {
+            Set<Integer> allValues = new HashSet<>();
+            for (String k : allKeys) {
+                IntStream values = getTagValuesForPrimitive(osm, k, directValuesOnly);
+                if (values != null) {
+                    values.forEach(allValues::add);
+                }
+            }
+            if (!allValues.isEmpty()) return allValues.stream().mapToInt(it -> it).sorted();
+        }
+        return Boolean.TRUE.equals(PROP_AUTO_FILTER_DEFAULTS.get()) ? defaultValueSupplier.apply(osm) : IntStream.empty();
+    }
+
+    private IntStream getTagValuesForPrimitive(OsmPrimitive osm, String key, boolean directValuesOnly) {
         String value = osm.get(key);
         if (value != null) {
             Pattern p = Pattern.compile("(-?[0-9]+)-(-?[0-9]+)");
@@ -125,7 +189,11 @@ public class AutoFilterRule {
                 if (m.matches()) {
                     int a = valueExtractor.applyAsInt(m.group(1));
                     int b = valueExtractor.applyAsInt(m.group(2));
-                    return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b));
+                    if (directValuesOnly && a != b) {
+                        return IntStream.of(a, b).sorted();
+                    } else {
+                        return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b));
+                    }
                 } else {
                     try {
                         return IntStream.of(valueExtractor.applyAsInt(v));
@@ -136,7 +204,7 @@ public class AutoFilterRule {
                 }
             });
         }
-        return Boolean.TRUE.equals(PROP_AUTO_FILTER_DEFAULTS.get()) ? defaultValueSupplier.apply(osm) : IntStream.empty();
+        return null;
     }
 
     /**
@@ -156,6 +224,8 @@ public class AutoFilterRule {
             new AutoFilterRule("layer", 16)
                     .setDefaultValueSupplier(AutoFilterRule::defaultLayer),
             new AutoFilterRule("level", 17)
+                .setExtraKeys(List.of("repeat_on"))
+                .enableNoValueFilter()
                 // #17109, support values like 0.5 or 1.5 - level values are multiplied by 2 when parsing, values are divided by 2 for formatting
                 .setValueExtractor(s -> (int) (Double.parseDouble(s) * 2.))
                 .setValueFormatter(v -> DecimalFormat.getInstance(Locale.ROOT).format(v / 2.)),

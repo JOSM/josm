@@ -620,7 +620,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         MapFrame map = MainApplication.getMap();
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
+        if (AutoFilterManager.getInstance().getCurrentCombinedFilter() != null) {
             AutoFilterManager.getInstance().drawOSDText(tempG);
         } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
             map.filterDialog.drawOSDText(tempG);

@@ -98,7 +98,7 @@ public class FilterTableModel extends AbstractTableModel implements SortableTabl
      * @since 14206
      */
     public void executeFilters(boolean force) {
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null && (force || model.hasFilters())) {
+        if (AutoFilterManager.getInstance().getCurrentCombinedFilter() == null && (force || model.hasFilters())) {
             model.executeFilters();
             updateMap();
         }
@@ -111,7 +111,7 @@ public class FilterTableModel extends AbstractTableModel implements SortableTabl
      * @since 14206
      */
     public void executeFilters(Collection<? extends OsmPrimitive> primitives, boolean force) {
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null && (force || model.hasFilters())) {
+        if (AutoFilterManager.getInstance().getCurrentCombinedFilter() == null && (force || model.hasFilters())) {
             model.executeFilters(primitives);
             updateMap();
         }

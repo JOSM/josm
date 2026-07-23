@@ -8,13 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Objects;
-import java.util.TreeMap;
+import java.util.OptionalInt;
 import java.util.TreeSet;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -63,9 +65,16 @@ public final class AutoFilterManager
 implements ZoomChangeListener, MapModeChangeListener, DataSetListener, PreferenceChangedListener, LayerChangeListener {
 
     /**
-     * Property to determines if the auto filter feature is enabled.
+     * Property to determine if the auto filter feature is enabled.
      */
     public static final BooleanProperty PROP_AUTO_FILTER_ENABLED = new BooleanProperty("auto.filter.enabled", true);
+
+    /**
+     * Property to determine if the auto filter feature completely hides elements instead of just disabling them.
+     * Equivalent to {@link Filter#hiding}
+     */
+    public static final BooleanProperty PROP_AUTO_FILTER_HIDING = new BooleanProperty("auto.filter.hiding", false);
+
 
     /**
      * Property to determine the current auto filter rule.
@@ -80,7 +89,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     /**
      * The buttons currently displayed in map view.
      */
-    private final Map<Integer, AutoFilterButton> buttons = new TreeMap<>();
+    private final Map<OptionalInt, AutoFilterButton> buttons = new HashMap<>();
 
     /**
      * The list of registered auto filter rules.
@@ -103,9 +112,10 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     AutoFilterRule enabledRule;
 
     /**
-     * The currently selected auto filter, if any.
+     * The currently selected auto filters, if any.
+     * If more than one auto filter is active, elements will match if they match at least one of them.
      */
-    private AutoFilter currentAutoFilter;
+    private final List<AutoFilter> currentAutoFilters = new ArrayList<>();
 
     /**
      * Returns the unique instance.
@@ -133,11 +143,15 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
                 && enabledRule.getMinZoomLevel() <= Selector.GeneralSelector.scale2level(map.mapView.getDist100Pixel())) {
             // Retrieve the values from current rule visible on screen
             NavigableSet<Integer> values = getNumericValues();
-            // Make sure current auto filter button remains visible even if no data is found, to allow user to disable it
-            if (currentAutoFilter != null) {
-                values.add(currentAutoFilter.getFilter().value);
+            // Make sure current auto filter buttons remain visible even if no data is found, to allow user to disable them
+            for (var currentAutoFilter : currentAutoFilters) {
+                if (currentAutoFilter.getFilter().value != null) {
+                    values.add(currentAutoFilter.getFilter().value);
+                }
             }
-            if (!values.equals(buttons.keySet())) {
+            if (!values.equals(buttons.keySet().stream()
+                    .filter(it -> it.isPresent() && it.getAsInt() != Integer.MIN_VALUE)
+                    .map(OptionalInt::getAsInt).collect(Collectors.toSet()))) {
                 removeAllButtons();
                 addNewButtons(values);
             }
@@ -146,11 +160,12 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
 
     static class CompiledFilter extends Filter implements MatchSupplier {
         final AutoFilterRule rule;
-        final int value;
+        final Integer value;
 
-        CompiledFilter(AutoFilterRule rule, int value) {
+        CompiledFilter(AutoFilterRule rule, Integer value, boolean hiding) {
             this.rule = rule;
             this.value = value;
+            this.hiding = hiding;
             this.enable = true;
             this.inverted = true;
             this.text = rule.getKey() + "=" + rule.formatValue(value);
@@ -173,22 +188,81 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             if (!super.equals(obj) || getClass() != obj.getClass())
                 return false;
             CompiledFilter other = (CompiledFilter) obj;
-            return Objects.equals(rule, other.rule) && value == other.value;
+            return Objects.equals(rule, other.rule) && Objects.equals(value, other.value);
+        }
+    }
+
+    /** The combination of multiple {@link CompiledFilter}s */
+    static class CombinedFilter extends Filter implements MatchSupplier {
+
+        private final List<CompiledFilter> filters;
+
+        CombinedFilter(List<CompiledFilter> filters) {
+
+            if (filters == null || filters.isEmpty()) throw new IllegalArgumentException("no filters provided");
+
+            this.filters = filters;
+
+            boolean hiding = filters.get(0).hiding;
+            String key = filters.get(0).rule.getKey();
+            List<String> values = new ArrayList<>();
+
+            for (CompiledFilter filter : filters) {
+                if (hiding != filter.hiding) throw new IllegalArgumentException("non-matching hiding properties");
+                if (!Objects.equals(key, filter.rule.getKey())) throw new IllegalArgumentException("non-matching keys");
+                values.add(filter.rule.formatValue(filter.value));
+            }
+
+            this.hiding = hiding;
+            this.enable = true;
+            this.inverted = true;
+            this.text = key + "~" + String.join("|", values);
+
+        }
+
+        @Override
+        public SearchCompiler.Match get() {
+            return new SearchCompiler.Match() {
+                @Override
+                public boolean match(OsmPrimitive osm) {
+                    return filters.stream().anyMatch(filter -> filter.get().match(osm));
+                }
+            };
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * super.hashCode() + Objects.hash(filters);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj) || getClass() != obj.getClass())
+                return false;
+            CombinedFilter other = (CombinedFilter) obj;
+            return Objects.equals(filters, other.filters);
         }
     }
 
     static class Match extends SearchCompiler.Match {
         final AutoFilterRule rule;
-        final int value;
+        final Integer value;
 
-        Match(AutoFilterRule rule, int value) {
+        Match(AutoFilterRule rule, Integer value) {
             this.rule = rule;
             this.value = value;
         }
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            return rule.getTagValuesForPrimitive(osm).anyMatch(v -> v == value);
+            IntStream values = rule.getTagValuesForPrimitive(osm, false);
+            if (value != null) {
+                return values.anyMatch(v -> v == value);
+            } else {
+                return values.findAny().isEmpty();
+            }
         }
 
         @Override
@@ -196,7 +270,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Match match = (Match) o;
-            return value == match.value &&
+            return Objects.equals(value, match.value) &&
                     Objects.equals(rule, match.rule);
         }
 
@@ -214,16 +288,20 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         int maxWidth = 16;
         final AutoFilterButton keyButton = AutoFilterButton.forOsmKey(enabledRule.getKey());
         addButton(keyButton, Integer.MIN_VALUE, i++);
-        for (final Integer value : values.descendingSet()) {
-            CompiledFilter filter = new CompiledFilter(enabledRule, value);
+        var valueList = new ArrayList<>(values.descendingSet());
+        if (enabledRule.getNoValueFilter()) {
+            valueList.add(null);
+        }
+        for (final Integer value : valueList) {
+            CompiledFilter filter = new CompiledFilter(enabledRule, value, PROP_AUTO_FILTER_HIDING.get());
             String label = enabledRule.formatValue(value);
             AutoFilter autoFilter = new AutoFilter(label, filter.text, filter);
             AutoFilterButton button = new AutoFilterButton(autoFilter);
-            if (autoFilter.equals(currentAutoFilter)) {
+            if (currentAutoFilters.contains(autoFilter)) {
                 button.getModel().setPressed(true);
             }
-            maxWidth = Math.max(maxWidth, button.getPreferredSize().width);
             addButton(button, value, i++);
+            maxWidth = Math.max(maxWidth, button.getPreferredSize().width);
         }
         for (AutoFilterButton b : buttons.values()) {
             b.setSize(b == keyButton ? b.getPreferredSize().width : maxWidth, 20);
@@ -231,9 +309,9 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         MainApplication.getMap().mapView.validate();
     }
 
-    private void addButton(AutoFilterButton button, int value, int i) {
+    private void addButton(AutoFilterButton button, Integer value, int i) {
         MapView mapView = MainApplication.getMap().mapView;
-        buttons.put(value, button);
+        buttons.put(value == null ? OptionalInt.empty() : OptionalInt.of(value), button);
         mapView.add(button).setLocation(3, 60 + 22*i);
     }
 
@@ -252,10 +330,15 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         }
         BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
         NavigableSet<Integer> values = new TreeSet<>();
-        Consumer<OsmPrimitive> consumer = o -> enabledRule.getTagValuesForPrimitive(o).forEach(values::add);
-        ds.searchNodes(bbox).forEach(consumer);
-        ds.searchWays(bbox).forEach(consumer);
-        ds.searchRelations(bbox).forEach(consumer);
+        for (var primitiveList : List.of(ds.searchNodes(bbox), ds.searchWays(bbox), ds.searchRelations(bbox))) {
+            // add all values that are directly mentioned
+            primitiveList.forEach(o -> enabledRule.getTagValuesForPrimitive(o, true).forEach(values::add));
+            // only add integer values from value ranges, not fractional values
+            primitiveList.forEach(o -> enabledRule.getTagValuesForPrimitive(o, false)
+                    .filter(v -> !enabledRule.formatValue(v).contains("."))
+                    .forEach(values::add));
+
+        }
         return values;
     }
 
@@ -267,6 +350,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     @Override
     public void dataChanged(DataChangedEvent event) {
         updateFiltersFull();
+        updateButtons();
     }
 
     @Override
@@ -313,13 +397,13 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     }
 
     private synchronized void updateFiltersFull() {
-        if (currentAutoFilter != null) {
+        if (!currentAutoFilters.isEmpty()) {
             model.executeFilters();
         }
     }
 
     private synchronized void updateFiltersEvent(AbstractDatasetChangedEvent event, boolean affectedOnly) {
-        if (currentAutoFilter != null) {
+        if (!currentAutoFilters.isEmpty()) {
             Collection<? extends OsmPrimitive> prims = event.getPrimitives();
             model.executeFilters(affectedOnly ? FilterModel.getAffectedPrimitives(prims) : prims);
         }
@@ -382,11 +466,25 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     }
 
     /**
-     * Returns the currently selected auto filter, if any.
-     * @return the currently selected auto filter, or null
+     * Returns the currently selected auto filters, if any.
+     * @return the currently selected auto filters. Can be empty.
      */
-    public synchronized AutoFilter getCurrentAutoFilter() {
-        return currentAutoFilter;
+    public synchronized List<AutoFilter> getCurrentAutoFilters() {
+        return currentAutoFilters;
+    }
+
+    /**
+     * Returns a combination of all {@link #getCurrentAutoFilters()}, if any.
+     * @return a single combined filter, or null
+     */
+    public Filter getCurrentCombinedFilter() {
+        if (currentAutoFilters.isEmpty()) {
+            return null;
+        } else if (currentAutoFilters.size() == 1) {
+            return currentAutoFilters.get(0).getFilter();
+        } else {
+            return new CombinedFilter(currentAutoFilters.stream().map(AutoFilter::getFilter).collect(Collectors.toList()));
+        }
     }
 
     /**
@@ -394,16 +492,40 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
      * @param autoFilter the currently selected auto filter, or null
      */
     public synchronized void setCurrentAutoFilter(AutoFilter autoFilter) {
-        model.clearFilters();
-        currentAutoFilter = autoFilter;
+        currentAutoFilters.clear();
         if (autoFilter != null) {
-            model.addFilter(autoFilter.getFilter());
+            currentAutoFilters.add(autoFilter);
+        }
+        updateModelFilters();
+    }
+
+    public synchronized void addCurrentAutoFilter(AutoFilter autoFilter) {
+        if (!currentAutoFilters.contains(autoFilter)) {
+            currentAutoFilters.add(autoFilter);
+            updateModelFilters();
+        }
+    }
+
+    public synchronized void removeCurrentAutoFilter(AutoFilter autoFilter) {
+        if (currentAutoFilters.contains(autoFilter)) {
+            currentAutoFilters.removeIf(it -> Objects.equals(it, autoFilter));
+            updateModelFilters();
+        }
+    }
+
+    private synchronized void updateModelFilters() {
+        model.clearFilters();
+        if (currentAutoFilters.isEmpty()) {
+            if (MainApplication.getMap() != null) {
+                MainApplication.getMap().filterDialog.getFilterModel().executeFilters(true);
+            }
+        } else {
+            model.addFilter(getCurrentCombinedFilter());
             model.executeFilters();
-            if (model.isChanged()) {
-                OsmDataLayer dataLayer = MainApplication.getLayerManager().getActiveDataLayer();
-                if (dataLayer != null) {
-                    dataLayer.invalidate();
-                }
+            // update the data layer (necessary even if model.isChanged() == false to update the OSDText)
+            OsmDataLayer dataLayer = MainApplication.getLayerManager().getActiveDataLayer();
+            if (dataLayer != null) {
+                dataLayer.invalidate();
             }
         }
     }
@@ -413,8 +535,10 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
      * @param g The graphics to draw that text on.
      */
     public synchronized void drawOSDText(Graphics2D g) {
+        String filterText = Objects.requireNonNull(getCurrentCombinedFilter()).text;
+        String lengthLimitedFilterText = filterText.length() > 18 ? filterText.substring(0, 18) + "…" : filterText;
         model.drawOSDText(g, lblOSD,
-            tr("<h2>Filter active: {0}</h2>", currentAutoFilter.getFilter().text),
+            tr("<h2>Filter active: {0}</h2>", lengthLimitedFilterText),
             tr("</p><p>Click again on filter button to see all objects.</p></html>"));
     }
 
@@ -437,7 +561,8 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
                 enableAutoFilterRule((AutoFilterRule) null);
                 resetCurrentAutoFilter();
             }
-        } else if (e.getKey().equals(PROP_AUTO_FILTER_RULE.getKey())) {
+        } else if (e.getKey().equals(PROP_AUTO_FILTER_RULE.getKey())
+                || e.getKey().equals(PROP_AUTO_FILTER_HIDING.getKey())) {
             enableAutoFilterRule(PROP_AUTO_FILTER_RULE.get());
             resetCurrentAutoFilter();
             updateButtons();
