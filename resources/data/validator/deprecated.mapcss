@@ -2701,7 +2701,7 @@ relation[power=branch] {
   group: tr("deprecated tagging");
   suggestAlternative: "utility=water + indication:emergency=fire_hydrant";
   fixAdd: "indication:emergency=fire_hydrant";
-  fixAdd": "utility=water";
+  fixAdd: "utility=water";
 }
 
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
