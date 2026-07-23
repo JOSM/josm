@@ -81,7 +81,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
      * @since 19589
      */
     public static MapPaintSettings createSettings(String prefix) {
-        return new MapPaintSettings(name);
+        return new MapPaintSettings(prefix);
     }
 
     private void load() {

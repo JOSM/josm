@@ -429,6 +429,13 @@ way[route=ferry]!:closed >[index=-1] node[amenity!=ferry_terminal][man_made!=pie
   throwWarning: tr("Ferry route is not connected to a ferry terminal or branches.");
 }
 
+/* 20421 */
+area[power=substation] ⊇ *[transformer=distribution] {
+  throwWarning: tr("A distribution transformer shouldn't be contained in a substation.");
+  suggestAlternative: "transformer=main";
+  fixAdd: "transformer=main";
+}
+
 /* #21801 */
 way[railway][railway !~ /^(turntable|traverser|platform_edge|roundhouse|workshop|platform)$/] > node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) > 2]:connection,
 way[railway][railway !~ /^(turntable|traverser|platform_edge|roundhouse|workshop|platform)$/] >[index!=1][index!=-1] node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) == 2]:connection {

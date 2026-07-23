@@ -6619,7 +6619,7 @@
             <space />
             <key key="pipeline" value="substation" />
             <text key="name" text="Name" />
-            <combo key="substation" text="Type" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" values_searchable="true" />
+            <combo key="substation" text="Role of substation" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" values_searchable="true" />
             <reference ref="ref_operator" />
             <reference ref="substance" />
         </item> <!-- Pipeline Substation -->
@@ -7127,7 +7127,7 @@
             <space />
             <key key="power" value="substation" />
             <text key="name" text="Name" />
-            <combo key="substation" text="Type of substation" values="compensation,converter,distribution,industrial,minor_distribution,traction,transition,transmission" values_context="power" />
+            <combo key="substation" text="Role of substation" values="compensation,converter,distribution,industrial,minor_distribution,traction,transition,transmission" values_context="power" />
             <reference ref="power_loc" />
             <reference ref="voltage_frequency" />
             <reference ref="ref_operator" />
@@ -7141,7 +7141,7 @@
             <link wiki="Tag:power=transformer" />
             <space />
             <key key="power" value="transformer" />
-            <combo key="transformer" text="Type of transformer" values="auxiliary,converter,distribution,generator,main,phase_angle_regulator,yes" match="key" values_context="power" />
+            <combo key="transformer" text="Nature of transformer" values="auxiliary,converter,distribution,generator,main,phase_angle_regulator,yes" match="key" values_context="power" />
             <reference ref="power_loc" />
             <reference ref="transformer_voltage_frequency" />
             <reference ref="ref_operator" />
@@ -7298,10 +7298,25 @@
             <reference ref="power_pole" />
             <space />
             <label text="Transformer Attributes:" />
-            <key key="transformer" value="distribution" match="key!" />
+            <key key="transformer" value="distribution" match="keyvalue!" />
             <reference ref="transformer_voltage_frequency" />
             <reference ref="optional_transformer_rating_phases_devices_windings" />
         </item> <!-- Pole with Transformer -->
+        <item name="Pole with Substation" icon="presets/power/pole_transformer.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:power=pole" />
+            <space />
+            <key key="power" value="pole" />
+            <label text="Pole Attributes:" />
+            <reference ref="power_pole" />
+            <space />
+            <label text="Substation Attributes:" />
+            <combo key="substation" text="Role of substation" values="industrial,minor_distribution" match="key!" />
+            <space />
+            <label text="Transformer Attributes:" />
+            <combo key="transformer" text="Nature of transformer" values="main" match="none" />
+            <reference ref="transformer_voltage_frequency" />
+            <reference ref="optional_transformer_rating_phases_devices_windings" />
+        </item> <!-- Pole with Substation -->
         <item name="Catenary mast" icon="presets/power/catenary_mast.svg" type="node" preset_name_label="true">
             <link wiki="Tag:power=catenary_mast" />
             <space />
