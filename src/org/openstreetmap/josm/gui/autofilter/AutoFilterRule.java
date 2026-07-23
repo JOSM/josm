@@ -82,7 +82,7 @@ public class AutoFilterRule {
 
     /**
      * Returns true if there should be a filter button for OSM primitives which have no value for the key.
-     * @since xxx
+     * @since 19592
      */
     public boolean getNoValueFilter() {
         return noValueFilter;
@@ -92,7 +92,7 @@ public class AutoFilterRule {
      * Formats the numeric value
      * @param value the numeric value to format
      * @return the formatted value
-     * @since xxx
+     * @since 19592
      */
     public String formatValue(Integer value) {
         return value == null ? "∅" : valueFormatter.apply(value);
@@ -146,7 +146,7 @@ public class AutoFilterRule {
      * @param extraKeys the list of extra keys, may be empty
      * @return {@code this}
      * @throws NullPointerException if {@code extraKeys} is null
-     * @since xxx
+     * @since 19592
      */
     public AutoFilterRule setExtraKeys(List<String> extraKeys) {
         Objects.requireNonNull(extraKeys);
@@ -160,7 +160,7 @@ public class AutoFilterRule {
      * @param osm              the primitive
      * @param directValuesOnly whether "inner" values from ranges (such as 6 and 7 for 5-8) should be omitted
      * @return a stream of numeric values
-     * @since xxx
+     * @since 19592
      */
     public IntStream getTagValuesForPrimitive(OsmPrimitive osm, boolean directValuesOnly) {
         if (osm.isDeleted()) return IntStream.empty();
