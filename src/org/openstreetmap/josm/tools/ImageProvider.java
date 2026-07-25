@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.geom.Dimension2D;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -78,7 +79,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.github.weisj.jsvg.SVGDocument;
-import com.github.weisj.jsvg.geometry.size.FloatSize;
 import com.github.weisj.jsvg.parser.DocumentLimits;
 import com.github.weisj.jsvg.parser.LoaderContext;
 import com.github.weisj.jsvg.parser.SVGLoader;
@@ -1469,9 +1469,9 @@ public class ImageProvider {
         if (Logging.isTraceEnabled()) {
             Logging.trace("createImageFromSvg: {0}", dim);
         }
-        FloatSize size = svg.size();
-        final float sourceWidth = size.width;
-        final float sourceHeight = size.height;
+        Dimension2D size = svg.size();
+        final double sourceWidth = size.getWidth();
+        final double sourceHeight = size.getHeight();
         if (sourceWidth <= 0 || sourceHeight <= 0) {
             Logging.error("createImageFromSvg: {0} sourceWidth={1} sourceHeight={2}", dim, sourceWidth, sourceHeight);
             return null;

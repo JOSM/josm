@@ -31,7 +31,7 @@
         <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.11"/>
         <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
         <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.19.0" transitive="false"/>
-        <dependency conf="api->default" org="com.github.weisj" name="jsvg" rev="1.7.0"/>
+        <dependency conf="api->default" org="com.github.weisj" name="jsvg" rev="2.1.0"/>
         <dependency conf="api->default" org="org.jetbrains" name="annotations" rev="24.1.0"/>
         <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.29.0"/>
         <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
