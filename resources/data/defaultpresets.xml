@@ -6,7 +6,7 @@
 
     <!-- Item chunks -->
     <chunk id="surface">
-        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,concrete:plates,concrete:lanes,paving_stones,sett,cobblestone,unhewn_cobblestone,grass_paver,compacted,fine_gravel,gravel,pebblestone,ground,mud,rock,sand,grass,wood,metal,stone,woodchips" />
+        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,concrete:plates,concrete:lanes,paving_stones,sett,cobblestone,unhewn_cobblestone,grass_paver,compacted,fine_gravel,gravel,pebblestone,ground,mud,rock,sand,grass,wood,metal,stone,woodchips,laterite" />
     </chunk>
     <chunk id="surface_smoothness">
         <reference ref="surface" />
