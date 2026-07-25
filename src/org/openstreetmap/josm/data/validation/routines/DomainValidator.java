@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2026021400, Last Updated Sat Feb 14 07:07:01 2026 UTC
+        // Taken from Version 2026072500, Last Updated Sat Jul 25 07:07:01 2026 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -344,7 +344,7 @@ public final class DomainValidator extends AbstractValidator {
         "android", // android Charleston Road Registry Inc.
         "anquan", // anquan Beijing Qihu Keji Co., Ltd.
         "anz", // anz Australia and New Zealand Banking Group Limited
-        "aol", // aol Yahoo Inc.
+        "aol", // aol AOL Media LLC
         "apartments", // apartments Binky Moon, LLC
         "app", // app Charleston Road Registry Inc.
         "apple", // apple Apple Inc.
@@ -486,7 +486,7 @@ public final class DomainValidator extends AbstractValidator {
         "chrome", // chrome Charleston Road Registry Inc.
         "church", // church Binky Moon, LLC
         "cipriani", // cipriani Hotel Cipriani Srl
-        "circle", // circle Amazon Registry Services, Inc.
+        "circle", // circle Jolly Host, LLC
         "cisco", // cisco Cisco Technology, Inc.
         "citadel", // citadel Citadel Domain LLC
         "citi", // citi Citigroup Inc.
@@ -678,7 +678,7 @@ public final class DomainValidator extends AbstractValidator {
         "gbiz", // gbiz Charleston Road Registry Inc.
         "gdn", // gdn Joint Stock Company "Navigation-information systems"
         "gea", // gea GEA Group Aktiengesellschaft
-        "gent", // gent Combell nv
+        "gent", // gent Easyhost bv
         "genting", // genting Resorts World Inc. Pte. Ltd.
         "george", // george Wal-Mart Stores, Inc.
         "ggee", // ggee GMO Internet, Inc.
@@ -702,7 +702,7 @@ public final class DomainValidator extends AbstractValidator {
         "goog", // goog Charleston Road Registry Inc.
         "google", // google Charleston Road Registry Inc.
         "gop", // gop Republican State Leadership Committee, Inc.
-        "got", // got Amazon Registry Services, Inc.
+        "got", // got Jolly Host, LLC
         "gov", // gov Cybersecurity and Infrastructure Security Agency
         "grainger", // grainger Grainger Registry Services, LLC
         "graphics", // graphics Binky Moon, LLC
@@ -798,7 +798,7 @@ public final class DomainValidator extends AbstractValidator {
         "jnj", // jnj Johnson & Johnson Services, Inc.
         "jobs", // jobs Employ Media LLC
         "joburg", // joburg ZA Central Registry NPC trading as ZA Central Registry
-        "jot", // jot Amazon Registry Services, Inc.
+        "jot", // jot Jolly Host, LLC
         "joy", // joy Amazon Registry Services, Inc.
         "jpmorgan", // jpmorgan JPMorgan Chase Bank, National Association
         "jprs", // jprs Japan Registry Services Co., Ltd.
@@ -899,6 +899,7 @@ public final class DomainValidator extends AbstractValidator {
         "memorial", // memorial Dog Beach, LLC
         "men", // men Exclusive Registry Limited
         "menu", // menu Dot Menu Registry LLC
+        "merck", // merck Merck Registry Holdings, Inc.
         "merckmsd", // merckmsd MSD Registry Holdings, Inc.
         "miami", // miami Registry Services, LLC
         "microsoft", // microsoft Microsoft Corporation
@@ -975,7 +976,7 @@ public final class DomainValidator extends AbstractValidator {
         "omega", // omega The Swatch Group Ltd
         "one", // one One.com A/S
         "ong", // ong Public Interest Registry
-        "onl", // onl iRegistry GmbH
+        "onl", // onl Jolly Host, LLC
         "online", // online Radix Technologies Inc. SEZC
         "ooo", // ooo INFIBEAM AVENUES LIMITED
         "open", // open American Express Travel Related Services Company, Inc.
@@ -1047,7 +1048,7 @@ public final class DomainValidator extends AbstractValidator {
         "quebec", // quebec PointQuébec Inc
         "quest", // quest XYZ.COM LLC
         "racing", // racing Premier Registry Limited
-        "radio", // radio European Broadcasting Union (EBU)
+        "radio", // radio Digity, LLC
         "read", // read Amazon Registry Services, Inc.
         "realestate", // realestate dotRealEstate LLC
         "realtor", // realtor Real Estate Domains LLC
@@ -1089,7 +1090,7 @@ public final class DomainValidator extends AbstractValidator {
         "ryukyu", // ryukyu BRregistry, Inc.
         "saarland", // saarland dotSaarland GmbH
         "safe", // safe Amazon Registry Services, Inc.
-        "safety", // safety Safety Registry Services, LLC.
+        "safety", // safety Jolly Host, LLC
         "sakura", // sakura SAKURA internet Inc.
         "sale", // sale Dog Beach, LLC
         "salon", // salon Binky Moon, LLC
@@ -1286,8 +1287,9 @@ public final class DomainValidator extends AbstractValidator {
         "wanggou", // wanggou Amazon Registry Services, Inc.
         "watch", // watch Binky Moon, LLC
         "watches", // watches Identity Digital Limited
-        "weather", // weather International Business Machines Corporation
-        "weatherchannel", // weatherchannel International Business Machines Corporation
+        "weather", // weather The Weather Company, LLC
+        "weatherchannel", // weatherchannel The Weather Company, LLC
+        "web", // web VeriSign, Inc.
         "webcam", // webcam dot Webcam Limited
         "weber", // weber Saint-Gobain Weber SA
         "website", // website Radix Technologies Inc.
