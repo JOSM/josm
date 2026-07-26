@@ -431,7 +431,7 @@ way[route=ferry]!:closed >[index=-1] node[amenity!=ferry_terminal][man_made!=pie
 
 /* 20421 */
 area[power=substation] ⊇ *[transformer=distribution] {
-  throwWarning: tr("A distribution transformer shouldn't be contained in a substation.");
+  throwWarning: tr("A distribution transformer should not be contained in a substation.");
   suggestAlternative: "transformer=main";
   fixAdd: "transformer=main";
 }
