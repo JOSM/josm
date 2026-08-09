@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassification;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassifications;
 import org.openstreetmap.josm.testutils.annotations.Territories;
+import org.openstreetmap.josm.tools.I18n;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,6 +39,10 @@ class PresetClassificationsTest {
      */
     @BeforeAll
     public static void setUp() throws IOException, SAXException {
+        // @BeforeAll runs before the per-test I18n extension resets translations, so a leftover
+        // non-English locale from a previous test class could get baked into the cached preset names below.
+        I18n.set("en");
+        Locale.setDefault(Locale.ENGLISH);
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll("resource://data/defaultpresets.xml", true);
         classifications.loadPresets(presets);
     }
