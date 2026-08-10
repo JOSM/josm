@@ -602,6 +602,13 @@ Build-Date: ${build.tstamp}
         -dontobfuscate
         -dontwarn org.jetbrains.annotations.**
 
+        # jsvg (see #24793) references these compile-time-only annotations (OSGi/JPMS bundle
+        # metadata, errorprone) which are absent at runtime; jsvg works fine without them.
+        -dontwarn org.osgi.annotation.bundle.**
+        -dontwarn aQute.bnd.annotation.**
+        -dontwarn com.google.errorprone.annotations.**
+        -dontwarn java.lang.invoke.MethodHandle
+
         # These options probably are not necessary (and make processing a bit slower)
         -dontskipnonpubliclibraryclasses
         -dontskipnonpubliclibraryclassmembers
