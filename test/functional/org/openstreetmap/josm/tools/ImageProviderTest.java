@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 
@@ -186,10 +188,41 @@ class ImageProviderTest {
         assertImageEquals(reference, referenceFile, image, 0, 0, null);
     }
 
+    private static final Pattern JAVA_SUFFIX_PATTERN = Pattern.compile("-java(\\d+)\\.png$");
+
+    /**
+     * Determine the reference image file to use for the given reference name.
+     * <p>
+     * Different Java versions may render SVG images slightly differently.
+     * When this happens, an additional reference file with a {@code -javaXX} suffix
+     * can be added next to the original reference file. This method
+     * then picks the reference file whose suffixed Java version is the closest (but not newer) to the
+     * Java version currently running the test, falling back to the unsuffixed file otherwise.
+     * <p>
+     * This way, new reference files only need to be added when a new Java version actually renders
+     * something differently, without needing to touch this method.
+     * @param reference the reference identifier
+     * @return the most appropriate reference file for the current Java version
+     */
     private static File getReferenceFile(String reference) {
-        // Java 11-17 and Java 21 render SVG images differently, thus, use separate reference files
-        final String javaSuffix = Utils.getJavaVersion() == 21 ? "-java21" : "";
-        return new File(TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName() + javaSuffix + "/" + reference + ".png");
+        final File directory = new File(TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName());
+        final int javaVersion = Utils.getJavaVersion();
+        final File[] candidates = directory.listFiles((dir, name) -> name.startsWith(reference + "-java"));
+        File bestFile = null;
+        int bestVersion = -1;
+        if (candidates != null) {
+            for (File candidate : candidates) {
+                Matcher matcher = JAVA_SUFFIX_PATTERN.matcher(candidate.getName());
+                if (matcher.find()) {
+                    int version = Integer.parseInt(matcher.group(1));
+                    if (version <= javaVersion && version > bestVersion) {
+                        bestVersion = version;
+                        bestFile = candidate;
+                    }
+                }
+            }
+        }
+        return bestFile != null ? bestFile : new File(directory, reference + ".png");
     }
 
     /**
