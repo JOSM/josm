@@ -214,10 +214,10 @@ public final class Tag2Link {
         if (!formatterUrls.isEmpty()) {
             final String formattedValue = valueFormatter.getOrDefault(key, x -> x).apply(value);
 
-            final String urlKey = formatterUrls.stream().map(urlFormatter -> PATTERN_DOLLAR_ONE.matcher(urlFormatter)
+            final String urlKey = Utils.encodeUrl(formatterUrls.stream().map(urlFormatter -> PATTERN_DOLLAR_ONE.matcher(urlFormatter)
                             .replaceAll(Matcher.quoteReplacement("(.*)"))).map(PatternUtils::compile)
                             .map(pattern -> pattern.matcher(value)).filter(Matcher::matches)
-                            .map(matcher -> matcher.group(1)).findFirst().orElse(formattedValue);
+                            .map(matcher -> matcher.group(1)).findFirst().orElse(formattedValue));
 
             formatterUrls.forEach(urlFormatter -> {
                 // Check if the current value matches the formatter pattern -- some keys can take a full url or a key for
