@@ -313,9 +313,9 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.formdev</groupId>
-                <artifactId>svgSalamander</artifactId>
-                <version>1.1.4</version>
+                <groupId>com.github.weisj</groupId>
+                <artifactId>jsvg</artifactId>
+                <version>2.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
