@@ -468,6 +468,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     /**
      * Returns the currently selected auto filters, if any.
      * @return the currently selected auto filters. Can be empty.
+     * @since 19592
      */
     public synchronized List<AutoFilter> getCurrentAutoFilters() {
         return currentAutoFilters;
@@ -476,6 +477,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     /**
      * Returns a combination of all {@link #getCurrentAutoFilters()}, if any.
      * @return a single combined filter, or null
+     * @since 19592
      */
     public Filter getCurrentCombinedFilter() {
         if (currentAutoFilters.isEmpty()) {
@@ -499,6 +501,11 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         updateModelFilters();
     }
 
+    /**
+     * Adds another auto filter to current list
+     * @param autoFilter the filter to add to current list
+     * @since 19592
+     */
     public synchronized void addCurrentAutoFilter(AutoFilter autoFilter) {
         if (!currentAutoFilters.contains(autoFilter)) {
             currentAutoFilters.add(autoFilter);
@@ -506,6 +513,11 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         }
     }
 
+    /**
+     * Remove a current auto filter
+     * @param autoFilter the filter to remove from current list
+     * @since 19592
+     */
     public synchronized void removeCurrentAutoFilter(AutoFilter autoFilter) {
         if (currentAutoFilters.contains(autoFilter)) {
             currentAutoFilters.removeIf(it -> Objects.equals(it, autoFilter));
