@@ -1,12 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -17,9 +11,16 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link PowerLines}
@@ -158,5 +159,64 @@ class PowerLinesTest {
         this.powerLines.visit(new ArrayList<>(ds.getWays()));
         this.powerLines.endTest();
         assertTrue(this.powerLines.getErrors().isEmpty());
+    }
+
+    /**
+     * Test for ticket #24851.
+     * Simulates connecting a power line to an existing highway node without power tags.
+     * Validates that the resulting error contains both the Node AND the Way, so it
+     * doesn't get filtered out during partial validation on upload.
+     */
+    @Test
+    void testTicket24851_ReportExistingNonPowerNodes() {
+        Node sharedNode = new Node(new LatLon(0, 0)); // no power tag attached
+
+        // unrelated highway way
+        Way highway = TestUtils.newWay("highway=unclassified",
+                sharedNode, new Node(new LatLon(0.1, 0)));
+
+        // power line way
+        Way powerline = TestUtils.newWay("power=line",
+                sharedNode, new Node(new LatLon(0, 0.1)));
+
+        // second node has a valid tag
+        powerline.getNode(1).put("power", "tower");
+
+        ds.addPrimitiveRecursive(highway);
+        ds.addPrimitiveRecursive(powerline);
+
+        powerLines.startTest(NullProgressMonitor.INSTANCE);
+        for (Way w : ds.getWays()) {
+            powerLines.visit(w);
+        }
+        for (Node n : ds.getNodes()) {
+            powerLines.visit(n);
+        }
+        powerLines.endTest();
+
+        assertFalse(powerLines.getErrors().isEmpty(), "Errors should be generated for the missing tag and bad connection");
+
+        boolean foundSupportError = false;
+        boolean foundConnectionError = false;
+
+        for (TestError error : powerLines.getErrors()) {
+            // verify POWER_SUPPORT behavior (missing tag)
+            if (error.getCode() == PowerLines.POWER_SUPPORT && error.getPrimitives().contains(sharedNode)) {
+                foundSupportError = true;
+                assertTrue(error.getPrimitives().contains(powerline),
+                        "MUST contain the parent powerline way. This prevents JOSM from discarding the error " +
+                                "during partial validation if the node itself was unmodified.");
+            }
+            // verify POWER_CONNECTION behavior (bad connection)
+            if (error.getCode() == PowerLines.POWER_CONNECTION && error.getPrimitives().contains(sharedNode)) {
+                foundConnectionError = true;
+                assertTrue(error.getPrimitives().contains(highway),
+                        "MUST contain the unrelated parent way. This prevents JOSM from discarding the error" +
+                                "during partial validation if the node itself was unmodified.");
+            }
+        }
+
+        assertTrue(foundSupportError, "Should report missing power tag on shared node");
+        assertTrue(foundConnectionError, "Should report bad connection on shared node");
     }
 }

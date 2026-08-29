@@ -11,9 +11,12 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -75,8 +78,8 @@ public class PowerLines extends Test {
 
     private double hillyCompensation;
     private double hillyThreshold;
-    private final Set<Node> badConnections = new HashSet<>();
-    private final Set<Node> missingTags = new HashSet<>();
+    private final Map<Node, Set<OsmPrimitive>> badConnections = new HashMap<>();
+    private final Map<Node, Set<OsmPrimitive>> missingTags = new HashMap<>();
     private final Set<Way> wrongLineType = new HashSet<>();
     private final Set<WaySegment> missingNodes = new HashSet<>();
     private final Set<OsmPrimitive> refDiscontinuities = new HashSet<>();
@@ -98,16 +101,15 @@ public class PowerLines extends Test {
 
     @Override
     public void visit(Node n) {
-        boolean nodeInLineOrCable = false;
-        boolean connectedToUnrelated = false;
-        for (Way parent : n.getParentWays()) {
-            if (parent.hasTag(POWER, "line", MINOR_LINE, "cable"))
-                nodeInLineOrCable = true;
-            else if (!isRelatedToPower(parent))
-                connectedToUnrelated = true;
+        if (!n.isConnectionNode() || n.referrers(Way.class).noneMatch(w -> isPowerLineOrCable(w)))
+            return;
+
+        List<Way> unrelatedParents = n.referrers(Way.class).filter(w -> !isPowerLineOrCable(w) && !isRelatedToPower(w))
+                .collect(Collectors.toList());
+        if (!unrelatedParents.isEmpty()) {
+            Set<OsmPrimitive> set = badConnections.computeIfAbsent(n, k -> new HashSet<>());
+            set.addAll(unrelatedParents);
         }
-        if (nodeInLineOrCable && connectedToUnrelated)
-            badConnections.add(n);
     }
 
     @Override
@@ -162,21 +164,24 @@ public class PowerLines extends Test {
             powerlineChecks(w);
         }
         // Then return the errors
-        for (Node n : missingTags) {
+        for (Entry<Node, Set<OsmPrimitive>> entry : missingTags.entrySet()) {
+            Node n = entry.getKey();
             if (!isInPowerStation(n)) {
                 errors.add(TestError.builder(this, Severity.WARNING, POWER_SUPPORT)
                         // the "missing tag" grouping can become broken if the MapCSS message get reworded
                         .message(tr("missing tag"), tr("node without power=*"))
-                        .primitives(n)
+                        .primitives(getAllPrimitives(entry))
+                        .highlight(n)
                         .build());
             }
         }
 
-        for (Node n : badConnections) {
+        for (Entry<Node, Set<OsmPrimitive>> entry : badConnections.entrySet()) {
             errors.add(TestError.builder(this, Severity.WARNING, POWER_CONNECTION)
                     .message(tr("Node connects a power line or cable with an object "
                             + "which is not related to the power infrastructure"))
-                    .primitives(n)
+                    .primitives(getAllPrimitives(entry))
+                    .highlight(entry.getKey())
                     .build());
         }
 
@@ -224,6 +229,18 @@ public class PowerLines extends Test {
     }
 
     /**
+     * Combine the node and the related objects.
+     * @param entry a map entry with a node and related objects
+     * @return set containing the node and the related objects
+     */
+    private Collection<? extends OsmPrimitive> getAllPrimitives(Entry<Node, Set<OsmPrimitive>> entry) {
+        Set<OsmPrimitive> primitives = new LinkedHashSet<>();
+        primitives.add(entry.getKey());
+        primitives.addAll(entry.getValue());
+        return primitives;
+    }
+
+    /**
      * The base powerline checks
      * @param w The powerline to check
      */
@@ -253,8 +270,10 @@ public class PowerLines extends Test {
 
             /// handle missing power line support tags (e.g. tower)
             if (!isPowerTower(n) && !isPowerInfrastructure(n) && IN_DOWNLOADED_AREA.test(n)
-                    && (!w.isFirstLastNode(n) || !isPowerStation(n)))
-                missingTags.add(n);
+                    && (!w.isFirstLastNode(n) || !isPowerStation(n))) {
+                Set<OsmPrimitive> set = missingTags.computeIfAbsent(n, k -> new HashSet<>());
+                set.add(w);
+            }
 
             /// handle missing nodes
             double segmentLen = n.greatCircleDistance(prevNode);
@@ -666,6 +685,15 @@ public class PowerLines extends Test {
      */
     protected static boolean isPowerLine(Way w) {
         return isPowerIn(w, POWER_LINE_TAGS);
+    }
+
+    /**
+     * Determines if the specified way denotes a power line or cable.
+     * @param w The way to be tested
+     * @return {@code true} if power key is set and equal to line,minor_line or cable
+     */
+    protected static boolean isPowerLineOrCable(Way w) {
+        return isPowerIn(w, Arrays.asList("line", MINOR_LINE, "cable"));
     }
 
     /**
