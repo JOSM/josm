@@ -436,6 +436,10 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("allindownloadedarea", "allindownloadedarea ",
                         tr("objects (and all its way nodes / relation members) in downloaded area")),
                 GBC.eol());
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("history"))
+                .addKeyword("was <i>expr</i>", "was ", tr("match <i>expr</i> in any object version (current and historic)"), "was building=*"),
+                GBC.eol());
         }
         if (options.overpassQuery) {
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
