@@ -30,7 +30,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -50,7 +49,6 @@ import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -101,6 +99,9 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     private static final CachingProperty<Double> SNAP_DISTANCE_IMPERIAL = new DoubleProperty(prefKey("snap-distance-imperial"), 1).cached();
     private static final CachingProperty<Double> SNAP_DISTANCE_CHINESE  = new DoubleProperty(prefKey("snap-distance-chinese"), 1).cached();
     private static final CachingProperty<Double> SNAP_DISTANCE_NAUTICAL = new DoubleProperty(prefKey("snap-distance-nautical"), 0.1).cached();
+    private static final CachingProperty<Double> ARC_STEP_DEGREES
+            = new DoubleProperty(prefKey("arc-step-degrees"), ParallelWays.DEFAULT_ARC_STEP_DEGREES).cached();
+    private static final CachingProperty<BasicStroke> PREVIEW_STROKE = new StrokeProperty(prefKey("stroke.preview"), "2").cached();
     private static final CachingProperty<Color> MAIN_COLOR = new NamedColorProperty(marktr("make parallel helper line"), Color.RED).cached();
 
     private static final CachingProperty<Map<Modifier, Boolean>> SNAP_MODIFIER_COMBO
@@ -140,6 +141,8 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     private transient Set<Way> sourceWays;
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
+    /** the source segment the current offset relates to (the one closest to the mouse) */
+    private transient ParallelWays.ClosestPoint helperSegment;
 
     private final ParallelWayLayer temporaryLayer = new ParallelWayLayer();
 
@@ -191,6 +194,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         pWays = null;
         sourceWays = null;
         referenceSegment = null;
+        helperSegment = null;
     }
 
     @Override
@@ -331,7 +335,21 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
             } // else -> invalid modifier combination
         } else if (mode == Mode.DRAGGING) {
             clearSourceWays();
-            MainApplication.getMap().statusLine.setDist(pWays.getWays());
+            if (pWays != null) {
+                // The nodes and ways are only created now, since their number depends on the offset
+                pWays.commit();
+                List<Way> newWays = pWays.getWays();
+                if (newWays.isEmpty()) {
+                    new Notification(tr("Parallel Way:\n" +
+                            "The offset is too large, nothing remains of the parallel way(s)"))
+                            .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                            .show();
+                    pWays = null;
+                } else {
+                    getLayerManager().getEditDataSet().setSelected(newWays);
+                    MainApplication.getMap().statusLine.setDist(newWays);
+                }
+            }
         }
 
         setMode(Mode.NORMAL);
@@ -382,20 +400,20 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
             setMode(Mode.DRAGGING);
         }
 
-        // Calculate distance to the reference line
+        // Calculate the distance to the source path: the offset relates to the part of the path closest to the
+        // mouse, so that the helper line stays meaningful when the mouse moves along the way.
         Point p = e.getPoint();
         EastNorth enp = mv.getEastNorth((int) p.getX(), (int) p.getY());
-        EastNorth nearestPointOnRefLine = Geometry.closestPointToLine(referenceSegment.getFirstNode().getEastNorth(),
-                referenceSegment.getSecondNode().getEastNorth(), enp);
+        ParallelWays.ClosestPoint closest = pWays.closestPoint(enp);
+        EastNorth nearestPointOnPath = closest.point;
 
         // Note: d is the distance in _projected units_
-        double d = enp.distance(nearestPointOnRefLine);
+        double d = Math.abs(closest.signedDistance);
         double realD = mv.getProjection().eastNorth2latlon(enp).greatCircleDistance(
-                (ILatLon) mv.getProjection().eastNorth2latlon(nearestPointOnRefLine));
+                (ILatLon) mv.getProjection().eastNorth2latlon(nearestPointOnPath));
         double snappedRealD = realD;
 
-        boolean toTheRight = Geometry.angleIsClockwise(
-                referenceSegment.getFirstNode(), referenceSegment.getSecondNode(), new Node(enp));
+        boolean toTheRight = closest.signedDistance < 0;
 
         if (snap) {
             // TODO: Very simple snapping
@@ -424,9 +442,12 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
                 snappedRealD = closestWholeUnit + Math.signum(realD - closestWholeUnit) * snapDistance;
             }
         }
-        d = snappedRealD * (d/realD); // convert back to projected distance. (probably ok on small scales)
-        helperLineStart = nearestPointOnRefLine;
+        if (realD > 0) {
+            d = snappedRealD * (d/realD); // convert back to projected distance. (probably ok on small scales)
+        }
+        helperLineStart = nearestPointOnPath;
         helperLineEnd = enp;
+        helperSegment = closest;
         if (toTheRight) {
             d = -d;
         }
@@ -507,6 +528,17 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
 
         sourceWays.removeIf(w -> w.isIncomplete() || w.isEmpty());
 
+        // The selection may have been changed by other means while in this mode (e.g. Selection > Non-branching way
+        // sequences): if it contains the way under the mouse, the selected ways are the source ways.
+        Set<Way> selectedWays = new LinkedHashSet<>(getLayerManager().getEditDataSet().getSelectedWays());
+        selectedWays.removeIf(w -> w.isIncomplete() || w.isEmpty());
+        if (selectedWays.contains(referenceSegment.getWay()) && !selectedWays.equals(sourceWays)) {
+            clearSourceWays();
+            for (Way w : selectedWays) {
+                addSourceWay(w);
+            }
+        }
+
         if (!sourceWays.contains(referenceSegment.getWay())) {
             clearSourceWays();
             addSourceWay(referenceSegment.getWay());
@@ -522,13 +554,11 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
                 }
                 i++;
             }
-            pWays = new ParallelWays(sourceWays, copyTags, referenceWayIndex);
-            pWays.commit();
-            getLayerManager().getEditDataSet().setSelected(pWays.getWays());
+            pWays = new ParallelWays(sourceWays, copyTags, referenceWayIndex, ARC_STEP_DEGREES.get());
             return true;
         } catch (IllegalArgumentException e) {
             Logging.debug(e);
-            new Notification(tr("ParallelWayAction\n" +
+            new Notification(tr("Parallel Way:\n" +
                     "The ways selected must form a simple branchless path"))
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)
                     .show();
@@ -628,8 +658,13 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
                 g.setStroke(REF_LINE_STROKE.get());
                 g.setColor(mainColor);
                 MapViewPath line = new MapViewPath(mv);
-                line.moveTo(referenceSegment.getFirstNode());
-                line.lineTo(referenceSegment.getSecondNode());
+                if (helperSegment != null) {
+                    line.moveTo(helperSegment.segmentStart);
+                    line.lineTo(helperSegment.segmentEnd);
+                } else {
+                    line.moveTo(referenceSegment.getFirstNode());
+                    line.lineTo(referenceSegment.getSecondNode());
+                }
                 g.draw(line.computeClippedLine(g.getStroke()));
 
                 g.setStroke(HELPER_LINE_STROKE.get());
@@ -638,6 +673,23 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
                 line.moveTo(helperLineStart);
                 line.lineTo(helperLineEnd);
                 g.draw(line.computeClippedLine(g.getStroke()));
+
+                // Preview of the parallel way(s)
+                if (pWays != null) {
+                    List<EastNorth> pts = pWays.getOffsetPoints();
+                    if (pts.size() > 1) {
+                        g.setStroke(PREVIEW_STROKE.get());
+                        line = new MapViewPath(mv);
+                        line.moveTo(pts.get(0));
+                        for (int i = 1; i < pts.size(); i++) {
+                            line.lineTo(pts.get(i));
+                        }
+                        if (pWays.isResultClosed()) {
+                            line.lineTo(pts.get(0));
+                        }
+                        g.draw(line.computeClippedLine(g.getStroke()));
+                    }
+                }
             }
         }
     }

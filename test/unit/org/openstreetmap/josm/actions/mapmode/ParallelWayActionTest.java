@@ -12,6 +12,8 @@ import org.openstreetmap.josm.actions.mapmode.ParallelWayAction.Modifier;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -67,6 +69,63 @@ class ParallelWayActionTest {
         assertEquals(3, this.dataSet.allPrimitives().size());
         this.map.mapMode.mousePressed(MapModeUtils.mouseClickAt(new LatLon(0.00005, 0.0001)));
         assertTrue(Logging.getLastErrorAndWarnings().isEmpty(), String.join("\n", Logging.getLastErrorAndWarnings()));
+    }
+
+    /**
+     * Several selected ways connected by common nodes are offset together, one result way per source way.
+     */
+    @Test
+    void testMultipleSelectedWays() {
+        Node a = new Node(LatLon.ZERO);
+        Node b = new Node(new LatLon(0, 0.0001));
+        Node c = new Node(new LatLon(0, 0.0002));
+        Way w1 = new Way();
+        w1.addNode(a);
+        w1.addNode(b);
+        Way w2 = new Way();
+        w2.addNode(b);
+        w2.addNode(c);
+        for (Node n : new Node[] {a, b, c}) {
+            this.dataSet.addPrimitive(n);
+        }
+        this.dataSet.addPrimitive(w1);
+        this.dataSet.addPrimitive(w2);
+        this.dataSet.setSelected(w1, w2);
+        this.map.selectMapMode(mapMode);
+        MapModeUtils.dragFromTo(new LatLon(0, 0.00005), new LatLon(0.00005, 0.00005));
+        assertEquals(2, this.dataSet.getWays().size() - 2, "two parallel ways expected: " + this.dataSet.getWays());
+        assertEquals(3 + 3 + 2 + 2, this.dataSet.allPrimitives().size());
+    }
+
+    /**
+     * The selection changed while in the mode (e.g. by Selection > Non-branching way sequences, after a first
+     * parallel way has been created) is used as source.
+     */
+    @Test
+    void testSelectionChangedInMode() {
+        Node a = new Node(LatLon.ZERO);
+        Node b = new Node(new LatLon(0, 0.0001));
+        Node c = new Node(new LatLon(0, 0.0002));
+        Way w1 = new Way();
+        w1.addNode(a);
+        w1.addNode(b);
+        Way w2 = new Way();
+        w2.addNode(b);
+        w2.addNode(c);
+        for (Node n : new Node[] {a, b, c}) {
+            this.dataSet.addPrimitive(n);
+        }
+        this.dataSet.addPrimitive(w1);
+        this.dataSet.addPrimitive(w2);
+        this.dataSet.setSelected(w1);
+        this.map.selectMapMode(mapMode);
+        // first parallel of the single selected way
+        MapModeUtils.dragFromTo(new LatLon(0, 0.00005), new LatLon(0.00005, 0.00005));
+        assertEquals(3, this.dataSet.getWays().size());
+        // now the selection is extended by other means, the next drag must use both ways
+        this.dataSet.setSelected(w1, w2);
+        MapModeUtils.dragFromTo(new LatLon(0, 0.00005), new LatLon(-0.00005, 0.00005));
+        assertEquals(5, this.dataSet.getWays().size(), this.dataSet.getWays().toString());
     }
 
     /**
