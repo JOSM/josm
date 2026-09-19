@@ -5396,6 +5396,11 @@
             <reference ref="color" />
             <combo key="seats" text="Amount of Seats" values="1,2,3,4,5,6,7,8,9,10" />
         </item> <!-- Bench -->
+        <item name="Lounger" icon="presets/leisure/lounger.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:amenity=lounger" />
+            <space />
+            <key key="amenity" value="lounger" />
+        </item> <!-- Lounger -->
         <item name="Shelter" icon="presets/accommodation/shelter.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:amenity=shelter" />
             <space />

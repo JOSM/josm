@@ -3719,6 +3719,10 @@ node[amenity=bench] {
     icon-image: "presets/leisure/bench.svg";
     set icon_z17;
 }
+node[amenity=lounger] {
+    icon-image: "presets/leisure/lounger.svg";
+    set icon_z17;
+}
 node[amenity=bbq] {
     icon-image: "presets/leisure/bbq.svg";
     set icon_z17;
