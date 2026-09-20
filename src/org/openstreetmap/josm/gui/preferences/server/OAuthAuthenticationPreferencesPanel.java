@@ -109,7 +109,22 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
                 )
         );
         pnlAdvancedProperties.setVisible(false);
+        pnlAdvancedProperties.addPropertyChangeListener(this);
         return pnl;
+    }
+
+    /**
+     * Re-evaluate whether the "Authorize now" buttons can be enabled, after the API URL or the
+     * advanced OAuth parameters changed.
+     */
+    private void updateAuthoriseNowActions() {
+        for (JPanel panel : Arrays.asList(this.pnlNotYetAuthorised, (JPanel) this.pnlAlreadyAuthorised.getComponent(6))) {
+            for (Component component : panel.getComponents()) {
+                if (component instanceof JButton && ((JButton) component).getAction() instanceof AuthoriseNowAction) {
+                    ((AuthoriseNowAction) ((JButton) component).getAction()).updateEnabledState();
+                }
+            }
+        }
     }
 
     /**
@@ -148,13 +163,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
         pnlAdvancedProperties.setApiUrl(apiUrl);
-        for (JPanel panel : Arrays.asList(this.pnlNotYetAuthorised, (JPanel) this.pnlAlreadyAuthorised.getComponent(6))) {
-            for (Component component : panel.getComponents()) {
-                if (component instanceof JButton && ((JButton) component).getAction() instanceof AuthoriseNowAction) {
-                    ((AuthoriseNowAction) ((JButton) component).getAction()).updateEnabledState();
-                }
-            }
-        }
+        updateAuthoriseNowActions();
     }
 
     /**
@@ -318,6 +327,11 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         void updateEnabledState() {
             if (procedure == AuthorizationProcedure.MANUALLY) {
                 this.setEnabled(true);
+            } else if (!pnlAdvancedProperties.isUseDefaultSettings()) {
+                // The user supplied the parameters - the client id of an OAuth application they
+                // registered on the server themselves. The wizard is given exactly these parameters
+                // when the button is pressed, so they decide whether it can be pressed.
+                this.setEnabled(!Utils.isEmpty(pnlAdvancedProperties.getEnteredClientId()));
             } else if (Utils.isValidUrl(apiUrl)) {
                 final URI apiURI;
                 try {
@@ -420,8 +434,10 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (!evt.getPropertyName().equals(OsmApiUrlInputPanel.API_URL_PROP))
-            return;
-        setApiUrl((String) evt.getNewValue());
+        if (AdvancedOAuthPropertiesPanel.PARAMETERS_CHANGED_PROP.equals(evt.getPropertyName())) {
+            updateAuthoriseNowActions();
+        } else if (OsmApiUrlInputPanel.API_URL_PROP.equals(evt.getPropertyName())) {
+            setApiUrl((String) evt.getNewValue());
+        }
     }
 }

@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.remotecontrol.handler.AuthorizationHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
@@ -125,7 +126,12 @@ public class OAuth20Authorization implements IOAuthAuthorization {
             String code = args.get("code");
             try {
                 HttpClient tradeCodeForToken = HttpClient.create(new URL(parameters.getAccessTokenUrl()), "POST");
+                // A confidential client (the default when registering an application on
+                // openstreetmap-website) must present its secret at the token endpoint;
+                // the built-in OSM application is a public client and has none.
+                String clientSecret = parameters.getClientSecret();
                 tradeCodeForToken.setRequestBody(("grant_type=authorization_code&client_id=" + parameters.getClientId()
+                        + (!Utils.isEmpty(clientSecret) ? "&client_secret=" + Utils.encodeUrl(clientSecret) : "")
                         + "&redirect_uri=" + parameters.getRedirectUri()
                         + "&code=" + code
                         + (this.codeVerifier != null ? "&code_verifier=" + this.codeVerifier : "")
@@ -134,6 +140,13 @@ public class OAuth20Authorization implements IOAuthAuthorization {
                 try {
                     tradeCodeForToken.connect();
                     HttpClient.Response response = tradeCodeForToken.getResponse();
+                    if (response.getResponseCode() >= 400) {
+                        // Doorkeeper answers a rejected exchange with a JSON error body, but an
+                        // authentication failure can come back with none - say what the server said
+                        String body = response.fetchContent();
+                        throw new OAuth20Exception(tr("The server refused the token request: HTTP {0} {1}",
+                                response.getResponseCode(), Utils.isEmpty(body) ? response.getResponseMessage() : body));
+                    }
                     OAuth20Token oAuth20Token = new OAuth20Token(parameters, response.getContentReader());
                     consumer.accept(Optional.of(oAuth20Token));
                 } catch (IOException | OAuth20Exception e) {
