@@ -57,6 +57,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
      * Interface to notify listeners that a preset item input as changed.
      * @since 17610
      */
+    @FunctionalInterface
     public interface ChangeListener {
         /**
          * Notifies this listener that a preset item input as changed.

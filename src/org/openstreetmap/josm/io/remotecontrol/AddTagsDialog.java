@@ -283,7 +283,7 @@ public class AddTagsDialog extends ExtendedDialog {
      * @since 15316
      */
     public static Map<String, String> parseUrlTagsToKeyValues(String urlSection) {
-        Map<String, String> tags = TextTagParser.readTagsByRegexp(urlSection, "\\|", "(.*?)=(.*?)", false);
+        Map<String, String> tags = TextTagParser.readTagsByRegexp(urlSection, "(?<!\\\\)\\|", "(.*?)=(.*?)", false, true);
         return tags == null ? Collections.emptyMap() : tags;
     }
 

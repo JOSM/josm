@@ -163,10 +163,10 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     public Pair<StyleElementList, Range> getStyleCacheWithRange(IPrimitive osm, double scale, NavigatableComponent nc) {
         synchronized (osm.getStyleCacheSyncObject()) {
-            if (!osm.isCachedStyleUpToDate() || scale <= 0) {
-                osm.setCachedStyle(StyleCache.EMPTY_STYLECACHE);
+            if (!osm.isCachedStyleUpToDate(this) || scale <= 0) {
+                osm.setCachedStyle(this, StyleCache.EMPTY_STYLECACHE);
             } else {
-                Pair<StyleElementList, Range> lst = osm.getCachedStyle().getWithRange(scale, osm.isSelected());
+                Pair<StyleElementList, Range> lst = osm.getCachedStyle(this).getWithRange(scale, osm.isSelected());
                 if (lst.a != null)
                     return lst;
             }
@@ -216,15 +216,15 @@ public class ElemStyles implements PreferenceChangedListener {
                     p.a = new StyleElementList(p.a, line);
                 }
             }
-            StyleCache style = osm.getCachedStyle() != null ? osm.getCachedStyle() : StyleCache.EMPTY_STYLECACHE;
+            StyleCache style = osm.getCachedStyle(this) != null ? osm.getCachedStyle(this) : StyleCache.EMPTY_STYLECACHE;
             try {
-                osm.setCachedStyle(style.put(p.a, p.b, osm.isSelected()));
+                osm.setCachedStyle(this, style.put(p.a, p.b, osm.isSelected()));
             } catch (RangeViolatedError e) {
                 throw new AssertionError("Range violated: " + e.getMessage()
-                  + " (object: " + osm.getPrimitiveId() + ", current style: " + osm.getCachedStyle()
+                  + " (object: " + osm.getPrimitiveId() + ", current style: " + osm.getCachedStyle(this)
                   + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b + ')', e);
             }
-            osm.declareCachedStyleUpToDate();
+            osm.declareCachedStyleUpToDate(this);
             return p;
         }
     }

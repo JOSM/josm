@@ -14,24 +14,30 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
           fetch-depth: 256
 
     - name: Cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ~/.ivy2/cache/
           ~/work/josm/josm/tools/
         key: ${{ runner.os }}-ivy2-${{ hashFiles('build.xml', 'ivy.xml', 'tools/ivy.xml') }}
 
+    - name: Setup Java 21
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'zulu'
+        java-version: 21
+
     - name: Run Spotbugs with Ant
       run: |
         ant spotbugs
 
     - name: Upload report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: spotbugs-josm.xml
 

@@ -232,8 +232,6 @@ public class AutoScaleAction extends JosmAction {
         case NEXT:
             setHelpId(ht("/Action/ZoomToNext"));
             break;
-        default:
-            throw new IllegalArgumentException("Unknown mode: " + mode);
         }
         installAdapters();
     }

@@ -15,7 +15,7 @@ public class NoExtension implements AnimationExtension {
     }
 
     @Override
-    public void adjustForSize(int w, int h) {
+    public void adjustForSize(int w, int h, int x, int y) {
         // No-op
     }
 

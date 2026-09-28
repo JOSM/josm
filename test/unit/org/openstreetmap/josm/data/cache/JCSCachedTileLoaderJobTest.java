@@ -572,6 +572,6 @@ class JCSCachedTileLoaderJobTest {
     }
 
     private static ICacheAccess<String, CacheEntry> getCache() {
-        return JCSCacheManager.getCache("test");
+        return JCSCacheManager.getCache("testJCSCachedTileLoaderJob");
     }
 }

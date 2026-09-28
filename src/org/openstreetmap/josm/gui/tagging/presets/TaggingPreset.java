@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -277,16 +278,25 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         File arch = TaggingPresetReader.getZipIcons();
         final Collection<String> s = TaggingPresets.ICON_SOURCES.get();
         this.iconFuture = new CompletableFuture<>();
-        new ImageProvider(iconName)
+        final ImageProvider provider = new ImageProvider(iconName)
             .setDirs(s)
             .setId("presets")
             .setArchive(arch)
-            .setOptional(true)
-            .getResourceAsync(result -> {
+            .setOptional(true);
+        final Executor fetcher = ImageProvider.getImageFetchExecutor();
+        // Explicitly dispatch to the image fetch executor so that even local JAR-bundled icons
+        // are loaded asynchronously, keeping expensive SVG pre-rendering off the startup thread.
+        CompletableFuture.supplyAsync(provider::getResource, fetcher)
+            .thenAcceptAsync(result -> {
                 if (result != null) {
+                    // Pre-render off EDT to avoid flooding the event queue with expensive SVG rendering
+                    ImageIcon small = result.getImageIcon(ImageProvider.ImageSizes.SMALLICON.getImageDimension());
+                    ImageIcon large = result.getImageIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
                     GuiHelper.runInEDT(() -> {
                         try {
-                            result.attachImageIcon(this, true);
+                            putValue(Action.SMALL_ICON, small);
+                            putValue(Action.LARGE_ICON_KEY, large);
+                            putValue("ImageResource", result);
                         } catch (IllegalArgumentException e) {
                             Logging.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
                             Logging.warn(e);
@@ -298,7 +308,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                     Logging.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
                     iconFuture.complete(null);
                 }
-            });
+            }, fetcher);
     }
 
     /**

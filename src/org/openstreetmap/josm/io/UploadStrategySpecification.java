@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * An UploadStrategySpecification consists of the parameter describing the strategy
  * for uploading a collection of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
- *
+ * <p>
  * This includes:
  * <ul>
  * <li>a decision on which {@link UploadStrategy} to use</li>
@@ -144,6 +144,7 @@ public class UploadStrategySpecification {
                 return 0;
             else
                 return (int) Math.ceil((double) numObjects / (double) chunkSize);
+        default: // do nothing
         }
         // should not happen
         return 0;

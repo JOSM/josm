@@ -131,6 +131,76 @@ node[restriction] {
     text: auto;
 }
 
+/*********************************/
+/* conditional turn restrictions */
+/*********************************/
+
+relation["restriction:conditional" ^= "no_left_turn @ "][!setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_left_turn_red.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_left_turn @ "][setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_left_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_right_turn @ "][!setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_right_turn_red.svg";
+    icon-opacity: 0.6;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_right_turn @ "][setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_right_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_straight_on @ "][!setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_straight_on_red.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_straight_on @ "][setting("alt_turn_icons")] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_straight_on.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "no_u_turn @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/no_u_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "only_left_turn @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/only_left_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "only_right_turn @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/only_right_turn.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+relation["restriction:conditional" ^= "only_straight_on @ "] {
+    icon-image: "presets/vehicle/restriction/turn_restrictions/only_straight_on.svg";
+    icon-opacity: 0.5;
+    set icon_z17;
+    text: auto;
+}
+node["restriction:conditional"] {
+    icon-image: "presets/misc/deprecated.svg";
+    set icon_z17;
+    text: auto;
+}
+
 /******************/
 /* bridge, tunnel */
 /******************/
@@ -1398,10 +1468,10 @@ area[power=compensator],
 area[power=converter],
 area[power=switchgear],
 area[power=generator],
-area[man_made=street_cabinet][street_cabinet=power] {
+area[man_made=street_cabinet][utility=power] {
     fill-color: power#eeeeee;
 }
-node[man_made=street_cabinet][street_cabinet=power] {
+node[man_made=street_cabinet][utility=power] {
     icon-image: "presets/power/cable_distribution_cabinet.svg";
     set icon_z17;
 }
@@ -1517,7 +1587,7 @@ node[power_source] {
 /* man_made tags */
 /*****************/
 
-area[man_made=street_cabinet][street_cabinet!=power], /* power street cabinet has own style above */
+area[man_made=street_cabinet][utility!=power], /* power street cabinet has own style above */
 area[man_made=beacon],
 area[man_made=bridge],
 area[bridge:support],
@@ -1533,7 +1603,7 @@ area[man_made=pumping_station],
 area[man_made=mineshaft] {
     fill-color: manmade#d8d8d8;
 }
-node[man_made=street_cabinet][street_cabinet!=power] {
+node[man_made=street_cabinet][utility!=power] {
     icon-image: "presets/misc/street_cabinet.svg";
     set icon_z17;
 }
@@ -1955,7 +2025,7 @@ node[man_made=utility_pole][utility~=street_lighting] {
 area[telecom=exchange],
 area[telecom=connection_point],
 area[telecom=service_device],
-area[man_made=street_cabinet][street_cabinet=telecom] {
+area[man_made=street_cabinet][utility=telecom] {
     fill-color: telecom#d8d8d8; /* same as man_made */
 }
 node[telecom=exchange] {
@@ -1970,7 +2040,7 @@ node[telecom=service_device] {
     icon-image: "presets/telecom/service_device.svg";
     set icon_z17;
 }
-node[man_made=street_cabinet][street_cabinet=telecom] {
+node[man_made=street_cabinet][utility=telecom] {
     icon-image: "presets/telecom/telecom_cabinet.svg";
     set icon_z17;
 }
@@ -2370,8 +2440,13 @@ node[advertising=poster_box] {
     icon-image: "presets/leisure/poster_box.svg";
     set icon_z17;
 }
+node[advertising=totem] {
+    icon-image: "presets/leisure/totem.svg";
+    set icon_z17;
+}
 way[advertising=billboard],
-way[advertising=poster_box] {
+way[advertising=poster_box],
+way[advertising=totem] {
     width: 2;
     color: advertising#880000;
 }
@@ -2513,6 +2588,10 @@ node[shop=butcher] {
 }
 node[shop=bicycle] {
     icon-image: "presets/shop/bicycle.svg";
+    set icon_z17;
+}
+node[shop=games] {
+    icon-image: "presets/shop/games.svg";
     set icon_z17;
 }
 node[shop=doityourself] {
@@ -3142,7 +3221,8 @@ area[amenity=car_pooling],
 area[amenity=car_sharing],
 area[amenity=car_wash],
 area[amenity=taxi],
-area[amenity=fuel] {
+area[amenity=fuel],
+area[amenity=charging_station] {
     fill-color: amenity_traffic#f7efb7;
 }
 node[amenity=parking_space] {
@@ -3332,7 +3412,8 @@ area[amenity=college],
 area[amenity=kindergarten],
 area[amenity=language_school],
 area[amenity=music_school],
-area[amenity=driving_school] {
+area[amenity=driving_school],
+area[amenity=driver_training] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=animal_boarding] {
@@ -3459,7 +3540,8 @@ node[amenity=language_school] {
     icon-image: "presets/education/language_school.svg";
     set icon_z17;
 }
-node[amenity=driving_school] {
+node[amenity=driving_school],
+node[amenity=driver_training] {
     icon-image: "presets/education/driving_school.svg";
     set icon_z17;
 }
@@ -3635,6 +3717,10 @@ way[amenity=bench] {
 }
 node[amenity=bench] {
     icon-image: "presets/leisure/bench.svg";
+    set icon_z17;
+}
+node[amenity=lounger] {
+    icon-image: "presets/leisure/lounger.svg";
     set icon_z17;
 }
 node[amenity=bbq] {
@@ -5532,6 +5618,10 @@ node[boundary=national_park] {
 /* maxspeed nodes */
 /******************/
 node[traffic_sign][maxspeed=none][!is_prop_set(icon-image)] {
+    icon-image: "presets/vehicle/restriction/maxspeed_none.svg";
+    set icon_z17;
+}
+node[traffic_sign][maxspeed=implicit][!is_prop_set(icon-image)] {
     icon-image: "presets/vehicle/restriction/maxspeed_none.svg";
     set icon_z17;
 }

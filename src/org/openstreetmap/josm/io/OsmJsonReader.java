@@ -192,7 +192,7 @@ public class OsmJsonReader extends AbstractReader {
             if (exception.getCause() instanceof IOException) {
                 IOException soe = (IOException) exception.getCause();
                 soe.addSuppressed(exception); // Add the caught exception as a suppressed exception
-                throw new IllegalDataException(soe); // NOPMD -- PreserveStackTrace should be fixed with PMD 7
+                throw new IllegalDataException(soe);
             }
             throw exception;
         }

@@ -59,7 +59,7 @@ def write_xxx(rev: int, el: ElementTree.Element) -> None:
         return
     with open(path, "r") as f:
         old_text = f.read()
-    new_text = re.sub("since xxx", lambda _: "since {}".format(rev), old_text)
+    new_text = re.sub("since [xX][xX][xX]", lambda _: "since {}".format(rev), old_text)
     if old_text != new_text:
         print(
             "replacing 'since xxx' with 'since {}' in '{}'".format(rev, path)

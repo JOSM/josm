@@ -105,8 +105,8 @@ public class ColorfulFilter implements BufferedImageOp {
             doFilter((DataBufferByte) srcBuffer, (DataBufferByte) destBuffer, redOffset, greenOffset, blueOffset,
                     alphaOffset, src.getAlphaRaster() != null);
             return dest;
+        default: // Fall through
         }
-
         return doFilterRGB(src);
     }
 

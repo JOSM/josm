@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
@@ -223,6 +224,8 @@ class SequenceCommandTest {
                     User.createOsmUser(1, "foo"), User.createOsmUser(2, "bar"))
             .withPrefabValues(OsmDataLayer.class,
                     new OsmDataLayer(new DataSet(), "1", null), new OsmDataLayer(new DataSet(), "2", null))
+            .withPrefabValues(ElemStyles.class,
+                    new ElemStyles(), new ElemStyles())
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
     }

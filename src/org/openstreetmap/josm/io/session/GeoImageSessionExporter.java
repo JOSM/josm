@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 /**
  * Session exporter for {@link GeoImageLayer}.
  * @since 5505
+ * @since 19387 exifGpsTrack, exifHPosErr, gpsDiffMode, gps2d3dMode, exifGpsDop, exifGpsDatum, exifGpsProcMethod exporter added
  */
 public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLayer> {
 
@@ -104,6 +105,27 @@ public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLay
             }
             if (entry.getExifImgDir() != null) {
                 addAttr("exif-image-direction", entry.getExifImgDir().toString(), imgElem, support);
+            }
+            if (entry.getExifGpsTrack() != null) {
+                addAttr("exif-gps-track", entry.getExifGpsTrack().toString(), imgElem, support);
+            }
+            if (entry.getExifHPosErr() != null) {
+                addAttr("exif-gps-hposerr", entry.getExifHPosErr().toString(), imgElem, support);
+            }
+            if (entry.getGpsDiffMode() != null) {
+                addAttr("exif-gps-diffmode", entry.getGpsDiffMode().toString(), imgElem, support);
+            }
+            if (entry.getGps2d3dMode() != null) {
+                addAttr("exif-gps-2d3dmode", entry.getGps2d3dMode().toString(), imgElem, support);
+            }
+            if (entry.getExifGpsDop() != null) {
+                addAttr("exif-gps-dop", entry.getExifGpsDop().toString(), imgElem, support);
+            }
+            if (entry.getExifGpsDatum() != null) {
+                addAttr("exif-gps-datum", entry.getExifGpsDatum().toString(), imgElem, support);
+            }
+            if (entry.getExifGpsProcMethod() != null) {
+                addAttr("exif-gps-procmethod", entry.getExifGpsProcMethod().toString(), imgElem, support);
             }
             if (entry.hasNewGpsData()) {
                 addAttr("is-new-gps-data", Boolean.toString(entry.hasNewGpsData()), imgElem, support);

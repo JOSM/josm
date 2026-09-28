@@ -109,6 +109,8 @@ class DomainValidatorTestIT {
             Map<String, String[]> htmlInfo = getHtmlInfo(htmlFile);
             Map<String, String> missingTLD = new TreeMap<>(); // stores entry and comments as String[]
             Map<String, String> missingCC = new TreeMap<>();
+            Map<String, String> allTLD = new TreeMap<>(); // stores entry and comments as String[]
+            Map<String, String> allCC = new TreeMap<>(); // stores entry and comments as String[]
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#")) {
                     final String unicodeTld; // only different from asciiTld if that was punycode
@@ -118,11 +120,24 @@ class DomainValidatorTestIT {
                     } else {
                         unicodeTld = asciiTld;
                     }
-                    if (!dv.isValidTld(asciiTld)) {
-                        String[] info = htmlInfo.get(asciiTld);
-                        if (info != null) {
-                            String type = info[0];
-                            String comment = info[1];
+                    String[] info = htmlInfo.get(asciiTld);
+                    if (info != null) {
+                        String type = info[0];
+                        String comment = info[1].replaceAll("&quot;", "\"").replaceAll("&#x27;", "'").replaceAll("&amp;", "&");
+                        if ("country-code".equals(type)) { // Which list to use?
+                            if (!dv.isValidInfrastructureTld(asciiTld)) {
+                                allCC.put(asciiTld, unicodeTld + " " + comment);
+                                if (generateUnicodeTlds) {
+                                    allCC.put(unicodeTld, asciiTld + " " + comment);
+                                }
+                            }
+                        } else {
+                            allTLD.put(asciiTld, unicodeTld + " " + comment);
+                            if (generateUnicodeTlds) {
+                                allTLD.put(unicodeTld, asciiTld + " " + comment);
+                            }
+                        }
+                        if (!dv.isValidTld(asciiTld)) {
                             if ("country-code".equals(type)) { // Which list to use?
                                 missingCC.put(asciiTld, unicodeTld + " " + comment);
                                 if (generateUnicodeTlds) {
@@ -157,6 +172,12 @@ class DomainValidatorTestIT {
                     }
                 }
             }
+            allTLD.remove("arpa");
+            String s = allTLD.get("melbourne");
+            if (s != null) /* text too long, shorten a bit */
+                allTLD.replace("melbourne", s.replace("represented by its ", ""));
+            printMap(header, allTLD, "allTLD");
+            printMap(header, allCC, "allCC");
             if (!missingTLD.isEmpty()) {
                 printMap(header, missingTLD, "TLD");
                 fail("missing TLD");

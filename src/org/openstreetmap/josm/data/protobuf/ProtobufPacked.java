@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.protobuf;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 /**
@@ -14,18 +13,6 @@ public class ProtobufPacked {
     private final byte[] bytes;
     private final long[] numbers;
     private int location;
-
-    /**
-     * Create a new ProtobufPacked object
-     *
-     * @param ignored A reusable ByteArrayOutputStream (no longer used)
-     * @param bytes The packed bytes
-     * @deprecated since we aren't using the output stream anymore
-     */
-    @Deprecated
-    public ProtobufPacked(ByteArrayOutputStream ignored, byte[] bytes) {
-        this(bytes);
-    }
 
     /**
      * Create a new ProtobufPacked object

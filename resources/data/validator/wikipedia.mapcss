@@ -76,7 +76,7 @@
 /* All wikipedias except "jbo" automatically capitalize first letter of the page title.
    To see the latest list, see <https://noc.wikimedia.org/conf/highlight.php?file=InitialiseSettings.php>
    and look for 'wgCapitalLinks' setting. */
-*[wikipedia =~ /^[-a-zA-Z]{2,12}:\p{Ll}/][wikipedia !~ /^jbo:/][wikipedia !~ /(?i)^[-a-z]{2,12}:https?:/] {
+*[wikipedia =~ /^[-a-zA-Z]{2,12}:(?!\p{sc=Georgian})\p{Ll}/][wikipedia !~ /^jbo:/][wikipedia !~ /(?i)^[-a-z]{2,12}:https?:/] {
   throwWarning: tr("wikipedia page title should have first letter capitalized");
   fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),1), upper(get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),2)), get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),3));
   assertMatch: "node wikipedia=en:foo";

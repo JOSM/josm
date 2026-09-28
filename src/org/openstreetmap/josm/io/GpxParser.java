@@ -592,7 +592,7 @@ class GpxParser extends DefaultHandler {
             data.put(META_AUTHOR_LINK, currentLink);
         } else if (currentState != State.LINK) {
             getAttr().ifPresent(attr ->
-                ((Collection<GpxLink>) attr.computeIfAbsent(META_LINKS, e -> new LinkedList<GpxLink>())).add(currentLink));
+                ((Collection<GpxLink>) attr.computeIfAbsent(META_LINKS, e -> new LinkedList<>())).add(currentLink));
         }
     }
 

@@ -91,16 +91,14 @@ way[highway=cycleway][bicycle=no],
 way[highway=footway][foot=no],
 way[highway=cycleway][cycleway=lane] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  assertMatch: "way highway=cycleway cycleway=lane";
+  assertMatch: "way highway=footway maxspeed=20";
   assertNoMatch: "way highway=cycleway bicycle=yes";
   assertNoMatch: "way highway=cycleway";
   assertNoMatch: "way highway=footway foot=yes";
   assertNoMatch: "way highway=footway";
-  assertMatch: "way highway=cycleway cycleway=lane";
-  assertNoMatch: "way highway=cycleway";
   assertNoMatch: "way highway=residential cycleway=lane";
-  assertMatch: "way highway=footway maxspeed=20";
   assertNoMatch: "way highway=residential maxspeed=20";
-  assertNoMatch: "way highway=footway";
 }
 
 /* footway, see #10851, #10976, #15439, #19389, #21235 */

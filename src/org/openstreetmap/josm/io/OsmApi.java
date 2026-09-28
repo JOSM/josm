@@ -97,6 +97,7 @@ public class OsmApi extends OsmConnection {
      * OSM API initialization listener.
      * @since 12804
      */
+    @FunctionalInterface
     public interface OsmApiInitializationListener {
         /**
          * Called when an OSM API instance has been successfully initialized.
@@ -420,6 +421,7 @@ public class OsmApi extends OsmConnection {
     public void createPrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
         individualPrimitiveModification("PUT", "create", osm, monitor, ret -> {
             osm.setOsmId(Long.parseLong(ret.trim()), 1);
+            osm.setReferrersDownloaded(true);
             osm.setChangesetId(getChangeset().getId());
         }, ret -> tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
     }
@@ -824,7 +826,7 @@ public class OsmApi extends OsmConnection {
                         throw new OsmApiException(retCode, errorHeader, errorBody);
                 case HttpURLConnection.HTTP_UNAUTHORIZED:
                 case HttpURLConnection.HTTP_FORBIDDEN:
-                    CredentialsManager.getInstance().purgeCredentialsCache(RequestorType.SERVER);
+                    CredentialsManager.getInstance().purgeCredentialsCache(RequestorType.SERVER, getHost());
                     throw new OsmApiException(retCode, errorHeader, errorBody, activeConnection.getURL().toString(),
                             doAuthenticate ? retrieveBasicAuthorizationLogin(client) : null, response.getContentType());
                 default:
@@ -997,7 +999,7 @@ public class OsmApi extends OsmConnection {
             if (newNotes.size() == 1) {
                 return newNotes.get(0);
             }
-            // Shouldn't ever execute. Server will either respond with an error (caught elsewhere) or one note
+            // Should never execute. Server will either respond with an error (caught elsewhere) or one note
             throw new OsmTransferException(tr("Note upload failed"));
         } catch (SAXException | IOException e) {
             Logging.error(e);

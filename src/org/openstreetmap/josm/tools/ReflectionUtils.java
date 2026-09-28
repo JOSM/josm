@@ -60,6 +60,28 @@ public final class ReflectionUtils {
         }, exclusions);
     }
 
+    /**
+     * Find a class either in the default class loader or in plugins.
+     * @param name class name to search
+     * @return found class object, or null if it was not found
+     * @since 19597
+     */
+    public static Class<?> findClass(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            Logging.trace(e);
+            for (ClassLoader cl : PluginHandler.getPluginClassLoaders()) {
+                try {
+                    return Class.forName(name, true, cl);
+                } catch (ClassNotFoundException ex) {
+                    Logging.trace(e);
+                }
+            }
+            return null;
+        }
+    }
+
     private static <T> T findCaller(Function<StackTraceElement, T> getter, Collection<T> exclusions) {
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         for (int i = 3; i < stack.length; i++) {

@@ -128,6 +128,7 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
      *
      * @author Taylor Smock
      */
+    @FunctionalInterface
     public interface TileListener {
         /**
          * Called when the MVTTile is finished loading
@@ -142,6 +143,7 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
      *
      * @author Taylor Smock
      */
+    @FunctionalInterface
     public interface LayerShower {
         /**
          * Get a list of layers to show

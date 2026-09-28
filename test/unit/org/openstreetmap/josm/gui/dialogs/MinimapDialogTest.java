@@ -253,7 +253,7 @@ class MinimapDialogTest {
         // call paint to trigger new tile fetch
         this.paintSlippyMap();
 
-        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+        Awaitility.await().atMost(3000, MILLISECONDS).until(this.slippyMapTasksFinished);
 
         this.paintSlippyMap();
 

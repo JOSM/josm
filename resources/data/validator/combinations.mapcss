@@ -2,7 +2,7 @@
  * Taginfo query: select keypairs.key1, keypairs.key2, keypairs.count_all, keys.count_all, cast(keypairs.count_all as real)/keys.count_all as from_fraction_all from keys, keypairs where key1='waterway' and keys.key=keypairs.key2 and (key1<>'highway' or keypairs.count_all>12000) and (key1<>'railway' or keypairs.count_all>3000) and (key1<>'waterway' or keypairs.count_all>800) and key2 not like '%:%' and from_fraction_all>0.97 and 1 union select keypairs.key2, keypairs.key1, keypairs.count_all, keys.count_all, cast(keypairs.count_all as real)/keys.count_all as from_fraction_all from keys, keypairs where key2='waterway' and keys.key=keypairs.key1 and (key2<>'highway' or keypairs.count_all>12000) and (key2<>'railway' or keypairs.count_all>3000) and (key2<>'waterway' or keypairs.count_all>800) and key1 not like '%:%' and from_fraction_all>0.97 and 1 order by keypairs.count_all desc limit 1000;
  */
 
-way[surface=~/^(unpaved|compacted|gravel|fine_gravel|pebblestone|ground|earth|dirt|grass|sand|mud|ice|salt|snow|woodchips)$/] { /* without grass_paver as it is controversial */
+way[surface=~/^(unpaved|compacted|gravel|fine_gravel|pebblestone|ground|earth|dirt|grass|sand|mud|ice|salt|snow|woodchips|laterite)$/] { /* without grass_paver as it is controversial */
   set unpaved_surface;
 }
 way[surface=~/^(paved|asphalt|cobblestone|cobblestone:flattened|sett|concrete|concrete:plates|paving_stones|metal|wood|unhewn_cobblestone)$/] {
@@ -148,16 +148,16 @@ way[highway=~/^(unclassified|residential)$/] > node[barrier].barrierSmallRoadCon
 
 /* {0.key} without {1.tag} or {2.tag} */
 *[bridge:movable               ][bridge!=movable][man_made!=bridge],
-*[substation                   ][power!=substation][pipeline!=substation],
 *[reservoir_type               ][landuse!=reservoir][water!=reservoir],
 way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.tag}", "{2.tag}");
   group: tr("missing tag");
 }
 
-/* {0.key} without {1.tag}, {2.tag} or {3.tag}, #15107, #20241 */
+/* {0.key} without {1.tag}, {2.tag} or {3.tag}, #15107, #20241, #20421 */
 *[iata                         ][aeroway!=aerodrome][aeroway!=heliport][aeroway!=helipad],
-*[icao                         ][aeroway!=aerodrome][aeroway!=heliport][aeroway!=helipad] {
+*[icao                         ][aeroway!=aerodrome][aeroway!=heliport][aeroway!=helipad],
+*[substation                   ][power!=substation][power!~/pole|tower/][pipeline!=substation] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.tag}", "{2.tag}", "{3.tag}");
   group: tr("missing tag");
 }
@@ -306,6 +306,8 @@ way[usage=penstock][waterway!=pressurised] {
 *[internet_access=no][internet_access:fee],
 node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
+relation[power=circuit][wires],
+relation[power=line_section][wires],
 *[amenity=vending_machine][shop],
 *[noname?][name],
 *[noref?][ref],
@@ -332,7 +334,7 @@ way[highway=footway][oneway=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.tag} together with {1.tag}, see #18411, #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186, #18815, #20960 */
+/* {0.tag} together with {1.tag}, see #18411, #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186, #18815, #20960, #24114 */
 *[barrier=kerb][kerb=no],
 way[highway=construction][construction][construction=~/^(yes|minor|no)$/],
 way[railway=construction][construction][construction=~/^(yes|minor|no)$/],
@@ -345,12 +347,13 @@ node[highway=crossing][crossing=no],
 node[railway=crossing][crossing=no],
 way[junction=yes][highway],
 way[tracktype=grade1][surface].unpaved_surface,
-way[tracktype=grade2][surface][surface=~/^(sand|mud|ground|earth|dirt|grass|ice|salt|snow|woodchips)$/],
+way[tracktype=grade2][surface][surface=~/^(sand|mud|earth|dirt|grass|ice|salt|snow|woodchips)$/],
 way[tracktype=grade4][surface].fully_paved_surface,
 way[tracktype=grade5][surface].fully_paved_surface,
 way[segregated][bicycle=no],
 way[segregated][foot=no],
-way[man_made=pipeline][tunnel=flooded] {
+way[man_made=pipeline][tunnel=flooded],
+*[line_management=termination][location:transition=yes] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
 }
@@ -364,10 +367,6 @@ relation[type=multipolygon][area=no] {
 /* {0.key} together with {1.key}, #18267, #17630, #17604, #21836 */
 node[transformer][voltage],
 node[marker][cover],
-node[marker][voltage],
-node[marker][pressure],
-node[marker][diameter],
-node[marker][substance],
 *[building:part][building],
 *[addr:street][addr:place][outside("CZ,DK")] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
@@ -687,7 +686,7 @@ relation[type=multipolygon][building] > way {
   set part_of_building_MP;
 }
 way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!note][!amenity][!leisure][!landuse][!man_made][!tourism][!barrier][place!=plot]!.part_of_building_MP {
-  /* don't exclude shop because a lot of real missing bulding tag cases have a shop tag. */
+  /* do not exclude shop because a lot of real missing bulding tag cases have a shop tag. */
   throwOther: tr("possibly missing {0} tag", "{1.key}");
   group: tr("missing tag");
 }
@@ -997,14 +996,15 @@ way[bicycle][/^cycleway(:|$)/][!/^bicycle:/][bicycle=~/^(no|use_sidepath)$/][/^c
 
 /* #19980 */
 way[highway=living_street][maxspeed][maxspeed=~/mph/][get(split(" ", tag(maxspeed)), 0) > 15],
-way[highway=living_street][maxspeed][maxspeed!~/mph/][get(split(" ", tag(maxspeed)), 0) > 20] {
+way[highway=living_street][maxspeed][maxspeed!~/mph/][get(split(" ", tag(maxspeed)), 0) > 20][outside("AT,CL,DK,IL,UZ")],
+way[highway=living_street][maxspeed][maxspeed!~/mph/][get(split(" ", tag(maxspeed)), 0) > 30][inside("AT,CL,DK,IL,UZ")] { /*Austria, Chile, Denmark, Israel, Uzbekistan*/
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
   assertNoMatch: "way highway=living_street";
   assertNoMatch: "way highway=living_street maxspeed=20";
   assertNoMatch: "way highway=living_street maxspeed=\"15 mph\"";
   assertNoMatch: "way highway=living_street maxspeed=walk";
-  assertMatch: "way highway=living_street maxspeed=30";
+  assertMatch: "way highway=living_street maxspeed=50";
   assertMatch: "way highway=living_street maxspeed=\"20 mph\"";
 }
 
@@ -1053,6 +1053,14 @@ relation[piste:type=nordic][!piste:grooming]{
   assertNoMatch: "relation piste:type=nordic piste:grooming=classic";
 }
 
+/* #20421 */
+*[substation][transformer=distribution] {
+  throwWarning: tr("{0} together with {1}", "{1.tag}", "{0.key}");
+  suggestAlternative: "transformer=main";
+  group: tr("suspicious tag combination");
+  fixAdd: "transformer=main"
+}
+
 /* #21836 */
 *[voltage:primary][voltage:secondary][transformer=generator][tag("voltage:secondary")<tag("voltage:primary")] {
   throwWarning: tr("{0} is lower than {1} on {2}.", "{1.key}", "{0.key}", "{2.tag}");
@@ -1064,4 +1072,137 @@ area[/^(building|building:part)$/][height][min_height][siunit_length(tag(height)
 area[/^(building|building:part)$/][building:levels][building:min_level][tag("building:levels") <= tag("building:min_level")] {
   throwWarning: tr("{0} is lower or equal to {1} on {2}", "{1.key}", "{2.key}", "{0.key}");
   group: tr("suspicious tag combination");
+}
+
+/* #23932 */
+way[cycleway:right][cycleway:right!=lane][cycleway:right!=separate][/^cycleway(:right|:both|):buffer/],
+way[cycleway:left][cycleway:left!=lane][cycleway:left!=separate][/^cycleway(:left|:both|):buffer/],
+way[cycleway:both][cycleway:both!=lane][cycleway:both!=separate][/^cycleway(:right|:left|:both|):buffer/],
+way[cycleway][cycleway!=lane][cycleway!=separate][/^cycleway(:right|:left|:both|):buffer/] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{3.tag}");
+  group: tr("suspicious tag combination");
+  assertMatch: "way cycleway:left=shared_lane cycleway:buffer=no";
+  assertMatch: "way cycleway:both=track cycleway:left:buffer=yes";
+  assertMatch: "way cycleway=shared_busway cycleway:buffer=no";
+  assertNoMatch: "way cycleway:right=lane cycleway:right:buffer=no";
+  assertNoMatch: "way cycleway:right=separate cycleway:right:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:left:buffer=yes";
+  assertNoMatch: "way cycleway:both=lane cycleway:both:buffer=no";
+  assertNoMatch: "way cycleway:both=lane cycleway:left:buffer=yes";
+  assertNoMatch: "way cycleway:both=lane cycleway:buffer=no";
+  assertNoMatch: "way cycleway=lane cycleway:buffer=yes";
+  assertNoMatch: "way cycleway=lane cycleway:right:buffer=no";
+  assertNoMatch: "way cycleway=lane cycleway:both:buffer=no";
+}
+
+way[cycleway:right=separate][/^cycleway(:right|:both):./], 
+way[cycleway:left=separate][/^cycleway(:left|:both):./], 
+way[cycleway:both=separate][/^cycleway(:right|:left|:both):./], 
+way[cycleway=separate][/^cycleway(:right|:left|:both):./] {
+  throwWarning: tr("{0} together with {1}. Remove {1}.", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+  assertMatch: "way cycleway:right=separate cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway:right=separate cycleway:both:buffer=yes";
+  assertMatch: "way cycleway:left=separate cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway:left=separate cycleway:both:buffer=yes";
+  assertMatch: "way cycleway:both=separate cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway:both=separate cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway:both=separate cycleway:both:buffer=yes";
+  assertMatch: "way cycleway=separate cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway=separate cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway=separate cycleway:both:buffer=yes";
+  assertNoMatch: "way cycleway:right=separate cycleway:left:surface=asphalt";
+  assertNoMatch: "way cycleway:left=separate cycleway:right:buffer=yes";
+  assertNoMatch: "way cycleway:both=separate";
+  assertNoMatch: "way cycleway=separate";
+}
+
+way[/^cycleway:right:/][!cycleway:right][!cycleway:both][!cycleway],
+way[/^cycleway:left:/][!cycleway:left][!cycleway:both][!cycleway],
+way[/^cycleway:both:/][!cycleway:both][!cycleway][!cycleway:left][!cycleway:right],
+way[/^cycleway(?!:right|:left|:both|:lanes):/][!cycleway][!cycleway:both][!cycleway:left][!cycleway:right][segregated!=yes] {
+  throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
+  group: tr("missing tag");
+  suggestAlternative: "{0.tag} + {1.key}=*";
+  assertMatch: "way cycleway:right=lane cycleway:left:buffer=yes";
+  assertMatch: "way cycleway:right:buffer=yes";
+  assertMatch: "way cycleway:right:surface=asphalt";
+  assertMatch: "way cycleway:left=lane cycleway:right:buffer=no";
+  assertMatch: "way cycleway:left:buffer=yes";
+  assertMatch: "way cycleway:left:surface=asphalt";
+  assertMatch: "way cycleway:both:buffer=yes";
+  assertMatch: "way cycleway:both:surface=asphalt";
+  assertMatch: "way cycleway:buffer=no";
+  assertNoMatch: "way cycleway:right=lane cycleway:right:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:left:buffer=yes";
+  assertNoMatch: "way cycleway:both=lane cycleway:both:buffer=yes";
+  assertNoMatch: "way cycleway=lane cycleway:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:right=lane cycleway:both:buffer=yes";
+  assertNoMatch: "way cycleway:left=lane cycleway:right=lane cycleway:buffer=no";
+  assertNoMatch: "way cycleway=lane cycleway:surface=asphalt";
+  assertNoMatch: "way cycleway:both=lane cycleway:both:surface=asphalt";
+  assertNoMatch: "way highway=path segregated=yes cycleway:surface=needles footway:surface=paving_stones";
+  assertNoMatch: "way highway=primary oneway=yes bicycle:lanes=no|designated|yes cycleway:lanes=|lane|no";
+}
+
+/* Prevent redundancy between relation and members, see #24456, #24457 */
+relation[power=circuit] > way[power=line][frequency],
+relation[power=circuit] > way[power=minor_line][frequency],
+relation[power=circuit] > way[power=cable][frequency] {
+  throwWarning: tr("Frequency tag should be on the circuit relation only, not on the power segment");
+  group: tr("redundant tagging");
+}
+relation[power=circuit] > relation[power=line_section][frequency] {  
+  throwWarning: tr("Frequency tag should be on the circuit relation only, not on the power section");
+  group: tr("redundant tagging");
+}
+
+/* Invalid topology with power circuit relation, see #24456 */
+relation[power=circuit][topology][topology!~/^(linear|branched)$/] {
+       throwError: tr("power=circuit relations should have a topology tag with value linear or branched");
+       assertMatch: "relation type=power power=circuit topology=branch";
+       assertNoMatch: "relation type=power power=circuit topology=branched";
+}
+
+/* #21927 */
+way[!cycleway][!cycleway:right][!cycleway:left][!cycleway:both][!cycleway:lanes] > node[cycleway=asl] {
+  throwWarning: tr("{0} not on cycleway", "{0.tag}");
+  group: tr("suspicious tag combination");
+}
+
+way[/^oneway(:bicycle)?$/!~/^yes$/] > node[cycleway=asl][!direction],
+way[!oneway][!oneway:bicycle] > node[cycleway=asl][!direction] {
+  throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("missing tag");
+  suggestAlternative: "{0.tag} + {1.key}=*";
+}
+
+/* #24724 */
+*[marker][voltage] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:voltage=*";
+  fixRemove: "voltage";
+  fixAdd: "indication:voltage={1.value}"
+}
+*[marker][diameter] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:diameter=*";
+  fixRemove: "diameter";
+  fixAdd: "indication:diameter={1.value}"
+}
+*[marker][pressure] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:pressure=*";
+  fixRemove: "pressure";
+  fixAdd: "indication:pressure={1.value}"
+}
+*[marker][substance] {
+  throwWarning: tr("{0} with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "indication:substance=*";
+  fixRemove: "substance";
+  fixAdd: "indication:substance={1.value}"
 }

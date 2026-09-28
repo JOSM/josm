@@ -648,6 +648,20 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="multiline" type="boolean">
+            <annotation>
+                <documentation>
+                    The text is expected to be multiline, and newlines must not be normalized (default is false)
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="normalize" type="boolean">
+            <annotation>
+                <documentation>
+                    This performs normalization of the value by stripping extraneous spaces and consolidating whitespace (default is true for JOSM)
+                </documentation>
+            </annotation>
+        </attribute>
     </attributeGroup>
 
     <attributeGroup name="attributes.values">

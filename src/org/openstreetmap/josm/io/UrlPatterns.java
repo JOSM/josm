@@ -26,7 +26,7 @@ public final class UrlPatterns {
         /** URL of remote geojson files, optionally compressed */
         COMPRESSED_FILE(".*/(.*\\.(json|geojson)(\\."+COMPRESSED+")?)"),
         /** URL of generic service providing geojson as output format */
-        FORMAT_GEOJSON (".*format=geojson.*");
+        FORMAT_GEOJSON (".*f(ormat)?=geojson.*");
 
         private final String urlPattern;
 
@@ -45,7 +45,7 @@ public final class UrlPatterns {
      */
     public enum GpxUrlPattern implements UrlPattern {
         /** URL of identified GPX trace on OpenStreetMap website */
-        TRACE_ID     (".*(osm|openstreetmap).org/trace/\\p{Digit}+/data"),
+        TRACE_ID     (".*(osm|openstreetmap).org/traces?/\\p{Digit}+/data"),
         /** URL of identified GPX trace belonging to any user on OpenStreetMap website */
         USER_TRACE_ID(".*(osm|openstreetmap).org/user/[^/]+/traces/(\\p{Digit}+)"),
         /** URL of the edit link from the OpenStreetMap trace page */

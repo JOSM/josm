@@ -152,13 +152,23 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
         return providers.stream().flatMap(
             provider -> provider.getTileSources().stream()
         ).collect(Collectors.toMap(
-            TileSource::getId,
+            ts -> getTileSourceId(ts),
             ts -> ts,
             (oldTs, newTs) -> oldTs,
             LinkedHashMap::new
         ));
     }
 
+    /**
+     * In case the tile source has no ID, use the name
+     */
+    private static String getTileSourceId(TileSource ts) {
+        String id = ts.getId();
+        if (id == null)
+            id = ts.getName();
+        return id;
+    }
+    
     /**
      * Get the distance in meter that correspond to 100 px on screen.
      * @return the distance in meter that correspond to 100 px on screen

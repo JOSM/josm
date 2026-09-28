@@ -49,7 +49,7 @@ public final class I18n {
     /**
      * Enumeration of possible plural modes. It allows us to identify and implement logical conditions of
      * plural forms defined on <a href="https://help.launchpad.net/Translations/PluralForms">Launchpad</a>.
-     * See <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html">CLDR</a>
+     * See <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html">CLDR</a>
      * for another complete list.
      * @see #pluralEval
      */
@@ -61,28 +61,34 @@ public final class I18n {
         /** Plural = Greater than 1. For some latin languages (French, Brazilian Portuguese) */
         MODE_GREATERONE,
         /* Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ar">Arabic</a>.*/
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ar">Arabic</a>.*/
         MODE_AR,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cs">Czech</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cs">Czech</a>. */
         MODE_CS,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#pl">Polish</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#pl">Polish</a>. */
         MODE_PL,
         /* Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ro">Romanian</a>.*
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ro">Romanian</a>.*
         MODE_RO,*/
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#lt">Lithuanian</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#lt">Lithuanian</a>. */
         MODE_LT,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ru">Russian</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#lv">Latvian</a>. */
+        MODE_LV,
+        /** Special mode for
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ru">Russian</a>. */
         MODE_RU,
         /** Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sk">Slovak</a>. */
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sk">Slovak</a>. */
+        MODE_CY,
+        /** Special mode for
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cy">Welsh</a>. */
         MODE_SK,
         /* Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sl">Slovenian</a>.*
+         * <a href="https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sl">Slovenian</a>.*
         MODE_SL,*/
     }
 
@@ -104,17 +110,20 @@ public final class I18n {
         languages.put("ca", PluralMode.MODE_NOTONE);
         languages.put("ca@valencia", PluralMode.MODE_NOTONE);
         languages.put("cs", PluralMode.MODE_CS);
+        languages.put("cy", PluralMode.MODE_CY);
         languages.put("da", PluralMode.MODE_NOTONE);
         languages.put("de", PluralMode.MODE_NOTONE);
         languages.put("el", PluralMode.MODE_NOTONE);
         languages.put("en_AU", PluralMode.MODE_NOTONE);
-        //languages.put("en_CA", PluralMode.MODE_NOTONE);
+        languages.put("en_CA", PluralMode.MODE_NOTONE);
         languages.put("en_GB", PluralMode.MODE_NOTONE);
+        languages.put("eo", PluralMode.MODE_NOTONE);
         languages.put("es", PluralMode.MODE_NOTONE);
         languages.put("et", PluralMode.MODE_NOTONE);
         //languages.put("eu", PluralMode.MODE_NOTONE);
         languages.put("fa", PluralMode.MODE_NONE);
         languages.put("fi", PluralMode.MODE_NOTONE);
+        languages.put("fo", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
         //languages.put("he", PluralMode.MODE_NOTONE);
@@ -126,9 +135,12 @@ public final class I18n {
         languages.put("ko", PluralMode.MODE_NONE);
         languages.put("km", PluralMode.MODE_NONE);
         languages.put("lt", PluralMode.MODE_LT);
+        languages.put("lo", PluralMode.MODE_NONE);
+        languages.put("lv", PluralMode.MODE_LV);
         languages.put("mr", PluralMode.MODE_NOTONE);
         languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
+        languages.put("nn", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
         languages.put("pt", PluralMode.MODE_NOTONE);
         languages.put("pt_BR", PluralMode.MODE_GREATERONE);
@@ -138,7 +150,7 @@ public final class I18n {
         //languages.put("sl", PluralMode.MODE_SL);
         languages.put("sr@latin", PluralMode.MODE_RU);
         languages.put("sv", PluralMode.MODE_NOTONE);
-        //languages.put("tr", PluralMode.MODE_NONE);
+        languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
         //languages.put("vi", PluralMode.MODE_NONE);
         languages.put("zh_CN", PluralMode.MODE_NONE);
@@ -652,7 +664,7 @@ public final class I18n {
 
     private static int pluralEval(long n) {
         switch (pluralMode) {
-        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, es, et, eu, fi, gl, is, it, iw_IL, mr, nb, nl, sv */
+        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, eo, es, et, eu, fi, fo, gl, is, it, iw_IL, mr, nb, nl, sv */
             return (n != 1) ? 1 : 0;
         case MODE_NONE: /* id, vi, ja, km, tr, zh_CN, zh_TW */
             return 0;
@@ -671,11 +683,15 @@ public final class I18n {
         case MODE_LT:
             return ((n % 10) == 1) && ((n % 100) != 11) ? 0 : (((n % 10) >= 2)
                     && (((n % 100) < 10) || ((n % 100) >= 20)) ? 1 : 2);
+        case MODE_LV:
+            return ((n % 10) == 1) && ((n % 100) != 11) ? 0 : (n != 0) ? 1 : 2;
         case MODE_RU:
             return (((n % 10) == 1) && ((n % 100) != 11)) ? 0 : (((((n % 10) >= 2)
                     && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2);
         case MODE_SK:
             return (n == 1) ? 1 : (((n >= 2) && (n <= 4)) ? 2 : 0);
+        case MODE_CY:
+            return (n == 1) ? 0 : ((n == 2) ? 1 : (n != 8 && n != 11) ? 2 : 3);
         //case MODE_SL:
         //    return (((n % 100) == 1) ? 1 : (((n % 100) == 2) ? 2 : ((((n % 100) == 3)
         //            || ((n % 100) == 4)) ? 3 : 0)));

@@ -172,7 +172,7 @@ public final class ShowStatusReportAction extends JosmAction {
                     "jsonp",
                     "metadata-extractor2",
                     "signpost-core", "liboauth-signpost-java",
-                    "svgsalamander"
+                    "jsvg"
             }) {
                 String details = PlatformHookUnixoid.getPackageDetails(p);
                 if (details != null) {

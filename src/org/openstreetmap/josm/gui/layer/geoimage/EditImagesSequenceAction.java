@@ -16,6 +16,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelationSettings;
+import org.openstreetmap.josm.data.gpx.TimeSource;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.geoimage.CorrelateGpxWithImages.RepaintTheMapListener;
@@ -78,11 +79,11 @@ public class EditImagesSequenceAction extends JosmAction {
             // So reset all images.
             yLayer.discardTmp();
             // Construct a list of images that have a date, and sort them on the date.
-            List<ImageEntry> dateImgLst = yLayer.getSortedImgList(true, true);
+            List<ImageEntry> dateImgLst = yLayer.getSortedImgList(true, true, TimeSource.EXIFCAMTIME);
             // Create a temporary copy for each image
             dateImgLst.forEach(ie -> ie.createTmp().unflagNewGpsData());
             GpxImageCorrelation.matchGpxTrack(dateImgLst, yLayer.getFauxGpxData(),
-                            new GpxImageCorrelationSettings(0, false, pDirectionPosition.getSettings()));
+                            new GpxImageCorrelationSettings(0, false, TimeSource.EXIFCAMTIME, pDirectionPosition.getSettings()));
             yLayer.updateBufferAndRepaint();
         }
     }

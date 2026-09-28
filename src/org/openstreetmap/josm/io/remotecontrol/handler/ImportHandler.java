@@ -49,7 +49,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                 }
             }
             LoadAndZoomHandler.parseChangesetTags(args);
-        } catch (RuntimeException ex) { // NOPMD
+        } catch (RuntimeException ex) {
             Logging.warn("RemoteControl: Error parsing import remote control request:");
             Logging.error(ex);
             throw new RequestHandlerErrorException(ex);

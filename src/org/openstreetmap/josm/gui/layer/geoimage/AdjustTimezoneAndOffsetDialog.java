@@ -144,6 +144,7 @@ public class AdjustTimezoneAndOffsetDialog extends ExtendedDialog {
     /**
      * Listener called when the sliders are moved.
      */
+    @FunctionalInterface
     public interface AdjustListener {
         /**
          * Provides a textual description matching the new state after the change of values.

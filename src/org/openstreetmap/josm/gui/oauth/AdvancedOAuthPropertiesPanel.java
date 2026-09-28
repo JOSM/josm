@@ -14,6 +14,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.data.oauth.IOAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
@@ -47,6 +49,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 2746
  */
 public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
+    /**
+     * Property fired whenever the parameters this panel would return change: the client id was edited,
+     * or "use default settings" was toggled. Listeners re-read {@link #getAdvancedParameters()}.
+     * @since 19627
+     */
+    public static final String PARAMETERS_CHANGED_PROP = AdvancedOAuthPropertiesPanel.class.getName() + ".parametersChanged";
 
     private final JCheckBox cbUseDefaults = new JCheckBox(tr("Use default settings"));
     private final JosmTextField tfConsumerKey = new JosmTextField();
@@ -137,6 +145,46 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         ilUseDefault = new UseDefaultItemListener();
         cbUseDefaults.addItemListener(ilUseDefault);
         cbUseDefaults.setSelected(Config.getPref().getBoolean("oauth.settings.use-default", true));
+        cbUseDefaults.addItemListener(e -> fireParametersChanged());
+        tfConsumerKey.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                fireParametersChanged();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                fireParametersChanged();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                fireParametersChanged();
+            }
+        });
+    }
+
+    private void fireParametersChanged() {
+        firePropertyChange(PARAMETERS_CHANGED_PROP, null, null);
+    }
+
+    /**
+     * Determines if the panel is set to use the default parameters for the API URL rather than
+     * the values entered in its fields.
+     * @return {@code true} if "use default settings" is selected
+     * @since 19627
+     */
+    public boolean isUseDefaultSettings() {
+        return cbUseDefaults.isSelected();
+    }
+
+    /**
+     * Get the client id as entered in the panel, without falling back to the defaults.
+     * @return the client id field's text
+     * @since 19627
+     */
+    public String getEnteredClientId() {
+        return tfConsumerKey.getText();
     }
 
     protected boolean hasCustomSettings() {

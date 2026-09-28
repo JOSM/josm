@@ -12,8 +12,6 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.sources.MapPaintPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -26,7 +24,6 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.OsmPrimitiveImageProvider;
 import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -230,22 +227,6 @@ public final class MapPaintStyles {
                 .setArchive(source.zipIcons)
                 .setInArchiveDir(source.getZipEntryDirName())
                 .setOptional(true).get();
-    }
-
-    /**
-     * Returns the node icon that would be displayed for the given tag.
-     * @param tag The tag to look an icon for
-     * @return {@code null} if no icon found
-     * @deprecated use {@link OsmPrimitiveImageProvider#getResource}
-     */
-    @Deprecated
-    public static ImageIcon getNodeIcon(Tag tag) {
-        if (tag != null) {
-            return OsmPrimitiveImageProvider.getResource(tag.getKey(), tag.getValue(), OsmPrimitiveType.NODE)
-                    .map(resource -> resource.getPaddedIcon(ImageProvider.ImageSizes.SMALLICON.getImageDimension()))
-                    .orElse(null);
-        }
-        return null;
     }
 
     /**

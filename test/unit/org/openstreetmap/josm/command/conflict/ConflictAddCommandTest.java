@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -73,6 +74,8 @@ class ConflictAddCommandTest {
                     new Conflict<>(new Node(), new Node()), new Conflict<>(new Way(), new Way()))
             .withPrefabValues(OsmDataLayer.class,
                     new OsmDataLayer(new DataSet(), "1", null), new OsmDataLayer(new DataSet(), "2", null))
+            .withPrefabValues(ElemStyles.class,
+                    new ElemStyles(), new ElemStyles())
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
     }

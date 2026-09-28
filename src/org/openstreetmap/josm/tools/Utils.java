@@ -31,17 +31,14 @@ import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Bidi;
-import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.Normalizer;
-import java.text.ParseException;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -175,25 +172,6 @@ public final class Utils {
             res += n;
         }
         return res;
-    }
-
-    /**
-     * Joins a list of strings (or objects that can be converted to string via
-     * Object.toString()) into a single string with fields separated by sep.
-     * @param sep the separator
-     * @param values collection of objects, null is converted to the
-     *  empty string
-     * @return null if values is null. The joined string otherwise.
-     * @deprecated since 15718, use {@link String#join} or {@link Collectors#joining}
-     */
-    @Deprecated(since = "15718", forRemoval = true)
-    public static String join(String sep, Collection<?> values) {
-        CheckParameterUtil.ensureParameterNotNull(sep, "sep");
-        if (values == null)
-            return null;
-        return values.stream()
-                .map(v -> v != null ? v.toString() : "")
-                .collect(Collectors.joining(sep));
     }
 
     /**
@@ -716,18 +694,6 @@ public final class Utils {
     }
 
     /**
-     * Determines if a string is null or blank.
-     * @param string string
-     * @return {@code true} if string is null or blank
-     * @since 18208
-     * @deprecated use {@link #isStripEmpty(String)} or {@link String#isBlank()} instead
-     */
-    @Deprecated(since = "19080", forRemoval = true)
-    public static boolean isBlank(String string) {
-        return isStripEmpty(string);
-    }
-
-    /**
      * Returns the first not empty string in the given candidates, otherwise the default string.
      * @param defaultString default string returned if all candidates would be empty if stripped
      * @param candidates string candidates to consider
@@ -820,10 +786,21 @@ public final class Utils {
      * @since 13597
      */
     public static String removeWhiteSpaces(String s) {
+        return removeWhiteSpaces(WHITE_SPACES_PATTERN, s);
+    }
+
+    /**
+     * Removes leading, trailing, and multiple inner whitespaces from the given string, to be used as a key or value.
+     * @param s The string
+     * @param whitespaces The regex for whitespaces to remove outside the leading and trailing whitespaces (see {@link #strip(String)})
+     * @return The string without leading, trailing or multiple inner whitespaces
+     * @since 19261
+     */
+    public static String removeWhiteSpaces(Pattern whitespaces, String s) {
         if (isEmpty(s)) {
             return s;
         }
-        return strip(s).replaceAll("\\s+", " ");
+        return whitespaces.matcher(strip(s)).replaceAll(" ");
     }
 
     /**
@@ -1492,22 +1469,6 @@ public final class Utils {
     }
 
     /**
-     * Reads the input stream and closes the stream at the end of processing (regardless if an exception was thrown)
-     *
-     * @param stream input stream
-     * @return byte array of data in input stream (empty if stream is null)
-     * @throws IOException if any I/O error occurs
-     * @deprecated since 19050 -- use {@link InputStream#readAllBytes()} instead
-     */
-    @Deprecated(since = "19050", forRemoval = true)
-    public static byte[] readBytesFromStream(InputStream stream) throws IOException {
-        if (stream == null) {
-            return new byte[0];
-        }
-        return stream.readAllBytes();
-    }
-
-    /**
      * Returns the initial capacity to pass to the HashMap / HashSet constructor
      * when it is initialized with a known number of entries.
      * <p>
@@ -1741,31 +1702,6 @@ public final class Utils {
     }
 
     /**
-     * Returns the JRE expiration date.
-     * @return the JRE expiration date, or null
-     * @since 12219
-     */
-    public static Date getJavaExpirationDate() {
-        try {
-            Object value;
-            Class<?> c = Class.forName("com.sun.deploy.config.BuiltInProperties");
-            try {
-                value = c.getDeclaredField("JRE_EXPIRATION_DATE").get(null);
-            } catch (NoSuchFieldException e) {
-                // Field is gone with Java 9, there's a method instead
-                Logging.trace(e);
-                value = c.getDeclaredMethod("getProperty", String.class).invoke(null, "JRE_EXPIRATION_DATE");
-            }
-            if (value instanceof String) {
-                return DateFormat.getDateInstance(3, Locale.US).parse((String) value);
-            }
-        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException | ParseException e) {
-            Logging.debug(e);
-        }
-        return null;
-    }
-
-    /**
      * Returns the latest version of Java, from Oracle website.
      * @return the latest version of Java, from Oracle website
      * @since 12219
@@ -1814,17 +1750,6 @@ public final class Utils {
     public static boolean isRunningWebStart() {
         // See http://stackoverflow.com/a/16200769/2257172
         return isClassFound("javax.jnlp.ServiceManager");
-    }
-
-    /**
-     * Determines whether JOSM has been started via Oracle Java Web Start.
-     * @return true if JOSM has been started via Oracle Java Web Start
-     * @since 15740
-     * @deprecated JOSM no longer supports Oracle Java Webstart since Oracle Java Webstart doesn't support Java 9+.
-     */
-    @Deprecated(since = "19101", forRemoval = true)
-    public static boolean isRunningJavaWebStart() {
-        return isRunningWebStart() && isClassFound("com.sun.javaws.Main");
     }
 
     /**
@@ -2071,5 +1996,29 @@ public final class Utils {
                 return 0.0254;
             default: throw new IllegalArgumentException("Invalid length unit: " + unit);
         }
+    }
+
+    /**
+     * Calculate the number of unicode code points. See #24446
+     * @param s the string
+     * @return 0 if s is null or empty, else the number of code points
+     * @since 19437
+     */
+    public static int getCodePointCount(String s) {
+        if (s == null)
+            return 0;
+        return s.codePointCount(0, s.length());
+    }
+
+    /**
+     * Check if a given string has more than the allowed number of code points.
+     * See #24446. The OSM server checks this number, not the value returned by String.length()
+     * @param s the string
+     * @param maxLen the maximum number of code points
+     * @return true if s is null or within the given limit, false else
+     * @since 19437
+     */
+    public static boolean checkCodePointCount(String s, int maxLen) {
+        return getCodePointCount(s) <= maxLen;
     }
 }

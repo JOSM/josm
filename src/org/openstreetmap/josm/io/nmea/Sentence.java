@@ -8,7 +8,7 @@ package org.openstreetmap.josm.io.nmea;
  * Most GPS sensors emit only RMC, GGA, GSA, GSV, GLL, VTG, and (rarely) ZDA.
  * Newer ones conforming to NMEA 3.x may emit GBS as well.
  * Other NMEA sentences are usually only emitted by high-end maritime navigation systems.<p>
- * See <a href="http://www.catb.org/gpsd/NMEA.html#_nmea_encoding_conventions">NMEA Encoding Conventions</a>
+ * See <a href="https://gpsd.gitlab.io//gpsd/NMEA.html#_nmea_encoding_conventions">NMEA Encoding Conventions</a>
  * @since 12421
  */
 public enum Sentence {
@@ -31,7 +31,7 @@ public enum Sentence {
      * <li>Standard deviation of bias estimate</li>
      * <li>Checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_gbs_gps_satellite_fault_detection">GBS</a>
+     * See <a href="https://gpsd.gitlab.io//gpsd/NMEA.html#_gbs_gps_satellite_fault_detection">GBS</a>
      */
     GBS,
 
@@ -71,7 +71,7 @@ public enum Sentence {
      * <li>Differential reference station ID, 0000-1023</li>
      * <li>Checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_gga_global_positioning_system_fix_data">GGA</a>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_gga_global_positioning_system_fix_data">GGA</a>
      */
     GGA,
 
@@ -102,7 +102,7 @@ public enum Sentence {
      * <li>VDOP</li>
      * <li>Checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_gsa_gps_dop_and_active_satellites">GSA</a>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_gsa_gps_dop_and_active_satellites">GSA</a>
      */
     GSA,
 
@@ -122,7 +122,7 @@ public enum Sentence {
      * <li>azimuth in degrees to true north (000-359) (leading zeros sent)</li>
      * <li>SNR in dB (00-99) (leading zeros sent) more satellite info quadruples like 4-7 n) checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_gsv_satellites_in_view">GSV</a>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_gsv_satellites_in_view">GSV</a>
      */
     GSV,
 
@@ -143,9 +143,31 @@ public enum Sentence {
      * <li>FAA mode indicator (NMEA 2.3 and later)</li>
      * <li>Checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_gll_geographic_position_latitude_longitude">GLL</a>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_gll_geographic_position_latitude_longitude">GLL</a>
      */
     GLL,
+    
+    /**
+     * GST - GPS Pseudorange Noise Statistics
+     * <pre>
+     *              1    2 3 4 5 6 7 8   9
+     *              |    | | | | | | |   |
+     * $ --GST,hhmmss.ss,x,x,x,x,x,x,x*hh
+     * </pre>
+     * Field Number:<ol>
+     * <li>UTC time of associated GGA fix</li>
+     * <li>Total RMS standard deviation of ranges inputs to the navigation solution</li>
+     * <li>Standard deviation (meters) of semi-major axis of error ellipse</li>
+     * <li>Standard deviation (meters) of semi-minor axis of error ellipse</li>
+     * <li>Orientation of semi-major axis of error ellipse (true north degrees)</li>
+     * <li>Standard deviation (meters) of latitude error</li>
+     * <li>Standard deviation (meters) of longitude error</li>
+     * <li>Standard deviation (meters) of altitude error</li>
+     * <li>Checksum</li>
+     * </ol>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_gst_gps_pseudorange_noise_statistics">GST</a>
+     */
+    GST,
 
     /**
      * RMC - Recommended Minimum Navigation Information
@@ -170,7 +192,7 @@ public enum Sentence {
      * <li>FAA mode indicator (NMEA 2.3 and later)</li>
      * <li>Checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_rmc_recommended_minimum_navigation_information">RMC</a>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_rmc_recommended_minimum_navigation_information">RMC</a>
      */
     RMC,
 
@@ -193,7 +215,7 @@ public enum Sentence {
      * <li>FAA mode indicator (NMEA 2.3 and later)</li>
      * <li>Checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_vtg_track_made_good_and_ground_speed">VTG</a>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_vtg_track_made_good_and_ground_speed">VTG</a>
      */
     VTG,
 
@@ -213,7 +235,7 @@ public enum Sentence {
      * <li>Local zone minutes description, apply same sign as local hours</li>
      * <li>Checksum</li>
      * </ol>
-     * See <a href="http://www.catb.org/gpsd/NMEA.html#_zda_time_amp_date_utc_day_month_year_and_local_time_zone">ZDA</a>
+     * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_zda_time_amp_date_utc_day_month_year_and_local_time_zone">ZDA</a>
      */
     ZDA
 }

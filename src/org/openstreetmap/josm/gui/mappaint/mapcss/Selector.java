@@ -490,7 +490,7 @@ public interface Selector {
             public void visit(IRelation<?> r) {
                 if (r instanceof Relation && r.isMultipolygon() && r.getBBox().bounds(e.osm.getBBox())
                         && left.matches(new Environment(r).withParent(e.osm))
-                        && !Geometry.filterInsideMultipolygon(Collections.singletonList(e.osm), (Relation) r).isEmpty()) {
+                        && !Geometry.filterInsideMultipolygon(Collections.singletonList(e.osm), (Relation) r, e.mpJoinedAreaCache).isEmpty()) {
                     addToChildren(e, r);
                 }
             }

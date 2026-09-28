@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
  * @since 6209
  */
 class ExifReaderTest {
-    private File orientationSampleFile, directionSampleFile;
+    private File orientationSampleFile, directionSampleFile, positionErrorSampleFile;
 
     /**
      * Setup test
@@ -30,6 +30,7 @@ class ExifReaderTest {
     public void setUp() {
         directionSampleFile = new File("nodist/data/exif-example_direction.jpg");
         orientationSampleFile = new File("nodist/data/exif-example_orientation=6.jpg");
+        positionErrorSampleFile = new File("nodist/data/exif-position-error.jpg"); 
     }
 
     /**
@@ -55,6 +56,15 @@ class ExifReaderTest {
         assertEquals(Instant.parse(expectedDate), date);
     }
 
+    /**
+     * Test reading GPS date and time
+     */
+    @Test
+    void testReadGpsDateTime() {
+        Instant date = ExifReader.readGpsInstant(positionErrorSampleFile);
+        assertEquals(Instant.parse("2024-04-30T16:36:42Z"), date);
+    }
+ 
     /**
      * Test orientation extraction
      */
@@ -98,6 +108,62 @@ class ExifReaderTest {
     @Test
     void testReadElevation() {
         assertEquals(Double.valueOf(23.4), ExifReader.readElevation(new File("nodist/data/exif-example_speed_ele.jpg")));
+    }
+
+    /**
+     * Test horizontal position error extraction
+     */
+    @Test
+    void testReadHorPosError() {
+        assertEquals(Double.valueOf(0.014), ExifReader.readHpositioningError(positionErrorSampleFile));
+    }
+
+    /**
+     * Test GPS track course extraction
+     */
+    @Test
+    void testReadGpsTrack() {
+        assertEquals(Double.valueOf(298), ExifReader.readGpsTrackDirection(positionErrorSampleFile));
+    }
+
+    /**
+     * Test GPS differential mode extraction
+     */
+    @Test
+    void testReadGpsDiffmode() {
+        assertEquals(Integer.valueOf(1), ExifReader.readGpsDiffMode(positionErrorSampleFile));
+    }
+
+    /**
+     * Test GPS DOP value extraction
+     */
+    @Test
+    void testReadGpsDop() {
+        assertEquals(Double.valueOf(0.92), ExifReader.readGpsDop(positionErrorSampleFile));
+    }
+
+    /**
+     * Test GPS measure mode (2D/3D) extraction
+     */
+    @Test
+    void testReadGps2d3dMode() {
+        assertEquals(Integer.valueOf(3), ExifReader.readGpsMeasureMode(positionErrorSampleFile));
+    }
+
+    /**
+     * Test GPS datum extraction
+     */
+    @Test
+    void testReadGpsDatum() {
+        assertEquals(String.valueOf("EPSG:9782"), ExifReader.readGpsDatum(positionErrorSampleFile));
+    }
+
+    /**
+     * Test GPS processing method extraction
+     */
+    @Test
+    void testReadGpsProcMethod() {
+        assertEquals(String.valueOf("GNSS RTK_FIX CORRELATION"), ExifReader.readGpsProcessingMethod(positionErrorSampleFile));
     }
 
     /**

@@ -6,7 +6,7 @@
 
     <!-- Item chunks -->
     <chunk id="surface">
-        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,concrete:plates,concrete:lanes,paving_stones,sett,cobblestone,unhewn_cobblestone,grass_paver,compacted,fine_gravel,gravel,pebblestone,ground,mud,rock,sand,grass,wood,metal,stone,woodchips" />
+        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,concrete:plates,concrete:lanes,paving_stones,sett,cobblestone,unhewn_cobblestone,grass_paver,compacted,fine_gravel,gravel,pebblestone,ground,mud,rock,sand,grass,wood,metal,stone,woodchips,laterite" />
     </chunk>
     <chunk id="surface_smoothness">
         <reference ref="surface" />
@@ -469,7 +469,7 @@
     <chunk id="power_source_values">
     </chunk>
     <chunk id="utilities">
-        <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" values_searchable="true"/>
+        <combo key="utility" text="Utility" values="chemical,gas,heating,oil,power,sewerage,street_lighting,telecom,television,waste,water" values_searchable="true"/>
     </chunk>
     <chunk id="pole">
         <text key="height" text="Height (meters)" length="7" />
@@ -498,6 +498,9 @@
             <!-- #16364: don't use simple "power" context to avoid conflict with "delta" used for power towers -->
             <combo key="windings:configuration" text="Windings configuration" values="star,delta,open-delta,zigzag,open,scott,leblanc" values_context="power_windings" />
         </optional>
+    </chunk>
+    <chunk id="power_topology">
+        <combo key="topology" text="Circuit topology" values="linear,branched" />
     </chunk>
     <chunk id="telecom_medium">
         <combo key="telecom:medium" text="Local loop type" values="copper,fibre,coaxial" />
@@ -1267,12 +1270,13 @@
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="sac_scale" text="SAC Scale" values_searchable="true" values_sort="false">
-                    <list_entry value="hiking" display_value="T1 - hiking trail" short_description="Trail well cleared. Area flat or slightly sloped, no fall hazard" />
-                    <list_entry value="mountain_hiking" display_value="T2 - mountain hiking trail" short_description="Trail with continuous line and balanced ascent. Terrain partially steep, fall hazard possible" />
-                    <list_entry value="demanding_mountain_hiking" display_value="T3 - difficult, exposed hiking trail" short_description="exposed sites may be secured with ropes or chains, possible need to use hands for balance. Partly exposed sites with fall hazard, scree, pathless jagged rocks" />
-                    <list_entry value="alpine_hiking" display_value="T4 - difficult, exposed, steep alpine trail" short_description="sometimes need for hand use to get ahead. Terrain quite exposed, precarious grassy acclivities, jagged rocks, facile snow-free glaciers" />
-                    <list_entry value="demanding_alpine_hiking" display_value="T5 - difficult alpine trail with climbing" short_description="single plainly climbing up to second grade. Exposed, demanding terrain, jagged rocks, few dangerous glacier and snow" />
-                    <list_entry value="difficult_alpine_hiking" display_value="T6 - hazardous alpine trail with climbing" short_description="climbing up to second grade. Often very exposed, precarious jagged rocks, glacier with danger to slip and fall" />
+                    <list_entry value="strolling" display_value="smooth strolling trail" short_description="Smooth trail with no obstacles usually wide enough to be walked side-by-side. No exposed areas. Terrain level; no risk of falling or tripping over minor obstacles." />
+                    <list_entry value="hiking" display_value="T1 - hiking trail" short_description="Trail well cleared or with rather minor obstacles like roots, usually walked single file. Exposed areas well secured. Terrain level or inclined; no risk of falling with appropriate behaviour." />
+                    <list_entry value="mountain_hiking" display_value="T2 - mountain hiking trail" short_description="Continuous trail, with somewhat bigger obstacles like stones, smaller rocks. Exposed areas made more secure. Terrain steep in places and may pose fall hazards." />
+                    <list_entry value="demanding_mountain_hiking" display_value="T3 - difficult, exposed hiking trail" short_description="Obstacles like boulders. Exposed areas ordinarily secured with fixed ropes or chains. Use of hands for balance potentially needed. Portions of the route exposed with danger of falling. Trail may have unmarked portions and cross fields of loose scree or talus." />
+                    <list_entry value="alpine_hiking" display_value="T4 - difficult, exposed, steep alpine trail" short_description="Use of hands needed in order to advance in certain places. Terrain already quite exposed, including steep grassy pitches, talus slopes, easy snowfields, or snow-free glacier crossings." />
+                    <list_entry value="demanding_alpine_hiking" display_value="T5 - difficult alpine trail with climbing" short_description="Individual easy climbing sections. Exposed and demanding terrain. May include steep rock scrambles, glaciers and snowfields with risk of sliding." />
+                    <list_entry value="difficult_alpine_hiking" display_value="T6 - hazardous alpine trail with climbing" short_description="Includes climbing pitches up to UIAA grade II. Severe exposure. Difficult craggy terrain. Glaciers with high risk of sliding." />
                 </combo>
                 <combo key="mtb:scale" text="MTB Scale" values="0-,0,0+,1-,1,1+,2-,2,2+,3-,3,3+,4-,4,4+,5-,5,5+,6-,6,6+" values_sort="false" values_no_i18n="true" />
                 <reference ref="trailblazed" />
@@ -1330,8 +1334,11 @@
             <space />
             <optional text="Cycleway Lane Attributes">
                 <combo key="cycleway:both:lane" text="Lane type (both)" values_context="cycleway" values="advisory,exclusive"/>
+                <check key="cycleway:both:buffer" text="Has buffer between automobiles and cycleway (both)" />
                 <combo key="cycleway:left:lane" text="Lane type (left)" values_context="cycleway" values="advisory,exclusive"/>
+                <check key="cycleway:left:buffer" text="Has buffer between automobiles and cycleway (left)" />
                 <combo key="cycleway:right:lane" text="Lane type (right)" values_context="cycleway" values="advisory,exclusive"/>
+                <check key="cycleway:right:buffer" text="Has buffer between automobiles and cycleway (right)" />
             </optional>
             <optional text="Edit Highway Attributes:">
                 <combo key="highway" text="Highway" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,living_street,service,bus_guideway,construction" values_context="Highway" values_sort="false" />
@@ -1527,6 +1534,9 @@
         <item name="Advanced stop line" icon="presets/vehicle/asl.svg" type="node" preset_name_label="true">
             <link wiki="Tag:cycleway=asl" />
             <key key="cycleway" value="asl" />
+            <optional>
+                <combo key="direction" text="Direction" values="forward,backward" values_sort="false" />
+            </optional>
         </item> <!-- Advanced stop line -->
         <item name="Mini-Roundabout" icon="presets/vehicle/restriction/mini_roundabout_left.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=mini_roundabout" />
@@ -1554,6 +1564,7 @@
             <check key="crossing:island" text="With island" />
             <reference ref="check_crossing_access" />
             <label text="In case of traffic signals:" />
+            <check key="crossing:signals" text="With signals" />
             <checkgroup columns="2">
                 <check key="button_operated" text="Button operated" />
                 <check key="traffic_signals:sound" text="Sound signals" />
@@ -1884,7 +1895,7 @@
             <link wiki="Tag:barrier=fence" />
             <key key="barrier" value="fence" />
             <optional>
-                <combo key="fence_type" text="Type" values="barbed_wire,bars,chain_link,concrete,electric,metal,pole,railing,split_rail,wire,wood" />
+                <combo key="fence_type" text="Type" values="barbed_wire,bars,chain_link,concrete,corrugated_metal,electric,glass,knee_rail,krest,net,paling,panel,pole,post_and_rail,railing,roundpole,slatted,split_rail,temporary,welded_diamond_mesh,wire"/>
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Fence -->
@@ -2390,6 +2401,13 @@
             <reference ref="wikipedia_wikidata" />
             <reference ref="water_access" />
         </item> <!-- Water -->
+        <item name="Flowline" icon="presets/nautical/waterway_stream.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:waterway=flowline" />
+            <space />
+            <key key="waterway" value="flowline" />
+            <text key="name" text="Name" />
+            <reference ref="water_access" />
+        </item> <!-- Stream -->
         <item name="Tailings Pond" icon="presets/misc/tailings_pond.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:man_made=tailings_pond" />
             <space />
@@ -2913,7 +2931,7 @@
             <link wiki="Tag:amenity=parking_space" />
             <space />
             <key key="amenity" value="parking_space" />
-            <combo key="parking_space" text="Type of parking space" values="disabled,normal,charging" />
+            <combo key="parking_space" text="Type of parking space" values="disabled,normal,charging,hgv,bus,motorcycle,parent" />
             <reference ref="parking_name_ref" />
             <text key="capacity" text="Capacity" />
             <reference ref="access_fee_operator_surface_smoothness" />
@@ -2984,7 +3002,7 @@
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Fuel -->
-        <item name="Charging Station" icon="presets/vehicle/charging_station.svg" type="node" preset_name_label="true">
+        <item name="Charging Station" icon="presets/vehicle/charging_station.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:amenity=charging_station" />
             <space />
             <key key="amenity" value="charging_station" />
@@ -3534,6 +3552,12 @@
             <text key="ref" text="Reference (track number)" />
             <text key="width" text="Width (meters)" />
             <check key="area" text="Area" />
+        </item> <!-- Railway Platform -->
+        <item name="Railway Platform Edge" icon="presets/transport/platform_rail.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:railway=platform_edge" />
+            <space />
+            <key key="railway" value="platform_edge" />
+            <text key="ref" text="Reference (track number)" />
         </item> <!-- Railway Platform -->
         <separator/>
         <item name="Bus Station" icon="presets/transport/bus_old.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4749,15 +4773,24 @@
             <reference ref="school_common"/>
             <reference ref="link_contact_address" />
         </item> <!-- College -->
-         <item name="Driving School" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Driving School" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=driving_school" />
             <space />
             <key key="amenity" value="driving_school" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="license_classes" text="License Classes" values="A;A1;B;BE;C,A;A1;B;B1;C;C1;D;D1;BE;CE;C1E;DE;D1E" />
-            <reference ref="school_common"/>
+            <multiselect key="license_classes" text="License Classes" values="AM;A1;A2;A;B;BE;B1;C1;C1E;C;CE;D1;D1E;D;DE" values_sort="false" values_no_i18n="true" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Driver Training" text="Similar but different tags:" />
         </item> <!-- Driving School -->
+        <item name="Driver Training" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=driver_training" />
+            <space />
+            <key key="amenity" value="driver_training" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <multiselect key="license_classes" text="License Classes" values="AM;A1;A2;A;B;BE;B1;C1;C1E;C;CE;D1;D1E;D;DE" values_sort="false" values_no_i18n="true" />
+            <reference ref="link_contact_address" />
+            <preset_link preset_name="Driving School" text="Similar but different tags:" />
+        </item> <!-- Driver Training -->
         <item name="Language school" icon="presets/education/language_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=language_school" />
             <space />
@@ -4991,6 +5024,21 @@
                 <text key="name" text="Name" />
                 </optional>
         </item> <!-- Fire Hydrant -->
+        <item name="Hydrant marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Key:marker" />
+            <space />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key!" />
+            <key key="indication:emergency" value="fire_hydrant" match="keyvalue!" />
+            <optional>
+                <reference ref="ref_operator" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+                <reference ref="color" />
+                <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
+                <space />
+                <label text="Indicates:" />
+                <text key="indication:diameter" text="Diameter" />
+            </optional>
+        </item> <!-- Hydrant marker -->
         <item name="Water Tank" icon="presets/emergency/water_tank.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:emergency=water_tank" />
             <space />
@@ -5355,6 +5403,11 @@
             <reference ref="color" />
             <combo key="seats" text="Amount of Seats" values="1,2,3,4,5,6,7,8,9,10" />
         </item> <!-- Bench -->
+        <item name="Lounger" icon="presets/leisure/lounger.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:amenity=lounger" />
+            <space />
+            <key key="amenity" value="lounger" />
+        </item> <!-- Lounger -->
         <item name="Shelter" icon="presets/accommodation/shelter.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:amenity=shelter" />
             <space />
@@ -5441,6 +5494,21 @@
                 <reference ref="common_advertising" />
             </optional>
         </item> <!-- Poster box -->
+        <item name="Advertising Totem" icon="presets/leisure/totem.svg" type="node,way" preset_name_label="true">
+            <link wiki="Tag:advertising=totem"/>
+            <space />
+            <key key="advertising" value="totem" />
+            <combo key="message" text="Message type" values="commercial,local,safety,legal,map,political,showbiz,non_profit,opinion,religion" />
+            <optional>
+                <reference ref="ref_operator"/>
+                <reference ref="common_advertising" />
+                <text key="width" text="Width (meters)" />
+                <combo key="sides" text="Sides" values="2,3,4,5,6,7,8,9,10" length="3" />
+                <combo key="orientation" text="Orientation" values="front,medium,parallel,opposite,multi" />
+                <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270" values_sort="false" />
+                <combo key="visibility" text="Visibility" values="street,area"/>
+            </optional>
+        </item> <!-- Totem -->
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
   <group name="Sports" icon="presets/sport/soccer.svg">
@@ -6058,6 +6126,18 @@
             </optional>
             <preset_link preset_name="Address" />
         </item> <!-- Residential Building -->
+        <item name="Service Building" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
+            <link wiki="Key:building" />
+            <key key="building" value="service" match="keyvalue!" />
+            <optional>
+                <reference ref="name_operator" />
+                <reference ref="utilities" />
+                <combo key="building:levels" text="Levels above ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <combo key="building:levels:underground" text="Levels below ground" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
+            <preset_link preset_name="Address" />
+        </item> <!-- Service Building -->
         <item name="Building part" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building:part" />
             <space />
@@ -6314,12 +6394,12 @@
             <space />
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
-        <item name="Avalanche Protection" icon="presets/misc/avalanche_protection.svg" type="node,way,closed_way" preset_name_label="true">
+        <item name="Avalanche Protection" icon="presets/misc/avalanche_protection.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=avalanche_protection" />
             <space />
             <key key="man_made" value="avalanche_protection" />
             <optional>
-                <combo key="avalanche_protection" text="Avalance protection" values="snow_bridge,dam,berm,mound,shed,gas_ignition" />
+                <combo key="avalanche_protection" text="Avalanche Protection" values="snow_bridge,dam,berm,mound,shed,gas_ignition" />
                 <check key="barrier" value_on="fence" text="Fence"/>
             </optional>
         </item> <!-- Avalanche Protection -->
@@ -6329,7 +6409,7 @@
             <space />
             <key key="man_made" value="utility_pole" />
             <reference ref="pole" />
-            <reference ref="utilities" />
+            <combo key="utility" text="Utility" values="power,street_lighting,telecom,television" values_searchable="true"/>
             <optional>
                 <reference ref="line_properties"/>
             </optional>
@@ -6347,7 +6427,8 @@
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
             <optional>
-                <combo key="street_cabinet" text="Type" values="cable_tv,gas,postal_service,power,street_lighting,telecom,traffic_control,traffic_monitoring,transport_management,waste,water,water_management" />
+                <reference ref="utilities" />
+                <combo key="street_cabinet" text="Special function" values="postal_service,traffic_control,traffic_monitoring,transport_management,waste" />
                 <reference ref="ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
                 <reference ref="color" />
@@ -6578,7 +6659,7 @@
             <space />
             <key key="pipeline" value="substation" />
             <text key="name" text="Name" />
-            <combo key="substation" text="Type" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" values_searchable="true" />
+            <combo key="substation" text="Role of substation" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" values_searchable="true" />
             <reference ref="ref_operator" />
             <reference ref="substance" />
         </item> <!-- Pipeline Substation -->
@@ -6595,15 +6676,21 @@
         <item name="Marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
             <link wiki="Key:marker" />
             <space />
-            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key" />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key!" />
+            <key key="indication:man_made" value="pipeline" match="keyvalue!" />
             <reference ref="utilities" />
             <optional>
                 <reference ref="ref_operator" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
                 <reference ref="color" />
                 <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
+                <space />
+                <label text="Indicates:" />
+                <combo key="indication:substance" text="Substance" values="water,hot_water,steam,sewage,gas,oil" />
+                <text key="indication:diameter" text="Diameter" />
+                <text key="indication:pressure" text="Pressure" />
             </optional>
-        </item> <!-- Marker -->
+        </item> <!-- Pipeline marker -->
         <item name="Manhole" icon="presets/misc/manhole.svg" type="node" preset_name_label="true">
             <link wiki="Key:manhole" />
             <space />
@@ -7086,7 +7173,7 @@
             <space />
             <key key="power" value="substation" />
             <text key="name" text="Name" />
-            <combo key="substation" text="Type of substation" values="compensation,converter,distribution,industrial,minor_distribution,traction,transition,transmission" values_context="power" />
+            <combo key="substation" text="Role of substation" values="compensation,converter,distribution,industrial,minor_distribution,traction,transition,transmission" values_context="power" />
             <reference ref="power_loc" />
             <reference ref="voltage_frequency" />
             <reference ref="ref_operator" />
@@ -7100,7 +7187,7 @@
             <link wiki="Tag:power=transformer" />
             <space />
             <key key="power" value="transformer" />
-            <combo key="transformer" text="Type of transformer" values="auxiliary,converter,distribution,generator,main,phase_angle_regulator,yes" match="key" values_context="power" />
+            <combo key="transformer" text="Nature of transformer" values="auxiliary,converter,distribution,generator,main,phase_angle_regulator,yes" match="key" values_context="power" />
             <reference ref="power_loc" />
             <reference ref="transformer_voltage_frequency" />
             <reference ref="ref_operator" />
@@ -7173,7 +7260,7 @@
         <item name="Power Street Cabinet" icon="presets/power/cable_distribution_cabinet.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
-            <key key="street_cabinet" value="power" />
+            <key key="utility" value="power" />
             <optional>
                 <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110" /> <!-- Recheck values -->
                 <reference ref="ref_operator" />
@@ -7186,11 +7273,12 @@
             <link wiki="Tag:building=transformer_tower" />
             <space />
             <key key="building" value="transformer_tower" />
+            <key key="utility" value="power" />
             <text key="height" text="Height (meters)" length="7" />
             <reference ref="ref_operator" />
             <preset_link preset_name="Power Substation" />
         </item> <!-- Transformer Tower -->
-        <item name="Terminal" icon="presets/power/terminal.svg" type="node" preset_name_label="true">
+        <item name="Terminal" icon="presets/power/terminal.svg" type="node" preset_name_label="true" name_context="power">
             <link wiki="Tag:power=terminal" />
             <space />
             <key key="power" value="terminal" />
@@ -7257,10 +7345,25 @@
             <reference ref="power_pole" />
             <space />
             <label text="Transformer Attributes:" />
-            <key key="transformer" value="distribution" match="key!" />
+            <key key="transformer" value="distribution" match="keyvalue!" />
             <reference ref="transformer_voltage_frequency" />
             <reference ref="optional_transformer_rating_phases_devices_windings" />
         </item> <!-- Pole with Transformer -->
+        <item name="Pole with Substation" icon="presets/power/pole_transformer.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:power=pole" />
+            <space />
+            <key key="power" value="pole" />
+            <label text="Pole Attributes:" />
+            <reference ref="power_pole" />
+            <space />
+            <label text="Substation Attributes:" />
+            <combo key="substation" text="Role of substation" values="industrial,minor_distribution" match="key!" />
+            <space />
+            <label text="Transformer Attributes:" />
+            <combo key="transformer" text="Nature of transformer" values="main" match="none" />
+            <reference ref="transformer_voltage_frequency" />
+            <reference ref="optional_transformer_rating_phases_devices_windings" />
+        </item> <!-- Pole with Substation -->
         <item name="Catenary mast" icon="presets/power/catenary_mast.svg" type="node" preset_name_label="true">
             <link wiki="Tag:power=catenary_mast" />
             <space />
@@ -7312,12 +7415,28 @@
                 <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
         </item> <!-- Power Cable -->
+        <item name="Cable marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Key:marker" />
+            <space />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key!" />
+            <key key="indication:power" value="cable" match="keyvalue!" />
+            <key key="utility" value="power" match="keyvalue!"/>
+            <optional>
+                <reference ref="ref_operator" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+                <reference ref="color" />
+                <combo key="location" text="Location" values="overground,overhead,surface,underground,underwater" values_context="pipeline" />
+                <space />
+                <label text="Indicates:" />
+                <text key="indication:voltage" text="Voltage" />
+            </optional>
+        </item> <!-- Power marker -->
     </group> <!-- Power -->
     <group name="Telecom" icon="presets/telecom/telecom.svg">
         <item name="Telecom Street Cabinet" icon="presets/telecom/telecom_cabinet.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
-            <key key="street_cabinet" value="telecom" />
+            <key key="utility" value="telecom" />
             <optional>
                 <reference ref="ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
@@ -7521,7 +7640,7 @@
                 <list_entry value="bench" short_description="A bench placed in memory of someone or something; usually has a plaque, and sometimes a statue sitting on (part of) it." />
             </combo>
             <optional>
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
                 <text key="artist_name" text="Artist Name" />
                 <combo key="material" text="Material" values="concrete,granite,metal,plastic,steel,stone,wood" />
                 <text key="start_date" text="Start date" />
@@ -7535,7 +7654,7 @@
             <text key="name" text="Name" />
             <reference ref="religious_catholic_christian" />
             <text key="start_date" text="Start date" />
-            <text key="inscription" text="Inscription" />
+            <text key="inscription" text="Inscription" multiline="true" />
         </item> <!-- Wayside Cross -->
         <item name="Wayside Shrine" icon="presets/religion/wayside_shrine.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:historic=wayside_shrine" />
@@ -7546,7 +7665,7 @@
             <check key="amenity" text="Place of worship" value_on="place_of_worship" disable_off="true" />
             <combo key="building" text="Building" values="wayside_shrine,yes" values_context="building" />
             <text key="start_date" text="Start date" />
-            <text key="inscription" text="Inscription" />
+            <text key="inscription" text="Inscription" multiline="true" />
         </item> <!-- Wayside Shrine -->
         <item name="Boundary Stone" icon="presets/landmark/boundary_stone.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:historic=boundary_stone" />
@@ -7554,7 +7673,7 @@
             <key key="historic" value="boundary_stone" />
             <optional>
                 <text key="name" text="Name" />
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
             </optional>
             <preset_link preset_name="Boundary Marker" text="Similar but different tags:" />
         </item> <!-- Boundary Stone -->
@@ -7564,7 +7683,7 @@
             <key key="historic" value="milestone" />
             <optional>
                 <text key="name" text="Name" />
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
             </optional>
         </item> <!-- Milestone -->
     </group> <!-- Historic Places -->
@@ -8320,6 +8439,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Toys -->
+        <item name="Games" icon="presets/shop/games.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=games" />
+            <space />
+            <key key="shop" value="games" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!--Games -->
         <item name="Gift/Souvenir" icon="presets/shop/present.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=gift" />
             <space />
@@ -8487,7 +8613,6 @@
             <check key="payment:bankaxess" text="BankAxess" match="keyvalue" />
             <check key="payment:bancomat" text="Bancomat" match="keyvalue" />
             <check key="payment:girocard" text="Girocard" match="keyvalue" />
-            <check key="payment:laser" text="Laser" match="keyvalue" />
             <check key="payment:maestro" text="Maestro" match="keyvalue" />
             <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" regions="CH" />
             <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
@@ -8504,14 +8629,15 @@
             <check key="payment:visa" text="Visa" match="keyvalue" />
         </checkgroup>
         <space />
-        <check key="payment:contactless" text="Contactless payment" match="keyvalue" />
+        <checkgroup columns="3">
+            <check key="payment:contactless" text="Contactless payment" match="keyvalue" />
+            <check key="payment:qr_code" text="QR code" match="keyvalue" />
+            <check key="payment:cards" text="Cards (of any type)" match="keyvalue" />
+        </checkgroup>
         <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" regions="FI" />
-            <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" regions="DE" />
             <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" regions="PT" />
-            <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" regions="LU" />
             <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" regions="IT" />
             <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" regions="ES" />
         </checkgroup>
@@ -8626,13 +8752,13 @@
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Insurance -->
-    <item name="It specialist" icon="presets/office/it.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="IT Specialist" icon="presets/office/it.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:office=it" />
         <space />
         <key key="office" value="it" />
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item> <!-- It specialist -->
+    </item> <!-- IT Specialist -->
     <item name="Lawyer" icon="presets/office/lawyer.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:office=lawyer" />
         <space />
@@ -8953,7 +9079,7 @@
             <key key="boundary" value="marker" />
             <optional>
                 <reference ref="name_ref" />
-                <text key="inscription" text="Inscription" />
+                <text key="inscription" text="Inscription" multiline="true" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
             </optional>
             <preset_link preset_name="Boundary Stone" text="Similar but different tags:" />
@@ -9126,7 +9252,7 @@
             <reference ref="name_wikipedia_wikidata" />
             <text key="ele" text="Elevation (meters)" length="10" />
             <optional>
-                <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" />
+                <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" values_context="volcano" />
                 <combo key="volcano:type" text="Type" values="stratovolcano,shield,scoria" />
             </optional>
         </item> <!-- Volcano -->
@@ -9616,7 +9742,10 @@
             <space />
             <key key="landuse" value="industrial" />
             <combo key="industrial" text="Type" values="bakery,brewery,brickyard,depot,distributor,factory,grinding_mill,heating_station,machine_shop,mine,oil,port,salt_pond,sawmill,scrap_yard,shipyard,slaughterhouse,warehouse,wellsite" values_context="industrial" />
-            <reference ref="optional_name" />
+            <optional>
+                <text key="name" text="Name" />
+                <reference ref="utilities" />
+            </optional>
         </item> <!-- Industrial -->
         <item name="Garages" icon="presets/landuse/garages.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=garages" />
@@ -9831,7 +9960,7 @@
             <space />
             <key key="type" value="boundary" />
             <text key="name" text="Name" />
-            <combo key="boundary" text="Boundary type" values="administrative,maritime,national_park,political,postal_code,protected_area" values_searchable="true" />
+            <combo key="boundary" text="Boundary type" values="administrative,maritime,national_park,political,postal_code,protected_area,place" values_searchable="true" />
             <optional>
                 <combo key="admin_level" text="Administrative level" values="1,2,3,4,5,6,7,8,9,10,11" />
             </optional>
@@ -9874,6 +10003,7 @@
             <space />
             <key key="type" value="restriction" />
             <combo key="restriction" text="Restriction" values="no_left_turn,no_right_turn,no_straight_on,no_u_turn,only_right_turn,only_left_turn,only_straight_on" values_searchable="true" />
+            <multiselect key="except" text="Except" values="psv;bicycle;hgv;motorcar;emergency" />
             <roles>
                 <role key="from" text="from way" requisite="required" count="1" type="way" />
                 <role key="via" text="via node or ways" requisite="required" type="way,node" />
@@ -10080,17 +10210,6 @@
                     <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
             </item> <!-- Detour Route -->
-            <item name="Power Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
-                <link wiki="Tag:route=power" />
-                <space/>
-                <key key="type" value="route"/>
-                <key key="route" value="power"/>
-                <reference ref="name_ref_operator"/>
-                <roles>
-                    <role key="line" text="route segment" requisite="required" type="way" member_expression="power=line|power=cable"/>
-                    <role key="substation" text="Power Substation" requisite="optional" type="way,closedway,multipolygon" member_expression="power"/>
-                </roles>
-            </item> <!-- Power Route -->
             <item name="Railway Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
                 <link wiki="Tag:route=railway" />
                 <space/>
@@ -10123,7 +10242,7 @@
                 <link wiki="Relation:superroute" />
                 <space/>
                 <key key="type" value="superroute"/>
-                <combo key="route" text="Type" values="bicycle,detour,foot,hiking,horse,mtb,piste,power,railway,road,ski" display_values="Bicycle Route,Detour Route,Walking Route,Hiking Route,Riding Route,Mountain Biking Route,Piste Route,Power Route,Railway Route,Road Route,Ski Route" />
+                <combo key="route" text="Type" values="bicycle,detour,foot,hiking,horse,mtb,piste,railway,road,ski" display_values="Bicycle Route,Detour Route,Walking Route,Hiking Route,Riding Route,Mountain Biking Route,Piste Route,Railway Route,Road Route,Ski Route" />
                 <reference ref="name_ref_operator"/>
                 <roles>
                     <role key="" text="route segment" requisite="required" type="relation" member_expression="type=route"/> <!-- fixme: at least 2 members are required -->
@@ -10262,5 +10381,41 @@
                 <role key="edge" text="edge ways parallel to 'through'" requisite="optional" type="way" />
             </roles>
         </item> <!-- Tunnel -->
+        <group name="Power" icon="presets/power/power.svg">
+            <item name="Power circuit" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+                <link wiki="Tag:power=circuit" />
+                <space/>
+                <key key="type" value="power"/>
+                <key key="power" value="circuit"/>
+                <space/>
+                <reference ref="cables"/>
+                <reference ref="voltage"/>
+                <reference ref="frequency"/>
+                <reference ref="power_topology"/>
+                <optional>
+                    <reference ref="name_ref_operator"/>
+                </optional>
+                <roles>
+                    <role key="substation" text="Power Substation" requisite="required" type="way,closedway,multipolygon" member_expression="power|substation"/>
+                    <role key="section" text="Circuit section" requisite="required" type="way,relation" member_expression="power=line|power=cable|power=minor_line|power=line_section"/>
+                    <role key="tap" text="Tap point" requisite="optional" type="node" member_expression="power=pole|power=tower|power=connection"/>
+                </roles>
+            </item> <!-- Power circuit -->
+            <item name="Power line section" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+                <link wiki="Tag:power=line_section" />
+                <space/>
+                <key key="type" value="power"/>
+                <key key="power" value="line_section"/>
+                <space/>
+                <reference ref="cables"/>
+                <reference ref="voltage"/>
+                <optional>
+                    <reference ref="name_ref_operator"/>
+                </optional>
+                <roles>
+                    <role key="line" text="Section segment" requisite="required" type="way" member_expression="power=line|power=cable|power=minor_line"/>
+                </roles>
+            </item> <!-- Power circuit -->
+        </group>
     </group> <!-- Relations -->
 </presets>

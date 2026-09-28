@@ -90,7 +90,6 @@ public class PlatformHookOsx implements PlatformHook {
             Logging.warn("Failed to register with macOS: " + ex);
         }
         warnSoonToBeUnsupportedJava(javaCallback);
-        checkExpiredJava(javaCallback);
         PlatformHook.super.startupHook(javaCallback, sanityCheckCallback);
     }
 

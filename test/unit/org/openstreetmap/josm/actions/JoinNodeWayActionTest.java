@@ -28,6 +28,7 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.tools.Geometry;
 
 /**
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.tools.Geometry;
 @BasicPreferences
 @Main
 @Projection
+@Territories(Territories.Initialize.ALL)
 final class JoinNodeWayActionTest {
     private void setupMapView(DataSet ds) {
         // setup a reasonable size for the edit window

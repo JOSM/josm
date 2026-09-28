@@ -34,7 +34,7 @@ class ChangesetCacheTableRowSorter extends TableRowSorter<ChangesetCacheManagerM
         setComparator(3, comparing(Changeset::getUser, comparing(User::getName)));
 
         // column 4 - Created at
-        setComparator(4, comparing(Changeset::getCreatedAt));
+        setComparator(4, comparing(Changeset::getCreatedAt, nullsLast(naturalOrder())));
 
         // column 5 - Closed at
         setComparator(5, comparing(Changeset::getClosedAt, nullsLast(naturalOrder())));

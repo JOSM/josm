@@ -32,6 +32,7 @@ import org.openstreetmap.josm.tools.Logging;
  * }
  * </pre>
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface StyleSetting {
 
     /**

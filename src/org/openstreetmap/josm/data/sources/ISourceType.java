@@ -8,6 +8,7 @@ package org.openstreetmap.josm.data.sources;
  * @param <T> The source type (e.g., Imagery or otherwise -- should be the name of the class)
  * @since 16545
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface ISourceType<T extends Enum<T>> extends ICommonSource<T> {
     /**
      * Returns the unique string identifying this type.

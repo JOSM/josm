@@ -133,7 +133,7 @@ public class CredentialsManager implements CredentialsAgent {
             }
         }
         // see #11914: clear cache before we store new value
-        purgeCredentialsCache(requestorType);
+        purgeCredentialsCache(requestorType, host);
         delegate.store(requestorType, host, credentials);
     }
 
@@ -141,7 +141,7 @@ public class CredentialsManager implements CredentialsAgent {
     public CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse)
             throws CredentialsAgentException {
         CredentialsAgentResponse credentials = delegate.getCredentials(requestorType, host, noSuccessWithLastResponse);
-        if (requestorType == RequestorType.SERVER) {
+        if (requestorType == RequestorType.SERVER && Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
             // see #11914 : Keep UserIdentityManager up to date
             String userName = credentials.getUsername();
             userName = userName == null ? "" : userName.trim();
@@ -173,5 +173,10 @@ public class CredentialsManager implements CredentialsAgent {
     @Override
     public void purgeCredentialsCache(RequestorType requestorType) {
         delegate.purgeCredentialsCache(requestorType);
+    }
+
+    @Override
+    public void purgeCredentialsCache(RequestorType requestorType, String host) {
+        delegate.purgeCredentialsCache(requestorType, host);
     }
 }

@@ -830,7 +830,6 @@ public final class PluginHandler {
      *
      * @param plugins the plugins to add
      */
-    @SuppressWarnings("PMD.CloseResource") // NOSONAR We do *not* want to close class loaders in this method...
     private static void extendJoinedPluginResourceCL(Collection<PluginInformation> plugins) {
         // iterate all plugins and collect all libraries of all plugins:
         File pluginDir = Preferences.main().getPluginsDirectory();
@@ -876,7 +875,7 @@ public final class PluginHandler {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", "'"+Utils.escapeReservedCharactersHTML(plugin.name)+"'", plugin.className);
             }
-        } catch (RuntimeException e) { // NOPMD
+        } catch (RuntimeException e) {
             pluginLoadingExceptions.put(plugin.name, e);
             Logging.error(e);
         }
@@ -936,7 +935,7 @@ public final class PluginHandler {
      * Generate classloaders for a list of plugins
      * @param toLoad The plugins to generate the classloaders for
      */
-    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"}) // NOSONAR the classloaders and put in a map which we want to keep.
+    @SuppressWarnings("squid:S2095") // NOSONAR the classloaders and put in a map which we want to keep.
     private static void generateClassloaders(List<PluginInformation> toLoad) {
         for (PluginInformation info : toLoad) {
             PluginClassLoader cl = AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>)
@@ -952,7 +951,7 @@ public final class PluginHandler {
      * Resolve dependencies for a list of plugins
      * @param toLoad The plugins to resolve dependencies for
      */
-    @SuppressWarnings({"squid:S2095", "PMD.CloseResource"}) // NOSONAR the classloaders are from a persistent map
+    @SuppressWarnings("squid:S2095") // NOSONAR the classloaders are from a persistent map
     private static void resolveDependencies(List<PluginInformation> toLoad) {
         for (PluginInformation info : toLoad) {
             PluginClassLoader cl = classLoaders.get(info.name);
@@ -1692,24 +1691,29 @@ public final class PluginHandler {
      */
     public static JPanel getInfoPanel() {
         JPanel pluginTab = new JPanel(new GridBagLayout());
-        for (final PluginInformation info : getPlugins()) {
-            String name = info.name
-            + (!Utils.isEmpty(info.localversion) ? " Version: " + info.localversion : "");
-            pluginTab.add(new JLabel(name), GBC.std());
-            pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GridBagConstraints.HORIZONTAL));
-            pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
+        final List<PluginInformation> plugins = getPlugins();
+        if (plugins.isEmpty()) {
+            pluginTab.add(new JLabel(tr("No plugins installed")), GBC.eol());
+        } else {
+            for (final PluginInformation info : plugins) {
+                String name = info.name
+                + (!Utils.isEmpty(info.localversion) ? " Version: " + info.localversion : "");
+                pluginTab.add(new JLabel(name), GBC.std());
+                pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GridBagConstraints.HORIZONTAL));
+                pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
 
-            JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
-                    : info.description);
-            description.setEditable(false);
-            description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
-            description.setLineWrap(true);
-            description.setWrapStyleWord(true);
-            description.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-            description.setBackground(UIManager.getColor("Panel.background"));
-            description.setCaretPosition(0);
+                JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
+                        : info.description);
+                description.setEditable(false);
+                description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
+                description.setLineWrap(true);
+                description.setWrapStyleWord(true);
+                description.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+                description.setBackground(UIManager.getColor("Panel.background"));
+                description.setCaretPosition(0);
 
-            pluginTab.add(description, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
+                pluginTab.add(description, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
+            }
         }
         return pluginTab;
     }

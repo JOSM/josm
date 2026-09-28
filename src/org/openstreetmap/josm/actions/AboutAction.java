@@ -110,14 +110,14 @@ public final class AboutAction extends JosmAction {
         info.add(new JLabel(tr("Homepage")), GBC.std().insets(10, 0, 10, 0));
         info.add(new UrlLabel(Config.getUrls().getJOSMWebsite(), 2), GBC.eol());
         info.add(new JLabel(tr("Translations")), GBC.std().insets(10, 0, 10, 0));
-        info.add(new UrlLabel("https://translations.launchpad.net/josm", 2), GBC.eol());
+        info.add(new UrlLabel("https://josm.openstreetmap.de/wiki/Translations", 2), GBC.eol());
         info.add(new JLabel(tr("Follow us on")), GBC.std().insets(10, 10, 10, 0));
         JPanel logos = new JPanel(new FlowLayout());
-        logos.add(createImageLink("OpenStreetMap", /* ICON(dialogs/about/) */ "openstreetmap",
-                "https://www.openstreetmap.org/user/josmeditor/diary"));
-        logos.add(createImageLink("Mastodon", /* ICON(dialogs/about/) */ "mastodon", "https://en.osm.town/@josmeditor"));
-        logos.add(createImageLink("Twitter", /* ICON(dialogs/about/) */ "twitter-square", "https://twitter.com/josmeditor"));
-        logos.add(createImageLink("Facebook", /* ICON(dialogs/about/) */ "facebook-square", "https://www.facebook.com/josmeditor"));
+        //logos.add(createImageLink("OpenStreetMap", /* ICON(dialogs/about/) */ "openstreetmap",
+        //        "https://www.openstreetmap.org/user/josmeditor/diary"));
+        //logos.add(createImageLink("Mastodon", /* ICON(dialogs/about/) */ "mastodon", "https://en.osm.town/@josmeditor"));
+        //logos.add(createImageLink("X", /* ICON(dialogs/about/) */ "twitter-square", "https://x.com/josmeditor"));
+        //logos.add(createImageLink("Facebook", /* ICON(dialogs/about/) */ "facebook-square", "https://www.facebook.com/josmeditor"));
         logos.add(createImageLink("GitHub", /* ICON(dialogs/about/) */ "github-square", "https://github.com/JOSM"));
         info.add(logos, GBC.eol().insets(0, 10, 0, 0));
         info.add(GBC.glue(0, 5), GBC.eol());

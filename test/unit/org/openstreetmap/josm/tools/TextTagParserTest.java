@@ -175,7 +175,7 @@ class TextTagParserTest {
     void testStableOrder() {
         List<String> expected = Arrays.asList("foo4", "foo3", "foo2", "foo1");
         ArrayList<String> actual = new ArrayList<>(TextTagParser.readTagsByRegexp(
-                "foo4=bar4 foo3=bar3 foo2=bar2 foo1=bar1", " ", "(.*?)=(.*?)", true).keySet());
+                "foo4=bar4 foo3=bar3 foo2=bar2 foo1=bar1", " ", "(.*?)=(.*?)", true, false).keySet());
         assertEquals(expected, actual);
     }
 }

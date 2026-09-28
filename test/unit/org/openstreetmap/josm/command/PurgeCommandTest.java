@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -150,6 +151,8 @@ class PurgeCommandTest {
                     new Conflict<>(new Node(1, 1), new Node(3, 1)))
             .withPrefabValues(OsmDataLayer.class,
                 new OsmDataLayer(new DataSet(), "1", null), new OsmDataLayer(new DataSet(), "2", null))
+            .withPrefabValues(ElemStyles.class,
+                new ElemStyles(), new ElemStyles())
             .withPrefabValues(Hash.class,
                 Storage.<OsmPrimitive>defaultHash(), Storage.<OsmPrimitive>defaultHash())
             .suppress(Warning.NONFINAL_FIELDS)

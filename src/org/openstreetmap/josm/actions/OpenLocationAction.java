@@ -36,6 +36,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadSessionTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -278,15 +279,30 @@ public class OpenLocationAction extends JosmAction {
 
         List<Future<?>> result = new ArrayList<>();
         for (final DownloadTask task : tasks) {
+            DownloadParams currentParams = settings;
+            if (task.providesOldData() && !settings.isNewLayer()) {
+                currentParams = GuiHelper.runInEDTAndWaitAndReturn(() -> confirmNoNewLayer(settings, url));
+            }
             try {
                 task.setZoomAfterDownload(zoomToData);
-                result.add(MainApplication.worker.submit(new PostDownloadHandler(task, task.loadUrl(settings, url,
+                result.add(MainApplication.worker.submit(new PostDownloadHandler(task, task.loadUrl(currentParams, url,
                         new PleaseWaitProgressMonitor(tr("Download data"))))));
             } catch (IllegalArgumentException e) {
                 Logging.error(e);
             }
         }
         return Collections.unmodifiableList(result);
+    }
+
+    private static DownloadParams confirmNoNewLayer(DownloadParams originalParams, String url) {
+        if (ConditionalOptionPaneUtil.showConfirmationDialog("open-location-action.confirm-no-new-layer",
+                MainApplication.getMainFrame(),
+                tr("Do you want to create a new layer for {0}?<br>You may be mixing old and new data otherwise!", url),
+                tr("No new layer"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, JOptionPane.YES_OPTION)
+        ) {
+            return new DownloadParams(originalParams).withNewLayer(true);
+        }
+        return originalParams;
     }
 
     /**

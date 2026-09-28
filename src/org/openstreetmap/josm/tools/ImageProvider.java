@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.geom.Dimension2D;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -27,11 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
@@ -44,6 +43,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -78,18 +78,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGException;
-import com.kitfox.svg.SVGUniverse;
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.parser.DocumentLimits;
+import com.github.weisj.jsvg.parser.LoaderContext;
+import com.github.weisj.jsvg.parser.SVGLoader;
 
 /**
  * Helper class to support the application with images.
- *
+ * <p>
  * How to use:
- *
+ * <p>
  * <code>ImageIcon icon = new ImageProvider(name).setMaxSize(ImageSizes.MAP).get();</code>
  * (there are more options, see below)
- *
+ * <p>
  * short form:
  * <code>ImageIcon icon = ImageProvider.get(name);</code>
  *
@@ -246,6 +247,13 @@ public class ImageProvider {
         }
     }
 
+    private enum ImageLocations {
+        LOCAL,
+        ARCHIVE
+    }
+
+    private static final SVGLoader svgloader = new SVGLoader();
+
     /**
      * Property set on {@code BufferedImage} returned by {@link #makeImageTransparent}.
      * @since 7132
@@ -288,8 +296,6 @@ public class ImageProvider {
     protected boolean isDisabled;
     /** <code>true</code> if multi-resolution image is requested */
     protected boolean multiResolution = true;
-
-    private static SVGUniverse svgUniverse;
 
     /**
      * The icon cache
@@ -371,7 +377,7 @@ public class ImageProvider {
 
     /**
      * Specify a zip file where the image is located.
-     *
+     * <p>
      * (optional)
      * @param archive zip file where the image is located
      * @return the current object, for convenience
@@ -383,9 +389,9 @@ public class ImageProvider {
 
     /**
      * Specify a base path inside the zip file.
-     *
+     * <p>
      * The subdir and name will be relative to this path.
-     *
+     * <p>
      * (optional)
      * @param inArchiveDir path inside the archive
      * @return the current object, for convenience
@@ -412,7 +418,7 @@ public class ImageProvider {
 
     /**
      * Set the dimensions of the image.
-     *
+     * <p>
      * If not specified, the original size of the image is used.
      * The width part of the dimension can be -1. Then it will only set the height but
      * keep the aspect ratio. (And the other way around.)
@@ -427,7 +433,7 @@ public class ImageProvider {
 
     /**
      * Set the dimensions of the image.
-     *
+     * <p>
      * If not specified, the original size of the image is used.
      * @param size final dimensions of the image
      * @return the current object, for convenience
@@ -475,10 +481,10 @@ public class ImageProvider {
 
     /**
      * Limit the maximum size of the image.
-     *
+     * <p>
      * It will shrink the image if necessary, but keep the aspect ratio.
      * The given width or height can be -1 which means this direction is not bounded.
-     *
+     * <p>
      * 'size' and 'maxSize' are not compatible, you should set only one of them.
      * @param maxSize maximum image size
      * @return the current object, for convenience
@@ -491,10 +497,10 @@ public class ImageProvider {
 
     /**
      * Limit the maximum size of the image.
-     *
+     * <p>
      * It will shrink the image if necessary, but keep the aspect ratio.
      * The given width or height can be -1 which means this direction is not bounded.
-     *
+     * <p>
      * This function sets value using the most restrictive of the new or existing set of
      * values.
      *
@@ -514,10 +520,10 @@ public class ImageProvider {
 
     /**
      * Limit the maximum size of the image.
-     *
+     * <p>
      * It will shrink the image if necessary, but keep the aspect ratio.
      * The given width or height can be -1 which means this direction is not bounded.
-     *
+     * <p>
      * 'size' and 'maxSize' are not compatible, you should set only one of them.
      * @param size maximum image size
      * @return the current object, for convenience
@@ -560,7 +566,7 @@ public class ImageProvider {
 
     /**
      * Decide, if an exception should be thrown, when the image cannot be located.
-     *
+     * <p>
      * Set to true, when the image URL comes from user data and the image may be missing.
      *
      * @param optional true, if JOSM should <b>not</b> throw a RuntimeException
@@ -574,7 +580,7 @@ public class ImageProvider {
 
     /**
      * Suppresses warning on the command line in case the image cannot be found.
-     *
+     * <p>
      * In combination with setOptional(true);
      * @param suppressWarnings if <code>true</code> warnings are suppressed
      * @return the current object, for convenience
@@ -666,7 +672,7 @@ public class ImageProvider {
 
     /**
      * Load the image in a background thread.
-     *
+     * <p>
      * This method returns immediately and runs the image request asynchronously.
      * @param action the action that will deal with the image
      *
@@ -711,8 +717,9 @@ public class ImageProvider {
 
     /**
      * Load the image in a background thread.
-     *
-     * This method returns immediately and runs the image request asynchronously.
+     * <p>
+     * This method returns immediately and runs the image request asynchronously for remote resources.
+     * For local resources, the request is executed synchronously in the current thread.
      * @param action the action that will deal with the image
      *
      * @return the future of the requested image
@@ -722,6 +729,17 @@ public class ImageProvider {
         return isRemote()
                 ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER).thenAcceptAsync(action, IMAGE_FETCHER)
                 : CompletableFuture.completedFuture(getResource()).thenAccept(action);
+    }
+
+    /**
+     * Returns the executor used for background image fetching.
+     * Callers that need to force asynchronous loading even for local resources
+     * (e.g. to off-load expensive SVG pre-rendering) may use this executor directly.
+     * @return the image fetch executor
+     * @since 19553
+     */
+    public static Executor getImageFetchExecutor() {
+        return IMAGE_FETCHER;
     }
 
     /**
@@ -883,9 +901,7 @@ public class ImageProvider {
         } else {
             extensions = new String[] {".png", ".svg"};
         }
-        final int typeArchive = 0;
-        final int typeLocal = 1;
-        for (int place : new Integer[] {typeArchive, typeLocal}) {
+        for (ImageLocations place : ImageLocations.values()) {
             for (String ext : extensions) {
 
                 if (".svg".equals(ext)) {
@@ -905,7 +921,7 @@ public class ImageProvider {
                 }
 
                 switch (place) {
-                case typeArchive:
+                case ARCHIVE:
                     if (archive != null) {
                         cacheName = "zip:" + archive.hashCode() + ':' + cacheName;
                         ImageResource ir = cache.get(cacheName);
@@ -918,7 +934,7 @@ public class ImageProvider {
                         }
                     }
                     break;
-                case typeLocal:
+                case LOCAL:
                     ImageResource ir = cache.get(cacheName);
                     if (ir != null) return ir;
 
@@ -951,31 +967,27 @@ public class ImageProvider {
      */
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
         try (CachedFile cf = new CachedFile(url).setDestDir(
-                new File(Config.getDirs().getCacheDirectory(true), "images").getPath());
-             InputStream is = cf.getInputStream()) {
+                new File(Config.getDirs().getCacheDirectory(true), "images").getPath())) {
+            URL localurl = Utils.fileToURL(cf.getFile());
             switch (type) {
             case SVG:
-                SVGDiagram svg = null;
-                synchronized (getSvgUniverse()) {
-                    URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
-                    svg = getSvgUniverse().getDiagram(uri);
-                }
+                Logging.debug("Load SVG "+url);
+                SVGDocument svg = svgloader.load(localurl, getSVGContext());
                 return svg == null ? null : new ImageResource(svg);
             case OTHER:
                 BufferedImage img = null;
                 try {
-                    img = read(Utils.fileToURL(cf.getFile()), false, false);
+                    img = read(localurl, false, false);
                 } catch (IOException | UnsatisfiedLinkError e) {
                     Logging.log(Logging.LEVEL_WARN, "Exception while reading HTTP image:", e);
                 }
                 return img == null ? null : new ImageResource(img);
-            default:
-                throw new AssertionError("Unsupported type: " + type);
             }
         } catch (IOException e) {
             Logging.debug(e);
             return null;
         }
+        throw new AssertionError("Unsupported type: " + type);
     }
 
     /**
@@ -1002,19 +1014,16 @@ public class ImageProvider {
             }
             String mediatype = m.group(1);
             if ("image/svg+xml".equals(mediatype)) {
-                String s = new String(bytes, StandardCharsets.UTF_8);
                 // see #19097: check if s starts with PNG magic
-                if (s.length() > 4 && "PNG".equals(s.substring(1, 4))) {
+                if (bytes.length > 4 && bytes[1] == 'P' && bytes[2] == 'N' && bytes[3] == 'G') {
                     Logging.warn("url contains PNG file " + url);
                     return null;
                 }
-                SVGDiagram svg;
-                synchronized (getSvgUniverse()) {
-                    URI uri = getSvgUniverse().loadSVG(new StringReader(s), Utils.encodeUrl(s));
-                    svg = getSvgUniverse().getDiagram(uri);
-                }
+                InputStream is = new ByteArrayInputStream(bytes);
+                Logging.debug("Load SVG "+url);
+                SVGDocument svg = svgloader.load(is, (URI) null, getSVGContext());
                 if (svg == null) {
-                    Logging.warn("Unable to process svg: "+s);
+                    Logging.warn("Unable to process svg: "+bytes);
                     return null;
                 }
                 return new ImageResource(svg);
@@ -1081,6 +1090,7 @@ public class ImageProvider {
      * @return the requested image or null if the request failed
      */
     private static ImageResource getIfAvailableZip(String fullName, File archive, String inArchiveDir, ImageType type) {
+        Objects.requireNonNull(type, "ImageType must not be null");
         try (ZipFile zipFile = new ZipFile(archive, StandardCharsets.UTF_8)) {
             if (inArchiveDir == null || ".".equals(inArchiveDir)) {
                 inArchiveDir = "";
@@ -1096,11 +1106,8 @@ public class ImageProvider {
                 try (InputStream is = zipFile.getInputStream(entry)) {
                     switch (type) {
                     case SVG:
-                        SVGDiagram svg = null;
-                        synchronized (getSvgUniverse()) {
-                            URI uri = getSvgUniverse().loadSVG(is, entryName, true);
-                            svg = getSvgUniverse().getDiagram(uri);
-                        }
+                        Logging.debug("Load SVG "+archive+" "+entryName);
+                        SVGDocument svg = svgloader.load(is, (URI) null, getSVGContext());
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
                         while (size > 0) {
@@ -1115,8 +1122,6 @@ public class ImageProvider {
                             Logging.warn(e);
                         }
                         return img == null ? null : new ImageResource(img);
-                    default:
-                        throw new AssertionError("Unknown ImageType: "+type);
                     }
                 }
             }
@@ -1134,26 +1139,30 @@ public class ImageProvider {
      * @return the requested image or null if the request failed
      */
     private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
+        Objects.requireNonNull(type, "ImageType must not be null");
         switch (type) {
         case SVG:
-            SVGDiagram svg = null;
-            synchronized (getSvgUniverse()) {
+            SVGDocument svg = null;
+            try {
+                Logging.debug("Load SVG "+path);
+                svg = svgloader.load(path, getSVGContext());
+            } catch (Exception e) {
+                Logging.error("Cannot open {0}: {1}", path, e.getMessage());
+                Logging.trace(e);
+            }
+
+            if (svg == null && "jar".equals(path.getProtocol())) {
                 try {
-                    URI uri = null;
-                    try {
-                        uri = getSvgUniverse().loadSVG(path);
-                    } catch (InvalidPathException e) {
-                        Logging.error("Cannot open {0}: {1}", path, e.getMessage());
-                        Logging.trace(e);
-                    }
-                    if (uri == null && "jar".equals(path.getProtocol())) {
-                        URL betterPath = Utils.betterJarUrl(path);
-                        if (betterPath != null) {
-                            uri = getSvgUniverse().loadSVG(betterPath);
+                    URL betterPath = Utils.betterJarUrl(path);
+                    if (betterPath != null) {
+                        try {
+                            Logging.debug("Load SVG "+betterPath);
+                            svg = svgloader.load(betterPath, getSVGContext());
+                        } catch (Exception e) {
+                            Logging.log(Logging.LEVEL_WARN, "Unable to read SVG from fallback jar URL", e);
                         }
                     }
-                    svg = getSvgUniverse().getDiagram(uri);
-                } catch (SecurityException | IOException e) {
+                } catch (IOException e) {
                     Logging.log(Logging.LEVEL_WARN, "Unable to read SVG", e);
                 }
             }
@@ -1173,9 +1182,9 @@ public class ImageProvider {
                 Logging.debug(e);
             }
             return img == null ? null : new ImageResource(img);
-        default:
-            throw new AssertionError();
         }
+        // Default
+        throw new AssertionError();
     }
 
     private static URL getImageUrl(String path, String name) {
@@ -1378,8 +1387,8 @@ public class ImageProvider {
      * This method will use a multi-step scaling technique that provides higher quality than the usual
      * one-step technique (only useful in downscaling cases, where {@code targetWidth} or {@code targetHeight} is
      * smaller than the original dimensions, and generally only when the {@code BILINEAR} hint is specified).
-     *
-     * From https://community.oracle.com/docs/DOC-983611: "The Perils of Image.getScaledInstance()"
+     * <p>
+     * From <a href="https://community.oracle.com/docs/DOC-983611">"The Perils of Image.getScaledInstance()"</a>
      *
      * @param img the original image to be scaled
      * @param targetWidth the desired width of the scaled instance, in pixels
@@ -1456,34 +1465,20 @@ public class ImageProvider {
      * @param resizeMode how to size/resize the image
      * @return an image from the given SVG data at the desired dimension.
      */
-    static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim, ImageResizeMode resizeMode) {
+    static BufferedImage createImageFromSvg(SVGDocument svg, Dimension dim, ImageResizeMode resizeMode) {
         if (Logging.isTraceEnabled()) {
-            Logging.trace("createImageFromSvg: {0} {1}", svg.getXMLBase(), dim);
+            Logging.trace("createImageFromSvg: {0}", dim);
         }
-        final float sourceWidth = svg.getWidth();
-        final float sourceHeight = svg.getHeight();
+        Dimension2D size = svg.size();
+        final double sourceWidth = size.getWidth();
+        final double sourceHeight = size.getHeight();
         if (sourceWidth <= 0 || sourceHeight <= 0) {
-            Logging.error("createImageFromSvg: {0} {1} sourceWidth={2} sourceHeight={3}", svg.getXMLBase(), dim, sourceWidth, sourceHeight);
+            Logging.error("createImageFromSvg: {0} sourceWidth={1} sourceHeight={2}", dim, sourceWidth, sourceHeight);
             return null;
         }
         return resizeMode.createBufferedImage(dim, new Dimension((int) sourceWidth, (int) sourceHeight), g -> {
-            try {
-                synchronized (getSvgUniverse()) {
-                    svg.render(g);
-                }
-            } catch (SVGException ex) {
-                Logging.log(Logging.LEVEL_ERROR, "Unable to load svg:", ex);
-            }
+            svg.render(null, g);
         }, null);
-    }
-
-    private static synchronized SVGUniverse getSvgUniverse() {
-        if (svgUniverse == null) {
-            svgUniverse = new SVGUniverse();
-            // CVE-2017-5617: Allow only data scheme (see #14319)
-            svgUniverse.setImageDataInlineOnly(true);
-        }
-        return svgUniverse;
     }
 
     /**
@@ -1579,7 +1574,7 @@ public class ImageProvider {
     public static BufferedImage read(InputStream input, boolean readMetadata, boolean enforceTransparency) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(input, "input");
 
-        ImageInputStream stream = createImageInputStream(input); // NOPMD
+        ImageInputStream stream = createImageInputStream(input);
         BufferedImage bi = read(stream, readMetadata, enforceTransparency);
         if (bi == null) {
             stream.close();
@@ -1937,6 +1932,11 @@ public class ImageProvider {
      */
     public static ImageIcon createBlankIcon(ImageSizes size) {
         return new ImageIcon(new BufferedImage(size.getAdjustedWidth(), size.getAdjustedHeight(), BufferedImage.TYPE_INT_ARGB));
+    }
+
+    private static LoaderContext getSVGContext() {
+        return LoaderContext.builder().documentLimits(new DocumentLimits(DocumentLimits.DEFAULT_MAX_NESTING_DEPTH,
+            DocumentLimits.DEFAULT_MAX_USE_NESTING_DEPTH, DocumentLimits.DEFAULT_MAX_PATH_COUNT+3000)).build();
     }
 
     @Override

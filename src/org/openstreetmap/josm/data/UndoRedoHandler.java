@@ -379,7 +379,7 @@ public final class UndoRedoHandler {
                     final Command c = commands.removeLast();
                     try {
                         c.undoCommand();
-                    } catch (Exception e) { // NOPMD
+                    } catch (Exception e) {
                         // fix #20098: restore command stack as we will not fire an event
                         commands.add(c);
                         throw e;

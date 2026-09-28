@@ -215,6 +215,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 break;
             case CANCELED:
                 tile.loadingCanceled();
+                break;
+            default: // This should be removed when we move to Java 17+
                 // do nothing
             }
 

@@ -233,18 +233,6 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      * Constructs a new {@code FullyAutomaticAuthorizationUI} for the given API URL.
      * @param apiUrl The OSM API URL
      * @param executor the executor used for running the HTTP requests for the authorization
-     * @since 5422
-     * @deprecated since 18991
-     */
-    @Deprecated
-    public FullyAutomaticAuthorizationUI(String apiUrl, Executor executor) {
-        this(apiUrl, executor, OAuthVersion.OAuth10a);
-    }
-
-    /**
-     * Constructs a new {@code FullyAutomaticAuthorizationUI} for the given API URL.
-     * @param apiUrl The OSM API URL
-     * @param executor the executor used for running the HTTP requests for the authorization
      * @param oAuthVersion The OAuth version to use for this UI
      * @since 18991
      */

@@ -5,8 +5,11 @@
 /build2/
 /dist/
 /javadoc
+/target/
 # Ignore developer-provided jvm argument -Djosm.home=josmHome directory
 /josmHome
+# Home directory used by the Maven/surefire test run (see -Djosm.home in pom.xml)
+/test/config/josm.home/
 /resources/CONTRIBUTION
 /resources/LICENSE
 /resources/README

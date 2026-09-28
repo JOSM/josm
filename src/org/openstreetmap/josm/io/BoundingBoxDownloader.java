@@ -233,6 +233,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 ds.getNodes().stream().filter(n -> bounds.stream().anyMatch(b -> b.contains(n)))
                         .forEach(i -> i.setReferrersDownloaded(true));
                 ds.getWays().forEach(i -> i.setReferrersDownloaded(true));
+                ds.getRelations().stream().filter(r -> r.getMembers().stream().noneMatch(rm -> rm.isRelation()))
+                        .forEach(i -> i.setReferrersDownloaded(true));
             }
             return ds;
         } catch (OsmTransferException e) {
@@ -301,7 +303,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     /**
      * Get the bounds for this downloader
      * @return The bounds for this downloader
-     * @since xxx
+     * @since 19078
      */
     protected Collection<Bounds> getBounds() {
         return Collections.singleton(new Bounds(this.lat1, this.lon1, this.lat2, this.lon2));

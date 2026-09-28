@@ -472,7 +472,7 @@ public class GeoJSONReader extends AbstractReader {
                 }
             }
             mergeEqualMultipolygonWays();
-        } catch (IOException | IllegalArgumentException | JsonParsingException e) {
+        } catch (IOException | IllegalArgumentException | ClassCastException | JsonParsingException e) {
             throw new IllegalDataException(e);
         }
         return getDataSet();

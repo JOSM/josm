@@ -56,9 +56,8 @@ public enum OnlineResource {
                 return /* ICON() */ "offline_certificates";
             case ALL:
                 return /* ICON() */ "offline_all";
-            default:
-                return null;
         }
+        return null;
     }
 
     /**

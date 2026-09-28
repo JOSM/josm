@@ -88,7 +88,6 @@ public class PluginClassLoader extends DynamicURLClassLoader {
      * @param resolve {@code true} to resolve the class
      * @return the class, if found, otherwise {@code null}
      */
-    @SuppressWarnings("PMD.CloseResource") // NOSONAR We do *not* want to close class loaders in this method...
     private Class<?> findClassInDependencies(String name, boolean resolve) {
         for (PluginClassLoader dep : dependencies) {
             try {
@@ -105,7 +104,6 @@ public class PluginClassLoader extends DynamicURLClassLoader {
     }
 
     @Override
-    @SuppressWarnings("PMD.CloseResource") // NOSONAR We do *not* want to close class loaders in this method...
     public URL findResource(String name) {
         URL resource = super.findResource(name);
         if (resource == null) {

@@ -78,6 +78,38 @@ public final class OAuthParameters {
         }
     }
 
+    /**
+     * Get the OAuth 2.0 parameters the user entered in the advanced OAuth settings and saved with
+     * {@link IOAuthParameters#rememberPreferences()}. Until a token exists, this is the only place a
+     * client id for a server not in {@link #createDefault(String, OAuthVersion)} can come from.
+     * {@link OAuth20Parameters#rememberPreferences()} keys by the API URL as given; callers may pass
+     * either the URL or its host, so both are tried.
+     * @param keys The preference key suffixes to try, in order
+     * @return The remembered parameters, or {@code null} if none are saved or they cannot be parsed
+     * @since 19627
+     */
+    private static IOAuthParameters createFromPreferences(String... keys) {
+        for (String key : keys) {
+            if (Utils.isEmpty(key)) {
+                continue;
+            }
+            final String json = Config.getPref().get("oauth.access-token.parameters." + OAuthVersion.OAuth20 + "." + key, null);
+            if (Utils.isEmpty(json)) {
+                continue;
+            }
+            try {
+                OAuth20Parameters parameters = new OAuth20Parameters(json);
+                if (!Utils.isEmpty(parameters.getClientId())) {
+                    return parameters;
+                }
+            } catch (IllegalArgumentException | NullPointerException | JsonParsingException e) {
+                // A preference written by hand, or by an older JOSM with different fields
+                Logging.trace(e);
+            }
+        }
+        return null;
+    }
+
     private static JsonObject getRFC8414Parameters(String apiUrl) {
         HttpClient client = null;
         try {
@@ -135,6 +167,13 @@ public final class OAuthParameters {
             case "https://api.openhistoricalmap.org/api":
                 // clientId provided by 1ec5 (Minh Nguyễn)
                 clientId = "Hl5yIhFS-Egj6aY7A35ouLOuZl0EHjj8JJQQ46IO96E";
+                clientSecret = null;
+                break;
+            case "https://opengeofiction.net/api":
+            case "https://lugus.opengeofiction.net/api":
+                // clientId provided by wangi (Lee Kindness), OpenGeofiction administrator.
+                // lugus is the OpenGeofiction test server.
+                clientId = "dKB9Fb5H4MxrM3I23UFxNCh5VGiAEQ_20gC7WmXnaaY";
                 clientSecret = null;
                 break;
             default:
@@ -199,6 +238,7 @@ public final class OAuthParameters {
      * @since 18650
      */
     public static IOAuthParameters createFromApiUrl(String apiUrl, OAuthVersion oAuthVersion) {
+        final String originalApiUrl = apiUrl;
         // We actually need the host
         if (apiUrl.startsWith("https://") || apiUrl.startsWith("http://")) {
             try {
@@ -217,6 +257,10 @@ public final class OAuthParameters {
                     }
                 } catch (CredentialsAgentException e) {
                     Logging.trace(e);
+                }
+                IOAuthParameters remembered = createFromPreferences(originalApiUrl, apiUrl);
+                if (remembered != null) {
+                    return remembered;
                 }
                 return createDefault(apiUrl, oAuthVersion);
             default:

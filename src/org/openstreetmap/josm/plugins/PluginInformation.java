@@ -361,6 +361,7 @@ public class PluginInformation {
     public boolean isExternal() {
         return downloadlink != null
                 && !downloadlink.startsWith("https://josm.openstreetmap.de/osmsvn/applications/editors/josm/dist/")
+                && !downloadlink.startsWith("https://josm.eu/osmsvn/applications/editors/josm/dist/")
                 && !downloadlink.startsWith("https://github.com/JOSM/");
     }
 

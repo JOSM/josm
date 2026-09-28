@@ -26,9 +26,14 @@ public class ScaleCommand extends TransformNodesCommand {
     private double scalingFactor;
 
     /**
+     * scaling factor applied previously
+     */
+    private double deltaScalingFactor;
+
+    /**
      * World position of the mouse when the user started the command.
      */
-    private final EastNorth startEN;
+    private EastNorth startEN;
 
     /**
      * Creates a ScaleCommand.
@@ -57,12 +62,27 @@ public class ScaleCommand extends TransformNodesCommand {
      */
     @Override
     public final void handleEvent(EastNorth currentEN) {
-        double startAngle = Math.atan2(startEN.east()-pivot.east(), startEN.north()-pivot.north());
-        double endAngle = Math.atan2(currentEN.east()-pivot.east(), currentEN.north()-pivot.north());
+        setScalingFactor(deltaScalingFactor + calcScalingFactor(currentEN));
+        transformNodes();
+    }
+
+    /**
+     * Handle a repeated scaling action where the mouse was moved to a different position
+     * see #24695
+     * @param newStartEN start cursor position of a repeated scaling
+     * @since 19566
+     */
+    public void handleUpdate(EastNorth newStartEN) {
+        startEN = newStartEN;
+        deltaScalingFactor = scalingFactor - calcScalingFactor(newStartEN);
+    }
+
+    private double calcScalingFactor(EastNorth currentEN) {
+        double startAngle = Math.atan2(startEN.east() - pivot.east(), startEN.north() - pivot.north());
+        double endAngle = Math.atan2(currentEN.east() - pivot.east(), currentEN.north() - pivot.north());
         double startDistance = pivot.distance(startEN);
         double currentDistance = pivot.distance(currentEN);
-        setScalingFactor(Math.cos(startAngle-endAngle) * currentDistance / startDistance);
-        transformNodes();
+        return Math.cos(startAngle - endAngle) * currentDistance / startDistance;
     }
 
     /**
@@ -103,7 +123,7 @@ public class ScaleCommand extends TransformNodesCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), pivot, scalingFactor, startEN);
+        return Objects.hash(super.hashCode(), pivot, scalingFactor, startEN, deltaScalingFactor);
     }
 
     @Override
@@ -114,6 +134,7 @@ public class ScaleCommand extends TransformNodesCommand {
         ScaleCommand that = (ScaleCommand) obj;
         return Double.compare(that.scalingFactor, scalingFactor) == 0 &&
                 Objects.equals(pivot, that.pivot) &&
-                Objects.equals(startEN, that.startEN);
+                Objects.equals(startEN, that.startEN) &&
+                Objects.equals(deltaScalingFactor, that.deltaScalingFactor);
     }
 }

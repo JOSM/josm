@@ -16,17 +16,14 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * This interface allows platform (operating system) dependent code
@@ -291,26 +288,6 @@ public interface PlatformHook {
          * @param message The message parts to show the user (as a list)
          */
         void sanityCheckFailed(String title, boolean canContinue, String... message);
-    }
-
-    /**
-     * Checks if the running version of Java has expired, proposes to user to update it if needed.
-     * @param callback Java expiration callback
-     * @since 12270 (signature)
-     * @since 12219
-     */
-    default void checkExpiredJava(JavaExpirationCallback callback) {
-        Date expiration = Utils.getJavaExpirationDate();
-        if (expiration != null && expiration.before(new Date())) {
-            String latestVersion = Utils.getJavaLatestVersion();
-            String currentVersion = Utils.getSystemProperty("java.version");
-            // #17831 WebStart may be launched with an expired JRE but then launching JOSM with up-to-date JRE
-            if (latestVersion == null || !latestVersion.equalsIgnoreCase(currentVersion)) {
-                callback.askUpdateJava(latestVersion != null ? latestVersion : "latest",
-                        Config.getPref().get("java.update.url", getJavaUrl()),
-                        DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
-            }
-        }
     }
 
     /**

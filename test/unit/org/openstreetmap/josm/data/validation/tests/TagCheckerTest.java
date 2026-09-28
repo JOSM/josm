@@ -107,8 +107,8 @@ class TagCheckerTest {
                 // Check value with upper case
                 Arguments.of("testValueDifferentCase", "node highway=Residential", unknown,
                         "Value 'Residential' for key 'highway' is unknown, maybe 'residential' is meant?", Severity.WARNING, false),
-                Arguments.of("testRegionKey", "node payment:ep_avant=yes", invalidPreset,
-                        "Preset Payment Methods should not have the key payment:ep_avant", Severity.WARNING, false),
+                Arguments.of("testRegionKey", "node payment:ep_minipay=yes", invalidPreset,
+                        "Preset Payment Methods should not have the key payment:ep_minipay", Severity.WARNING, false),
                 Arguments.of("testRegionTag", "relation type=waterway gnis:feature_id=123456", invalidPreset,
                         "Preset Waterway should not have the key gnis:feature_id", Severity.WARNING, false),
                 // Key in presets but not in ignored.cfg. Caused a NPE with r14727.

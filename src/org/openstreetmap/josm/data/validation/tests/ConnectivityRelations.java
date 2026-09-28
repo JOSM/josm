@@ -169,6 +169,7 @@ public class ConnectivityRelations extends Test {
                 break;
             }
         }
+
         // Lane count from member tags
         for (RelationMember rM : relation.getMembers()) {
             // Check lanes
@@ -179,7 +180,11 @@ public class ConnectivityRelations extends Test {
                     List<Long> laneCounts = new ArrayList<>();
                     long maxLaneCount;
                     if (prim.hasTag("lanes")) {
-                        laneCounts.add(Long.parseLong(prim.get("lanes")));
+                        try {
+                            laneCounts.add(Long.parseLong(prim.get("lanes")));
+                        } catch (NumberFormatException e) {
+                            return Collections.emptyMap();
+                        }
                     }
                     for (Entry<String, String> entry : primKeys.entrySet()) {
                         String thisKey = entry.getKey();

@@ -422,11 +422,9 @@ public class LineElement extends StyleElement {
     }
 
     private static Float computeWidth(LineType type, Cascade c, Cascade cDef) {
-        Float width;
         switch (type) {
             case NORMAL:
-                width = getWidth(c, WIDTH, getWidth(cDef, WIDTH, null));
-                break;
+                return getWidth(c, WIDTH, getWidth(cDef, WIDTH, null));
             case CASING:
                 Float casingWidth = c.get(type.prefix + WIDTH, null, Float.class, true);
                 if (casingWidth == null) {
@@ -437,16 +435,12 @@ public class LineElement extends StyleElement {
                 }
                 if (casingWidth == null)
                     return null;
-                width = Optional.ofNullable(getWidth(c, WIDTH, getWidth(cDef, WIDTH, null))).orElse(0f) + 2 * casingWidth;
-                break;
+                return Optional.ofNullable(getWidth(c, WIDTH, getWidth(cDef, WIDTH, null))).orElse(0f) + 2 * casingWidth;
             case LEFT_CASING:
             case RIGHT_CASING:
-                width = getWidth(c, type.prefix + WIDTH, null);
-                break;
-            default:
-                throw new AssertionError();
+                return getWidth(c, type.prefix + WIDTH, null);
         }
-        return width;
+        throw new AssertionError();
     }
 
     private static float computeRealWidth(Environment env, LineType type, Cascade c) {

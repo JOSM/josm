@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.openstreetmap.josm</groupId>
     <artifactId>josm-parent</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <relativePath>./nodist/pom.xml</relativePath>
   </parent>
 
@@ -123,9 +123,16 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.formdev</groupId>
-      <artifactId>svgSalamander</artifactId>
+      <groupId>com.github.weisj</groupId>
+      <artifactId>jsvg</artifactId>
+      <version>2.1.0</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.1.0</version>
+      <scope>provided</scope> 
     </dependency>
     <dependency>
       <groupId>ch.poole</groupId>
@@ -204,6 +211,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.awaitility</groupId>
@@ -235,6 +243,38 @@
         <directory>${test.dir}/data</directory>
       </testResource>
     </testResources>
+    <pluginManagement>
+      <plugins>
+        <!-- Prevent m2e from also running checkstyle:check during its own
+             incremental/full IDE builds. Without this, m2e's background build
+             and a manually launched "mvn test" can write checkstyle-josm.xml
+             concurrently, corrupting it. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <versionRange>[0,)</versionRange>
+                    <goals>
+                      <goal>check</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <!-- Generate sources -->
       <plugin>
@@ -299,8 +339,6 @@
                 <argument>${scripts.src.dir}/SyncEditorLayerIndex.java</argument>
                 <argument>${basedir}</argument>
               </arguments>
-              <!-- We need commons-lang3, which isn't needed elsewhere in core (besides a test or two) -->
-              <classpathScope>test</classpathScope>
             </configuration>
             <goals>
               <goal>exec</goal>
@@ -465,6 +503,9 @@
           <!-- We might need @{argLine} in the future if another plugin has issues -->
           <argLine>
             @{argLine}
+            <!-- Must be a real -D flag: as a configurationParameters entry it is set too late,
+                 after java-agents below already cached the JDK's default locale provider list. -->
+            -Djava.locale.providers=SPI,CLDR
             -javaagent:${org.jmockit:jmockit:jar}
             --add-opens java.base/java.io=ALL-UNNAMED
             --add-opens java.base/java.lang=ALL-UNNAMED
@@ -478,7 +519,6 @@
           <properties>
             <configurationParameters>
               file.encoding = UTF-8
-              java.locale.providers = SPI,CLDR
               junit.jupiter.extensions.autodetection.enabled = true
               junit.jupiter.execution.parallel.enabled = true
             </configurationParameters>
@@ -662,16 +702,6 @@
                   </excludes>
                 </filter>
                 <filter>
-                  <artifact>com.formdev:svgSalamander</artifact>
-                  <excludes>
-                    <exclude>com/kitfox/svg/app/ant/**</exclude>
-                    <exclude>com/kitfox/svg/app/*Dialog*</exclude>
-                    <exclude>com/kitfox/svg/app/*Frame*</exclude>
-                    <exclude>com/kitfox/svg/app/*Player*</exclude>
-                    <exclude>com/kitfox/svg/app/*Viewer*</exclude>
-                  </excludes>
-                </filter>
-                <filter>
                   <artifact>org.apache.commons:commons-compress</artifact>
                   <excludes>
                     <exclude>org/apache/commons/compress/PasswordRequiredException*</exclude>
@@ -758,6 +788,7 @@
               <!-- We might need @{argLine} in the future if another plugin has issues -->
               <argLine>
                 @{argLine}
+                -Djava.locale.providers=SPI,CLDR
                 -javaagent:${com.ginsberg:junit5-system-exit:jar}
                 -javaagent:${org.jmockit:jmockit:jar}
                 --add-opens java.base/java.io=ALL-UNNAMED

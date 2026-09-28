@@ -281,6 +281,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         /**
          * @deprecated Use {@link #finishTask(String)} instead.
+         * This function is required by ProgressMonitor interface and cannot be
+         * removed.
          */
         @Override
         @Deprecated

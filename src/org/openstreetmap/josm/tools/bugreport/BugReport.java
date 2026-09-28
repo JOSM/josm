@@ -153,7 +153,7 @@ public final class BugReport implements Serializable {
         if (isIncludeStatusReport()) {
             try {
                 out.println(header);
-            } catch (RuntimeException e) { // NOPMD
+            } catch (RuntimeException e) {
                 out.println("Could not generate status report: " + e.getMessage());
             }
         }

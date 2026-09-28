@@ -36,7 +36,7 @@ public class GeoJSONServerReader extends OsmServerLocationReader {
             if (in == null)
                 return null;
             progressMonitor.subTask(tr("Downloading OSM data..."));
-            InputStream uncompressedInputStream = compression.getUncompressedInputStream(in); // NOPMD
+            InputStream uncompressedInputStream = compression.getUncompressedInputStream(in);
             ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(1, false);
             return GeoJSONReader.parseDataSet(uncompressedInputStream, subTaskMonitor);
         }

@@ -749,7 +749,6 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
          */
         void makeVisible(int index, Layer layer);
 
-
         /**
          * Fired when something has changed in the layer list model.
          */

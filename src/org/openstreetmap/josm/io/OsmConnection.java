@@ -52,6 +52,7 @@ public class OsmConnection {
      * Retrieves OAuth access token.
      * @since 12803
      */
+    @FunctionalInterface
     public interface OAuthAccessTokenFetcher {
         /**
          * Obtains an OAuth access token for the connection. Afterwards, the token is accessible via {@link OAuthAccessTokenHolder}.

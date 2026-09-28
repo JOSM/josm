@@ -89,8 +89,9 @@ public class GpxExtension extends WithAttributes {
             return new XMLNamespace("gpxd", XML_URI_EXTENSIONS_DRAWING, XML_XSD_EXTENSIONS_DRAWING);
         case "josm":
             return new XMLNamespace("josm", XML_URI_EXTENSIONS_JOSM, XML_XSD_EXTENSIONS_JOSM);
+        default:
+            return null;
         }
-        return null;
     }
 
     /**

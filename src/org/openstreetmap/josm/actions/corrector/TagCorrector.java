@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.correction.RoleCorrectionTable;
 import org.openstreetmap.josm.gui.correction.TagCorrectionTable;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -94,12 +96,13 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             p.add(label2, GBC.eop().anchor(GBC.CENTER).fill(GBC.HORIZONTAL));
 
             for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
-                final OsmPrimitive primitive = entry.getKey();
-                final List<TagCorrection> tagCorrections = entry.getValue();
-
-                if (tagCorrections.isEmpty()) {
+                if (entry.getValue().isEmpty())
                     continue;
-                }
+
+                final OsmPrimitive primitive = entry.getKey();
+                final List<TagCorrection> tagCorrections = entry.getValue().stream()
+                        .sorted((o1, o2) -> AlphanumComparator.getInstance().compare(o1.oldKey, o2.oldKey))
+                        .collect(Collectors.toList());
 
                 final JLabel propertiesLabel = new JLabel(tr("Tags of "));
                 p.add(propertiesLabel, GBC.std());
@@ -111,8 +114,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 );
                 p.add(primitiveLabel, GBC.eol());
 
-                final TagCorrectionTable table = new TagCorrectionTable(
-                        tagCorrections);
+                final TagCorrectionTable table = new TagCorrectionTable(tagCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
                 p.add(scrollPane, GBC.eop().fill(GBC.BOTH));
 
@@ -120,12 +122,14 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             }
 
             for (Entry<OsmPrimitive, List<RoleCorrection>> entry : roleCorrectionMap.entrySet()) {
-                final OsmPrimitive primitive = entry.getKey();
-                final List<RoleCorrection> roleCorrections = entry.getValue();
-
-                if (roleCorrections.isEmpty()) {
+                if (entry.getValue().isEmpty())
                     continue;
-                }
+
+                final OsmPrimitive primitive = entry.getKey();
+                final List<RoleCorrection> roleCorrections = entry.getValue().stream()
+                        .sorted((o1, o2) -> DefaultNameFormatter.getInstance().getRelationComparator()
+                                .compare(o1.relation, o2.relation))
+                        .collect(Collectors.toList());
 
                 final JLabel rolesLabel = new JLabel(tr("Roles in relations referring to"));
                 p.add(rolesLabel, GBC.std());

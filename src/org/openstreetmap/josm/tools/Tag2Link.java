@@ -64,7 +64,7 @@ public final class Tag2Link {
             .collect(Collectors.joining("|"));
 
     static final ListProperty PREF_SOURCE = new ListProperty("tag2link.source",
-            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2024.10.21/index.json"));
+            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2026.6.26/index.json"));
 
     static final CachingProperty<List<String>> PREF_SEARCH_ENGINES = new ListProperty("tag2link.search",
             Arrays.asList("https://duckduckgo.com/?q=$1", "https://www.google.com/search?q=$1")).cached();
@@ -214,10 +214,10 @@ public final class Tag2Link {
         if (!formatterUrls.isEmpty()) {
             final String formattedValue = valueFormatter.getOrDefault(key, x -> x).apply(value);
 
-            final String urlKey = formatterUrls.stream().map(urlFormatter -> PATTERN_DOLLAR_ONE.matcher(urlFormatter)
+            final String urlKey = Utils.encodeUrl(formatterUrls.stream().map(urlFormatter -> PATTERN_DOLLAR_ONE.matcher(urlFormatter)
                             .replaceAll(Matcher.quoteReplacement("(.*)"))).map(PatternUtils::compile)
                             .map(pattern -> pattern.matcher(value)).filter(Matcher::matches)
-                            .map(matcher -> matcher.group(1)).findFirst().orElse(formattedValue);
+                            .map(matcher -> matcher.group(1)).findFirst().orElse(formattedValue));
 
             formatterUrls.forEach(urlFormatter -> {
                 // Check if the current value matches the formatter pattern -- some keys can take a full url or a key for

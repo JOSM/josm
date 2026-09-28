@@ -121,8 +121,6 @@ public class TagInfoExtract {
             case EXTERNAL_PRESETS:
                 script.new ExternalPresets().run();
                 break;
-            default:
-                throw new IllegalStateException("Invalid type " + script.options.mode);
         }
         if (!script.options.noexit) {
             System.exit(0);

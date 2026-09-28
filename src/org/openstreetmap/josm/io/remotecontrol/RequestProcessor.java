@@ -10,8 +10,10 @@ import java.io.Writer;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -28,13 +30,16 @@ import java.util.stream.Stream;
 import jakarta.json.Json;
 
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AuthorizationHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.FeaturesHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.ExportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadDataHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadObjectHandler;
@@ -71,13 +76,18 @@ public class RequestProcessor extends Thread {
      * interface extensions. Change major number in case of incompatible
      * changes.
      */
-    public static final String PROTOCOLVERSION = Json.createObjectBuilder()
-            .add("protocolversion", Json.createObjectBuilder()
-                    .add("major", RemoteControl.protocolMajorVersion)
-                    .add("minor", RemoteControl.protocolMinorVersion))
-            .add("application", JOSM_REMOTE_CONTROL)
-            .add("version", Version.getInstance().getVersion())
-            .build().toString();
+    public static String getProtocolVersion() {
+        String osmServerUrl = OsmApi.getOsmApi().getServerUrl();
+        String defaultOsmApiUrl = JosmUrls.getInstance().getDefaultOsmApiUrl();
+        return Json.createObjectBuilder()
+                .add("protocolversion", Json.createObjectBuilder()
+                        .add("major", RemoteControl.protocolMajorVersion)
+                        .add("minor", RemoteControl.protocolMinorVersion))
+                .add("application", JOSM_REMOTE_CONTROL)
+                .add("version", Version.getInstance().getVersion())
+                .add("osm_server", osmServerUrl.equals(defaultOsmApiUrl) ? "default" : "custom")
+                .build().toString();
+    }
 
     /** The socket this processor listens on */
     private final Socket request;
@@ -165,6 +175,7 @@ public class RequestProcessor extends Thread {
             addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
             addRequestHandlerClass(LoadDataHandler.command, LoadDataHandler.class, true);
             addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
+            addRequestHandlerClass(ExportHandler.command, ExportHandler.class, true);
             addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
             PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.ALLOW_WEB_RESOURCES);
             addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
@@ -325,7 +336,7 @@ public class RequestProcessor extends Thread {
                 handler.setSender(sender);
                 handler.handle();
                 sendHeader(out, "200 OK", handler.getContentType(), false);
-                out.write("Content-length: " + handler.getContent().length()
+                out.write("Content-length: " + handler.getContent().getBytes().length
                         + "\r\n");
                 out.write("\r\n");
                 out.write(handler.getContent());
@@ -443,7 +454,7 @@ public class RequestProcessor extends Thread {
     private static void sendHeader(Writer out, String status, String contentType,
             boolean endHeaders) throws IOException {
         out.write("HTTP/1.1 " + status + "\r\n");
-        out.write("Date: " + new Date() + "\r\n");
+        out.write("Date: " + DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneOffset.UTC)) + "\r\n");
         out.write("Server: " + JOSM_REMOTE_CONTROL + "\r\n");
         out.write("Content-type: " + contentType + "; charset=" + RESPONSE_CHARSET.name().toLowerCase(Locale.ENGLISH) + "\r\n");
         out.write("Access-Control-Allow-Origin: *\r\n");

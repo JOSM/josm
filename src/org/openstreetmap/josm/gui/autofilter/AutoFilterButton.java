@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
 
 /**
@@ -35,13 +34,28 @@ public class AutoFilterButton extends JButton {
         super(new JosmAction(filter.getLabel(), null, filter.getDescription(), null, false) {
             @Override
             public synchronized void actionPerformed(ActionEvent e) {
+
                 AutoFilterManager afm = AutoFilterManager.getInstance();
-                if (filter.equals(afm.getCurrentAutoFilter())) {
-                    afm.setCurrentAutoFilter(null);
-                    MainApplication.getMap().filterDialog.getFilterModel().executeFilters(true);
-                } else {
+
+                if (afm.getCurrentAutoFilters().isEmpty()) {
                     afm.setCurrentAutoFilter(filter);
+                } else {
+                    if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0
+                            || (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
+                        if (afm.getCurrentAutoFilters().contains(filter)) {
+                            afm.removeCurrentAutoFilter(filter);
+                        } else {
+                            afm.addCurrentAutoFilter(filter);
+                        }
+                    } else {
+                        if (afm.getCurrentAutoFilters().size() == 1 && afm.getCurrentAutoFilters().contains(filter)) {
+                            afm.setCurrentAutoFilter(null);
+                        } else {
+                            afm.setCurrentAutoFilter(filter);
+                        }
+                    }
                 }
+
             }
         });
         this.filter = filter;
@@ -54,7 +68,7 @@ public class AutoFilterButton extends JButton {
     protected void paintComponent(Graphics g) {
         if (getModel().isPressed()) {
             g.setColor(PROP_COLOR.get().darker().darker());
-        } else if (getModel().isRollover() || AutoFilterManager.getInstance().getCurrentAutoFilter() == filter) {
+        } else if (getModel().isRollover() || AutoFilterManager.getInstance().getCurrentAutoFilters().contains(filter)) {
             g.setColor(PROP_COLOR.get().darker());
         } else {
             g.setColor(PROP_COLOR.get());

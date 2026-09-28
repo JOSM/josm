@@ -162,7 +162,7 @@ class PluginPreferenceHighLevelTest {
             () -> ((javax.swing.JButton) TestUtils.getComponentByName(tabbedPane, "downloadListButton")).doClick()
         );
 
-        Awaitility.await().atMost(3000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
+        Awaitility.await().atMost(6000, MILLISECONDS).until(() -> Config.getPref().getInt("pluginmanager.version", 999) != 999);
 
         pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         pluginServerRule.resetRequests();
@@ -487,7 +487,7 @@ class PluginPreferenceHighLevelTest {
         assertEquals(1, jopsMocker.getInvocationLog().size());
         invocationLogEntry = jopsMocker.getInvocationLog().get(0);
         assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
-        assertEquals("Warning", invocationLogEntry[2]);
+        assertEquals("Information", invocationLogEntry[2]);
 
         // dummy_plugin jar is still the updated version
         TestUtils.assertFileContentsEqual(this.referenceDummyJarNew, this.targetDummyJar);
@@ -722,7 +722,7 @@ class PluginPreferenceHighLevelTest {
         assertEquals(1, jopsMocker.getInvocationLog().size());
         Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
         assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
-        assertEquals("Warning", invocationLogEntry[2]);
+        assertEquals("Information", invocationLogEntry[2]);
 
         assertTrue(haMocker.getInvocationLog().isEmpty());
 

@@ -53,7 +53,8 @@ class RtkLibPosReaderTest {
         assertEquals(5, wp0.get(GpxConstants.RTKLIB_Q));
         assertEquals("92.3955", wp0.get(GpxConstants.PT_ELE));
         assertEquals("2", wp0.get(GpxConstants.PT_SAT));
-        assertEquals("1.8191757", wp0.get(GpxConstants.PT_HDOP).toString().trim());
+        assertEquals("1.8191757", wp0.get(GpxConstants.PT_STD_HDEV).toString().trim());
+        assertEquals("0.8167", wp0.get(GpxConstants.PT_STD_VDEV).toString().trim());
 
         assertEquals("1.5620", wp0.get(GpxConstants.RTKLIB_SDN));
         assertEquals("0.9325", wp0.get(GpxConstants.RTKLIB_SDE));

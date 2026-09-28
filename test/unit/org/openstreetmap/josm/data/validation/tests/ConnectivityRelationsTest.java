@@ -2,12 +2,14 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 
@@ -98,5 +100,30 @@ class ConnectivityRelationsTest {
         relation.put(CONNECTIVITY, "1");
         check.visit(relation);
         assertEquals(++expectedFailures, check.getErrors().size());
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/201821">Bug #20182</a>.
+     */
+    @Test
+    void testTicket24368() {
+        Relation relation = createDefaultTestRelation();
+        check.visit(relation);
+
+        assertEquals(0, check.getErrors().size());
+
+        // change lanes for one way to an invalid value as reported in the ticket
+        boolean changed = false;
+        for (OsmPrimitive m : relation.getChildren()) {
+            if ("4".equals(m.get("lanes"))) {
+                m.put("lanes", "25 mph");
+                changed = true;
+                break;
+            }
+        }
+        assertTrue(changed);
+        check.visit(relation);
+        assertEquals(0, check.getErrors().size());
+
     }
 }

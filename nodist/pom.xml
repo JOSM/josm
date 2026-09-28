@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.openstreetmap.josm</groupId>
     <artifactId>josm-parent</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>US-ASCII</project.build.sourceEncoding>
@@ -17,12 +17,13 @@
         <sonar.host.url>https://josm.openstreetmap.de/sonar/</sonar.host.url>
         <sonar.projectKey>JOSM</sonar.projectKey>
         <jmockit.version>1.49.a</jmockit.version>
-        <pmd.version>7.6.0</pmd.version>
-        <jacoco.version>0.8.12</jacoco.version>
-        <checkstyle.version>10.18.2</checkstyle.version>
-        <spotbugs.version>4.8.6</spotbugs.version>
+        <pmd.version>7.22.0</pmd.version>
+        <jacoco.version>0.8.13</jacoco.version>
+        <checkstyle.version>10.26.1</checkstyle.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
         <!-- Note: 2.0.0 requires Java 17, and we'll need to upgrade to it for Java 25 LTS (see JEP 486)-->
         <junit5-system-exit.version>1.1.2</junit5-system-exit.version>
+        <equalsverifier.version>3.19.4</equalsverifier.version>
     </properties>
     <modules>
         <module>..</module>
@@ -32,20 +33,20 @@
     <repositories>
         <repository>
             <id>JOSM</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
+            <url>https://josm.openstreetmap.de/repository/public/</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>JOSM</id>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/public/</url>
+            <url>https://josm.openstreetmap.de/repository/public/</url>
         </pluginRepository>
     </pluginRepositories>
     <distributionManagement>
         <snapshotRepository>
             <id>josm-snapshots</id>
             <name>JOSM snapshots</name>
-            <url>https://josm.openstreetmap.de/nexus/content/repositories/snapshots</url>
+            <url>https://josm.openstreetmap.de/repository/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     <build>
@@ -253,14 +254,14 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.11.3</version>
+                <version>5.14.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.openstreetmap.jmapviewer</groupId>
                 <artifactId>jmapviewer</artifactId>
-                <version>2.22</version>
+                <version>2.25</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -284,7 +285,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.27.1</version>
+                <version>1.28.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -296,7 +297,7 @@
             <dependency>
                 <groupId>org.tukaani</groupId>
                 <artifactId>xz</artifactId>
-                <version>1.10</version>
+                <version>1.11</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -312,22 +313,22 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.formdev</groupId>
-                <artifactId>svgSalamander</artifactId>
-                <version>1.1.4</version>
+                <groupId>com.github.weisj</groupId>
+                <artifactId>jsvg</artifactId>
+                <version>2.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>ch.poole</groupId>
                 <artifactId>OpeningHoursParser</artifactId>
-                <version>0.28.2</version>
+                <version>0.29.0</version>
                 <scope>provided</scope>
             </dependency>
             <!-- Don't forget to update org.openstreetmap.josm.tools.Tag2Link#PREF_SOURCE -->
             <dependency>
                 <groupId>org.webjars.npm</groupId>
                 <artifactId>tag2link</artifactId>
-                <version>2024.10.21</version>
+                <version>2026.6.26</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -351,13 +352,13 @@
             <dependency>
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock</artifactId>
-                <version>3.9.2</version>
+                <version>3.13.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
-                <version>4.8.177</version>
+                <version>4.8.184</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -369,19 +370,19 @@
             <dependency>
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>
-                <version>3.16.2</version>
+                <version>${equalsverifier.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.17.0</version>
+                <version>3.18.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
-                <version>4.2.2</version>
+                <version>4.3.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -393,7 +394,20 @@
                 <jdk>[17</jdk>
             </activation>
             <properties>
-                <junit5-system-exit.version>2.0.0</junit5-system-exit.version>
+                <junit5-system-exit.version>2.0.2</junit5-system-exit.version>
+                <jmockit.version>1.50</jmockit.version>
+                <checkstyle.version>12.3.1</checkstyle.version>
+                <equalsverifier.version>4.3.1</equalsverifier.version>
+            </properties>
+        </profile>
+        <profile>
+            <!-- should be used together with java-17 profile -->
+            <id>java-21</id>
+            <activation>
+                <jdk>[21</jdk>
+            </activation>
+            <properties>
+                <checkstyle.version>13.2.0</checkstyle.version>
             </properties>
         </profile>
     </profiles>

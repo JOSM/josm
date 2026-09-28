@@ -102,9 +102,9 @@ public enum Compression {
             case XZ:
                 return getXZInputStream(in);
             case NONE:
-            default:
                 return in;
         }
+        return in;
     }
 
     /**
@@ -118,7 +118,7 @@ public enum Compression {
         if (in == null) {
             return null;
         }
-        return new XZCompressorInputStream(in, true);
+        return XZCompressorInputStream.builder().setInputStream(in).setDecompressConcatenated(true).get();
     }
 
     /**
@@ -177,7 +177,7 @@ public enum Compression {
      */
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
         try {
-            return getUncompressedFileInputStream(file.toPath());  // NOPMD
+            return getUncompressedFileInputStream(file.toPath());
         } catch (InvalidPathException e) {
             throw new IOException(e);
         }
@@ -191,7 +191,7 @@ public enum Compression {
      * @since 16816
      */
     public static InputStream getUncompressedFileInputStream(Path path) throws IOException {
-        InputStream in = Files.newInputStream(path); // NOPMD
+        InputStream in = Files.newInputStream(path);
         try {
             return byExtension(path.getFileName().toString()).getUncompressedInputStream(in);
         } catch (IOException e) {
@@ -218,9 +218,9 @@ public enum Compression {
             case XZ:
                 return new XZCompressorOutputStream(out);
             case NONE:
-            default:
                 return out;
         }
+        return out;
     }
 
     /**
@@ -232,7 +232,7 @@ public enum Compression {
      * @throws InvalidPathException if a Path object cannot be constructed from the abstract path
      */
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {
-        return getCompressedFileOutputStream(file.toPath()); // NOPMD
+        return getCompressedFileOutputStream(file.toPath());
     }
 
     /**
@@ -245,7 +245,7 @@ public enum Compression {
      * @since 16816
      */
     public static OutputStream getCompressedFileOutputStream(Path path) throws IOException {
-        OutputStream out = Files.newOutputStream(path); // NOPMD
+        OutputStream out = Files.newOutputStream(path);
         try {
             return byExtension(path.getFileName().toString()).getCompressedOutputStream(out);
         } catch (IOException e) {

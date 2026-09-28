@@ -86,6 +86,11 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
         return MainApplication.worker.submit(downloadTask);
     }
 
+    @Override
+    public boolean providesOldData() {
+        return true;
+    }
+
     /**
      * OsmChange download task.
      */

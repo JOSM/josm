@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * Allows to enter the date or choose it by using slider
  * @since 5815
  */
+@SuppressWarnings("PMD.ReplaceJavaUtilDate") // JSpinner needs Date anyway, so not using Date makes no sense
 public class DateEditorWithSlider extends JPanel {
     private final JSpinner spinner;
     private final JSlider slider;

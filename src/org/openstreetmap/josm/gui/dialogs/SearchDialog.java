@@ -28,6 +28,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
@@ -91,6 +92,20 @@ public class SearchDialog extends ExtendedDialog {
         hcbSearchString = new AutoCompComboBox<>(model);
         this.searchSettings = new SearchSetting(initialValues);
         setContent(buildPanel(options));
+
+        // See #24333
+        if (!(initialValues instanceof Filter)) {
+            DataSet data = MainApplication.getLayerManager().getActiveDataSet();
+            if (data != null && data.getSelected().isEmpty()) {
+                remove.setEnabled(false);
+                inSelection.setEnabled(false);
+                if (this.searchSettings.mode == SearchMode.in_selection
+                        || this.searchSettings.mode == SearchMode.remove) {
+                    this.searchSettings.mode = SearchMode.replace;
+                    replace.setSelected(true);
+                }
+            }
+        }
     }
 
     /**

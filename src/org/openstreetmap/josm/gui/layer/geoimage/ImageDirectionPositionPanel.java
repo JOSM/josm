@@ -28,6 +28,7 @@ public class ImageDirectionPositionPanel extends JPanel {
 
     private final JCheckBox cChangeImageDirection = new JCheckBox();
     private final JSpinner sOffsetDegrees = new JSpinner(new SpinnerNumberModel(0, -360, 360, 1));
+    private final JCheckBox cSetGpxTrackTag = new JCheckBox();
 
     private final JSpinner sX = new JSpinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 0.1));
     private final JSpinner sY = new JSpinner(new SpinnerNumberModel(0.0, -50.0, 50.0, 0.1));
@@ -37,7 +38,7 @@ public class ImageDirectionPositionPanel extends JPanel {
      * Constructs a new {@code ImageMetadataModificationPanel}
      * @param changeDirectionText the text displayed for the change image direction combobox
      */
-    protected ImageDirectionPositionPanel(String changeDirectionText) {
+    protected ImageDirectionPositionPanel(String changeDirectionText, boolean hideGpxTrack) {
         super(new GridBagLayout());
 
         cChangeImageDirection.setText(changeDirectionText);
@@ -45,6 +46,12 @@ public class ImageDirectionPositionPanel extends JPanel {
         cChangeImageDirection.addActionListener(e -> sOffsetDegrees.setEnabled(!sOffsetDegrees.isEnabled()));
         addSetting(tr("Offset angle in degrees:"), sOffsetDegrees);
         sOffsetDegrees.setEnabled(false);
+        if (!hideGpxTrack) {
+            cChangeImageDirection.addActionListener(e -> cSetGpxTrackTag.setEnabled(!cSetGpxTrackTag.isEnabled()));
+            cSetGpxTrackTag.setText(tr("Set image course direction (from gpx track)"));
+            add(cSetGpxTrackTag, GBC.eol().insets(0, 0, 0, 5));
+            cSetGpxTrackTag.setEnabled(false);
+        }
 
         add(new JSeparator(SwingConstants.HORIZONTAL),
                 GBC.eol().fill(GBC.HORIZONTAL).insets(0, 12, 0, 12));
@@ -61,7 +68,7 @@ public class ImageDirectionPositionPanel extends JPanel {
      * @return a new {@code ImageMetadataModificationPanel} in a GPX trace context
      */
     public static ImageDirectionPositionPanel forGpxTrace() {
-        return new ImageDirectionPositionPanel(tr("Set image direction towards the next GPX waypoint"));
+        return new ImageDirectionPositionPanel(tr("Set image direction towards the next GPX waypoint"), false);
     }
 
     /**
@@ -69,7 +76,7 @@ public class ImageDirectionPositionPanel extends JPanel {
      * @return a new {@code ImageMetadataModificationPanel} in an image sequence context
      */
     public static ImageDirectionPositionPanel forImageSequence() {
-        return new ImageDirectionPositionPanel(tr("Set image direction towards the next one"));
+        return new ImageDirectionPositionPanel(tr("Set image direction towards the next one"), true);
     }
 
     protected void addSetting(String text, JComponent component) {
@@ -86,6 +93,7 @@ public class ImageDirectionPositionPanel extends JPanel {
         return new GpxImageDirectionPositionSettings(
                 cChangeImageDirection.isSelected(),
                 (Integer) sOffsetDegrees.getValue(),
+                cSetGpxTrackTag.isSelected(),
                 (Double) sX.getValue(),
                 (Double) sY.getValue(),
                 (Double) sZ.getValue());
@@ -109,6 +117,7 @@ public class ImageDirectionPositionPanel extends JPanel {
      */
     public void addItemListenerOnComponents(ItemListener listener) {
         cChangeImageDirection.addItemListener(listener);
+        cSetGpxTrackTag.addItemListener(listener);
     }
 
     /**

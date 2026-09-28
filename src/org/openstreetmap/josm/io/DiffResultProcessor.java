@@ -141,7 +141,11 @@ public class DiffResultProcessor {
                 }
                 processed.add(p);
                 if (!p.isDeleted()) {
+                    boolean isNew = p.isNew();
                     p.setOsmId(entry.newId, entry.newVersion);
+                    if (isNew) {
+                        p.setReferrersDownloaded(true);
+                    }
                     p.setVisible(true);
                 } else {
                     p.setVisible(false);

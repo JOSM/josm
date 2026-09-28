@@ -4,7 +4,7 @@ package org.openstreetmap.josm.io.nmea;
 /**
  * Talker identifiers mnemonics are the first two characters at the beginning of each sentence.
  * This enum lists the common ones (navigation systems).<p>
- * See <a href="http://www.catb.org/gpsd/NMEA.html#_talker_ids">Talker IDs</a>
+ * See <a href="https://gpsd.gitlab.io/gpsd/NMEA.html#_talker_ids">Talker IDs</a>
  * @since 12421
  */
 public enum TalkerId {

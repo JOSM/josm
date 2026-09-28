@@ -2,20 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="8"
    height="7"
    viewBox="0 0 8 7"
    id="svg4264"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="waterway_drain3.svg">
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   sodipodi:docname="waterway_drain.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="45.254834"
-     inkscape:cx="0.58070291"
-     inkscape:cy="3.2701754"
+     inkscape:zoom="90.509668"
+     inkscape:cx="3.2372232"
+     inkscape:cy="3.7951747"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -49,10 +49,23 @@
      inkscape:snap-center="false"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="true"
-     inkscape:snap-page="true">
+     inkscape:snap-page="true"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:window-width="1280"
+     inkscape:window-height="952"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
-       id="grid4137" />
+       id="grid4137"
+       originx="0"
+       originy="0"
+       spacingy="1"
+       spacingx="1"
+       units="px" />
   </sodipodi:namedview>
   <metadata
      id="metadata4269">
@@ -62,7 +75,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
@@ -89,10 +101,9 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="fill:#000000;fill-opacity:1"
-       d="m 6.0047978,1052.1373 1.9952034,-6.3897 -1.1428573,-0.3855 -1.7801991,5.829 -2.1230756,-0.012 L 1.142857,1045.3622 2.8499999e-6,1045.7476 2.0104926,1052.1585 c 0.083454,0.2144 0.2322033,0.2287 0.3836929,0.2349 l 3.3036579,-0.021 c 0.1859607,0 0.2676949,-0.1002 0.3069544,-0.2348 z"
-       id="polygon3436"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccccccc" />
+       style="display:inline;fill:#4d4d4d;fill-opacity:1;stroke:#000000;stroke-width:0.132583;paint-order:stroke fill markers"
+       d="M 2.1559162,6.9578543 C 2.0730818,6.9095712 1.9948764,6.6728973 0.79402863,2.8363564 0.37694856,1.5038438 0.04258398,0.40785196 0.05099624,0.40081899 0.0594085,0.39378602 0.30525944,0.30871969 0.59733168,0.2117827 L 1.1283721,0.03553362 2.0336423,2.9460449 2.9389126,5.8565562 4.0197813,5.8450936 5.1006498,5.8336309 5.5531181,4.3531261 C 5.801976,3.5388485 6.2003303,2.2345623 6.4383509,1.4547123 L 6.8711148,0.03680326 7.413033,0.21619343 C 7.7110883,0.31485801 7.9535897,0.41595786 7.9519253,0.44085973 7.950261,0.46576165 7.4969914,1.9277982 6.9446592,3.6898299 6.0473739,6.5523215 5.9288491,6.8993787 5.8317823,6.9484988 5.6939309,7.0182571 2.2744751,7.0269598 2.1559162,6.9578543 Z"
+       id="path1"
+       transform="translate(0,1045.3621)" />
   </g>
 </svg>

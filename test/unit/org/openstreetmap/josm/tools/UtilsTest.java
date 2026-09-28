@@ -523,7 +523,11 @@ class UtilsTest {
      */
     @Test
     void testExecOutput() throws Exception {
-        final String output = Utils.execOutput(Arrays.asList("echo", "Hello", "World"));
+        // "echo" is a shell builtin on Windows, not a standalone executable ProcessBuilder can find.
+        final List<String> command = PlatformManager.isPlatformWindows()
+                ? Arrays.asList("cmd", "/c", "echo", "Hello", "World")
+                : Arrays.asList("echo", "Hello", "World");
+        final String output = Utils.execOutput(command);
         assertEquals("Hello World", output);
     }
 

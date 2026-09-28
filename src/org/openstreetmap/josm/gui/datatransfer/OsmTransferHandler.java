@@ -94,7 +94,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
                     .anyMatch(s -> s.supports(available));
         } catch (IllegalStateException e) {
             Logging.debug(e);
-        } catch (NullPointerException e) { // NOPMD
+        } catch (NullPointerException e) {
             // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
             Logging.error(e);
         }

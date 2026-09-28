@@ -5,6 +5,7 @@ package org.openstreetmap.josm.gui.download;
  * Listener to get notified about changes in the list of download sources.
  * @since 12878
  */
+@FunctionalInterface
 interface DownloadSourceListener {
 
     /**

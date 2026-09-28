@@ -978,12 +978,17 @@ public class OsmDataLayer extends AbstractOsmDataLayer
         addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_SYM, "wpt_symbol", null);
         addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_TYPE, null, null);
 
+        // Angle info
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_COURSE, "gps:course");
+
         // Accuracy info
         addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_FIX, "gps:fix", null);
         addIntegerIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_SAT, "gps:sat");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_HDOP, "gps:hdop");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_VDOP, "gps:vdop");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_PDOP, "gps:pdop");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_STD_HDEV, "gps:stdhdev");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_STD_VDEV, "gps:stdvdev");
         addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
         addIntegerIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_DGPSID, "gps:dgpsid");
 
@@ -1249,7 +1254,13 @@ public class OsmDataLayer extends AbstractOsmDataLayer
     }
 
     private void resetTiles(Collection<? extends IPrimitive> primitives) {
-        if (primitives.size() >= this.data.allNonDeletedCompletePrimitives().size() || primitives.size() > 100) {
+        // Clear the cache if we aren't using tiles. And return.
+        if (!MapRendererFactory.getInstance().isMapRendererActive(StyledTiledMapRenderer.class)) {
+            this.cache.clear();
+            return;
+        }
+        // Don't use anything that uses filtered collections. It becomes slow at large datasets.
+        if (primitives.size() > 100) {
             dirtyAll();
             return;
         }

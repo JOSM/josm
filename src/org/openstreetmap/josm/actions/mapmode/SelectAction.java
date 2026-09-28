@@ -68,12 +68,12 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Move is an action that can move all kind of OsmPrimitives (except keys for now).
- *
+ * <p>
  * If an selected object is under the mouse when dragging, move all selected objects.
  * If an unselected object is under the mouse when dragging, it becomes selected
  * and will be moved.
  * If no object is under the mouse, move all selected objects (if any)
- *
+ * <p>
  * On Mac OS X, Ctrl + mouse button 1 simulates right click (map move), so the
  * feature "selection remove" is disabled on this platform.
  */
@@ -401,9 +401,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     /**
      * Look, whether any object is selected. If not, select the nearest node.
      * If there are no nodes in the dataset, do nothing.
-     *
+     * <p>
      * If the user did not press the left mouse button, do nothing.
-     *
+     * <p>
      * Also remember the starting position of the movement and change the mouse
      * cursor to movement.
      */
@@ -464,7 +464,6 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             GuiHelper.scheduleTimer(initialMoveDelay+1, evt -> updateStatusLine(), false);
             break;
         case SELECT:
-        default:
             if (!(ctrl && PlatformManager.isPlatformOsx())) {
                 // start working with rectangle or lasso
                 selectionManager.register(mv, lassoMode);
@@ -608,29 +607,30 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             }
         }
 
-        if (mode == Mode.MOVE && e.getButton() == MouseEvent.BUTTON1) {
-            DataSet ds = getLayerManager().getEditDataSet();
-            if (!didMouseDrag) {
-                // only built in move mode
-                virtualManager.clear();
-                // do nothing if the click was to short too be recognized as a drag,
-                // but the release position is farther than 10px away from the press position
-                if (lastMousePos == null || lastMousePos.distanceSq(e.getPoint()) < 100) {
-                    updateKeyModifiers(e);
-                    selectPrims(cycleManager.cyclePrims(), true, false);
+        if (mode == Mode.MOVE && e.getButton() == MouseEvent.BUTTON1 && !didMouseDrag) {
+            // only built in move mode
+            virtualManager.clear();
+            // do nothing if the click was to short too be recognized as a drag,
+            // but the release position is farther than 10px away from the press position
+            if (lastMousePos == null || lastMousePos.distanceSq(e.getPoint()) < 100) {
+                DataSet ds = getLayerManager().getEditDataSet();
+                updateKeyModifiers(e);
+                selectPrims(cycleManager.cyclePrims(), true, false);
 
-                    // If the user double-clicked a node, change to draw mode
-                    Collection<OsmPrimitive> c = ds.getSelected();
-                    if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
-                        // We need to do it like this as otherwise drawAction will see a double
-                        // click and switch back to SelectMode
-                        MainApplication.worker.execute(() -> map.selectDrawTool(true));
-                        return;
-                    }
+                // If the user double-clicked a node, change to draw mode
+                Collection<OsmPrimitive> c = ds.getSelected();
+                if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
+                    // We need to do it like this as otherwise drawAction will see a double
+                    // click and switch back to SelectMode
+                    MainApplication.worker.execute(() -> map.selectDrawTool(true));
+                    return;
                 }
-            } else {
-                confirmOrUndoMovement(e);
             }
+        }
+
+        if ((mode == Mode.MOVE || mode == Mode.ROTATE || mode == Mode.SCALE) && e.getButton() == MouseEvent.BUTTON1
+                && didMouseDrag) {
+            confirmOrUndoMovement(e);
         }
 
         mode = null;
@@ -792,13 +792,21 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             return ds.update(() -> {
                 if (mode == Mode.ROTATE) {
                     if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
-                        ((RotateCommand) c).handleEvent(currentEN);
+                        if (didMouseDrag) {
+                            ((RotateCommand) c).handleEvent(currentEN);
+                        } else {
+                            ((RotateCommand) c).handleUpdate(currentEN);
+                        }
                     } else {
                         UndoRedoHandler.getInstance().add(new RotateCommand(selection, currentEN));
                     }
                 } else if (mode == Mode.SCALE) {
                     if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
-                        ((ScaleCommand) c).handleEvent(currentEN);
+                        if (didMouseDrag) {
+                            ((ScaleCommand) c).handleEvent(currentEN);
+                        } else {
+                            ((ScaleCommand) c).handleUpdate(currentEN);
+                        }
                     } else {
                         UndoRedoHandler.getInstance().add(new ScaleCommand(selection, currentEN));
                     }
@@ -885,6 +893,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
         SelectAction.checkCommandForLargeDistance(lastCommand);
 
+        // check if move was cancelled
+        if (UndoRedoHandler.getInstance().getLastCommand() != lastCommand)
+            return;
+
         final int moveCount = lastCommand.getParticipatingPrimitives().size();
         final int max = Config.getPref().getInt("warn.move.maxelements", 20);
         if (moveCount > max) {
@@ -914,7 +926,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 final ConfirmMoveDialog ed = new ConfirmMoveDialog();
                 ed.setContent(trn(
                         "You moved {0} element by a distance of {1}. "
-                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
+                                + "Moving elements by a large distance is often an error.\n" + "Really move it?",
                         "You moved {0} elements by a distance of {1}. "
                                 + "Moving elements by a large distance is often an error.\n" + "Really move them?",
                         moveCount, moveCount, SystemOfMeasurement.getSystemOfMeasurement().getDistText(moveDistance)));

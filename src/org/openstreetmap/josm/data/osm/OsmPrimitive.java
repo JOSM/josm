@@ -7,12 +7,12 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -144,26 +145,31 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     /*----------
      * MAPPAINT
      *--------*/
-    private StyleCache mappaintStyle;
+    private final Map<ElemStyles, StyleCache> mappaintStyle = new HashMap<>();
 
     @Override
-    public final StyleCache getCachedStyle() {
-        return mappaintStyle;
+    public final StyleCache getCachedStyle(ElemStyles elemStyles) {
+        return mappaintStyle.get(elemStyles);
     }
 
     @Override
-    public final void setCachedStyle(StyleCache mappaintStyle) {
-        this.mappaintStyle = mappaintStyle;
+    public final void setCachedStyle(ElemStyles elemStyles, StyleCache mappaintStyle) {
+        this.mappaintStyle.put(elemStyles, mappaintStyle);
     }
 
     @Override
-    public final boolean isCachedStyleUpToDate() {
-        return mappaintStyle != null && mappaintCacheIdx == dataSet.getMappaintCacheIndex();
+    public final boolean isCachedStyleUpToDate(ElemStyles elemStyles) {
+        return mappaintStyle.get(elemStyles) != null && mappaintCacheIdx == dataSet.getMappaintCacheIndex();
     }
 
     @Override
-    public final void declareCachedStyleUpToDate() {
+    public final void declareCachedStyleUpToDate(ElemStyles styles) {
         this.mappaintCacheIdx = dataSet.getMappaintCacheIndex();
+    }
+
+    @Override
+    public void clearCachedStyle() {
+        this.mappaintStyle.clear();
     }
 
     /* end of mappaint data */
@@ -294,18 +300,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
             if (dataSet != null) {
                 dataSet.fireChangesetIdChanged(this, old, changesetId);
             }
-        } finally {
-            writeUnlock(locked);
-        }
-    }
-
-    @Deprecated(since = "17749", forRemoval = true)
-    @Override
-    public void setTimestamp(Date timestamp) {
-        checkDatasetNotReadOnly();
-        boolean locked = writeLock();
-        try {
-            super.setTimestamp(timestamp);
         } finally {
             writeUnlock(locked);
         }
@@ -663,7 +657,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         if (referrers == null) {
             return Stream.empty();
         }
-        final Stream<OsmPrimitive> stream = referrers instanceof OsmPrimitive // NOPMD
+        final Stream<OsmPrimitive> stream = referrers instanceof OsmPrimitive
                 ? Stream.of((OsmPrimitive) referrers)
                 : Arrays.stream((OsmPrimitive[]) referrers);
         return stream

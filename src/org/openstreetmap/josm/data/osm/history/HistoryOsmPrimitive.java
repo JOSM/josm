@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -153,16 +152,6 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
      */
     public long getChangesetId() {
         return changesetId;
-    }
-
-    /**
-     * Returns the timestamp.
-     * @return the timestamp
-     * @deprecated Use {@link #getInstant()}
-     */
-    @Deprecated
-    public Date getTimestamp() {
-        return Date.from(timestamp);
     }
 
     /**

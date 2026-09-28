@@ -17,7 +17,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 
-import com.kitfox.svg.SVGDiagram;
+import com.github.weisj.jsvg.SVGDocument;
 
 /**
  * Holds data for one particular image.
@@ -36,7 +36,7 @@ public class ImageResource {
     /**
      * SVG diagram information in case of SVG vector image.
      */
-    private SVGDiagram svg;
+    private SVGDocument svg;
     /**
      * Use this dimension to request original file dimension.
      */
@@ -67,7 +67,7 @@ public class ImageResource {
      * Constructs a new {@code ImageResource} from SVG data.
      * @param svg SVG data
      */
-    public ImageResource(SVGDiagram svg) {
+    public ImageResource(SVGDocument svg) {
         CheckParameterUtil.ensureParameterNotNull(svg);
         this.svg = svg;
     }

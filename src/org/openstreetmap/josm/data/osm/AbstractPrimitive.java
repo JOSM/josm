@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -18,7 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -309,12 +307,6 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
         this.changesetId = changesetId;
     }
 
-    @Deprecated(since = "17749")
-    @Override
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = (int) TimeUnit.MILLISECONDS.toSeconds(timestamp.getTime());
-    }
-
     @Override
     public void setInstant(Instant timestamp) {
         this.timestamp = (int) timestamp.getEpochSecond();
@@ -323,12 +315,6 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     @Override
     public void setRawTimestamp(int timestamp) {
         this.timestamp = timestamp;
-    }
-
-    @Deprecated(since = "17749")
-    @Override
-    public Date getTimestamp() {
-        return Date.from(getInstant());
     }
 
     @Override
@@ -807,7 +793,6 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
     }
 
     @Override
-    @SuppressWarnings("PMD.UseArraysAsList") // See https://github.com/pmd/pmd/issues/5071
     public final Collection<String> keySet() {
         String[] tKeys = this.keys;
         if (tKeys == null) {
@@ -918,7 +903,6 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
             discardable = new HashSet<>(Config.getPref().getList("tags.discardable",
                     Arrays.asList(
                             "created_by",
-                            "converted_by",
                             "current_id", /* prevent export of this JOSM internal information, see OsmReader */
                             "geobase:datasetName",
                             "geobase:uuid",
@@ -946,6 +930,14 @@ public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimit
                             "KSJ2:lat",
                             "KSJ2:long",
                             "KSJ2:river_id",
+                            "LINZ:dataset",
+                            "LINZ:layer",
+                            "LINZ:source_version",
+                            "LINZ2OSM:dataset",
+                            "LINZ2OSM:layer",
+                            "linz2osm:objectid",
+                            "LINZ2OSM:source_version",
+                            "fid",
                             "odbl",
                             "odbl:note",
                             "osmarender:nameDirection",

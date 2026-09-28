@@ -66,7 +66,7 @@ public final class LanguageInfo {
                 }
             }
             switch (code) {
-                case "nb":          /* OSM-Wiki has "no", but no "nb" */
+                case "nb": case "nn":     /* OSM-Wiki has "no", but no "nb" */
                     return "No:";
                 case "sr@latin":    /* OSM-Wiki has "Sr-latn" and not Sr-latin */
                     return "Sr-latn:";

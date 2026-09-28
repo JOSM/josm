@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -65,6 +64,7 @@ import org.openstreetmap.josm.data.validation.tests.RelationChecker;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.ScrollViewport;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AbstractRelationEditorAction;
@@ -160,9 +160,10 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      * A list of listeners that need to be notified on clipboard content changes.
      */
     private final ArrayList<FlavorListener> clipboardListeners = new ArrayList<>();
-
-    private Component selectedTabPane;
-    private final JTabbedPane tabbedPane;
+    /**
+     * Flag that signals that this instance of the relation editor is currently saving the relation
+     */
+    private boolean isSaving;
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
@@ -235,12 +236,12 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         pnl.setBorder(BorderFactory.createRaisedBevelBorder());
 
         getContentPane().setLayout(new BorderLayout());
+        final JTabbedPane tabbedPane;
         tabbedPane = new JTabbedPane();
         tabbedPane.add(tr("Tags and Members"), pnl);
         referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel);
         tabbedPane.add(tr("Parent Relations"), referrerBrowser);
         tabbedPane.add(tr("Child Relations"), new ChildRelationBrowser(getLayer(), relation));
-        selectedTabPane = tabbedPane.getSelectedComponent();
         tabbedPane.addChangeListener(e -> {
             JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
             int index = sourceTabbedPane.getSelectedIndex();
@@ -248,14 +249,6 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
             if (title.equals(tr("Parent Relations"))) {
                 referrerBrowser.init();
             }
-            // see #20228
-            boolean selIsTagsAndMembers = sourceTabbedPane.getSelectedComponent() == pnl;
-            if (selectedTabPane == pnl && !selIsTagsAndMembers) {
-                unregisterMain();
-            } else if (selectedTabPane != pnl && selIsTagsAndMembers) {
-                registerMain();
-            }
-            selectedTabPane = sourceTabbedPane.getSelectedComponent();
         });
 
         actionAccess = new RelationEditorActionAccess();
@@ -320,26 +313,20 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         key = Shortcut.getCopyKeyStroke();
         if (key != null) {
             // handle uncommon situation, that user has no keystroke assigned to copy
-            registerCopyPasteAction(new CopyMembersAction(actionAccess),
+            registerCopyPasteAction(new CopyMembersAction(actionAccess, true),
                     "COPY_MEMBERS", key, getRootPane(), memberTable, selectionTable);
+        }
+        key = Shortcut.getCutKeyStroke();
+        if (key != null) {
+            // handle uncommon situation, that user has no keystroke assigned to cut
+            registerCopyPasteAction(new CopyMembersAction(actionAccess, false),
+                    "CUT_MEMBERS", key, getRootPane(), memberTable, selectionTable);
         }
         tagEditorPanel.setNextFocusComponent(memberTable);
         selectionTable.setFocusable(false);
         memberTableModel.setSelectedMembers(selectedMembers);
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/RelationEditor"));
         UndoRedoHandler.getInstance().addCommandQueueListener(this);
-    }
-
-    private void registerMain() {
-        selectionTableModel.register();
-        memberTableModel.register();
-        memberTable.registerListeners();
-    }
-
-    private void unregisterMain() {
-        selectionTableModel.unregister();
-        memberTableModel.unregister();
-        memberTable.unregisterListeners();
     }
 
     @Override
@@ -788,9 +775,10 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
             // make sure all registered listeners are unregistered
             //
             memberTable.stopHighlighting();
-            if (tabbedPane != null && tr("Tags and Members").equals(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()))) {
-                unregisterMain();
-            }
+            selectionTableModel.unregister();
+            memberTableModel.unregister();
+            memberTable.unregisterListeners();
+
             if (windowMenuItem != null) {
                 MainApplication.getMenu().windowMenu.remove(windowMenuItem);
                 windowMenuItem = null;
@@ -897,7 +885,6 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         UndoRedoHandler.getInstance().removeCommandQueueListener(this);
         super.dispose(); // call before setting relation to null, see #20304
         setRelation(null);
-        selectedTabPane = null;
     }
 
     /**
@@ -1079,10 +1066,32 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     @Override
     public void commandChanged(int queueSize, int redoSize) {
         Relation r = getRelation();
-        if (r != null && r.getDataSet() == null) {
-            // see #19915
-            setRelation(null);
-            applyAction.updateEnabledState();
+        if (r != null) {
+            if (r.getDataSet() == null) {
+                // see #19915
+                setRelation(null);
+                applyAction.updateEnabledState();
+            } else if (isDirtyRelation()) {
+                if (!isDirtyEditor()) {
+                    reloadDataFromRelation();
+                } else if (!isSaving) {
+                    new Notification(tr("Relation modified outside of relation editor with pending changes. Conflict resolution required."))
+                    .setIcon(JOptionPane.WARNING_MESSAGE).show();
+                }
+            }
         }
+    }
+
+    @Override
+    public boolean isDirtyEditor() {
+        Relation snapshot = getRelationSnapshot();
+        Relation relation = getRelation();
+        return (snapshot != null && !memberTableModel.hasSameMembersAs(snapshot)) ||
+                tagEditorPanel.getModel().isDirty() || relation == null || relation.getDataSet() == null;
+    }
+
+    @Override
+    public void setIsSaving(boolean b) {
+        isSaving = b;
     }
 }

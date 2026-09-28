@@ -121,8 +121,6 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
                 xmf = rq * dd;
                 ymf = rq / dd;
                 break;
-            default:
-                throw new AssertionError(mode);
         }
     }
 
@@ -132,7 +130,11 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
         final double sinlam = Math.sin(lambda);
         final double sinphi = Math.sin(phi);
         double q = qsfn(sinphi);
-        final double sinb, cosb, b, c, x, y;
+        double sinb, cosb, b, c, x, y;
+        // Set c, x, y to 0 until we move to Java 17 where we can use a better switch expression.
+        c = 0;
+        x = 0;
+        y = 0;
         switch (mode) {
             case OBLIQUE:
                 sinb = q / qp;
@@ -172,8 +174,6 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
                     x = y = 0.;
                 }
                 break;
-            default:
-                throw new AssertionError(mode);
         }
         if (Math.abs(c) < EPSILON_LATITUDE) {
             return new double[] {0, 0}; // this is an error, we should handle it somehow
@@ -191,9 +191,8 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
                 return invprojectNS(x, -y);
             case SOUTH_POLE:
                 return invprojectNS(x, y);
-            default:
-                throw new AssertionError(mode);
         }
+        throw new AssertionError(mode);
     }
 
     private double[] invprojectEO(double x, double y) {

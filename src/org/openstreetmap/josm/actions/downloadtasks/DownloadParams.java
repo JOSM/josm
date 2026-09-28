@@ -16,6 +16,22 @@ public class DownloadParams {
     private DownloadPolicy downloadPolicy;
     private UploadPolicy uploadPolicy;
 
+    public DownloadParams() {
+        // Do nothing -- just make this constructor visible
+    }
+
+    /**
+     * Clone another {@link DownloadParams}
+     * @param other The download parameters to clone
+     */
+    public DownloadParams(DownloadParams other) {
+        this.newLayer = other.newLayer;
+        this.layerName = other.layerName;
+        this.locked = other.locked;
+        this.downloadPolicy = other.downloadPolicy;
+        this.uploadPolicy = other.uploadPolicy;
+    }
+
     /**
      * Determines if the data is to be downloaded into a new layer.
      * @return true, if the data is to be downloaded into a new layer. If false, the task

@@ -207,7 +207,7 @@ public abstract class OsmServerReader extends OsmConnection {
             }
             try {
                 if (response.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    CredentialsManager.getInstance().purgeCredentialsCache(RequestorType.SERVER);
+                    CredentialsManager.getInstance().purgeCredentialsCache(RequestorType.SERVER, OsmApi.getOsmApi().getHost());
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED, null, null);
                 }
 

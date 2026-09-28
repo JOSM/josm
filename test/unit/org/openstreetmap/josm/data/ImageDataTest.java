@@ -445,6 +445,90 @@ class ImageDataTest {
     }
 
     @Test
+    void testUpdateHPosErr() {
+        List<ImageEntry> list = getOneImage();
+        ImageData data = new ImageData(list);
+
+        new Expectations(list.get(0)) {{
+            list.get(0).setExifHPosErr(1.23);
+            list.get(0).flagNewGpsData();
+        }};
+        data.updateImageHPosErr(list.get(0), 1.23);
+    }
+
+    @Test
+    void testUpdateGpsDatum() {
+        List<ImageEntry> list = getOneImage();
+        ImageData data = new ImageData(list);
+
+        new Expectations(list.get(0)) {{
+            list.get(0).setExifGpsDatum("WGS-84");
+            list.get(0).flagNewGpsData();
+        }};
+        data.updateImageExifGpsDatum(list.get(0), "WGS-84");
+    }
+
+    @Test
+    void testUpdateGpsTrack() {
+        List<ImageEntry> list = getOneImage();
+        ImageData data = new ImageData(list);
+
+        new Expectations(list.get(0)) {{
+            list.get(0).setExifGpsTrack(180.5);
+            list.get(0).flagNewGpsData();
+        }};
+        data.updateImageGpsTrack(list.get(0), 180.5);
+    }
+
+    @Test
+    void testUpdateGpsDop() {
+        List<ImageEntry> list = getOneImage();
+        ImageData data = new ImageData(list);
+
+        new Expectations(list.get(0)) {{
+            list.get(0).setExifGpsDop(1.9);
+            list.get(0).flagNewGpsData();
+        }};
+        data.updateImageExifGpsDop(list.get(0), 1.9);
+    }
+
+    @Test
+    void testUpdateGpsProcMethod() {
+        List<ImageEntry> list = getOneImage();
+        ImageData data = new ImageData(list);
+
+        new Expectations(list.get(0)) {{
+            list.get(0).setExifGpsProcMethod("GNSS RTK CORRELATION");
+            list.get(0).flagNewGpsData();
+        }};
+        data.updateImageExifGpsProcMethod(list.get(0), "GNSS RTK CORRELATION");
+    }
+
+    @Test
+    void testUpdateGpsDifferentialMode() {
+        List<ImageEntry> list = getOneImage();
+        ImageData data = new ImageData(list);
+
+        new Expectations(list.get(0)) {{
+            list.get(0).setGpsDiffMode(1);
+            list.get(0).flagNewGpsData();
+        }};
+        data.updateImageGpsDiffMode(list.get(0), 1);
+    }
+
+    @Test
+    void testUpdateGps2d3dMode() {
+        List<ImageEntry> list = getOneImage();
+        ImageData data = new ImageData(list);
+
+        new Expectations(list.get(0)) {{
+            list.get(0).setGps2d3dMode(3);
+            list.get(0).flagNewGpsData();
+        }};
+        data.updateImageGps2d3dMode(list.get(0), 3);
+    }
+
+    @Test
     void testTriggerListenerOnUpdate() {
         List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);

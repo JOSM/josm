@@ -180,12 +180,13 @@ public class PropertiesMergeModel extends ChangeNotifier {
      */
     public LatLon getMergedCoords() {
         switch (coordMergeDecision) {
-        case KEEP_MINE: return myCoords;
-        case KEEP_THEIR: return theirCoords;
-        case UNDECIDED: return null;
+        case KEEP_MINE:
+            return myCoords;
+        case KEEP_THEIR:
+            return theirCoords;
+        default:
+            return null;
         }
-        // should not happen
-        return null;
     }
 
     /**
@@ -221,12 +222,13 @@ public class PropertiesMergeModel extends ChangeNotifier {
      */
     public Boolean getMergedDeletedState() {
         switch (deletedMergeDecision) {
-        case KEEP_MINE: return myDeletedState;
-        case KEEP_THEIR: return theirDeletedState;
-        case UNDECIDED: return null;
+        case KEEP_MINE:
+            return myDeletedState;
+        case KEEP_THEIR:
+            return theirDeletedState;
+        default:
+            return null;
         }
-        // should not happen
-        return null;
     }
 
     /**

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 
 /**
@@ -151,22 +152,27 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     }
 
     @Override
-    public StyleCache getCachedStyle() {
+    public StyleCache getCachedStyle(ElemStyles styles) {
         return null;
     }
 
     @Override
-    public void setCachedStyle(StyleCache mappaintStyle) {
+    public void setCachedStyle(ElemStyles styles, StyleCache mappaintStyle) {
         // Override if needed
     }
 
     @Override
-    public boolean isCachedStyleUpToDate() {
+    public boolean isCachedStyleUpToDate(ElemStyles styles) {
         return false;
     }
 
     @Override
-    public void declareCachedStyleUpToDate() {
+    public void declareCachedStyleUpToDate(ElemStyles styles) {
+        // Override if needed
+    }
+
+    @Override
+    public void clearCachedStyle(){
         // Override if needed
     }
 }

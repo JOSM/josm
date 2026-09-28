@@ -25,7 +25,6 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -104,7 +103,7 @@ public class APIDataSet {
                     case ADD: toAdd.add(osm); break;
                     case UPDATE: toUpdate.add(osm); break;
                     case DELETE: toDelete.add(osm); break;
-                    default: Logging.trace("Ignored primitive {0} -> {1}", osm, op);
+                    // Used to have a default case for logging: Logging.trace("Ignored primitive {0} -> {1}", osm, op);
                 }
             }
         }
@@ -227,7 +226,7 @@ public class APIDataSet {
     /**
      * Adjusts the upload order for new relations. Child relations are uploaded first,
      * parent relations second.
-     *
+     * <p>
      * This method detects cyclic dependencies in new relation. Relations with cyclic
      * dependencies can't be uploaded.
      *

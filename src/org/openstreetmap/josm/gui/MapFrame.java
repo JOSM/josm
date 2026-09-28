@@ -235,7 +235,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         add(splitPane, BorderLayout.CENTER);
 
         dialogsPanel.setLayout(new BoxLayout(dialogsPanel, BoxLayout.Y_AXIS));
-        dialogsPanel.setPreferredSize(new Dimension(TOGGLE_DIALOGS_WIDTH.get(), 0));
+        dialogsPanel.setPreferredSize(new Dimension(TOGGLE_DIALOGS_WIDTH.get() - splitPane.getDividerSize(), 0));
         dialogsPanel.setMinimumSize(new Dimension(24, 0));
         mapView.setMinimumSize(new Dimension(10, 0));
 
@@ -723,7 +723,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      */
     public void rememberToggleDialogWidth() {
         if (dialogsPanel.isVisible()) {
-            TOGGLE_DIALOGS_WIDTH.put(splitPane.getWidth() - splitPane.getDividerLocation() - splitPane.getDividerSize() - 1);
+            TOGGLE_DIALOGS_WIDTH.put(splitPane.getWidth() - splitPane.getDividerLocation());
         }
     }
 

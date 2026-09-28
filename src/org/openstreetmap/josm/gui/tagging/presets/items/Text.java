@@ -7,12 +7,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -47,6 +46,7 @@ import org.xml.sax.SAXException;
  * Text field type.
  */
 public class Text extends KeyedItem {
+    private static final Pattern MULTILINE_WHITESPACE_PATTERN = Pattern.compile("[\\s&&[^\n]]+");
 
     private static int auto_increment_selected; // NOSONAR
 
@@ -166,12 +166,13 @@ public class Text extends KeyedItem {
                 saveHorizontalSpace(aibutton);
                 bg.add(aibutton);
                 try {
-                    // TODO there must be a better way to parse a number like "+3" than this.
-                    final int buttonvalue = NumberFormat.getIntegerInstance().parse(ai.replace("+", "")).intValue();
+                    // NumberFormat cannot parse negative for hr_HR and also needs a workaround for the +
+                    // see #24374
+                    final int buttonvalue = Integer.parseInt(ai);
                     if (auto_increment_selected == buttonvalue) aibutton.setSelected(true);
                     aibutton.addActionListener(e -> auto_increment_selected = buttonvalue);
                     pnl.add(aibutton, GBC.std());
-                } catch (ParseException ex) {
+                } catch (NumberFormatException ex) {
                     Logging.error("Cannot parse auto-increment value of '" + ai + "' into an integer");
                 }
             }
@@ -240,7 +241,13 @@ public class Text extends KeyedItem {
             return;
         }
 
-        v = Utils.removeWhiteSpaces(v);
+        if (this.normalize) {
+            if (this.multiline) {
+                v = Utils.removeWhiteSpaces(MULTILINE_WHITESPACE_PATTERN, v);
+            } else {
+                v = Utils.removeWhiteSpaces(v);
+            }
+        }
 
         if (!"false".equals(use_last_as_default) || auto_increment != null) {
             LAST_VALUES.put(key, v);

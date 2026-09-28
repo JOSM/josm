@@ -137,7 +137,7 @@ public class EmailValidator extends AbstractValidator {
             return false;
         }
 
-        if (email.endsWith(".")) { // check this first - it's cheap!
+        if (email.endsWith(".")) { // check this first - it is cheap!
             setErrorMessage(tr("E-mail address is invalid"));
             return false;
         }

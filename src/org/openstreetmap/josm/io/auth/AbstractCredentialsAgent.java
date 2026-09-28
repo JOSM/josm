@@ -3,11 +3,12 @@ package org.openstreetmap.josm.io.auth;
 
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Partial implementation of the {@link CredentialsAgent} interface.
@@ -47,7 +48,7 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
         credentialsProvider = Objects.requireNonNull(provider, "provider");
     }
 
-    protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new EnumMap<>(RequestorType.class);
+    protected Map<Pair<RequestorType, String>, PasswordAuthentication> memoryCredentialsCache = new HashMap<>();
 
     @Override
     public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse)
@@ -64,9 +65,10 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
          * Last request was successful and there was no credentials stored in file (or only the username is stored).
          * -> Try to recall credentials that have been entered manually in this session.
          */
-        if (!noSuccessWithLastResponse && memoryCredentialsCache.containsKey(requestorType) &&
+        Pair<RequestorType, String> mccKey = Pair.create(requestorType, host);
+        if (!noSuccessWithLastResponse && memoryCredentialsCache.containsKey(mccKey) &&
                 (credentials == null || credentials.getPassword() == null || credentials.getPassword().length == 0)) {
-            PasswordAuthentication pa = memoryCredentialsCache.get(requestorType);
+            PasswordAuthentication pa = memoryCredentialsCache.get(mccKey);
             response.setUsername(pa.getUserName());
             response.setPassword(pa.getPassword());
             response.setCanceled(false);
@@ -88,7 +90,7 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
                 ));
             } else {
                 // User decides not to save credentials to file. Keep it in memory so we don't have to ask over and over again.
-                memoryCredentialsCache.put(requestorType, new PasswordAuthentication(response.getUsername(), response.getPassword()));
+                memoryCredentialsCache.put(mccKey, new PasswordAuthentication(response.getUsername(), response.getPassword()));
             }
         } else {
             // We got it from file.
@@ -101,7 +103,12 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
 
     @Override
     public final void purgeCredentialsCache(RequestorType requestorType) {
-        memoryCredentialsCache.remove(requestorType);
+        memoryCredentialsCache.keySet().removeIf(pair -> pair.a == requestorType);
+    }
+
+    @Override
+    public void purgeCredentialsCache(RequestorType requestorType, String host) {
+        memoryCredentialsCache.remove(Pair.create(requestorType, host));
     }
 
     /**

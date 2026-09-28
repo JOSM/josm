@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.widgets.OrientationAction;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 
 /**
  * Abstract superclass for combo box and multi-select list types.
@@ -231,15 +232,29 @@ public abstract class ComboMultiSelect extends KeyedItem {
         String[] classMethod = valuesFrom.split("#", -1);
         if (classMethod.length == 2) {
             try {
-                Method method = Class.forName(classMethod[0]).getMethod(classMethod[1]);
+                Class<?> cl = ReflectionUtils.findClass(classMethod[0]);
+                if (cl == null) {
+                    Logging.error(tr("Broken tagging preset \"{0}-{1}\" - Java class {2} given in ''values_from'' was not found",
+                            key, text, classMethod[0]));
+                    return null;
+                }
+                Method method = cl.getMethod(classMethod[1]);
                 // Check method is public static String[] methodName()
                 int mod = method.getModifiers();
                 if (Modifier.isPublic(mod) && Modifier.isStatic(mod)
-                        && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {
-                    return Arrays.asList((String[]) method.invoke(null));
-                } else {
-                    Logging.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
-                            "public static String[] methodName()"));
+                        && method.getReturnType().equals(String[].class)) {
+                    if (method.getParameterTypes().length == 0) {
+                        return Arrays.asList((String[]) method.invoke(null));
+                    } else if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(String.class)) {
+                        return Arrays.asList((String[]) method.invoke(key));
+                    } else if (method.getParameterTypes().length == 2
+                            && method.getParameterTypes()[0].equals(String.class)
+                            && method.getParameterTypes()[1].equals(String.class)) {
+                        return Arrays.asList((String[]) method.invoke(key, originalValue));
+                    } else {
+                        Logging.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
+                                "public static String[] methodName()"));
+                    }
                 }
             } catch (ReflectiveOperationException e) {
                 Logging.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' threw {2} ({3})", key, text,

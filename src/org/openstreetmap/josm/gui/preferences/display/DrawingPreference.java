@@ -56,6 +56,8 @@ public class DrawingPreference extends DefaultTabPreferenceSetting {
     private final JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private final JCheckBox discardableKeys = new JCheckBox(tr("Display discardable keys"));
     private final JCheckBox autoFilters = new JCheckBox(tr("Use auto filters"));
+    private final JCheckBox autoFiltersHiding = new JCheckBox(tr("Hide auto-filtered elements"));
+
     private final JLabel lblRule = new JLabel(tr("Rule"));
     private final JosmComboBox<AutoFilterRule> autoFilterRules = new JosmComboBox<>(
             AutoFilterManager.getInstance().getAutoFilterRules().toArray(new AutoFilterRule[] {}));
@@ -149,9 +151,13 @@ public class DrawingPreference extends DefaultTabPreferenceSetting {
         autoFilters.addActionListener(e -> {
             lblRule.setEnabled(autoFilters.isSelected());
             autoFilterRules.setEnabled(autoFilters.isSelected());
+            autoFiltersHiding.setEnabled(autoFilters.isSelected());
         });
         autoFilterRules.setToolTipText("Rule defining which tag will provide automatic filters, below a certain zoom level");
         autoFilterRules.setSelectedItem(AutoFilterManager.getInstance().getAutoFilterRule(AutoFilterManager.PROP_AUTO_FILTER_RULE.get()));
+        autoFiltersHiding.setToolTipText(
+            tr("Completely hide elements which do not match the automatic filter instead of merely disabling them"));
+        autoFiltersHiding.setSelected(AutoFilterManager.PROP_AUTO_FILTER_HIDING.get());
 
         JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
 
@@ -183,6 +189,7 @@ public class DrawingPreference extends DefaultTabPreferenceSetting {
         panel.add(autoFilters, GBC.eop().insets(20, 0, 0, 0));
         panel.add(lblRule, GBC.std().insets(40, 0, 0, 0));
         panel.add(autoFilterRules, GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 0));
+        panel.add(autoFiltersHiding, GBC.eop().insets(40, 0, 0, 0));
 
         ExpertToggleAction.addVisibilitySwitcher(performanceLabel);
         ExpertToggleAction.addVisibilitySwitcher(useAntialiasing);
@@ -213,6 +220,7 @@ public class DrawingPreference extends DefaultTabPreferenceSetting {
         Config.getPref().putBoolean("draw.helper-line", drawHelperLine.isSelected());
         Config.getPref().putBoolean("display.discardable-keys", discardableKeys.isSelected());
         AutoFilterManager.PROP_AUTO_FILTER_ENABLED.put(autoFilters.isSelected());
+        AutoFilterManager.PROP_AUTO_FILTER_HIDING.put(autoFiltersHiding.isSelected());
         AutoFilterManager.PROP_AUTO_FILTER_RULE.put(((AutoFilterRule) autoFilterRules.getSelectedItem()).getKey());
         int vn = Config.getPref().getInt("mappaint.node.virtual-size", 8);
         if (virtualNodes.isSelected()) {

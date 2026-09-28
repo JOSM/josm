@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -90,6 +91,8 @@ class CoordinateConflictResolveCommandTest {
                     User.createOsmUser(1, "foo"), User.createOsmUser(2, "bar"))
             .withPrefabValues(OsmDataLayer.class,
                     new OsmDataLayer(new DataSet(), "1", null), new OsmDataLayer(new DataSet(), "2", null))
+            .withPrefabValues(ElemStyles.class,
+                    new ElemStyles(), new ElemStyles())
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
     }

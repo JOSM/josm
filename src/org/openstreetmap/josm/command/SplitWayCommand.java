@@ -366,7 +366,7 @@ public class SplitWayCommand extends SequenceCommand {
             }
         }
 
-        MissingMemberStrategy missingMemberStrategy;
+        MissingMemberStrategy missingMemberStrategy = USER_ABORTED; // default case
         if (relationsNeedingMoreMembers.isEmpty()) {
             // The split can be performed without any extra downloads.
             missingMemberStrategy = GO_AHEAD_WITHOUT_DOWNLOADS;
@@ -392,7 +392,6 @@ public class SplitWayCommand extends SequenceCommand {
                     missingMemberStrategy = GO_AHEAD_WITH_DOWNLOADS;
                     break;
                 case ABORT:
-                default:
                     missingMemberStrategy = USER_ABORTED;
                     break;
             }
@@ -418,7 +417,6 @@ public class SplitWayCommand extends SequenceCommand {
                 // the split without downloading them.
                 break;
             case USER_ABORTED:
-            default:
                 return Optional.empty();
             }
             return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
@@ -795,7 +793,7 @@ public class SplitWayCommand extends SequenceCommand {
 
     /**
      * This is only strictly necessary when we are splitting a route where it starts to loop back.
-     * Example: way1 -> way2 -> way2 -> way1
+     * Example: way1 → way2 → way2 → way1
      *
      * @param position         The position of the original way in the relation
      * @param indexOfWayToKeep The index of the way to keep in relation to {@code newWays}

@@ -522,20 +522,17 @@ public abstract class AbstractReader {
     }
 
     protected final void parseVersion(PrimitiveData current, int version) throws IllegalDataException {
-        switch (ds.getVersion()) {
-        case "0.6":
+        if (ds.getVersion().equals("0.6")) {
             if (version <= 0 && !current.isNew()) {
                 throw new IllegalDataException(
                         tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.",
-                        Long.toString(current.getUniqueId()), version));
+                                Long.toString(current.getUniqueId()), version));
             } else if (version < 0 && current.isNew()) {
                 Logging.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.",
                         current.getUniqueId(), version, 0, "0.6"));
                 version = 0;
             }
-            break;
-        default:
-            // should not happen. API version has been checked before
+        } else { // should not happen. API version has been checked before
             throw new IllegalDataException(tr("Unknown or unsupported API version. Got {0}.", ds.getVersion()));
         }
         current.setVersion(version);

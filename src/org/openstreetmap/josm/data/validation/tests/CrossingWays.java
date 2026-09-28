@@ -133,8 +133,10 @@ public abstract class CrossingWays extends Test {
             if (w1.hasKey(RAILWAY) && w2.hasKey(RAILWAY) && (w1.hasTag(RAILWAY, "yard") != w2.hasTag(RAILWAY, "yard")
                     || w1.hasTag(RAILWAY, "halt") != w2.hasTag(RAILWAY, "halt")))
                 return true;  // see #20089, #21541
-            return (w1.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && isWaterArea(w2))
-                    || (w2.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && isWaterArea(w1));
+            if (w1.hasTag(WATERWAY, "fairway") && w2.hasTag(WATERWAY, "fairway"))
+                return true; // see #24572
+            return (w1.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && isWaterAreaOrFairway(w2))
+                    || (w2.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && isWaterAreaOrFairway(w1));
         }
 
         @Override
@@ -360,6 +362,10 @@ public abstract class CrossingWays extends Test {
 
     static boolean isWaterArea(OsmPrimitive w) {
         return w.hasTag("natural", "water") || w.hasTag(WATERWAY, "riverbank") || w.hasTag(LANDUSE, "reservoir");
+    }
+
+    static boolean isWaterAreaOrFairway(OsmPrimitive w) {
+        return isWaterArea(w) || w.hasTag(WATERWAY, "fairway");
     }
 
     static boolean isHighway(OsmPrimitive w) {

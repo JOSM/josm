@@ -5,6 +5,7 @@ package org.openstreetmap.josm.data.gpx;
  * Object containing a {@link GpxData} instance.
  * @since 18078
  */
+@FunctionalInterface
 public interface GpxDataContainer {
 
     /**

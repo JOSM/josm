@@ -277,7 +277,6 @@ public class Bounds implements IBounds {
                 this.maxLon = initLon(values[2], roundToOsmPrecision);
                 break;
             case MINLAT_MINLON_MAXLAT_MAXLON:
-            default:
                 this.minLat = initLat(values[0], roundToOsmPrecision);
                 this.minLon = initLon(values[1], roundToOsmPrecision);
                 this.maxLat = initLat(values[2], roundToOsmPrecision);

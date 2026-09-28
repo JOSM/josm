@@ -90,7 +90,9 @@ node[source:outline] {
 node[type=multipolygon],
 node[interval],
 node[route],
-node[restriction] {
+node[restriction],
+node[power=circuit],
+node[power=line_section] {
   throwError: tr("{0} on a node. Should be used in a relation", "{0.tag}"); 
 }
 
@@ -139,12 +141,16 @@ way[door] {
 way[restriction][restriction =~ /^(no_right_turn|no_left_turn|no_u_turn|no_straight_on|only_right_turn|only_left_turn|only_straight_on|no_entry|no_exit)$/],
 way[type=multipolygon],
 way[interval][route!=ferry],
-way[route=bus] {
+way[route=bus],
+way[power=circuit],
+way[power=line_section] {
   throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
 
 /* {0} on a closed way, should be a unclosed way; #19981 */
-way:closed[power=line] {
+way:closed[power=line],
+way:closed[power=cable],
+way:closed[power=minor_line] {
   throwWarning: tr("{0} on a closed way. Should be used on an unclosed way.", "{1.tag}"); 
 }
 
@@ -326,7 +332,7 @@ way[waterway] > node.node_in_bridge {
   throwWarning: tr("node connects waterway and bridge");
 }
 
-/* #11128, #14812, #15032 */
+/* #11128, #14812, #15032, #24710 */
 way[highway] > node[tourism=information][information=guidepost] {
   set guidepost;
   throwOther: tr("{0} node connected to a highway", "{1.tag}");
@@ -335,7 +341,7 @@ way >[index=1] node,
 way >[index=-1] node {
   set first_last_node;
 }
-way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal|weighbridge|taxi|toilets|ticket_validator)$/],
+way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal|weighbridge|taxi|toilets|ticket_validator|loading_dock)$/],
 way[highway] > node[building][!entrance],
 way[highway] > node[leisure][!entrance][leisure!=slipway][leisure!=fitness_station],
 way[highway] > node[office][!entrance],
@@ -423,9 +429,16 @@ way[route=ferry]!:closed >[index=-1] node[amenity!=ferry_terminal][man_made!=pie
   throwWarning: tr("Ferry route is not connected to a ferry terminal or branches.");
 }
 
+/* 20421 */
+area[power=substation] ⊇ *[transformer=distribution] {
+  throwWarning: tr("A distribution transformer should not be contained in a substation.");
+  suggestAlternative: "transformer=main";
+  fixAdd: "transformer=main";
+}
+
 /* #21801 */
-way[railway][railway !~ /^(turntable|traverser|roundhouse|workshop|platform)$/] > node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) > 2]:connection,
-way[railway][railway !~ /^(turntable|traverser|roundhouse|workshop|platform)$/] >[index!=1][index!=-1] node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) == 2]:connection {
+way[railway][railway !~ /^(turntable|traverser|platform_edge|roundhouse|workshop|platform)$/] > node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) > 2]:connection,
+way[railway][railway !~ /^(turntable|traverser|platform_edge|roundhouse|workshop|platform)$/] >[index!=1][index!=-1] node[/railway$/ !~ /^(switch|railway_crossing)$/][count(parent_osm_primitives("railway")) == 2]:connection {
   set missing_switch_railway_crossing;
 }
 node.missing_switch_railway_crossing {

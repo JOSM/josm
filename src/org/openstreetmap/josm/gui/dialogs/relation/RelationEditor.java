@@ -115,6 +115,7 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
 
     @Override
     public final void setRelation(Relation relation) {
+        setIsSaving(false); // see #24444
         setRelationSnapshot((relation == null) ? null : new Relation(relation));
         Relation oldValue = this.relation;
         this.relation = relation;
@@ -147,7 +148,12 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
 
     @Override
     public final boolean isDirtyRelation() {
-        return !relation.hasEqualSemanticAttributes(relationSnapshot);
+        return isDirtyRelation(false);
+    }
+
+    @Override
+    public final boolean isDirtyRelation(boolean ignoreUninterestingTags) {
+        return relation != null && !relation.hasEqualSemanticAttributes(relationSnapshot, ignoreUninterestingTags);
     }
 
     /* ----------------------------------------------------------------------- */

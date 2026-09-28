@@ -225,7 +225,7 @@ public class LafPreference implements SubPreferenceSetting {
         logZoomLevel = Math.max(1, logZoomLevel);
         logZoomLevel = Math.min(5, logZoomLevel);
         JLabel labelZoomRatio = new JLabel(tr("Zoom steps to get double scale"));
-        spinZoomRatio = new JSpinner(new SpinnerNumberModel(logZoomLevel, 1, 5, 1));
+        spinZoomRatio = new JSpinner(new SpinnerNumberModel(logZoomLevel, 1, 10, 1));
         Component spinZoomRatioEditor = spinZoomRatio.getEditor();
         JFormattedTextField jftf = ((JSpinner.DefaultEditor) spinZoomRatioEditor).getTextField();
         jftf.setColumns(2);

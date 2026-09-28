@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.PlatformManager;
  */
 public class OrientationAction extends AbstractAction implements PropertyChangeListener {
     /** Default for {@link #RTL_LANGUAGES} */
-    private static final List<String> DEFAULT_RTL_LANGUAGES = Arrays.asList("ar", "he", "fa", "iw", "ur");
+    private static final List<String> DEFAULT_RTL_LANGUAGES = Arrays.asList("ar", "he", "fa", "ps", "iw", "ur");
 
     /** Default for {@link #LOCALIZED_KEYS} */
     private static final List<String> DEFAULT_LOCALIZED_KEYS = Arrays.asList(

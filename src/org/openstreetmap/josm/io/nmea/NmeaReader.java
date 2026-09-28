@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Reads a NMEA 0183 file. Based on information from
- * <a href="http://www.catb.org/gpsd/NMEA.html">http://www.catb.org/gpsd</a>.
+ * <a href="https://gpsd.gitlab.io/gpsd/NMEA.html">https://gpsd.gitlab.io/gpsd</a>.
  *
  * NMEA files are in printable ASCII form and may include information such as position,
  * speed, depth, frequency allocation, etc.

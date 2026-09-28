@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class AddPrimitivesCommand extends Command {
 
-    private List<PrimitiveData> data;
+    private List<PrimitiveData> primitiveData;
     private Collection<PrimitiveData> toSelect;
     private List<PrimitiveData> preExistingData;
 
@@ -55,9 +55,9 @@ public class AddPrimitivesCommand extends Command {
 
     private void init(List<PrimitiveData> data, List<PrimitiveData> toSelect) {
         CheckParameterUtil.ensureParameterNotNull(data, "data");
-        this.data = new ArrayList<>(data);
+        this.primitiveData = new ArrayList<>(data);
         if (toSelect == data) {
-            this.toSelect = this.data;
+            this.toSelect = this.primitiveData;
         } else if (toSelect != null) {
             this.toSelect = new ArrayList<>(toSelect);
         }
@@ -75,10 +75,10 @@ public class AddPrimitivesCommand extends Command {
 
     private void executeRealCommand(DataSet ds) {
         if (createdPrimitives == null) { // first time execution
-            List<OsmPrimitive> newPrimitives = new ArrayList<>(data.size());
+            List<OsmPrimitive> newPrimitives = new ArrayList<>(primitiveData.size());
             preExistingData = new ArrayList<>();
 
-            for (PrimitiveData pd : data) {
+            for (PrimitiveData pd : primitiveData) {
                 OsmPrimitive primitive = ds.getPrimitiveById(pd);
                 boolean created = primitive == null;
                 if (primitive == null) {
@@ -98,7 +98,7 @@ public class AddPrimitivesCommand extends Command {
             // Then load ways and relations
             for (int i = 0; i < newPrimitives.size(); i++) {
                 if (!(newPrimitives.get(i) instanceof Node)) {
-                    newPrimitives.get(i).load(data.get(i));
+                    newPrimitives.get(i).load(primitiveData.get(i));
                 }
             }
             newPrimitives.forEach(p -> p.setModified(true));
@@ -107,7 +107,7 @@ public class AddPrimitivesCommand extends Command {
             // a subsequent command (e.g. MoveCommand) cannot be redone.
             for (OsmPrimitive osm : createdPrimitives) {
                 if (preExistingData.stream().anyMatch(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId()))) {
-                    Optional<PrimitiveData> o = data.stream()
+                    Optional<PrimitiveData> o = primitiveData.stream()
                             .filter(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId())).findAny();
                     o.ifPresent(osm::load);
                 } else {
@@ -120,8 +120,8 @@ public class AddPrimitivesCommand extends Command {
     @Override public void undoCommand() {
         DataSet ds = getAffectedDataSet();
         if (createdPrimitives == null) {
-            createdPrimitives = new ArrayList<>(data.size());
-            for (PrimitiveData pd : data) {
+            createdPrimitives = new ArrayList<>(primitiveData.size());
+            for (PrimitiveData pd : primitiveData) {
                 OsmPrimitive p = ds.getPrimitiveById(pd);
                 createdPrimitives.add(p);
             }
@@ -146,7 +146,7 @@ public class AddPrimitivesCommand extends Command {
 
     @Override
     public String getDescriptionText() {
-        int size = data != null ? data.size() : createdPrimitives.size();
+        int size = primitiveData != null ? primitiveData.size() : createdPrimitives.size();
         return trn("Added {0} object", "Added {0} objects", size, size);
     }
 
@@ -161,14 +161,14 @@ public class AddPrimitivesCommand extends Command {
         if (createdPrimitives != null)
             return createdPrimitives;
 
-        return data.stream()
+        return primitiveData.stream()
                 .map(d -> Objects.requireNonNull(getAffectedDataSet().getPrimitiveById(d), () -> "No primitive found for " + d))
                 .collect(Collectors.toSet());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), data, toSelect, preExistingData, createdPrimitives);
+        return Objects.hash(super.hashCode(), primitiveData, toSelect, preExistingData, createdPrimitives);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class AddPrimitivesCommand extends Command {
         if (obj == null || getClass() != obj.getClass()) return false;
         if (!super.equals(obj)) return false;
         AddPrimitivesCommand that = (AddPrimitivesCommand) obj;
-        return Objects.equals(data, that.data) &&
+        return Objects.equals(primitiveData, that.primitiveData) &&
                Objects.equals(toSelect, that.toSelect) &&
                Objects.equals(preExistingData, that.preExistingData) &&
                Objects.equals(createdPrimitives, that.createdPrimitives);

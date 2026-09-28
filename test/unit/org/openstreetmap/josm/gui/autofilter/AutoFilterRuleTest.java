@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 @I18n
 class AutoFilterRuleTest {
     /**
-     * Unit test of {@link AutoFilterRule#getTagValuesForPrimitive}.
+     * Unit test of {@link AutoFilterRule#getTagValuesForPrimitive(OsmPrimitive, boolean)}.
      */
     @Test
     void testTagValuesForPrimitive() {
@@ -36,12 +36,14 @@ class AutoFilterRuleTest {
         assertTagValuesForPrimitive(level, "way level=6-9", 12, 13, 14, 15, 16, 17, 18);
         assertTagValuesForPrimitive(level, "way level=10;12-13", 20, 24, 25, 26);
         assertTagValuesForPrimitive(level, "way level=0;0.5;1;1.5;2;2.5;3", 0, 1, 2, 3, 4, 5, 6);
+        assertTagValuesForPrimitive(level, "node level=0 repeat_on=1;2", 0, 2, 4);
+        assertTagValuesForPrimitive(level, "way level=4 repeat_on=4;5 layer=1", 8, 10);
         assertEquals("0 0.5 1 1.5 2 2.5 3",
                 IntStream.of(0, 1, 2, 3, 4, 5, 6).mapToObj(level::formatValue).collect(Collectors.joining(" ")));
     }
 
     /**
-     * Unit test of {@link AutoFilterRule#getTagValuesForPrimitive} to deal with {@code %} of key {@code incline}.
+     * Unit test of {@link AutoFilterRule#getTagValuesForPrimitive(OsmPrimitive, boolean)} to deal with {@code %} of key {@code incline}.
      */
     @Test
     void testTagValuesForPrimitiveInclineUnit() {
@@ -52,7 +54,7 @@ class AutoFilterRuleTest {
     }
 
     /**
-     * Unit test of {@link AutoFilterRule#getTagValuesForPrimitive} provides sensible defaults, see #17496.
+     * Unit test of {@link AutoFilterRule#getTagValuesForPrimitive(OsmPrimitive, boolean)} provides sensible defaults, see #17496.
      */
     @Test
     void testTagValuesForPrimitivesDefaults() {
@@ -69,7 +71,7 @@ class AutoFilterRuleTest {
 
     private void assertTagValuesForPrimitive(AutoFilterRule rule, String assertion, int... expected) {
         final OsmPrimitive primitive = OsmUtils.createPrimitive(assertion);
-        final int[] actual = rule.getTagValuesForPrimitive(primitive).toArray();
+        final int[] actual = rule.getTagValuesForPrimitive(primitive, false).toArray();
         assertArrayEquals(expected, actual);
     }
 

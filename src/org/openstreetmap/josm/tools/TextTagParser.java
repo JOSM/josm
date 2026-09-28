@@ -46,15 +46,18 @@ public final class TextTagParser {
      * @param splitRegex - text is split into parts with this delimiter
      * @param tagRegex - each part is matched against this regex
      * @param unescapeTextInQuotes - if true, matched tag and value will be analyzed more thoroughly
+     * @param unescapePipe - if true, then replace all '\|' by '|' (issue #14490)
      * @return map of tags
+     * @since 19571 (parameter unescapePipe added)
      */
-    public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, boolean unescapeTextInQuotes) {
-         String[] lines = text.split(splitRegex, -1);
-         Pattern p = Pattern.compile(tagRegex);
-         Map<String, String> tags = new LinkedHashMap<>();
-         String k;
-         String v;
-         for (String line: lines) {
+    public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, 
+            boolean unescapeTextInQuotes, boolean unescapePipe) {
+        String[] lines = text.split(splitRegex, -1);
+        Pattern p = Pattern.compile(tagRegex);
+        Map<String, String> tags = new LinkedHashMap<>();
+        String k;
+        String v;
+        for (String line: lines) {
             if (line.trim().isEmpty()) continue; // skip empty lines
             Matcher m = p.matcher(line);
             if (m.matches()) {
@@ -65,16 +68,20 @@ public final class TextTagParser {
                      v = unescape(v);
                      if (k == null || v == null) return null;
                  }
+                 if (unescapePipe) {
+                     k = k.replaceAll("\\\\\\|", "|");
+                     v = v.replaceAll("\\\\\\|", "|");
+                 }
                  tags.put(k, v);
             } else {
                 return null;
             }
-         }
-         if (!tags.isEmpty()) {
-            return tags;
-         } else {
-            return null;
-         }
+        }
+        if (!tags.isEmpty()) {
+           return tags;
+        } else {
+           return null;
+        }
     }
 
     /**
@@ -99,7 +106,7 @@ public final class TextTagParser {
 
         // Format
         // tag1\tval1\ntag2\tval2\n
-        tags = readTagsByRegexp(buf, "[\\r\\n]+", ".*?([a-zA-Z0-9:_]+).*\\t(.*?)", false);
+        tags = readTagsByRegexp(buf, "[\\r\\n]+", ".*?([a-zA-Z0-9:_]+).*\\t(.*?)", false, false);
         // try "tag\tvalue\n" format
         if (tags != null) return tags;
 
@@ -108,7 +115,7 @@ public final class TextTagParser {
         // SORRY: "a=b" = c is not supported for now, only first = will be considered
         // a = "b=c" is OK
         // a = b=c  - this method of parsing fails intentionally
-        tags = readTagsByRegexp(buf, "[\\n\\t\\r]+", "(.*?)=(.*?)", true);
+        tags = readTagsByRegexp(buf, "[\\n\\t\\r]+", "(.*?)=(.*?)", true, false);
         // try format  t1=v1\n t2=v2\n ...
         if (tags != null) return tags;
 
@@ -118,7 +125,7 @@ public final class TextTagParser {
         if (bufJson.startsWith("{") && bufJson.endsWith("}"))
             bufJson = bufJson.substring(1, bufJson.length()-1);
         tags = readTagsByRegexp(bufJson, "[\\s]*,[\\s]*",
-                "[\\s]*(\\\".*?[^\\\\]\\\")"+"[\\s]*:[\\s]*"+"(\\\".*?[^\\\\]\\\")[\\s]*", true);
+                "[\\s]*(\\\".*?[^\\\\]\\\")"+"[\\s]*:[\\s]*"+"(\\\".*?[^\\\\]\\\")[\\s]*", true, false);
         if (tags != null) return tags;
 
         // Free format
@@ -154,8 +161,8 @@ public final class TextTagParser {
                 r = callback.warning(tr("Suspicious characters in key:"), key, "tags.paste.keydoesnotmatch");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
-            if (value.length() > MAX_VALUE_LENGTH) {
-                r = callback.warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "tags.paste.valuetoolong");
+            if (!Utils.checkCodePointCount(value, MAX_VALUE_LENGTH)) {
+                r = callback.warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
         }

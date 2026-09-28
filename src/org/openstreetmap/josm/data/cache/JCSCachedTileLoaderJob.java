@@ -393,7 +393,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 attributes.setResponseCode(urlConn.getResponseCode());
                 byte[] raw;
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    raw = urlConn.getContent().readAllBytes();
+                    try (InputStream is = urlConn.getContent()) {
+                        raw = is.readAllBytes();
+                    }
                 } else {
                     raw = new byte[]{};
                     try {

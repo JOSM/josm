@@ -7,6 +7,7 @@ package org.openstreetmap.josm.gui.preferences;
  * This preference setting's addGui method is called after the user clicked the parent tab
  * (returned by getTabPreferenceSetting).
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface SubPreferenceSetting extends PreferenceSetting {
 
     /**

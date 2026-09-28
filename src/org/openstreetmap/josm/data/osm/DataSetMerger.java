@@ -306,7 +306,7 @@ public class DataSetMerger {
             // Same version, but different "visible" attribute and neither of them are modified.
             // It indicates a serious problem in datasets.
             // For example, datasets can be fetched from different OSM servers or badly hand-modified.
-            // We shouldn't merge that datasets.
+            // We should not merge these datasets.
             throw new DataIntegrityProblemException(tr("Conflict in ''visible'' attribute for object of type {0} with id {1}",
                     target.getType(), target.getId()));
         }

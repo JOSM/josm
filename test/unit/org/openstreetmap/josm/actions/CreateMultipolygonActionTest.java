@@ -32,6 +32,7 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
 import org.openstreetmap.josm.testutils.annotations.MapPaintStyles;
 import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 @Main
 @MapPaintStyles
 @Projection
+@Territories(Territories.Initialize.ALL)
 class CreateMultipolygonActionTest {
     private static Map<String, String> getRefToRoleMap(Relation relation) {
         Map<String, String> refToRole = new TreeMap<>();

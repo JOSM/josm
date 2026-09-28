@@ -588,7 +588,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         nonChangedLayers.clear();
-        nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
+        if (nonChangedLayersCount > 0)
+            nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
         lastViewID = getViewID();
         lastClipBounds = g.getClipBounds();
 
@@ -619,7 +620,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         MapFrame map = MainApplication.getMap();
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
+        if (AutoFilterManager.getInstance().getCurrentCombinedFilter() != null) {
             AutoFilterManager.getInstance().drawOSDText(tempG);
         } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
             map.filterDialog.drawOSDText(tempG);
