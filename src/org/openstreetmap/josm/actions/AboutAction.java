@@ -71,13 +71,13 @@ public final class AboutAction extends JosmAction {
     JPanel buildAboutPanel() {
         final JTabbedPane about = new JTabbedPane();
 
-        Version version = Version.getInstance();
-
         JosmTextArea readme = new JosmTextArea();
         readme.setFont(GuiHelper.getMonospacedFont(readme));
         readme.setEditable(false);
         setTextFromResourceFile(readme, "/README");
         readme.setCaretPosition(0);
+
+        Version version = Version.getInstance();
 
         JosmTextArea revision = new JosmTextArea();
         revision.setFont(GuiHelper.getMonospacedFont(revision));

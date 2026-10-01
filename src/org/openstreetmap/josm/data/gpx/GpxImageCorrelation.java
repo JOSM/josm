@@ -36,8 +36,6 @@ public final class GpxImageCorrelation {
      * @return number of matched points
      */
     public static int matchGpxTrack(List<? extends GpxImageEntry> images, GpxData selectedGpx, GpxImageCorrelationSettings settings) {
-        int ret = 0;
-
         if (Logging.isDebugEnabled()) {
             Logging.debug("Correlating {0} images to {1} GPX track segments using {2}",
                     images.size(), selectedGpx.getTrackSegsCount(), settings);
@@ -81,6 +79,8 @@ public final class GpxImageCorrelation {
         boolean isFirst = true;
         long prevWpTime = 0;
         WayPoint prevWp = null;
+
+        int ret = 0;
 
         for (List<List<WayPoint>> segs : loadTracks(selectedGpx.getTracks())) {
             boolean firstSegment = true;

@@ -114,7 +114,6 @@ public class SplitMode extends MapMode {
 
         MapView mv = MainApplication.getMap().mapView;
         int mouseDownButton = e.getButton();
-        Point mousePos = e.getPoint();
 
         // return early
         if (!mv.isActiveLayerVisible() || Boolean.FALSE.equals(this.getValue("active")) || mouseDownButton != MouseEvent.BUTTON1)
@@ -149,6 +148,7 @@ public class SplitMode extends MapMode {
             }
 
             if (applicableWays.size() > 1) {
+                Point mousePos = e.getPoint();
                 createPopup(n, applicableWays).show(mv, mousePos.x, mousePos.y);
             } else {
                 final Way splitWay = applicableWays.get(0);
@@ -158,7 +158,7 @@ public class SplitMode extends MapMode {
                 }
             }
         } else if (nearestPrimitive instanceof Way && !((Way) nearestPrimitive).isClosed()) {
-            addNodeAndSplit(mv, mousePos, (Way) nearestPrimitive);
+            addNodeAndSplit(mv, e.getPoint(), (Way) nearestPrimitive);
             if (updateUserFeedback(e)) {
                 MainApplication.getMap().mapView.repaint();
             }
