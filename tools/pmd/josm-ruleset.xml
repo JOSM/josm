@@ -16,17 +16,13 @@
     <exclude name="AvoidStringBufferField"/>
     <exclude name="ConstantsInInterface"/>
     <exclude name="GuardLogStatement"/>
-    <exclude name="JUnit4TestShouldUseTestAnnotation" reason="False positive in src/org/openstreetmap/josm/data/validation/Test.java"/>
     <exclude name="LiteralsFirstInComparisons" reason="Introduced in 6.24, some positives in source code at this time. Replaces PositionLiteralsFirstInComparisons."/>
     <exclude name="LooseCoupling"/>
     <exclude name="MethodReturnsInternalArray"/>
     <exclude name="OneDeclarationPerLine"/>
     <exclude name="ReplaceHashtableWithMap"/>
-    <exclude name="SwitchStmtsShouldHaveDefault"/>
     <exclude name="SystemPrintln"/>
     <exclude name="UnusedAssignment" reason="Introduced in 6.26, some number of positives in source code at this time"/>
-    <exclude name="UnusedPrivateMethod" reason="Broken since PMD 6.33, see https://github.com/pmd/pmd/issues/3468"/>
-    <exclude name="UnusedPrivateField" reason="Broken in 7.2.x"/>
     <exclude name="UseVarargs"/>
   </rule>
   <rule ref="category/java/bestpractices.xml/ForLoopCanBeForeach">
@@ -58,7 +54,6 @@
     <exclude name="LongVariable"/>
     <exclude name="MethodArgumentCouldBeFinal"/>
     <exclude name="MethodNamingConventions"/>
-    <exclude name="NoPackage"/>
     <exclude name="OnlyOneReturn"/>
     <exclude name="PrematureDeclaration"/>
     <exclude name="ShortClassName"/>
@@ -129,14 +124,11 @@
     <exclude name="SignatureDeclareThrowsException"/>
     <exclude name="SimplifiedTernary"/>
     <exclude name="SimplifyBooleanReturns" reason="Increased sensitivity in 7.x; should be fixed in our source code." />
-    <exclude name="SimplifyConditional"/>
     <exclude name="SingularField"/>
     <exclude name="SwitchDensity"/>
     <exclude name="TooManyFields"/>
     <exclude name="TooManyMethods"/>
-    <exclude name="UseObjectForClearerAPI"/>
     <exclude name="UselessOverridingMethod"/>
-    <exclude name="UseUtilityClass"/>
   </rule>
   <rule ref="category/java/design.xml/SignatureDeclareThrowsException">
     <properties>
@@ -149,7 +141,6 @@
     <exclude name="AssignmentInOperand"/>
     <exclude name="AssignmentToNonFinalStatic"/>
     <exclude name="AvoidBranchingStatementAsLastInLoop"/>
-    <exclude name="AvoidCatchingNPE"/>
     <exclude name="AvoidDuplicateLiterals"/>
     <exclude name="AvoidFieldNameMatchingMethodName"/>
     <exclude name="AvoidFieldNameMatchingTypeName"/>
@@ -159,7 +150,6 @@
     <exclude name="ConfusingArgumentToVarargsMethod" reason="Introduced in 7.1.0; there are false positives in source code at this time."/>
     <exclude name="ConstructorCallsOverridableMethod"/>
     <exclude name="DoNotTerminateVM"/>
-    <exclude name="DontImportSun"/>
     <exclude name="ImplicitSwitchFallThrough"/>
     <exclude name="MissingSerialVersionUID"/>
     <exclude name="MissingStaticMethodInNonInstantiatableClass"/>
@@ -181,11 +171,7 @@
   <rule ref="category/java/performance.xml">
     <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="ConsecutiveLiteralAppends"/>
-    <exclude name="InefficientEmptyStringCheck"/>
     <exclude name="InsufficientStringBufferDeclaration" reason="PMD 6.40 has a bug where it doesn't properly count appended strings in if statements."/>
-    <exclude name="TooFewBranchesForASwitchStatement"/>
-    <exclude name="UseArrayListInsteadOfVector"/>
-    <exclude name="UselessStringValueOf"/>
     <exclude name="UseStringBufferForStringAppends"/>
   </rule>
 
