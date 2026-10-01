@@ -67,7 +67,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements D
             setEnabled(false);
         }
     }
-    
+
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void selectionChanged(final Collection<? extends IPrimitive> newSelection) {
         GuiHelper.runInEDT(() -> setEnabled(!Utils.isEmpty(newSelection)
