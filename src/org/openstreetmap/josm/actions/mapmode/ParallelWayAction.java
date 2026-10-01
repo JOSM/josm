@@ -463,6 +463,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         return matchesCurrentModifiers(spec.get());
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private boolean matchesCurrentModifiers(Map<Modifier, Boolean> spec) {
         EnumSet<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
         if (ctrl) {
