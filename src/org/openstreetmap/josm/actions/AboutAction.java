@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
@@ -179,22 +182,32 @@ public final class AboutAction extends JosmAction {
     }
 
     private static class OpenDirAction extends AbstractAction {
-        final String dir;
+    	private final Path dirPath;
 
         OpenDirAction(String dir) {
-            putValue(Action.NAME, "...");
-            this.dir = dir;
-            try {
-                setEnabled(dir != null && new File(dir).isDirectory());
-            } catch (SecurityException e) {
-                setEnabled(false);
-                Logging.warn(e);
+            super("...");
+            
+            Path path = null;
+            boolean isValidDir = false;
+
+            if (dir != null) {
+                try {
+                    path = Path.of(dir);
+                    isValidDir = Files.isDirectory(path);
+                } catch (InvalidPathException | SecurityException e) {
+                    Logging.warn(e);
+                }
             }
+
+            this.dirPath = isValidDir ? path : null;
+            setEnabled(isValidDir);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            OpenBrowser.displayUrl(new File(dir).toURI());
+            if (dirPath != null) {
+                OpenBrowser.displayUrl(dirPath.toUri());
+            }
         }
     }
 
