@@ -678,7 +678,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Exception: angle cannot be recognized as 0, 90, 180 or 270 degrees
      */
-    protected static class RejectedAngleException extends Exception {
+    static class RejectedAngleException extends Exception {
         RejectedAngleException() {
             super();
         }

@@ -282,7 +282,7 @@ public final class MapStatus extends JPanel implements
 
     private final transient List<StatusTextHistory> statusText = new ArrayList<>();
 
-    protected static final class StatusTextHistory {
+    static final class StatusTextHistory {
         private final Object id;
         private final String text;
 

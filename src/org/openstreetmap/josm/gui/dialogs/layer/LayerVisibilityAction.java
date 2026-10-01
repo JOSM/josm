@@ -179,7 +179,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      * An entry in the visibility settings dropdown.
      * @author Michael Zangl
      */
-    protected interface VisibilityMenuEntry {
+    interface VisibilityMenuEntry {
 
         /**
          * Update the displayed value
