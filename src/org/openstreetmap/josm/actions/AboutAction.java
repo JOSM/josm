@@ -14,7 +14,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,31 +70,31 @@ public final class AboutAction extends JosmAction {
     JPanel buildAboutPanel() {
         final JTabbedPane about = new JTabbedPane();
 
-        Version version = Version.getInstance();
+        final Version version = Version.getInstance();
 
-        JosmTextArea readme = new JosmTextArea();
+        final JosmTextArea readme = new JosmTextArea();
         readme.setFont(GuiHelper.getMonospacedFont(readme));
         readme.setEditable(false);
         setTextFromResourceFile(readme, "/README");
         readme.setCaretPosition(0);
 
-        JosmTextArea revision = new JosmTextArea();
+        final JosmTextArea revision = new JosmTextArea();
         revision.setFont(GuiHelper.getMonospacedFont(revision));
         revision.setEditable(false);
         revision.setText(version.getReleaseAttributes());
         revision.setCaretPosition(0);
 
-        JosmTextArea contribution = new JosmTextArea();
+        final JosmTextArea contribution = new JosmTextArea();
         contribution.setEditable(false);
         setTextFromResourceFile(contribution, "/CONTRIBUTION");
         contribution.setCaretPosition(0);
 
-        JosmTextArea license = new JosmTextArea();
+        final JosmTextArea license = new JosmTextArea();
         license.setEditable(false);
         setTextFromResourceFile(license, "/LICENSE");
         license.setCaretPosition(0);
 
-        JPanel info = new JPanel(new GridBagLayout());
+        final JPanel info = new JPanel(new GridBagLayout());
         final JMultilineLabel label = new JMultilineLabel("<html>" +
                 "<h1>" + "JOSM – " + tr("Java OpenStreetMap Editor") + "</h1>" +
                 "<p style='font-size:75%'></p>" +
@@ -112,7 +111,7 @@ public final class AboutAction extends JosmAction {
         info.add(new JLabel(tr("Translations")), GBC.std().insets(10, 0, 10, 0));
         info.add(new UrlLabel("https://josm.openstreetmap.de/wiki/Translations", 2), GBC.eol());
         info.add(new JLabel(tr("Follow us on")), GBC.std().insets(10, 10, 10, 0));
-        JPanel logos = new JPanel(new FlowLayout());
+        final JPanel logos = new JPanel(new FlowLayout());
         //logos.add(createImageLink("OpenStreetMap", /* ICON(dialogs/about/) */ "openstreetmap",
         //        "https://www.openstreetmap.org/user/josmeditor/diary"));
         //logos.add(createImageLink("Mastodon", /* ICON(dialogs/about/) */ "mastodon", "https://en.osm.town/@josmeditor"));
@@ -122,7 +121,7 @@ public final class AboutAction extends JosmAction {
         info.add(logos, GBC.eol().insets(0, 10, 0, 0));
         info.add(GBC.glue(0, 5), GBC.eol());
 
-        JPanel inst = new JPanel(new GridBagLayout());
+        final JPanel inst = new JPanel(new GridBagLayout());
         inst.add(new JLabel(tr("Preferences are stored in {0}", getPathToPreferences())), GBC.eol().insets(0, 0, 0, 10));
         inst.add(new JLabel(tr("Symbolic names for directories and the actual paths:")),
                 GBC.eol().insets(0, 0, 0, 10));
@@ -139,13 +138,13 @@ public final class AboutAction extends JosmAction {
         about.addTab(tr("Installation Details"), inst);
 
         // Get the list of Launchpad contributors using customary msgid “translator-credits”
-        String translators = tr("translator-credits");
+        final String translators = tr("translator-credits");
         if (!Utils.isEmpty(translators) && !"translator-credits".equals(translators)) {
             about.addTab(tr("Translators"), createScrollPane(new JosmTextArea(translators)));
         }
 
         // Intermediate panel to allow proper optionPane resizing
-        JPanel panel = new JPanel(new GridBagLayout());
+        final JPanel panel = new JPanel(new GridBagLayout());
         panel.setPreferredSize(new Dimension(890, 300));
         panel.add(new JLabel("", ImageProvider.get("logo.svg", ImageSizes.ABOUT_LOGO), CENTER), GBC.std().insets(0, 5, 0, 0));
         panel.add(about, GBC.std().fill());
@@ -153,7 +152,7 @@ public final class AboutAction extends JosmAction {
     }
 
     private static String getPathToPreferences() {
-        File preferenceFile = Preferences.main().getPreferenceFile();
+        final File preferenceFile = Preferences.main().getPreferenceFile();
         try {
             return ShowStatusReportAction.paramCleanup(preferenceFile.getAbsolutePath());
         } catch (SecurityException e) {
@@ -164,10 +163,10 @@ public final class AboutAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JPanel panel = buildAboutPanel();
+        final JPanel panel = buildAboutPanel();
 
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
-        ExtendedDialog dlg = new ExtendedDialog(MainApplication.getMainFrame(), tr("About JOSM..."), tr("OK"), tr("Report bug"));
+        final ExtendedDialog dlg = new ExtendedDialog(MainApplication.getMainFrame(), tr("About JOSM..."), tr("OK"), tr("Report bug"));
         int ret = dlg.setButtonIcons("ok", "bug")
                 .configureContextsensitiveHelp(ht("Action/About"), true)
                 .setContent(panel, false)
@@ -206,11 +205,12 @@ public final class AboutAction extends JosmAction {
      * @param source source for symbol
      */
     private static void addInstallationLine(JPanel inst, String dir, String source) {
-        if (source == null)
-            return;
-        JLabel symbol = new JLabel(source);
+        if (source == null) {
+			return;
+		}
+        final JLabel symbol = new JLabel(source);
         symbol.setFont(GuiHelper.getMonospacedFont(symbol));
-        JosmTextArea dirLabel = new JosmTextArea();
+        final JosmTextArea dirLabel = new JosmTextArea();
         if (!Utils.isEmpty(dir)) {
             dirLabel.setText(dir);
             dirLabel.setEditable(false);
@@ -224,7 +224,7 @@ public final class AboutAction extends JosmAction {
         dirLabel.setFont(GuiHelper.getMonospacedFont(dirLabel));
         dirLabel.setOpaque(false);
         inst.add(dirLabel, GBC.std().fill(HORIZONTAL));
-        JButton btn = new JButton(new OpenDirAction(dir));
+        final JButton btn = new JButton(new OpenDirAction(dir));
         btn.setToolTipText(tr("Open directory"));
         inst.add(btn, GBC.eol().insets(0, 0, 5, 0));
     }
@@ -240,19 +240,17 @@ public final class AboutAction extends JosmAction {
      * @param filePath the path where the resource file to read resides
      */
     private void setTextFromResourceFile(JTextArea ta, String filePath) {
-        InputStream is = Utils.getResourceAsStream(getClass(), filePath);
+        final InputStream is = Utils.getResourceAsStream(getClass(), filePath);
         if (is == null) {
             displayErrorMessage(ta, tr("Failed to locate resource ''{0}''.", filePath));
-        } else {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    ta.append(line+'\n');
-                }
-            } catch (IOException e) {
-                Logging.warn(e);
-                displayErrorMessage(ta, tr("Failed to load resource ''{0}'', error is {1}.", filePath, e.toString()));
-            }
+            return;
+        }
+        
+        try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            ta.read(isr, null);
+        } catch (IOException e) {
+            Logging.warn(e);
+            displayErrorMessage(ta, tr("Failed to load resource ''{0}'', error is {1}.", filePath, e.toString()));
         }
     }
 
@@ -265,7 +263,7 @@ public final class AboutAction extends JosmAction {
     private static JScrollPane createScrollPane(JosmTextArea area) {
         area.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         area.setOpaque(false);
-        JScrollPane sp = new JScrollPane(area);
+        final JScrollPane sp = new JScrollPane(area);
         sp.setBorder(null);
         sp.setOpaque(false);
         return sp;
