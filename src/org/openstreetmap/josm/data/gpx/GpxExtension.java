@@ -189,7 +189,7 @@ public class GpxExtension extends WithAttributes {
      */
     public void hide() {
         visible = false;
-        if (parent != null && parent instanceof GpxExtension) {
+        if (parent instanceof GpxExtension) {
             GpxExtension gpx = (GpxExtension) parent;
             if (Utils.isStripEmpty(gpx.getValue())
                     && gpx.getAttributes().isEmpty()
@@ -205,7 +205,7 @@ public class GpxExtension extends WithAttributes {
      */
     public void show() {
         visible = true;
-        if (parent != null && parent instanceof GpxExtension) {
+        if (parent instanceof GpxExtension) {
             ((GpxExtension) parent).show();
         }
     }

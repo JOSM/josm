@@ -122,7 +122,6 @@
     <exclude name="NcssCount"/>
     <exclude name="NPathComplexity"/>
     <exclude name="SignatureDeclareThrowsException"/>
-    <exclude name="SimplifiedTernary"/>
     <exclude name="SimplifyBooleanReturns" reason="Increased sensitivity in 7.x; should be fixed in our source code." />
     <exclude name="SingularField"/>
     <exclude name="SwitchDensity"/>
