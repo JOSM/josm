@@ -61,6 +61,7 @@ public class MapboxVectorCachedTileLoader implements TileLoader, CachedTileLoade
                 getDownloadExecutor());
     }
 
+    @SuppressWarnings("PMD.CloseResource") /* closed in shutdown() */
     @Override
     public void cancelOutstandingTasks() {
         final ThreadPoolExecutor executor = getDownloadExecutor();
