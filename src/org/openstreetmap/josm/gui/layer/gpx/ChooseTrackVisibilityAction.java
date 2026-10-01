@@ -382,7 +382,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             if (row >= 0 && row < content.length && col >= 0 && col <= 1) {
                 Object t = content[row][5];
                 String val = (String) getValueAt(row, col);
-                if (t != null && t instanceof IGpxTrack) {
+                if (t instanceof IGpxTrack) {
                     IGpxTrack trk = (IGpxTrack) t;
                     if (col == 0) {
                         trk.put("name", val);
