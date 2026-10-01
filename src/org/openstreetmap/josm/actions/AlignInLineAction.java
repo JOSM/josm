@@ -93,11 +93,12 @@ public final class AlignInLineAction extends JosmAction {
         // Get ways passing though all selected nodes.
         Set<Way> waysRef = null;
         for (Node n: nodes) {
-            Collection<Way> ref = n.getParentWays();
-            if (waysRef == null)
-                waysRef = new HashSet<>(ref);
-            else
-                waysRef.retainAll(ref);
+            final Collection<Way> ref = n.getParentWays();
+            if (waysRef == null) {
+				waysRef = new HashSet<>(ref);
+			} else {
+				waysRef.retainAll(ref);
+			}
         }
 
         if (waysRef == null) {
@@ -105,11 +106,12 @@ public final class AlignInLineAction extends JosmAction {
         }
 
         // Nodes belongs to multiple ways, return most distant nodes.
-        if (waysRef.size() != 1)
-            return nodeFurthestAppart(nodes);
+        if (waysRef.size() != 1) {
+			return nodeFurthestAppart(nodes);
+		}
 
         // All nodes are part of the same way. See #9605.
-        Way way = waysRef.iterator().next();
+        final Way way = waysRef.iterator().next();
 
         if (way.isClosed()) {
             // Align these nodes on the line passing through the most distant nodes.
@@ -121,12 +123,14 @@ public final class AlignInLineAction extends JosmAction {
 
         // The way is open, align nodes on the line passing through the extremity nodes (most distant in the way
         // sequence). See #9605#comment:3.
-        Set<Node> remainNodes = new HashSet<>(nodes);
+        final Set<Node> remainNodes = new HashSet<>(nodes);
         for (Node n : way.getNodes()) {
-            if (!remainNodes.contains(n))
-                continue;
-            if (nodea == null)
-                nodea = n;
+            if (!remainNodes.contains(n)) {
+				continue;
+			}
+            if (nodea == null) {
+				nodea = n;
+			}
             if (remainNodes.size() == 1) {
                 nodeb = remainNodes.iterator().next();
                 break;
@@ -146,14 +150,14 @@ public final class AlignInLineAction extends JosmAction {
     private static Node[] nodeFurthestAppart(List<Node> nodes) {
         Node node1 = null, node2 = null;
         double minSqDistance = 0;
-        int nb;
+        final int nb;
 
         nb = nodes.size();
         for (int i = 0; i < nb - 1; i++) {
-            Node n = nodes.get(i);
+            final Node n = nodes.get(i);
             for (int j = i + 1; j < nb; j++) {
-                Node m = nodes.get(j);
-                double sqDist = n.getEastNorth().distanceSq(m.getEastNorth());
+                final Node m = nodes.get(j);
+                final double sqDist = n.getEastNorth().distanceSq(m.getEastNorth());
                 if (sqDist > minSqDistance) {
                     node1 = n;
                     node2 = m;
@@ -170,11 +174,12 @@ public final class AlignInLineAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled())
-            return;
+        if (!isEnabled()) {
+			return;
+		}
 
         try {
-            Command cmd = buildCommand(getLayerManager().getEditDataSet());
+            final Command cmd = buildCommand(getLayerManager().getEditDataSet());
             if (cmd != null) {
                 UndoRedoHandler.getInstance().add(cmd);
             }
@@ -194,8 +199,8 @@ public final class AlignInLineAction extends JosmAction {
      * @since 13108
      */
     public Command buildCommand(DataSet ds) throws InvalidSelection {
-        List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
-        List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
+        final List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
+        final List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
         selectedWays.removeIf(w -> w.isIncomplete() || w.isEmpty());
 
         // Decide what to align based on selection:
@@ -204,17 +209,19 @@ public final class AlignInLineAction extends JosmAction {
             return alignMultiWay(selectedWays);
         } else if (selectedNodes.size() == 1) {
             // Only 1 node selected -> align this node relative to referrers way
-            Node selectedNode = selectedNodes.get(0);
-            List<Way> involvedWays;
-            if (selectedWays.isEmpty())
-                // No selected way, all way containing this node are used
+            final Node selectedNode = selectedNodes.get(0);
+            final List<Way> involvedWays;
+            if (selectedWays.isEmpty()) {
+				// No selected way, all way containing this node are used
                 involvedWays = selectedNode.getParentWays();
-            else
-                // Selected way, use only these ways
+			} else {
+				// Selected way, use only these ways
                 involvedWays = selectedWays;
-            List<Line> lines = getInvolvedLines(selectedNode, involvedWays);
-            if (lines.size() > 2 || lines.isEmpty())
-                throw new InvalidSelection();
+			}
+            final List<Line> lines = getInvolvedLines(selectedNode, involvedWays);
+            if (lines.size() > 2 || lines.isEmpty()) {
+				throw new InvalidSelection();
+			}
             return alignSingleNode(selectedNodes.get(0), lines);
         } else if (selectedNodes.size() >= 3) {
             // More than 3 nodes and way(s) selected -> align selected nodes. Don't care of way(s).
@@ -234,9 +241,9 @@ public final class AlignInLineAction extends JosmAction {
      */
     private static Command alignOnlyNodes(List<Node> nodes) throws InvalidSelection {
         // Choose nodes used as anchor points for projection.
-        Node[] anchors = nodePairFurthestApart(nodes);
-        Line line = new Line(anchors[0], anchors[1]);
-        Collection<Command> cmds = nodes.stream()
+        final Node[] anchors = nodePairFurthestApart(nodes);
+        final Line line = new Line(anchors[0], anchors[1]);
+        final Collection<Command> cmds = nodes.stream()
                 .filter(node -> node != anchors[0] && node != anchors[1])
                 .map(line::projectionCommand)
                 .collect(Collectors.toList());
@@ -251,11 +258,12 @@ public final class AlignInLineAction extends JosmAction {
      */
     private static Command alignMultiWay(Collection<Way> ways) throws InvalidSelection {
         // Collect all nodes and compute line equation
-        Set<Node> nodes = new HashSet<>();
-        Map<Way, Line> lines = new HashMap<>();
+        final Set<Node> nodes = new HashSet<>();
+        final Map<Way, Line> lines = new HashMap<>();
         for (Way w: ways) {
-            if (w.isClosed())
-                throw new InvalidSelection(tr("Can not align a polygon. Abort."));
+            if (w.isClosed()) {
+				throw new InvalidSelection(tr("Can not align a polygon. Abort."));
+			}
             if (!w.isEmpty()) {
                 nodes.addAll(w.getNodes());
                 lines.put(w, new Line(w));
@@ -264,22 +272,26 @@ public final class AlignInLineAction extends JosmAction {
         if (nodes.isEmpty()) {
             throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
         }
-        Collection<Command> cmds = new ArrayList<>(nodes.size());
-        List<Way> referrers = new ArrayList<>(ways.size());
+        final Collection<Command> cmds = new ArrayList<>(nodes.size());
+        final List<Way> referrers = new ArrayList<>(ways.size());
         for (Node n: nodes) {
             referrers.clear();
             for (OsmPrimitive o: n.getReferrers()) {
-                if (ways.contains(o))
-                    referrers.add((Way) o);
+                if (ways.contains(o)) {
+					referrers.add((Way) o);
+				}
             }
             if (referrers.size() == 1) {
-                Way way = referrers.get(0);
-                if (way.isFirstLastNode(n)) continue;
+                final Way way = referrers.get(0);
+                if (way.isFirstLastNode(n)) {
+					continue;
+				}
                 cmds.add(lines.get(way).projectionCommand(n));
             } else if (referrers.size() == 2) {
                 cmds.add(lines.get(referrers.get(0)).intersectionCommand(n, lines.get(referrers.get(1))));
-            } else
-                throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
+            } else {
+				throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
+			}
         }
         return cmds.isEmpty() ? null : new SequenceCommand(tr("Align Nodes in Line"), cmds);
     }
@@ -292,10 +304,10 @@ public final class AlignInLineAction extends JosmAction {
      * @throws InvalidSelection if a node got more than 4 neighbours (self-crossing way)
      */
     private static List<Line> getInvolvedLines(Node node, List<Way> refWays) throws InvalidSelection {
-        List<Line> lines = new ArrayList<>();
-        List<Node> neighbors = new ArrayList<>();
+        final List<Line> lines = new ArrayList<>();
+        final List<Node> neighbors = new ArrayList<>();
         for (Way way: refWays) {
-            List<Node> nodes = way.getNodes();
+            final List<Node> nodes = way.getNodes();
             neighbors.clear();
             for (int i = 1; i < nodes.size()-1; i++) {
                 if (nodes.get(i) == node) {
@@ -303,26 +315,31 @@ public final class AlignInLineAction extends JosmAction {
                     neighbors.add(nodes.get(i+1));
                 }
             }
-            if (neighbors.isEmpty())
-                continue;
-            else if (neighbors.size() == 2)
-                // Non self crossing
+            if (neighbors.isEmpty()) {
+				continue;
+			} else if (neighbors.size() == 2) {
+				// Non self crossing
                 lines.add(new Line(neighbors.get(0), neighbors.get(1)));
-            else if (neighbors.size() == 4) {
+			} else if (neighbors.size() == 4) {
                 // Self crossing, have to make 2 lines with 4 neighbors
                 // see #9081 comment 6
-                EastNorth c = node.getEastNorth();
-                double[] angle = IntStream.range(0, 4)
+                final EastNorth c = node.getEastNorth();
+                final double[] angle = IntStream.range(0, 4)
                         .mapToDouble(i -> PolarCoor.computeAngle(neighbors.get(i).getEastNorth(), c)).toArray();
-                double[] deltaAngle = new double[3];
+                final double[] deltaAngle = new double[3];
                 for (int i = 0; i < 3; i++) {
                     deltaAngle[i] = angle[i+1] - angle[0];
-                    if (deltaAngle[i] < 0)
-                        deltaAngle[i] += 2*Math.PI;
+                    if (deltaAngle[i] < 0) {
+						deltaAngle[i] += 2*Math.PI;
+					}
                 }
                 int nb = 0;
-                if (deltaAngle[1] < deltaAngle[0]) nb++;
-                if (deltaAngle[2] < deltaAngle[0]) nb++;
+                if (deltaAngle[1] < deltaAngle[0]) {
+					nb++;
+				}
+                if (deltaAngle[2] < deltaAngle[0]) {
+					nb++;
+				}
                 if (nb == 1) {
                     // Align along [neighbors[0], neighbors[1]] and [neighbors[0], neighbors[2]]
                     lines.add(new Line(neighbors.get(0), neighbors.get(1)));
@@ -332,8 +349,9 @@ public final class AlignInLineAction extends JosmAction {
                     lines.add(new Line(neighbors.get(0), neighbors.get(2)));
                     lines.add(new Line(neighbors.get(1), neighbors.get(3)));
                 }
-            } else
-                throw new InvalidSelection("cannot treat more than 4 neighbours, got "+neighbors.size());
+            } else {
+				throw new InvalidSelection("cannot treat more than 4 neighbours, got "+neighbors.size());
+			}
         }
         return lines;
     }
@@ -346,10 +364,11 @@ public final class AlignInLineAction extends JosmAction {
      * @throws InvalidSelection if more than 2 lines
      */
     private static Command alignSingleNode(Node node, List<Line> lines) throws InvalidSelection {
-        if (lines.size() == 1)
-            return lines.get(0).projectionCommand(node);
-        else if (lines.size() == 2)
-            return lines.get(0).intersectionCommand(node, lines.get(1));
+        if (lines.size() == 1) {
+			return lines.get(0).projectionCommand(node);
+		} else if (lines.size() == 2) {
+			return lines.get(0).intersectionCommand(node, lines.get(1));
+		}
         throw new InvalidSelection();
     }
 
@@ -378,18 +397,24 @@ public final class AlignInLineAction extends JosmAction {
          * @throws InvalidSelection if nodes have same coordinates
          */
         Line(Node first, Node last) throws InvalidSelection {
-            xM = first.getEastNorth().getX();
-            yM = first.getEastNorth().getY();
-            double xB = last.getEastNorth().getX();
-            double yB = last.getEastNorth().getY();
-            a = yB - yM;
-            b = xM - xB;
-            double norm = Math.sqrt(a*a + b*b);
-            if (norm == 0)
-                throw new InvalidSelection("Nodes have same coordinates!");
-            a /= norm;
-            b /= norm;
-            c = -(a*xM + b*yM);
+        	final var coordFirst = first.getEastNorth();
+            xM = coordFirst.getX();
+            yM = coordFirst.getY();
+            
+            final var coordLast = last.getEastNorth();
+            final double xB = coordLast.getX();
+            final double yB = coordLast.getY();
+            
+            
+            this.a = yB - yM;
+            this.b = xM - xB;
+            final double norm = Math.hypot(this.a, this.b);
+            if (norm == 0) {
+				throw new InvalidSelection("Nodes have same coordinates!");
+			}
+            this.a /= norm;
+            this.b /= norm;
+            this.c = -(this.a * this.xM + this.b * this.yM);
         }
 
         /**
@@ -407,7 +432,7 @@ public final class AlignInLineAction extends JosmAction {
          * @return The command that do the projection of this node
          */
         public Command projectionCommand(Node n) {
-            double s = (xM - n.getEastNorth().getX()) * a + (yM - n.getEastNorth().getY()) * b;
+            final double s = (xM - n.getEastNorth().getX()) * a + (yM - n.getEastNorth().getY()) * b;
             return new MoveCommand(n, a*s, b*s);
         }
 
@@ -419,19 +444,22 @@ public final class AlignInLineAction extends JosmAction {
          * @throws InvalidSelection if two parallels ways found
          */
         public Command intersectionCommand(Node n, Line other) throws InvalidSelection {
-            double d = this.a * other.b - other.a * this.b;
-            if (Math.abs(d) < 10e-6)
-                // parallels lines
-                throw new InvalidSelection(tr("Two parallels ways found. Abort."));
-            double x = (this.b * other.c - other.b * this.c) / d;
-            double y = (other.a * this.c - this.a * other.c) / d;
-            return new MoveCommand(n, x - n.getEastNorth().getX(), y - n.getEastNorth().getY());
+            final double d = this.a * other.b - other.a * this.b;
+            if (Math.abs(d) < 10e-6) {
+				// parallels lines
+                throw new InvalidSelection(tr("Two parallel ways found. Abort."));
+			}
+            final double x = (this.b * other.c - other.b * this.c) / d;
+            final double y = (other.a * this.c - this.a * other.c) / d;
+            
+            final var eastNorth = n.getEastNorth();
+            return new MoveCommand(n, x - eastNorth.getX(), y - eastNorth.getY());
         }
     }
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
+        final DataSet ds = getLayerManager().getEditDataSet();
         setEnabled(ds != null && !ds.selectionEmpty());
     }
 
