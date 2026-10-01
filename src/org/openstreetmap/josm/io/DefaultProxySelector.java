@@ -111,7 +111,7 @@ public class DefaultProxySelector extends ProxySelector {
 
     protected int parseProxyPortValue(String property, String value) {
         if (value == null) return 0;
-        int port = 0;
+        int port;
         try {
             port = Integer.parseInt(value);
         } catch (NumberFormatException e) {

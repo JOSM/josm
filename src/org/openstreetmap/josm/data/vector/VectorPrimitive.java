@@ -98,6 +98,7 @@ public abstract class VectorPrimitive extends AbstractPrimitive implements DataL
         this.mappaintCacheIdx = dataSet.getMappaintCacheIndex();
     }
 
+    @Override
     public void clearCachedStyle() {
         this.mappaintStyle.clear();
     }

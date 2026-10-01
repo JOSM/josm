@@ -144,7 +144,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             // Retrieve the values from current rule visible on screen
             NavigableSet<Integer> values = getNumericValues();
             // Make sure current auto filter buttons remain visible even if no data is found, to allow user to disable them
-            for (var currentAutoFilter : currentAutoFilters) {
+            for (AutoFilter currentAutoFilter : currentAutoFilters) {
                 if (currentAutoFilter.getFilter().value != null) {
                     values.add(currentAutoFilter.getFilter().value);
                 }
@@ -288,7 +288,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         int maxWidth = 16;
         final AutoFilterButton keyButton = AutoFilterButton.forOsmKey(enabledRule.getKey());
         addButton(keyButton, Integer.MIN_VALUE, i++);
-        var valueList = new ArrayList<>(values.descendingSet());
+        List<Integer> valueList = new ArrayList<>(values.descendingSet());
         if (enabledRule.getNoValueFilter()) {
             valueList.add(null);
         }
@@ -330,7 +330,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         }
         BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
         NavigableSet<Integer> values = new TreeSet<>();
-        for (var primitiveList : List.of(ds.searchNodes(bbox), ds.searchWays(bbox), ds.searchRelations(bbox))) {
+        for (List<? extends OsmPrimitive> primitiveList : List.of(ds.searchNodes(bbox), ds.searchWays(bbox), ds.searchRelations(bbox))) {
             // add all values that are directly mentioned
             primitiveList.forEach(o -> enabledRule.getTagValuesForPrimitive(o, true).forEach(values::add));
             // only add integer values from value ranges, not fractional values

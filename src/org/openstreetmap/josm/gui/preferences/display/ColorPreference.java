@@ -111,7 +111,7 @@ public class ColorPreference extends ExtensibleTabPreferenceSetting implements L
          */
         public String getDisplay() {
             if (info.getSource() != null) {
-                if (info.getCategory() == NamedColorProperty.COLOR_CATEGORY_MAPPAINT)
+                if (NamedColorProperty.COLOR_CATEGORY_MAPPAINT.equals(info.getCategory()))
                     return tr("Paint style {0}: {1}", tr(I18n.escape(info.getSource())), tr(info.getName()));
                 else
                     return tr(I18n.escape(info.getSource())) + " - " + tr(I18n.escape(info.getName()));

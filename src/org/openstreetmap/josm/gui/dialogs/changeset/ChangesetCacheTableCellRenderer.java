@@ -19,7 +19,7 @@ public class ChangesetCacheTableCellRenderer extends AbstractCellRenderer {
 
     protected void renderUploadComment(Changeset cs) {
         String comment = cs.getComment();
-        if (comment.trim().isEmpty()) {
+        if (comment.isBlank()) {
             setText(trc("changeset.upload-comment", "empty"));
             setFont(UIManager.getFont("Table.font").deriveFont(Font.ITALIC));
         } else {

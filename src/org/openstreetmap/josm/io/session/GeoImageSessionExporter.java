@@ -122,10 +122,10 @@ public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLay
                 addAttr("exif-gps-dop", entry.getExifGpsDop().toString(), imgElem, support);
             }
             if (entry.getExifGpsDatum() != null) {
-                addAttr("exif-gps-datum", entry.getExifGpsDatum().toString(), imgElem, support);
+                addAttr("exif-gps-datum", entry.getExifGpsDatum(), imgElem, support);
             }
             if (entry.getExifGpsProcMethod() != null) {
-                addAttr("exif-gps-procmethod", entry.getExifGpsProcMethod().toString(), imgElem, support);
+                addAttr("exif-gps-procmethod", entry.getExifGpsProcMethod(), imgElem, support);
             }
             if (entry.hasNewGpsData()) {
                 addAttr("is-new-gps-data", Boolean.toString(entry.hasNewGpsData()), imgElem, support);

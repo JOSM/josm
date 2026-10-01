@@ -192,7 +192,7 @@ public class PlaceSelection implements DownloadSelection {
         @Override
         public void actionPerformed(ActionEvent e) {
             String searchExpression = cbSearchExpression.getText();
-            if (!isEnabled() || searchExpression.trim().isEmpty() || serverComboBox.getSelectedItem() == null)
+            if (!isEnabled() || searchExpression.isBlank() || serverComboBox.getSelectedItem() == null)
                 return;
             cbSearchExpression.addCurrentItemToHistory();
             cbSearchExpression.getModel().prefs().save(HISTORY_KEY);
@@ -214,7 +214,7 @@ public class PlaceSelection implements DownloadSelection {
 
         protected final void updateState() {
             String searchExpression = cbSearchExpression.getText();
-            setEnabled(!searchExpression.trim().isEmpty());
+            setEnabled(!searchExpression.isBlank());
             isSearchMore = Objects.equals(lastSearchExpression, searchExpression) && !model.getData().isEmpty();
             if (isSearchMore) {
                 putValue(NAME, tr("Search more..."));

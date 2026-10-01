@@ -122,7 +122,7 @@ class ProjectionRefTest {
             Pattern projPattern = Pattern.compile("<(.+?)>(.*)<>");
             RefEntry curEntry = null;
             while ((line = in.readLine()) != null) {
-                if (line.startsWith("#") || line.trim().isEmpty()) {
+                if (line.startsWith("#") || line.isBlank()) {
                     continue;
                 }
                 if (line.startsWith("<")) {

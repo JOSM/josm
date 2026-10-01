@@ -1085,10 +1085,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 osd.append(tr("\nDOP: {0}", entry.getExifGpsDop()));
             }
             if (entry.getExifGpsDatum() != null) {
-                osd.append(tr("\nDatum: {0}", entry.getExifGpsDatum().toString()));
+                osd.append(tr("\nDatum: {0}", entry.getExifGpsDatum()));
             }
             if (entry.getExifGpsProcMethod() != null) {
-                osd.append(tr("\nProc. method: {0}", entry.getExifGpsProcMethod().toString()));
+                osd.append(tr("\nProc. method: {0}", entry.getExifGpsProcMethod()));
             }
         }
         Optional.ofNullable(entry.getIptcCaption()).map(s -> tr("\nCaption: {0}", s)).ifPresent(osd::append);

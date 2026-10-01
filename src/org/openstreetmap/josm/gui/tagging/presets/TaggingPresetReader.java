@@ -370,6 +370,7 @@ public final class TaggingPresetReader {
      * @throws SAXException if any XML error occurs
      * @throws IOException if any I/O error occurs
      */
+    @SuppressWarnings("PMD.UseTryWithResources") // zip.a/zip.b are closed via Utils.close(), which swallows IOException
     static Collection<TaggingPreset> readAll(String source, boolean validate, HashSetWithLast<TaggingPreset> all)
             throws SAXException, IOException {
         Collection<TaggingPreset> tp;

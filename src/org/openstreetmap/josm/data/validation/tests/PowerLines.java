@@ -101,7 +101,7 @@ public class PowerLines extends Test {
 
     @Override
     public void visit(Node n) {
-        if (!n.isConnectionNode() || n.referrers(Way.class).noneMatch(w -> isPowerLineOrCable(w)))
+        if (!n.isConnectionNode() || n.referrers(Way.class).noneMatch(PowerLines::isPowerLineOrCable))
             return;
 
         List<Way> unrelatedParents = n.referrers(Way.class).filter(w -> !isPowerLineOrCable(w) && !isRelatedToPower(w))

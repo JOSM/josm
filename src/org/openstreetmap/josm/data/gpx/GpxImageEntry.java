@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -349,12 +348,6 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         else if (timeSource == TimeSource.EXIFCAMTIME)
             return getExifInstant();
         return null;
-    }
-
-    private static Date getDefensiveDate(Instant date) {
-        if (date == null)
-            return null;
-        return Date.from(date);
     }
 
     @Override

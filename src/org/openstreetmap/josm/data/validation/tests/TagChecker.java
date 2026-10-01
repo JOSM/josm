@@ -1023,7 +1023,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .build());
             withErrors.put(p, "LV");
         }
-        if (value.trim().isEmpty() && !withErrors.contains(p, "EV")) {
+        if (value.isBlank() && !withErrors.contains(p, "EV")) {
             errors.add(TestError.builder(this, Severity.WARNING, EMPTY_VALUES)
                     .message(tr("Tags with empty values"), s, key)
                     .primitives(p)

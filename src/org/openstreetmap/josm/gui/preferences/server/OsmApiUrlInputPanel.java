@@ -232,14 +232,14 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         @Override
         public boolean isValid() {
-            if (getComponent().getText().trim().isEmpty())
+            if (getComponent().getText().isBlank())
                 return false;
             return Utils.isValidUrl(getComponent().getText().trim());
         }
 
         @Override
         public void validate() {
-            if (getComponent().getText().trim().isEmpty()) {
+            if (getComponent().getText().isBlank()) {
                 feedbackInvalid(tr("OSM API URL must not be empty. Please enter the OSM API URL."));
                 return;
             }

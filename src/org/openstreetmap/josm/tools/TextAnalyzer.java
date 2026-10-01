@@ -78,7 +78,7 @@ public class TextAnalyzer {
             } else if (c == '\\') {
                 esc = true;
             } else if (c == '\"' && !quotesStarted) { // opening "
-                if (!s.toString().trim().isEmpty()) { // we had   ||some text"||
+                if (!s.toString().isBlank()) { // we had   ||some text"||
                     s.append(c); // just add ", not open
                 } else {
                     s.delete(0, s.length()); // forget that empty characters and start reading "....

@@ -26,7 +26,7 @@ public class DefaultTextComponentValidator extends AbstractTextComponentValidato
 
     @Override
     public boolean isValid() {
-        return !getComponent().getText().trim().isEmpty();
+        return !getComponent().getText().isBlank();
     }
 
     @Override

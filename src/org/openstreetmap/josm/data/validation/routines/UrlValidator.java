@@ -424,7 +424,7 @@ public class UrlValidator extends AbstractValidator {
             }
         }
 
-        return Optional.ofNullable(authorityMatcher.group(PARSE_AUTHORITY_EXTRA)).orElse("").trim().isEmpty();
+        return Optional.ofNullable(authorityMatcher.group(PARSE_AUTHORITY_EXTRA)).orElse("").isBlank();
     }
 
     /**

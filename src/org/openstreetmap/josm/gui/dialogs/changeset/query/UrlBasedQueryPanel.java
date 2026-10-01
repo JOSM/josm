@@ -203,7 +203,7 @@ public class UrlBasedQueryPanel extends JPanel {
 
         protected void validate() {
             String value = tfUrl.getText();
-            if (value.trim().isEmpty()) {
+            if (value.isBlank()) {
                 feedbackNone();
                 return;
             }

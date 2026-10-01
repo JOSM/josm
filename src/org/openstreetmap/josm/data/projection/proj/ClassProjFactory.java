@@ -20,7 +20,7 @@ public class ClassProjFactory implements ProjFactory {
 
     @Override
     public Proj createInstance() {
-        Proj proj = null;
+        Proj proj;
         try {
             proj = projClass.getConstructor().newInstance();
         } catch (ReflectiveOperationException e) {

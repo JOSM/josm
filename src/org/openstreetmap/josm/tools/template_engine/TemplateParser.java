@@ -80,7 +80,7 @@ public class TemplateParser {
 
     private void skipWhitespace() throws ParseError {
         Token token = tokenizer.lookAhead();
-        if (token.getType() == TokenType.TEXT && token.getText().trim().isEmpty()) {
+        if (token.getType() == TokenType.TEXT && token.getText().isBlank()) {
             tokenizer.nextToken();
         }
     }

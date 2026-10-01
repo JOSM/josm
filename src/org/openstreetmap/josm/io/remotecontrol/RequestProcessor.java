@@ -336,7 +336,7 @@ public class RequestProcessor extends Thread {
                 handler.setSender(sender);
                 handler.handle();
                 sendHeader(out, "200 OK", handler.getContentType(), false);
-                out.write("Content-length: " + handler.getContent().getBytes().length
+                out.write("Content-length: " + handler.getContent().getBytes(RESPONSE_CHARSET).length
                         + "\r\n");
                 out.write("\r\n");
                 out.write(handler.getContent());

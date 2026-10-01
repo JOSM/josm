@@ -286,6 +286,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @throws IOException if any I/O error occurs
      * @since 18365 (public, primarily for ValidatorCLI)
      */
+    @SuppressWarnings("PMD.UseTryWithResources") // zip.a is closed via Utils.close(), which swallows IOException
     public synchronized ParseResult addMapCSS(String url, Consumer<String> assertionConsumer) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         ParseResult result;

@@ -48,7 +48,7 @@ public class AutoFilterRule {
 
     private IntFunction<String> valueFormatter = Integer::toString;
 
-    private boolean noValueFilter = false;
+    private boolean noValueFilter;
 
     /** The union of {@link #key} and the keys provided by {@link #setExtraKeys(List)}. */
     private List<String> allKeys;

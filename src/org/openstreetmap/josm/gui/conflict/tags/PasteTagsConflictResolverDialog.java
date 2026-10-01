@@ -17,7 +17,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -164,8 +163,8 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
             Map<OsmPrimitiveType, Integer> targetStatistics) {
         mode = Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY;
         tagsForAllPrimitives = tagsForAllPrimitives == null ? new TagCollection() : tagsForAllPrimitives;
-        sourceStatistics = sourceStatistics == null ? new HashMap<>() : sourceStatistics;
-        targetStatistics = targetStatistics == null ? new HashMap<>() : targetStatistics;
+        sourceStatistics = sourceStatistics == null ? new EnumMap<>(OsmPrimitiveType.class) : sourceStatistics;
+        targetStatistics = targetStatistics == null ? new EnumMap<>(OsmPrimitiveType.class) : targetStatistics;
 
         // init the resolver
         //

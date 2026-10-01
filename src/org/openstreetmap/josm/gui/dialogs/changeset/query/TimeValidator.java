@@ -43,7 +43,7 @@ public class TimeValidator extends AbstractTextComponentValidator {
 
     @Override
     public boolean isValid() {
-        if (getComponent().getText().trim().isEmpty())
+        if (getComponent().getText().isBlank())
             return true;
         return getTime() != null;
     }
@@ -91,7 +91,7 @@ public class TimeValidator extends AbstractTextComponentValidator {
      * @return the time
      */
     public LocalTime getTime() {
-        if (getComponent().getText().trim().isEmpty())
+        if (getComponent().getText().isBlank())
             return LocalTime.MIDNIGHT;
 
         for (final FormatStyle format: FormatStyle.values()) {

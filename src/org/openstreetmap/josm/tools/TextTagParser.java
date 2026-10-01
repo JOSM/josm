@@ -58,7 +58,7 @@ public final class TextTagParser {
         String k;
         String v;
         for (String line: lines) {
-            if (line.trim().isEmpty()) continue; // skip empty lines
+            if (line.isBlank()) continue; // skip empty lines
             Matcher m = p.matcher(line);
             if (m.matches()) {
                  k = Utils.removeWhiteSpaces(m.group(1));

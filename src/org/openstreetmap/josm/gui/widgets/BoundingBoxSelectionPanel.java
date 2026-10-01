@@ -145,7 +145,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
 
         @Override
         public void validate() {
-            double value = 0;
+            double value;
             try {
                 value = JosmDecimalFormatSymbolsProvider.parseDouble(getComponent().getText());
             } catch (NumberFormatException ex) {
@@ -183,7 +183,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
 
         @Override
         public void validate() {
-            double value = 0;
+            double value;
             try {
                 value = JosmDecimalFormatSymbolsProvider.parseDouble(getComponent().getText());
             } catch (NumberFormatException ex) {

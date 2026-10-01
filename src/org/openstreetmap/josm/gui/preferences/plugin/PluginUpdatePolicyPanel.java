@@ -202,7 +202,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
         // remember update interval
         //
-        int days = 0;
+        int days;
         try {
             days = Integer.parseInt(tfUpdateInterval.getText().trim());
             if (days <= 0) {

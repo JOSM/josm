@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -233,7 +234,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 ds.getNodes().stream().filter(n -> bounds.stream().anyMatch(b -> b.contains(n)))
                         .forEach(i -> i.setReferrersDownloaded(true));
                 ds.getWays().forEach(i -> i.setReferrersDownloaded(true));
-                ds.getRelations().stream().filter(r -> r.getMembers().stream().noneMatch(rm -> rm.isRelation()))
+                ds.getRelations().stream().filter(r -> r.getMembers().stream().noneMatch(RelationMember::isRelation))
                         .forEach(i -> i.setReferrersDownloaded(true));
             }
             return ds;

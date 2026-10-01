@@ -399,9 +399,9 @@ public class CredentialDialog extends JDialog {
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                if (currentTF.getText().trim().isEmpty()) {
+                if (currentTF.getText().isBlank()) {
                     currentTF.selectAll();
-                } else if (nextTF.getText().trim().isEmpty()) {
+                } else if (nextTF.getText().isBlank()) {
                     nextTF.requestFocusInWindow();
                     nextTF.selectAll();
                 } else {

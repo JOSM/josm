@@ -338,7 +338,6 @@ public class TagEditHelper {
     /**
      * Extracted interface of {@link EditTagDialog}.
      */
-    @SuppressWarnings("PMD.ImplicitFunctionalInterface")
     protected interface IEditTagDialog extends IExtendedDialog {
         /**
          * Edit tags of multiple selected objects according to selected ComboBox values

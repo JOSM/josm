@@ -1418,7 +1418,7 @@ public abstract class SourceEditor extends JPanel {
                 ExtendedSourceEntry last = null;
 
                 while ((line = reader.readLine()) != null && !canceled) {
-                    if (line.trim().isEmpty()) {
+                    if (line.isBlank()) {
                         continue; // skip empty lines
                     }
                     if (line.startsWith("\t")) {

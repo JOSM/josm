@@ -173,7 +173,7 @@ public class JumpToAction extends JosmAction {
             final int option = new JumpToPositionDialog(buttons, panel).showDialog().getValue();
 
             if (option != 1) return;
-            if (place.hasFocus() && !place.getText().trim().isEmpty()) {
+            if (place.hasFocus() && !place.getText().isBlank()) {
                 try {
                     List<NameFinder.SearchResult> searchResults = NameFinder.queryNominatim(place.getText());
                     if (!searchResults.isEmpty()) {

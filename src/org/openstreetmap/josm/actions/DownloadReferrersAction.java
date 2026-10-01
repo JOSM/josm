@@ -69,7 +69,7 @@ public class DownloadReferrersAction extends JosmAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         updateEnabledStateOnModifiableSelection(selection);
         if (isEnabled() && !Utils.isEmpty(selection)
-                && DownloadPolicy.BLOCKED.equals(selection.iterator().next().getDataSet().getDownloadPolicy())) {
+                && selection.iterator().next().getDataSet().getDownloadPolicy() == DownloadPolicy.BLOCKED) {
             setEnabled(false);
         }
     }
