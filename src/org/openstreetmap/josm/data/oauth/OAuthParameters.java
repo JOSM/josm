@@ -262,7 +262,9 @@ public final class OAuthParameters {
                 if (remembered != null) {
                     return remembered;
                 }
-                return createDefault(apiUrl, oAuthVersion);
+                // Use the URL as it was given: apiUrl is the host by now, which is never a valid URL, so
+                // createDefault() would silently fall back to the API currently configured in the preferences.
+                return createDefault(originalApiUrl, oAuthVersion);
             default:
                 throw new IllegalArgumentException("Unknown OAuth version: " + oAuthVersion);
         }

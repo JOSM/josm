@@ -33,6 +33,7 @@ import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Base class that handles common things like authentication for the reader and writer
@@ -146,6 +147,14 @@ public class OsmConnection {
      * @throws MissingOAuthAccessTokenException if the process cannot be completed successfully
      */
     private void obtainOAuth20Token() throws MissingOAuthAccessTokenException {
+        if (Utils.isEmpty(this.oAuth20Parameters.getClientId())) {
+            // Without a client id the authorization request is rejected by the server with "Missing required
+            // parameter: client_id", so do not send the user to the browser at all. The message of the exception
+            // is for the log only; what the user is shown already points at the preferences, which is where the
+            // client id of an OAuth application registered on this server has to be entered.
+            throw new MissingOAuthAccessTokenException(
+                    "No OAuth client id for " + OsmApi.getOsmApi().getServerUrl() + ", cannot request a token");
+        }
         if (!Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
                 ConditionalOptionPaneUtil.showConfirmationDialog("oauth.oauth20.obtain.automatically",
                     MainApplication.getMainFrame(),
@@ -200,7 +209,10 @@ public class OsmConnection {
      */
     protected void addOAuth20AuthorizationHeader(HttpClient connection) throws OsmTransferException {
         if (this.oAuth20Parameters == null) {
-            this.oAuth20Parameters = OAuthParameters.createFromApiUrl(connection.getURL().getHost(), OAuthVersion.OAuth20);
+            // The parameters are stored under the API URL, so look them up with the API URL and not with the
+            // host of the request: OAuthParameters.createFromApiUrl() reduces it to the host itself where that
+            // is what it needs.
+            this.oAuth20Parameters = OAuthParameters.createFromApiUrl(OsmApi.getOsmApi().getServerUrl(), OAuthVersion.OAuth20);
         }
         OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
         IOAuthToken token = holder.getAccessToken(connection.getURL().toExternalForm(), OAuthVersion.OAuth20);
