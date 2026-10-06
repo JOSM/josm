@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.util.Objects;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -13,6 +14,8 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * A Notification Message similar to a popup window, but without disrupting the
@@ -129,12 +132,19 @@ public class Notification {
 
     /**
      * Set an icon to display on the left part of the message window.
+     * <p>
+     * Icons larger than {@link ImageSizes#NOTIFICATION} are scaled down.
      *
      * @param icon the icon (null means no icon is displayed)
      * @return the current Object, for convenience
      */
     public Notification setIcon(Icon icon) {
-        this.icon = icon;
+        if (icon instanceof ImageIcon && (icon.getIconWidth() > ImageSizes.NOTIFICATION.getAdjustedWidth()
+                || icon.getIconHeight() > ImageSizes.NOTIFICATION.getAdjustedHeight())) {
+            this.icon = new ImageResource(((ImageIcon) icon).getImage()).getImageIconBounded(ImageSizes.NOTIFICATION.getImageDimension());
+        } else {
+            this.icon = icon;
+        }
         return this;
     }
 

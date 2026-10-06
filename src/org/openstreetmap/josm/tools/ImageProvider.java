@@ -182,7 +182,12 @@ public class ImageProvider {
          * HTML inline image
          * @since 16872
          */
-        HTMLINLINE(24, 24);
+        HTMLINLINE(24, 24),
+        /**
+         * Notification icon maximum size
+         * @since 19643
+         */
+        NOTIFICATION(Config.getPref().getInt("iconsize.notification", 32));
 
         private final int virtualWidth;
         private final int virtualHeight;
