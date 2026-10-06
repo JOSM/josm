@@ -30,6 +30,7 @@ import javax.swing.event.MenuListener;
 
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AddNodeAction;
+import org.openstreetmap.josm.actions.AlignGridRotationAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -100,6 +101,8 @@ import org.openstreetmap.josm.actions.SelectNonBranchingWaySequencesAction;
 import org.openstreetmap.josm.actions.SelectSharedChildObjectsAction;
 import org.openstreetmap.josm.actions.SessionSaveAction;
 import org.openstreetmap.josm.actions.SessionSaveAsAction;
+import org.openstreetmap.josm.actions.SetGridOriginAction;
+import org.openstreetmap.josm.actions.ShowGridAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
@@ -135,6 +138,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.geoimage.WikimediaCommonsLoader.WikimediaCommonsLoadImagesAction;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
+import org.openstreetmap.josm.gui.preferences.display.GridPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -256,6 +260,14 @@ public class MainMenu extends JMenuBar {
     public final TiledRenderToggleAction tiledRenderToggleAction = new TiledRenderToggleAction();
     /** View / Hatch area outside download */
     public final DrawBoundariesOfDownloadedDataAction drawBoundariesOfDownloadedDataAction = new DrawBoundariesOfDownloadedDataAction();
+    /** View / Grid submenu: the grid drawn over the map and its placement */
+    public final JMenu gridMenu = new JMenu(tr("Grid"));
+    /** View / Grid / Show */
+    public final ShowGridAction showGridAction = new ShowGridAction();
+    /** View / Grid / Set origin to selection */
+    public final SetGridOriginAction setGridOriginAction = new SetGridOriginAction();
+    /** View / Grid / Align rotation to selection */
+    public final AlignGridRotationAction alignGridRotationAction = new AlignGridRotationAction();
     /** View / Advanced info */
     public final InfoAction info = new InfoAction();
     /** View / Advanced info (web) */
@@ -815,6 +827,15 @@ public class MainMenu extends JMenuBar {
         final JCheckBoxMenuItem hatchAreaOutsideDownloadMenuItem = drawBoundariesOfDownloadedDataAction.getCheckbox();
         viewMenu.add(hatchAreaOutsideDownloadMenuItem);
         ExpertToggleAction.addVisibilitySwitcher(hatchAreaOutsideDownloadMenuItem);
+        // -- Grid submenu
+        gridMenu.setIcon(ImageProvider.get("grid", ImageProvider.ImageSizes.MENU));
+        gridMenu.add(showGridAction.getCheckbox());
+        add(gridMenu, setGridOriginAction);
+        add(gridMenu, alignGridRotationAction);
+        gridMenu.addSeparator();
+        add(gridMenu, PreferencesAction.forPreferenceTab(tr("Grid preferences..."),
+                tr("Click to open the grid tab in the preferences"), GridPreference.class));
+        viewMenu.add(gridMenu);
 
         viewMenu.add(new MapPaintMenu());
         viewMenu.addSeparator();

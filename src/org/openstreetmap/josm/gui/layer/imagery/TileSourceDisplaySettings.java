@@ -45,6 +45,8 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
      */
     private static final String SHOW_ERRORS = "show-errors";
 
+    private static final String SHOW_TILE_BORDERS = "show-tile-borders";
+
     private static final String DISPLACEMENT = "displacement";
 
     private static final String PREFERENCE_PREFIX = "imagery.generic";
@@ -59,6 +61,14 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
      */
     public static final BooleanProperty PROP_AUTO_ZOOM = new BooleanProperty(PREFERENCE_PREFIX + ".default_autozoom", true);
 
+    /**
+     * The default tile borders property, remembered whenever the user toggles them, so that the choice also
+     * applies to layers created later and after a restart
+     * @since 19640
+     */
+    public static final BooleanProperty PROP_SHOW_TILE_BORDERS
+            = new BooleanProperty(PREFERENCE_PREFIX + ".default_showtileborders", false);
+
 
     /** if layers changes automatically, when user zooms in */
     private boolean autoZoom;
@@ -66,6 +76,8 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     private boolean autoLoad;
     /** if layer should show errors on tiles */
     private boolean showErrors;
+    /** if layer should draw a border around each tile */
+    private boolean showTileBorders;
 
     private OffsetBookmark previousOffsetBookmark;
     private OffsetBookmark offsetBookmark;
@@ -96,15 +108,15 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
         autoZoom = getProperty(prefixes, "default_autozoom", PROP_AUTO_ZOOM.getDefaultValue());
         autoLoad = getProperty(prefixes, "default_autoload", PROP_AUTO_LOAD.getDefaultValue());
         showErrors = getProperty(prefixes, "default_showerrors", Boolean.TRUE);
+        showTileBorders = getProperty(prefixes, "default_showtileborders", PROP_SHOW_TILE_BORDERS.getDefaultValue());
     }
 
     private static boolean getProperty(String[] prefixes, String name, Boolean def) {
-        // iterate through all values to force the preferences to receive the default value.
-        // we only support a default value of true.
-        boolean value = true;
+        // iterate through all values to force the preferences to receive the default value
+        boolean value = def;
         for (String p : prefixes) {
             String key = p + "." + name;
-            boolean currentValue = Config.getPref().getBoolean(key, true);
+            boolean currentValue = Config.getPref().getBoolean(key, def);
             if (!Config.getPref().get(key, def.toString()).isEmpty()) {
                 value = currentValue;
             }
@@ -167,6 +179,26 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     public void setShowErrors(boolean showErrors) {
         this.showErrors = showErrors;
         fireSettingsChange(SHOW_ERRORS);
+    }
+
+    /**
+     * If the layer should draw a thin border around each tile.
+     * @return <code>true</code> to draw tile borders.
+     * @since 19640
+     */
+    public boolean isShowTileBorders() {
+        return showTileBorders;
+    }
+
+    /**
+     * Sets the show tile borders property. Fires a change event.
+     * @param showTileBorders {@code true} if the layer should draw a thin border around each tile
+     * @see #isShowTileBorders()
+     * @since 19640
+     */
+    public void setShowTileBorders(boolean showTileBorders) {
+        this.showTileBorders = showTileBorders;
+        fireSettingsChange(SHOW_TILE_BORDERS);
     }
 
     /**
@@ -289,6 +321,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
         data.put(AUTO_LOAD, Boolean.toString(autoLoad));
         data.put(AUTO_ZOOM, Boolean.toString(autoZoom));
         data.put(SHOW_ERRORS, Boolean.toString(showErrors));
+        data.put(SHOW_TILE_BORDERS, Boolean.toString(showTileBorders));
         return data;
     }
 
@@ -316,6 +349,11 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
             if (doShowErrors != null) {
                 setShowErrors(Boolean.parseBoolean(doShowErrors));
             }
+
+            String doShowTileBorders = data.get(SHOW_TILE_BORDERS);
+            if (doShowTileBorders != null) {
+                setShowTileBorders(Boolean.parseBoolean(doShowTileBorders));
+            }
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("data", data);
         }
@@ -323,7 +361,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
 
     @Override
     public int hashCode() {
-        return Objects.hash(autoLoad, autoZoom, showErrors);
+        return Objects.hash(autoLoad, autoZoom, showErrors, showTileBorders);
     }
 
     @Override
@@ -335,13 +373,14 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
         TileSourceDisplaySettings other = (TileSourceDisplaySettings) obj;
         return autoLoad == other.autoLoad
             && autoZoom == other.autoZoom
-            && showErrors == other.showErrors;
+            && showErrors == other.showErrors
+            && showTileBorders == other.showTileBorders;
     }
 
     @Override
     public String toString() {
         return "TileSourceDisplaySettings [autoZoom=" + autoZoom + ", autoLoad=" + autoLoad + ", showErrors="
-                + showErrors + ']';
+                + showErrors + ", showTileBorders=" + showTileBorders + ']';
     }
 
     /**

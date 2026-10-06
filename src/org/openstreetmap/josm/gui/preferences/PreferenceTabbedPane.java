@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.preferences.display.ColorPreference;
 import org.openstreetmap.josm.gui.preferences.display.DisplayPreference;
 import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
 import org.openstreetmap.josm.gui.preferences.display.GPXPreference;
+import org.openstreetmap.josm.gui.preferences.display.GridPreference;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.display.LanguagePreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
@@ -610,6 +611,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         SETTINGS_FACTORIES.add(new ServerAccessPreference.Factory());
         SETTINGS_FACTORIES.add(new ProxyPreference.Factory());
         SETTINGS_FACTORIES.add(new ProjectionPreference.Factory());
+        SETTINGS_FACTORIES.add(new GridPreference.Factory());
         SETTINGS_FACTORIES.add(new MapPaintPreference.Factory());
         SETTINGS_FACTORIES.add(new TaggingPresetPreference.Factory());
         SETTINGS_FACTORIES.add(new BackupPreference.Factory());

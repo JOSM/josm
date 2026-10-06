@@ -73,6 +73,7 @@ import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MapGridPaintable;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -122,6 +123,8 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * The view control displayed.
      */
     public final MapView mapView;
+    /** The grid drawn over the map view, see {@link MapGridPaintable} */
+    private final MapGridPaintable gridOverlay = new MapGridPaintable();
 
     /**
      * This object allows to detect key press and release events
@@ -204,6 +207,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         setLayout(new BorderLayout());
 
         mapView = new MapView(MainApplication.getLayerManager(), viewportData);
+        mapView.addTemporaryLayer(gridOverlay);
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 
@@ -366,6 +370,8 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         toolBarToggle.removeAll();
 
         statusLine.destroy();
+        mapView.removeTemporaryLayer(gridOverlay);
+        gridOverlay.destroy();
         mapView.destroy();
         keyDetector.unregister();
 

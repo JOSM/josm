@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect x="2.5" y="2.5" width="19" height="19" rx="1.5" fill="#f4f4f4" stroke="#606060"/>
+  <path d="M12 2.5v19M2.5 12h19" fill="none" stroke="#3d7ac2"/>
+  <rect x="9" y="9" width="6" height="6" fill="#ffffff" stroke="#df421e" stroke-width="2"/><!-- origin at a grid crossing -->
+</svg>

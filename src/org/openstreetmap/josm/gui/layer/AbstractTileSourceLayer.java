@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -15,6 +16,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Shape;
 import java.awt.Toolkit;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -93,6 +95,7 @@ import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -116,6 +119,7 @@ import org.openstreetmap.josm.gui.layer.imagery.LoadErroneousTilesAction;
 import org.openstreetmap.josm.gui.layer.imagery.MVTLayer;
 import org.openstreetmap.josm.gui.layer.imagery.ReprojectionTile;
 import org.openstreetmap.josm.gui.layer.imagery.ShowErrorsAction;
+import org.openstreetmap.josm.gui.layer.imagery.ShowTileBordersAction;
 import org.openstreetmap.josm.gui.layer.imagery.TileAnchor;
 import org.openstreetmap.josm.gui.layer.imagery.TileCoordinateConverter;
 import org.openstreetmap.josm.gui.layer.imagery.TilePosition;
@@ -181,6 +185,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public static final IntegerProperty ZOOM_OFFSET = new IntegerProperty(PREFERENCE_PREFIX + ".zoom_offset", 0);
 
     private static final BooleanProperty POPUP_MENU_ENABLED = new BooleanProperty(PREFERENCE_PREFIX + ".popupmenu", true);
+    /** Color of the border drawn around each tile if enabled, see {@link TileSourceDisplaySettings#isShowTileBorders()} */
+    private static final NamedColorProperty TILE_BORDER_COLOR = new NamedColorProperty(marktr("imagery tile border"), new Color(0, 0, 0, 96));
+    private static final Stroke TILE_BORDER_STROKE = new BasicStroke(1f);
     private static final String ERROR_STRING = marktr("Error");
 
     /*
@@ -1226,7 +1233,16 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             //texty += 1 + fontHeight;
         }
 
-        if (Logging.isDebugEnabled()) {
+        if (getDisplaySettings().isShowTileBorders()) {
+            // draw a thin border around the tile
+            Color oldColor = g.getColor();
+            Stroke oldStroke = g.getStroke();
+            g.setColor(TILE_BORDER_COLOR.get());
+            g.setStroke(TILE_BORDER_STROKE);
+            g.draw(coordinateConverter.getTileShapeScreen(tile));
+            g.setStroke(oldStroke);
+            g.setColor(oldColor);
+        } else if (Logging.isDebugEnabled()) {
             // draw tile outline in semi-transparent red
             g.setColor(new Color(255, 0, 0, 50));
             g.draw(coordinateConverter.getTileShapeScreen(tile));
@@ -1853,6 +1869,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             new AutoLoadTilesAction(this),
             new AutoZoomAction(this),
             new ShowErrorsAction(this),
+            new ShowTileBordersAction(this),
             new IncreaseZoomAction(this),
             new DecreaseZoomAction(this),
             new ZoomToBestAction(this),
