@@ -31,6 +31,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportQueue.SuppressionMode;
 import org.openstreetmap.josm.tools.bugreport.BugReportSender;
@@ -45,6 +46,8 @@ import org.openstreetmap.josm.tools.bugreport.ReportedException;
  */
 public class BugReportDialog extends JDialog {
     private static final int MAX_MESSAGE_SIZE = 500;
+    /** whether the user has been told about file names that cannot be represented, which is done once per session */
+    private static volatile boolean unmappableFileNameExplained;
     // This is explicitly not an ExtendedDialog - we still want to be able to display bug reports if there are problems with preferences/..
     private final JPanel content = new JPanel(new GridBagLayout());
     private final BugReport report;
@@ -227,6 +230,22 @@ public class BugReportDialog extends JDialog {
                     "Error",
                     JOptionPane.ERROR_MESSAGE
                     );
+            return SuppressionMode.NONE;
+        } else if (e.isUnmappableFileName()) {
+            // Not a bug in JOSM, but a locale which cannot represent the name of a file, see #14596. Explain how to
+            // fix it rather than asking for a bug report, and only once: browsing other folders throws it again.
+            if (!unmappableFileNameExplained) {
+                unmappableFileNameExplained = true;
+                GuiHelper.runInEDTAndWait(() -> JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                        tr("<html>JOSM cannot handle the name of a file, because it is running with the character set {0} "
+                                + "for file names, which cannot represent it.<br>"
+                                + "This happens when JOSM is started without a UTF-8 locale, for example with {1}, "
+                                + "or with a locale which is not installed.<br><br>"
+                                + "Please start JOSM with the environment variable {2}.</html>",
+                                Utils.getSystemProperty("sun.jnu.encoding"), "<tt>LANG=C</tt>", "<tt>LC_ALL=C.UTF-8</tt>"),
+                        tr("Unsupported file name"),
+                        JOptionPane.WARNING_MESSAGE));
+            }
             return SuppressionMode.NONE;
         } else {
             PluginDownloadTask downloadTask = PluginHandler.updateOrdisablePluginAfterException(e);

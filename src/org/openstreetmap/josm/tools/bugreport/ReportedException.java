@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools.bugreport;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import java.util.function.Supplier;
 
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.StreamUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a special exception that cannot be directly thrown.
@@ -275,6 +277,20 @@ public class ReportedException extends RuntimeException {
      */
     public boolean isOutOfMemory() {
         return StreamUtils.toStream(CauseTraceIterator::new).anyMatch(OutOfMemoryError.class::isInstance);
+    }
+
+    /**
+     * Check if this is caused by the name of a file which cannot be represented in the character set Java uses for
+     * file names. Java takes that character set from the locale, so this happens when JOSM runs in the C/POSIX locale,
+     * or with a locale which is not installed: file names are then ASCII only, and opening a folder which holds a
+     * non-ASCII name fails. See #14596.
+     * @return <code>true</code> if it is.
+     * @since 19637
+     */
+    public boolean isUnmappableFileName() {
+        return !"UTF-8".equalsIgnoreCase(Utils.getSystemProperty("sun.jnu.encoding"))
+                && StreamUtils.toStream(CauseTraceIterator::new).anyMatch(t -> t instanceof InvalidPathException
+                        && String.valueOf(((InvalidPathException) t).getReason()).contains("unmappable characters"));
     }
 
     /**

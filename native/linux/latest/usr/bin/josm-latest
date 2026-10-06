@@ -59,6 +59,19 @@ if [ -f "/etc/default/${JOSM_VERSION}" ]; then
     . "/etc/default/${JOSM_VERSION}"
 fi
 
+# Java decodes file names with the character set of the locale, and -Dsun.jnu.encoding
+# cannot override it. If the locale is C/POSIX, or cannot be set at all - typically a
+# UTF-8 LANG whose locale is not installed, as in a Flatpak sandbox - file names are
+# decoded as ASCII and opening a folder that holds a non-ASCII name fails with
+# InvalidPathException. Fall back to C.UTF-8 then, which is built into glibc 2.35 and
+# later. This does not change the language of JOSM: when the locale cannot be set, Java
+# already falls back to English. LC_ALL is needed, as setlocale() fails as a whole if
+# any category names a locale that is not installed.
+if { [ -n "$(locale 2>&1 >/dev/null)" ] || [ "$(locale charmap 2>/dev/null)" = "ANSI_X3.4-1968" ]; } \
+        && [ -z "$(LC_ALL=C.UTF-8 locale 2>&1 >/dev/null)" ]; then
+    export LC_ALL=C.UTF-8
+fi
+
 # If there is more than 8G ram, we can use up to 75% of the memory while still leaving 2G for other things.
 if [ "$(LC_ALL=C LANG=C free --mega | grep '^Mem:' | awk '{print $2}')" -gt 8192 ]; then
     # But don't set anything if JAVA_OPTS is already set.

@@ -2,7 +2,10 @@
 package org.openstreetmap.josm.tools.bugreport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -58,6 +61,31 @@ class ReportedExceptionTest {
         e.put("testObject", o);
         e.put("testArray", a);
         e.put("testList", Arrays.asList(a));
+    }
+
+    /**
+     * Tests {@link ReportedException#isUnmappableFileName()}: a file name which the character set used for file names
+     * cannot represent is recognised, also as the cause of another exception, but only if that character set is not
+     * UTF-8 - otherwise the locale is not to blame. See #14596.
+     */
+    @Test
+    void testIsUnmappableFileName() {
+        // the exception sun.nio.fs.UnixPath throws for "Capture d'écran.png" when the locale is C or not installed
+        InvalidPathException unmappable = new InvalidPathException("/home/user/Capture d'\u00e9cran.png",
+                "Malformed input or input contains unmappable characters");
+        String jnuEncoding = System.getProperty("sun.jnu.encoding");
+        try {
+            System.setProperty("sun.jnu.encoding", "ANSI_X3.4-1968");
+            assertTrue(new ReportedException(unmappable).isUnmappableFileName());
+            assertTrue(new ReportedException(new IllegalStateException(unmappable)).isUnmappableFileName());
+            assertFalse(new ReportedException(new InvalidPathException("a\0b", "Nul character not allowed")).isUnmappableFileName());
+            assertFalse(new ReportedException(new IllegalStateException()).isUnmappableFileName());
+
+            System.setProperty("sun.jnu.encoding", "UTF-8");
+            assertFalse(new ReportedException(unmappable).isUnmappableFileName());
+        } finally {
+            System.setProperty("sun.jnu.encoding", jnuEncoding);
+        }
     }
 
     /**
