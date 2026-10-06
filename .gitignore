@@ -17,3 +17,16 @@
 /resources/data/projection/
 /src/org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/
 /tools/ivy/
+# Ivy-retrieved libraries for the IDE (ant bootstrap-workspace)
+/lib/
+# Maven shade plugin output
+/dependency-reduced-pom.xml
+# Ant build outputs (see build.xml: test-compile, call-junit, test-init)
+/test/build/
+/test/report/
+/test/lib/
+/test/config/functional-josm.home/
+/test/config/performance-josm.home/
+/test/config/unit-josm.home/
+/tools/jacocoant.jar
+/tools/pmd/cache
