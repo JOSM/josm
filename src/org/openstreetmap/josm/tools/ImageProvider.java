@@ -82,6 +82,7 @@ import com.github.weisj.jsvg.SVGDocument;
 import com.github.weisj.jsvg.parser.DocumentLimits;
 import com.github.weisj.jsvg.parser.LoaderContext;
 import com.github.weisj.jsvg.parser.SVGLoader;
+import com.github.weisj.jsvg.renderer.SVGRenderingHints;
 
 /**
  * Helper class to support the application with images.
@@ -1477,6 +1478,11 @@ public class ImageProvider {
             return null;
         }
         return resizeMode.createBufferedImage(dim, new Dimension((int) sourceWidth, (int) sourceHeight), g -> {
+            // jsvg clips through Graphics2D#clip by default, which is not antialiased (jagged edges, see #18131).
+            // Soft clipping avoids that, but needs accurate mask/clip rendering, otherwise the clip is applied as a
+            // paint that the clipped elements' own paints override and parts of the image go missing.
+            g.setRenderingHint(SVGRenderingHints.KEY_SOFT_CLIPPING, SVGRenderingHints.VALUE_SOFT_CLIPPING_ON);
+            g.setRenderingHint(SVGRenderingHints.KEY_MASK_CLIP_RENDERING, SVGRenderingHints.VALUE_MASK_CLIP_RENDERING_ACCURACY);
             svg.render(null, g);
         }, null);
     }

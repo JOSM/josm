@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.testutils.ImageTestUtils.assertImageEquals;
 
 import java.awt.Dimension;
@@ -128,6 +129,39 @@ class ImageProviderTest {
         Node node = new Node(LatLon.ZERO);
         node.put("amenity", "fuel");
         assertDoesNotThrow(() -> OsmPrimitiveImageProvider.getResource(node, Collections.emptyList()));
+    }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/18131">#18131</a>
+     * <p>
+     * The JOSM logo is assembled from clipped paths. Unless the SVG renderer clips with antialiasing,
+     * the outline of the logo shows jagged steps.
+     */
+    @Test
+    void testTicket18131() {
+        ImageIcon icon = new ImageProvider("logo").setSize(new Dimension(256, 256)).get();
+        assertNotNull(icon);
+        BufferedImage image = (BufferedImage) icon.getImage();
+        // For every column, look at the topmost visible pixel: a fully opaque one means a hard, aliased edge
+        int opaqueEdges = 0;
+        int blendedEdges = 0;
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                int alpha = image.getRGB(x, y) >>> 24;
+                if (alpha == 0) {
+                    continue;
+                }
+                if (alpha == 0xff) {
+                    opaqueEdges++;
+                } else {
+                    blendedEdges++;
+                }
+                break;
+            }
+        }
+        assertTrue(opaqueEdges * 4 < blendedEdges,
+                "expected an antialiased logo outline, but found " + opaqueEdges + " aliased and "
+                        + blendedEdges + " antialiased edge pixels");
     }
 
     /**
