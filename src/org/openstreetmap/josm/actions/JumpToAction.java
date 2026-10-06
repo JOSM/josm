@@ -147,7 +147,7 @@ public class JumpToAction extends JosmAction {
         SelectAllOnFocusGainedDecorator.decorate(url);
 
         JPanel p = new JPanel(new GridBagLayout());
-        panel.add(p, BorderLayout.NORTH);
+        panel.add(p, BorderLayout.CENTER);
 
         p.add(new JLabel(tr("Enter a place name to search for")), GBC.eol());
         p.add(place, GBC.eol().fill(GBC.HORIZONTAL));
