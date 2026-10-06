@@ -169,8 +169,8 @@ There are some third party libraries which are directly included in the source c
 * Apache commons validator: Improved validator routines
     src/org/openstreetmap/josm/data/validation/routines
     -> http://commons.apache.org/proper/commons-validator
-* SVG Salamander: Support for SVG image format
-    -> https://github.com/blackears/svgSalamander
+* JSVG: Support for SVG image format
+    -> https://github.com/weisJ/jsvg
 * Metadata Extractor: Read EXIF Metadata of photos
     -> https://github.com/drewnoakes/metadata-extractor
 * MultiSplitPane: Small lib for GUI layout management
