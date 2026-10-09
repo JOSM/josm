@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,10 +138,12 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
 
     private synchronized void updateButtons() {
         MapFrame map = MainApplication.getMap();
-        if (enabledRule != null && map != null
+        // The active data set is null while the data layer is uploaded, keep the buttons as they are
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+        if (enabledRule != null && map != null && ds != null
                 && enabledRule.getMinZoomLevel() <= Selector.GeneralSelector.scale2level(map.mapView.getDist100Pixel())) {
             // Retrieve the values from current rule visible on screen
-            NavigableSet<Integer> values = getNumericValues();
+            NavigableSet<Integer> values = getNumericValues(ds);
             // Make sure current auto filter buttons remain visible even if no data is found, to allow user to disable them
             for (AutoFilter currentAutoFilter : currentAutoFilters) {
                 if (currentAutoFilter.getFilter().value != null) {
@@ -323,11 +324,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         buttons.clear();
     }
 
-    private synchronized NavigableSet<Integer> getNumericValues() {
-        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-        if (ds == null) {
-            return Collections.emptyNavigableSet();
-        }
+    private synchronized NavigableSet<Integer> getNumericValues(DataSet ds) {
         BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
         NavigableSet<Integer> values = new TreeSet<>();
         for (List<? extends OsmPrimitive> primitiveList : List.of(ds.searchNodes(bbox), ds.searchWays(bbox), ds.searchRelations(bbox))) {
