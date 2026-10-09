@@ -64,7 +64,8 @@ public class OsmJsonReader extends AbstractReader {
     }
 
     private void parseRoot(JsonObject object) throws IllegalDataException {
-        parseVersion(object.get("version").toString());
+        JsonValue version = object.get("version");
+        parseVersion(version != null ? version.toString() : null);
         parseDownloadPolicy("download", object.getString("download", null));
         parseUploadPolicy("upload", object.getString("upload", null));
         parseLocked(object.getString("locked", null));

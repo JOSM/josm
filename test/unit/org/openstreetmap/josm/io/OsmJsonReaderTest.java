@@ -259,6 +259,20 @@ class OsmJsonReaderTest {
         assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
     }
 
+    /**
+     * Non-regression test for ticket #24927. GeoJSON served as {@code application/json} (e.g. by Postpass)
+     * must be reported as illegal data, not crash the reader.
+     */
+    @Test
+    void testTicket24927() {
+        byte[] geoJson = ("{\"type\": \"FeatureCollection\", \"features\": [{\"type\": \"Feature\", " +
+                "\"geometry\": {\"type\": \"Point\", \"coordinates\": [10.1, 20.2]}, " +
+                "\"properties\": {\"tags\": {\"fixme\": \"yes\"}}}]}").getBytes(StandardCharsets.UTF_8);
+        IllegalDataException exception = assertThrows(IllegalDataException.class,
+                () -> OsmJsonReader.parseDataSet(new ByteArrayInputStream(geoJson), NullProgressMonitor.INSTANCE));
+        assertEquals("Missing mandatory attribute 'version'.", exception.getMessage());
+    }
+
     static Stream<Arguments> testException() {
         final byte[] smallJson = "{\"type\", \"node\", \"id\": 1, \"lat\": 1.0, \"lon\": 2.0}".getBytes(StandardCharsets.UTF_8);
         return Stream.of(
