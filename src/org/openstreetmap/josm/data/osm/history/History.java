@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.history;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -264,6 +265,14 @@ public class History {
         if (isEmpty())
             return null;
         return sortDescending().versions.get(0);
+    }
+
+    /**
+     * Returns an immutable list of entries of this history.
+     * @return a list of historic primitive versions in this history
+     */
+    public List<HistoryOsmPrimitive> getAsList() {
+        return Collections.unmodifiableList(versions);
     }
 
     /**
