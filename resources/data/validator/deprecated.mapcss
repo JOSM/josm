@@ -2336,7 +2336,7 @@ way[shoulder=none] {
 
 /* #20421 */
 *[transformer=minor_distribution] {
-  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "transformer=distribution";
   group: tr("deprecated tagging");
   fixAdd: "transformer=distribution";
