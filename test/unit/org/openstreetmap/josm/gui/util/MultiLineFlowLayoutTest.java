@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
  * @author Michael Zangl
  */
 class MultiLineFlowLayoutTest {
-    private static final int TEST_WIDHT = 500;
+    private static final int TEST_WIDTH = 500;
     private JPanel container;
 
     /**
@@ -26,14 +26,14 @@ class MultiLineFlowLayoutTest {
     @BeforeEach
     public void setUp() {
         JPanel parent = new JPanel();
-        parent.setBounds(0, 0, TEST_WIDHT, 500);
+        parent.setBounds(0, 0, TEST_WIDTH, 500);
 
         container = new JPanel(new MultiLineFlowLayout(FlowLayout.CENTER, 0, 0));
         parent.add(container);
     }
 
     /**
-     * Test that one line is layed out correctly
+     * Test that one line is laid out correctly
      */
     @Test
     void testOneLine() {
@@ -41,11 +41,11 @@ class MultiLineFlowLayoutTest {
 
         container.invalidate();
         Dimension preferredSize = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(TEST_WIDTH, preferredSize.width);
         assertEquals(100, preferredSize.height);
 
         Dimension minimum = container.getMinimumSize();
-        assertEquals(TEST_WIDHT, minimum.width);
+        assertEquals(TEST_WIDTH, minimum.width);
         assertEquals(50, minimum.height);
     }
 
@@ -59,14 +59,14 @@ class MultiLineFlowLayoutTest {
         container.setBorder(BorderFactory.createEmptyBorder(3, 0, 7, 0));
         container.invalidate();
         Dimension preferredSize = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(TEST_WIDTH, preferredSize.width);
         assertEquals(110, preferredSize.height);
 
         // This should force wrapping
         container.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 40));
         container.invalidate();
         preferredSize = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(TEST_WIDTH, preferredSize.width);
         assertEquals(200, preferredSize.height);
     }
 
@@ -80,7 +80,7 @@ class MultiLineFlowLayoutTest {
         container.setLayout(new MultiLineFlowLayout(FlowLayout.LEADING, 20, 10));
         container.invalidate();
         Dimension preferredSize = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(TEST_WIDTH, preferredSize.width);
         assertEquals(230, preferredSize.height);
     }
 
