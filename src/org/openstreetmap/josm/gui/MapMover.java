@@ -101,6 +101,9 @@ public class MapMover extends MouseAdapter implements Destroyable {
                 case "down":
                     nc.zoomTo(new EastNorth(center.east(), newcenter.north()));
                     break;
+                case "center":
+                    Optional.ofNullable(nc.getMousePosition()).ifPresent(p -> nc.zoomTo(nc.getEastNorth(p.x, p.y))); 
+                    break;
                 default: // Do nothing
                 }
             }
@@ -143,6 +146,9 @@ public class MapMover extends MouseAdapter implements Destroyable {
                 Shortcut.registerShortcut("system:movefocusup", tr("Map: {0}", tr("Move up")), KeyEvent.VK_UP, Shortcut.CTRL));
         registerActionShortcut(new ZoomerAction("down"),
                 Shortcut.registerShortcut("system:movefocusdown", tr("Map: {0}", tr("Move down")), KeyEvent.VK_DOWN, Shortcut.CTRL));
+        registerActionShortcut(new ZoomerAction("center"),
+                Shortcut.registerShortcut("view:centeratmouse", tr("Map: {0}", tr("Center view at mouse position")),
+                KeyEvent.VK_HOME, Shortcut.CTRL));
 
         // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
         if (!PlatformManager.isPlatformOsx()) {
