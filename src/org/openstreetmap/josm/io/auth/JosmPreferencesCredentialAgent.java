@@ -134,7 +134,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             keySet.addAll(Config.getPref().getSensitive()); // Just in case we decide to not return sensitive keys in getKeySet
             // Assume we want to remove all access tokens
             for (OAuthVersion oauthType : OAuthVersion.values()) {
-                final String hostKey = "oauth.access-token.parameters." + oauthType + "." + host;
+                final String hostKey = "oauth.access-token.object." + oauthType + "." + host;
                 final String parametersKey = "oauth.access-token.parameters." + oauthType + "." + host;
                 if (keySet.contains(hostKey)) {
                     Config.getPref().removeSensitive(hostKey);
