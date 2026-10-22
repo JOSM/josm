@@ -124,7 +124,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      */
     public final MapView mapView;
     /** The grid drawn over the map view, see {@link MapGridPaintable} */
-    private final MapGridPaintable gridOverlay = new MapGridPaintable();
+    private final transient MapGridPaintable gridOverlay = new MapGridPaintable();
 
     /**
      * This object allows to detect key press and release events

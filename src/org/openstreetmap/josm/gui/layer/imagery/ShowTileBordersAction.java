@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
  */
 public class ShowTileBordersAction extends AbstractAction implements LayerAction {
 
-    private final AbstractTileSourceLayer<?> layer;
+    private final transient AbstractTileSourceLayer<?> layer;
 
     /**
      * Constructs a new {@code ShowTileBordersAction}.

@@ -26,6 +26,9 @@ import org.openstreetmap.josm.gui.layer.MapGridPaintable.GridType;
  */
 public class AlignGridRotationAction extends JosmAction {
 
+    /** returned when the selection does not define a direction */
+    private static final EastNorth[] EMPTY_DIRECTION = new EastNorth[0];
+
     /**
      * Constructs a new {@code AlignGridRotationAction}.
      */
@@ -39,11 +42,11 @@ public class AlignGridRotationAction extends JosmAction {
     /**
      * Determines the direction given by the selection: a single way with at least two nodes, or exactly two nodes.
      * @param ds the data set, may be null
-     * @return start and end point, or {@code null} if the selection does not define a direction
+     * @return start and end point, or an empty array if the selection does not define a direction
      */
     static EastNorth[] getSelectedDirection(DataSet ds) {
         if (ds == null) {
-            return null;
+            return EMPTY_DIRECTION;
         }
         Collection<Way> ways = ds.getSelectedWays();
         Collection<Node> nodes = ds.getSelectedNodes();
@@ -61,10 +64,10 @@ public class AlignGridRotationAction extends JosmAction {
             b = it.next();
         }
         if (a == null || b == null || !a.isLatLonKnown() || !b.isLatLonKnown()) {
-            return null;
+            return EMPTY_DIRECTION;
         }
         EastNorth[] result = {a.getEastNorth(), b.getEastNorth()};
-        return result[0].equalsEpsilon(result[1], 1e-9) ? null : result;
+        return result[0].equalsEpsilon(result[1], 1e-9) ? EMPTY_DIRECTION : result;
     }
 
     /**
@@ -85,7 +88,7 @@ public class AlignGridRotationAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getSelectedDirection(getLayerManager().getEditDataSet()) != null);
+        setEnabled(getSelectedDirection(getLayerManager().getEditDataSet()).length == 2);
     }
 
     @Override
@@ -96,7 +99,7 @@ public class AlignGridRotationAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         EastNorth[] direction = getSelectedDirection(getLayerManager().getEditDataSet());
-        if (direction == null) {
+        if (direction.length != 2) {
             return;
         }
         MapGridPaintable.ROTATION.put(rotationOf(direction[0], direction[1]));

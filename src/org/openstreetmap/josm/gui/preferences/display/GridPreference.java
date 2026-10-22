@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.display;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -100,7 +101,7 @@ public class GridPreference extends DefaultTabPreferenceSetting {
 
         panel.add(enabled, GBC.eol().insets(0, 0, 0, 10));
         panel.add(new JLabel(tr("Grid type")), GBC.std().insets(5, 0, 5, 5));
-        panel.add(type, GBC.eol().fill(GBC.HORIZONTAL).insets(0, 0, 0, 5));
+        panel.add(type, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
         panel.add(spacingXLabel, GBC.std().insets(5, 0, 5, 5));
         panel.add(spacingX, GBC.eol().insets(0, 0, 0, 5));
         panel.add(spacingYLabel, GBC.std().insets(5, 0, 5, 5));
@@ -116,8 +117,8 @@ public class GridPreference extends DefaultTabPreferenceSetting {
         panel.add(new JLabel(tr("Line width (pixels)")), GBC.std().insets(5, 0, 5, 5));
         panel.add(lineWidth, GBC.eol().insets(0, 0, 0, 5));
         panel.add(new JLabel(tr("Blend mode")), GBC.std().insets(5, 0, 5, 5));
-        panel.add(blendMode, GBC.eol().fill(GBC.HORIZONTAL).insets(0, 0, 0, 5));
-        panel.add(GBC.glue(0, 0), GBC.eol().fill(GBC.BOTH));
+        panel.add(blendMode, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
+        panel.add(GBC.glue(0, 0), GBC.eol().fill(GridBagConstraints.BOTH));
 
         createPreferenceTabWithScrollPane(gui, panel);
     }
@@ -142,7 +143,7 @@ public class GridPreference extends DefaultTabPreferenceSetting {
 
     /** Renders enum values with a translated name */
     private static final class TranslatedRenderer<T> extends DefaultListCellRenderer {
-        private final Function<T, String> name;
+        private final transient Function<T, String> name;
 
         TranslatedRenderer(Function<T, String> name) {
             this.name = name;
@@ -178,7 +179,7 @@ public class GridPreference extends DefaultTabPreferenceSetting {
     private static void save(JosmTextField field, DoubleProperty property, boolean positive) {
         try {
             double value = FORMAT.parse(field.getText().trim()).doubleValue();
-            if (positive && !(value > 0)) {
+            if (positive && (Double.isNaN(value) || value <= 0)) {
                 Logging.warn("Ignoring invalid grid setting {0}: {1}", property.getKey(), field.getText());
                 return;
             }

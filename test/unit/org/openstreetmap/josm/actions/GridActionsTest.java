@@ -164,14 +164,14 @@ class GridActionsTest {
             ds.addPrimitive(w);
 
             ds.setSelected();
-            assertNull(AlignGridRotationAction.getSelectedDirection(ds));
+            assertEquals(0, AlignGridRotationAction.getSelectedDirection(ds).length);
             AlignGridRotationAction action = new AlignGridRotationAction();
             assertFalse(action.isEnabled());
             ds.setSelected(a);
-            assertNull(AlignGridRotationAction.getSelectedDirection(ds));
+            assertEquals(0, AlignGridRotationAction.getSelectedDirection(ds).length);
             assertFalse(action.isEnabled());
             ds.setSelected(a, b, c);
-            assertNull(AlignGridRotationAction.getSelectedDirection(ds));
+            assertEquals(0, AlignGridRotationAction.getSelectedDirection(ds).length);
             assertFalse(action.isEnabled());
 
             ds.setSelected(a, b);

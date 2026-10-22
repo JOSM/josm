@@ -12,11 +12,11 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
@@ -137,7 +137,7 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
     private static final int MAX_LINES = 500;
 
     /** written by {@link #paint} and read by {@link #preferenceChanged}, which may run on another thread */
-    private volatile MapView mapView;
+    private final AtomicReference<MapView> mapView = new AtomicReference<>();
 
     /**
      * Constructs a new {@code MapGridPaintable}.
@@ -148,7 +148,7 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
-        mapView = mv;
+        mapView.set(mv);
         if (!Boolean.TRUE.equals(ENABLED.get()) || mv.getWidth() <= 0 || mv.getHeight() <= 0) {
             return;
         }
@@ -318,7 +318,7 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
             if (!a.isValid() || !b.isValid()) {
                 return 1;
             }
-            double metres = a.greatCircleDistance((ILatLon) b);
+            double metres = a.greatCircleDistance(b);
             return metres > 0 && Double.isFinite(metres) ? step / metres : 1;
         } catch (IllegalArgumentException e) {
             Logging.trace(e);
@@ -357,7 +357,7 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
     public static List<ProjectedGridLine> getProjectedGridLines(ProjectionBounds area, double spacingX, double spacingY,
             double rotationDegrees, double originX, double originY) {
         List<ProjectedGridLine> lines = new ArrayList<>();
-        if (!(spacingX > 0) || !(spacingY > 0)) {
+        if (!isPositive(spacingX) || !isPositive(spacingY)) {
             return lines;
         }
         double angle = Math.toRadians(rotationDegrees);
@@ -420,7 +420,7 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
     public static List<LatLonGridLine> getLatLonGridLines(Bounds area, Bounds world, double spacingLon, double spacingLat,
             double originLon, double originLat, int segments) {
         List<LatLonGridLine> lines = new ArrayList<>();
-        if (!(spacingLon > 0) || !(spacingLat > 0) || segments < 1) {
+        if (!isPositive(spacingLon) || !isPositive(spacingLat) || segments < 1) {
             return lines;
         }
         double minLat = Math.max(area.getMinLat(), world.getMinLat());
@@ -445,14 +445,9 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
         boolean limitedLon = world.getMinLon() > -180 || world.getMaxLon() < 180;
         for (long k = kLonMin; k <= kLonMax; k++) {
             double lon = LatLon.toIntervalLon(originLon + k * spacingLon);
-            if (limitedLon && (lon < world.getMinLon() || lon > world.getMaxLon())) {
-                continue;
+            if (!limitedLon || (lon >= world.getMinLon() && lon <= world.getMaxLon())) {
+                addMeridian(lines, lon, minLat, maxLat, segments);
             }
-            List<LatLon> line = new ArrayList<>(segments + 1);
-            for (int i = 0; i <= segments; i++) {
-                line.add(new LatLon(minLat + (maxLat - minLat) * i / segments, lon));
-            }
-            lines.add(new LatLonGridLine(line, true));
         }
         for (long k = kLatMin; k <= kLatMax; k++) {
             double lat = originLat + k * spacingLat;
@@ -462,6 +457,22 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
             addParallel(lines, lat, minLon, maxLon, segments);
         }
         return lines;
+    }
+
+    /**
+     * Adds a meridian running from one latitude to another.
+     * @param lines the list to add to
+     * @param lon the longitude of the meridian
+     * @param minLat the latitude to start at
+     * @param maxLat the latitude to end at
+     * @param segments number of segments of the polyline
+     */
+    private static void addMeridian(List<LatLonGridLine> lines, double lon, double minLat, double maxLat, int segments) {
+        List<LatLon> line = new ArrayList<>(segments + 1);
+        for (int i = 0; i <= segments; i++) {
+            line.add(new LatLon(minLat + (maxLat - minLat) * i / segments, lon));
+        }
+        lines.add(new LatLonGridLine(line, true));
     }
 
     /**
@@ -480,7 +491,7 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
             addParallel(lines, lat, -180, maxLon - 360, segments);
             return;
         }
-        if (!(maxLon > minLon)) {
+        if (maxLon <= minLon) {
             return;
         }
         List<LatLon> line = new ArrayList<>(segments + 1);
@@ -490,12 +501,22 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
         lines.add(new LatLonGridLine(line, false));
     }
 
+    /**
+     * Determines if a value is strictly positive. Unlike {@code value <= 0}, this rejects NaN.
+     * @param value the value
+     * @return {@code true} if the value is greater than 0
+     */
+    private static boolean isPositive(double value) {
+        return value > 0;
+    }
+
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e.getKey().startsWith(PREFIX) || e.getKey().equals(COLOR_EAST.getKey()) || e.getKey().equals(COLOR_NORTH.getKey())) {
             invalidate();
-            if (mapView != null) {
-                mapView.repaint();
+            MapView mv = mapView.get();
+            if (mv != null) {
+                mv.repaint();
             }
         }
     }
@@ -503,6 +524,6 @@ public class MapGridPaintable extends AbstractMapViewPaintable implements Prefer
     @Override
     public void destroy() {
         Config.getPref().removePreferenceChangeListener(this);
-        mapView = null;
+        mapView.set(null);
     }
 }
