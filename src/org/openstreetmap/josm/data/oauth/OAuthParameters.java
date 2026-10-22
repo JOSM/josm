@@ -147,7 +147,7 @@ public final class OAuthParameters {
         final String clientSecret;
         final String redirectUri = "http://127.0.0.1:8111/oauth_authorization";
         final String baseUrl;
-        apiUrl = apiUrl == null ? OsmApi.getOsmApi().getServerUrl() : apiUrl;
+        apiUrl = OsmApi.normalizeApiUrl(apiUrl == null ? OsmApi.getOsmApi().getServerUrl() : apiUrl);
         switch (apiUrl) {
             case OSM_API_DEV:
             case OSM_API_MASTER:
@@ -238,6 +238,7 @@ public final class OAuthParameters {
      * @since 18650
      */
     public static IOAuthParameters createFromApiUrl(String apiUrl, OAuthVersion oAuthVersion) {
+        apiUrl = OsmApi.normalizeApiUrl(apiUrl);
         final String originalApiUrl = apiUrl;
         // We actually need the host
         if (apiUrl.startsWith("https://") || apiUrl.startsWith("http://")) {

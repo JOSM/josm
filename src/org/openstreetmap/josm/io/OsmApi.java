@@ -133,12 +133,34 @@ public class OsmApi extends OsmConnection {
      *
      */
     public static OsmApi getOsmApi(String serverUrl) {
-        OsmApi api = instances.get(serverUrl);
+        String url = normalizeApiUrl(serverUrl);
+        OsmApi api = instances.get(url);
         if (api == null) {
-            api = new OsmApi(serverUrl);
+            api = new OsmApi(url);
             cacheInstance(api);
         }
         return api;
+    }
+
+    /**
+     * Normalizes an OSM API URL: removes leading and trailing white space and any trailing {@code '/'}.
+     * <p>
+     * The URL may be entered with a trailing slash, but code which compares it to a known API URL or derives
+     * another URL from it does not expect one: OAuth would not find the client id of the server, and the links
+     * to the web site of the server (browse, history, user) would be built from the API path.
+     * @param serverUrl the server URL, may be null
+     * @return the normalized URL, or null if {@code serverUrl} is null
+     * @since 19651
+     */
+    public static String normalizeApiUrl(String serverUrl) {
+        if (serverUrl == null) {
+            return null;
+        }
+        String url = Utils.strip(serverUrl);
+        while (url.endsWith("/") && !url.endsWith("://")) {
+            url = url.substring(0, url.length() - 1);
+        }
+        return url;
     }
 
     protected static void cacheInstance(OsmApi api) {
@@ -181,7 +203,7 @@ public class OsmApi extends OsmConnection {
      */
     protected OsmApi(String serverUrl) {
         CheckParameterUtil.ensureParameterNotNull(serverUrl, "serverUrl");
-        this.serverUrl = serverUrl;
+        this.serverUrl = normalizeApiUrl(serverUrl);
     }
 
     /**

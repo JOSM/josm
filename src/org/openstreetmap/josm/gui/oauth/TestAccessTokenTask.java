@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -59,7 +60,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         CheckParameterUtil.ensureParameterNotNull(accessToken, "accessToken");
         this.tokenOAuth2 = accessToken;
         this.parent = parent;
-        this.apiUrl = apiUrl;
+        this.apiUrl = OsmApi.normalizeApiUrl(apiUrl);
     }
 
     @Override
@@ -81,21 +82,10 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         this.tokenOAuth2.sign(con);
     }
 
-    protected String normalizeApiUrl(String url) {
-        // remove leading and trailing white space
-        url = url.trim();
-
-        // remove trailing slashes
-        while (url.endsWith("/")) {
-            url = url.substring(0, url.lastIndexOf('/'));
-        }
-        return url;
-    }
-
     protected UserInfo getUserDetails() throws OsmOAuthAuthorizationException, XmlParsingException, OsmTransferException {
         boolean authenticatorEnabled = true;
         try {
-            URL url = new URL(normalizeApiUrl(apiUrl) + "/0.6/user/details");
+            URL url = new URL(apiUrl + "/0.6/user/details");
             authenticatorEnabled = DefaultAuthenticator.getInstance().isEnabled();
             DefaultAuthenticator.getInstance().setEnabled(false);
 

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.Capabilities;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -48,7 +49,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
         super(parent, tr("Testing OSM API URL ''{0}''", url), false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         this.parent = parent;
-        this.url = url;
+        this.url = OsmApi.normalizeApiUrl(url);
     }
 
     protected void alertInvalidUrl(String url) {
@@ -66,15 +67,15 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
         );
     }
 
-    protected void alertInvalidCapabilitiesUrl(String url) {
+    protected void alertInvalidCapabilitiesUrl(String capabilitiesUrl) {
         HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Failed to build URL ''{0}'' for validating the OSM API server.<br>"
                         + "Please check the spelling of ''{1}'' and validate again."
                         +"</html>",
-                        url,
-                        getNormalizedApiUrl()
+                        capabilitiesUrl,
+                        url
                 ),
                 tr("Invalid API URL"),
                 JOptionPane.ERROR_MESSAGE,
@@ -90,7 +91,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                         + "Please check the spelling of ''{1}'' and your Internet connection and validate again."
                         +"</html>",
                         url,
-                        getNormalizedApiUrl()
+                        url
                 ),
                 tr("Connection to API failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -107,7 +108,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                         + "Please check the spelling of ''{1}'' and validate again."
                         + "</html>",
                         retCode,
-                        getNormalizedApiUrl()
+                        url
                 ),
                 tr("Connection to API failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -123,7 +124,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                         + "It is likely that ''{0}'' is not an OSM API server.<br>"
                         + "Please check the spelling of ''{0}'' and validate again."
                         + "</html>",
-                        getNormalizedApiUrl()
+                        url
                 ),
                 tr("Connection to API failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -146,30 +147,17 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
         // Do nothing
     }
 
-    /**
-     * Removes leading and trailing whitespace from the API URL and removes trailing '/'.
-     *
-     * @return the normalized API URL
-     */
-    protected String getNormalizedApiUrl() {
-        String apiUrl = url.trim();
-        while (apiUrl.endsWith("/")) {
-            apiUrl = apiUrl.substring(0, apiUrl.lastIndexOf('/'));
-        }
-        return apiUrl;
-    }
-
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             try {
-                new URL(getNormalizedApiUrl());
+                new URL(url);
             } catch (MalformedURLException e) {
-                alertInvalidUrl(getNormalizedApiUrl());
+                alertInvalidUrl(url);
                 return;
             }
             URL capabilitiesUrl;
-            String getCapabilitiesUrl = getNormalizedApiUrl() + "/0.6/capabilities";
+            String getCapabilitiesUrl = url + "/0.6/capabilities";
             try {
                 capabilitiesUrl = new URL(getCapabilitiesUrl);
             } catch (MalformedURLException e) {
