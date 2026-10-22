@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import javax.swing.JOptionPane;
 
@@ -59,14 +59,14 @@ class OsmConnectionTest {
     }
 
     private static HttpClient apiRequest() throws MalformedURLException {
-        return HttpClient.create(new URL(API_URL + "/0.6/changeset/create"), "PUT");
+        return HttpClient.create(URI.create(API_URL + "/0.6/changeset/create").toURL(), "PUT");
     }
 
     /**
      * Stores the advanced OAuth parameters the way the authentication preferences do, that is under the API URL.
      */
     private static OAuth20Parameters rememberParameters() {
-        OAuth20Parameters parameters = new OAuth20Parameters(CLIENT_ID, null, API_URL, API_URL, REDIRECT_URI);
+        final OAuth20Parameters parameters = new OAuth20Parameters(CLIENT_ID, null, API_URL, API_URL, REDIRECT_URI);
         parameters.rememberPreferences();
         return parameters;
     }
@@ -81,14 +81,14 @@ class OsmConnectionTest {
      */
     @Test
     void testOAuthParametersComeFromTheApiUrl() throws Exception {
-        OAuth20Parameters parameters = rememberParameters();
+        final OAuth20Parameters parameters = rememberParameters();
         // a token is needed, otherwise the connection would try to obtain one
         OAuthAccessTokenHolder.getInstance().setAccessToken(API_URL, new OAuth20Token(parameters,
                 "{\"token_type\":\"bearer\", \"access_token\":\"a-token\"}"));
 
-        TestConnection connection = new TestConnection();
+        final TestConnection connection = new TestConnection();
         assertNull(connection.parameters());
-        HttpClient client = apiRequest();
+        final HttpClient client = apiRequest();
         connection.addOAuth20AuthorizationHeader(client);
 
         assertEquals(CLIENT_ID, connection.parameters().getClientId());
@@ -110,8 +110,8 @@ class OsmConnectionTest {
         Config.getPref().putInt("message.oauth.oauth20.obtain.automatically.value", JOptionPane.NO_OPTION);
 
         // no parameters remembered for this API, and it has no client id built into JOSM
-        HttpClient client = apiRequest();
-        MissingOAuthAccessTokenException thrown = assertThrows(MissingOAuthAccessTokenException.class,
+        final HttpClient client = apiRequest();
+        final MissingOAuthAccessTokenException thrown = assertThrows(MissingOAuthAccessTokenException.class,
                 () -> new TestConnection().addOAuth20AuthorizationHeader(client));
         assertNotNull(thrown.getMessage(), "gave up only after asking the user, rather than for the missing client id");
         assertTrue(thrown.getMessage().contains(API_URL), thrown.getMessage());
@@ -125,11 +125,11 @@ class OsmConnectionTest {
      */
     @Test
     void testExistingTokenSignsTheConnection() throws Exception {
-        OAuth20Parameters parameters = new OAuth20Parameters(CLIENT_ID, null, API_URL, API_URL, REDIRECT_URI);
+        final OAuth20Parameters parameters = new OAuth20Parameters(CLIENT_ID, null, API_URL, API_URL, REDIRECT_URI);
         OAuthAccessTokenHolder.getInstance().setAccessToken(API_URL, new OAuth20Token(parameters,
                 "{\"token_type\":\"bearer\", \"access_token\":\"another-token\"}"));
 
-        HttpClient client = apiRequest();
+        final HttpClient client = apiRequest();
         new TestConnection().addOAuth20AuthorizationHeader(client);
         assertEquals("Bearer another-token", client.getRequestHeader("Authorization"));
     }
