@@ -5,9 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,16 +63,19 @@ public class PowerLines extends Test {
     protected static final String PREFIX = ValidatorPrefHelper.PREFIX + "." + PowerLines.class.getSimpleName();
 
     /** Values for {@code power} key interpreted as power lines */
-    static final Collection<String> POWER_LINE_TAGS = Arrays.asList("line", MINOR_LINE);
+    static final Set<String> POWER_LINE_TAGS = Set.of("line", MINOR_LINE);
     /** Values for {@code power} key interpreted as power towers */
-    static final Collection<String> POWER_TOWER_TAGS = Arrays.asList("catenary_mast", "pole", "portal", "tower");
+    static final Set<String> POWER_TOWER_TAGS = Set.of("catenary_mast", "pole", "portal", "tower");
     /** Values for {@code power} key interpreted as power stations */
-    static final Collection<String> POWER_STATION_TAGS = Arrays.asList("generator", "plant", "substation");
+    static final Set<String> POWER_STATION_TAGS = Set.of("generator", "plant", "substation");
     /** Values for {@code building} key interpreted as power stations */
-    static final Collection<String> BUILDING_STATION_TAGS = Collections.singletonList("transformer_tower");
+    static final Set<String> BUILDING_STATION_TAGS = Set.of("transformer_tower");
     /** Values for {@code power} key interpreted as allowed power items */
-    static final Collection<String> POWER_INFRASTRUCTURE_TAGS = Arrays.asList("compensator", "connection", "converter",
+    static final Set<String> POWER_INFRASTRUCTURE_TAGS = Set.of("compensator", "connection", "converter",
             "generator", "insulator", "switch", "switchgear", "terminal", "transformer");
+
+    /** Values for {@code power} key interpreted as power lines or cables */
+    private static final Set<String> POWER_LINE_OR_CABLE_TAGS = Set.of("line", MINOR_LINE, "cable");
 
     private double hillyCompensation;
     private double hillyThreshold;
@@ -189,7 +190,7 @@ public class PowerLines extends Test {
             errors.add(TestError.builder(this, Severity.WARNING, POWER_SEGMENT_LENGTH)
                     .message(tr("Possibly missing line support node within power line"))
                     .primitives(s.getFirstNode(), s.getSecondNode())
-                    .highlightWaySegments(new HashSet<>(Collections.singleton(s)))
+                    .highlightWaySegments(Set.of(s))
                     .build());
         }
 
@@ -249,7 +250,11 @@ public class PowerLines extends Test {
         final double mean = w.getLength() / segmentCount;
         final double stdDev = Utils.getStandardDeviation(w.getSegmentLengths(), mean);
         final boolean isContinuesAsMinorLine = isContinuesAsMinorLine(w);
-        boolean isCrossingWater = false;
+        // the crossings only depend on the way, so look them up once instead of for every node
+        final Set<Way> crossingWaterWays = new HashSet<>(8);
+        final Set<ILatLon> crossingPositions = new HashSet<>(8);
+        findCrossings(this.cellSegmentsWater, w, crossingWaterWays, crossingPositions);
+        final boolean isCrossingWater = !crossingWaterWays.isEmpty();
         int poleCount = 0;
         int towerCount = 0;
         Node prevNode = w.firstNode();
@@ -277,11 +282,7 @@ public class PowerLines extends Test {
 
             /// handle missing nodes
             double segmentLen = n.greatCircleDistance(prevNode);
-            final Set<Way> crossingWaterWays = new HashSet<>(8);
-            final Set<ILatLon> crossingPositions = new HashSet<>(8);
-            findCrossings(this.cellSegmentsWater, w, crossingWaterWays, crossingPositions);
-
-            if (!crossingWaterWays.isEmpty()) {
+            if (isCrossingWater) {
                 double compensation = calculateIntersectingLen(prevNode, crossingPositions);
                 segmentLen -= compensation;
             }
@@ -293,9 +294,6 @@ public class PowerLines extends Test {
                 missingNodes.add(WaySegment.forNodePair(w, prevNode, n));
 
             /// handle wrong line types
-            if (!crossingWaterWays.isEmpty())
-                isCrossingWater = true;
-
             if (n.hasTag(POWER, "pole"))
                 poleCount++;
             else if (n.hasTag(POWER, "tower", "portal"))
@@ -599,10 +597,13 @@ public class PowerLines extends Test {
         if (way.hasTag(POWER) || way.hasTag(BUILDING))
             return true;
         for (OsmPrimitive ref : way.getReferrers()) {
-            if (ref instanceof Relation && ref.isMultipolygon() && (ref.hasTag(POWER) || ref.hasTag(BUILDING))) {
-                for (RelationMember rm : ((Relation) ref).getMembers()) {
-                    if (way == rm.getMember())
-                        return true;
+            if (ref instanceof Relation) {
+                Relation r = (Relation) ref;
+                if (r.isMultipolygon() && (r.hasTag(POWER) || r.hasTag(BUILDING))) {
+                    for (RelationMember rm : r.getMembers()) {
+                        if (rm.getMember() == way)
+                            return true;
+                    }
                 }
             }
         }
@@ -658,20 +659,18 @@ public class PowerLines extends Test {
      */
     protected final boolean isInPowerStation(Node n) {
         for (OsmPrimitive station : powerStations) {
-            List<List<Node>> nodesLists = new ArrayList<>();
             if (station instanceof Way) {
-                nodesLists.add(((Way) station).getNodes());
+                if (Geometry.nodeInsidePolygon(n, ((Way) station).getNodes())) {
+                    return true;
+                }
             } else if (station instanceof Relation) {
                 Multipolygon polygon = MultipolygonCache.getInstance().get((Relation) station);
                 if (polygon != null) {
                     for (JoinedWay outer : Multipolygon.joinWays(polygon.getOuterWays())) {
-                        nodesLists.add(outer.getNodes());
+                        if (Geometry.nodeInsidePolygon(n, outer.getNodes())) {
+                            return true;
+                        }
                     }
-                }
-            }
-            for (List<Node> nodes : nodesLists) {
-                if (Geometry.nodeInsidePolygon(n, nodes)) {
-                    return true;
                 }
             }
         }
@@ -693,7 +692,7 @@ public class PowerLines extends Test {
      * @return {@code true} if power key is set and equal to line,minor_line or cable
      */
     protected static boolean isPowerLineOrCable(Way w) {
-        return isPowerIn(w, Arrays.asList("line", MINOR_LINE, "cable"));
+        return isPowerIn(w, POWER_LINE_OR_CABLE_TAGS);
     }
 
     /**
