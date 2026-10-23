@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemTest;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 
 /**
  * Unit tests of {@link Combo} class.
@@ -121,6 +124,26 @@ class ComboTest implements TaggingPresetItemTest {
         combo.use_last_as_default = 0;
 
         KeyedItem.LAST_VALUES.clear();
+    }
+
+    /**
+     * Entry icons are centered in a square and entries without an icon get a blank one, so that the texts line up.
+     */
+    @Test
+    void testIconAlignment() {
+        final Combo combo = getInstance();
+        combo.key = "highway";
+        PresetListEntry trunk = new PresetListEntry("trunk", combo);
+        trunk.icon = "presets/transport/way/way_trunk.svg";
+        combo.addListEntry(trunk);
+        combo.addListEntry(new PresetListEntry("busway", combo));
+        combo.addToPanel(new JPanel(), TaggingPresetItemGuiSupport.create(false));
+        JList<PresetListEntry> list = new JList<>();
+        for (PresetListEntry entry : combo.presetListEntries) {
+            JLabel label = (JLabel) combo.combobox.getRenderer().getListCellRendererComponent(list, entry, 0, false, false);
+            assertEquals(ImageSizes.SMALLICON.getAdjustedWidth(), label.getIcon().getIconWidth(), entry.value);
+            assertEquals(ImageSizes.SMALLICON.getAdjustedHeight(), label.getIcon().getIconHeight(), entry.value);
+        }
     }
 
     @Test

@@ -94,8 +94,9 @@ enum ImageResizeMode {
             prepareGraphics(icon, bufferedImage, g);
             renderer.accept(g);
         } else if (sourceIcon != null) {
-            sourceIcon = sourceIcon.getScaledInstance(real.width, real.height, Image.SCALE_SMOOTH);
-            g.drawImage(sourceIcon, 0, 0, null);
+            final Dimension scaled = (this == PADDED) ? AUTO.computeDimension(real, icon) : real;
+            sourceIcon = sourceIcon.getScaledInstance(scaled.width, scaled.height, Image.SCALE_SMOOTH);
+            g.drawImage(sourceIcon, (real.width - scaled.width) / 2, (real.height - scaled.height) / 2, null);
         } else {
             throw new IllegalArgumentException("renderer or sourceIcon");
         }

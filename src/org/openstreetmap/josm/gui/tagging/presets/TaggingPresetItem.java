@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.tagging.presets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +29,8 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.LruCache;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -150,16 +153,15 @@ public abstract class TaggingPresetItem {
      * Loads a tagging preset icon
      * @param iconName the icon name
      * @param zipIcons zip file where the image is located
-     * @param maxSize maximum image size (or null)
-     * @return the requested image or null if the request failed
+     * @param maxSize maximum image size (or null for the default small icon size)
+     * @return the requested image, centered in a square of {@code maxSize}, or null if the request failed
      */
     public static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
         final Collection<String> s = TaggingPresets.ICON_SOURCES.get();
-        ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
-        if (maxSize != null && maxSize > 0) {
-            imgProv.setMaxSize(maxSize);
-        }
-        return imgProv.get();
+        final int size = (maxSize != null && maxSize > 0) ? maxSize : ImageSizes.SMALLICON.getVirtualWidth();
+        ImageResource resource = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true)
+                .getResource();
+        return resource == null ? null : resource.getPaddedIcon(new Dimension(size, size));
     }
 
     /**

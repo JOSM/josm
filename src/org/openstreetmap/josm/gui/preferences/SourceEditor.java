@@ -1336,7 +1336,7 @@ public abstract class SourceEditor extends JPanel {
                         sourceEntry.active ? SOURCE_ENTRY_ACTIVE_BACKGROUND_COLOR.get() : SOURCE_ENTRY_INACTIVE_BACKGROUND_COLOR.get());
                 }
                 final ImageSizes size = ImageSizes.TABLE;
-                setIcon(value.icon == null ? ImageProvider.getEmpty(size) : value.icon.getImageIconBounded(size.getImageDimension()));
+                setIcon(value.icon == null ? ImageProvider.getEmpty(size) : value.icon.getPaddedIcon(size.getImageDimension()));
             }
             return this;
         }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
@@ -65,6 +66,22 @@ class ImageResizeModeTest {
         assertThrows(IllegalArgumentException.class, () -> ImageResizeMode.PADDED.computeDimension(new Dimension(-1, 16), image));
         assertEquals(new Dimension(64, 48), ImageResizeMode.PADDED.computeDimension(new Dimension(64, 48), image));
         assertEquals(new Dimension(24, 32), ImageResizeMode.PADDED.computeDimension(new Dimension(24, 32), image));
+    }
+
+    /**
+     * Test method for {@link ImageResizeMode#createBufferedImage} using {@link ImageResizeMode#PADDED} on a raster image
+     */
+    @Test
+    void testCreateBufferedImagePaddedRaster() {
+        BufferedImage source = new BufferedImage(16, 4, BufferedImage.TYPE_INT_RGB); // opaque black
+        BufferedImage padded = ImageResizeMode.PADDED.createBufferedImage(new Dimension(32, 32), new Dimension(16, 4), null, source);
+        assertEquals(32, padded.getWidth());
+        assertEquals(32, padded.getHeight());
+        // aspect ratio is kept: a 32x8 bar centered vertically
+        assertEquals(0, padded.getRGB(16, 11) >>> 24);
+        assertEquals(0xff, padded.getRGB(16, 12) >>> 24);
+        assertEquals(0xff, padded.getRGB(16, 19) >>> 24);
+        assertEquals(0, padded.getRGB(16, 20) >>> 24);
     }
 
     /**

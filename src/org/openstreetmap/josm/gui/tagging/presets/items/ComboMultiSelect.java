@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -13,9 +14,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -142,7 +146,14 @@ public abstract class ComboMultiSelect extends KeyedItem {
             if (value.getCount() > 0) {
                 l.setFont(l.getFont().deriveFont(Font.ITALIC + Font.BOLD));
             }
-            l.setIcon(value.getIcon());
+            Icon icon = value.getIcon();
+            if (icon == null && value.cms != null) {
+                // use a blank icon if other entries have one, so that all texts line up
+                icon = value.cms.presetListEntries.stream().map(PresetListEntry::getIcon).filter(Objects::nonNull).findFirst()
+                        .map(i -> new ImageIcon(new BufferedImage(i.getIconWidth(), i.getIconHeight(), BufferedImage.TYPE_INT_ARGB)))
+                        .orElse(null);
+            }
+            l.setIcon(icon);
             l.setToolTipText(value.getToolTipText(key));
             return l;
         }

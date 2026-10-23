@@ -290,8 +290,8 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             .thenAcceptAsync(result -> {
                 if (result != null) {
                     // Pre-render off EDT to avoid flooding the event queue with expensive SVG rendering
-                    ImageIcon small = result.getImageIcon(ImageProvider.ImageSizes.SMALLICON.getImageDimension());
-                    ImageIcon large = result.getImageIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
+                    ImageIcon small = result.getPaddedIcon(ImageProvider.ImageSizes.SMALLICON.getImageDimension());
+                    ImageIcon large = result.getPaddedIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
                     GuiHelper.runInEDT(() -> {
                         try {
                             putValue(Action.SMALL_ICON, small);
