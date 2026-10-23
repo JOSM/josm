@@ -1206,3 +1206,8 @@ way[!oneway][!oneway:bicycle] > node[cycleway=asl][!direction] {
   fixRemove: "substance";
   fixAdd: "indication:substance={1.value}"
 }
+
+/* 24943 */
+way[highway][bicycle_road=yes][vehicle][vehicle!=yes][!bicycle] {
+  throwWarning: tr("bicycle_road without bicycle access");
+}
