@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -85,7 +86,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     protected UserInfo getUserDetails() throws OsmOAuthAuthorizationException, XmlParsingException, OsmTransferException {
         boolean authenticatorEnabled = true;
         try {
-            URL url = new URL(apiUrl + "/0.6/user/details");
+            final URL url = URI.create(apiUrl + "/0.6/user/details").toURL();
             authenticatorEnabled = DefaultAuthenticator.getInstance().isEnabled();
             DefaultAuthenticator.getInstance().setEnabled(false);
 
@@ -97,19 +98,22 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             }
 
             final String oauthKey = getAuthKey();
-            if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+            if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,
                         tr("Retrieving user details with Access Token Key ''{0}'' was rejected.",
                                 oauthKey), null);
+            }
 
-            if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN)
+            if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 throw new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN,
                         tr("Retrieving user details with Access Token Key ''{0}'' was forbidden.", oauthKey), null);
+            }
 
-            if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK)
+            if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK) {
                 throw new OsmApiException(connection.getResponse().getResponseCode(),
                         connection.getResponse().getHeaderField("Error"), null);
-            Document d = XmlUtils.parseSafeDOM(connection.getResponse().getContent());
+            }
+            final Document d = XmlUtils.parseSafeDOM(connection.getResponse().getContent());
             return OsmServerUserInfoReader.buildFromXML(d);
         } catch (SAXException | ParserConfigurationException e) {
             throw new XmlParsingException(e);
@@ -233,15 +237,21 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             getProgressMonitor().indeterminateSubTask(tr("Retrieving user info..."));
-            UserInfo userInfo = getUserDetails();
-            if (canceled) return;
+            final UserInfo userInfo = getUserDetails();
+            if (canceled) {
+                return;
+            }
             notifySuccess(userInfo);
         } catch (OsmOAuthAuthorizationException e) {
-            if (canceled) return;
+            if (canceled) {
+                return;
+            }
             Logging.error(e);
             alertFailedSigning();
         } catch (OsmApiException e) {
-            if (canceled) return;
+            if (canceled) {
+                return;
+            }
             Logging.error(e);
             if (e.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 alertInternalError();
@@ -255,7 +265,9 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             }
             alertFailedConnection();
         } catch (OsmTransferException e) {
-            if (canceled) return;
+            if (canceled) {
+                return;
+            }
             Logging.error(e);
             alertFailedConnection();
         }
