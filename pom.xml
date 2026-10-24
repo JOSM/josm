@@ -478,6 +478,8 @@
           <configLocation>${checkstyle.dir}/josm_checks.xml</configLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <outputFile>${project.basedir}/checkstyle-josm.xml</outputFile>
+          <!-- josm_checks.xml reports everything as warning; report them like `ant checkstyle` does -->
+          <violationSeverity>warning</violationSeverity>
           <!-- checkstyle cannot parse module-info.java yet -->
           <excludes>module-info.java,org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/*.java</excludes>
         </configuration>
