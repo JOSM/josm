@@ -175,8 +175,8 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             }
 
             final int responseCode = connection.getResponse().getResponseCode();
-            if (responseCode  != HttpURLConnection.HTTP_OK) {
-                alertInvalidServerResult(responseCode );
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                alertInvalidServerResult(responseCode);
                 return;
             }
 
