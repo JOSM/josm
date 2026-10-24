@@ -1,12 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.server;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -37,6 +39,8 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
     private boolean success;
     private final Component parent;
     private HttpClient connection;
+
+    private static final String CONNECTION_FAILED_MSG = marktr("Connection to API failed");
 
     /**
      * Constructs a new {@code ApiUrlTestTask}.
@@ -93,7 +97,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                         url,
                         url
                 ),
-                tr("Connection to API failed"),
+                tr(CONNECTION_FAILED_MSG),
                 JOptionPane.ERROR_MESSAGE,
                 HelpUtil.ht("/Preferences/Connection#ConnectionToAPIFailed")
         );
@@ -110,7 +114,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                         retCode,
                         url
                 ),
-                tr("Connection to API failed"),
+                tr(CONNECTION_FAILED_MSG),
                 JOptionPane.ERROR_MESSAGE,
                 HelpUtil.ht("/Preferences/Connection#InvalidServerResult")
         );
@@ -126,7 +130,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                         + "</html>",
                         url
                 ),
-                tr("Connection to API failed"),
+                tr(CONNECTION_FAILED_MSG),
                 JOptionPane.ERROR_MESSAGE,
                 HelpUtil.ht("/Preferences/Connection#InvalidSettings")
         );
@@ -151,16 +155,16 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             try {
-                new URL(url);
-            } catch (MalformedURLException e) {
+                URI.create(url).toURL();
+            } catch (IllegalArgumentException | MalformedURLException e) {
                 alertInvalidUrl(url);
                 return;
             }
-            URL capabilitiesUrl;
-            String getCapabilitiesUrl = url + "/0.6/capabilities";
+            final URL capabilitiesUrl;
+            final String getCapabilitiesUrl = url + "/0.6/capabilities";
             try {
-                capabilitiesUrl = new URL(getCapabilitiesUrl);
-            } catch (MalformedURLException e) {
+                capabilitiesUrl = URI.create(getCapabilitiesUrl).toURL();
+            } catch (IllegalArgumentException | MalformedURLException e) {
                 alertInvalidCapabilitiesUrl(getCapabilitiesUrl);
                 return;
             }
@@ -170,8 +174,9 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                 connection.connect();
             }
 
-            if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK) {
-                alertInvalidServerResult(connection.getResponse().getResponseCode());
+            final int responseCode = connection.getResponse().getResponseCode();
+            if (responseCode  != HttpURLConnection.HTTP_OK) {
+                alertInvalidServerResult(responseCode );
                 return;
             }
 
@@ -184,9 +189,10 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             }
             success = true;
         } catch (IOException e) {
-            if (canceled)
+            if (canceled) {
                 // ignore exceptions
                 return;
+            }
             Logging.error(e);
             alertConnectionFailed();
         }
