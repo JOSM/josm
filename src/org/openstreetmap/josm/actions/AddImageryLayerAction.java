@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
@@ -57,6 +58,7 @@ import org.openstreetmap.josm.tools.bugreport.ReportedException;
  * @since 3715
  */
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
+    private static final String WMS_ERROR = marktr("WMS Error");
     private final transient ImageryInfo info;
 
     static class SelectWmsLayersDialog extends ExtendedDialog {
@@ -84,7 +86,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         installAdapters();
 
         // change toolbar icon from if specified
-        String icon = info.getIcon();
+        final String icon = info.getIcon();
         if (icon != null) {
             new ImageProvider(icon).setOptional(true).getResourceAsync(result -> {
                 if (result != null) {
@@ -126,12 +128,12 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             case WMTS:
                 // specify which layer to use
                 if (Utils.isEmpty(info.getDefaultLayers())) {
-                    WMTSTileSource tileSource = new WMTSTileSource(info);
-                    DefaultLayer layerId = tileSource.userSelectLayer();
+                    final WMTSTileSource tileSource = new WMTSTileSource(info);
+                    final DefaultLayer layerId = tileSource.userSelectLayer();
                     if (layerId != null) {
-                        ImageryInfo copy = new ImageryInfo(info);
+                        final ImageryInfo copy = new ImageryInfo(info);
                         copy.setDefaultLayers(Collections.singletonList(layerId));
-                        String layerName = tileSource.getLayers().stream()
+                        final String layerName = tileSource.getLayers().stream()
                                 .filter(x -> x.getIdentifier().equals(layerId.getLayerName()))
                                 .map(Layer::getUserTitle)
                                 .findFirst()
@@ -147,11 +149,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 return info;
             }
         } catch (MalformedURLException ex) {
-            handleException(ex, tr("Invalid service URL."), tr("WMS Error"), null);
+            handleException(ex, tr("Invalid service URL."), tr(WMS_ERROR), null);
         } catch (IOException ex) {
-            handleException(ex, tr("Could not retrieve WMS layer list."), tr("WMS Error"), null);
+            handleException(ex, tr("Could not retrieve WMS layer list."), tr(WMS_ERROR), null);
         } catch (WMSGetCapabilitiesException ex) {
-            handleException(ex, tr("Could not parse WMS layer list."), tr("WMS Error"),
+            handleException(ex, tr("Could not parse WMS layer list."), tr(WMS_ERROR),
                     "Could not parse WMS layer list. Incoming data:\n" + ex.getIncomingData());
         } catch (WMTSGetCapabilitiesException ex) {
             handleException(ex, tr("Could not parse WMTS layer list."), tr("WMTS Error"),
@@ -162,7 +164,9 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled()) return;
+        if (!isEnabled()) {
+            return;
+        }
         ImageryLayer layer = null;
         try {
             final ImageryInfo infoToAdd = convertImagery(info);
@@ -209,14 +213,14 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     private static LayerSelection askToSelectLayers(WMSImagery wms) {
         final WMSLayerTree tree = new WMSLayerTree();
 
-        Collection<String> wmsFormats = wms.getFormats();
+        final Collection<String> wmsFormats = wms.getFormats();
         final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[0]));
         formats.setSelectedItem(wms.getPreferredFormat());
         formats.setToolTipText(tr("Select image format for WMS layer"));
 
-        JCheckBox checkBounds = new JCheckBox(tr("Show only layers for current view"), true);
-        Runnable updateTree = () -> {
-            LatLon latLon = checkBounds.isSelected() && MainApplication.isDisplayingMapView()
+        final JCheckBox checkBounds = new JCheckBox(tr("Show only layers for current view"), true);
+        final Runnable updateTree = () -> {
+            final LatLon latLon = checkBounds.isSelected() && MainApplication.isDisplayingMapView()
                     ? MainApplication.getMap().mapView.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter())
                     : null;
             tree.setCheckBounds(latLon);
@@ -227,7 +231,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         updateTree.run();
 
         if (!GraphicsEnvironment.isHeadless()) {
-            ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
+            final ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
                     tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
             final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
             scrollPane.setPreferredSize(new Dimension(400, 400));
@@ -259,11 +263,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         try {
             return getWMSLayerInfo(info, AddImageryLayerAction::askToSelectLayers);
         } catch (MalformedURLException ex) {
-            handleException(ex, tr("Invalid service URL."), tr("WMS Error"), null);
+            handleException(ex, tr("Invalid service URL."), tr(WMS_ERROR), null);
         } catch (IOException ex) {
-            handleException(ex, tr("Could not retrieve WMS layer list."), tr("WMS Error"), null);
+            handleException(ex, tr("Could not retrieve WMS layer list."), tr(WMS_ERROR), null);
         } catch (WMSGetCapabilitiesException ex) {
-            handleException(ex, tr("Could not parse WMS layer list."), tr("WMS Error"),
+            handleException(ex, tr("Could not parse WMS layer list."), tr(WMS_ERROR),
                     "Could not parse WMS layer list. Incoming data:\n" + ex.getIncomingData());
         }
         return null;
@@ -285,7 +289,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         // We need to get the URL with {apikey} replaced. See #22642.
         final TemplatedWMSTileSource tileSource = new TemplatedWMSTileSource(info, ProjectionRegistry.getProjection());
         final WMSImagery wms = new WMSImagery(tileSource.getBaseUrl(), info.getCustomHttpHeaders());
-        LayerSelection selection = choice.apply(wms);
+        final LayerSelection selection = choice.apply(wms);
         if (selection == null) {
             return null;
         }
@@ -297,11 +301,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 selection.transparent
                 );
 
-        String selectedLayers = selection.layers.stream()
+        final String selectedLayers = selection.layers.stream()
                 .map(LayerDetails::getName)
                 .collect(Collectors.joining(", "));
         // Use full copy of original Imagery info to copy all attributes. Only overwrite what's different
-        ImageryInfo ret = new ImageryInfo(info);
+        final ImageryInfo ret = new ImageryInfo(info);
         ret.setUrl(url);
         ret.setImageryType(ImageryType.WMS);
         ret.setName(info.getName() + " - " + selectedLayers);
