@@ -93,10 +93,11 @@ public class OpenFileAction extends DiskAccessAction {
         } else {
             fc = createAndOpenFileChooser(true, true, null, null, FILES_AND_DIRECTORIES, true, null);
         }
-        if (fc == null)
+        if (fc == null) {
             return;
-        File[] files = fc.getSelectedFiles();
-        OpenFileTask task = new OpenFileTask(Arrays.asList(files), fc.getFileFilter());
+        }
+        final File[] files = fc.getSelectedFiles();
+        final OpenFileTask task = new OpenFileTask(Arrays.asList(files), fc.getFileFilter());
         task.setOptions(Options.RECORD_HISTORY);
         MainApplication.worker.submit(task);
     }
@@ -125,7 +126,7 @@ public class OpenFileAction extends DiskAccessAction {
      * @since 17534 ({@link Options})
      */
     public static Future<?> openFiles(List<File> fileList, Options... options) {
-        OpenFileTask task = new OpenFileTask(fileList, null);
+        final OpenFileTask task = new OpenFileTask(fileList, null);
         task.setOptions(options);
         return MainApplication.worker.submit(task);
     }
@@ -167,7 +168,7 @@ public class OpenFileAction extends DiskAccessAction {
                         this.files.add(file);
                     }
                 } else {
-                    String message = tr("Unable to locate file  ''{0}''.", file.getPath());
+                    final String message = tr("Unable to locate file  ''{0}''.", file.getPath());
                     Logging.warn(message);
                     new Notification(message).setIcon(JOptionPane.WARNING_MESSAGE).show();
                 }
@@ -220,7 +221,7 @@ public class OpenFileAction extends DiskAccessAction {
 
         @Override
         protected void finish() {
-            MapFrame map = MainApplication.getMap();
+            final MapFrame map = MainApplication.getMap();
             if (map != null) {
                 map.repaint();
             }
@@ -275,8 +276,10 @@ public class OpenFileAction extends DiskAccessAction {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            if (Utils.isEmpty(files)) return;
-            List<Layer> oldLayers = MainApplication.getLayerManager().getLayers();
+            if (Utils.isEmpty(files)) {
+                return;
+            }
+            final List<Layer> oldLayers = MainApplication.getLayerManager().getLayers();
 
             /*
              * Find the importer with the chosen file filter
@@ -300,8 +303,8 @@ public class OpenFileAction extends DiskAccessAction {
 
             if (chosenImporter != null) {
                 // The importer was explicitly chosen, so use it.
-                List<File> filesNotMatchingWithImporter = new LinkedList<>();
-                List<File> filesMatchingWithImporter = new LinkedList<>();
+                final List<File> filesNotMatchingWithImporter = new LinkedList<>();
+                final List<File> filesMatchingWithImporter = new LinkedList<>();
                 for (final File f : files) {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
@@ -327,41 +330,45 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             } else {
                 // find appropriate importer
-                MultiMap<FileImporter, File> importerMap = new MultiMap<>();
-                List<File> filesWithUnknownImporter = new LinkedList<>();
-                List<File> urlFiles = new LinkedList<>();
-                FILES: for (File f : files) {
+                final MultiMap<FileImporter, File> importerMap = new MultiMap<>();
+                final List<File> filesWithUnknownImporter = new LinkedList<>();
+                final List<File> urlFiles = new LinkedList<>();
+                for (File f : files) {
+                    boolean imported = false;
                     for (FileImporter importer : ExtensionFileFilter.getImporters()) {
                         if (importer.acceptFile(f)) {
                             importerMap.put(importer, f);
-                            continue FILES;
+                            imported = true;
+                            break;
                         }
                     }
-                    if (URL_FILE_FILTER.accept(f)) {
-                        urlFiles.add(f);
-                    } else {
-                        filesWithUnknownImporter.add(f);
+                    if (!imported) {
+                        if (URL_FILE_FILTER.accept(f)) {
+                            urlFiles.add(f);
+                        } else {
+                            filesWithUnknownImporter.add(f);
+                        }
                     }
                 }
+
                 if (!filesWithUnknownImporter.isEmpty()) {
                     alertFilesWithUnknownImporter(filesWithUnknownImporter);
                 }
-                List<FileImporter> importers = new ArrayList<>(importerMap.keySet());
-                Collections.sort(importers);
-                Collections.reverse(importers);
+                final List<FileImporter> importers = new ArrayList<>(importerMap.keySet());
+                importers.sort(Collections.reverseOrder());
 
                 for (FileImporter importer : importers) {
                     importData(importer, new ArrayList<>(importerMap.get(importer)));
                 }
 
-                Pattern urlPattern = Pattern.compile(".*(https?://.*)");
+                final Pattern urlPattern = Pattern.compile(".*(https?://.*)");
                 for (File urlFile: urlFiles) {
                     try (BufferedReader reader = Files.newBufferedReader(urlFile.toPath(), StandardCharsets.UTF_8)) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            Matcher m = urlPattern.matcher(line);
+                            final Matcher m = urlPattern.matcher(line);
                             if (m.matches()) {
-                                String url = m.group(1);
+                                final String url = m.group(1);
                                 MainApplication.getMenu().openLocation.openUrl(false, url);
                             }
                         }
@@ -374,11 +381,11 @@ public class OpenFileAction extends DiskAccessAction {
             }
 
             if (this.options.contains(Options.RECORD_HISTORY)) {
-                Collection<String> oldFileHistory = Config.getPref().getList("file-open.history");
+                final Collection<String> oldFileHistory = Config.getPref().getList("file-open.history");
                 fileHistory.addAll(oldFileHistory);
                 // remove the files which failed to load from the list
                 fileHistory.removeAll(failedAll);
-                int maxsize = Math.max(0, Config.getPref().getInt("file-open.history.max-size", 15));
+                final int maxsize = Math.max(0, Config.getPref().getInt("file-open.history.max-size", 15));
                 PreferencesUtils.putListBounded(Config.getPref(), "file-open.history", maxsize, new ArrayList<>(fileHistory));
             }
             if (!canceled && !GraphicsEnvironment.isHeadless()) {
@@ -390,13 +397,14 @@ public class OpenFileAction extends DiskAccessAction {
             // We do have to wrap the EDT call in a worker call, since layers may be created in the EDT.
             // And the layer(s) must be added to the layer list in order for the dialog to work properly.
             MainApplication.worker.execute(() -> GuiHelper.runInEDT(() -> {
-                List<Layer> newLayers = MainApplication.getLayerManager().getLayers();
+                final List<Layer> newLayers = MainApplication.getLayerManager().getLayers();
                 // see #23728: open first image of topmost new image layer
                 for (Layer l : newLayers) {
-                    if (oldLayers.contains(l))
+                    if (oldLayers.contains(l)) {
                         return;
+                    }
                     if (l instanceof GeoImageLayer) {
-                        GeoImageLayer imageLayer = (GeoImageLayer) l;
+                        final GeoImageLayer imageLayer = (GeoImageLayer) l;
                         imageLayer.jumpToNextMarker();
                         return;
                     }
@@ -412,8 +420,10 @@ public class OpenFileAction extends DiskAccessAction {
         public void importData(FileImporter importer, List<File> files) {
             importer.setOptions(this.options.toArray(new Options[0]));
             if (importer.isBatchImporter()) {
-                if (canceled) return;
-                String msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
+                if (canceled) {
+                    return;
+                }
+                final String msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
                 getProgressMonitor().setCustomText(msg);
                 getProgressMonitor().indeterminateSubTask(msg);
                 if (importer.importDataHandleExceptions(files, getProgressMonitor().createSubTaskMonitor(files.size(), false))) {
@@ -421,7 +431,9 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             } else {
                 for (File f : files) {
-                    if (canceled) return;
+                    if (canceled) {
+                        return;
+                    }
                     getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
                     if (importer.importDataHandleExceptions(f, getProgressMonitor().createSubTaskMonitor(1, false))) {
                         successfullyOpenedFiles.add(f);
