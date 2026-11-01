@@ -198,7 +198,7 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
                 // delta is very small, use configured minimum value
                 return enlarge;
             }
-            if (deltaDegress < 0.1) {
+            if (enlarge > deltaDegress / 100) {
                 return enlarge - deltaDegress / 100;
             }
             return 0.0;
