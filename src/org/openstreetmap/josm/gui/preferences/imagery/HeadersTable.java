@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Simple table for editing HTTP headers
@@ -111,10 +113,17 @@ public class HeadersTable extends JPanel {
 
     /**
      * Returns headers provided by user.
-     * @return headers provided by user
+     * Rows without a name or without a value are ignored. If several rows use the same name, the last one wins.
+     * @return headers provided by user, in table order
      */
     public Map<String, String> getHeaders() {
-        return headers.stream().distinct().collect(Collectors.toMap(x -> x[0], x -> x[1]));
+        Map<String, String> result = new LinkedHashMap<>();
+        for (String[] header : headers) {
+            if (!Utils.isStripEmpty(header[0]) && !Utils.isStripEmpty(header[1])) {
+                result.put(header[0], header[1]);
+            }
+        }
+        return result;
     }
 
 }
