@@ -477,4 +477,31 @@ class MapCSSTagCheckerTest {
         test.endTest();
         assertTrue(test.getErrors().isEmpty());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/22878">#22878</a>
+     * - rules reloaded while the validation is running.
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test
+    void testTicket22878() throws ParseException {
+        final MapCSSTagChecker test = buildTagChecker("node[amenity=bench] { throwWarning: \"bench\"; }");
+        final String css = "node[amenity=bench] { throwWarning: \"other bench\"; }";
+        test.checks.putAll("other", MapCSSTagCheckerRule.readMapCSS(new StringReader(css)).parseChecks);
+        final OsmPrimitive p = OsmUtils.createPrimitive("node amenity=bench");
+        new DataSet(p);
+        test.startTest(NullProgressMonitor.INSTANCE);
+        // the predicate is called while iterating over the rules, reload them there like addMapCSS does
+        assertDoesNotThrow(() -> test.visit(List.of(p), url -> {
+            try {
+                test.checks.remove("other");
+                test.checks.putAll("other", MapCSSTagCheckerRule.readMapCSS(new StringReader(css)).parseChecks);
+            } catch (ParseException e) {
+                throw new IllegalStateException(e);
+            }
+            return true;
+        }));
+        test.endTest();
+        assertTrue(test.getErrors().stream().anyMatch(e -> "bench".equals(e.getMessage())));
+    }
 }

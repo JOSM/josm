@@ -404,8 +404,13 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @param urlPredicate a predicate deciding whether the rules from the given URL shall be executed
      */
     void visit(Collection<OsmPrimitive> selection, Predicate<String> urlPredicate) {
+        // the rules may be reloaded by another thread (preferences, file watcher) while the validation is running, see #22878
+        final List<Entry<String, Set<MapCSSTagCheckerRule>>> checksToRun;
+        synchronized (this) {
+            checksToRun = new ArrayList<>(checks.entrySet());
+        }
         if (urlPredicate == null && progressMonitor != null) {
-            progressMonitor.setTicksCount(selection.size() * checks.size());
+            progressMonitor.setTicksCount(selection.size() * checksToRun.size());
         }
 
         mpAreaCache.clear();
@@ -413,7 +418,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         toMatchForSurrounding.clear();
 
         Set<OsmPrimitive> surrounding = new HashSet<>();
-        for (Entry<String, Set<MapCSSTagCheckerRule>> entry : checks.entrySet()) {
+        for (Entry<String, Set<MapCSSTagCheckerRule>> entry : checksToRun) {
             if (isCanceled()) {
                 break;
             }
