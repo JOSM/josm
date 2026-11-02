@@ -1050,6 +1050,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             ensureMaxZoom(maxVisibleRect);
 
             maxVisibleRect.checkRectSize();
+            maxVisibleRect.checkRectPos();
             synchronized (this) {
                 this.visibleRect = maxVisibleRect;
             }

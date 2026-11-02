@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
@@ -25,6 +27,7 @@ import javax.swing.JPanel;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.data.imagery.street_level.Projections;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay.VisRect;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
@@ -110,6 +113,42 @@ class ImageDisplayTest {
         final VisRect zoomOutVisRect = visRectSupplier.get();
         assertAll(() -> assertEquals(640, zoomOutVisRect.width),
                 () -> assertEquals(480, zoomOutVisRect.height));
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/24997">#24997</a>, shrinking a zoomed-in
+     * 360° image viewer must keep the visible rectangle inside the offscreen image.
+     */
+    @Test
+    void testNonRegression24997() {
+        final ImageDisplay imageDisplay = new ImageDisplay(new ImageryFilterSettings());
+        imageDisplay.setSize(800, 400);
+        imageDisplay.setImage0(new TestImageEntry(2000, 1000) {
+            @Override
+            public Projections getProjectionType() {
+                return Projections.EQUIRECTANGULAR;
+            }
+
+            @Override
+            public BufferedImage read(Dimension target) {
+                // Byte image, so that CameraPlane uses its fast byte mapping like for typical JPEG photos
+                return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+            }
+        }).run();
+        // zoom in near the bottom right corner, so the visible rectangle is moved away from the origin
+        final MouseWheelEvent zoomIn = new MouseWheelEvent(imageDisplay, 0, 0, 0, 790, 390, 790, 390, 0,
+                false, MouseWheelEvent.WHEEL_UNIT_SCROLL, -1, -1, -1);
+        for (MouseWheelListener listener : imageDisplay.getMouseWheelListeners()) {
+            listener.mouseWheelMoved(zoomIn);
+        }
+
+        imageDisplay.setSize(600, 300);
+        final ComponentEvent resized = new ComponentEvent(imageDisplay, ComponentEvent.COMPONENT_RESIZED);
+        for (ComponentListener listener : imageDisplay.getComponentListeners()) {
+            listener.componentResized(resized);
+        }
+        final Graphics2D g = new BufferedImage(600, 300, BufferedImage.TYPE_INT_ARGB).createGraphics();
+        assertDoesNotThrow(() -> imageDisplay.paintComponent(g));
     }
 
     private static class TestImageEntry extends ImageEntry {
