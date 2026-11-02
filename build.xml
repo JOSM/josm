@@ -304,8 +304,8 @@ Build-Date: ${build.tstamp}
       </sequential>
     </macrodef>
     <target name="compile" depends="init,javacc" unless="compile.notRequired" description="Compile JOSM">
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone" unless:set="noErrorProne"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac" unless:set="noErrorProne"/>
         <!-- JOSM -->
         <call-javac-compile excludes="**/package-info.java,**/module-info.java,main/**" release="${java.lang.version}"/>
         <!-- Java 11 specific files (2018-09 LTS) -->
