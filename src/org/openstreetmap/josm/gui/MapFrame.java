@@ -679,6 +679,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
                     }));
                 }
             }
+            MenuScroller.setScrollerFor(menu);
             if (button != null && button.isShowing()) {
                 Rectangle bounds = button.getBounds();
                 menu.show(button, bounds.x + bounds.width, 0);
