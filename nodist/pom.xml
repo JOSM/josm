@@ -9,7 +9,7 @@
     <properties>
         <project.build.sourceEncoding>US-ASCII</project.build.sourceEncoding>
         <project.reporting.outputEncoding>US-ASCII</project.reporting.outputEncoding>
-        <java.lang.version>11</java.lang.version>
+        <java.lang.version>17</java.lang.version>
         <maven.compiler.release>${java.lang.version}</maven.compiler.release>
         <maven.compiler.source>${java.lang.version}</maven.compiler.source>
         <maven.compiler.target>${java.lang.version}</maven.compiler.target>
