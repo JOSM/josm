@@ -42,6 +42,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Needed just in case something adds argLine for tests before we set it -->
     <argLine/>
+    <!-- Like `ant test-perf`, performance tests only run on request: -DskipPerformanceTests=false -->
+    <skipPerformanceTests>true</skipPerformanceTests>
   </properties>
   <packaging>jar</packaging>
   <inceptionYear>2005</inceptionYear>
@@ -493,10 +495,48 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Configure the test plugin, specifically enable autodetection of global extensions -->
+      <!-- Compile test/functional and test/performance against the unit test classes, like `ant test-compile` -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>functional-test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <compileSourceRoots>
+                <compileSourceRoot>${test.dir}/functional</compileSourceRoot>
+              </compileSourceRoots>
+              <outputDirectory>${project.build.directory}/functional-test-classes</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>performance-test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <compileSourceRoots>
+                <compileSourceRoot>${test.dir}/performance</compileSourceRoot>
+              </compileSourceRoots>
+              <outputDirectory>${project.build.directory}/performance-test-classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Configure the test plugin, specifically enable autodetection of global extensions.
+           `mvn test` runs the unit tests (default-test, like `ant test-unit`); `mvn integration-test` also runs
+           the functional tests and the unit/functional *TestIT (like `ant test` and `ant test-it`). -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <includes>
+            <include>**/*Test</include>
+          </includes>
           <excludes>
             <exclude>**/*TestIT</exclude>
           </excludes>
@@ -526,7 +566,7 @@
             </configurationParameters>
           </properties>
           <systemPropertyVariables>
-            <josm.home>${test.dir}/config/josm.home</josm.home>
+            <josm.home>${test.dir}/config/unit-josm.home</josm.home>
             <josm.test.data>${test.dir}/data</josm.test.data>
             <java.awt.headless>${test.headless}</java.awt.headless>
             <glass.platform>Monocle</glass.platform>
@@ -536,20 +576,16 @@
         </configuration>
         <executions>
           <execution>
-            <id>default-tests</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>integration-tests</id>
+            <id>unit-it-tests</id>
             <phase>integration-test</phase>
             <goals>
               <goal>test</goal>
             </goals>
             <configuration>
-              <includes>**/*TestIT</includes>
+              <includes combine.self="override">
+                <include>**/*TestIT</include>
+              </includes>
+              <excludes combine.self="override"/>
             </configuration>
           </execution>
           <execution>
@@ -559,7 +595,33 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <testSourceDirectory>${test.dir}/functional</testSourceDirectory>
+              <testClassesDirectory>${project.build.directory}/functional-test-classes</testClassesDirectory>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${project.build.testOutputDirectory}</additionalClasspathElement>
+              </additionalClasspathElements>
+              <systemPropertyVariables>
+                <josm.home>${test.dir}/config/functional-josm.home</josm.home>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>functional-it-tests</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <testClassesDirectory>${project.build.directory}/functional-test-classes</testClassesDirectory>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${project.build.testOutputDirectory}</additionalClasspathElement>
+              </additionalClasspathElements>
+              <systemPropertyVariables>
+                <josm.home>${test.dir}/config/functional-josm.home</josm.home>
+              </systemPropertyVariables>
+              <includes combine.self="override">
+                <include>**/*TestIT</include>
+              </includes>
+              <excludes combine.self="override"/>
             </configuration>
           </execution>
           <execution>
@@ -569,7 +631,14 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <testSourceDirectory>${test.dir}/performance</testSourceDirectory>
+              <skip>${skipPerformanceTests}</skip>
+              <testClassesDirectory>${project.build.directory}/performance-test-classes</testClassesDirectory>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${project.build.testOutputDirectory}</additionalClasspathElement>
+              </additionalClasspathElements>
+              <systemPropertyVariables>
+                <josm.home>${test.dir}/config/performance-josm.home</josm.home>
+              </systemPropertyVariables>
             </configuration>
           </execution>
         </executions>
