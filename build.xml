@@ -17,12 +17,6 @@
 >
     <target name="init-javaversions" description="Initialize Java version properties">
         <!-- For Java specific stuff by version -->
-        <!-- <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]|[2-9][0-9]" /></condition> -->
-        <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]|[2-9][0-9]" /></condition>
-        <!-- <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition> -->
-        <!-- <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]|[2-9][0-9]" /></condition> -->
-        <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]|[2-9][0-9]" /></condition>
-        <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
         <!-- <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]|[2-9][0-9]" /></condition> -->
         <condition property="isJava19"><matches string="${ant.java.version}" pattern="19|[2-9][0-9]" /></condition>
         <!-- <condition property="isJava20"><matches string="${ant.java.version}" pattern="[2-9][0-9]" /></condition> -->
@@ -97,7 +91,7 @@
         <property name="dist-sources.jar" location="${dist.dir}/josm-custom-sources.jar"/>
         <!-- When incrementing the minimum Java version, don't forget to update the Java versions users will update to
              (PlatformHook#getJavaUrl, PlatformHook#startupSanityChecks and PlatformHook#warnSoonToBeUnsupportedJava) -->
-        <property name="java.lang.version" value="11" />
+        <property name="java.lang.version" value="17" />
         <property name="test.headless" value="true" />
         <property name="noErrorProne" value="false"/>
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
@@ -232,16 +226,16 @@ Build-Date: ${build.tstamp}
           <javac sourcepath="@{sourcepath}" srcdir="@{srcdir}" fork="@{fork}"
             includes="@{includes}" excludes="@{excludes}" destdir="@{destdir}" release="@{release}"
             debug="@{debug}" includeantruntime="@{includeantruntime}" encoding="@{encoding}">
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
-              <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED"  unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED" unless:set="noErrorProne"/>
+              <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" unless:set="noErrorProne"/>
               <compilerarg line="-XDcompilePolicy=simple"/>
               <compilerarg value="-processorpath"/>
               <compilerarg value="${toString:errorprone.classpath}:${toString:semanticdb.classpath}"/>
@@ -308,8 +302,6 @@ Build-Date: ${build.tstamp}
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac" unless:set="noErrorProne"/>
         <!-- JOSM -->
         <call-javac-compile excludes="**/package-info.java,**/module-info.java,main/**" release="${java.lang.version}"/>
-        <!-- Java 11 specific files (2018-09 LTS) -->
-        <call-javac-compile-mrjar release="11"/>
         <!-- Java 17 specific files (2021-09 LTS) -->
         <call-javac-compile-mrjar release="17"/>
         <!-- Java 21 specific files (2023-09 LTS) -->
@@ -350,14 +342,13 @@ Build-Date: ${build.tstamp}
                 private="true"
                 linksource="true"
                 author="false">
-            <link href="https://docs.oracle.com/en/java/javase/11/docs/api" />
+            <link href="https://docs.oracle.com/en/java/javase/17/docs/api" />
             <doctitle><![CDATA[<h2>
                 <img src="https://josm.openstreetmap.de/svn/trunk/nodist/images/logo/header.png" style="vertical-align: middle;" alt="JOSM">
                 &mdash; Javadoc
             </h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
-            <!-- Disable HTML checking until we switch to Java13+, see https://bugs.openjdk.java.net/browse/JDK-8223552 -->
-            <arg value="-Xdoclint:-html" if:set="isJava13" />
+            <arg value="-Xdoclint:-html" />
             <arg value="-html5" />
             <arg value="--add-exports" unless:set="noJavaFX" />
             <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" unless:set="noJavaFX" />
@@ -478,8 +469,8 @@ Build-Date: ${build.tstamp}
                         <jvmarg value="${jacocoagent@{testfamily}@{testITsuffix}}" if:set="jacocoagent@{testfamily}@{testITsuffix}" />
                         <jvmarg value="-Dfile.encoding=UTF-8"/>
                         <jvmarg value="-Djava.locale.providers=SPI,CLDR" />
-                        <jvmarg value="-Djava.security.manager=allow" if:set="isJava17" unless:set="isJava24" />
-                        <jvmarg value="-javaagent:${test.dir}/lib/junit5-system-exit.jar" if:set="isJava17"/>
+                        <jvmarg value="-Djava.security.manager=allow" unless:set="isJava24" />
+                        <jvmarg value="-javaagent:${test.dir}/lib/junit5-system-exit.jar" />
                         <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
                         <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
                         <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
@@ -504,7 +495,7 @@ Build-Date: ${build.tstamp}
                         <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                         <sysproperty key="josm.test.data" value="${test.dir}/data"/>
                         <sysproperty key="java.awt.headless" value="${test.headless}"/>
-                        <sysproperty key="java.security.manager" value="allow" if:set="isJava17" unless:set="isJava24" />
+                        <sysproperty key="java.security.manager" value="allow" unless:set="isJava24" />
                         <sysproperty key="glass.platform" value="Monocle"/>
                         <sysproperty key="monocle.platform" value="Headless"/>
                         <sysproperty key="prism.order" value="sw"/>
@@ -1048,7 +1039,7 @@ Build-Date: ${build.tstamp}
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*'"/>
             <arg line="-dotoutput dots"/>
-            <arg line="--multi-release 11"/>
+            <arg line="--multi-release 17"/>
             <arg line="${jar-direct.files.string}" />
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
@@ -1063,7 +1054,7 @@ Build-Date: ${build.tstamp}
         <pathconvert property="jar-all.files.string" refid="jar-direct.files" pathsep=" "/>
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-dotoutput dots"/>
-            <arg line="--multi-release 11"/>
+            <arg line="--multi-release 17"/>
             <arg line="${jar-all.files.string}" />
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
