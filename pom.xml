@@ -495,6 +495,28 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Register test/functional and test/performance as test sources for IDEs (IntelliJ, Eclipse m2e).
+           Bound after test-compile so default-testCompile does not build them into the unit test classes;
+           maven-compiler-plugin below compiles them separately. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-functional-performance-test-sources</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${test.dir}/functional</source>
+                <source>${test.dir}/performance</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <!-- Compile test/functional and test/performance against the unit test classes, like `ant test-compile` -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
