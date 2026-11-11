@@ -292,6 +292,8 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
                 // but just in case
                 return;
             int row = table.rowAtPoint(e.getPoint());
+            if (row < 0) // see #25019
+                return;
             model.decide(row, mergeDecision);
         }
     }
