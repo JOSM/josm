@@ -437,6 +437,10 @@
           <analysisCacheLocation>${pmd.dir}/cache</analysisCacheLocation>
           <language>java</language>
           <targetJdk>${java.lang.version}</targetJdk>
+          <compileSourceRoots>
+            <compileSourceRoot>${src.dir}</compileSourceRoot>
+            <compileSourceRoot>${scripts.src.dir}</compileSourceRoot>
+          </compileSourceRoots>
           <rulesets>
             <ruleset>${pmd.dir}/josm-ruleset.xml</ruleset>
           </rulesets>

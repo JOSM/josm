@@ -937,11 +937,17 @@ Build-Date: ${build.tstamp}
         </spotbugs>
     </target>
 
-    <target name="pmd" depends="init" description="Run PMD on the source files">
+    <target name="pmd" depends="compile" description="Run PMD on the source files">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
         <pmd cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
+            <!-- PMD needs the Java runtime, the compiled classes and the dependencies to resolve types -->
+            <auxclasspath>
+                <pathelement location="${java.home}/lib/jrt-fs.jar"/>
+                <pathelement location="${build.dir}"/>
+                <path refid="compile.path"/>
+            </auxclasspath>
             <ruleset>${pmd.dir}/josm-ruleset.xml</ruleset>
             <formatter type="text" toConsole="true" />
             <formatter type="xml" toFile="pmd-josm.xml">
