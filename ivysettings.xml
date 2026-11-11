@@ -16,7 +16,8 @@
   <property name="versions.errorprone" value="2.42.0" unlessset="isJava21" />
   <property name="versions.errorprone" value="2.47.0" ifset="isJava21"/>
 
-  <property name="versions.jmockit" value="1.50" />
+  <!-- JMockit 1.50 cannot read JaCoCo-instrumented classes (CONSTANT_Dynamic), keep custom-built 1.49.a with CONDY support -->
+  <property name="versions.jmockit" value="1.49.a" />
 
   <property name="versions.equalsverifier" value="4.3.1" />
 </ivysettings>

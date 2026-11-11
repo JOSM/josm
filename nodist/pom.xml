@@ -16,7 +16,8 @@
         <test.headless>true</test.headless>
         <sonar.host.url>https://josm.openstreetmap.de/sonar/</sonar.host.url>
         <sonar.projectKey>JOSM</sonar.projectKey>
-        <jmockit.version>1.50</jmockit.version>
+        <!-- 1.50 cannot read JaCoCo-instrumented classes (CONSTANT_Dynamic), see ivysettings.xml -->
+        <jmockit.version>1.49.a</jmockit.version>
         <pmd.version>7.28.0</pmd.version>
         <jacoco.version>0.8.13</jacoco.version>
         <checkstyle.version>12.3.1</checkstyle.version>
