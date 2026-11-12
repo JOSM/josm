@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2026072500, Last Updated Sat Jul 25 07:07:01 2026 UTC
+        // Taken from Version 2026111200, Last Updated Thu Nov 12 07:07:01 2026 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -505,7 +505,7 @@ public final class DomainValidator extends AbstractValidator {
         "codes", // codes Binky Moon, LLC
         "coffee", // coffee Binky Moon, LLC
         "college", // college XYZ.COM LLC
-        "cologne", // cologne dotKoeln GmbH
+        "cologne", // cologne domainworx Service & Management GmbH
         "com", // com VeriSign Global Registry Services
         "commbank", // commbank COMMONWEALTH BANK OF AUSTRALIA
         "community", // community Binky Moon, LLC
@@ -726,7 +726,6 @@ public final class DomainValidator extends AbstractValidator {
         "health", // health Registry Services, LLC
         "healthcare", // healthcare Binky Moon, LLC
         "help", // help Innovation Service Ltd
-        "helsinki", // helsinki City of Helsinki
         "here", // here Charleston Road Registry Inc.
         "hermes", // hermes Hermes International
         "hiphop", // hiphop Dot Hip Hop, LLC
@@ -803,7 +802,6 @@ public final class DomainValidator extends AbstractValidator {
         "jpmorgan", // jpmorgan JPMorgan Chase Bank, National Association
         "jprs", // jprs Japan Registry Services Co., Ltd.
         "juegos", // juegos Dog Beach, LLC
-        "juniper", // juniper JUNIPER NETWORKS, INC.
         "kaufen", // kaufen Dog Beach, LLC
         "kddi", // kddi KDDI CORPORATION
         "kerryhotels", // kerryhotels Kerry Trading Co. Limited
@@ -815,7 +813,7 @@ public final class DomainValidator extends AbstractValidator {
         "kindle", // kindle Amazon Registry Services, Inc.
         "kitchen", // kitchen Binky Moon, LLC
         "kiwi", // kiwi DOT KIWI LIMITED
-        "koeln", // koeln dotKoeln GmbH
+        "koeln", // koeln domainworx Service & Management GmbH
         "komatsu", // komatsu Komatsu Ltd.
         "kosher", // kosher Kosher Marketing Assets LLC
         "kpmg", // kpmg KPMG International Cooperative (KPMG International Genossenschaft)
@@ -1245,7 +1243,7 @@ public final class DomainValidator extends AbstractValidator {
         "tui", // tui TUI AG
         "tunes", // tunes Amazon Registry Services, Inc.
         "tushu", // tushu Amazon Registry Services, Inc.
-        "tvs", // tvs T V SUNDRAM IYENGAR  & SONS PRIVATE LIMITED
+        "tvs", // tvs T V SUNDRAM IYENGAR & SONS PRIVATE LIMITED
         "ubank", // ubank National Australia Bank Limited
         "ubs", // ubs UBS AG
         "unicom", // unicom China United Network Communications Corporation Limited
@@ -1330,7 +1328,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
         "xn--55qx5d", // 公司 China Internet Network Information Center (CNNIC)
         "xn--5su34j936bgsg", // 香格里拉 Shangri-La International Hotel Management Limited
-        "xn--5tzm5g", // 网站 Global Website TLD Asia Limited
+        "xn--5tzm5g", // 网站 Jolly Host, LLC
         "xn--6frz82g", // 移动 Identity Digital Limited
         "xn--6qq986b3xl", // 我爱你 Tycoon Treasure Limited
         "xn--80adxhks", // москва Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
@@ -1429,251 +1427,250 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] COUNTRY_CODE_TLDS = {
-        "ac",                 // Ascension Island
-        "ad",                 // Andorra
-        "ae",                 // United Arab Emirates
-        "af",                 // Afghanistan
-        "ag",                 // Antigua and Barbuda
-        "ai",                 // Anguilla
-        "al",                 // Albania
-        "am",                 // Armenia
-        //"an",               // Netherlands Antilles (retired)
-        "ao",                 // Angola
-        "aq",                 // Antarctica
-        "ar",                 // Argentina
-        "as",                 // American Samoa
-        "at",                 // Austria
-        "au",                 // Australia (includes Ashmore and Cartier Islands and Coral Sea Islands)
-        "aw",                 // Aruba
-        "ax",                 // Åland
-        "az",                 // Azerbaijan
-        "ba",                 // Bosnia and Herzegovina
-        "bb",                 // Barbados
-        "bd",                 // Bangladesh
-        "be",                 // Belgium
-        "bf",                 // Burkina Faso
-        "bg",                 // Bulgaria
-        "bh",                 // Bahrain
-        "bi",                 // Burundi
-        "bj",                 // Benin
-        "bm",                 // Bermuda
-        "bn",                 // Brunei Darussalam
-        "bo",                 // Bolivia
-        "br",                 // Brazil
-        "bs",                 // Bahamas
-        "bt",                 // Bhutan
-        "bv",                 // Bouvet Island
-        "bw",                 // Botswana
-        "by",                 // Belarus
-        "bz",                 // Belize
-        "ca",                 // Canada
-        "cc",                 // Cocos (Keeling) Islands
-        "cd",                 // Democratic Republic of the Congo (formerly Zaire)
-        "cf",                 // Central African Republic
-        "cg",                 // Republic of the Congo
-        "ch",                 // Switzerland
-        "ci",                 // Côte d'Ivoire
-        "ck",                 // Cook Islands
-        "cl",                 // Chile
-        "cm",                 // Cameroon
-        "cn",                 // China, mainland
-        "co",                 // Colombia
-        "cr",                 // Costa Rica
-        "cu",                 // Cuba
-        "cv",                 // Cape Verde
-        "cw",                 // Curaçao
-        "cx",                 // Christmas Island
-        "cy",                 // Cyprus
-        "cz",                 // Czech Republic
-        "de",                 // Germany
-        "dj",                 // Djibouti
-        "dk",                 // Denmark
-        "dm",                 // Dominica
-        "do",                 // Dominican Republic
-        "dz",                 // Algeria
-        "ec",                 // Ecuador
-        "ee",                 // Estonia
-        "eg",                 // Egypt
-        "er",                 // Eritrea
-        "es",                 // Spain
-        "et",                 // Ethiopia
-        "eu",                 // European Union
-        "fi",                 // Finland
-        "fj",                 // Fiji
-        "fk",                 // Falkland Islands
-        "fm",                 // Federated States of Micronesia
-        "fo",                 // Faroe Islands
-        "fr",                 // France
-        "ga",                 // Gabon
-        "gb",                 // Great Britain (United Kingdom)
-        "gd",                 // Grenada
-        "ge",                 // Georgia
-        "gf",                 // French Guiana
-        "gg",                 // Guernsey
-        "gh",                 // Ghana
-        "gi",                 // Gibraltar
-        "gl",                 // Greenland
-        "gm",                 // The Gambia
-        "gn",                 // Guinea
-        "gp",                 // Guadeloupe
-        "gq",                 // Equatorial Guinea
-        "gr",                 // Greece
-        "gs",                 // South Georgia and the South Sandwich Islands
-        "gt",                 // Guatemala
-        "gu",                 // Guam
-        "gw",                 // Guinea-Bissau
-        "gy",                 // Guyana
-        "hk",                 // Hong Kong
-        "hm",                 // Heard Island and McDonald Islands
-        "hn",                 // Honduras
-        "hr",                 // Croatia (Hrvatska)
-        "ht",                 // Haiti
-        "hu",                 // Hungary
-        "id",                 // Indonesia
-        "ie",                 // Ireland (Éire)
-        "il",                 // Israel
-        "im",                 // Isle of Man
-        "in",                 // India
-        "io",                 // British Indian Ocean Territory
-        "iq",                 // Iraq
-        "ir",                 // Iran
-        "is",                 // Iceland
-        "it",                 // Italy
-        "je",                 // Jersey
-        "jm",                 // Jamaica
-        "jo",                 // Jordan
-        "jp",                 // Japan
-        "ke",                 // Kenya
-        "kg",                 // Kyrgyzstan
-        "kh",                 // Cambodia (Khmer)
-        "ki",                 // Kiribati
-        "km",                 // Comoros
-        "kn",                 // Saint Kitts and Nevis
-        "kp",                 // North Korea
-        "kr",                 // South Korea
-        "kw",                 // Kuwait
-        "ky",                 // Cayman Islands
-        "kz",                 // Kazakhstan
-        "la",                 // Laos (currently being marketed as the official domain for Los Angeles)
-        "lb",                 // Lebanon
-        "lc",                 // Saint Lucia
-        "li",                 // Liechtenstein
-        "lk",                 // Sri Lanka
-        "lr",                 // Liberia
-        "ls",                 // Lesotho
-        "lt",                 // Lithuania
-        "lu",                 // Luxembourg
-        "lv",                 // Latvia
-        "ly",                 // Libya
-        "ma",                 // Morocco
-        "mc",                 // Monaco
-        "md",                 // Moldova
-        "me",                 // Montenegro
-        "mg",                 // Madagascar
-        "mh",                 // Marshall Islands
-        "mk",                 // Republic of Macedonia
-        "ml",                 // Mali
-        "mm",                 // Myanmar
-        "mn",                 // Mongolia
-        "mo",                 // Macau
-        "mp",                 // Northern Mariana Islands
-        "mq",                 // Martinique
-        "mr",                 // Mauritania
-        "ms",                 // Montserrat
-        "mt",                 // Malta
-        "mu",                 // Mauritius
-        "mv",                 // Maldives
-        "mw",                 // Malawi
-        "mx",                 // Mexico
-        "my",                 // Malaysia
-        "mz",                 // Mozambique
-        "na",                 // Namibia
-        "nc",                 // New Caledonia
-        "ne",                 // Niger
-        "nf",                 // Norfolk Island
-        "ng",                 // Nigeria
-        "ni",                 // Nicaragua
-        "nl",                 // Netherlands
-        "no",                 // Norway
-        "np",                 // Nepal
-        "nr",                 // Nauru
-        "nu",                 // Niue
-        "nz",                 // New Zealand
-        "om",                 // Oman
-        "pa",                 // Panama
-        "pe",                 // Peru
-        "pf",                 // French Polynesia With Clipperton Island
-        "pg",                 // Papua New Guinea
-        "ph",                 // Philippines
-        "pk",                 // Pakistan
-        "pl",                 // Poland
-        "pm",                 // Saint-Pierre and Miquelon
-        "pn",                 // Pitcairn Islands
-        "pr",                 // Puerto Rico
-        "ps",                 // Palestinian territories (PA-controlled West Bank and Gaza Strip)
-        "pt",                 // Portugal
-        "pw",                 // Palau
-        "py",                 // Paraguay
-        "qa",                 // Qatar
-        "re",                 // Réunion
-        "ro",                 // Romania
-        "rs",                 // Serbia
-        "ru",                 // Russia
-        "rw",                 // Rwanda
-        "sa",                 // Saudi Arabia
-        "sb",                 // Solomon Islands
-        "sc",                 // Seychelles
-        "sd",                 // Sudan
-        "se",                 // Sweden
-        "sg",                 // Singapore
-        "sh",                 // Saint Helena
-        "si",                 // Slovenia
-        "sj",                 // Svalbard and Jan Mayen Islands Not in use (Norwegian dependencies; see .no)
-        "sk",                 // Slovakia
-        "sl",                 // Sierra Leone
-        "sm",                 // San Marino
-        "sn",                 // Senegal
-        "so",                 // Somalia
-        "sr",                 // Suriname
-        "ss",                 // South Sudan
-        "st",                 // São Tomé and Príncipe
-        "su",                 // Soviet Union (deprecated)
-        "sv",                 // El Salvador
-        "sx",                 // Sint Maarten
-        "sy",                 // Syria
-        "sz",                 // Swaziland
-        "tc",                 // Turks and Caicos Islands
-        "td",                 // Chad
-        "tf",                 // French Southern and Antarctic Lands
-        "tg",                 // Togo
-        "th",                 // Thailand
-        "tj",                 // Tajikistan
-        "tk",                 // Tokelau
-        "tl",                 // East Timor (deprecated old code)
-        "tm",                 // Turkmenistan
-        "tn",                 // Tunisia
-        "to",                 // Tonga
-        //"tp",               // East Timor (Retired)
-        "tr",                 // Turkey
-        "tt",                 // Trinidad and Tobago
-        "tv",                 // Tuvalu
-        "tw",                 // Taiwan, Republic of China
-        "tz",                 // Tanzania
-        "ua",                 // Ukraine
-        "ug",                 // Uganda
-        "uk",                 // United Kingdom
-        "us",                 // United States of America
-        "uy",                 // Uruguay
-        "uz",                 // Uzbekistan
-        "va",                 // Vatican City State
-        "vc",                 // Saint Vincent and the Grenadines
-        "ve",                 // Venezuela
-        "vg",                 // British Virgin Islands
-        "vi",                 // U.S. Virgin Islands
-        "vn",                 // Vietnam
-        "vu",                 // Vanuatu
-        "wf",                 // Wallis and Futuna
-        "ws",                 // Samoa (formerly Western Samoa)
+        // Taken from Version 2026111200, Last Updated Thu Nov 12 07:07:01 2026 UTC
+        "ac", // ac Internet Computer Bureau Limited
+        "ad", // ad Andorra Telecom
+        "ae", // ae Telecommunications and Digital Government Regulatory Authority (TDRA)
+        "af", // af Ministry of Communications and IT
+        "ag", // ag UHSA School of Medicine
+        "ai", // ai Government of Anguilla
+        "al", // al Electronic and Postal Communications Authority - AKEP
+        "am", // am "Internet Society" Non-governmental Organization
+        "ao", // ao Ministry of Telecommunications and Information Technologies (MTTI)
+        "aq", // aq Antarctica Network Information Centre Limited
+        "ar", // ar Presidencia de la Nación , Secretaría Legal y Técnica
+        "as", // as AS Domain Registry
+        "at", // at nic.at GmbH
+        "au", // au .au Domain Administration (auDA)
+        "aw", // aw SETAR
+        "ax", // ax Ålands landskapsregering
+        "az", // az IntraNS
+        "ba", // ba University Tele-Informatic Center (UTIC)
+        "bb", // bb Ministry of Innovation, Science and Smart Technology
+        "bd", // bd Posts and Telecommunications Division
+        "be", // be DNS Belgium vzw/asbl
+        "bf", // bf Autorité de Régulation des Communications Electroniques et des Postes (ARCEP)
+        "bg", // bg Register.BG
+        "bh", // bh Telecommunications Regulatory Authority (TRA)
+        "bi", // bi Centre National de l'Informatique
+        "bj", // bj Autorité de Régulation des Communications Electroniques et de la Poste du Bénin (ARCEP BENIN)
+        "bm", // bm Registry General Department, Ministry of Home Affairs
+        "bn", // bn Authority for Info-communications Technology Industry of Brunei Darussalam (AITI)
+        "bo", // bo Agencia de Gobierno Electrónico y Tecnologías de Información y Comunicación
+        "br", // br Comite Gestor da Internet no Brasil
+        "bs", // bs University of The Bahamas
+        "bt", // bt Ministry of Information and Communications
+        "bv", // bv Norid A/S
+        "bw", // bw Botswana Communications Regulatory Authority (BOCRA)
+        "by", // by Belarusian Cloud Technologies LLC
+        "bz", // bz University of Belize
+        "ca", // ca Canadian Internet Registration Authority (CIRA) Autorité Canadienne pour les enregistrements Internet (ACEI)
+        "cc", // cc eNIC Cocos (Keeling) Islands Pty. Ltd. d/b/a Island Internet Services
+        "cd", // cd Office Congolais des Postes et Télécommunications - OCPT
+        "cf", // cf Societe Centrafricaine de Telecommunications (SOCATEL)
+        "cg", // cg Interpoint Switzerland
+        "ch", // ch SWITCH The Swiss Education & Research Network
+        "ci", // ci Autorité de Régulation des Télécommunications/TIC de Côte d’lvoire (ARTCI)
+        "ck", // ck Telecom Cook Islands Ltd.
+        "cl", // cl NIC Chile (University of Chile)
+        "cm", // cm Agence Nationale des Technologies de l'Information et de la Communication (ANTIC)
+        "cn", // cn China Internet Network Information Center (CNNIC)
+        "co", // co Ministry of Information and Communications Technologies (MinTIC)
+        "cr", // cr National Academy of Sciences (Academia Nacional de Ciencias)
+        "cu", // cu CENIAInternet
+        "cv", // cv Agência Reguladora Multissectorial da Economia (ARME)
+        "cw", // cw University of Curacao
+        "cx", // cx Christmas Island Domain Administration Limited
+        "cy", // cy University of Cyprus
+        "cz", // cz CZ.NIC, z.s.p.o
+        "de", // de DENIC eG
+        "dj", // dj Djibouti Telecom S.A
+        "dk", // dk Dansk Internet Forum
+        "dm", // dm DotDM Corporation
+        "do", // do Pontificia Universidad Catolica Madre y Maestra, Recinto Santo Tomas de Aquino
+        "dz", // dz CERIST
+        "ec", // ec ECUADORDOMAIN S.A.
+        "ee", // ee Eesti Interneti Sihtasutus (EIS)
+        "eg", // eg Egyptian Universities Network (EUN), Supreme Council of Universities
+        "er", // er Eritrea Telecommunication Services Corporation (EriTel)
+        "es", // es Red.es
+        "et", // et Ethio telecom
+        "eu", // eu EURid vzw
+        "fi", // fi Finnish Transport and Communications Agency Traficom
+        "fj", // fj The University of the South Pacific IT Services
+        "fk", // fk Falkland Islands Government
+        "fm", // fm FSM Telecommunications Corporation
+        "fo", // fo FO Council
+        "fr", // fr Association Française pour le Nommage Internet en Coopération (A.F.N.I.C.)
+        "ga", // ga Agence Nationale des Infrastructures Numériques et des Fréquences (ANINF)
+        "gb", // gb Reserved Domain - IANA
+        "gd", // gd The National Telecommunications Regulatory Commission (NTRC)
+        "ge", // ge Caucasus Online LLC
+        "gf", // gf CANAL+ TELECOM
+        "gg", // gg Island Networks Ltd.
+        "gh", // gh Network Computer Systems Limited
+        "gi", // gi Sapphire Networks
+        "gl", // gl TELE Greenland A/S
+        "gm", // gm GM-NIC
+        "gn", // gn Centre National des Sciences Halieutiques de Boussoura
+        "gp", // gp Networking Technologies Group
+        "gq", // gq GETESA
+        "gr", // gr ICS-FORTH GR
+        "gs", // gs Government of South Georgia and South Sandwich Islands (GSGSSI)
+        "gt", // gt Universidad del Valle de Guatemala
+        "gu", // gu University of Guam
+        "gw", // gw Autoridade Reguladora Nacional - Tecnologias de Informação e Comunicação da Guiné-Bissau
+        "gy", // gy University of Guyana
+        "hk", // hk Hong Kong Internet Registration Corporation Ltd.
+        "hm", // hm HM Domain Registry
+        "hn", // hn Red de Desarrollo Sostenible Honduras
+        "hr", // hr CARNet - Croatian Academic and Research Network
+        "ht", // ht Consortium FDS/RDDH
+        "hu", // hu Council of Hungarian Internet Providers (CHIP)
+        "id", // id Perkumpulan Pengelola Nama Domain Internet Indonesia (PANDI)
+        "ie", // ie IE Domain Registry CLG
+        "il", // il The Israel Internet Association (RA)
+        "im", // im Isle of Man Government
+        "in", // in National Internet Exchange of India
+        "io", // io Internet Computer Bureau Limited
+        "iq", // iq Communications and Media Commission (CMC)
+        "ir", // ir Institute for Research in Fundamental Sciences
+        "is", // is ISNIC - Internet á Íslandi hf.
+        "it", // it IIT - CNR
+        "je", // je Island Networks (Jersey) Ltd.
+        "jm", // jm University of West Indies
+        "jo", // jo Ministry of Digital Economy and Entrepreneurship (MoDEE)
+        "jp", // jp Japan Registry Services Co., Ltd.
+        "ke", // ke Kenya Network Information Center (KeNIC)
+        "kg", // kg AsiaInfo Telecommunication Enterprise
+        "kh", // kh Telecommunication Regulator of Cambodia (TRC)
+        "ki", // ki Ministry of Information, Communications and Transport (MICT)
+        "km", // km Comores Telecom
+        "kn", // kn Ministry of Finance, Sustainable Development Information & Technology
+        "kp", // kp Star Joint Venture Company
+        "kr", // kr Korea Internet & Security Agency (KISA)
+        "kw", // kw Communications and Information Technology Regulatory Authority
+        "ky", // ky Utility Regulation and Competition Office (OfReg)
+        "kz", // kz Association of IT Companies of Kazakhstan
+        "la", // la Lao National Internet Center (LANIC), Ministry of Technology and Communications
+        "lb", // lb Internet Society Lebanon
+        "lc", // lc University of Puerto Rico
+        "li", // li SWITCH The Swiss Education & Research Network
+        "lk", // lk Council for Information Technology LK Domain Registrar
+        "lr", // lr Data Technology Solutions, Inc.
+        "ls", // ls Lesotho Network Information Centre Proprietary (LSNIC)
+        "lt", // lt Kaunas University of Technology
+        "lu", // lu RESTENA
+        "lv", // lv University of Latvia, Institute of Mathematics and Computer Science, Department of Network Solutions (DNS)
+        "ly", // ly General Authority of Communications and Informatics (GACI)
+        "ma", // ma Agence Nationale de Réglementation des Télécommunications (ANRT)
+        "mc", // mc Direction des Plateformes et des Ressources Numériques
+        "md", // md IP Serviciul Tehnologia Informatiei si Securitate Cibernetica
+        "me", // me Government of Montenegro
+        "mg", // mg NIC-MG (Network Information Center Madagascar)
+        "mh", // mh Office of the Cabinet
+        "mk", // mk Macedonian Academic Research Network Skopje
+        "ml", // ml Agence des Technologies de l’Information et de la Communication
+        "mm", // mm Ministry of Transport and Communications
+        "mn", // mn Datacom Co., Ltd.
+        "mo", // mo Macao Post and Telecommunications Bureau (CTT)
+        "mp", // mp Saipan Datacom, Inc.
+        "mq", // mq CANAL+ TELECOM
+        "mr", // mr Université de Nouakchott Al Aasriya
+        "ms", // ms MNI Networks Ltd.
+        "mt", // mt NIC (Malta)
+        "mu", // mu Internet Direct Ltd
+        "mv", // mv Dhivehi Raajjeyge Gulhun PLC
+        "mw", // mw Malawi Sustainable Development Network Programme (Malawi SDNP)
+        "mx", // mx NIC-Mexico ITESM - Campus Monterrey
+        "my", // my MYNIC Berhad
+        "mz", // mz Centro de Informatica de Universidade Eduardo Mondlane
+        "na", // na Namibian Network Information Center
+        "nc", // nc Office des Postes et Telecommunications
+        "ne", // ne Niger Télécoms SA (NIGERTELECOMS)
+        "nf", // nf Norfolk Island Data Services
+        "ng", // ng Nigeria Internet Registration Association
+        "ni", // ni Universidad Nacional del Ingernieria. Division de Tecnologias de la Informacion.
+        "nl", // nl SIDN (Stichting Internet Domeinregistratie Nederland)
+        "no", // no Norid A/S
+        "np", // np Mercantile Communications Pvt. Ltd.
+        "nr", // nr CENPAC NET
+        "nu", // nu The IUSN Foundation
+        "nz", // nz InternetNZ
+        "om", // om Telecommunications Regulatory Authority (TRA)
+        "pa", // pa Universidad Tecnologica de Panama
+        "pe", // pe Red Cientifica Peruana
+        "pf", // pf Gouvernement de la Polynésie française
+        "pg", // pg PNG DNS Administration, Vice Chancellors Office, The Papua New Guinea University of Technology
+        "ph", // ph PH Domain Foundation
+        "pk", // pk PKNIC
+        "pl", // pl Research and Academic Computer Network
+        "pm", // pm Association Française pour le Nommage Internet en Coopération (A.F.N.I.C.)
+        "pn", // pn Pitcairn Island Administration
+        "pr", // pr Gauss Research Laboratory Inc.
+        "ps", // ps Ministry of Telecommunications & Information Technology, Government Computer Center
+        "pt", // pt Associação DNS.PT
+        "pw", // pw Micronesia Investment and Development Corporation
+        "py", // py NIC-PY
+        "qa", // qa Communications Regulatory Authority
+        "re", // re Association Française pour le Nommage Internet en Coopération (A.F.N.I.C.)
+        "ro", // ro National Institute for R&D in Informatics
+        "rs", // rs Serbian National Internet Domain Registry (RNIDS)
+        "ru", // ru Coordination Center for TLD RU
+        "rw", // rw Rwanda Internet Community and Technology Alliance (RICTA) Ltd
+        "sa", // sa Communications, Space and Technology Commission
+        "sb", // sb Solomon Telekom Company Limited
+        "sc", // sc VCS Pty Ltd
+        "sd", // sd Sudan Internet Society
+        "se", // se The Internet Infrastructure Foundation
+        "sg", // sg Singapore Network Information Centre (SGNIC) Pte Ltd
+        "sh", // sh Government of St. Helena
+        "si", // si Academic and Research Network of Slovenia (ARNES)
+        "sj", // sj Norid A/S
+        "sk", // sk SK-NIC, a.s.
+        "sl", // sl Sierratel
+        "sm", // sm Telecom Italia San Marino S.p.A.
+        "sn", // sn Universite Cheikh Anta Diop
+        "so", // so Ministry of Post and Telecommunications
+        "sr", // sr Telesur
+        "ss", // ss National Communication Authority (NCA)
+        "st", // st Tecnisys
+        "su", // su Russian Institute for Development of Public Networks (ROSNIIROS)
+        "sv", // sv SVNet
+        "sx", // sx SX Registry SA B.V.
+        "sy", // sy National Authority for Information Technology Services (NAITS)
+        "sz", // sz University of Swaziland Department of Computer Science
+        "tc", // tc Melrex TC
+        "td", // td l'Agence de Développement des Technologies de l'Information et de la Communication (ADETIC)
+        "tf", // tf Association Française pour le Nommage Internet en Coopération (A.F.N.I.C.)
+        "tg", // tg Autorité de Régulation des Communications Electroniques et des Postes (ARCEP)
+        "th", // th Thai Network Information Center Foundation
+        "tj", // tj Information Technology Center
+        "tk", // tk Telecommunication Tokelau Corporation (Teletok)
+        "tl", // tl Autoridade Nacional de Comunicações
+        "tm", // tm TM Domain Registry Ltd
+        "tn", // tn Agence Tunisienne d'Internet
+        "to", // to Government of the Kingdom of Tonga, H.R.H. Crown Prince Tupouto'a, c/o Consulate of Tonga
+        "tr", // tr Bilgi Teknolojileri ve İletişim Kurumu (BTK)
+        "tt", // tt University of the West Indies, Faculty of Engineering
+        "tv", // tv Ministry of Transport, Energy, Communications and Innovations
+        "tw", // tw Taiwan Network Information Center (TWNIC)
+        "tz", // tz Tanzania Communications Regulatory Authority
+        "ua", // ua Hostmaster Ltd.
+        "ug", // ug Uganda Online Ltd.
+        "uk", // uk Nominet UK
+        "us", // us Registry Services, LLC
+        "uy", // uy SeCIU - Universidad de la Republica
+        "uz", // uz Single Integrator for Creation and Support of State Information Systems UZINFOCOM
+        "va", // va Holy See - Vatican City State
+        "vc", // vc Ministry of Telecommunications, Science, Technology and Industry
+        "ve", // ve Comisión Nacional de Telecomunicaciones (CONATEL)
+        "vg", // vg Telecommunications Regulatory Commission of the Virgin Islands
+        "vi", // vi Virgin Islands Public Telecommunications System, Inc.
+        "vn", // vn Viet Nam Internet Network Information Center (VNNIC)
+        "vu", // vu Telecommunications Radiocommunications and Broadcasting Regulator (TRBR)
+        "wf", // wf Association Française pour le Nommage Internet en Coopération (A.F.N.I.C.)
+        "ws", // ws Government of Samoa Ministry of Foreign Affairs & Trade
         "xn--2scrj9c", // ಭಾರತ National Internet eXchange of India
         "xn--3e0b707e", // 한국 KISA (Korea Internet & Security Agency)
         "xn--3hcrj9c", // ଭାରତ National Internet eXchange of India
@@ -1735,11 +1732,11 @@ public final class DomainValidator extends AbstractValidator {
         "xn--y9a3aq", // հայ "Internet Society" Non-governmental Organization
         "xn--yfro4i67o", // 新加坡 Singapore Network Information Centre (SGNIC) Pte Ltd
         "xn--ygbi2ammx", // فلسطين Ministry of Telecom & Information Technology (MTIT)
-        "ye",                 // Yemen
-        "yt",                 // Mayotte
-        "za",                 // South Africa
-        "zm",                 // Zambia
-        "zw",                 // Zimbabwe
+        "ye", // ye TeleYemen
+        "yt", // yt Association Française pour le Nommage Internet en Coopération (A.F.N.I.C.)
+        "za", // za ZA Domain Name Authority
+        "zm", // zm Zambia Information and Communications Technology Authority (ZICTA)
+        "zw", // zw Postal and Telecommunications Regulatory Authority of Zimbabwe (POTRAZ)
     };
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search

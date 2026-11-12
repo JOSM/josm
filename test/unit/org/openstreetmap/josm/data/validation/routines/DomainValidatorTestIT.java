@@ -31,7 +31,7 @@ import java.lang.reflect.Modifier;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.IDN;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -42,15 +42,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
 import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.tools.Logging;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Integration tests for the DomainValidator.
@@ -82,17 +84,18 @@ class DomainValidatorTestIT {
         DomainValidator dv = DomainValidator.getInstance();
         File txtFile = new File(System.getProperty("java.io.tmpdir"), "tlds-alpha-by-domain.txt");
         long timestamp;
+        String tlds = "https://data.iana.org/TLD/tlds-alpha-by-domain.txt";
         try {
-            timestamp = download(txtFile, "http://data.iana.org/TLD/tlds-alpha-by-domain.txt", 0L);
+            timestamp = download(txtFile, tlds, 0L);
         } catch (ConnectException e) {
             Logging.error(e);
             // Try again one more time in case of random network issue
-            timestamp = download(txtFile, "http://data.iana.org/TLD/tlds-alpha-by-domain.txt", 0L);
+            timestamp = download(txtFile, tlds, 0L);
         }
-        final File htmlFile = new File(System.getProperty("java.io.tmpdir"), "tlds-alpha-by-domain.html");
-        // N.B. sometimes the html file may be updated a day or so after the txt file
-        // if the txt file contains entries not found in the html file, try again in a day or two
-        download(htmlFile, "http://www.iana.org/domains/root/db", timestamp);
+        final File jsonFile = new File(System.getProperty("java.io.tmpdir"), "tlds-alpha-by-domain.json");
+        // N.B. sometimes the JSON data may be updated a day or so after the txt file
+        // if the txt file contains entries not found in the JSON file, try again in a day or two
+        download(jsonFile, "https://data.iana.org/TLD/v1/tlds.json", timestamp);
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(txtFile.toPath()), StandardCharsets.UTF_8))) {
             String line;
@@ -105,8 +108,8 @@ class DomainValidatorTestIT {
             }
             final boolean generateUnicodeTlds = false; // Change this to generate Unicode TLDs as well
 
-            // Parse html page to get entries
-            Map<String, String[]> htmlInfo = getHtmlInfo(htmlFile);
+            // Parse JOSN to get entries
+            Map<String, String[]> jsonInfo = getJSONInfo(jsonFile);
             Map<String, String> missingTLD = new TreeMap<>(); // stores entry and comments as String[]
             Map<String, String> missingCC = new TreeMap<>();
             Map<String, String> allTLD = new TreeMap<>(); // stores entry and comments as String[]
@@ -120,10 +123,10 @@ class DomainValidatorTestIT {
                     } else {
                         unicodeTld = asciiTld;
                     }
-                    String[] info = htmlInfo.get(asciiTld);
+                    String[] info = jsonInfo.get(asciiTld);
                     if (info != null) {
                         String type = info[0];
-                        String comment = info[1].replaceAll("&quot;", "\"").replaceAll("&#x27;", "'").replaceAll("&amp;", "&");
+                        String comment = info[1];
                         if ("country-code".equals(type)) { // Which list to use?
                             if (!dv.isValidInfrastructureTld(asciiTld)) {
                                 allCC.put(asciiTld, unicodeTld + " " + comment);
@@ -149,9 +152,9 @@ class DomainValidatorTestIT {
                                     missingTLD.put(unicodeTld, asciiTld + " " + comment);
                                 }
                             }
-                        } else {
-                            Logging.error("Expected to find HTML info for "+ asciiTld);
                         }
+                    } else {
+                        Logging.error("Expected to find JSON information for "+ asciiTld);
                     }
                     ianaTlds.add(asciiTld);
                     // Don't merge these conditions; generateUnicodeTlds is final so needs to be separate to avoid a warning
@@ -162,28 +165,24 @@ class DomainValidatorTestIT {
                     }
                 }
             }
-            // List html entries not in TLD text list
-            for (String key : (new TreeMap<>(htmlInfo)).keySet()) {
+            // List JSON entries not in TLD text list
+            for (String key : (new TreeMap<>(jsonInfo)).keySet()) {
                 if (!ianaTlds.contains(key)) {
-                    if (isNotInRootZone(key)) {
-                        Logging.info("HTML entry not yet in root zone: "+key);
-                    } else {
-                        Logging.warn("Expected to find text entry for html: "+key);
-                    }
+                    Logging.warn("Expected to find text entry for JSON: "+key);
                 }
             }
             allTLD.remove("arpa");
             String s = allTLD.get("melbourne");
             if (s != null) /* text too long, shorten a bit */
                 allTLD.replace("melbourne", s.replace("represented by its ", ""));
-            printMap(header, allTLD, "allTLD");
-            printMap(header, allCC, "allCC");
+            printMap(header, allTLD, "allTLD", "in");
+            printMap(header, allCC, "allCC", "in");
             if (!missingTLD.isEmpty()) {
-                printMap(header, missingTLD, "TLD");
+                printMap(header, missingTLD, "TLD", "missing from");
                 fail("missing TLD");
             }
             if (!missingCC.isEmpty()) {
-                printMap(header, missingCC, "CC");
+                printMap(header, missingCC, "CC", "missing from");
                 fail("missing CC");
             }
         }
@@ -194,8 +193,8 @@ class DomainValidatorTestIT {
         // Don't check local TLDS assertTrue(isInIanaList("LOCAL_TLDS", ianaTlds));
     }
 
-    private static void printMap(final String header, Map<String, String> map, String string) {
-        Logging.warn("Entries missing from "+ string +" List\n");
+    private static void printMap(final String header, Map<String, String> map, String string, String mode) {
+        Logging.warn("Entries " + mode + " "+ string +" List\n");
         if (header != null) {
             Logging.warn("        // Taken from " + header);
         }
@@ -205,50 +204,37 @@ class DomainValidatorTestIT {
         Logging.warn(System.lineSeparator() + "Done");
     }
 
-    @SuppressFBWarnings(value = "PERFORMANCE")
-    private static Map<String, String[]> getHtmlInfo(final File f) throws IOException {
+    private static Map<String, String[]> getJSONInfo(final File f) throws IOException {
         final Map<String, String[]> info = new HashMap<>();
 
-        final Pattern domain = Pattern.compile(".*<a href=\"/domains/root/db/([^.]+)\\.html");
-        final Pattern type = Pattern.compile("\\s+<td>([^<]+)</td>");
-        final Pattern comment = Pattern.compile("\\s+<td>([^<]+)</td>");
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8));
+            JsonReader reader = Json.createReader(br)) {
+            
+            JsonObject root = reader.readObject();
+            JsonArray domains = root.getJsonArray("domains");
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                Matcher m = domain.matcher(line);
-                if (m.lookingAt()) {
-                    String dom = m.group(1);
-                    String typ = "??";
+            if (domains != null) {
+                for (JsonValue val : domains) {
+                    JsonObject domainNode = val.asJsonObject();
+                    
+                    String dom = domainNode.getString("name", "");
+                    String typ = domainNode.getString("type", "??");
+                    String status = domainNode.getString("status", "");
+
                     String com = "??";
-                    line = br.readLine();
-                    while (line != null && line.matches("^\\s*$")) { // extra blank lines introduced
-                        line = br.readLine();
+                    if (domainNode.containsKey("manager") && !domainNode.isNull("manager")) {
+                        JsonObject managerNode = domainNode.getJsonObject("manager");
+                        if (managerNode != null && managerNode.containsKey("organization") && !managerNode.isNull("organization")) {
+                            com = managerNode.getString("organization", "??");
+                        }
                     }
-                    Matcher t = type.matcher(line);
-                    if (t.lookingAt()) {
-                        typ = t.group(1);
-                        line = br.readLine();
-                        if (line != null && line.matches("\\s+<!--.*")) {
-                            while (line != null && !line.matches(".*-->.*")) {
-                                line = br.readLine();
-                            }
-                            line = br.readLine();
-                        }
-                        // Should have comment; is it wrapped?
-                        while (line != null && !line.matches(".*</td>.*")) {
-                            line += " " +br.readLine();
-                        }
-                        Matcher n = comment.matcher(line);
-                        if (n.lookingAt()) {
-                            com = n.group(1);
-                        }
-                        // Don't save unused entries
-                        if (!com.contains("Not assigned") && !com.contains("Retired") && !typ.equals("test")) {
-                            info.put(dom.toLowerCase(Locale.ENGLISH), new String[]{typ, com});
-                        }
-                    } else {
-                        Logging.error("Unexpected type: " + line);
+
+                    boolean isRetired = "retired".equalsIgnoreCase(status);
+                    boolean isTest = "test".equalsIgnoreCase(typ);
+                    boolean isNotAssigned = com.contains("Not assigned") || com.equals("??");
+
+                    if (!isRetired && !isTest && !isNotAssigned) {
+                        info.put(dom.toLowerCase(Locale.ENGLISH), new String[]{typ, com});
                     }
                 }
             }
@@ -259,7 +245,7 @@ class DomainValidatorTestIT {
     /*
      * Download a file if it is more recent than our cached copy.
      * Unfortunately the server does not seem to honour If-Modified-Since for the
-     * Html page, so we check if it is newer than the txt file and skip download if so
+     * page, so we check if it is newer than the txt file and skip download if so
      */
     private static long download(File f, String tldurl, long timestamp) throws IOException {
         final int HOUR = 60*60*1000; // an hour in ms
@@ -274,7 +260,7 @@ class DomainValidatorTestIT {
         } else {
             modTime = 0;
         }
-        HttpURLConnection hc = (HttpURLConnection) new URL(tldurl).openConnection();
+        HttpURLConnection hc = (HttpURLConnection) URI.create(tldurl).toURL().openConnection();
         if (modTime > 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z"); //Sun, 06 Nov 1994 08:49:37 GMT
             String since = sdf.format(new Date(modTime));
@@ -287,45 +273,15 @@ class DomainValidatorTestIT {
             Logging.debug("Downloading " + tldurl);
             byte[] buff = new byte[1024];
             try (InputStream is = hc.getInputStream();
-                 FileOutputStream fos = new FileOutputStream(f)) {
-                int len;
-                while ((len = is.read(buff)) != -1) {
-                    fos.write(buff, 0, len);
+                FileOutputStream fos = new FileOutputStream(f)) {
+                    int len;
+                    while ((len = is.read(buff)) != -1) {
+                        fos.write(buff, 0, len);
                 }
             }
             Logging.debug("Done");
         }
         return f.lastModified();
-    }
-
-    /**
-     * Check whether the domain is in the root zone currently.
-     * Reads the URL http://www.iana.org/domains/root/db/*domain*.html
-     * (using a local disk cache)
-     * and checks for the string "This domain is not present in the root zone at this time."
-     * @param domain the domain to check
-     * @return true if the string is found
-     */
-    private static boolean isNotInRootZone(String domain) {
-        String tldurl = "http://www.iana.org/domains/root/db/" + domain + ".html";
-        BufferedReader in = null;
-        try {
-            File rootCheck = new File(System.getProperty("java.io.tmpdir"), "tld_" + domain + ".html");
-            download(rootCheck, tldurl, 0L);
-            in = new BufferedReader(new InputStreamReader(Files.newInputStream(rootCheck.toPath()), StandardCharsets.UTF_8));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                if (inputLine.contains("This domain is not present in the root zone at this time.")) {
-                    return true;
-                }
-            }
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            closeQuietly(in);
-        }
-        return false;
     }
 
     private static void closeQuietly(Closeable in) {
