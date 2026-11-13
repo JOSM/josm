@@ -105,6 +105,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     private static final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {
             "name",
             "ref",
+            "from-to",
             //
             "amenity",
             "landuse",
@@ -448,6 +449,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     private static String getRelationTypeName(IRelation<?> relation) {
         // see https://josm.openstreetmap.de/browser/osm/applications/editors/josm/i18n/specialmessages.java
         String name = trc("Relation type", relation.get("type"));
+        if (relation.hasTag("type", "route") && relation.hasKey("route")) {
+            String route = trc("Route type", relation.get("route"));
+            name = route + " " + name;
+        }
         if (name == null) {
             name = relation.hasKey("public_transport") ? tr("public transport") : null;
         }
@@ -483,6 +488,12 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     private static String getNameTagValue(IRelation<?> relation, String nameTag) {
         if ("name".equals(nameTag)) {
             return formatLocalName(relation);
+        } else if ("from-to".equals(nameTag)) {
+            String from = trcLazy("from", I18n.escape(relation.get("from")));
+            String to = trcLazy("to", I18n.escape(relation.get("to")));
+            if (from != null || to != null)
+                return (from != null ? from : "?") + "-" + (to != null ? to : "?");
+            return null;
         } else if (":LocationCode".equals(nameTag)) {
             return relation.keys()
                     .filter(m -> m.endsWith(nameTag))
