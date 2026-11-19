@@ -68,7 +68,7 @@ public interface DataSetListener {
      * Call each subevent of a {@link DataChangedEvent}. This should only ever be called from
      * {@link #dataChanged(DataChangedEvent)}.
      * @param event The event to call the individual elements from
-     * @implNote Implementors should decide what they want to do with {@code event == null},
+     * Implementors should decide what they want to do with {@code event == null},
      * {@code event.getEvents() == null}, and {@code event.getEvents().isEmpty()}.
      * @since 18792
      */

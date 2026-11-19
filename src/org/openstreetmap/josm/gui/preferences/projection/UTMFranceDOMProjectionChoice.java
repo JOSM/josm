@@ -11,7 +11,6 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * ProjectionChoice for various French overseas territories (EPSG:2969,2970,2972,2973,2975).
- * <p>
  * @see <a href="https://fr.wikipedia.org/wiki/Système_de_coordonnées_(cartographie)#Dans_les_d.C3.A9partements_d.27Outre-mer">DOM</a>
  */
 public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {

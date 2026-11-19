@@ -17,7 +17,6 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * ProjectionChoice for 4 zone Lambert (1920, EPSG:27561-27564).
- * <p>
  * @see <a href="https://fr.wikipedia.org/wiki/Projection_conique_conforme_de_Lambert#Lambert_zone">Lambert zone</a>
  */
 public class LambertProjectionChoice extends ListProjectionChoice {

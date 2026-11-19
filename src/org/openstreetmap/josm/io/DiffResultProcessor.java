@@ -40,7 +40,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * New primitives (uploaded with negative id) will be assigned a positive id, etc.
  * The goal is to have a clean state, just like a fresh download (assuming no
  * concurrent uploads by other users have happened in the meantime).
- * <p>
  * @see <a href="https://wiki.openstreetmap.org/wiki/API_v0.6#Response_10">API 0.6 diff upload response</a>
  */
 public class DiffResultProcessor {

@@ -13,8 +13,6 @@ import org.openstreetmap.josm.tools.Logging;
  * This class has been derived from the implementation of the Geotools project;
  * git 8cbf52d, org.geotools.referencing.operation.projection.MapProjection
  * at the time of migration.
- * <p>
- *
  * @author André Gosselin
  * @author Martin Desruisseaux (PMO, IRD)
  * @author Rueben Schulz

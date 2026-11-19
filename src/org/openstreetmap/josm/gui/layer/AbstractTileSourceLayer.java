@@ -266,7 +266,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     /**
      * Get projections this imagery layer supports natively.
-     * <p/>
+     * <p>
      * For example projection of tiles that are downloaded from a server. Layer may support even more
      * projections (by reprojecting the tiles), but with a certain loss in image quality and performance.
      * @return projections this imagery layer supports natively; null if layer is projection agnostic.
@@ -678,6 +678,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @see #tryLoadFromDifferentZoom(Graphics2D, int, List, int)
      * @see #drawInViewArea(Graphics2D, MapView, ProjectionBounds)
      * @see AbstractTileSourceLayer.TileSet#overloadTiles()
+     * @param visibleTiles number of currently visible tiles
+     * @param maxXtiles maximum number of tiles along the horizontal (X) axis
+     * @param maxYtiles maximum number of tiles along the vertical (Y) axis
+     * @return estimated total number of tiles to load across zoom levels and borders
      */
     private static int calculateRealTiles(int visibleTiles, int maxXtiles, int maxYtiles) {
         return (int) Math.ceil(

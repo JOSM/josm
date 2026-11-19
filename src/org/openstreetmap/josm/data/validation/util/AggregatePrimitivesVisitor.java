@@ -13,8 +13,6 @@ import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 
 /**
  * A visitor that aggregates all primitives it visits.
- * <p>
- *
  * @author frsantos
  */
 public class AggregatePrimitivesVisitor implements OsmPrimitiveVisitor {

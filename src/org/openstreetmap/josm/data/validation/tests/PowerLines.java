@@ -346,7 +346,7 @@ public class PowerLines extends Test {
      * @param parent parent powerline way to find crossings for
      * @param crossingWays found crossing ways
      * @param crossingPositions collection of the crossing positions
-     * @implNote Inspired by {@code utilsplugin2/selection/NodeWayUtils.java#addWaysIntersectingWay()}
+     * Inspired by {@code utilsplugin2/selection/NodeWayUtils.java#addWaysIntersectingWay()}
      */
     private static void findCrossings(Map<Point2D, List<WaySegment>> ways, Way parent, Set<Way> crossingWays,
                                       Set<ILatLon> crossingPositions) {

@@ -17,8 +17,6 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 
 /**
  * This interface provides access to the relation editor for actions.
- * <p>
- *
  * @author Michael Zangl
  * @since 14027
  */

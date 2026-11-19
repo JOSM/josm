@@ -33,8 +33,7 @@ import org.openstreetmap.josm.tools.Logging;
  * A class that provides scrolling capabilities to a long menu dropdown or
  * popup menu. A number of items can optionally be frozen at the top of the menu.
  * <p>
- * <b>Implementation note:</B>  The default scrolling interval is 150 milliseconds.
- * <p>
+ * <b>Implementation note:</B> The default scrolling interval is 150 milliseconds.
  * @author Darryl, https://tips4java.wordpress.com/2009/02/01/menu-scroller/
  * @since 4593
  */

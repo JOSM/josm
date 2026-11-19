@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * This class handles the layer management.
  * <p>
  * This manager handles a list of layers with the first layer being the front layer.
- * <h1>Threading</h1>
+ * <h2>Threading</h2>
  * Synchronization of the layer manager is done by synchronizing all read/write access. All changes are internally done in the EDT thread.
  * <p>
  * Methods of this manager may be called from any thread in any order.

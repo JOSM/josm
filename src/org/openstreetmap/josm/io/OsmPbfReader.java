@@ -52,7 +52,7 @@ public final class OsmPbfReader extends AbstractReader {
     /**
      * This could be replaced by {@link org.apache.commons.io.input.BoundedInputStream} from Apache Commons IO.
      * However, Commons IO is not <i>currently</i> (2024-05-13) a required JOSM dependency, so we should avoid using it
-     * for now. Commons IO is a <i>transitive</i> dependency, currently pulled in by {@link org.apache.commons.compress}
+     * for now. Commons IO is a <i>transitive</i> dependency, currently pulled in by <code>org.apache.commons.compress</code>
      * (see {@link org.apache.commons.compress.utils.BoundedInputStream}).
      */
     private static final class BoundedInputStream extends InputStream {

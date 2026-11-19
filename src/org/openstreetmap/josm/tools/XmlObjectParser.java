@@ -205,7 +205,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         /**
          * Get a field (uncached in {@link #fields})
-         * @implNote Please profile startup when changing
+         * Please profile startup when changing
          * @param s The field to get
          * @return The field, or {@code null}.
          */
@@ -227,7 +227,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         /**
          * Get an uncached method (in {@link #methods})
-         * @implNote Please profile startup when changing
+         * Please profile startup when changing
          * @param s The method to find
          * @return The method or {@code null}.
          */

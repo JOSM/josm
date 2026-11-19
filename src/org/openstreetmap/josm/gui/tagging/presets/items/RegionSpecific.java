@@ -21,7 +21,7 @@ public interface RegionSpecific {
     /**
      * Get the regions for the item
      * @return The regions that the item is valid for
-     * @apiNote This is not {@code getRegions} just in case we decide to make the {@link RegionSpecific} record classes.
+     * This is not {@code getRegions} just in case we decide to make the {@link RegionSpecific} record classes.
      */
     Collection<String> regions();
 
@@ -49,7 +49,7 @@ public interface RegionSpecific {
 
     /**
      * Get the exclude_regions for the preset
-     * @apiNote This is not {@code getExclude_regions} just in case we decide to make {@link RegionSpecific} a record class.
+     * This is not {@code getExclude_regions} just in case we decide to make {@link RegionSpecific} a record class.
      * @return {@code true} if the meaning of {@link #regions()} should be inverted
      */
     boolean exclude_regions();
