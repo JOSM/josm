@@ -675,13 +675,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
      * <p>
      * Check call to tryLoadFromDifferentZoom
-     * @see #tryLoadFromDifferentZoom(Graphics2D, int, List, int)
-     * @see #drawInViewArea(Graphics2D, MapView, ProjectionBounds)
-     * @see AbstractTileSourceLayer.TileSet#overloadTiles()
      * @param visibleTiles number of currently visible tiles
      * @param maxXtiles maximum number of tiles along the horizontal (X) axis
      * @param maxYtiles maximum number of tiles along the vertical (Y) axis
      * @return estimated total number of tiles to load across zoom levels and borders
+     * @see #tryLoadFromDifferentZoom(Graphics2D, int, List, int)
+     * @see #drawInViewArea(Graphics2D, MapView, ProjectionBounds)
+     * @see AbstractTileSourceLayer.TileSet#overloadTiles()
      */
     private static int calculateRealTiles(int visibleTiles, int maxXtiles, int maxYtiles) {
         return (int) Math.ceil(
