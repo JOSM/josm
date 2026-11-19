@@ -4971,7 +4971,7 @@
                 <list_entry value="wall" short_description="A wall-mounted fire hydrant." />
                 <list_entry value="pipe" short_description="A simple capped pipe, without the usual hydrant shape." />
             </combo>
-            <combo key="fire_hydrant:diameter" text="Diameter (mm)" values="50,70,75,80,100,110,125,150,200,250,300,400" />
+            <combo key="fire_hydrant:diameter" text="Diameter (mm)" values="50,70,75,80,100,110,125,150,200,250,300,400,500" />
             <combo key="fire_hydrant:pressure" text="Pressure (bar) or suction" values_searchable="true" values_sort="false">
                 <list_entry value="#" short_description="Pressure in bar." />
                 <list_entry value="yes" short_description="Pressure but value unknown." />
