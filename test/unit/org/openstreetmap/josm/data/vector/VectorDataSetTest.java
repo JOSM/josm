@@ -6,15 +6,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTTile;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorCachedTileLoader;
@@ -73,8 +83,8 @@ class VectorDataSetTest {
             throw new IllegalArgumentException("Tiles come with a {z}, {x}, and {y} component");
         }
         final MapboxVectorTileSource tileSource = layer.getTileSource();
-        MapboxVectorCachedTileLoader tileLoader = layer.getTileLoader();
-        Collection<MVTTile> tilesCollection = new ArrayList<>();
+        final MapboxVectorCachedTileLoader tileLoader = layer.getTileLoader();
+        final Collection<MVTTile> tilesCollection = new ArrayList<>();
         for (int i = 0; i < tiles.length / 3; i++) {
             final MVTTile tile = (MVTTile) layer.createTile(tileSource, tiles[3 * i + 1], tiles[3 * i + 2], tiles[3 * i]);
             tileLoader.createTileLoaderJob(tile).submit();
@@ -123,5 +133,107 @@ class VectorDataSetTest {
             .distinct().count());
         assertEquals(1, dataSet.getWays().size());
         assertEquals(0, dataSet.getRelations().size());
+    }
+
+    /**
+     * Test that {@link VectorDataSet#getAllSelected()} returns the expected selected primitives
+     * and returns an empty collection once the selection is cleared.
+     */
+    @Test
+    void testGetAllSelected() {
+        final VectorDataSet dataSet = this.layer.getData();
+        assertTrue(dataSet.getAllSelected().isEmpty());
+
+        dataSet.setZoom(14);
+        loadTile(this.layer, 14, 3248, 6258);
+
+        // Select two arbitrary nodes from the loaded tile
+        final List<VectorNode> nodesToSelect = dataSet.getNodes().stream()
+                .limit(2)
+                .collect(Collectors.toList());
+        assertEquals(2, nodesToSelect.size());
+
+        dataSet.setSelected(nodesToSelect);
+
+        final Collection<VectorPrimitive> selected = dataSet.getAllSelected();
+        assertEquals(2, selected.size());
+        assertTrue(selected.containsAll(nodesToSelect));
+
+        // Clear selection again
+        dataSet.clearSelection();
+        assertTrue(dataSet.getAllSelected().isEmpty());
+    }
+
+    /**
+     * Test that {@link VectorDataSet#getAllSelected()} properly combines selected primitives
+     * from both loaded vector tiles and the custom data store.
+     */
+    @Test
+    void testGetAllSelectedWithCustomDataStore() {
+        final VectorDataSet dataSet = this.layer.getData();
+        dataSet.setZoom(14);
+        loadTile(this.layer, 14, 3248, 6258);
+
+        // Combine a primitive from the tile and a custom primitive (customDataStore)
+        final VectorPrimitive tilePrimitive = dataSet.getNodes().iterator().next();
+        final VectorNode customNode = new VectorNode("custom-layer");
+        customNode.setCoor(new LatLon(0, 0));
+        dataSet.addPrimitive(customNode);
+
+        dataSet.setSelected(Arrays.asList(tilePrimitive, customNode));
+
+        final Collection<VectorPrimitive> selected = dataSet.getAllSelected();
+        assertEquals(2, selected.size());
+        assertTrue(selected.contains(tilePrimitive));
+        assertTrue(selected.contains(customNode));
+    }
+
+    /**
+     * Test that {@link VectorDataSet#getAllSelected()} is thread-safe when primitives are
+     * concurrently added and removed while reading the current selection.
+     *
+     * @throws Exception if any thread execution or timeout error occurs
+     */
+    @Test
+    void testGetAllSelectedThreadSafety() throws Exception {
+        final VectorDataSet dataSet = this.layer.getData();
+        dataSet.setZoom(14);
+        loadTile(this.layer, 14, 3248, 6258);
+
+        final List<VectorNode> nodesToSelect = dataSet.getNodes().stream()
+                .limit(5)
+                .collect(Collectors.toList());
+        dataSet.setSelected(nodesToSelect);
+
+        final int iterations = 200;
+        final ExecutorService executor = Executors.newFixedThreadPool(2);
+        final CountDownLatch startLatch = new CountDownLatch(1);
+
+        // Thread 1: Continuously add and remove primitives (modifies underlying maps)
+        final Future<?> writer = executor.submit(() -> {
+            startLatch.await();
+            for (int i = 0; i < iterations; i++) {
+                final VectorNode tempNode = new VectorNode("temp-layer");
+                tempNode.setCoor(new LatLon(i * 0.001, i * 0.001));
+                dataSet.addPrimitive(tempNode);
+                dataSet.removePrimitive(tempNode);
+            }
+            return null;
+        });
+
+        // Thread 2: Concurrently read getAllSelected()
+        final Future<?> reader = executor.submit(() -> {
+            startLatch.await();
+            for (int i = 0; i < iterations; i++) {
+                final Collection<VectorPrimitive> selected = dataSet.getAllSelected();
+                assertEquals(5, selected.size());
+            }
+            return null;
+        });
+
+        startLatch.countDown();
+        writer.get(5, TimeUnit.SECONDS);
+        reader.get(5, TimeUnit.SECONDS);
+        executor.shutdown();
     }
 }

@@ -252,7 +252,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
 
     @Override
     public <T extends VectorPrimitive> Collection<T> getPrimitives(Predicate<? super VectorPrimitive> predicate) {
-        Collection<VectorPrimitive> primitives = tryRead(this.readWriteLock, () -> {
+        final Collection<VectorPrimitive> primitives = tryRead(this.readWriteLock, () -> {
             final Storage<MVTTile> dataStore = this.getBestZoomDataStore().orElse(null);
             final Stream<VectorDataStore> dataStoreStream = dataStore != null ? dataStore.stream().map(MVTTile::getData) : Stream.empty();
             return Stream.concat(dataStoreStream, Stream.of(this.customDataStore))
@@ -363,14 +363,27 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     public Collection<VectorPrimitive> getAllSelected() {
         return tryRead(this.readWriteLock, () -> {
             final Storage<MVTTile> dataStore = this.getBestZoomDataStore().orElse(null);
-            Stream<VectorDataStore> dataStoreStream = dataStore != null ? dataStore.stream().map(MVTTile::getData) : Stream.empty();
-                return Stream.concat(dataStoreStream, Stream.of(this.customDataStore)).map(VectorDataStore::getPrimitivesMap)
-                  .flatMap(dataMap -> {
-                    // Synchronize on dataMap to avoid concurrent modification errors
-                    synchronized (dataMap) {
-                        return this.currentSelectedPrimitives.stream().map(dataMap::get).filter(Objects::nonNull);
-                    }
-                }).collect(Collectors.toList());
+            final Stream<VectorDataStore> dataStoreStream = dataStore != null 
+                    ? dataStore.stream().map(MVTTile::getData) 
+                    : Stream.empty();
+
+            return Stream.concat(dataStoreStream, Stream.ofNullable(this.customDataStore))
+                    .map(VectorDataStore::getPrimitivesMap)
+                    .filter(Objects::nonNull)
+                    .flatMap(dataMap -> {
+                        final Map<PrimitiveId, VectorPrimitive> lockObject = dataMap;
+                        synchronized (lockObject) {
+                            final List<VectorPrimitive> selectedInMap = new ArrayList<>();
+                            for (PrimitiveId id : this.currentSelectedPrimitives) {
+                                final VectorPrimitive primitive = lockObject.get(id);
+                                if (primitive != null) {
+                                    selectedInMap.add(primitive);
+                                }
+                            }
+                            return selectedInMap.stream();
+                        }
+                    })
+                    .collect(Collectors.toList());
         }).orElseGet(Collections::emptyList);
     }
 
@@ -490,7 +503,7 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
     private boolean doSelectionChange(final Function<Set<VectorPrimitive>,
             SelectionChangeEvent<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet>> command) {
         synchronized (this.selectionLock) {
-            SelectionChangeEvent<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet> event =
+            final SelectionChangeEvent<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet> event =
                     command.apply(currentSelectedPrimitives.stream().map(this::getPrimitiveById).collect(Collectors.toSet()));
             if (event.isNop()) {
                 return false;
@@ -635,8 +648,8 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
      * @param invisibleLayers The layer to not show
      */
     public void setInvisibleLayers(Collection<String> invisibleLayers) {
-        String[] currentInvisibleLayers = invisibleLayers.stream().filter(Objects::nonNull).toArray(String[]::new);
-        List<String> temporaryList = Arrays.asList(currentInvisibleLayers);
+        final String[] currentInvisibleLayers = invisibleLayers.stream().filter(Objects::nonNull).toArray(String[]::new);
+        final List<String> temporaryList = Arrays.asList(currentInvisibleLayers);
         this.dataStoreMap.values().stream().flatMap(Collection::stream).map(MVTTile::getData)
           .forEach(dataStore -> dataStore.getAllPrimitives().parallelStream()
             .forEach(primitive -> primitive.setVisible(!temporaryList.contains(primitive.getLayer()))));
