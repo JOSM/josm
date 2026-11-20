@@ -351,12 +351,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             Logging.debug("JCS - starting HttpClient GET request for URL: {0}", getUrl());
             final HttpClient request = getRequest("GET");
 
-            if (isObjectLoadable() &&
-                    (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
-                request.setIfModifiedSince(attributes.getLastModification());
-            }
+            // If-Modified-Since only without an ETag: servers which evaluate both (e.g. Apache serving tiles without a
+            // Last-Modified) answer 200 to our download time even when the ETag matches, see RFC 9110 section 13.1.3
             if (isObjectLoadable() && attributes.getEtag() != null) {
                 request.setHeader("If-None-Match", attributes.getEtag());
+            } else if (isObjectLoadable() &&
+                    (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
+                request.setIfModifiedSince(attributes.getLastModification());
             }
 
             final HttpClient.Response urlConn = request.connect();

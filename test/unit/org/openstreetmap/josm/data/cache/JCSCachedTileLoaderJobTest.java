@@ -3,10 +3,12 @@ package org.openstreetmap.josm.data.cache;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.headRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.status;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -538,6 +540,71 @@ class JCSCachedTileLoaderJobTest {
         assertTrue(testStart + expires <= listener.attributes.getExpirationTime());
         submitJob(job, false);
         tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/test"))); // no more requests were made
+    }
+
+    /**
+     * A cache entry with an ETag is checked with If-None-Match only.
+     * <p>
+     * Non-regression test: If-Modified-Since was sent too, with the time of the download. Apache serving tiles without
+     * a Last-Modified (mod_tile) takes the file to be modified now, so it answered 200 although the ETag matched, and
+     * the host was then wrongly switched to HEAD requests.
+     * @throws IOException exception
+     */
+    @Test
+    void testCheckUsingETagOnly() throws IOException {
+        final String eTag = "\"tile-etag\"";
+        ICacheAccess<String, CacheEntry> cache = getCache();
+        long expires = TimeUnit.DAYS.toMillis(1);
+        long testStart = System.currentTimeMillis();
+        cache.put("etag-only",
+                new CacheEntry("cached dummy".getBytes(StandardCharsets.UTF_8)),
+                createEntryAttributes(-1 * expires, 200, testStart, eTag)
+                );
+        // like Apache with mod_tile: any If-Modified-Since wins over a matching If-None-Match
+        tileServer.getWireMock().register(get(urlEqualTo("/etag-only"))
+                .atPriority(1)
+                .withHeader("If-Modified-Since", matching(".*"))
+                .willReturn(aResponse().withHeader("ETag", eTag).withBody("mock entry")));
+        tileServer.getWireMock().register(get(urlEqualTo("/etag-only"))
+                .atPriority(2)
+                .withHeader("If-None-Match", equalTo(eTag))
+                .willReturn(status(304).withHeader("ETag", eTag)
+                        .withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))));
+
+        // the host of the other tests may already be switched to HEAD requests (the switch is static), so use another
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(
+                "http://127.0.0.1:" + tileServer.getHttpPort() + "/etag-only", "etag-only");
+        Listener listener = submitJob(job, false);
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/etag-only"))
+                .withHeader("If-None-Match", equalTo(eTag))
+                .withoutHeader("If-Modified-Since"));
+        assertArrayEquals("cached dummy".getBytes(StandardCharsets.UTF_8), listener.data);
+    }
+
+    /**
+     * A cache entry without an ETag is still checked with If-Modified-Since.
+     * @throws IOException exception
+     */
+    @Test
+    void testCheckUsingIfModifiedSinceWithoutETag() throws IOException {
+        ICacheAccess<String, CacheEntry> cache = getCache();
+        long expires = TimeUnit.DAYS.toMillis(1);
+        long testStart = System.currentTimeMillis();
+        cache.put("no-etag",
+                new CacheEntry("cached dummy".getBytes(StandardCharsets.UTF_8)),
+                createEntryAttributes(-1 * expires, 200, testStart, null)
+                );
+        tileServer.getWireMock().register(get(urlEqualTo("/no-etag"))
+                .withHeader("If-Modified-Since", matching(".*"))
+                .willReturn(status(304).withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))));
+
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(
+                "http://127.0.0.1:" + tileServer.getHttpPort() + "/no-etag", "no-etag");
+        Listener listener = submitJob(job, false);
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/no-etag"))
+                .withHeader("If-Modified-Since", matching(".*"))
+                .withoutHeader("If-None-Match"));
+        assertArrayEquals("cached dummy".getBytes(StandardCharsets.UTF_8), listener.data);
     }
 
     private void createHeadGetStub(UrlPattern url, long expires, long lastModified, String eTag, String body) {
