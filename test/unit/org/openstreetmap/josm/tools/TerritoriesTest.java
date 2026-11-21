@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,10 +51,10 @@ class TerritoriesTest {
     }
 
     /**
-     * Test of {@link Territories#initializeExternalData} - nominal case
+     * Test of {@link Territories#initializeExternalData} with ISO codes represented as arrays.
      */
     @Test
-    void testTaginfoGeofabrik_nominal() {
+    void testTaginfoGeofabrik_arrays() {
         Territories.initializeExternalData("foo", TestUtils.getTestDataRoot() + "/taginfo/geofabrik-index-v1-nogeom.json");
         Map<String, TaginfoRegionalInstance> cache = Territories.taginfoGeofabrikCache;
         assertEquals(5, cache.size());
@@ -66,6 +67,22 @@ class TerritoriesTest {
         List<TaginfoRegionalInstance> regionalTaginfo = Territories.getRegionalTaginfoUrls(new LatLon(41.3268733, 19.8187913));
         assertEquals(1, regionalTaginfo.size());
         checkTaginfoInstance(regionalTaginfo.iterator().next(), singleton("AL"), "https://taginfo.geofabrik.de/europe/albania/");
+    }
+
+    /**
+     * Test of {@link Territories#initializeExternalData} with ISO codes represented as strings.
+     */
+    @Test
+    void testTaginfoGeofabrik_strings() {
+        Territories.initializeExternalData("foo", TestUtils.getTestDataRoot() + "/taginfo/geofabrik-index-v1-nogeom-strings.json");
+        Map<String, TaginfoRegionalInstance> cache = Territories.taginfoGeofabrikCache;
+        assertEquals(3, cache.size());
+        assertFalse(cache.containsKey("CA-AB"), "ISO3166-1 must take precedence over ISO3166-2");
+        assertFalse(cache.containsKey(""), "Empty ISO codes must not be cached");
+        checkTaginfoInstance(cache.get("AL"), singleton("AL"), "https://taginfo.geofabrik.de/europe/albania/");
+        Set<String> guernseyAndJersey = new HashSet<>(Arrays.asList("GG", "JE"));
+        checkTaginfoInstance(cache.get("GG"), guernseyAndJersey, "https://taginfo.geofabrik.de/europe/guernsey-jersey/");
+        checkTaginfoInstance(cache.get("JE"), guernseyAndJersey, "https://taginfo.geofabrik.de/europe/guernsey-jersey/");
     }
 
     private static void checkTaginfoInstance(TaginfoRegionalInstance instance, Set<String> expectedIsoCodes, String expectedUrl) {

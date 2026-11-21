@@ -201,8 +201,8 @@ public final class Territories {
                         ofNullable(feature.asJsonObject().getJsonObject("properties")).ifPresent(props ->
                         ofNullable(props.getJsonObject("urls")).flatMap(urls ->
                         ofNullable(urls.getString(TAGINFO))).ifPresent(taginfo -> {
-                            JsonArray iso1 = props.getJsonArray(ISO3166_1_LC);
-                            JsonArray iso2 = props.getJsonArray(ISO3166_2_LC);
+                            JsonValue iso1 = props.get(ISO3166_1_LC);
+                            JsonValue iso2 = props.get(ISO3166_2_LC);
                             if (iso1 != null) {
                                 readExternalTaginfo(taginfoGeofabrikCache, taginfo, iso1, source);
                             } else if (iso2 != null) {
@@ -218,8 +218,18 @@ public final class Territories {
         }
     }
 
-    private static void readExternalTaginfo(Map<String, TaginfoRegionalInstance> cache, String taginfo, JsonArray jsonCodes, String source) {
-        Set<String> isoCodes = jsonCodes.getValuesAs(JsonString.class).stream().map(JsonString::getString).collect(Collectors.toSet());
+    private static void readExternalTaginfo(Map<String, TaginfoRegionalInstance> cache, String taginfo, JsonValue jsonCodes, String source) {
+        Stream<String> codes;
+        if (jsonCodes instanceof JsonArray) {
+            codes = jsonCodes.asJsonArray().stream().filter(JsonString.class::isInstance)
+                    .map(JsonString.class::cast).map(JsonString::getString);
+        } else if (jsonCodes instanceof JsonString) {
+            codes = Stream.of(((JsonString) jsonCodes).getString());
+        } else {
+            return;
+        }
+        Set<String> isoCodes = codes.flatMap(s -> Arrays.stream(s.split(",")))
+                .map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toSet());
         isoCodes.forEach(s -> cache.put(s, new TaginfoRegionalInstance(taginfo, isoCodes, source)));
     }
 
