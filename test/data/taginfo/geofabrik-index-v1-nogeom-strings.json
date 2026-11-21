@@ -1,0 +1,60 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "invalid-iso3166-1",
+                "iso3166-1:alpha2": 42,
+                "iso3166-2": ["CA-AB"],
+                "urls": {
+                    "taginfo": "https://taginfo.geofabrik.de/invalid/"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "empty-string",
+                "iso3166-1:alpha2": "",
+                "urls": {
+                    "taginfo": "https://taginfo.geofabrik.de/empty-string/"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "empty-array",
+                "iso3166-1:alpha2": [],
+                "urls": {
+                    "taginfo": "https://taginfo.geofabrik.de/empty-array/"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "albania",
+                "parent": "europe",
+                "iso3166-1:alpha2": "AL",
+                "name": "Albania",
+                "urls": {
+                    "taginfo": "https://taginfo.geofabrik.de/europe/albania/"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "guernsey-jersey",
+                "parent": "europe",
+                "iso3166-1:alpha2": " GG, JE ",
+                "name": "Guernsey and Jersey",
+                "urls": {
+                    "taginfo": "https://taginfo.geofabrik.de/europe/guernsey-jersey/"
+                }
+            }
+        }
+    ]
+}
