@@ -212,7 +212,7 @@ public final class Territories {
                     }
                 }
             }
-        } catch (IOException | JsonParsingException e) {
+        } catch (IOException | JsonParsingException | ClassCastException e) {
             Logging.debug(e);
             Logging.warn(tr("Failed to parse external taginfo data at {0}: {1}", path, e.getMessage()));
         }
