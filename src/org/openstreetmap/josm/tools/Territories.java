@@ -200,7 +200,7 @@ public final class Territories {
                     for (JsonValue feature : json.getObject().getJsonArray("features")) {
                         ofNullable(feature.asJsonObject().getJsonObject("properties")).ifPresent(props ->
                         ofNullable(props.getJsonObject("urls")).flatMap(urls ->
-                        ofNullable(urls.getString(TAGINFO))).ifPresent(taginfo -> {
+                        ofNullable(urls.getString(TAGINFO, null))).ifPresent(taginfo -> {
                             JsonValue iso1 = props.get(ISO3166_1_LC);
                             JsonValue iso2 = props.get(ISO3166_2_LC);
                             if (iso1 != null) {
