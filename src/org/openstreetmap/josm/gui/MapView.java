@@ -53,10 +53,12 @@ import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
@@ -236,9 +238,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private transient BufferedImage nonChangedLayersBuffer;
     private transient BufferedImage offscreenBuffer;
-    // Layers that wasn't changed since last paint
-    private final transient List<Layer> nonChangedLayers = new ArrayList<>();
     private int lastViewID;
+    private double lastPaintedScale;
+    private EastNorth lastPaintedCenter;
+    private Projection lastPaintedProjection;
+    private List<Layer> lastPaintedLayers;
+    // Composite baked without labels during a pan.
+    private transient boolean panLabelsHidden;
     private final AtomicBoolean paintPreferencesChanged = new AtomicBoolean(true);
     private Rectangle lastClipBounds = new Rectangle();
     private transient MapMover mapMover;
@@ -492,6 +498,15 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     /**
+     * Determines if a pan is in progress.
+     * @return {@code true} if a pan is in progress
+     * @since 19701
+     */
+    public boolean isPanning() {
+        return mapMover != null && mapMover.movementInProgress();
+    }
+
+    /**
      * Draw the component.
      */
     @Override
@@ -551,62 +566,121 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
         }
 
-        boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
-                && nonChangedLayers.size() <= nonChangedLayersCount
-                && lastViewID == getViewID()
-                && lastClipBounds.contains(g.getClipBounds())
-                && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
+        boolean paintPrefsChanged = paintPreferencesChanged.getAndSet(false);
+        boolean sameLayerSet = lastPaintedLayers != null && lastPaintedLayers.equals(visibleLayers);
+        int viewID = getViewID();
+        boolean viewMoved = lastViewID != viewID;
+        boolean panning = isPanning();
+        boolean hideLabels = OsmDataLayer.PROPERTY_HIDE_LABELS_WHILE_DRAGGING.get();
+        EastNorth center = getCenter();
+        double scale = getScale();
+        Rectangle clip = g.getClipBounds();
+        boolean fullClip = clip.contains(0, 0, getWidth(), getHeight());
+        // Partial clips must not rebuild the buffer or clear the label flag
+        boolean needLabelRefresh = panLabelsHidden && !viewMoved && fullClip && !panning;
+        if (needLabelRefresh) {
+            panLabelsHidden = false;
+        }
+        boolean canUseBuffer = !paintPrefsChanged
+                && !needLabelRefresh
+                && !viewMoved
+                && sameLayerSet
+                && nonChangedLayersCount == visibleLayers.size()
+                && lastClipBounds.contains(clip);
 
+        boolean canReusePan = !paintPrefsChanged
+                && viewMoved
+                && sameLayerSet
+                && Utils.equalsEpsilon(scale, lastPaintedScale)
+                && lastPaintedProjection == getProjection()
+                && lastClipBounds.contains(0, 0, getWidth(), getHeight())
+                && hideLabels
+                && nonChangedLayersBuffer != null
+                && nonChangedLayersBuffer.getWidth() == width && nonChangedLayersBuffer.getHeight() == height;
+        int blitDX = 0;
+        int blitDY = 0;
+        if (canReusePan) {
+            blitDX = (int) Math.round((lastPaintedCenter.east() - center.east()) / lastPaintedScale * uiScaleX);
+            blitDY = (int) Math.round((center.north() - lastPaintedCenter.north()) / lastPaintedScale * uiScaleY);
+            // Zero or off-screen blits must fall back to full paint
+            canReusePan = (blitDX != 0 || blitDY != 0) && Math.abs(blitDX) < width && Math.abs(blitDY) < height;
+        }
+        if (hideLabels && (canReusePan || panning)) {
+            panLabelsHidden = true;
+        }
         if (null == offscreenBuffer || offscreenBuffer.getWidth() != width || offscreenBuffer.getHeight() != height) {
             offscreenBuffer = getAcceleratedImage(this, width, height);
         }
 
-        if (!canUseBuffer || nonChangedLayersBuffer == null) {
+        if (!canReusePan && (!canUseBuffer || nonChangedLayersBuffer == null)) {
             if (null == nonChangedLayersBuffer
                     || nonChangedLayersBuffer.getWidth() != width || nonChangedLayersBuffer.getHeight() != height) {
                 nonChangedLayersBuffer = getAcceleratedImage(this, width, height);
             }
-            Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
-            g2.setClip(scaledClip);
-            g2.setTransform(trDef);
-            g2.setColor(PaintColors.getBackgroundColor());
-            g2.fillRect(0, 0, width, height);
-
-            for (int i = 0; i < nonChangedLayersCount; i++) {
-                paintLayer(visibleLayers.get(i), g2);
-            }
-        } else {
-            // Maybe there were more unchanged layers then last time - draw them to buffer
-            if (nonChangedLayers.size() != nonChangedLayersCount) {
+            if (fullClip) {
                 Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
                 g2.setClip(scaledClip);
                 g2.setTransform(trDef);
-                for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
+                g2.setColor(PaintColors.getBackgroundColor());
+                g2.fillRect(0, 0, width, height);
+
+                for (int i = 0; i < nonChangedLayersCount; i++) {
                     paintLayer(visibleLayers.get(i), g2);
                 }
+                g2.dispose();
             }
         }
 
-        nonChangedLayers.clear();
-        if (nonChangedLayersCount > 0)
-            nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
-        lastViewID = getViewID();
-        lastClipBounds = g.getClipBounds();
+        lastViewID = viewID;
+        lastClipBounds = clip;
+        lastPaintedScale = scale;
+        lastPaintedCenter = center;
+        lastPaintedProjection = getProjection();
+        lastPaintedLayers = new ArrayList<>(visibleLayers);
 
         Graphics2D tempG = offscreenBuffer.createGraphics();
         tempG.setClip(scaledClip);
         tempG.setTransform(new AffineTransform());
-        tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
+        if (canReusePan) {
+            tempG.drawImage(nonChangedLayersBuffer, blitDX, blitDY, null);
+            if (blitDX != 0) {
+                paintPanStrip(tempG, blitDX > 0 ? 0 : width + blitDX, 0,
+                        Math.abs(blitDX), height, visibleLayers, trDef);
+            }
+            if (blitDY != 0) {
+                paintPanStrip(tempG, 0, blitDY > 0 ? 0 : height + blitDY,
+                        width, Math.abs(blitDY), visibleLayers, trDef);
+            }
+            tempG.setClip(scaledClip);
+        } else {
+            tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
+        }
         tempG.setTransform(trDef);
 
-        for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
-            paintLayer(visibleLayers.get(i), tempG);
+        // Skip during a pan: repainting over the shifted composite would
+        // duplicate and stack translucent layers. Changes appear after pan stops
+        if (!canReusePan) {
+            for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
+                paintLayer(visibleLayers.get(i), tempG);
+            }
+        }
+        if (fullClip && !canUseBuffer) {
+            Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
+            g2.drawImage(offscreenBuffer, 0, 0, null);
+            g2.dispose();
+        }
+
+        // Viewport-fixed overlay which must not go into the reused composite
+        for (Layer layer : visibleLayers) {
+            if (layer instanceof AbstractTileSourceLayer) {
+                ((AbstractTileSourceLayer<?>) layer).paintAttribution(tempG, this);
+            }
         }
 
         try {
             drawTemporaryLayers(tempG, getLatLonBounds(new Rectangle(
-                    (int) Math.round(g.getClipBounds().x * uiScaleX),
-                    (int) Math.round(g.getClipBounds().y * uiScaleY))));
+                    (int) Math.round(clip.x * uiScaleX),
+                    (int) Math.round(clip.y * uiScaleY))));
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
         }
@@ -629,6 +703,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         if (playHeadMarker != null) {
             playHeadMarker.paint(tempG, this);
         }
+        tempG.dispose();
 
         try {
             g.setTransform(new AffineTransform(1, 0, 0, 1, trOrig.getTranslateX(), trOrig.getTranslateY()));
@@ -660,6 +735,24 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             Logging.error(e);
         } finally {
             g.setTransform(trOrig);
+        }
+    }
+
+    /** Icon overhang covered by the pan-strip band in logical pixels */
+    private static final int PAN_STRIP_MARGIN = 16;
+
+    private void paintPanStrip(Graphics2D g, int x, int y, int w, int h, List<Layer> layers, AffineTransform trDef) {
+        // Fill first so translucent content does not double stack
+        int mx = (int) Math.ceil(PAN_STRIP_MARGIN * trDef.getScaleX());
+        int my = (int) Math.ceil(PAN_STRIP_MARGIN * trDef.getScaleY());
+        Rectangle band = new Rectangle(x - mx, y - my, w + 2 * mx, h + 2 * my);
+        g.setTransform(new AffineTransform());
+        g.setClip(band);
+        g.setColor(PaintColors.getBackgroundColor());
+        g.fillRect(band.x, band.y, band.width, band.height);
+        g.setTransform(trDef);
+        for (Layer layer : layers) {
+            paintLayer(layer, g);
         }
     }
 
@@ -823,12 +916,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         if (mapMover != null) {
             mapMover.destroy();
         }
-        nonChangedLayers.clear();
         synchronized (temporaryLayers) {
             temporaryLayers.clear();
         }
         nonChangedLayersBuffer = null;
         offscreenBuffer = null;
+        lastPaintedLayers = null;
+        lastPaintedCenter = null;
+        lastPaintedProjection = null;
         setTransferHandler(null);
         GuiHelper.destroyComponents(this, false);
     }

@@ -801,7 +801,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (!MainApplication.getMap().mapView.isActiveLayerDrawable())
+        if (isPanning() || !MainApplication.getMap().mapView.isActiveLayerDrawable())
             return;
 
         // we copy ctrl/alt/shift from the event just in case our global

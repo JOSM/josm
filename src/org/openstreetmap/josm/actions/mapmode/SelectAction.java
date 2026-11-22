@@ -271,6 +271,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * @return {@code true} if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e, int modifiers) {
+        if (isPanning()) {
+            return false;
+        }
         Optional<OsmPrimitive> c = Optional.ofNullable(
                 mv.getNearestNodeOrWay(e.getPoint(), mv.isSelectablePredicate, true));
 

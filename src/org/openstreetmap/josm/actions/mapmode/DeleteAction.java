@@ -188,6 +188,9 @@ public class DeleteAction extends MapMode implements ModifierExListener {
      */
     @Override
     public void mouseMoved(MouseEvent e) {
+        if (isPanning()) {
+            return;
+        }
         oldEvent = e;
         giveUserFeedback(e);
     }

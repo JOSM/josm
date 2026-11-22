@@ -21,7 +21,6 @@ import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -250,7 +249,8 @@ public class MapMover extends MouseAdapter implements Destroyable {
         }
         nc.resetCursor(this);
         mousePosMoveStart = null;
-        MainApplication.getLayerManager().getLayers().forEach(Layer::invalidate);
+        // Repaint only. Labels refresh on the next still frame
+        nc.repaint();
     }
 
     /**

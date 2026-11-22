@@ -1507,6 +1507,11 @@ public class OsmDataLayer extends AbstractOsmDataLayer
 
     @Override
     public void primitiveHovered(PrimitiveHoverEvent e) {
+        MapFrame map = MainApplication.getMap();
+        // Skip hover highlight while panning, otherwise would invalidate on every feature
+        if (map != null && map.mapView != null && map.mapView.isPanning()) {
+            return;
+        }
         List<IPrimitive> primitives = new ArrayList<>(2);
         primitives.add(e.getHoveredPrimitive());
         primitives.add(e.getPreviousPrimitive());

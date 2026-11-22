@@ -14,9 +14,10 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.Toolkit;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -175,6 +176,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     //public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
     /** Zoomlevel at which tiles is currently downloaded. Initial zoom lvl is set to bestZoom */
     private int currentZoomLevel;
+    /** Zoom level the tiles were actually displayed at (auto-zoom fallback) for attribution */
+    private int lastDisplayZoomLevel;
 
     private final AttributionSupport attribution = new AttributionSupport();
 
@@ -293,6 +296,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         attribution.initialize(tileSource);
 
         currentZoomLevel = getBestZoom();
+        lastDisplayZoomLevel = currentZoomLevel;
 
         Map<String, String> headers = getHeaders(tileSource);
 
@@ -1584,6 +1588,19 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         // old and unused.
     }
 
+    /**
+     * Paints the imagery attribution as a viewport-fixed overlay.
+     * @param g the graphics context to paint on
+     * @param mv the map view to paint for
+     * @since 19701
+     */
+    public void paintAttribution(Graphics2D g, MapView mv) {
+        ProjectionBounds pb = mv.getState().getViewArea(new Rectangle(0, 0, mv.getWidth(), mv.getHeight()))
+                .getProjectionBounds();
+        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(pb.getMin()),
+                getShiftedCoord(pb.getMax()), lastDisplayZoomLevel, this);
+    }
+
     private void drawInViewArea(Graphics2D g, MapView mv, ProjectionBounds pb) {
         int zoom = currentZoomLevel;
         if (getDisplaySettings().isAutoZoom()) {
@@ -1634,6 +1651,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             setZoomLevel(zoom, false);
         }
         TileSet ts = dts.getTileSet(zoom);
+        lastDisplayZoomLevel = displayZoomLevel;
 
         // try to load tiles from desired zoom level, no matter what we will show (for example, tiles from previous zoom level
         // on zoom in)
@@ -1681,11 +1699,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         for (Tile t : ts.allExistingTiles()) {
             this.paintTileText(t, g);
         }
-
-        EastNorth min = pb.getMin();
-        EastNorth max = pb.getMax();
-        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(min), getShiftedCoord(max),
-                displayZoomLevel, this);
 
         g.setColor(Color.lightGray);
 

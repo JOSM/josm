@@ -263,4 +263,13 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     protected boolean isEditableDataLayer(Layer l) {
         return l instanceof OsmDataLayer && !((OsmDataLayer) l).isLocked();
     }
+
+    /**
+     * Determines if the user is currently panning the map.
+     * @return {@code true} if a pan is in progress
+     * @since 19701
+     */
+    protected static boolean isPanning() {
+        return MainApplication.isDisplayingMapView() && MainApplication.getMap().mapView.isPanning();
+    }
 }
