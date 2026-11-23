@@ -241,8 +241,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private int lastViewID;
     private double lastPaintedScale;
     private EastNorth lastPaintedCenter;
-    private Projection lastPaintedProjection;
-    private List<Layer> lastPaintedLayers;
+    private transient Projection lastPaintedProjection;
+    private transient List<Layer> lastPaintedLayers;
     // Composite baked without labels during a pan.
     private transient boolean panLabelsHidden;
     private final AtomicBoolean paintPreferencesChanged = new AtomicBoolean(true);
