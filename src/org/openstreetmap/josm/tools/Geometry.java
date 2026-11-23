@@ -86,6 +86,8 @@ public final class Geometry {
     /** threshold value for size of intersection area given in east/north space */
     public static final double INTERSECTION_EPS_EAST_NORTH = 1e-4;
 
+    private static final String INVALID_COORDINATE_MSG = " invalid";
+
     /**
      * Will find all intersection and add nodes there for list of given ways.
      * Handles self-intersections too.
@@ -102,13 +104,14 @@ public final class Geometry {
      */
     public static Set<Node> addIntersections(List<Way> ways, boolean test, List<Command> cmds) {
 
-        int n = ways.size();
+        final int n = ways.size();
         @SuppressWarnings("unchecked")
+        final
         List<Node>[] newNodes = new ArrayList[n];
-        BBox[] wayBounds = new BBox[n];
-        boolean[] changedWays = new boolean[n];
+        final BBox[] wayBounds = new BBox[n];
+        final boolean[] changedWays = new boolean[n];
 
-        Set<Node> intersectionNodes = new LinkedHashSet<>();
+        final Set<Node> intersectionNodes = new LinkedHashSet<>();
 
         //copy node arrays for local usage.
         for (int pos = 0; pos < n; pos++) {
@@ -117,10 +120,10 @@ public final class Geometry {
             changedWays[pos] = false;
         }
 
-        DataSet dataset = ways.get(0).getDataSet();
+        final DataSet dataset = ways.get(0).getDataSet();
 
         //iterate over all way pairs and introduce the intersections
-        Comparator<Node> coordsComparator = new NodePositionComparator();
+        final Comparator<Node> coordsComparator = new NodePositionComparator();
         for (int seg1Way = 0; seg1Way < n; seg1Way++) {
             for (int seg2Way = seg1Way; seg2Way < n; seg2Way++) {
 
@@ -129,22 +132,22 @@ public final class Geometry {
                     continue;
                 }
 
-                List<Node> way1Nodes = newNodes[seg1Way];
-                List<Node> way2Nodes = newNodes[seg2Way];
+                final List<Node> way1Nodes = newNodes[seg1Way];
+                final List<Node> way2Nodes = newNodes[seg2Way];
 
                 //iterate over primary segment
                 for (int seg1Pos = 0; seg1Pos + 1 < way1Nodes.size(); seg1Pos++) {
 
                     //iterate over secondary segment
-                    int seg2Start = seg1Way != seg2Way ? 0 : seg1Pos + 2; //skip the adjacent segment
+                    final int seg2Start = seg1Way != seg2Way ? 0 : seg1Pos + 2; //skip the adjacent segment
 
                     for (int seg2Pos = seg2Start; seg2Pos + 1 < way2Nodes.size(); seg2Pos++) {
 
                         //need to get them again every time, because other segments may be changed
-                        Node seg1Node1 = way1Nodes.get(seg1Pos);
-                        Node seg1Node2 = way1Nodes.get(seg1Pos + 1);
-                        Node seg2Node1 = way2Nodes.get(seg2Pos);
-                        Node seg2Node2 = way2Nodes.get(seg2Pos + 1);
+                        final Node seg1Node1 = way1Nodes.get(seg1Pos);
+                        final Node seg1Node2 = way1Nodes.get(seg1Pos + 1);
+                        final Node seg2Node1 = way2Nodes.get(seg2Pos);
+                        final Node seg2Node2 = way2Nodes.get(seg2Pos + 1);
 
                         int commonCount = 0;
                         //test if we have common nodes to add.
@@ -168,12 +171,12 @@ public final class Geometry {
 
                         //no common nodes - find intersection
                         if (commonCount == 0) {
-                            EastNorth intersection = getSegmentSegmentIntersection(
+                            final EastNorth intersection = getSegmentSegmentIntersection(
                                     seg1Node1.getEastNorth(), seg1Node2.getEastNorth(),
                                     seg2Node1.getEastNorth(), seg2Node2.getEastNorth());
 
                             if (intersection != null) {
-                                Node newNode = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(intersection));
+                                final Node newNode = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(intersection));
                                 Node intNode = newNode;
                                 boolean insertInSeg1 = false;
                                 boolean insertInSeg2 = false;
@@ -226,8 +229,9 @@ public final class Geometry {
                                     cmds.add(new AddCommand(dataset, intNode));
                                 }
                             }
-                        } else if (test && !intersectionNodes.isEmpty())
+                        } else if (test && !intersectionNodes.isEmpty()) {
                             return intersectionNodes;
+                        }
                     }
                 }
             }
@@ -260,14 +264,15 @@ public final class Geometry {
      * @return true if to the right side, false otherwise
      */
     public static <N extends INode> boolean isToTheRightSideOfLine(N lineP1, N lineP2, N lineP3, N testPoint) {
-        boolean pathBendToRight = angleIsClockwise(lineP1, lineP2, lineP3);
-        boolean rightOfSeg1 = angleIsClockwise(lineP1, lineP2, testPoint);
-        boolean rightOfSeg2 = angleIsClockwise(lineP2, lineP3, testPoint);
+        final boolean pathBendToRight = angleIsClockwise(lineP1, lineP2, lineP3);
+        final boolean rightOfSeg1 = angleIsClockwise(lineP1, lineP2, testPoint);
+        final boolean rightOfSeg2 = angleIsClockwise(lineP2, lineP3, testPoint);
 
-        if (pathBendToRight)
+        if (pathBendToRight) {
             return rightOfSeg1 && rightOfSeg2;
-        else
+        } else {
             return !(!rightOfSeg1 && !rightOfSeg2);
+        }
     }
 
     /**
@@ -294,21 +299,21 @@ public final class Geometry {
     public static EastNorth getSegmentSegmentIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
         // see the ILatLon version for an explanation why the checks are in the if statement
         if (!(p1.isValid() && p2.isValid() && p3.isValid() && p4.isValid())) {
-            CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + " invalid");
-            CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + " invalid");
-            CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + " invalid");
-            CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + " invalid");
+            CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + INVALID_COORDINATE_MSG);
+            CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + INVALID_COORDINATE_MSG);
+            CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + INVALID_COORDINATE_MSG);
+            CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + INVALID_COORDINATE_MSG);
         }
 
-        double x1 = p1.getX();
-        double y1 = p1.getY();
-        double x2 = p2.getX();
-        double y2 = p2.getY();
-        double x3 = p3.getX();
-        double y3 = p3.getY();
-        double x4 = p4.getX();
-        double y4 = p4.getY();
-        double[] en = getSegmentSegmentIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
+        final double x1 = p1.getX();
+        final double y1 = p1.getY();
+        final double x2 = p2.getX();
+        final double y2 = p2.getY();
+        final double x3 = p3.getX();
+        final double y3 = p3.getY();
+        final double x4 = p4.getX();
+        final double y4 = p4.getY();
+        final double[] en = getSegmentSegmentIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
         if (en != null && en.length == 2) {
             return new EastNorth(en[0], en[1]);
         }
@@ -330,21 +335,21 @@ public final class Geometry {
         // from this method (11.4 GB to 0) when testing #20716 with Mesa County, CO (overpass download).
         // There was also a 2/3 decrease in CPU samples for the method.
         if (!(p1.isLatLonKnown() && p2.isLatLonKnown() && p3.isLatLonKnown() && p4.isLatLonKnown())) {
-            CheckParameterUtil.ensureThat(p1.isLatLonKnown(), () -> p1 + " invalid");
-            CheckParameterUtil.ensureThat(p2.isLatLonKnown(), () -> p2 + " invalid");
-            CheckParameterUtil.ensureThat(p3.isLatLonKnown(), () -> p3 + " invalid");
-            CheckParameterUtil.ensureThat(p4.isLatLonKnown(), () -> p4 + " invalid");
+            CheckParameterUtil.ensureThat(p1.isLatLonKnown(), () -> p1 + INVALID_COORDINATE_MSG);
+            CheckParameterUtil.ensureThat(p2.isLatLonKnown(), () -> p2 + INVALID_COORDINATE_MSG);
+            CheckParameterUtil.ensureThat(p3.isLatLonKnown(), () -> p3 + INVALID_COORDINATE_MSG);
+            CheckParameterUtil.ensureThat(p4.isLatLonKnown(), () -> p4 + INVALID_COORDINATE_MSG);
         }
 
-        double x1 = p1.lon();
-        double y1 = p1.lat();
-        double x2 = p2.lon();
-        double y2 = p2.lat();
-        double x3 = p3.lon();
-        double y3 = p3.lat();
-        double x4 = p4.lon();
-        double y4 = p4.lat();
-        double[] en = getSegmentSegmentIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
+        final double x1 = p1.lon();
+        final double y1 = p1.lat();
+        final double x2 = p2.lon();
+        final double y2 = p2.lat();
+        final double x3 = p3.lon();
+        final double y3 = p3.lat();
+        final double x4 = p4.lon();
+        final double y4 = p4.lat();
+        final double[] en = getSegmentSegmentIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
         if (en != null && en.length == 2) {
             return new LatLon(en[1], en[0]);
         }
@@ -368,33 +373,39 @@ public final class Geometry {
 
         //TODO: do this locally.
         //TODO: remove this check after careful testing
-        if (!Line2D.linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4)) return null;
+        if (!Line2D.linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4)) {
+            return null;
+        }
 
         // solve line-line intersection in parametric form:
         // (x1,y1) + (x2-x1,y2-y1)* u  = (x3,y3) + (x4-x3,y4-y3)* v
         // (x2-x1,y2-y1)*u - (x4-x3,y4-y3)*v = (x3-x1,y3-y1)
         // if 0<= u,v <=1, intersection exists at ( x1+ (x2-x1)*u, y1 + (y2-y1)*u )
 
-        double a1 = x2 - x1;
-        double b1 = x3 - x4;
-        double c1 = x3 - x1;
+        final double a1 = x2 - x1;
+        final double b1 = x3 - x4;
+        final double c1 = x3 - x1;
 
-        double a2 = y2 - y1;
-        double b2 = y3 - y4;
-        double c2 = y3 - y1;
+        final double a2 = y2 - y1;
+        final double b2 = y3 - y4;
+        final double c2 = y3 - y1;
 
         // Solve the equations
-        double det = a1*b2 - a2*b1;
+        final double det = a1*b2 - a2*b1;
 
-        double uu = b2*c1 - b1*c2;
-        double vv = a1*c2 - a2*c1;
-        double mag = Math.abs(uu)+Math.abs(vv);
+        final double uu = b2*c1 - b1*c2;
+        final double vv = a1*c2 - a2*c1;
+        final double mag = Math.abs(uu)+Math.abs(vv);
 
         if (Math.abs(det) > 1e-12 * mag) {
             double u = uu/det, v = vv/det;
             if (u > -1e-8 && u < 1+1e-8 && v > -1e-8 && v < 1+1e-8) {
-                if (u < 0) u = 0;
-                if (u > 1) u = 1.0;
+                if (u < 0) {
+                    u = 0;
+                }
+                if (u > 1) {
+                    u = 1.0;
+                }
                 return new double[] {x1+a1*u, y1+a2*u};
             } else {
                 return null;
@@ -417,10 +428,10 @@ public final class Geometry {
      */
     public static EastNorth getLineLineIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
-        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + " invalid");
-        CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + " invalid");
-        CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + " invalid");
-        CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + " invalid");
+        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + INVALID_COORDINATE_MSG);
 
         // Basically, the formula from wikipedia is used:
         //  https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
@@ -434,18 +445,19 @@ public final class Geometry {
         // and segment p3'/p4'.
 
         // Convert line from (point, point) form to ax+by=c
-        double a1 = p2.getY() - p1.getY();
-        double b1 = p1.getX() - p2.getX();
+        final double a1 = p2.getY() - p1.getY();
+        final double b1 = p1.getX() - p2.getX();
 
-        double a2 = p4.getY() - p3.getY();
-        double b2 = p3.getX() - p4.getX();
+        final double a2 = p4.getY() - p3.getY();
+        final double b2 = p3.getX() - p4.getX();
 
         // Solve the equations
-        double det = a1 * b2 - a2 * b1;
-        if (det == 0)
+        final double det = a1 * b2 - a2 * b1;
+        if (det == 0) {
             return null; // Lines are parallel
+        }
 
-        double c2 = (p4.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p3.getX() - p1.getX()) * (p4.getY() - p1.getY());
+        final double c2 = (p4.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p3.getX() - p1.getX()) * (p4.getY() - p1.getY());
 
         return new EastNorth(b1 * c2 / det + p1.getX(), -a1 * c2 / det + p1.getY());
     }
@@ -460,17 +472,17 @@ public final class Geometry {
      */
     public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
-        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + " invalid");
-        CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + " invalid");
-        CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + " invalid");
-        CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + " invalid");
+        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p4.isValid(), () -> p4 + INVALID_COORDINATE_MSG);
 
         // Convert line from (point, point) form to ax+by=c
-        double a1 = p2.getY() - p1.getY();
-        double b1 = p1.getX() - p2.getX();
+        final double a1 = p2.getY() - p1.getY();
+        final double b1 = p1.getX() - p2.getX();
 
-        double a2 = p4.getY() - p3.getY();
-        double b2 = p3.getX() - p4.getX();
+        final double a2 = p4.getY() - p3.getY();
+        final double b2 = p3.getX() - p4.getX();
 
         // Solve the equations
         double det = a1 * b2 - a2 * b1;
@@ -484,24 +496,26 @@ public final class Geometry {
         CheckParameterUtil.ensureParameterNotNull(p2, "p2");
         CheckParameterUtil.ensureParameterNotNull(point, "point");
 
-        double ldx = p2.getX() - p1.getX();
-        double ldy = p2.getY() - p1.getY();
+        final double ldx = p2.getX() - p1.getX();
+        final double ldy = p2.getY() - p1.getY();
 
         //segment zero length
-        if (ldx == 0 && ldy == 0)
+        if (ldx == 0 && ldy == 0) {
             return p1;
+        }
 
-        double pdx = point.getX() - p1.getX();
-        double pdy = point.getY() - p1.getY();
+        final double pdx = point.getX() - p1.getX();
+        final double pdy = point.getY() - p1.getY();
 
-        double offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
+        final double offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
 
-        if (segmentOnly && offset <= 0)
+        if (segmentOnly && offset <= 0) {
             return p1;
-        else if (segmentOnly && offset >= 1)
+        } else if (segmentOnly && offset >= 1) {
             return p2;
-        else
+        } else {
             return p1.interpolate(p2, offset);
+        }
     }
 
     /**
@@ -546,14 +560,14 @@ public final class Geometry {
      */
     public static boolean angleIsClockwise(EastNorth commonNode, EastNorth firstNode, EastNorth secondNode) {
 
-        CheckParameterUtil.ensureThat(commonNode.isValid(), () -> commonNode + " invalid");
-        CheckParameterUtil.ensureThat(firstNode.isValid(), () -> firstNode + " invalid");
-        CheckParameterUtil.ensureThat(secondNode.isValid(), () -> secondNode + " invalid");
+        CheckParameterUtil.ensureThat(commonNode.isValid(), () -> commonNode + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(firstNode.isValid(), () -> firstNode + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(secondNode.isValid(), () -> secondNode + INVALID_COORDINATE_MSG);
 
-        double dy1 = firstNode.getY() - commonNode.getY();
-        double dy2 = secondNode.getY() - commonNode.getY();
-        double dx1 = firstNode.getX() - commonNode.getX();
-        double dx2 = secondNode.getX() - commonNode.getX();
+        final double dy1 = firstNode.getY() - commonNode.getY();
+        final double dy2 = secondNode.getY() - commonNode.getY();
+        final double dx1 = firstNode.getX() - commonNode.getX();
+        final double dx2 = secondNode.getX() - commonNode.getX();
 
         return dy1 * dx2 - dx1 * dy2 > 0;
     }
@@ -565,11 +579,11 @@ public final class Geometry {
      * @since 6841
      */
     public static Area getArea(List<? extends INode> polygon) {
-        Path2D path = new Path2D.Double(Path2D.WIND_NON_ZERO, polygon.size());
+        final Path2D path = new Path2D.Double(Path2D.WIND_NON_ZERO, polygon.size());
 
         boolean begin = true;
         for (INode n : polygon) {
-            EastNorth en = n.getEastNorth();
+            final EastNorth en = n.getEastNorth();
             if (en != null) {
                 if (begin) {
                     path.moveTo(en.getX(), en.getY());
@@ -594,7 +608,7 @@ public final class Geometry {
      * @since 13638 (signature)
      */
     public static Path2D buildPath2DLatLon(List<? extends ILatLon> polygon, Path2D path2d) {
-        Path2D path = path2d != null ? path2d : new Path2D.Double();
+        final Path2D path = path2d != null ? path2d : new Path2D.Double();
         boolean begin = true;
         for (ILatLon n : polygon) {
             if (begin) {
@@ -621,9 +635,9 @@ public final class Geometry {
             return Geometry.getArea(((Way) p).getNodes());
         }
         if (p instanceof Relation && p.isMultipolygon() && !p.isIncomplete()) {
-            Multipolygon mp = MultipolygonCache.getInstance().get((Relation) p);
+            final Multipolygon mp = MultipolygonCache.getInstance().get((Relation) p);
             if (mp.getOpenEnds().isEmpty()) {
-                Path2D path = new Path2D.Double();
+                final Path2D path = new Path2D.Double();
                 path.setWindingRule(Path2D.WIND_EVEN_ODD);
                 for (PolyData pd : mp.getCombinedPolygons()) {
                     path.append(pd.get(), false);
@@ -641,7 +655,7 @@ public final class Geometry {
      */
     public static Area getAreaLatLon(Relation multipolygon) {
         final Multipolygon mp = MultipolygonCache.getInstance().get(multipolygon);
-        Path2D path = new Path2D.Double();
+        final Path2D path = new Path2D.Double();
         path.setWindingRule(Path2D.WIND_EVEN_ODD);
         for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
             buildPath2DLatLon(pd.getNodes(), path);
@@ -659,8 +673,8 @@ public final class Geometry {
      * @return intersection kind
      */
     public static PolygonIntersection polygonIntersection(List<? extends INode> first, List<? extends INode> second) {
-        Area a1 = getArea(first);
-        Area a2 = getArea(second);
+        final Area a1 = getArea(first);
+        final Area a2 = getArea(second);
         return polygonIntersection(a1, a2, INTERSECTION_EPS_EAST_NORTH);
     }
 
@@ -703,7 +717,7 @@ public final class Geometry {
         if (!a12d.intersects(a22d) || !a1.intersects(a22d) || !a2.intersects(a12d)) {
             return new Pair<>(PolygonIntersection.OUTSIDE, new Area());
         }
-        Area inter = new Area(a1);
+        final Area inter = new Area(a1);
         inter.intersect(a2);
 
         // Note: Area has an equals method that takes Area; it does _not_ override the Object.equals method.
@@ -726,11 +740,11 @@ public final class Geometry {
      * @return true if any of the polygons is bigger than the given threshold
      */
     private static boolean checkIntersection(Area inter, double eps) {
-        PathIterator pit = inter.getPathIterator(null);
-        double[] res = new double[6];
+        final PathIterator pit = inter.getPathIterator(null);
+        final double[] res = new double[6];
         Rectangle2D r = new Rectangle2D.Double();
         while (!pit.isDone()) {
-            int type = pit.currentSegment(res);
+            final int type = pit.currentSegment(res);
             switch (type) {
             case PathIterator.SEG_MOVETO:
                 r = new Rectangle2D.Double(res[0], res[1], 0, 0);
@@ -739,8 +753,9 @@ public final class Geometry {
                 r.add(res[0], res[1]);
                 break;
             case PathIterator.SEG_CLOSE:
-                if (r.getWidth() > eps || r.getHeight() > eps)
+                if (r.getWidth() > eps || r.getHeight() > eps) {
                     return true;
+                }
                 break;
             default:
                 break;
@@ -757,8 +772,9 @@ public final class Geometry {
      * @return true if the point is inside polygon.
      */
     public static boolean nodeInsidePolygon(INode point, List<? extends INode> polygonNodes) {
-        if (polygonNodes.size() < 2)
+        if (polygonNodes.size() < 2) {
             return false;
+        }
 
         //iterate each side of the polygon, start with the last segment
         INode oldPoint = polygonNodes.get(polygonNodes.size() - 1);
@@ -789,11 +805,11 @@ public final class Geometry {
                 p2 = oldPoint;
             }
 
-            EastNorth pEN = point.getEastNorth();
-            EastNorth opEN = oldPoint.getEastNorth();
-            EastNorth npEN = newPoint.getEastNorth();
-            EastNorth p1EN = p1.getEastNorth();
-            EastNorth p2EN = p2.getEastNorth();
+            final EastNorth pEN = point.getEastNorth();
+            final EastNorth opEN = oldPoint.getEastNorth();
+            final EastNorth npEN = newPoint.getEastNorth();
+            final EastNorth p1EN = p1.getEastNorth();
+            final EastNorth p2EN = p2.getEastNorth();
 
             if (pEN != null && opEN != null && npEN != null && p1EN != null && p2EN != null) {
                 //test if the line is crossed and if so invert the inside flag.
@@ -877,15 +893,15 @@ public final class Geometry {
      * @see #isClockwise(Way)
      */
     public static boolean isClockwise(List<? extends INode> nodes) {
-        int nodesCount = nodes.size();
+        final int nodesCount = nodes.size();
         if (nodesCount < 3 || nodes.get(0) != nodes.get(nodesCount - 1)) {
             throw new IllegalArgumentException("Way must be closed to check orientation.");
         }
         double area2 = 0.;
 
         for (int node = 1; node <= /*sic! consider last-first as well*/ nodesCount; node++) {
-            INode coorPrev = nodes.get(node - 1);
-            INode coorCurr = nodes.get(node % nodesCount);
+            final INode coorPrev = nodes.get(node - 1);
+            final INode coorCurr = nodes.get(node % nodesCount);
             area2 += coorPrev.lon() * coorCurr.lat();
             area2 -= coorCurr.lon() * coorPrev.lat();
         }
@@ -901,8 +917,8 @@ public final class Geometry {
      */
     public static double getSegmentAngle(EastNorth p1, EastNorth p2) {
 
-        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + " invalid");
-        CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + " invalid");
+        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p2.isValid(), () -> p2 + INVALID_COORDINATE_MSG);
 
         return Math.atan2(p2.north() - p1.north(), p2.east() - p1.east());
     }
@@ -917,9 +933,9 @@ public final class Geometry {
      */
     public static double getCornerAngle(EastNorth p1, EastNorth common, EastNorth p3) {
 
-        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + " invalid");
-        CheckParameterUtil.ensureThat(common.isValid(), () -> common + " invalid");
-        CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + " invalid");
+        CheckParameterUtil.ensureThat(p1.isValid(), () -> p1 + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(common.isValid(), () -> common + INVALID_COORDINATE_MSG);
+        CheckParameterUtil.ensureThat(p3.isValid(), () -> p3 + INVALID_COORDINATE_MSG);
 
         double result = getSegmentAngle(common, p1) - getSegmentAngle(common, p3);
         if (result <= -Math.PI) {
@@ -977,16 +993,16 @@ public final class Geometry {
 
         // See https://en.wikipedia.org/wiki/Centroid#Of_a_polygon for the equation used here
         for (int i = 0; i < size; i++) {
-            EastNorth n0 = nodes.get(i);
-            EastNorth n1 = nodes.get((i+1) % size);
+            final EastNorth n0 = nodes.get(i);
+            final EastNorth n1 = nodes.get((i+1) % size);
 
             if (n0 != null && n1 != null && n0.isValid() && n1.isValid()) {
-                BigDecimal x0 = BigDecimal.valueOf(n0.east());
-                BigDecimal y0 = BigDecimal.valueOf(n0.north());
-                BigDecimal x1 = BigDecimal.valueOf(n1.east());
-                BigDecimal y1 = BigDecimal.valueOf(n1.north());
+                final BigDecimal x0 = BigDecimal.valueOf(n0.east());
+                final BigDecimal y0 = BigDecimal.valueOf(n0.north());
+                final BigDecimal x1 = BigDecimal.valueOf(n1.east());
+                final BigDecimal y1 = BigDecimal.valueOf(n1.north());
 
-                BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
+                final BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
 
                 area = area.add(k, MathContext.DECIMAL128);
                 east = east.add(k.multiply(x0.add(x1, MathContext.DECIMAL128), MathContext.DECIMAL128));
@@ -994,7 +1010,7 @@ public final class Geometry {
             }
         }
 
-        BigDecimal d = new BigDecimal(3, MathContext.DECIMAL128); // 1/2 * 6 = 3
+        final BigDecimal d = new BigDecimal(3, MathContext.DECIMAL128); // 1/2 * 6 = 3
         area = area.multiply(d, MathContext.DECIMAL128);
         if (area.compareTo(BigDecimal.ZERO) != 0) {
             north = north.divide(area, MathContext.DECIMAL128);
@@ -1023,26 +1039,30 @@ public final class Geometry {
      * @since 6934
      */
     public static EastNorth getCenter(List<? extends INode> nodes) {
-        int nc = nodes.size();
-        if (nc < 3) return null;
+        final int nc = nodes.size();
+        if (nc < 3) {
+            return null;
+        }
         /*
          * Equation of each bisector ax + by + c = 0
          */
-        double[] a = new double[nc];
-        double[] b = new double[nc];
-        double[] c = new double[nc];
+        final double[] a = new double[nc];
+        final double[] b = new double[nc];
+        final double[] c = new double[nc];
         // Compute equation of bisector
         for (int i = 0; i < nc; i++) {
-            EastNorth pt1 = nodes.get(i).getEastNorth();
-            EastNorth pt2 = nodes.get((i+1) % nc).getEastNorth();
+            final EastNorth pt1 = nodes.get(i).getEastNorth();
+            final EastNorth pt2 = nodes.get((i+1) % nc).getEastNorth();
             a[i] = pt1.east() - pt2.east();
             b[i] = pt1.north() - pt2.north();
-            double d = Math.sqrt(a[i]*a[i] + b[i]*b[i]);
-            if (d == 0) return null;
+            final double d = Math.sqrt(a[i]*a[i] + b[i]*b[i]);
+            if (d == 0) {
+                return null;
+            }
             a[i] /= d;
             b[i] /= d;
-            double xC = (pt1.east() + pt2.east()) / 2;
-            double yC = (pt1.north() + pt2.north()) / 2;
+            final double xC = (pt1.east() + pt2.east()) / 2;
+            final double yC = (pt1.north() + pt2.north()) / 2;
             c[i] = -(a[i]*xC + b[i]*yC);
         }
         // At.A = [aij]
@@ -1057,14 +1077,16 @@ public final class Geometry {
             b2 -= b[i]*c[i];
         }
         // (At.A)^-1 = [invij]
-        double det = a11*a22 - a12*a12;
-        if (Math.abs(det) < 1e-5) return null;
-        double inv11 = a22/det;
-        double inv12 = -a12/det;
-        double inv22 = a11/det;
+        final double det = a11*a22 - a12*a12;
+        if (Math.abs(det) < 1e-5) {
+            return null;
+        }
+        final double inv11 = a22/det;
+        final double inv12 = -a12/det;
+        final double inv22 = a11/det;
         // center (xC, yC) = (At.A)^-1.At.y
-        double xC = inv11*b1 + inv12*b2;
-        double yC = inv12*b1 + inv22*b2;
+        final double xC = inv11*b1 + inv12*b2;
+        final double yC = inv12*b1 + inv22*b2;
         return new EastNorth(xC, yC);
     }
 
@@ -1116,14 +1138,14 @@ public final class Geometry {
      */
     public static boolean isPolygonInsideMultiPolygon(List<? extends INode> nodes, Pair<List<JoinedPolygon>,
             List<JoinedPolygon>> outerInner, Predicate<Way> isOuterWayAMatch) {
-        Area a1 = nodes.size() == 1 ? null : getArea(nodes);
+        final Area a1 = nodes.size() == 1 ? null : getArea(nodes);
         // Test if object is inside an outer member
         for (JoinedPolygon out : outerInner.a) {
             if (a1 == null
                     ? nodeInsidePolygon(nodes.get(0), out.nodes)
                     : PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(a1, out.area)) {
                 // If inside an outer, check it is not inside an inner
-                boolean insideInner = outerInner.b.stream().anyMatch(in -> a1 == null
+                final boolean insideInner = outerInner.b.stream().anyMatch(in -> a1 == null
                         ? nodeInsidePolygon(nodes.get(0), in.nodes)
                         : in.area.getBounds2D().contains(a1.getBounds2D())
                         && polygonIntersection(a1, in.area) == PolygonIntersection.FIRST_INSIDE_SECOND
@@ -1169,9 +1191,10 @@ public final class Geometry {
      * @since 15069 (for {@link List} of {@code primitives}, 15730 for a {@link Collection} of {@code primitives})
      */
     public static List<IPrimitive> filterInsidePolygon(Collection<IPrimitive> primitives, IWay<?> polygon) {
-        List<IPrimitive> res = new ArrayList<>();
-        if (!polygon.isClosed() || polygon.getNodesCount() <= 3)
+        final List<IPrimitive> res = new ArrayList<>();
+        if (!polygon.isClosed() || polygon.getNodesCount() <= 3) {
             return res;
+        }
         /* polygon area in east north space, calculated only when really needed */
         Area polygonArea = null;
         for (IPrimitive p : primitives) {
@@ -1193,7 +1216,8 @@ public final class Geometry {
                 if (polygonArea == null) {
                     polygonArea = getArea(polygon.getNodes());
                 }
-                Multipolygon mp = p.getDataSet() != null ? MultipolygonCache.getInstance().get((Relation) p) : new Multipolygon((Relation) p);
+                final Multipolygon mp = p.getDataSet() != null ? MultipolygonCache.getInstance().get((Relation) p)
+                        : new Multipolygon((Relation) p);
                 boolean inside = true;
                 // a (valid) multipolygon is inside the polygon if all outer rings are inside
                 for (PolyData outer : mp.getOuterPolygons()) {
@@ -1236,9 +1260,10 @@ public final class Geometry {
      */
     public static List<IPrimitive> filterInsideMultipolygon(Collection<IPrimitive> primitives, Relation multiPolygon,
                                                             Map<IRelation<?>, Pair<List<JoinedPolygon>, List<JoinedPolygon>>> cache) {
-        List<IPrimitive> res = new ArrayList<>();
-        if (primitives.isEmpty())
+        final List<IPrimitive> res = new ArrayList<>();
+        if (primitives.isEmpty()) {
             return res;
+        }
 
         final Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner;
         try {
@@ -1249,10 +1274,11 @@ public final class Geometry {
             return res;
         }
 
-        Set<OsmPrimitive> members = multiPolygon.getMemberPrimitives();
+        final Set<OsmPrimitive> members = multiPolygon.getMemberPrimitives();
         for (IPrimitive p : primitives) {
-            if (members.contains(p))
+            if (members.contains(p)) {
                 continue;
+            }
             if (p instanceof Node) {
                 if (isPolygonInsideMultiPolygon(Collections.singletonList((Node) p), outerInner, null)) {
                     res.add(p);
@@ -1262,9 +1288,9 @@ public final class Geometry {
                     res.add(p);
                 }
             } else if (p.isMultipolygon()) {
-                Multipolygon mp = new Multipolygon((Relation) p);
+                final Multipolygon mp = new Multipolygon((Relation) p);
                 // a (valid) multipolygon is inside multiPolygon if all outer rings are inside
-                boolean inside = mp.getOuterPolygons().stream()
+                final boolean inside = mp.getOuterPolygons().stream()
                         .allMatch(outer -> outer.isClosed() && isPolygonInsideMultiPolygon(outer.getNodes(), outerInner, null));
                 if (inside) {
                     res.add(p);
@@ -1332,11 +1358,11 @@ public final class Geometry {
         CheckParameterUtil.ensureParameterNotNull(nodes, "nodes");
         double area = 0;
         double perimeter = 0;
-        Projection useProjection = projection == null ? ProjectionRegistry.getProjection() : projection;
+        final Projection useProjection = projection == null ? ProjectionRegistry.getProjection() : projection;
 
         if (!nodes.isEmpty()) {
-            boolean closed = nodes.get(0) == nodes.get(nodes.size() - 1);
-            int numSegments = closed ? nodes.size() - 1 : nodes.size();
+            final boolean closed = nodes.get(0) == nodes.get(nodes.size() - 1);
+            final int numSegments = closed ? nodes.size() - 1 : nodes.size();
             EastNorth p1 = nodes.get(0).getEastNorth(useProjection);
             for (int i = 1; i <= numSegments; i++) {
                 final ILatLon node = nodes.get(i == numSegments ? 0 : i);
@@ -1371,7 +1397,7 @@ public final class Geometry {
      * @since 15035
      */
     public static <T extends OsmPrimitive> T getClosestPrimitive(OsmPrimitive osm, Collection<T> primitives) {
-        Collection<T> collection = getClosestPrimitives(osm, primitives);
+        final Collection<T> collection = getClosestPrimitives(osm, primitives);
         return collection.iterator().next();
     }
 
@@ -1394,11 +1420,13 @@ public final class Geometry {
      */
     public static <T extends OsmPrimitive> Collection<T> getClosestPrimitives(OsmPrimitive osm, Collection<T> primitives) {
         double lowestDistance = Double.MAX_VALUE;
-        TreeSet<T> closest = new TreeSet<>();
+        final TreeSet<T> closest = new TreeSet<>();
         for (T primitive : primitives) {
-            double distance = getDistance(osm, primitive);
-            if (Double.isNaN(distance)) continue;
-            int comp = Double.compare(distance, lowestDistance);
+            final double distance = getDistance(osm, primitive);
+            if (Double.isNaN(distance)) {
+                continue;
+            }
+            final int comp = Double.compare(distance, lowestDistance);
             if (comp < 0) {
                 closest.clear();
                 lowestDistance = distance;
@@ -1458,11 +1486,13 @@ public final class Geometry {
      */
     public static <T extends OsmPrimitive> Collection<T> getFurthestPrimitives(OsmPrimitive osm, Collection<T> primitives) {
         double furthestDistance = Double.NEGATIVE_INFINITY;
-        TreeSet<T> furthest = new TreeSet<>();
+        final TreeSet<T> furthest = new TreeSet<>();
         for (T primitive : primitives) {
-            double distance = getDistance(osm, primitive);
-            if (Double.isNaN(distance)) continue;
-            int comp = Double.compare(distance, furthestDistance);
+            final double distance = getDistance(osm, primitive);
+            if (Double.isNaN(distance)) {
+                continue;
+            }
+            final int comp = Double.compare(distance, furthestDistance);
             if (comp > 0) {
                 furthest.clear();
                 furthestDistance = distance;
@@ -1489,7 +1519,9 @@ public final class Geometry {
     public static double getDistance(OsmPrimitive one, OsmPrimitive two) {
         double rValue = Double.MAX_VALUE;
         if (one == null || two == null || one.isIncomplete()
-                || two.isIncomplete()) return Double.NaN;
+                || two.isIncomplete()) {
+            return Double.NaN;
+        }
         if (one instanceof ILatLon && two instanceof ILatLon) {
             rValue = ((ILatLon) one).greatCircleDistance(((ILatLon) two));
         } else if (one instanceof Node && two instanceof Way) {
@@ -1500,16 +1532,20 @@ public final class Geometry {
             rValue = getDistanceWayWay((Way) one, (Way) two);
         } else if (one instanceof Relation && !(two instanceof Relation)) {
             for (OsmPrimitive osmPrimitive: ((Relation) one).getMemberPrimitives()) {
-                double currentDistance = getDistance(osmPrimitive, two);
-                if (currentDistance < rValue) rValue = currentDistance;
+                final double currentDistance = getDistance(osmPrimitive, two);
+                if (currentDistance < rValue) {
+                    rValue = currentDistance;
+                }
             }
         } else if (!(one instanceof Relation) && two instanceof Relation) {
             rValue = getDistance(two, one);
         } else if (one instanceof Relation && two instanceof Relation) {
             for (OsmPrimitive osmPrimitive1 : ((Relation) one).getMemberPrimitives()) {
                 for (OsmPrimitive osmPrimitive2 : ((Relation) two).getMemberPrimitives()) {
-                    double currentDistance = getDistance(osmPrimitive1, osmPrimitive2);
-                    if (currentDistance < rValue) rValue = currentDistance;
+                    final double currentDistance = getDistance(osmPrimitive1, osmPrimitive2);
+                    if (currentDistance < rValue) {
+                        rValue = currentDistance;
+                    }
                 }
             }
         }
@@ -1526,19 +1562,21 @@ public final class Geometry {
      * @since 15035
      */
     public static double getDistanceWayNode(Way way, Node node) {
-        if (way == null || node == null || way.getNodesCount() < 2 || !node.isLatLonKnown())
+        if (way == null || node == null || way.getNodesCount() < 2 || !node.isLatLonKnown()) {
             return Double.NaN;
+        }
 
         double smallest = Double.MAX_VALUE;
-        EastNorth en0 = node.getEastNorth();
+        final EastNorth en0 = node.getEastNorth();
         // go through the nodes as if they were paired
-        Iterator<Node> iter = way.getNodes().iterator();
+        final Iterator<Node> iter = way.getNodes().iterator();
         EastNorth en1 = iter.next().getEastNorth();
         while (iter.hasNext()) {
-            EastNorth en2 = iter.next().getEastNorth();
-            double distance = getSegmentNodeDistSq(en1, en2, en0);
-            if (distance < smallest)
+            final EastNorth en2 = iter.next().getEastNorth();
+            final double distance = getSegmentNodeDistSq(en1, en2, en0);
+            if (distance < smallest) {
                 smallest = distance;
+            }
             en1 = en2;
         }
         return smallest != Double.MAX_VALUE ? Math.sqrt(smallest) : Double.NaN;
@@ -1557,20 +1595,24 @@ public final class Geometry {
      */
     public static WaySegment getClosestWaySegment(Way way, OsmPrimitive primitive) {
         if (way == null || primitive == null || way.isIncomplete()
-                || primitive.isIncomplete()) return null;
+                || primitive.isIncomplete()) {
+            return null;
+        }
         double lowestDistance = Double.MAX_VALUE;
         Pair<Node, Node> closestNodes = null;
         for (Pair<Node, Node> nodes : way.getNodePairs(false)) {
-            Way tWay = new Way();
+            final Way tWay = new Way();
             tWay.addNode(new Node(nodes.a));
             tWay.addNode(new Node(nodes.b));
-            double distance = getDistance(tWay, primitive);
+            final double distance = getDistance(tWay, primitive);
             if (distance < lowestDistance) {
                 lowestDistance = distance;
                 closestNodes = nodes;
             }
         }
-        if (closestNodes == null) return null;
+        if (closestNodes == null) {
+            return null;
+        }
         return lowestDistance != Double.MAX_VALUE ? WaySegment.forNodePair(way, closestNodes.a, closestNodes.b) : null;
     }
 
@@ -1585,21 +1627,23 @@ public final class Geometry {
      * @since 15035
      */
     public static double getDistanceWayWay(Way w1, Way w2) {
-        if (w1 == null || w2 == null || w1.getNodesCount() < 2 || w2.getNodesCount() < 2)
+        if (w1 == null || w2 == null || w1.getNodesCount() < 2 || w2.getNodesCount() < 2) {
             return Double.NaN;
+        }
         double rValue = Double.MAX_VALUE;
-        Iterator<Node> iter1 = w1.getNodes().iterator();
-        List<Node> w2Nodes = w2.getNodes();
+        final Iterator<Node> iter1 = w1.getNodes().iterator();
+        final List<Node> w2Nodes = w2.getNodes();
         Node w1N1 = iter1.next();
         while (iter1.hasNext()) {
-            Node w1N2 = iter1.next();
-            Iterator<Node> iter2 = w2Nodes.iterator();
+            final Node w1N2 = iter1.next();
+            final Iterator<Node> iter2 = w2Nodes.iterator();
             Node w2N1 = iter2.next();
             while (iter2.hasNext()) {
-                Node w2N2 = iter2.next();
-                double distance = getDistanceSegmentSegment(w1N1, w1N2, w2N1, w2N2);
-                if (distance < rValue)
+                final Node w2N2 = iter2.next();
+                final double distance = getDistanceSegmentSegment(w1N1, w1N2, w2N1, w2N2);
+                if (distance < rValue) {
                     rValue = distance;
+                }
                 w2N1 = w2N2;
             }
             w1N1 = w1N2;
@@ -1635,18 +1679,19 @@ public final class Geometry {
         if (!ws1Node1.isLatLonKnown() || !ws1Node2.isLatLonKnown() || !ws2Node1.isLatLonKnown() || !ws2Node2.isLatLonKnown()) {
             return Double.NaN;
         }
-        EastNorth enWs1Node1 = ws1Node1.getEastNorth();
-        EastNorth enWs1Node2 = ws1Node2.getEastNorth();
-        EastNorth enWs2Node1 = ws2Node1.getEastNorth();
-        EastNorth enWs2Node2 = ws2Node2.getEastNorth();
-        if (getSegmentSegmentIntersection(enWs1Node1, enWs1Node2, enWs2Node1, enWs2Node2) != null)
+        final EastNorth enWs1Node1 = ws1Node1.getEastNorth();
+        final EastNorth enWs1Node2 = ws1Node2.getEastNorth();
+        final EastNorth enWs2Node1 = ws2Node1.getEastNorth();
+        final EastNorth enWs2Node2 = ws2Node2.getEastNorth();
+        if (getSegmentSegmentIntersection(enWs1Node1, enWs1Node2, enWs2Node1, enWs2Node2) != null) {
             return 0;
+        }
 
-        double dist1sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node1);
-        double dist2sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node2);
-        double dist3sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node1);
-        double dist4sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node2);
-        double smallest = Math.min(Math.min(dist1sq, dist2sq), Math.min(dist3sq, dist4sq));
+        final double dist1sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node1);
+        final double dist2sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node2);
+        final double dist3sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node1);
+        final double dist4sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node2);
+        final double smallest = Math.min(Math.min(dist1sq, dist2sq), Math.min(dist3sq, dist4sq));
         return smallest != Double.MAX_VALUE ? Math.sqrt(smallest) : Double.NaN;
     }
 
@@ -1681,7 +1726,7 @@ public final class Geometry {
      * @return the square of the euclidean distance from p to the closest point on the segment
      */
     private static double getSegmentNodeDistSq(EastNorth s1, EastNorth s2, EastNorth p) {
-        EastNorth c1 = closestPointTo(s1, s2, p, true);
+        final EastNorth c1 = closestPointTo(s1, s2, p, true);
         return c1.distanceSq(p);
     }
 }
