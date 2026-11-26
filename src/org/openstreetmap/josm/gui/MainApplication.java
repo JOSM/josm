@@ -6,14 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
-import java.awt.AWTError;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagLayout;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,20 +42,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.net.ssl.SSLSocketFactory;
-import javax.swing.Action;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
-import javax.swing.RepaintManager;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
 import org.openstreetmap.josm.actions.DeleteAction;
@@ -378,7 +358,7 @@ public class MainApplication {
         content.append(tr("You are running version {0} of Java.",
                 "<b>"+getSystemProperty("java.version")+"</b>")).append("<br><br>");
         if ("Sun Microsystems Inc.".equals(getSystemProperty("java.vendor")) && !PlatformManager.getPlatform().isOpenJDK()) {
-            content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
+            content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use, we ask you switch to a newer Java release.",
                     "Oracle", eolDate)).append("</b><br><br>");
         }
         content.append("<b>")
@@ -666,12 +646,146 @@ public class MainApplication {
     }
 
     /**
-     * Displays help on the console
+     * Displays help on the console, and if no console is avaliable falls back to GUI.
      * @since 2748
      */
     public static void showHelp() {
-        // TODO: put in a platformHook for system that have no console by default
-        System.out.println(getHelp());
+        // We check if it's been launched via a detectable console. If returning null, switch to Swing Panel.
+        if (System.console() == null) {
+            guiGetHelp();
+        } else {
+            // Console detected. Print to stdout.
+            System.out.println(getHelp());
+        }
+    }
+
+    static void guiGetHelp() {
+        JPanel optionPanel = new JPanel();
+        // Arrange options vertically.
+        optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+
+        // Boolean options
+        JCheckBox debug = new JCheckBox(tr("Enable Debugging (Print Messages to console)"));
+        optionPanel.add(debug);
+
+        JCheckBox maximize = new JCheckBox(tr("Maximize the Window"));
+        optionPanel.add(maximize);
+
+        /*
+         * TODO: Ensure it runs once, then gets reset.
+         *  Also: Create a warning box.
+         * Reset User Preferences
+         */
+        JCheckBox resetPreferences = new JCheckBox(tr("Reset user preferences (Highly dangerous)"));
+        optionPanel.add(resetPreferences);
+
+        // Text input options
+        JPanel geometryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        geometryPanel.add(new JLabel(tr("Window geometry:")));
+        JTextField geometry = new JTextField(20);
+        geometryPanel.add(geometry);
+        optionPanel.add(geometryPanel);
+
+        JPanel downloadPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        downloadPanel.add(new JLabel(tr("Download URL, filename or bounding box:")));
+        JTextField download = new JTextField(25);
+        downloadPanel.add(download);
+        optionPanel.add(downloadPanel);
+
+        JPanel downloadGpsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        downloadGpsPanel.add(new JLabel(tr("Download GPS bounding box or URL:")));
+        JTextField downloadGps = new JTextField(25);
+        downloadGpsPanel.add(downloadGps);
+        optionPanel.add(downloadGpsPanel);
+
+        JPanel selectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectionPanel.add(new JLabel(tr("Selection search string:")));
+        JTextField selection = new JTextField(25);
+        selectionPanel.add(selection);
+        optionPanel.add(selectionPanel);
+
+        JPanel loadPreferencesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        loadPreferencesPanel.add(new JLabel(tr("Load preferences from XML:")));
+        JTextField loadPreferences = new JTextField(25);
+        loadPreferencesPanel.add(loadPreferences);
+        optionPanel.add(loadPreferencesPanel);
+
+        JPanel setPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        setPanel.add(new JLabel(tr("Set preference key=value:")));
+        JTextField setPreference = new JTextField(25);
+        setPanel.add(setPreference);
+        optionPanel.add(setPanel);
+
+        JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        languagePanel.add(new JLabel(tr("Language:")));
+        JTextField language = new JTextField(15);
+        languagePanel.add(language);
+        optionPanel.add(languagePanel);
+
+        JPanel offlinePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        offlinePanel.add(new JLabel(tr("Disable online resources:")));
+        JTextField offline = new JTextField(25);
+        offlinePanel.add(offline);
+        optionPanel.add(offlinePanel);
+
+
+        JPanel prefPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        prefPanel.add(new JLabel(tr("Preferences directory:")));
+        JTextField prefDirectory = new JTextField(25);
+        prefPanel.add(prefDirectory);
+        optionPanel.add(prefPanel);
+
+        JPanel userDataPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        userDataPanel.add(new JLabel(tr("User data directory:")));
+        JTextField userDataDirectory = new JTextField(25);
+        userDataPanel.add(userDataDirectory);
+        optionPanel.add(userDataPanel);
+
+        JPanel cachePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        cachePanel.add(new JLabel(tr("Cache directory:")));
+        JTextField cacheDirectory = new JTextField(25);
+        cachePanel.add(cacheDirectory);
+        optionPanel.add(cachePanel);
+
+        JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        homePanel.add(new JLabel(tr("JOSM home directory:")));
+        JTextField homeDirectory = new JTextField(25);
+        homePanel.add(homeDirectory);
+        optionPanel.add(homePanel);
+
+        // Display the GUI
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                new JScrollPane(optionPanel),
+                tr("JOSM Startup Options"),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+        if (result == JOptionPane.OK_OPTION) {
+            // Create a new list to store all options selected/filled.
+            List<String> args = new ArrayList<>();
+            // Set the args for boolean options
+            if (debug.isSelected()) args.add("--debug");
+            if (maximize.isSelected()) args.add("--maximize");
+            if(resetPreferences.isSelected()) args.add("--reset-preferences");
+            // Set args for all that require text values (if user typed a value)
+            if (!geometry.getText().trim().isEmpty()) args.add("--geometry=" + geometry.getText().trim());
+            if (!download.getText().trim().isEmpty()) args.add("--download=" + download.getText().trim());
+            if (!downloadGps.getText().trim().isEmpty()) args.add("--downloadgps=" + downloadGps.getText().trim());
+            if (!selection.getText().trim().isEmpty()) args.add("--selection=" + selection.getText().trim());
+            if (!loadPreferences.getText().trim().isEmpty()) args.add("--load-preferences=" + loadPreferences.getText().trim());
+            if (!setPreference.getText().trim().isEmpty()) args.add("--set=" + setPreference.getText().trim());
+            if (!language.getText().trim().isEmpty()) args.add("--language=" + language.getText().trim());
+            if (!offline.getText().trim().isEmpty()) args.add("--offline=" + offline.getText().trim());
+            // Define system properties
+            if(!prefDirectory.getText().trim().isEmpty()) System.setProperty("josm.pref", prefDirectory.getText().trim());
+            if(!userDataDirectory.getText().trim().isEmpty()) System.setProperty("josm.userdata", userDataDirectory.getText().trim());
+            if(!cacheDirectory.getText().trim().isEmpty()) System.setProperty("josm.cache", cacheDirectory.getText().trim());
+            if(!homeDirectory.getText().trim().isEmpty()) System.setProperty("josm.userdata", homeDirectory.getText().trim());
+            String[] selectedArgs = args.toArray(new String[0]);
+            JOSM_CLI_MODULE.processArguments(selectedArgs);
+        }
+        else System.exit(0);
     }
 
     static String getHelp() {
