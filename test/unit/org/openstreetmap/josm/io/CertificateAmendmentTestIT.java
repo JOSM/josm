@@ -80,6 +80,24 @@ class CertificateAmendmentTestIT {
     }
 
     /**
+     * Test Greek Research (see #24580)
+     * @throws IOException in case of I/O error
+     */
+    @Test
+    void testGreekResearch() throws IOException {
+        connect("https://https://point.dgterritorio.gov.pt/", true);
+    }
+
+    /**
+     * Test Telekom (see #24580)
+     * @throws IOException in case of I/O error
+     */
+    @Test
+    void testTelekom() throws IOException {
+        connect("https://gdi.berlin.de/", true);
+    }
+
+    /**
      * Test Taiwan government.
      * @throws IOException in case of I/O error
      */

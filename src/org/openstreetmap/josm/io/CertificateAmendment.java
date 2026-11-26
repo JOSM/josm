@@ -182,6 +182,11 @@ public final class CertificateAmendment {
                 "HARICA_TLS_RSA_Root_CA_2021.pem",
                 "d95d0e8eda79525bf9beb11b14d2100d3294985f0c62d9fabd9cd999eccb7b1d",
                 "https://www.harica.gr"),
+        // #25013 - Telekom - https://www.telesec.de/de/root-programm/informationen-zu-ca-zertifikaten/root-zertifikate (expires 2048)
+        new NativeCertAmend(Collections.singleton("Telekom Security TLS RSA Root 2023"),
+                "Telekom_Security_TLS_RSA_Root_2023.pem",
+                "efc65cadbb59adb6efe84da22311b35624b71b3b1ea0da8b6655174ec8978646",
+                "https://www.telesec.de"),
     };
 
     private CertificateAmendment() {
