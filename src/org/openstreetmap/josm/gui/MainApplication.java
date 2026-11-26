@@ -728,7 +728,6 @@ public class MainApplication {
         offlinePanel.add(offline);
         optionPanel.add(offlinePanel);
 
-
         JPanel prefPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         prefPanel.add(new JLabel(tr("Preferences directory:")));
         JTextField prefDirectory = new JTextField(25);
@@ -767,7 +766,7 @@ public class MainApplication {
             // Set the args for boolean options
             if (debug.isSelected()) args.add("--debug");
             if (maximize.isSelected()) args.add("--maximize");
-            if(resetPreferences.isSelected()) args.add("--reset-preferences");
+            if (resetPreferences.isSelected()) args.add("--reset-preferences");
             // Set args for all that require text values (if user typed a value)
             if (!geometry.getText().trim().isEmpty()) args.add("--geometry=" + geometry.getText().trim());
             if (!download.getText().trim().isEmpty()) args.add("--download=" + download.getText().trim());
@@ -778,14 +777,19 @@ public class MainApplication {
             if (!language.getText().trim().isEmpty()) args.add("--language=" + language.getText().trim());
             if (!offline.getText().trim().isEmpty()) args.add("--offline=" + offline.getText().trim());
             // Define system properties
-            if(!prefDirectory.getText().trim().isEmpty()) System.setProperty("josm.pref", prefDirectory.getText().trim());
-            if(!userDataDirectory.getText().trim().isEmpty()) System.setProperty("josm.userdata", userDataDirectory.getText().trim());
-            if(!cacheDirectory.getText().trim().isEmpty()) System.setProperty("josm.cache", cacheDirectory.getText().trim());
-            if(!homeDirectory.getText().trim().isEmpty()) System.setProperty("josm.userdata", homeDirectory.getText().trim());
+            if (!prefDirectory.getText().trim().isEmpty())
+                System.setProperty("josm.pref", prefDirectory.getText().trim());
+            if (!userDataDirectory.getText().trim().isEmpty())
+                System.setProperty("josm.userdata", userDataDirectory.getText().trim());
+            if (!cacheDirectory.getText().trim().isEmpty())
+                System.setProperty("josm.cache", cacheDirectory.getText().trim());
+            if (!homeDirectory.getText().trim().isEmpty())
+                System.setProperty("josm.userdata", homeDirectory.getText().trim());
             String[] selectedArgs = args.toArray(new String[0]);
             JOSM_CLI_MODULE.processArguments(selectedArgs);
+        } else {
+            System.exit(0);
         }
-        else System.exit(0);
     }
 
     static String getHelp() {
