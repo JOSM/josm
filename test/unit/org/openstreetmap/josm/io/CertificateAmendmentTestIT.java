@@ -89,7 +89,7 @@ class CertificateAmendmentTestIT {
     }
 
     /**
-     * Test Telekom (see #24580)
+     * Test Telekom (see #25013)
      * @throws IOException in case of I/O error
      */
     @Test
