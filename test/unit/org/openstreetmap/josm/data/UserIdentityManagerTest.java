@@ -13,8 +13,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
+import org.openstreetmap.josm.data.oauth.OAuth20Token;
+import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.io.NetworkManager;
+import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
@@ -38,6 +45,40 @@ class UserIdentityManagerTest {
         userInfo.setId(id);
         userInfo.setDescription(description);
         return userInfo;
+    }
+
+    /**
+     * Removing the OAuth token of the server makes the user anonymous.
+     * <p>
+     * Non-regression test: the identity followed the parameters stored with the token, which are kept since they
+     * are the OAuth settings of the server too, so the user stayed identified after "Remove token".
+     * @throws Exception if the token cannot be stored
+     */
+    @Test
+    void testRemovingTheOAuthTokenMakesTheUserAnonymous() throws Exception {
+        // fetching the user details once a token is stored must not make a network request
+        NetworkManager.setOffline(OnlineResource.ALL);
+        Config.getPref().put("osm-server.auth-method", "oauth20");
+        final String apiUrl = OsmApi.getOsmApi().getServerUrl();
+        final String host = OsmApi.getOsmApi().getHost();
+        try {
+            OAuthAccessTokenHolder.getInstance().clear();
+            CredentialsManager.getInstance().storeOAuthAccessToken(host, new OAuth20Token(
+                    new OAuth20Parameters("", null, "", "", apiUrl, ""), "{\"access_token\": \"a-token\", \"token_type\": \"bearer\"}"));
+            UserIdentityManager.getInstance().setPartiallyIdentified("a-user");
+
+            // what "Remove token" in the preferences does
+            OAuthAccessTokenHolder.getInstance().setAccessToken(apiUrl, null);
+            OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
+
+            assertTrue(UserIdentityManager.getInstance().isAnonymous());
+        } finally {
+            Config.getPref().removeSensitive("oauth.access-token.parameters.OAuth20." + host);
+            Config.getPref().put("osm-server.auth-method", null);
+            OAuthAccessTokenHolder.getInstance().clear();
+            NetworkManager.setOnline(OnlineResource.ALL);
+            UserIdentityManager.getInstance().setAnonymous();
+        }
     }
 
     /**

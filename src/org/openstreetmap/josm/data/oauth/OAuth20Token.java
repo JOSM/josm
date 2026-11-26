@@ -51,6 +51,27 @@ public final class OAuth20Token implements IOAuthToken {
         this(oauthParameters, new InputStreamReader(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
     }
 
+    /**
+     * Create a bearer token from the access token alone, such as a token issued outside JOSM and pasted by the user.
+     * It has no refresh token, and works with nothing else: the parameters only need the API URL the token is for.
+     * @param oauthParameters The parameters for the OAuth token
+     * @param accessToken The access token
+     * @return The bearer token
+     * @since 19707
+     */
+    public static OAuth20Token fromAccessToken(IOAuthParameters oauthParameters, String accessToken) {
+        final String json = Json.createObjectBuilder()
+                .add(ACCESS_TOKEN, accessToken)
+                .add(TOKEN_TYPE, "bearer")
+                .build().toString();
+        try {
+            return new OAuth20Token(oauthParameters, json);
+        } catch (OAuth20Exception e) {
+            // both required fields are present
+            throw new JosmRuntimeException(e);
+        }
+    }
+
     OAuth20Token(IOAuthParameters oauthParameters, Reader bufferedReader) throws OAuth20Exception {
         this.oauthParameters = oauthParameters;
         try (JsonReader reader = Json.createReader(bufferedReader)) {

@@ -3,9 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator.RequestorType;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
@@ -31,7 +29,6 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.tools.HttpClient;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -48,34 +45,6 @@ public class OsmConnection {
     protected boolean cancel;
     protected HttpClient activeConnection;
     protected IOAuthParameters oAuth20Parameters;
-
-    /**
-     * Retrieves OAuth access token.
-     * @since 12803
-     */
-    @FunctionalInterface
-    public interface OAuthAccessTokenFetcher {
-        /**
-         * Obtains an OAuth access token for the connection. Afterwards, the token is accessible via {@link OAuthAccessTokenHolder}.
-         * @param serverUrl the URL to OSM server
-         * @throws InterruptedException if we're interrupted while waiting for the event dispatching thread to finish OAuth authorization task
-         * @throws InvocationTargetException if an exception is thrown while running OAuth authorization task
-         */
-        void obtainAccessToken(URL serverUrl) throws InvocationTargetException, InterruptedException;
-    }
-
-    static volatile OAuthAccessTokenFetcher fetcher = u -> {
-        throw new JosmRuntimeException("OsmConnection.setOAuthAccessTokenFetcher() has not been called");
-    };
-
-    /**
-     * Sets the OAuth access token fetcher.
-     * @param tokenFetcher new OAuth access token fetcher. Cannot be null
-     * @since 12803
-     */
-    public static void setOAuthAccessTokenFetcher(OAuthAccessTokenFetcher tokenFetcher) {
-        fetcher = Objects.requireNonNull(tokenFetcher, "tokenFetcher");
-    }
 
     /**
      * Cancels the connection.
@@ -149,11 +118,8 @@ public class OsmConnection {
     private void obtainOAuth20Token() throws MissingOAuthAccessTokenException {
         if (Utils.isEmpty(this.oAuth20Parameters.getClientId())) {
             // Without a client id the authorization request is rejected by the server with "Missing required
-            // parameter: client_id", so do not send the user to the browser at all. The message of the exception
-            // is for the log only; what the user is shown already points at the preferences, which is where the
-            // client id of an OAuth application registered on this server has to be entered.
-            throw new MissingOAuthAccessTokenException(
-                    "No OAuth client id for " + OsmApi.getOsmApi().getServerUrl() + ", cannot request a token");
+            // parameter: client_id", so do not send the user to the browser at all, but tell them what is missing.
+            throw MissingOAuthAccessTokenException.clientIdMissing(OsmApi.getOsmApi().getServerUrl());
         }
         if (!Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
                 ConditionalOptionPaneUtil.showConfirmationDialog("oauth.oauth20.obtain.automatically",
@@ -179,23 +145,17 @@ public class OsmConnection {
                     done.countDown();
                 };
         new OAuth20Authorization().authorize(oAuth20Parameters,
-                consumer, OsmScopes.read_gpx, OsmScopes.write_gpx,
-                OsmScopes.read_prefs, OsmScopes.write_prefs,
-                OsmScopes.write_api, OsmScopes.write_notes);
-        // Only wait at most 5 minutes
-        int counter = 0;
-        while (done.getCount() >= 0 && counter < 5) {
-            try {
-                if (done.await(1, TimeUnit.MINUTES)) {
-                    break;
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                Logging.trace(e);
-                consumer.accept(null);
-                throw new MissingOAuthAccessTokenException(e);
+                consumer, OsmScopes.getJosmScopes());
+        // Only wait at most 5 minutes for the user to authorize JOSM in the web browser
+        try {
+            if (!done.await(5, TimeUnit.MINUTES)) {
+                Logging.warn("No OAuth access token received from {0} within 5 minutes", OsmApi.getOsmApi().getServerUrl());
             }
-            counter++;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Logging.trace(e);
+            consumer.accept(Optional.empty());
+            throw new MissingOAuthAccessTokenException(e);
         }
     }
 
@@ -209,18 +169,18 @@ public class OsmConnection {
      */
     protected void addOAuth20AuthorizationHeader(HttpClient connection) throws OsmTransferException {
         if (this.oAuth20Parameters == null) {
-            // The parameters are stored under the API URL, so look them up with the API URL and not with the
-            // host of the request: OAuthParameters.createFromApiUrl() reduces it to the host itself where that
-            // is what it needs.
+            // Look them up with the API URL and not with the host of the request: OAuthParameters.createFromApiUrl()
+            // reduces it to the host itself for the stored parameters, and needs the URL for the default ones.
             this.oAuth20Parameters = OAuthParameters.createFromApiUrl(OsmApi.getOsmApi().getServerUrl(), OAuthVersion.OAuth20);
         }
         OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
         IOAuthToken token = holder.getAccessToken(connection.getURL().toExternalForm(), OAuthVersion.OAuth20);
-        if (token == null) {
+        // A token is obtained for the API, and so is only found for requests to the host of the API
+        if (token == null && Objects.equals(connection.getURL().getHost(), OsmApi.getOsmApi().getHost())) {
             obtainOAuth20Token();
             token = holder.getAccessToken(connection.getURL().toExternalForm(), OAuthVersion.OAuth20);
         }
-        if (token == null) { // check if wizard completed
+        if (token == null) { // check if authorization completed
             throw new MissingOAuthAccessTokenException();
         }
         try {

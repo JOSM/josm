@@ -36,6 +36,8 @@ public final class OAuthParameters {
     private static final String OSM_API_DEFAULT = "https://api.openstreetmap.org/api";
     private static final String OSM_API_DEV = "https://api06.dev.openstreetmap.org/api";
     private static final String OSM_API_MASTER = "https://master.apis.dev.openstreetmap.org/api";
+    /** Whether the default parameters are used; one setting for each host, with the setting for all hosts as fallback */
+    private static final String USE_DEFAULT = "oauth.settings.use-default";
 
     private OAuthParameters() {
         // Hide constructor
@@ -80,10 +82,11 @@ public final class OAuthParameters {
 
     /**
      * Get the OAuth 2.0 parameters the user entered in the advanced OAuth settings and saved with
-     * {@link IOAuthParameters#rememberPreferences()}. Until a token exists, this is the only place a
-     * client id for a server not in {@link #createDefault(String, OAuthVersion)} can come from.
-     * {@link OAuth20Parameters#rememberPreferences()} keys by the API URL as given; callers may pass
-     * either the URL or its host, so both are tried.
+     * {@link IOAuthParameters#rememberPreferences()}, or the parameters of the access token of the server. Until a
+     * token exists, this is the only place a client id for a server not in
+     * {@link #createDefault(String, OAuthVersion)} can come from.
+     * {@link OAuth20Parameters#rememberPreferences()} keys by the host of the API, as the access token is; earlier
+     * versions of JOSM keyed them by the API URL, so callers pass that too.
      * @param keys The preference key suffixes to try, in order
      * @return The remembered parameters, or {@code null} if none are saved or they cannot be parsed
      * @since 19627
@@ -110,12 +113,74 @@ public final class OAuthParameters {
         return null;
     }
 
+    /**
+     * Get the preference key under which the OAuth 2.0 parameters for the server of an API are stored. This is the
+     * key of the access token of that server too, see {@link org.openstreetmap.josm.io.auth.CredentialsAgent}.
+     * @param apiUrl The API URL, or the host of the API
+     * @return The preference key
+     * @since 19707
+     */
+    static String getPreferenceKey(String apiUrl) {
+        return "oauth.access-token.parameters." + OAuthVersion.OAuth20 + "." + getHost(apiUrl);
+    }
+
+    /**
+     * Get the host of an API, which is what the OAuth settings and the access token of a server are stored under.
+     * @param apiUrl The API URL, or the host of the API
+     * @return The host, or {@code apiUrl} itself if it is not a URL (including {@code null})
+     * @since 19707
+     */
+    public static String getHost(String apiUrl) {
+        if (Utils.isEmpty(apiUrl)) {
+            return apiUrl;
+        }
+        try {
+            final String host = new URI(apiUrl).getHost();
+            return host == null ? apiUrl : host;
+        } catch (URISyntaxException e) {
+            Logging.trace(e);
+            return apiUrl;
+        }
+    }
+
+    /**
+     * Determines whether the default OAuth 2.0 parameters are used for the server of an API, that is the ones built
+     * into JOSM or published by the server, rather than the ones the user entered in the advanced OAuth settings.
+     * <p>
+     * This is a setting of each server. Until it is set for a server, the setting earlier versions of JOSM had
+     * for all servers is used.
+     * @param apiUrl The API URL, or the host of the API
+     * @return {@code true} if the default parameters are used
+     * @since 19707
+     */
+    public static boolean isUseDefault(String apiUrl) {
+        final boolean useDefaultForAll = Config.getPref().getBoolean(USE_DEFAULT, true);
+        if (Utils.isEmpty(apiUrl)) {
+            return useDefaultForAll;
+        }
+        return Config.getPref().getBoolean(USE_DEFAULT + "." + getHost(apiUrl), useDefaultForAll);
+    }
+
+    /**
+     * Sets whether the default OAuth 2.0 parameters are used for the server of an API.
+     * @param apiUrl The API URL, or the host of the API
+     * @param useDefault {@code true} to use the default parameters, {@code false} to use the ones the user entered
+     * @see #isUseDefault(String)
+     * @since 19707
+     */
+    public static void setUseDefault(String apiUrl, boolean useDefault) {
+        if (!Utils.isEmpty(apiUrl)) {
+            Config.getPref().putBoolean(USE_DEFAULT + "." + getHost(apiUrl), useDefault);
+        }
+    }
+
     private static JsonObject getRFC8414Parameters(String apiUrl) {
         HttpClient client = null;
         try {
             final URI apiURI = new URI(apiUrl);
-            final URL rfc8414URL = new URI(apiURI.getScheme(), apiURI.getHost(),
-                    "/.well-known/oauth-authorization-server", null).toURL();
+            // keep the port, as for a development server on http://localhost:3000
+            final URL rfc8414URL = new URI(apiURI.getScheme(), null, apiURI.getHost(), apiURI.getPort(),
+                    "/.well-known/oauth-authorization-server", null, null).toURL();
             client = HttpClient.create(rfc8414URL);
             HttpClient.Response response = client.connect();
             if (response.getResponseCode() == 200) {
@@ -146,7 +211,6 @@ public final class OAuthParameters {
         final String clientId;
         final String clientSecret;
         final String redirectUri = "http://127.0.0.1:8111/oauth_authorization";
-        final String baseUrl;
         apiUrl = OsmApi.normalizeApiUrl(apiUrl == null ? OsmApi.getOsmApi().getServerUrl() : apiUrl);
         switch (apiUrl) {
             case OSM_API_DEV:
@@ -180,7 +244,6 @@ public final class OAuthParameters {
                 clientId = "";
                 clientSecret = null;
         }
-        baseUrl = apiUrl;
         // Check if the server is RFC 8414 compliant
         try {
             synchronized (RFC8414_RESPONSES) {
@@ -207,8 +270,21 @@ public final class OAuthParameters {
         } catch (OAuthException e) {
             Logging.trace(e);
         }
-        // Fall back to guessing the parameters.
-        return new OAuth20Parameters(clientId, clientSecret, baseUrl, apiUrl, redirectUri);
+        // Fall back to the endpoints of openstreetmap-website, which is what OSM API servers run
+        return new OAuth20Parameters(clientId, clientSecret, getWebsite(apiUrl) + "/oauth2", apiUrl, redirectUri);
+    }
+
+    /**
+     * Get the website of an OSM API server, where openstreetmap-website has its OAuth 2.0 endpoints: the API URL
+     * without its {@code /api}, except for the default OSM API, which is served from a host of its own.
+     * @param apiUrl The normalized API URL
+     * @return The website URL
+     */
+    private static String getWebsite(String apiUrl) {
+        if (OSM_API_DEFAULT.equals(apiUrl)) {
+            return Config.getUrls().getOSMWebsite();
+        }
+        return apiUrl.replaceAll("/api$", "");
     }
 
     /**
@@ -230,7 +306,9 @@ public final class OAuthParameters {
     }
 
     /**
-     * Replies a set of parameters as defined in the preferences.
+     * Replies a set of parameters as defined in the preferences: the parameters of the access token of the server,
+     * otherwise the parameters the user entered, unless the server is set to {@link #isUseDefault(String) use the
+     * default parameters}, otherwise the {@link #createDefault(String, OAuthVersion) default parameters}.
      *
      * @param oAuthVersion The OAuth version to use.
      * @param apiUrl the API URL. Must not be {@code null}.
@@ -239,33 +317,29 @@ public final class OAuthParameters {
      */
     public static IOAuthParameters createFromApiUrl(String apiUrl, OAuthVersion oAuthVersion) {
         apiUrl = OsmApi.normalizeApiUrl(apiUrl);
-        final String originalApiUrl = apiUrl;
         // We actually need the host
-        if (apiUrl.startsWith("https://") || apiUrl.startsWith("http://")) {
-            try {
-                apiUrl = new URI(apiUrl).getHost();
-            } catch (URISyntaxException syntaxException) {
-                Logging.trace(apiUrl);
-            }
-        }
+        final String host = getHost(apiUrl);
         switch (oAuthVersion) {
             case OAuth20:
             case OAuth21: // Right now, OAuth 2.1 will work with our OAuth 2.0 implementation
                 try {
-                    IOAuthToken storedToken = CredentialsManager.getInstance().lookupOAuthAccessToken(apiUrl);
+                    IOAuthToken storedToken = CredentialsManager.getInstance().lookupOAuthAccessToken(host);
                     if (storedToken != null) {
                         return storedToken.getParameters();
                     }
                 } catch (CredentialsAgentException e) {
                     Logging.trace(e);
                 }
-                IOAuthParameters remembered = createFromPreferences(originalApiUrl, apiUrl);
-                if (remembered != null) {
-                    return remembered;
+                if (!isUseDefault(apiUrl)) {
+                    // the API URL is where earlier versions of JOSM stored them
+                    IOAuthParameters remembered = createFromPreferences(host, apiUrl);
+                    if (remembered != null) {
+                        return remembered;
+                    }
                 }
-                // Use the URL as it was given: apiUrl is the host by now, which is never a valid URL, so
-                // createDefault() would silently fall back to the API currently configured in the preferences.
-                return createDefault(originalApiUrl, oAuthVersion);
+                // Use the URL as it was given: the host is never a valid URL, so createDefault() would silently
+                // fall back to the API currently configured in the preferences.
+                return createDefault(apiUrl, oAuthVersion);
             default:
                 throw new IllegalArgumentException("Unknown OAuth version: " + oAuthVersion);
         }

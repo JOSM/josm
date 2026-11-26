@@ -85,7 +85,8 @@ public class Preferences extends AbstractPreferences {
 
     /** remove if key equals */
     private static final String[] OBSOLETE_PREF_KEYS = {
-        // nothing ATM
+        "oauth.access-token.key", // OAuth 1.0a token, unused since OAuth 1.0a was removed (#22810). To remove end of 2027
+        "oauth.access-token.secret", // OAuth 1.0a token, unused since OAuth 1.0a was removed (#22810). To remove end of 2027
     };
 
     /** remove if key starts with */

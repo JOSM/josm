@@ -20,9 +20,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
@@ -59,7 +57,6 @@ public @interface JosmDefaults {
             User.clearUserMap();
             // Setup callbacks
             DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
-            OsmConnection.setOAuthAccessTokenFetcher(OAuthAuthorizationWizard::obtainAccessToken);
         }
 
         @Override

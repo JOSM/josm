@@ -50,12 +50,10 @@ import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreferenceTestIT;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
-import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.Setting;
@@ -549,7 +547,6 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
         User.clearUserMap();
         // Setup callbacks
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
-        OsmConnection.setOAuthAccessTokenFetcher(OAuthAuthorizationWizard::obtainAccessToken);
         HttpClient.setFactory(Http1Client::new);
 
         // Set up i18n

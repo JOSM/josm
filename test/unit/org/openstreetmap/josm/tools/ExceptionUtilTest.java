@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -275,6 +276,18 @@ class ExceptionUtilTest {
                 "You are using OAuth to authenticate but currently there is no<br>OAuth Access Token configured.<br>"+
                 "Please open the Preferences Dialog and generate or enter an Access Token.</html>",
                 ExceptionUtil.explainMissingOAuthAccessTokenException(new MissingOAuthAccessTokenException()));
+    }
+
+    /**
+     * Without a client id, JOSM cannot obtain a token, and says so rather than to generate one.
+     */
+    @Test
+    void testExplainMissingOAuthClientId() {
+        // the server JOSM gave up on, whichever is configured by the time this is explained
+        final String explanation = ExceptionUtil.explainMissingOAuthAccessTokenException(
+                MissingOAuthAccessTokenException.clientIdMissing("https://other.example.org/api"));
+        assertTrue(explanation.contains("'https://other.example.org/api'"), explanation);
+        assertTrue(explanation.contains("because it has no OAuth Client ID for it"), explanation);
     }
 
     /**

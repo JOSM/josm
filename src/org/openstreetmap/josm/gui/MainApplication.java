@@ -119,7 +119,6 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.RenderingCLI;
 import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
-import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -139,7 +138,6 @@ import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.AbstractCredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
@@ -1110,7 +1108,6 @@ public class MainApplication {
 
     static void setupCallbacks() {
         HttpClient.setFactory(Http1Client::new);
-        OsmConnection.setOAuthAccessTokenFetcher(OAuthAuthorizationWizard::obtainAccessToken);
         AbstractCredentialsAgent.setCredentialsProvider(CredentialDialog::promptCredentials);
         MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);

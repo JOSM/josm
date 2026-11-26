@@ -132,24 +132,22 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         if (accessToken == null) {
             Set<String> keySet = new HashSet<>(Config.getPref().getKeySet());
             keySet.addAll(Config.getPref().getSensitive()); // Just in case we decide to not return sensitive keys in getKeySet
-            // Assume we want to remove all access tokens
+            // Assume we want to remove all access tokens. The parameters stay: they are also the OAuth settings the
+            // user entered for the server, which are needed to obtain the next token.
             for (OAuthVersion oauthType : OAuthVersion.values()) {
                 final String hostKey = "oauth.access-token.object." + oauthType + "." + host;
-                final String parametersKey = "oauth.access-token.parameters." + oauthType + "." + host;
                 if (keySet.contains(hostKey)) {
                     Config.getPref().removeSensitive(hostKey);
-                }
-                if (keySet.contains(parametersKey)) {
-                    Config.getPref().removeSensitive(parametersKey);
                 }
             }
         } else {
             final String hostKey = "oauth.access-token.object." + accessToken.getOAuthType() + "." + host;
             final String parametersKey = "oauth.access-token.parameters." + accessToken.getOAuthType() + "." + host;
-            Config.getPref().put(hostKey, accessToken.toPreferencesString());
+            // the parameters first: listeners of the token, like UserIdentityManager, find them in place
             Config.getPref().put(parametersKey, accessToken.getParameters().toPreferencesString());
-            Config.getPref().addSensitive(this, hostKey);
             Config.getPref().addSensitive(this, parametersKey);
+            Config.getPref().put(hostKey, accessToken.toPreferencesString());
+            Config.getPref().addSensitive(this, hostKey);
         }
     }
 

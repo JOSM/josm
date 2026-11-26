@@ -85,8 +85,6 @@ public final class UserIdentityManager implements PreferenceChangedListener {
 
     private String userName;
     private UserInfo userInfo;
-    private boolean accessTokenKeyChanged;
-    private boolean accessTokenSecretChanged;
 
     private UserIdentityManager() {
     }
@@ -296,27 +294,15 @@ public final class UserIdentityManager implements PreferenceChangedListener {
                 setPartiallyIdentified(getUserName());
             }
             break;
-        case "oauth.access-token.key":
-            accessTokenKeyChanged = true;
-            break;
-        case "oauth.access-token.secret":
-            accessTokenSecretChanged = true;
-            break;
-        default: // Do nothing
-            if (evt.getKey() != null && evt.getKey().equals("oauth.access-token.parameters.OAuth20." + OsmApi.getOsmApi().getHost())) {
-                accessTokenKeyChanged = true;
-                accessTokenSecretChanged = true;
-            }
-        }
-        // oauth.access-token.parameters.OAuth20.api.openstreetmap.org
-
-        if (accessTokenKeyChanged && accessTokenSecretChanged) {
-            accessTokenKeyChanged = false;
-            accessTokenSecretChanged = false;
-            if (OsmApi.isUsingOAuthAndOAuthSetUp(OsmApi.getOsmApi())) {
-                getInstance().initFromOAuth();
-            } else if (OsmApi.isUsingOAuth()) {
-                setAnonymous();
+        default:
+            // the OAuth 2 token of the current server was stored or removed, e.g. oauth.access-token.object.OAuth20.api.openstreetmap.org;
+            // its parameters are kept when it is removed, so they do not tell
+            if (("oauth.access-token.object.OAuth20." + OsmApi.getOsmApi().getHost()).equals(evt.getKey())) {
+                if (OsmApi.isUsingOAuthAndOAuthSetUp(OsmApi.getOsmApi())) {
+                    getInstance().initFromOAuth();
+                } else if (OsmApi.isUsingOAuth()) {
+                    setAnonymous();
+                }
             }
         }
     }

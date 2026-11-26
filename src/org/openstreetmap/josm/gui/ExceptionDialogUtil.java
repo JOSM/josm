@@ -15,7 +15,10 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.preferences.server.ServerAccessPreference;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
@@ -25,6 +28,7 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -368,11 +372,24 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
-        showErrorDialog(
+        final ButtonSpec[] buttons = {
+                new ButtonSpec(tr("Open preferences"), new ImageProvider("preference"),
+                        tr("Open the OSM server preferences, to authorize JOSM or to enter an Access Token"), null),
+                new ButtonSpec(tr("Close"), new ImageProvider("cancel"), tr("Close this message"), null)
+        };
+        final int answer = HelpAwareOptionPane.showOptionDialog(
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainMissingOAuthAccessTokenException(e),
                 tr("Authentication failed"),
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                buttons,
+                buttons[0],
                 ht("/ErrorMessages#MissingOAuthAccessToken")
         );
+        if (answer == 0) {
+            PreferencesAction.forPreferenceTab(tr("Preferences"), null, ServerAccessPreference.class).run();
+        }
     }
 
     /**

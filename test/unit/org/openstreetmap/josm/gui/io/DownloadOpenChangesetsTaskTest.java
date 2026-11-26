@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.GraphicsEnvironment;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,16 +16,10 @@ import javax.swing.JPanel;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
-import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.OsmApi;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
-import org.openstreetmap.josm.tools.UserCancelException;
-
-import mockit.Invocation;
-import mockit.Mock;
-import mockit.MockUp;
 
 /**
  * Unit tests of {@link DownloadOpenChangesetsTask} class.
@@ -34,33 +27,6 @@ import mockit.MockUp;
 @BasicPreferences
 @OsmApi(OsmApi.APIType.DEV)
 class DownloadOpenChangesetsTaskTest {
-    /**
-     * OAuth wizard mocker.
-     */
-    public static class OAuthWizardMocker extends MockUp<OAuthAuthorizationWizard> {
-        /** {@code true} if wizard has been called */
-        public boolean called;
-
-        @Mock
-        void showDialog() throws UserCancelException {
-            this.called = true;
-            throw new UserCancelException();
-        }
-
-        @Mock
-        void obtainAccessToken(final Invocation invocation, final URL serverUrl) {
-            if (GraphicsEnvironment.isHeadless()) {
-                // we can't really let execution proceed any further as construction of the ui
-                // elements will fail with a mocked Window
-                this.called = true;
-                return;
-            }
-            // else we can allow a bit more of the code to be covered before we raise
-            // UserCancelException in showDialog
-            invocation.proceed(serverUrl);
-        }
-    }
-
     /**
      * Test of {@link DownloadOpenChangesetsTask} class when anonymous.
      */

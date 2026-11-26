@@ -83,6 +83,16 @@ public final class ExceptionUtil {
      */
     public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
         Logging.error(e);
+        if (e.isClientIdMissing()) {
+            return tr(
+                    "<html>Failed to authenticate at the OSM server ''{0}''.<br>"
+                    + "JOSM cannot obtain an OAuth Access Token for this server, because it has no OAuth Client ID for it.<br>"
+                    + "Please register an OAuth 2.0 application on the server, and enter its Client ID in the OAuth<br>"
+                    + "settings of the Preferences Dialog; or enter an Access Token obtained outside JOSM there."
+                    + "</html>",
+                    e.getClientIdMissingFor()
+            );
+        }
         return tr(
                 "<html>Failed to authenticate at the OSM server ''{0}''.<br>"
                 + "You are using OAuth to authenticate but currently there is no<br>"

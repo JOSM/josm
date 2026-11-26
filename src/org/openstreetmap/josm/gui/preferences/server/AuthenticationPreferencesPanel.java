@@ -17,6 +17,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
@@ -35,6 +36,11 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel implements PropertyChangeListener {
 
+    /** the choice of the authentication method; only shown to experts, see {@link #updateAuthenticationMethodVisibility()} */
+    private final JPanel pnlAuthenticationMethod = new JPanel(new FlowLayout(FlowLayout.LEADING));
+    /** follows expert mode; held here since {@link ExpertToggleAction} only keeps a weak reference to its listeners */
+    private final transient ExpertToggleAction.ExpertModeChangeListener expertModeListener =
+            isExpert -> updateAuthenticationMethodVisibility();
     /** indicates whether we use basic authentication */
     private final JRadioButton rbBasicAuthentication = new JRadioButton();
     /** indicates whether we use OAuth 2.0 as authentication scheme */
@@ -63,20 +69,20 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
 
         AuthenticationMethodChangeListener authChangeListener = new AuthenticationMethodChangeListener();
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         // -- radio button for basic authentication
-        buttonPanel.add(rbBasicAuthentication);
+        pnlAuthenticationMethod.add(rbBasicAuthentication);
         rbBasicAuthentication.setText(tr("Use Basic Authentication"));
         rbBasicAuthentication.setToolTipText(tr("Select to use HTTP basic authentication with your OSM username and password"));
         rbBasicAuthentication.addItemListener(authChangeListener);
         //-- radio button for OAuth 2.0
-        buttonPanel.add(rbOAuth20);
+        pnlAuthenticationMethod.add(rbOAuth20);
         rbOAuth20.setSelected(true); // This must before adding the listener; otherwise, saveToPreferences is called prior to initFromPreferences
         rbOAuth20.setText(tr("Use OAuth {0}", "2.0"));
         rbOAuth20.setToolTipText(tr("Select to use OAuth {0} as authentication mechanism", "2.0"));
         rbOAuth20.addItemListener(authChangeListener);
 
-        add(buttonPanel, GBC.eol());
+        add(pnlAuthenticationMethod, GBC.eol());
+        ExpertToggleAction.addExpertModeChangeListener(expertModeListener);
         //-- radio button for OAuth
         ButtonGroup bg = new ButtonGroup();
         bg.add(rbBasicAuthentication);
@@ -119,6 +125,17 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         }
         pnlBasicAuthPreferences.initFromPreferences();
         pnlOAuth20Preferences.initFromPreferences();
+        updateAuthenticationMethodVisibility();
+    }
+
+    /**
+     * Shows the choice of the authentication method in expert mode only, since basic authentication is meant as a
+     * quick way to test one's own server rather than for normal use. It is shown regardless while basic
+     * authentication is selected, so that a profile using it does not lose sight of its own setting. Selecting
+     * another method does not hide the choice straight away, which would take the option away under the mouse.
+     */
+    private void updateAuthenticationMethodVisibility() {
+        pnlAuthenticationMethod.setVisible(ExpertToggleAction.isExpert() || rbBasicAuthentication.isSelected());
     }
 
     /**
@@ -132,7 +149,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         } else if (rbOAuth20.isSelected()) {
             authMethod = "oauth20";
         } else {
-            throw new IllegalStateException("One of OAuth 2.0, OAuth 1.0a, or Basic authentication must be checked");
+            throw new IllegalStateException("One of OAuth 2.0 or Basic authentication must be checked");
         }
         final boolean initUser = Config.getPref().put("osm-server.auth-method", authMethod);
         if ("basic".equals(authMethod)) {
@@ -169,7 +186,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
                 pnlBasicAuthPreferences.revalidate();
             } else if (rbOAuth20.isSelected()) {
                 pnlAuthenticationParameters.add(pnlOAuth20Preferences, BorderLayout.CENTER);
-                pnlOAuth20Preferences.saveToPreferences();
+                // only refresh it: saving here would save what was entered before the user pressed OK
                 pnlOAuth20Preferences.initFromPreferences();
                 pnlOAuth20Preferences.revalidate();
             }
@@ -188,13 +205,24 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     }
 
     /**
-     * Update the acceptable authentications methods
+     * Update the acceptable authentications methods: basic authentication is not offered for a server which is known
+     * not to accept it, unless it is in use already, so that it can be changed.
      * @param apiUrl The API url to check
      */
     private void updateAcceptableAuthenticationMethods(String apiUrl) {
         final String authMethod = OsmApi.getAuthMethod();
-        final boolean defaultApi = JosmUrls.getInstance().getDefaultOsmApiUrl().equals(apiUrl);
-        rbBasicAuthentication.setEnabled(rbBasicAuthentication.isSelected() || "basic".equals(authMethod) || !defaultApi);
+        rbBasicAuthentication.setEnabled(rbBasicAuthentication.isSelected() || "basic".equals(authMethod)
+                || !isOAuthOnly(apiUrl));
+    }
+
+    /**
+     * Determines whether a server is known to accept OAuth 2.0 only, not basic authentication.
+     * @param apiUrl The API url to check
+     * @return {@code true} for the default OSM API and the OpenGeofiction API
+     */
+    private static boolean isOAuthOnly(String apiUrl) {
+        final String url = OsmApi.normalizeApiUrl(apiUrl);
+        return JosmUrls.getInstance().getDefaultOsmApiUrl().equals(url) || "https://opengeofiction.net/api".equals(url);
     }
 
 }

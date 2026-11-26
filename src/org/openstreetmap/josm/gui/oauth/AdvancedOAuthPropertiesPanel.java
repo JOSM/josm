@@ -9,9 +9,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -21,6 +25,7 @@ import org.openstreetmap.josm.data.oauth.IOAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
+import org.openstreetmap.josm.data.oauth.osm.OsmScopes;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -29,20 +34,18 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Panel allowing the user to setup advanced OAuth parameters:
  * <ul>
- * <li>Consumer key</li>
- * <li>Consumer secret</li>
- * <li>Request token URL</li>
+ * <li>Client ID</li>
+ * <li>Client secret</li>
+ * <li>Redirect URI</li>
  * <li>Access token URL</li>
  * <li>Authorize URL</li>
- * <li>OSM login URL</li>
- * <li>OSM logout URL</li>
+ * <li>Access token, which can be pasted instead of authorizing JOSM</li>
  * </ul>
  *
  * @see OAuthParameters
@@ -57,11 +60,13 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     public static final String PARAMETERS_CHANGED_PROP = AdvancedOAuthPropertiesPanel.class.getName() + ".parametersChanged";
 
     private final JCheckBox cbUseDefaults = new JCheckBox(tr("Use default settings"));
-    private final JosmTextField tfConsumerKey = new JosmTextField();
-    private final JosmTextField tfConsumerSecret = new JosmTextField();
-    private final JosmTextField tfRequestTokenURL = new JosmTextField();
+    private final JosmTextField tfClientId = new JosmTextField();
+    private final JosmTextField tfClientSecret = new JosmTextField();
+    private final JosmTextField tfRedirectUri = new JosmTextField();
     private final JosmTextField tfAccessTokenURL = new JosmTextField();
     private final JosmTextField tfAuthoriseURL = new JosmTextField();
+    private final JLabel lblAccessToken = new JLabel(tr("Access Token:"));
+    private final JosmTextField tfAccessToken = new JosmTextField();
     private final OAuthVersion oauthVersion;
     private transient UseDefaultItemListener ilUseDefault;
     private String apiUrl;
@@ -87,44 +92,44 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         gc.gridwidth = 3;
         add(cbUseDefaults, gc);
 
-        // -- consumer key
+        // -- client id
         gc.gridy = 1;
         gc.weightx = 0.0;
         gc.gridwidth = 1;
-        add(new JLabel(tr("Client ID:")), gc);
+        add(label(tr("Client ID:"), tfClientId), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfConsumerKey, gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfConsumerKey);
+        add(tfClientId, gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfClientId);
 
-        // -- consumer secret
+        // -- client secret
         gc.gridy++;
         gc.gridx = 0;
         gc.weightx = 0.0;
-        add(new JLabel(tr("Client Secret:")), gc);
+        add(label(tr("Client Secret:"), tfClientSecret), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfConsumerSecret, gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfConsumerSecret);
+        add(tfClientSecret, gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfClientSecret);
 
-        // -- request token URL
+        // -- redirect URI
         gc.gridy++;
         gc.gridx = 0;
         gc.weightx = 0.0;
-        add(new JLabel(tr("Redirect URL:")), gc);
+        add(label(tr("Redirect URL:"), tfRedirectUri), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfRequestTokenURL, gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfRequestTokenURL);
+        add(tfRedirectUri, gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfRedirectUri);
 
         // -- access token URL
         gc.gridy++;
         gc.gridx = 0;
         gc.weightx = 0.0;
-        add(new JLabel(tr("Access Token URL:")), gc);
+        add(label(tr("Access Token URL:"), tfAccessTokenURL), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
@@ -135,18 +140,33 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         gc.gridy++;
         gc.gridx = 0;
         gc.weightx = 0.0;
-        add(new JLabel(tr("Authorize URL:")), gc);
+        add(label(tr("Authorize URL:"), tfAuthoriseURL), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
         add(tfAuthoriseURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAuthoriseURL);
 
+        // -- access token: not one of the settings, so it can be pasted whether or not they are the default ones
+        gc.gridy++;
+        gc.gridx = 0;
+        gc.weightx = 0.0;
+        lblAccessToken.setLabelFor(tfAccessToken);
+        add(lblAccessToken, gc);
+
+        gc.gridx = 1;
+        gc.weightx = 1.0;
+        add(tfAccessToken, gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfAccessToken);
+
+        setToolTips();
+
         ilUseDefault = new UseDefaultItemListener();
         cbUseDefaults.addItemListener(ilUseDefault);
-        cbUseDefaults.setSelected(Config.getPref().getBoolean("oauth.settings.use-default", true));
+        cbUseDefaults.setSelected(true);
+        setChildComponentsVisible(false);
         cbUseDefaults.addItemListener(e -> fireParametersChanged());
-        tfConsumerKey.getDocument().addDocumentListener(new DocumentListener() {
+        tfClientId.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 fireParametersChanged();
@@ -164,8 +184,68 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         });
     }
 
+    /**
+     * Creates the label of a field, which has the tool tip of the field.
+     * @param text the text of the label
+     * @param field the field
+     * @return the label
+     */
+    private static JLabel label(String text, JosmTextField field) {
+        final JLabel label = new JLabel(text);
+        label.setLabelFor(field);
+        return label;
+    }
+
+    /**
+     * Explains each field, for the fields and their labels.
+     */
+    private void setToolTips() {
+        final String scopes = Stream.of(OsmScopes.getJosmScopes()).map(Enum::name).collect(Collectors.joining(", "));
+        cbUseDefaults.setToolTipText(tr("<html>Use the OAuth settings JOSM has built in for this server, or which the server publishes.<br>"
+                + "Untick to enter the settings of an OAuth 2.0 application you registered on the server yourself.</html>"));
+        tfClientId.setToolTipText(tr("<html>The Client ID of an OAuth 2.0 application registered on this server.<br>"
+                + "On an openstreetmap-website server, register one under My Settings &gt; OAuth 2 applications,<br>"
+                + "with the redirect URL below and the permissions {0}.</html>", scopes));
+        tfClientSecret.setToolTipText(tr("<html>Only needed if the application is registered as confidential.<br>"
+                + "The applications JOSM has built in are public clients and have none.</html>"));
+        tfRedirectUri.setToolTipText(tr("<html>Must be exactly the redirect URL registered with the application.<br>"
+                + "JOSM receives the authorization at {0}, by remote control.</html>", "http://127.0.0.1:8111/oauth_authorization"));
+        tfAccessTokenURL.setToolTipText(tr("<html>Where JOSM gets the Access Token from.<br>"
+                + "Taken from the OAuth metadata of the server if it publishes any; on an openstreetmap-website server,<br>"
+                + "this is the address of the website followed by {0}, not the API URL.</html>", "/oauth2/token"));
+        tfAuthoriseURL.setToolTipText(tr("<html>Where the web browser is sent to authorize JOSM.<br>"
+                + "Taken from the OAuth metadata of the server if it publishes any; on an openstreetmap-website server,<br>"
+                + "this is the address of the website followed by {0}, not the API URL.</html>", "/oauth2/authorize"));
+        tfAccessToken.setToolTipText(tr("<html>The Access Token JOSM uses for this server.<br>"
+                + "A token issued outside JOSM can be pasted here instead of authorizing JOSM; it needs the permissions {0}.</html>",
+                scopes));
+        for (Component c : getComponents()) {
+            if (c instanceof JLabel && ((JLabel) c).getLabelFor() instanceof JComponent) {
+                ((JLabel) c).setToolTipText(((JComponent) ((JLabel) c).getLabelFor()).getToolTipText());
+            }
+        }
+    }
+
     private void fireParametersChanged() {
         firePropertyChange(PARAMETERS_CHANGED_PROP, null, null);
+    }
+
+    /**
+     * Get the access token as entered in the panel.
+     * @return the access token, without surrounding white space; empty if there is none
+     * @since 19707
+     */
+    public String getAccessToken() {
+        return tfAccessToken.getText().trim();
+    }
+
+    /**
+     * Sets the access token to be displayed.
+     * @param accessToken the access token, or {@code null} if there is none
+     * @since 19707
+     */
+    public void setAccessToken(String accessToken) {
+        tfAccessToken.setText(accessToken);
     }
 
     /**
@@ -180,15 +260,15 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     /**
      * Get the client id as entered in the panel, without falling back to the defaults.
-     * @return the client id field's text
+     * @return the client id field's text, without surrounding white space
      * @since 19627
      */
     public String getEnteredClientId() {
-        return tfConsumerKey.getText();
+        return tfClientId.getText().trim();
     }
 
     protected boolean hasCustomSettings() {
-        IOAuthParameters params = OAuthParameters.createDefault(apiUrl, OAuthVersion.OAuth20);
+        IOAuthParameters params = OAuthParameters.createDefault(apiUrl, this.oauthVersion);
         return !params.equals(getAdvancedParameters());
     }
 
@@ -230,25 +310,35 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
                         case OAuth20:
                         case OAuth21:
                             OAuth20Parameters params20 = (OAuth20Parameters) iParams;
-                            tfConsumerKey.setText(params20.getClientId());
-                            tfConsumerSecret.setText(params20.getClientSecret());
+                            tfClientId.setText(params20.getClientId());
+                            tfClientSecret.setText(params20.getClientSecret());
                             tfAccessTokenURL.setText(params20.getAccessTokenUrl());
                             tfAuthoriseURL.setText(params20.getAuthorizationUrl());
-                            tfRequestTokenURL.setText(params20.getRedirectUri());
+                            tfRedirectUri.setText(params20.getRedirectUri());
                             break;
                         default:
                             throw new UnsupportedOperationException("Unsupported OAuth version: " + this.oauthVersion);
                     }
-                    setChildComponentsEnabled(false);
+                    setChildComponentsVisible(false);
                 });
     }
 
-    protected void setChildComponentsEnabled(boolean enabled) {
+    /**
+     * Shows or hides the OAuth parameters: they are shown when the user enters them, that is when the default
+     * settings are not used. The access token is not one of them, and is always shown.
+     * @param visible {@code true} to show the parameters
+     * @since 19707
+     */
+    protected void setChildComponentsVisible(boolean visible) {
         for (Component c: getComponents()) {
+            if (c == tfAccessToken || c == lblAccessToken) {
+                continue;
+            }
             if (c instanceof JosmTextField || c instanceof JLabel) {
-                c.setEnabled(enabled);
+                c.setVisible(visible);
             }
         }
+        revalidate();
     }
 
     /**
@@ -259,13 +349,26 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     public IOAuthParameters getAdvancedParameters() {
         if (cbUseDefaults.isSelected())
             return OAuthParameters.createDefault(apiUrl, this.oauthVersion);
+        return getDisplayedParameters();
+    }
+
+    /**
+     * Replies the OAuth parameters as currently displayed in this properties panel: the default ones are shown when
+     * "use default settings" is ticked, as far as they are known yet. Unlike {@link #getAdvancedParameters()}, this
+     * never makes a network request, and some of the parameters may be empty. White space around the values, which
+     * is easily copied along with them, is left out: a client secret with a trailing space is refused by the server.
+     *
+     * @return the OAuth parameters
+     * @since 19707
+     */
+    public OAuth20Parameters getDisplayedParameters() {
         return new OAuth20Parameters(
-                tfConsumerKey.getText(),
-                tfConsumerSecret.getText(),
-                tfAccessTokenURL.getText(),
-                tfAuthoriseURL.getText(),
+                tfClientId.getText().trim(),
+                tfClientSecret.getText().trim(),
+                tfAccessTokenURL.getText().trim(),
+                tfAuthoriseURL.getText().trim(),
                 apiUrl,
-                tfRequestTokenURL.getText()
+                tfRedirectUri.getText().trim()
                 );
     }
 
@@ -279,17 +382,17 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         if (parameters.equals(OAuthParameters.createDefault(apiUrl, parameters.getOAuthVersion()))) {
             cbUseDefaults.setSelected(true);
-            setChildComponentsEnabled(false);
+            setChildComponentsVisible(false);
         } else {
             cbUseDefaults.setSelected(false);
-            setChildComponentsEnabled(true);
+            setChildComponentsVisible(true);
             if (parameters instanceof OAuth20Parameters) {
                 OAuth20Parameters parameters20 = (OAuth20Parameters) parameters;
-                tfConsumerKey.setText(parameters20.getClientId());
-                tfConsumerSecret.setText(parameters20.getClientSecret());
+                tfClientId.setText(parameters20.getClientId());
+                tfClientSecret.setText(parameters20.getClientSecret());
                 tfAccessTokenURL.setText(parameters20.getAccessTokenUrl());
                 tfAuthoriseURL.setText(parameters20.getAuthorizationUrl());
-                tfRequestTokenURL.setText(parameters20.getRedirectUri());
+                tfRedirectUri.setText(parameters20.getRedirectUri());
             }
         }
     }
@@ -302,15 +405,18 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      */
     public void initialize(String paramApiUrl) {
         CheckParameterUtil.ensureParameterNotNull(paramApiUrl, "paramApiUrl");
-        setApiUrl(paramApiUrl);
-        boolean useDefault = Config.getPref().getBoolean("oauth.settings.use-default", true);
+        this.apiUrl = paramApiUrl;
+        // "use default settings" is a setting of each server
+        boolean useDefault = OAuthParameters.isUseDefault(paramApiUrl);
         ilUseDefault.setEnabled(false);
+        cbUseDefaults.setSelected(useDefault);
+        setChildComponentsVisible(!useDefault);
         MainApplication.worker.execute(() -> {
             if (useDefault) {
                 this.resetToDefaultSettings();
             } else {
                 // createFromApiUrl may make a network request
-                final IOAuthParameters parameters = OAuthParameters.createFromApiUrl(paramApiUrl, OAuthVersion.OAuth20);
+                final IOAuthParameters parameters = OAuthParameters.createFromApiUrl(paramApiUrl, this.oauthVersion);
                 GuiHelper.runInEDT(() -> setAdvancedParameters(parameters));
             }
             GuiHelper.runInEDT(() -> ilUseDefault.setEnabled(true));
@@ -318,13 +424,16 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     }
 
     /**
-     * Remembers the current values in the preferences <code>pref</code>.
+     * Remembers the current values in the preferences <code>pref</code>: whether the server uses the default
+     * settings, and the settings entered if not. Settings entered earlier are kept when the default settings are
+     * used, so that they are there again when they are needed again.
      */
     public void rememberPreferences() {
-        Config.getPref().putBoolean("oauth.settings.use-default", cbUseDefaults.isSelected());
-        if (cbUseDefaults.isSelected()) {
-            MainApplication.worker.execute(() -> OAuthParameters.createDefault().rememberPreferences());
-        } else {
+        if (apiUrl == null) {
+            return; // not initialized
+        }
+        OAuthParameters.setUseDefault(apiUrl, cbUseDefaults.isSelected());
+        if (!cbUseDefaults.isSelected()) {
             getAdvancedParameters().rememberPreferences();
         }
     }
@@ -344,7 +453,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
                 MainApplication.worker.execute(AdvancedOAuthPropertiesPanel.this::resetToDefaultSettings);
                 break;
             case ItemEvent.DESELECTED:
-                setChildComponentsEnabled(true);
+                setChildComponentsVisible(true);
                 break;
             default: // Do nothing
             }
@@ -362,6 +471,12 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      * @since 5422
      */
     public void setApiUrl(String apiUrl) {
+        if (this.apiUrl != null && apiUrl != null
+                && !Objects.equals(OAuthParameters.getHost(this.apiUrl), OAuthParameters.getHost(apiUrl))) {
+            // another server, with settings of its own
+            initialize(apiUrl);
+            return;
+        }
         this.apiUrl = apiUrl;
         if (cbUseDefaults.isSelected()) {
             MainApplication.worker.execute(this::resetToDefaultSettings);

@@ -15,6 +15,8 @@ import jakarta.json.JsonStructure;
 import jakarta.json.JsonValue;
 
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Parameters for OAuth 2.0
@@ -130,10 +132,26 @@ public final class OAuth20Parameters implements IOAuthParameters {
         return this.apiUrl;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The parameters are stored under the host of the API, where the access token of the server stores its
+     * parameters as well.
+     */
     @Override
     public void rememberPreferences() {
-        Config.getPref().put("oauth.access-token.parameters." + OAuthVersion.OAuth20 + "." + this.apiUrl,
-                this.toPreferencesString());
+        if (Utils.isEmpty(this.apiUrl)) {
+            // there is no server to store them for
+            Logging.warn("OAuth parameters of client id {0} have no API URL and are not stored", this.clientId);
+            return;
+        }
+        final String key = OAuthParameters.getPreferenceKey(this.apiUrl);
+        Config.getPref().put(key, this.toPreferencesString());
+        // earlier versions of JOSM stored them under the API URL
+        final String apiUrlKey = "oauth.access-token.parameters." + OAuthVersion.OAuth20 + "." + this.apiUrl;
+        if (!key.equals(apiUrlKey)) {
+            Config.getPref().put(apiUrlKey, null);
+        }
     }
 
     @Override

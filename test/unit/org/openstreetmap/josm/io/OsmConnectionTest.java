@@ -2,27 +2,34 @@
 package org.openstreetmap.josm.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.GraphicsEnvironment;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.oauth.IOAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Exception;
 import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Token;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.HttpClient;
 
 /**
@@ -54,7 +61,8 @@ class OsmConnectionTest {
         NetworkManager.setOnline(OnlineResource.ALL);
         OAuthAccessTokenHolder.getInstance().clear();
         // preferences and the token holder are static state shared with the other tests of this class
-        Config.getPref().put("oauth.access-token.parameters." + OAuthVersion.OAuth20 + "." + API_URL, null);
+        Config.getPref().put("oauth.access-token.parameters." + OAuthVersion.OAuth20 + "." + URI.create(API_URL).getHost(), null);
+        Config.getPref().put("oauth.settings.use-default." + URI.create(API_URL).getHost(), null);
         Config.getPref().put("osm-server.url", null);
     }
 
@@ -63,10 +71,11 @@ class OsmConnectionTest {
     }
 
     /**
-     * Stores the advanced OAuth parameters the way the authentication preferences do, that is under the API URL.
+     * Stores the advanced OAuth parameters the way the authentication preferences do.
      */
     private static OAuth20Parameters rememberParameters() {
         final OAuth20Parameters parameters = new OAuth20Parameters(CLIENT_ID, null, API_URL, API_URL, REDIRECT_URI);
+        OAuthParameters.setUseDefault(API_URL, false);
         parameters.rememberPreferences();
         return parameters;
     }
@@ -114,8 +123,45 @@ class OsmConnectionTest {
         final MissingOAuthAccessTokenException thrown = assertThrows(MissingOAuthAccessTokenException.class,
                 () -> new TestConnection().addOAuth20AuthorizationHeader(client));
         assertNotNull(thrown.getMessage(), "gave up only after asking the user, rather than for the missing client id");
+        assertTrue(thrown.isClientIdMissing(), "the user is not told what is missing");
         assertTrue(thrown.getMessage().contains(API_URL), thrown.getMessage());
         assertNull(client.getRequestHeader("Authorization"));
+    }
+
+    /**
+     * A token is obtained for the API, so for a request to another host JOSM does not ask the user to authorize it,
+     * which would not give a token for that request anyway.
+     * @throws MalformedURLException never
+     */
+    @Test
+    void testNoAuthorizationForAnotherHost() throws MalformedURLException {
+        TestUtils.assumeWorkingJMockit();
+        if (GraphicsEnvironment.isHeadless()) {
+            new WindowMocker();
+        }
+        final JOptionPaneSimpleMocker mocker = new JOptionPaneSimpleMocker(
+                Collections.singletonMap("Obtain OAuth 2.0 token for authentication?", JOptionPane.NO_OPTION));
+        rememberParameters();
+
+        final HttpClient client = HttpClient.create(URI.create("https://elsewhere.example.org/api/0.6/user/details").toURL());
+        final MissingOAuthAccessTokenException thrown = assertThrows(MissingOAuthAccessTokenException.class,
+                () -> new TestConnection().addOAuth20AuthorizationHeader(client));
+        assertFalse(thrown.isClientIdMissing());
+        assertEquals(0, mocker.getInvocationLog().size(), "asked to obtain a token for another host");
+    }
+
+    /**
+     * A token pasted by the user signs the connection with nothing else: no client id, no endpoints, no network.
+     * @throws Exception if the connection cannot be signed
+     */
+    @Test
+    void testPastedTokenSignsTheConnection() throws Exception {
+        OAuthAccessTokenHolder.getInstance().setAccessToken(API_URL,
+                OAuth20Token.fromAccessToken(new OAuth20Parameters("", null, "", "", API_URL, ""), "a-pasted-token"));
+
+        final HttpClient client = apiRequest();
+        new TestConnection().addOAuth20AuthorizationHeader(client);
+        assertEquals("Bearer a-pasted-token", client.getRequestHeader("Authorization"));
     }
 
     /**
