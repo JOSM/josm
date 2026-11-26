@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2026111200, Last Updated Thu Nov 12 07:07:01 2026 UTC
+        // Taken from Version 2026112503, Last Updated Thu Nov 26 07:07:01 2026 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -494,7 +494,7 @@ public final class DomainValidator extends AbstractValidator {
         "city", // city Binky Moon, LLC
         "claims", // claims Binky Moon, LLC
         "cleaning", // cleaning Binky Moon, LLC
-        "click", // click Internet Naming Co.
+        "click", // click Waterford Limited
         "clinic", // clinic Binky Moon, LLC
         "clinique", // clinique The Estée Lauder Companies Inc.
         "clothing", // clothing Binky Moon, LLC
@@ -1050,7 +1050,7 @@ public final class DomainValidator extends AbstractValidator {
         "read", // read Amazon Registry Services, Inc.
         "realestate", // realestate dotRealEstate LLC
         "realtor", // realtor Real Estate Domains LLC
-        "realty", // realty Internet Naming Co.
+        "realty", // realty Waterford Limited
         "recipes", // recipes Binky Moon, LLC
         "red", // red Identity Digital Limited
         "redumbrella", // redumbrella Travelers TLD, LLC
@@ -1313,7 +1313,6 @@ public final class DomainValidator extends AbstractValidator {
         "wtf", // wtf Binky Moon, LLC
         "xbox", // xbox Microsoft Corporation
         "xerox", // xerox Xerox DNHC LLC
-        "xihuan", // xihuan Beijing Qihu Keji Co., Ltd.
         "xin", // xin Elegant Leader Limited
         "xn--11b4c3d", // कॉम VeriSign Sarl
         "xn--1ck2e1b", // セール Amazon Registry Services, Inc.
