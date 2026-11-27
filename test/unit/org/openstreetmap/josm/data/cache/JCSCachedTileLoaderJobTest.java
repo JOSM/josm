@@ -607,6 +607,34 @@ class JCSCachedTileLoaderJobTest {
         assertArrayEquals("cached dummy".getBytes(StandardCharsets.UTF_8), listener.data);
     }
 
+    /**
+     * A 304 keeps the "no tile at this zoom level" marker of the cache entry: it was found from the response which
+     * delivered the object, and the confirmation does not repeat it. Non-regression test for #24893.
+     * @throws IOException exception
+     */
+    @Test
+    void testNoTileAtZoomKeptOn304() throws IOException {
+        final String eTag = "\"no-tile\"";
+        ICacheAccess<String, CacheEntry> cache = getCache();
+        long expires = TimeUnit.DAYS.toMillis(1);
+        long testStart = System.currentTimeMillis();
+        CacheEntryAttributes attributes = createEntryAttributes(-1 * expires, 200, testStart, eTag);
+        attributes.setNoTileAtZoom(true);
+        cache.put("no-tile", new CacheEntry("cached dummy".getBytes(StandardCharsets.UTF_8)), attributes);
+        tileServer.getWireMock().register(get(urlEqualTo("/no-tile"))
+                .willReturn(status(304).withHeader("ETag", eTag)
+                        .withHeader("Expires", TestUtils.getHTTPDate(testStart + expires))));
+
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(
+                "http://127.0.0.1:" + tileServer.getHttpPort() + "/no-tile", "no-tile");
+        Listener listener = submitJob(job, false);
+        tileServer.getWireMock().verifyThat(1, getRequestedFor(urlEqualTo("/no-tile")));
+        assertTrue(listener.attributes.isNoTileAtZoom(), "the no-tile marker was dropped");
+        assertTrue(((CacheEntryAttributes) cache.getCacheElement("no-tile").getElementAttributes()).isNoTileAtZoom(),
+                "the no-tile marker was dropped from the cache");
+        assertTrue(listener.attributes.getExpirationTime() >= testStart + expires, "the expiry wasn't updated");
+    }
+
     private void createHeadGetStub(UrlPattern url, long expires, long lastModified, String eTag, String body) {
         tileServer.getWireMock().register(get(url)
                 .willReturn(aResponse()

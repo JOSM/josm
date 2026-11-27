@@ -366,9 +366,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 // If isModifiedSince or If-None-Match has been set
                 // and the server answers with a HTTP 304 = "Not Modified"
                 Logging.debug("JCS - If-Modified-Since/ETag test: local version is up to date: {0}", getUrl());
-                // update cache attributes
-                attributes = parseHeaders(urlConn);
-                cache.put(getCacheKey(), cacheData, attributes);
+                updateAttributes(urlConn);
                 return true;
             } else if (isObjectLoadable() // we have an object in cache, but we haven't received 304 response code
                     && (
@@ -558,11 +556,24 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         boolean ret = (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getHeaderField("ETag"))) ||
                 (lastModified != 0 && lastModified <= attributes.getLastModification());
         if (ret) {
-            // update attributes
-            attributes = parseHeaders(urlConn);
-            cache.put(getCacheKey(), cacheData, attributes);
+            updateAttributes(urlConn);
         }
         return ret;
+    }
+
+    /**
+     * Updates the cache attributes after the server confirmed that the cached object is still valid.
+     * <p>
+     * The "no tile at this zoom level" marker is kept: it was found from the response which delivered the object,
+     * and a confirmation does not repeat that. Without it, an empty no-tile entry would look like a loaded tile
+     * without an image (see #24893).
+     * @param urlConn the response which confirmed the cached object
+     */
+    private void updateAttributes(HttpClient.Response urlConn) {
+        final boolean noTileAtZoom = attributes.isNoTileAtZoom();
+        attributes = parseHeaders(urlConn);
+        attributes.setNoTileAtZoom(noTileAtZoom);
+        cache.put(getCacheKey(), cacheData, attributes);
     }
 
     /**

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.imagery;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -202,6 +203,11 @@ class TMSCachedTileLoaderJobTest {
         Listener listener = new Listener();
         TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(listener, tile, key, minimumExpiry);
         job.submit(force);
+        waitFor(listener);
+        return job;
+    }
+
+    private static void waitFor(Listener listener) {
         synchronized (listener) {
             while (!listener.ready) {
                 try {
@@ -212,7 +218,6 @@ class TMSCachedTileLoaderJobTest {
                 }
             }
         }
-        return job;
     }
 
     /**
@@ -331,5 +336,40 @@ class TMSCachedTileLoaderJobTest {
         // only one request to tile server should be made, second should come from cache
         wireMockRuntimeInfo.getWireMock().verifyThat(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
+    }
+
+    /**
+     * A cached "no tile at this zoom level" entry which the server confirms with a 304 stays a no-tile.
+     * <p>
+     * Non-regression test for #24893: the 304 replaced the cache attributes and dropped the marker, so the empty
+     * entry finished as a loaded tile without an image, which kept showing the hourglass a tile starts with.
+     * @throws IOException exception
+     */
+    @Test
+    void testNoTileAtZoomKeptOn304() throws IOException {
+        final String eTag = "\"no-tile\"";
+        long testStart = System.currentTimeMillis();
+        wireMockRuntimeInfo.getWireMock().register(
+                WireMock.get(WireMock.urlEqualTo("/no-tile"))
+                .willReturn(WireMock.status(304).withHeader("ETag", eTag))
+                );
+        MockTile tile = new MockTile(wireMockRuntimeInfo.getHttpBaseUrl() + "/no-tile");
+        Listener listener = new Listener();
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(listener, tile, "no-tile");
+        // the entry as cached for a no-tile response, expired since
+        CacheEntryAttributes attributes = new CacheEntryAttributes();
+        attributes.setNoTileAtZoom(true);
+        attributes.setEtag(eTag);
+        attributes.setLastModification(testStart - TimeUnit.DAYS.toMillis(2));
+        attributes.setExpirationTime(testStart - TimeUnit.DAYS.toMillis(1));
+        getCache().put(job.getCacheKey(), new BufferedImageCacheEntry(new byte[0]), attributes);
+
+        job.submit(false);
+        waitFor(listener);
+
+        wireMockRuntimeInfo.getWireMock().verifyThat(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/no-tile")));
+        assertTrue(job.getAttributes().isNoTileAtZoom(), "the no-tile marker was dropped");
+        assertEquals("no-tile", tile.getValue("tile-info"));
+        assertNotSame(Tile.LOADING_IMAGE, tile.getImage(), "the tile still shows the hourglass");
     }
 }
