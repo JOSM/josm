@@ -51,6 +51,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.TextUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportSender;
 
@@ -308,7 +309,30 @@ public final class ShowStatusReportAction extends JosmAction {
         }
     }
 
-    private static String valueCleanup(Object value) {
+    /**
+     * Shortens and removes private information from a preference value used for status report, among them the API keys
+     * and tokens of URLs, e.g. of custom imagery.
+     * @param value preference value to cleanup
+     * @return shortened/anonymized value
+     */
+    static String valueCleanup(Object value) {
+        return valueCleanupStripped(stripUrls(value));
+    }
+
+    private static Object stripUrls(Object value) {
+        if (value instanceof String) {
+            return TextUtils.stripUrl((String) value);
+        } else if (value instanceof Map<?, ?>) {
+            Map<Object, Object> map = new LinkedHashMap<>();
+            ((Map<?, ?>) value).forEach((k, v) -> map.put(k, stripUrls(v)));
+            return map;
+        } else if (value instanceof Collection<?>) {
+            return ((Collection<?>) value).stream().map(ShowStatusReportAction::stripUrls).collect(Collectors.toList());
+        }
+        return value;
+    }
+
+    private static String valueCleanupStripped(Object value) {
         String valueString = value.toString();
         if (valueString.length() > 512 && value instanceof Collection<?>) {
             valueString = ((Collection<?>) value).stream().map(v -> {

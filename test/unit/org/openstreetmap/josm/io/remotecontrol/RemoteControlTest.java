@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.io.remotecontrol;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.AssertionsInEDT;
 import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Unit tests for Remote Control
@@ -51,6 +59,44 @@ class RemoteControlTest {
     @Test
     void testHttpListOfCommands() throws Exception {
         testListOfCommands(httpBase);
+    }
+
+    /**
+     * The OAuth 2.0 authorization code of the redirect to Remote Control is not written to the log.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testAuthorizationCodeIsNotLogged() throws Exception {
+        final List<String> logged = Collections.synchronizedList(new ArrayList<>());
+        final Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord logRecord) {
+                logged.add(String.valueOf(logRecord.getMessage()));
+            }
+
+            @Override
+            public void flush() {
+                // nothing to flush
+            }
+
+            @Override
+            public void close() {
+                // nothing to close
+            }
+        };
+        Logging.getLogger().addHandler(handler);
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(httpBase
+                    + "/oauth_authorization?code=a-secret-code&state=a-state").openConnection();
+            connection.connect();
+            connection.getResponseCode();
+            connection.disconnect();
+        } finally {
+            Logging.getLogger().removeHandler(handler);
+        }
+        final String log = String.join("\n", logged);
+        assertTrue(log.contains("RemoteControl received: GET /oauth_authorization?code=...stripped...&state=a-state"), log);
+        assertFalse(log.contains("a-secret-code"), log);
     }
 
     private void testListOfCommands(String url) throws IOException, ReflectiveOperationException {

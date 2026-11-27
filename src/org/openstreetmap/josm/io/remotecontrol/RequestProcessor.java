@@ -52,6 +52,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHan
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerOsmApiException;
 import org.openstreetmap.josm.io.remotecontrol.handler.VersionHandler;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.TextUtils;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -224,7 +225,7 @@ public class RequestProcessor extends Thread {
                 sendInternalError(out, null);
                 return;
             }
-            Logging.info("RemoteControl received: " + get);
+            Logging.info("RemoteControl received: " + TextUtils.stripUrl(get)); // e.g. an OAuth 2.0 authorization code
 
             StringTokenizer st = new StringTokenizer(get);
             if (!st.hasMoreTokens()) {

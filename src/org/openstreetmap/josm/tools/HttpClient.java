@@ -157,7 +157,7 @@ public abstract class HttpClient {
             ConnectionResponse cr;
             try {
                 if (Logging.isDebugEnabled()) {
-                    Logging.debug("REQUEST HEADERS: {0}", headers);
+                    Logging.debug("REQUEST HEADERS: {0}", TextUtils.stripHeaders(headers));
                 }
                 cr = performConnection();
                 final boolean hasReason = !Utils.isEmpty(reasonForRequest);
@@ -171,7 +171,7 @@ public abstract class HttpClient {
                 );
                 if (Logging.isDebugEnabled()) {
                     try {
-                        Logging.debug("RESPONSE HEADERS: {0}", cr.getHeaderFields());
+                        Logging.debug("RESPONSE HEADERS: {0}", TextUtils.stripHeaders(cr.getHeaderFields()));
                     } catch (IllegalArgumentException e) {
                         Logging.warn(e);
                     }
@@ -246,9 +246,14 @@ public abstract class HttpClient {
     }
 
     protected final void logRequestBody() {
-        logRequest("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
+        logRequest("{0} {1} ({2}) ...", requestMethod, TextUtils.stripUrl(url.toString()),
+                Utils.getSizeString(requestBody.length, Locale.getDefault()));
         if (Logging.isTraceEnabled() && hasRequestBody()) {
-            Logging.trace("BODY: {0}", new String(requestBody, StandardCharsets.UTF_8));
+            final String body = new String(requestBody, StandardCharsets.UTF_8);
+            final String contentType = headers.get("Content-Type");
+            // a form-encoded body has the syntax of a query, e.g. an OAuth 2.0 token request with the client secret
+            Logging.trace("BODY: {0}", contentType != null && contentType.contains("application/x-www-form-urlencoded")
+                    ? TextUtils.stripUrl(body) : body);
         }
     }
 
