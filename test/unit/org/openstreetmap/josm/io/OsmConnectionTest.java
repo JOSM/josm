@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
 import java.net.MalformedURLException;
@@ -140,7 +141,7 @@ class OsmConnectionTest {
             new WindowMocker();
         }
         final JOptionPaneSimpleMocker mocker = new JOptionPaneSimpleMocker(
-                Collections.singletonMap("Obtain OAuth 2.0 token for authentication?", JOptionPane.NO_OPTION));
+                Collections.singletonMap(tr("Obtain OAuth 2.0 token for authentication?"), JOptionPane.NO_OPTION));
         rememberParameters();
 
         final HttpClient client = HttpClient.create(URI.create("https://elsewhere.example.org/api/0.6/user/details").toURL());

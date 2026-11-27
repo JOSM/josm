@@ -330,7 +330,7 @@ class OAuthAuthenticationPreferencesPanelTest {
             new WindowMocker();
         }
         final JOptionPaneSimpleMocker mocker = new JOptionPaneSimpleMocker(Collections.singletonMap(
-                "There is no Access Token to test.", JOptionPane.OK_OPTION));
+                tr("There is no Access Token to test."), JOptionPane.OK_OPTION));
         NetworkManager.setOffline(OnlineResource.ALL);
         addAuthorization(OAuthVersion.OAuth20);
         final OAuthAuthenticationPreferencesPanel panel = new OAuthAuthenticationPreferencesPanel(OAuthVersion.OAuth20);
@@ -393,7 +393,7 @@ class OAuthAuthenticationPreferencesPanelTest {
         new OpenBrowserMocker();
         OpenBrowserMocker.getCalledURIs().clear();
         new JOptionPaneSimpleMocker(Collections.singletonMap(
-                "Authentication failed, please check browser for details.", JOptionPane.OK_OPTION));
+                tr("Authentication failed, please check browser for details."), JOptionPane.OK_OPTION));
         NetworkManager.setOffline(OnlineResource.ALL);
         RemoteControl.stop();
         addAuthorization(OAuthVersion.OAuth20);

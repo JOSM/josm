@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,11 +41,16 @@ class ExceptionDialogUtilTest {
      */
     @Test
     void testMissingOAuthAccessTokenOffersThePreferences() {
-        assertEquals(1, explainMissingOAuthAccessToken("Open preferences"));
-        assertEquals(0, explainMissingOAuthAccessToken("Close"));
+        assertTrue(explainMissingOAuthAccessToken(tr("Open preferences")), "the preferences were not opened");
+        assertFalse(explainMissingOAuthAccessToken(tr("Close")), "the preferences were opened");
     }
 
-    private static int explainMissingOAuthAccessToken(String answer) {
+    /**
+     * Explains a missing OAuth client id, answering the dialog with the given button.
+     * @param answer the text of the button
+     * @return whether the preferences were opened
+     */
+    private static boolean explainMissingOAuthAccessToken(String answer) {
         TestUtils.assumeWorkingJMockit();
         final MissingOAuthAccessTokenException e = MissingOAuthAccessTokenException.clientIdMissing("https://example.org/api");
         final HelpAwareOptionPaneMocker mocker = new HelpAwareOptionPaneMocker(
@@ -58,12 +64,7 @@ class ExceptionDialogUtilTest {
         };
         ExceptionDialogUtil.explainMissingOAuthAccessTokenException(e);
         assertEquals(1, mocker.getInvocationLog().size());
-        assertEquals("Authentication failed", mocker.getInvocationLog().get(0)[2]);
-        if (opened.get()) {
-            assertTrue(answer.startsWith("Open"));
-            return 1;
-        }
-        assertFalse(answer.startsWith("Open"));
-        return 0;
+        assertEquals(tr("Authentication failed"), mocker.getInvocationLog().get(0)[2]);
+        return opened.get();
     }
 }

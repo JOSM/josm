@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -286,8 +286,11 @@ class ExceptionUtilTest {
         // the server JOSM gave up on, whichever is configured by the time this is explained
         final String explanation = ExceptionUtil.explainMissingOAuthAccessTokenException(
                 MissingOAuthAccessTokenException.clientIdMissing("https://other.example.org/api"));
-        assertTrue(explanation.contains("'https://other.example.org/api'"), explanation);
-        assertTrue(explanation.contains("because it has no OAuth Client ID for it"), explanation);
+        assertEquals(tr("<html>Failed to authenticate at the OSM server ''{0}''.<br>"
+                + "JOSM cannot obtain an OAuth Access Token for this server, because it has no OAuth Client ID for it.<br>"
+                + "Please register an OAuth 2.0 application on the server, and enter its Client ID in the OAuth<br>"
+                + "settings of the Preferences Dialog; or enter an Access Token obtained outside JOSM there."
+                + "</html>", "https://other.example.org/api"), explanation);
     }
 
     /**
