@@ -84,6 +84,8 @@ class OAuthAuthenticationPreferencesPanelTest {
         Config.getPref().removeSensitive("oauth.access-token.parameters.OAuth20." + OsmApi.getOsmApi().getHost());
         Config.getPref().put("oauth.settings.use-default." + OsmApi.getOsmApi().getHost(), null);
         NetworkManager.setOnline(OnlineResource.ALL);
+        // the URLs opened by the tests are kept in a static list, which other tests count
+        OpenBrowserMocker.getCalledURIs().clear();
     }
 
     @ParameterizedTest
