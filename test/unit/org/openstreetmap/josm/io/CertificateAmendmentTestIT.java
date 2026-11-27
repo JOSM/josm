@@ -85,7 +85,7 @@ class CertificateAmendmentTestIT {
      */
     @Test
     void testGreekResearch() throws IOException {
-        connect("https://https://point.dgterritorio.gov.pt/", true);
+        connect("https://point.dgterritorio.gov.pt/", true);
     }
 
     /**
