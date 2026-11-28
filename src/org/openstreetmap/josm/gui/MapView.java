@@ -588,7 +588,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 && nonChangedLayersCount == visibleLayers.size()
                 && lastClipBounds.contains(clip);
 
+        // Pan-reuse is only valid mid-drag.
         boolean canReusePan = !paintPrefsChanged
+                && panning
                 && viewMoved
                 && sameLayerSet
                 && Utils.equalsEpsilon(scale, lastPaintedScale)
