@@ -298,7 +298,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
                 null, /* no dedicated icon */
                 buttons,
                 buttons[0],
-                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard")
+                HelpUtil.ht("/Preferences/Connection#AdvancedOAuthParameters")
         );
     }
 

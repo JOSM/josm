@@ -141,7 +141,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Success"),
                 JOptionPane.INFORMATION_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenOK")
+                HelpUtil.ht("/Preferences/Connection#AccessTokenOK")
         );
     }
 
@@ -159,7 +159,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Preferences/Connection#AccessTokenFailed")
         );
     }
 
@@ -177,7 +177,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Token allows restricted access"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Preferences/Connection#AccessTokenFailed")
         );
     }
 
@@ -196,7 +196,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Preferences/Connection#AccessTokenFailed")
         );
     }
 
@@ -213,7 +213,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Preferences/Connection#AccessTokenFailed")
         );
     }
 
@@ -229,7 +229,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Preferences/Connection#AccessTokenFailed")
         );
     }
 
