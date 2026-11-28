@@ -123,7 +123,7 @@ class AdvancedOAuthPropertiesPanelTest {
         OAuthParameters.setUseDefault(THIRD_PARTY, false);
         final AdvancedOAuthPropertiesPanel entered = new AdvancedOAuthPropertiesPanel(OAuthVersion.OAuth20);
         entered.initialize(THIRD_PARTY);
-        assertTrue(((JComponent) getField(entered, "tfClientId")).isVisible(), "the parameters are entered for this server");
+        assertTrue((getField(entered, "tfClientId")).isVisible(), "the parameters are entered for this server");
     }
 
     /**
